@@ -1,0 +1,41 @@
+{
+  "scope": "真实橙区两种首选：可信保存恢复与独立保存直接提交的逐步完整状态等价",
+  "routes": [
+    {
+      "firstSlot": "orange_1",
+      "choices": [
+        {
+          "slotId": "orange_1",
+          "symbolId": "symbol_4",
+          "legalCount": 2
+        },
+        {
+          "slotId": "orange_2",
+          "symbolId": "symbol_2",
+          "legalCount": 1
+        }
+      ]
+    },
+    {
+      "firstSlot": "orange_2",
+      "choices": [
+        {
+          "slotId": "orange_2",
+          "symbolId": "symbol_2",
+          "legalCount": 2
+        },
+        {
+          "slotId": "orange_1",
+          "symbolId": "symbol_4",
+          "legalCount": 1
+        },
+        {
+          "slotId": "orange_2",
+          "symbolId": "symbol_4",
+          "legalCount": 1
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

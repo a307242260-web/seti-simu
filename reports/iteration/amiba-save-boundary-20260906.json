@@ -1,0 +1,475 @@
+{
+  "scope": "真实绿210橙区奖励链：可信引用保存与独立保存后的继续提交",
+  "cases": [
+    {
+      "trustedFork": true,
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:eef4bfbf",
+        "actorId": "player-green",
+        "stateVersion": 99,
+        "decisionVersion": 5,
+        "target": {
+          "choiceId": "symbol:orange_2",
+          "slotId": "orange_2",
+          "region": "orange",
+          "symbolId": "symbol_2"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "orange_2（1数据）"
+      },
+      "result": {
+        "ok": false,
+        "message": "Cannot assign to read only property 'failure' of object '#<Object>'"
+      }
+    },
+    {
+      "trustedFork": false,
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:eef4bfbf",
+        "actorId": "player-green",
+        "stateVersion": 99,
+        "decisionVersion": 5,
+        "target": {
+          "choiceId": "symbol:orange_2",
+          "slotId": "orange_2",
+          "region": "orange",
+          "symbolId": "symbol_2"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "orange_2（1数据）"
+      },
+      "result": {
+        "ok": true,
+        "phase": "completed",
+        "family": "land",
+        "stateVersion": 100,
+        "failure": null,
+        "journal": {
+          "actions": [
+            {
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "land",
+                "phase": "main",
+                "actionId": "land:1cbade2c",
+                "actorId": "player-green",
+                "stateVersion": 99,
+                "decisionVersion": 5,
+                "target": {
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "登陆"
+              },
+              "groupId": "effect-session-2:group:1",
+              "groupKind": "action",
+              "quick": false,
+              "revision": 0
+            }
+          ],
+          "decisions": [
+            {
+              "decisionId": "effect-session-2:effect:5",
+              "decisionVersion": 4,
+              "ownerId": "player-green",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:c27f9d6e",
+                "actorId": "player-green",
+                "stateVersion": 99,
+                "decisionVersion": 5,
+                "target": {
+                  "choiceId": "trace:2:yellow:amiba:4",
+                  "kind": "planet-reward-alien-trace",
+                  "alienSlotId": 2,
+                  "traceType": "yellow",
+                  "speciesId": "amiba",
+                  "position": 4
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄4号位（1分+外星人牌）"
+              }
+            },
+            {
+              "decisionId": "effect-session-2:effect:6",
+              "decisionVersion": 5,
+              "ownerId": "player-green",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_card",
+                "phase": "conditional",
+                "actionId": "choose_card:30b94504",
+                "actorId": "player-green",
+                "stateVersion": 99,
+                "decisionVersion": 5,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "amiba:display:9",
+                  "source": "display",
+                  "cardIndex": 9
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "获得展示的低重力研究",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "9",
+                  "imageSrc": "../assets/aliens/阿米巴/cards/9.webp",
+                  "imageAlt": "低重力研究"
+                }
+              }
+            },
+            {
+              "decisionId": "effect-session-2:effect:7",
+              "decisionVersion": 6,
+              "ownerId": "player-green",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:4637832d",
+                "actorId": "player-green",
+                "stateVersion": 99,
+                "decisionVersion": 5,
+                "target": {
+                  "choiceId": "symbol:orange_1",
+                  "slotId": "orange_1",
+                  "region": "orange",
+                  "symbolId": "symbol_4"
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "orange_1（1盲抽）"
+              }
+            },
+            {
+              "decisionId": "effect-session-2:effect:8",
+              "decisionVersion": 7,
+              "ownerId": "player-green",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:eef4bfbf",
+                "actorId": "player-green",
+                "stateVersion": 99,
+                "decisionVersion": 5,
+                "target": {
+                  "choiceId": "symbol:orange_2",
+                  "slotId": "orange_2",
+                  "region": "orange",
+                  "symbolId": "symbol_2"
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "orange_2（1数据）"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "effectId": "effect-session-2:effect:1",
+              "groupId": "effect-session-2:group:1",
+              "groupKind": "action",
+              "type": "probe_turn_execute",
+              "revision": 1
+            },
+            {
+              "effectId": "effect-session-2:effect:2",
+              "groupId": "effect-session-2:group:2",
+              "groupKind": "spawned",
+              "type": "probe_turn_reward",
+              "revision": 2
+            },
+            {
+              "effectId": "effect-session-2:effect:3",
+              "groupId": "effect-session-2:group:3",
+              "groupKind": "spawned",
+              "type": "probe_turn_reward",
+              "revision": 3
+            },
+            {
+              "effectId": "effect-session-2:effect:4",
+              "groupId": "effect-session-2:group:4",
+              "groupKind": "spawned",
+              "type": "probe_turn_reward",
+              "revision": 4
+            },
+            {
+              "effectId": "effect-session-2:effect:5",
+              "groupId": "effect-session-2:group:5",
+              "groupKind": "spawned",
+              "type": "science_domain_alien_trace",
+              "revision": 5
+            },
+            {
+              "effectId": "effect-session-2:effect:6",
+              "groupId": "effect-session-2:group:6",
+              "groupKind": "spawned",
+              "type": "residual_alien_card_decision",
+              "revision": 6
+            },
+            {
+              "effectId": "effect-session-2:effect:7",
+              "groupId": "effect-session-2:group:7",
+              "groupKind": "spawned",
+              "type": "card_play_domain_effect:decision:amiba_choose_symbol_reward",
+              "revision": 7
+            },
+            {
+              "effectId": "effect-session-2:effect:8",
+              "groupId": "effect-session-2:group:8",
+              "groupKind": "spawned",
+              "type": "card_play_domain_effect:decision:amiba_choose_symbol_reward",
+              "revision": 8
+            }
+          ],
+          "events": [
+            {
+              "type": "land",
+              "planetId": "venus",
+              "markerKind": "land",
+              "satelliteId": null,
+              "playerId": "player-green",
+              "playerColor": "green",
+              "source": "land"
+            },
+            {
+              "type": "planet_reward_data",
+              "playerId": "player-green"
+            },
+            {
+              "type": "planet_reward_data",
+              "playerId": "player-green"
+            },
+            {
+              "type": "planet_reward_resources",
+              "playerId": "player-green",
+              "gain": {
+                "score": 5
+              }
+            },
+            {
+              "type": "alienTrace",
+              "playerId": "player-green",
+              "traceType": "yellow",
+              "alienSlotId": 2,
+              "region": "orange"
+            },
+            {
+              "type": "alien_card_gain",
+              "playerId": "player-green",
+              "alienId": "阿米巴",
+              "cardInstanceId": "alien-amiba-9-5",
+              "source": "display"
+            },
+            {
+              "type": "card_effect",
+              "effectId": null,
+              "effectType": "amiba_choose_symbol_reward",
+              "playerId": "player-green"
+            },
+            {
+              "type": "amiba_symbol_resolved",
+              "symbolId": "symbol_4",
+              "slotId": "orange_1",
+              "region": "orange"
+            },
+            {
+              "type": "card_effect",
+              "effectId": null,
+              "effectType": "amiba_choose_symbol_reward",
+              "playerId": "player-green"
+            },
+            {
+              "type": "amiba_symbol_resolved",
+              "symbolId": "symbol_2",
+              "slotId": "orange_2",
+              "region": "orange"
+            }
+          ],
+          "rng": [],
+          "history": [
+            {
+              "type": "probe_turn_action",
+              "family": "land",
+              "executorId": "probe_turn:executor:v1"
+            },
+            {
+              "type": "card_effect_decision",
+              "effectId": null,
+              "effectType": "amiba_choose_symbol_reward",
+              "executorId": "card_play:executor:v1",
+              "choiceId": "symbol:orange_1",
+              "symbolId": "symbol_4"
+            },
+            {
+              "type": "card_effect_decision",
+              "effectId": null,
+              "effectType": "amiba_choose_symbol_reward",
+              "executorId": "card_play:executor:v1",
+              "choiceId": "symbol:orange_2",
+              "symbolId": "symbol_2"
+            }
+          ],
+          "logs": [],
+          "replay": [
+            {
+              "cursor": 0,
+              "kind": "action",
+              "confirmed": true,
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "land",
+                "phase": "main",
+                "actionId": "land:1cbade2c",
+                "actorId": "player-green",
+                "stateVersion": 99,
+                "decisionVersion": 5,
+                "target": {
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "登陆"
+              },
+              "groupId": "effect-session-2:group:1",
+              "groupKind": "action"
+            },
+            {
+              "cursor": 1,
+              "kind": "decision",
+              "confirmed": true,
+              "decisionId": "effect-session-2:effect:5",
+              "decisionVersion": 4,
+              "ownerId": "player-green",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:c27f9d6e",
+                "actorId": "player-green",
+                "stateVersion": 99,
+                "decisionVersion": 5,
+                "target": {
+                  "choiceId": "trace:2:yellow:amiba:4",
+                  "kind": "planet-reward-alien-trace",
+                  "alienSlotId": 2,
+                  "traceType": "yellow",
+                  "speciesId": "amiba",
+                  "position": 4
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄4号位（1分+外星人牌）"
+              }
+            },
+            {
+              "cursor": 2,
+              "kind": "decision",
+              "confirmed": true,
+              "decisionId": "effect-session-2:effect:6",
+              "decisionVersion": 5,
+              "ownerId": "player-green",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_card",
+                "phase": "conditional",
+                "actionId": "choose_card:30b94504",
+                "actorId": "player-green",
+                "stateVersion": 99,
+                "decisionVersion": 5,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "amiba:display:9",
+                  "source": "display",
+                  "cardIndex": 9
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "获得展示的低重力研究",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "9",
+                  "imageSrc": "../assets/aliens/阿米巴/cards/9.webp",
+                  "imageAlt": "低重力研究"
+                }
+              }
+            },
+            {
+              "cursor": 3,
+              "kind": "decision",
+              "confirmed": true,
+              "decisionId": "effect-session-2:effect:7",
+              "decisionVersion": 6,
+              "ownerId": "player-green",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:4637832d",
+                "actorId": "player-green",
+                "stateVersion": 99,
+                "decisionVersion": 5,
+                "target": {
+                  "choiceId": "symbol:orange_1",
+                  "slotId": "orange_1",
+                  "region": "orange",
+                  "symbolId": "symbol_4"
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "orange_1（1盲抽）"
+              }
+            },
+            {
+              "cursor": 4,
+              "kind": "decision",
+              "confirmed": true,
+              "decisionId": "effect-session-2:effect:8",
+              "decisionVersion": 7,
+              "ownerId": "player-green",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:eef4bfbf",
+                "actorId": "player-green",
+                "stateVersion": 99,
+                "decisionVersion": 5,
+                "target": {
+                  "choiceId": "symbol:orange_2",
+                  "slotId": "orange_2",
+                  "region": "orange",
+                  "symbolId": "symbol_2"
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "orange_2（1数据）"
+              }
+            }
+          ]
+        },
+        "irreversibleBarrier": {
+          "effectId": "effect-session-2:effect:7",
+          "revision": 7,
+          "code": "hidden_card_draw",
+          "reason": "阿米巴细胞器奖励盲抽翻开隐藏牌"
+        }
+      }
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,125 @@
+diff --git a/docs/ai-design.md b/docs/ai-design.md
+index a15fc990..c946e641 100644
+--- a/docs/ai-design.md
++++ b/docs/ai-design.md
+@@ -152,6 +152,10 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
+ - 逐步证据：搜索在 current、折叠 settleChoice、连续 nextPlaceData 三类正式输入前，
+   读取当前 fork 的完整同 viewer 观察，立即按信息屏障遮蔽并提取事实；成功提交后才
+   加入 `leaf.planSteps`。既有 actionChain 和 executionStepCount 不改含义。
++- 阿米巴唯一后继奖励：分析/登陆的已绑定非条件根路线中，符号奖励节点可连续提交
++  剩余唯一符号奖励；多选、其他目标和延迟换回合仍回到原搜索边界。每次连续输入
++  保留正式计划、actionChain与目标轨迹，并按完整中间envelope/action重置分支随机
++  种子，不改变细胞器移动、数据实体、盲抽或信息遮蔽。无需中间入队/恢复/估值。
+ - 依赖按每个 origin 当时的目标深度、routeTargetId、routePlanId 分段；每步取当前
+   目标及该段后继具名选择所需事实的并集，包括路线、科技、扇区、数据布局、公共牌、
+   外星痕迹、终局计分板块。`tileId`不是科技类型标记：正式`final:<tile>`选择依赖
+diff --git a/docs/rl-simulation-env.md b/docs/rl-simulation-env.md
+index f29e1b2f..e21ee232 100644
+--- a/docs/rl-simulation-env.md
++++ b/docs/rl-simulation-env.md
+@@ -106,6 +106,10 @@ Production地球坐标及探测/正式行动context通过共享太阳系内核
+ actionChain长度表示提交数。非终局条件决策的同价值排序使用该计数，终局不使用；它不
+ 写入正式游戏状态或改变replay/plan结构。
+ 
++阿米巴符号奖励的唯一后继可在已绑定分析/登陆路线中连续正式提交（非条件根、无延迟
++换回合）；输入数仍逐次累计，actionChain和计划保留这些选择。每步使用完整中间
++envelope/action的原分支种子；多选不合并。此优化不增加env开关或改变规则Decision。
++
+ 搜索叶`terminalReason=goal-completed`表示目标及附带Decision已经完成，但搜索仍可继续
+ 下一目标；这是已执行路径的真实结果，不是尚待执行的frontier。后续触顶时仍可用于
+ 评估，outcome的pruned/低置信度标记保留。次级搜索已取消结束叶饱和计数；此叶不改变
+diff --git a/randomizer/game/rule-composition.js b/randomizer/game/rule-composition.js
+index 31a2e268..d83acec1 100644
+--- a/randomizer/game/rule-composition.js
++++ b/randomizer/game/rule-composition.js
+@@ -1803,6 +1803,17 @@
+           let drainGuard = 0;
+           let executionStepCount = 1; // 当前节点已成功提交的根动作/决策。
+           let representativeChoice = false;
++          const continuedAmibaChoices = [];
++          // 分析与登陆的完成事件不由符号奖励触发；已有待奖励状态仍由外层推进。
++          // 条件根和未绑定来源保留原来的下一决策边界。
++          const canContinueAmiba = Boolean(
++            secondaryAgentSearch && typeof reusableFork?.resetBranch === "function"
++            && current.family === "choose_target" && current.target?.symbolId && current.target?.slotId
++            && node.origins.every((origin) => (
++              origin.chain.length > 0 && !origin.rootWasConditional && !origin.pendingFocalAdvance
++              && (origin.routeTargetId === "data:analyze" || String(origin.routeTargetId).startsWith("land:"))
++            ))
++          );
+           // 折叠结算链中产生的隐藏信息 barrier（公共牌翻出等）——折叠提交也必须
+           // 建立 mask，不能因节点折叠泄漏新翻出的牌身份。
+           let drainHiddenBarrier = null;
+@@ -1820,7 +1831,10 @@
+             // 策略级选择（探测目标/科技/外星痕迹位置等多选一 choose_target/
+             // choose_card）**不折叠**——折叠会断链（协调器路径 rootObservation 缺
+             // requirements，selectSuccessors 无法选最优 → 效果结算无叶 → unresolved）。
+-            const drainable = drainChoices.length > 0 && drainChoices.every((choice) => (
++            const amibaContinuation = canContinueAmiba && drainChoices.length === 1
++              && drainChoices[0].family === "choose_target"
++              && Boolean(drainChoices[0].target?.symbolId && drainChoices[0].target?.slotId);
++            const drainable = amibaContinuation || (drainChoices.length > 0 && drainChoices.every((choice) => (
+               (choice.family === "choose_payment" && (
+                 drainChoices.length === 1
+                 || ["discard-hand-card", "confirm"].includes(choice.target?.kind)
+@@ -1836,7 +1850,7 @@
+                 && choice.target?.target === "computer"
+                 && choice.target?.choiceId === "data:computer"
+               )
+-            ));
++            )));
+             if (!drainable) break;
+             const discardCards = drainChoices.filter((choice) => (
+               choice.family === "choose_payment" && choice.target?.kind === "discard-hand-card"
+@@ -1870,6 +1884,17 @@
+             } else {
+               settleChoice = drainChoices[0];
+             }
++            if (amibaContinuation) {
++              // 独立节点原本会按(envelope,action)重置随机种子；连续提交必须复现它，
++              // 包括无盲抽时写回的RNG元数据，不能仅因合法集唯一而沿用前一步种子。
++              // 普通save生成独立checkpoint；trustedFork会冻结活动session引用，
++              // 只适用于停止执行并稍后restore的队列边界。
++              const continuationSaved = composition.lifecycle.save();
++              if (!continuationSaved?.ok) return { failed: true,
++                code: continuationSaved?.code || "COUNTERFACTUAL_BRANCH_SAVE_FAILED",
++                message: continuationSaved?.message || "阿米巴连续结算保存失败" };
++              reusableFork.resetBranch(branchKey(continuationSaved.envelope, settleChoice.actionId));
++            }
+             const settlePlanStep = captureStep(settleChoice);
+             const settleResult = composition.inputPort.submitDecision({
+               decisionId: drainInspection.session.decision.decisionId,
+@@ -1886,6 +1911,7 @@
+               };
+             }
+             retainStep(settlePlanStep, settleResult, settleChoice);
++            if (amibaContinuation) continuedAmibaChoices.push(settleChoice);
+             // 折叠提交后的 hidden barrier（公共牌翻出等）必须捕获——折叠不泄漏信息。
+             executionStepCount += 1;
+             if (!drainHiddenBarrier) {
+@@ -2044,6 +2070,7 @@
+             current,
+             executionStepCount,
+             representativeChoice,
++            continuedAmibaChoices,
+             planSteps,
+             probeSteps,
+             nextInspection,
+@@ -2420,7 +2447,8 @@
+               origin.rootActionSettledObservation = execution.leafObservation;
+               origin.rootActionSettledLegalSuccessors = execution.successors;
+             }
+-            const nextChain = [...origin.chain, current.actionId];
++            const nextChain = [...origin.chain, current.actionId,
++              ...execution.continuedAmibaChoices.map((choice) => choice.actionId)];
+             const originNextProbeAction = nextProbeAction || origin.lastProbeAction;
+             let routeTargetId = origin.routeTargetId || null;
+             if (
+@@ -2480,6 +2508,7 @@
+             const nextGoalTraceActions = [
+               ...(origin.goalTraceActions || []),
+               ...(currentIsGoalTraceAction ? [traceAction(current)] : []),
++              ...(traceGoalClusters ? execution.continuedAmibaChoices.map(traceAction) : []),
+             ];
+             const focalPassStarted = origin.focalPassStarted
+               || (currentIsFocal && current.family === "pass");
