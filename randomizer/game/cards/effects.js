@@ -3056,11 +3056,11 @@
       ]),
       tasks: Object.freeze([{
         id: "b67-three-traces-task",
-        condition: Object.freeze({ type: "singleAlienTraceCount", count: 3 }),
+        condition: Object.freeze({ type: "singleAlienTraceSet", traceTypes: Object.freeze(["pink", "yellow", "blue"]) }),
         rewards: Object.freeze([
-          alienTraceEffect("b67-any-trace-reward", "同一外星人3个痕迹：在该外星人获得任意痕迹", null, {
-            targetRule: "singleAlienTraceCount",
-            requiredTraceCount: 3,
+          alienTraceEffect("b67-any-trace-reward", "同一外星人三色痕迹齐全：在该外星人获得任意痕迹", null, {
+            targetRule: "singleAlienTraceSet",
+            requiredTraceTypes: Object.freeze(["pink", "yellow", "blue"]),
           }),
         ]),
       }]),

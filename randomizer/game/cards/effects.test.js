@@ -1202,7 +1202,7 @@ const singleAlienTraceState = {
 assert.deepEqual(collectReadyTaskIds(
   { id: "p1", color: "red", reservedCards: [{ id: "card-b67", cardId: "b_67.webp" }] },
   { aliens: singleAlienTraceState },
-), ["b67-three-traces-task"]);
+), [], "语言学分析要求三种颜色，三个同色痕迹不满足任务");
 
 const splitExtraOwnerTraceState = {
   aliens: {
@@ -1240,11 +1240,21 @@ assert.deepEqual(collectReadyTaskIds(
   mixedSingleAlienTracePlayer,
   { aliens: mixedSingleAlienTraceState },
 ), ["b67-three-traces-task"]);
+const b67Reward = cardEffects.getCardModel("b_67.webp").tasks[0].rewards[0];
+assert.equal(b67Reward.options.targetRule, "singleAlienTraceSet");
+assert.deepEqual(b67Reward.options.requiredTraceTypes, ["pink", "yellow", "blue"]);
+const wrongOwnerTraceState = structuredClone(mixedSingleAlienTraceState);
+wrongOwnerTraceState.aliens[1].traces.pink.ownerPlayerColor = "green";
+assert.deepEqual(collectReadyTaskIds(
+  mixedSingleAlienTracePlayer,
+  { aliens: wrongOwnerTraceState },
+), [], "其他玩家的颜色不能补齐自己的三色任务");
 const splitAlienTraceState = {
   aliens: {
     1: {
       traces: {
-        yellow: { firstPlaced: true, ownerPlayerColor: "red", extraCount: 1 },
+        yellow: { firstPlaced: true, ownerPlayerColor: "red" },
+        blue: { firstPlaced: true, ownerPlayerColor: "red" },
       },
     },
     2: {

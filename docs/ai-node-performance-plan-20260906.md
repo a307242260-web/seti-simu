@@ -94,3 +94,9 @@ reports/iteration/amiba-region-rule-design-20260906.md。官方中英文说明�
 完整模型目录11处，另含运行期异常奖励；拟收敛到science现有痕迹owner。特殊颜色/
 目标限制和b36后续计分义务须先闭合，不做单行补丁。见card-trace-owner-design-20260906.md；
 当前仅取证，尚未修改生产或重跑固定盘面。
+
+后续规则核对确认 b67 语言学分析要求同一物种三色各一，旧模型误用任意三枚。
+已独立修正任务模型与奖励目标声明（singleAlienTraceSet/requiredTraceTypes），
+复用现有纯条件函数；共享痕迹执行路径仍待实现，不宣称奖励目标执行已修复。
+见 reports/iteration/linguistic-trace-set-design-20260906.md；本项不改变搜索预算，
+不运行仍含已知痕迹提交异常的整局，也不降低 108.5 验收线。

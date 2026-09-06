@@ -40,12 +40,16 @@ options；science.placeAlienTrace则经正式stateSequences.take提供alienEntit
 | Decision | 卡牌来源仍是同一owner的真实选择；错误owner/stale输入拒绝，旧generic pending显式不兼容或经正式迁移，不静默提交 |
 | 后续效果 | 保留原卡牌效果相对顺序，隐藏抽牌屏障立即生效，区域确定性动作不伪造外部输入 |
 | 颜色限制 | allowedTraceTypes必须用于science枚举及再校验，不能默认扩大为三色 |
-| 特殊目标 | targetRule=playerHasSameTrace（b27/32/35）、singleAlienTraceCount+requiredTraceCount（b67）须明确落点；旧枚举目前未读取这些字段 |
+| 特殊目标 | targetRule=playerHasSameTrace（b27/32/35）、singleAlienTraceSet+requiredTraceTypes（b67）须明确落点；旧枚举目前未读取这些字段 |
 | 放置后分数 | b36 afterTraceReward须核对“所选颜色痕迹数”及参数顺序；旧调用countTraceMarkers(alienState,actor)与正式签名(player,aliensState,traceType)相反 |
 | 删除账 | 删除generic的第二份ALIEN_TRACE枚举/提交和其旧决策入口；保留正式类型来源登记，不能把源码目录覆盖等同于运行闭包 |
 | 测试/性能 | 真实466无序号异常且奖励正确；覆盖卡牌/嵌套/任务来源与恢复，随后单决策计数/耗时、去重quick→full，门槛仍108.5 |
 
-尚待闭合：上述特殊卡牌约束的正式依据和后续计分owner；runtime对空合法集的
+规则取证补充：b67 牌面为同一物种粉/黄/蓝各一，并非任意三枚。模型独立修正见
+linguistic-trace-set-design-20260906.md；v2 目录保留为修正前证据，不覆盖历史快照。
+后续迁移须读取当前模型的 requiredTraceTypes，不再沿用旧 requiredTraceCount。
+
+尚待闭合：后续计分owner；runtime对空合法集的
 science Decision处理，以及旧pending明确失败证据。未知项不能通过默认分支吞掉。
 发现的targetRule和b36旧缺陷不擅自以当前错误行为作为迁移契约，也不夹带其他
 物种奖励表修订。完成这一有限路径设计后再批量实现，不做“补一行→看下一个错”。
