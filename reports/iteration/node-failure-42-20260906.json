@@ -1,0 +1,333 @@
+{
+  "source": "reports/iteration/node-types-before-step-42-20260906.json",
+  "scope": "专门补取已保存真实绿42输入的分支错误明细；单次决策，不重跑整局，不作为新的性能基准",
+  "chosen": "move:2729ba3d",
+  "outcomes": [
+    {
+      "actionId": "scan:1b66b805",
+      "status": "settled",
+      "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+      "message": null,
+      "reasonCodes": [
+        "counterfactual-search-pruned"
+      ],
+      "searchCompleteness": {
+        "status": "incomplete",
+        "reasons": [
+          "beam-budget",
+          "information-barrier",
+          "node-budget",
+          "representative-choice"
+        ]
+      },
+      "leafCount": 38
+    },
+    {
+      "actionId": "play_card:91c74616",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "play_card:4b198271",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "play_card:5ef1aba4",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "pass:ff716055",
+      "status": "settled",
+      "code": null,
+      "message": null,
+      "reasonCodes": [],
+      "searchCompleteness": {
+        "status": "complete",
+        "reasons": []
+      },
+      "leafCount": 1
+    },
+    {
+      "actionId": "move:2729ba3d",
+      "status": "settled",
+      "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+      "message": "已在边界，无法继续移动",
+      "reasonCodes": [
+        "counterfactual-search-pruned",
+        "counterfactual-branch-failed"
+      ],
+      "searchCompleteness": {
+        "status": "incomplete",
+        "reasons": [
+          "beam-budget",
+          "branch-failed",
+          "information-barrier",
+          "node-budget",
+          "representative-choice"
+        ]
+      },
+      "leafCount": 1227
+    },
+    {
+      "actionId": "move:00ca1be1",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "move:6409366d",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "move:8fb1f33c",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "move:695254e0",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "move:cc916f6c",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "quick_trade:ee5652be",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "quick_trade:90440450",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "quick_trade:dafd4f4a",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "quick_trade:0037d2c5",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "quick_trade:38002215",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "quick_trade:fcb81f7a",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "quick_trade:5efaa113",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "quick_trade:76cce73d",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "quick_trade:16a0f2d7",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "industry:5bda1856",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "card_corner:7945e2ee",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "card_corner:37c1e431",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "card_corner:fbf752cc",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0
+    },
+    {
+      "actionId": "place_data:dbe01b29",
+      "status": "settled",
+      "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+      "message": null,
+      "reasonCodes": [
+        "counterfactual-search-pruned"
+      ],
+      "searchCompleteness": {
+        "status": "incomplete",
+        "reasons": [
+          "beam-budget",
+          "information-barrier",
+          "node-budget",
+          "representative-choice"
+        ]
+      },
+      "leafCount": 49
+    }
+  ],
+  "nodes": 4096,
+  "successfulClassifiedNodes": 2698,
+  "passed": true
+}
