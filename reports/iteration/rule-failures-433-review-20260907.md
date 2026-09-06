@@ -13,3 +13,9 @@ rule-failures-433-20260907.json：对真实433冷决策设置Node inspector条�
 skipCost=true、ignoreRocketLimit=false、repeat=1。需要先核对规则：打牌的不可执行
 效果如何结算，以及正式打牌准入与效果执行各自职责；不能仅凭错误推断应禁止整张牌，
 也不能把任意launch失败转换成功。下一轮独立设计、复现、修复、单决策及版本完整局验证。
+
+规则已核实（2026-09-07）：CGE 官方 FAQ 第2页 General Q2 明确以“已达探测器
+上限但需要发射”为例，要求跳过该效果并继续其他效果；Q1 要求本可执行的行动效果
+正常执行。27页英文原件已下载到 rules/seti-faq-base-en-202411.pdf，pypdf校验内容，
+不是HTML跳转页。修复方向已确定：不禁止整张牌、不忽略上限、不捕获所有失败。
+设计边界见 card-launch-limit-design-20260907.md；生产修复尚未实施。
