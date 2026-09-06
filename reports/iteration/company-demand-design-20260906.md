@@ -317,3 +317,35 @@ player-green.resources.publicity不同；向外路径额外经过火星，正式
 
 脚本语法与完整状态对照通过；本轮生产代码/运行入口/接口没有变化，仅同步本设计
 与性能计划。README、AGENTS、AI设计及RL接口文档无需调整，未运行新完整局。
+
+## 2026-09-07有限目录职责收敛
+
+movement-purpose-classification-20260907.json逐项核对旧目录56个模型路径仍等于
+当前正式模型的JSON值，禁止未知类型默认归类；并记录正式入口与执行前提。
+结果不是56种目标，而是：
+
+| 职责 | 模型节点数 | 实施范围 |
+|---|---:|---|
+| 移动手段 | 36 | card_free_move/card_move及按地球内容、手牌角标生成的移动额度；不各自建立目的 |
+| 位置目的 | 17 | 8个探测器扫描来源、7个位置条件、1个位置数据奖励、1个同格奖励 |
+| 非移动目的 | 3 | 2个参考图标记移除、1个棋子数量奖励；不能因为名字包含move/rocket就加入移动目标 |
+
+此外必须保留基础到达宣传、已打出1型卡访问槽、当回合事件奖励、虫族运输、b82
+终局位置准备；otherProbeAtPlanet是对手条件而非己方可达目标。外星人动态任务
+不在182个普通/DLC模型的静态覆盖证明内，不能以56项均已分类冒充完整执行闭包。
+
+两个具体正式契约待行为验证，不能在需求读模型中复制“预期正确规则”掩盖差异：
+1. Card Play将PROBE_SECTOR_SCAN转为Science mode=probe；扫描节点目前从己方
+   探测器扇区合集生成扫描选择。owner/maxTargets/includeAdjacent、同一探测器
+   多次扫描与returnToHandIfSignalCount的模型契约尚未在这条链上核实。
+2. dlc21访问触发槽要求hasOwnOrbit；eventMatchesTrigger消费该字段，但已检查的
+   applyArrivalRewards、augmentEffectResult及task-state转发未填入。需用真实
+   自有环绕标记与正式访问事件验证，尚未宣称bug已复现或修复。
+
+模型比对初次失败还揭示JS/JSON边界：7个未声明回手条件的扫描模型由构造器保留
+returnToHandIfSignalCount:undefined，旧JSON省略字段。核验脚本逐项列出这些
+optionalAbsences且遇到其他未解释undefined即失败，再比较序列化值；没有给模型
+填默认值或修改生产日志。此处解释仅指可选模型参数，不是全局零异常门槛已通过。
+
+本轮没有增加新的路线样本、执行AI或修改生产；下一步先验证上述具体契约，再将
+必要修复独立处理。分类缩小的是实现职责，不缩小完整移动、零截断与零异常目标。

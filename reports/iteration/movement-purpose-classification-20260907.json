@@ -1,0 +1,478 @@
+{
+  "scope": "有限普通/DLC模型检索项的逐项职责分类，不把静态映射当作完整动态执行覆盖；不运行AI",
+  "input": "reports/iteration/movement-demand-catalog-20260907.json",
+  "inputSha256": "46fd030b3c54cab594426f2100ba3986accd70a66dcc71edf877a1961ebc677c",
+  "counts": {
+    "means": 36,
+    "not-movement-purpose": 3,
+    "spatial-purpose": 17
+  },
+  "entries": [
+    {
+      "cardId": "b_2.webp",
+      "path": "model.triggers.2.effect",
+      "type": "card_free_move",
+      "role": "means",
+      "contract": "正式免费移动额度，不单独产生目的"
+    },
+    {
+      "cardId": "b_11.webp",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_13.webp",
+      "path": "model.playEffects.0",
+      "type": "card_remove_planet_marker",
+      "role": "not-movement-purpose",
+      "contract": "移除参考图标记，不由太阳系移动达成"
+    },
+    {
+      "cardId": "b_16.webp",
+      "path": "model.playEffects.0",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_17.webp",
+      "path": "model.playEffects.0",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_18.webp",
+      "path": "model.playEffects.0",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_20.webp",
+      "path": "model.triggers.0.effect",
+      "type": "card_free_move",
+      "role": "means",
+      "contract": "正式免费移动额度，不单独产生目的"
+    },
+    {
+      "cardId": "b_20.webp",
+      "path": "model.triggers.1.effect",
+      "type": "card_free_move",
+      "role": "means",
+      "contract": "正式免费移动额度，不单独产生目的"
+    },
+    {
+      "cardId": "b_20.webp",
+      "path": "model.triggers.2.effect",
+      "type": "card_free_move",
+      "role": "means",
+      "contract": "正式免费移动额度，不单独产生目的"
+    },
+    {
+      "cardId": "b_22.webp",
+      "path": "model.playEffects.0",
+      "type": "card_probe_sector_scan",
+      "role": "spatial-purpose",
+      "contract": "卡牌扫描源位置准备；正式owner为Science SCAN_STEP"
+    },
+    {
+      "cardId": "b_24.webp",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_25.webp",
+      "path": "model.triggers.0.effect",
+      "type": "card_free_move",
+      "role": "means",
+      "contract": "正式免费移动额度，不单独产生目的"
+    },
+    {
+      "cardId": "b_25.webp",
+      "path": "model.triggers.1.effect",
+      "type": "card_free_move",
+      "role": "means",
+      "contract": "正式免费移动额度，不单独产生目的"
+    },
+    {
+      "cardId": "b_25.webp",
+      "path": "model.triggers.2.effect",
+      "type": "card_free_move",
+      "role": "means",
+      "contract": "正式免费移动额度，不单独产生目的"
+    },
+    {
+      "cardId": "b_26.webp",
+      "path": "model.triggers.2.effect",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_49.webp",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_50.webp",
+      "path": "model.playEffects.0",
+      "type": "card_probe_sector_scan",
+      "role": "spatial-purpose",
+      "contract": "卡牌扫描源位置准备；正式owner为Science SCAN_STEP"
+    },
+    {
+      "cardId": "b_52.webp",
+      "path": "model.playEffects.0.options.condition",
+      "type": "probeLocation",
+      "role": "spatial-purpose",
+      "contract": "复用buildProbeLocationData与taskConditionMet"
+    },
+    {
+      "cardId": "b_53.webp",
+      "path": "model.playEffects.0",
+      "type": "card_probe_sector_scan",
+      "role": "spatial-purpose",
+      "contract": "卡牌扫描源位置准备；正式owner为Science SCAN_STEP"
+    },
+    {
+      "cardId": "b_54.webp",
+      "path": "model.playEffects.0",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_54.webp",
+      "path": "model.playEffects.1",
+      "type": "card_probe_sector_scan",
+      "role": "spatial-purpose",
+      "contract": "卡牌扫描源位置准备；正式owner为Science SCAN_STEP"
+    },
+    {
+      "cardId": "b_58.webp",
+      "path": "model.playEffects.0",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_58.webp",
+      "path": "model.playEffects.1",
+      "type": "card_probe_sector_scan",
+      "role": "spatial-purpose",
+      "contract": "卡牌扫描源位置准备；正式owner为Science SCAN_STEP"
+    },
+    {
+      "cardId": "b_62.webp",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_64.webp",
+      "path": "model.playEffects.0",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_64.webp",
+      "path": "model.playEffects.1",
+      "type": "card_probe_sector_scan",
+      "role": "spatial-purpose",
+      "contract": "卡牌扫描源位置准备；正式owner为Science SCAN_STEP"
+    },
+    {
+      "cardId": "b_66.webp",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_73.webp",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_76.webp",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_77.webp",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_81.webp",
+      "path": "model.tasks.0.condition",
+      "type": "probeAdjacentEarthAsteroid",
+      "role": "spatial-purpose",
+      "contract": "复用buildProbeLocationData与taskConditionMet"
+    },
+    {
+      "cardId": "b_87.webp",
+      "path": "model.playEffects.1",
+      "type": "card_earth_sector_content_move",
+      "role": "means",
+      "contract": "按当前地球扇区内容生成移动额度，不改变目的地"
+    },
+    {
+      "cardId": "b_88.webp",
+      "path": "model.playEffects.0",
+      "type": "card_probe_sector_scan",
+      "role": "spatial-purpose",
+      "contract": "卡牌扫描源位置准备；正式owner为Science SCAN_STEP"
+    },
+    {
+      "cardId": "b_89.webp",
+      "path": "model.playEffects.0",
+      "type": "card_probe_location_reward",
+      "role": "spatial-purpose",
+      "contract": "位置数据奖励；复用Card Play getProbeLocationReward"
+    },
+    {
+      "cardId": "b_96.webp",
+      "path": "model.playEffects.0",
+      "type": "card_probe_sector_scan",
+      "role": "spatial-purpose",
+      "contract": "卡牌扫描源位置准备；正式owner为Science SCAN_STEP"
+    },
+    {
+      "cardId": "b_98.webp",
+      "path": "model.playEffects.1",
+      "type": "card_count_hand_corner_move",
+      "role": "means",
+      "contract": "按手牌移动角标生成额度，不能预支未获得额度"
+    },
+    {
+      "cardId": "b_101.webp",
+      "path": "model.tasks.0.condition",
+      "type": "probeDistanceFromEarth",
+      "role": "spatial-purpose",
+      "contract": "复用buildProbeLocationData与taskConditionMet"
+    },
+    {
+      "cardId": "b_105.webp",
+      "path": "model.tasks.0.condition",
+      "type": "probeLocation",
+      "role": "spatial-purpose",
+      "contract": "复用buildProbeLocationData与taskConditionMet"
+    },
+    {
+      "cardId": "b_106.webp",
+      "path": "model.playEffects.0",
+      "type": "card_remove_planet_marker",
+      "role": "not-movement-purpose",
+      "contract": "移除参考图标记，不由太阳系移动达成"
+    },
+    {
+      "cardId": "b_108.webp",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_116.webp",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_124.webp",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_125.webp",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "b_131.webp",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "dlc_4.png",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "dlc_5.png",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "dlc_5.png",
+      "path": "model.playEffects.2.options.condition",
+      "type": "probeAdjacentEarth",
+      "role": "spatial-purpose",
+      "contract": "复用buildProbeLocationData与taskConditionMet"
+    },
+    {
+      "cardId": "dlc_6.png",
+      "path": "model.playEffects.0",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "dlc_7.png",
+      "path": "model.tasks.0.condition",
+      "type": "probesOnDifferentPlanets",
+      "role": "spatial-purpose",
+      "contract": "多探测器联合条件；复用taskConditionMet，不拆成独立已完成目标"
+    },
+    {
+      "cardId": "dlc_11.png",
+      "path": "model.tasks.0.condition",
+      "type": "probeLocation",
+      "role": "spatial-purpose",
+      "contract": "复用buildProbeLocationData与taskConditionMet"
+    },
+    {
+      "cardId": "dlc_12.png",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "dlc_27.png",
+      "path": "model.playEffects.0.options.rewards.0",
+      "type": "card_count_rockets_reward",
+      "role": "not-movement-purpose",
+      "contract": "棋子数量奖励，移动位置本身不增加棋子数量"
+    },
+    {
+      "cardId": "dlc_38.png",
+      "path": "model.playEffects.1",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "dlc_38.png",
+      "path": "model.playEffects.2",
+      "type": "card_probe_stack_reward",
+      "role": "spatial-purpose",
+      "contract": "同格条件奖励；复用getProbeStackRewardMatch"
+    },
+    {
+      "cardId": "dlc_39.png",
+      "path": "model.playEffects.0",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    },
+    {
+      "cardId": "dlc_40.png",
+      "path": "model.playEffects.0",
+      "type": "card_move",
+      "role": "means",
+      "contract": "正式卡牌移动额度，包括触发奖励中的移动"
+    }
+  ],
+  "optionalAbsences": [
+    {
+      "cardId": "b_22.webp",
+      "path": "model.playEffects.0.options.returnToHandIfSignalCount",
+      "contract": "probeSectorScanEffect未声明回手条件时保留可选undefined；历史JSON省略该字段，不代表模型变更；非生产零异常通过证明"
+    },
+    {
+      "cardId": "b_50.webp",
+      "path": "model.playEffects.0.options.returnToHandIfSignalCount",
+      "contract": "probeSectorScanEffect未声明回手条件时保留可选undefined；历史JSON省略该字段，不代表模型变更；非生产零异常通过证明"
+    },
+    {
+      "cardId": "b_53.webp",
+      "path": "model.playEffects.0.options.returnToHandIfSignalCount",
+      "contract": "probeSectorScanEffect未声明回手条件时保留可选undefined；历史JSON省略该字段，不代表模型变更；非生产零异常通过证明"
+    },
+    {
+      "cardId": "b_54.webp",
+      "path": "model.playEffects.1.options.returnToHandIfSignalCount",
+      "contract": "probeSectorScanEffect未声明回手条件时保留可选undefined；历史JSON省略该字段，不代表模型变更；非生产零异常通过证明"
+    },
+    {
+      "cardId": "b_58.webp",
+      "path": "model.playEffects.1.options.returnToHandIfSignalCount",
+      "contract": "probeSectorScanEffect未声明回手条件时保留可选undefined；历史JSON省略该字段，不代表模型变更；非生产零异常通过证明"
+    },
+    {
+      "cardId": "b_64.webp",
+      "path": "model.playEffects.1.options.returnToHandIfSignalCount",
+      "contract": "probeSectorScanEffect未声明回手条件时保留可选undefined；历史JSON省略该字段，不代表模型变更；非生产零异常通过证明"
+    },
+    {
+      "cardId": "b_96.webp",
+      "path": "model.playEffects.0.options.returnToHandIfSignalCount",
+      "contract": "probeSectorScanEffect未声明回手条件时保留可选undefined；历史JSON省略该字段，不代表模型变更；非生产零异常通过证明"
+    }
+  ],
+  "additionalSources": [
+    {
+      "source": "基础到达宣传",
+      "owner": "abilities/rocket.applyArrivalRewards",
+      "requirement": "正式到达事件与实际资源变化，不从地名另建奖励表"
+    },
+    {
+      "source": "已打出1型卡访问槽",
+      "owner": "cards/effects.collectMatchingTriggers",
+      "requirement": "剩余槽、来源排除、包含/排除行星、requiresOwnOrbit；读取不得修改冻结卡牌"
+    },
+    {
+      "source": "当回合移动/访问奖励",
+      "owner": "residual-domain-session.augmentEffectResult",
+      "requirement": "owner、usedKeys、distinctBy、minCount、claimedKeys、付宣传移动followup"
+    },
+    {
+      "source": "虫族运输",
+      "owner": "aliens/chong.listTransportArrivalEvents",
+      "requirement": "按fossilId关联运输棋子与原任务key，未送达与已送达分开"
+    },
+    {
+      "source": "b82终局位置",
+      "owner": "end-game-scoring与rockets.buildProbeLocationData",
+      "requirement": "只在实际保留终局卡时形成位置准备，不提前兑现终局分"
+    },
+    {
+      "source": "otherProbeAtPlanet",
+      "owner": "cards/effects.taskConditionMet",
+      "requirement": "对手条件，不生成己方可控制移动目的"
+    }
+  ],
+  "openContractChecks": [
+    "PROBE_SECTOR_SCAN经Card Play转为Science mode=probe，owner/maxTargets/includeAdjacent/returnToHandIfSignalCount与固定探测器多次扫描的执行契约待行为验证",
+    "visitPlanet要求hasOwnOrbit的触发槽：匹配器消费该字段，已检查到达事件和任务转发未填入；需正式触发反例，不能只按源码声明bug已复现"
+  ],
+  "verified": true
+}
