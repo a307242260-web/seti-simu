@@ -2209,7 +2209,9 @@
           return fail("ALIEN_CARD_DECISION_STALE", "外星人卡牌选择已失效");
         }
         if (legal.target.source === "cancel") {
-          return { ok: true, spawnedEffects: [], irreversible: null };
+          return result(state, root, `alien:${speciesId}_card_cancel`, {
+            spawnedEffects: [], irreversible: null,
+          });
         }
         const gained = legal.target.source === "display"
           ? module.takeDisplayedCard(

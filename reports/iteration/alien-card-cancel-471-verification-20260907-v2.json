@@ -1,0 +1,222 @@
+{
+  "scope": "真实471取消正式状态守恒、随后原根单决策搜索无失败；不重跑全盘",
+  "cancelResult": {
+    "ok": false,
+    "phase": "aborted",
+    "family": "analyze",
+    "stateVersion": 235,
+    "failure": {
+      "code": "EFFECT_SESSION_COMMIT_THROWN",
+      "message": "Cannot assign to read only property 'stateVersion' of object '#<Object>'"
+    },
+    "journal": {
+      "actions": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "analyze",
+            "phase": "main",
+            "actionId": "analyze:50f30055",
+            "actorId": "player-blue",
+            "stateVersion": 235,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "computer",
+              "requiredSlot": 6
+            },
+            "payload": {
+              "skipCost": false
+            },
+            "decision": null,
+            "summary": "分析"
+          },
+          "groupId": "effect-session-18:group:1",
+          "groupKind": "action",
+          "quick": false,
+          "revision": 0
+        }
+      ],
+      "decisions": [
+        {
+          "decisionId": "effect-session-18:effect:3",
+          "decisionVersion": 2,
+          "ownerId": "player-blue",
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:2194151f",
+            "actorId": "player-blue",
+            "stateVersion": 235,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "trace:2:blue:chong:9",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "blue",
+              "speciesId": "chong",
+              "position": 9
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 2 蓝9号位（5分+外星人牌）"
+          }
+        },
+        {
+          "decisionId": "effect-session-18:effect:4",
+          "decisionVersion": 3,
+          "ownerId": "player-blue",
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:657d4336",
+            "actorId": "player-blue",
+            "stateVersion": 235,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "chong:cancel",
+              "source": "cancel"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "取消"
+          }
+        }
+      ],
+      "effects": [
+        {
+          "effectId": "effect-session-18:effect:1",
+          "groupId": "effect-session-18:group:1",
+          "groupKind": "action",
+          "type": "science_domain_execute",
+          "revision": 1
+        },
+        {
+          "effectId": "effect-session-18:effect:2",
+          "groupId": "effect-session-18:group:2",
+          "groupKind": "spawned",
+          "type": "science_domain_analyze",
+          "revision": 2
+        },
+        {
+          "effectId": "effect-session-18:effect:3",
+          "groupId": "effect-session-18:group:3",
+          "groupKind": "spawned",
+          "type": "science_domain_alien_trace",
+          "revision": 3
+        },
+        {
+          "effectId": "effect-session-18:effect:4",
+          "groupId": "effect-session-18:group:4",
+          "groupKind": "spawned",
+          "type": "residual_alien_card_decision",
+          "revision": 4
+        }
+      ],
+      "events": [
+        {
+          "type": "analyze",
+          "playerId": "player-blue"
+        },
+        {
+          "type": "alienTrace",
+          "playerId": "player-blue",
+          "traceType": "blue",
+          "alienSlotId": 2,
+          "region": null
+        }
+      ],
+      "rng": [],
+      "history": [],
+      "logs": [],
+      "replay": [
+        {
+          "cursor": 0,
+          "kind": "action",
+          "confirmed": true,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "analyze",
+            "phase": "main",
+            "actionId": "analyze:50f30055",
+            "actorId": "player-blue",
+            "stateVersion": 235,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "computer",
+              "requiredSlot": 6
+            },
+            "payload": {
+              "skipCost": false
+            },
+            "decision": null,
+            "summary": "分析"
+          },
+          "groupId": "effect-session-18:group:1",
+          "groupKind": "action"
+        },
+        {
+          "cursor": 1,
+          "kind": "decision",
+          "confirmed": true,
+          "decisionId": "effect-session-18:effect:3",
+          "decisionVersion": 2,
+          "ownerId": "player-blue",
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:2194151f",
+            "actorId": "player-blue",
+            "stateVersion": 235,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "trace:2:blue:chong:9",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "blue",
+              "speciesId": "chong",
+              "position": 9
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 2 蓝9号位（5分+外星人牌）"
+          }
+        },
+        {
+          "cursor": 2,
+          "kind": "decision",
+          "confirmed": true,
+          "decisionId": "effect-session-18:effect:4",
+          "decisionVersion": 3,
+          "ownerId": "player-blue",
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:657d4336",
+            "actorId": "player-blue",
+            "stateVersion": 235,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "chong:cancel",
+              "source": "cancel"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "取消"
+          }
+        }
+      ]
+    },
+    "irreversibleBarrier": null
+  },
+  "passed": false,
+  "error": {
+    "message": "{\"code\":\"EFFECT_SESSION_COMMIT_THROWN\",\"message\":\"Cannot assign to read only property 'stateVersion' of object '#<Object>'\"}\n\nfalse !== true\n",
+    "stack": "AssertionError [ERR_ASSERTION]: {\"code\":\"EFFECT_SESSION_COMMIT_THROWN\",\"message\":\"Cannot assign to read only property 'stateVersion' of object '#<Object>'\"}\n\nfalse !== true\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/verify-alien-card-cancel-471-20260907.js:21:12)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

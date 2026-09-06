@@ -1,0 +1,8 @@
+{
+  "scope": "真实471取消正式状态守恒、随后原根单决策搜索无失败；不重跑全盘",
+  "passed": false,
+  "error": {
+    "message": "Expected values to be strictly equal:\n\nfalse !== true\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/verify-alien-card-cancel-471-20260907.js:20:12)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

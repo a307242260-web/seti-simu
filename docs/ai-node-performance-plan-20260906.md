@@ -49,6 +49,10 @@ quick加续跑527450ms。上一轮四轮实现已收口，不重开或改写其�
 nextState而失败；拟按原result封装修正executor契约，不删除取消或放宽runtime。
 详见reports/iteration/choice-failure-471-review-20260907.md。433两次失败仍待定位。
 
+取消修复已实施并通过六物种×有牌/无牌与真实471：3节点、成功执行3、失败0；
+AI从拿展示牌改为取消，完整局效果待验。取证同时暴露完整simulation投影冻结共享
+meta、随后提交stateVersion只读的独立缺陷，已保留证据待单独修复，不视为已归零。
+
 ## 初始取证
 
 已有绿方210步：4096节点，choose_target3070、place_data209；三种阿米巴符号奖励

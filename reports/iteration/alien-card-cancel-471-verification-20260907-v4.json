@@ -1,0 +1,344 @@
+{
+  "scope": "真实471取消正式状态守恒、随后原根单决策搜索无失败；不重跑全盘",
+  "cancelResult": {
+    "ok": true,
+    "phase": "completed",
+    "family": "analyze",
+    "stateVersion": 236,
+    "failure": null,
+    "journal": {
+      "actions": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "analyze",
+            "phase": "main",
+            "actionId": "analyze:50f30055",
+            "actorId": "player-blue",
+            "stateVersion": 235,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "computer",
+              "requiredSlot": 6
+            },
+            "payload": {
+              "skipCost": false
+            },
+            "decision": null,
+            "summary": "分析"
+          },
+          "groupId": "effect-session-18:group:1",
+          "groupKind": "action",
+          "quick": false,
+          "revision": 0
+        }
+      ],
+      "decisions": [
+        {
+          "decisionId": "effect-session-18:effect:3",
+          "decisionVersion": 2,
+          "ownerId": "player-blue",
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:2194151f",
+            "actorId": "player-blue",
+            "stateVersion": 235,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "trace:2:blue:chong:9",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "blue",
+              "speciesId": "chong",
+              "position": 9
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 2 蓝9号位（5分+外星人牌）"
+          }
+        },
+        {
+          "decisionId": "effect-session-18:effect:4",
+          "decisionVersion": 3,
+          "ownerId": "player-blue",
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:657d4336",
+            "actorId": "player-blue",
+            "stateVersion": 235,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "chong:cancel",
+              "source": "cancel"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "取消"
+          }
+        }
+      ],
+      "effects": [
+        {
+          "effectId": "effect-session-18:effect:1",
+          "groupId": "effect-session-18:group:1",
+          "groupKind": "action",
+          "type": "science_domain_execute",
+          "revision": 1
+        },
+        {
+          "effectId": "effect-session-18:effect:2",
+          "groupId": "effect-session-18:group:2",
+          "groupKind": "spawned",
+          "type": "science_domain_analyze",
+          "revision": 2
+        },
+        {
+          "effectId": "effect-session-18:effect:3",
+          "groupId": "effect-session-18:group:3",
+          "groupKind": "spawned",
+          "type": "science_domain_alien_trace",
+          "revision": 3
+        },
+        {
+          "effectId": "effect-session-18:effect:4",
+          "groupId": "effect-session-18:group:4",
+          "groupKind": "spawned",
+          "type": "residual_alien_card_decision",
+          "revision": 4
+        }
+      ],
+      "events": [
+        {
+          "type": "analyze",
+          "playerId": "player-blue"
+        },
+        {
+          "type": "alienTrace",
+          "playerId": "player-blue",
+          "traceType": "blue",
+          "alienSlotId": 2,
+          "region": null
+        }
+      ],
+      "rng": [],
+      "history": [],
+      "logs": [],
+      "replay": [
+        {
+          "cursor": 0,
+          "kind": "action",
+          "confirmed": true,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "analyze",
+            "phase": "main",
+            "actionId": "analyze:50f30055",
+            "actorId": "player-blue",
+            "stateVersion": 235,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "computer",
+              "requiredSlot": 6
+            },
+            "payload": {
+              "skipCost": false
+            },
+            "decision": null,
+            "summary": "分析"
+          },
+          "groupId": "effect-session-18:group:1",
+          "groupKind": "action"
+        },
+        {
+          "cursor": 1,
+          "kind": "decision",
+          "confirmed": true,
+          "decisionId": "effect-session-18:effect:3",
+          "decisionVersion": 2,
+          "ownerId": "player-blue",
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:2194151f",
+            "actorId": "player-blue",
+            "stateVersion": 235,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "trace:2:blue:chong:9",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "blue",
+              "speciesId": "chong",
+              "position": 9
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 2 蓝9号位（5分+外星人牌）"
+          }
+        },
+        {
+          "cursor": 2,
+          "kind": "decision",
+          "confirmed": true,
+          "decisionId": "effect-session-18:effect:4",
+          "decisionVersion": 3,
+          "ownerId": "player-blue",
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:657d4336",
+            "actorId": "player-blue",
+            "stateVersion": 235,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "chong:cancel",
+              "source": "cancel"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "取消"
+          }
+        }
+      ]
+    },
+    "irreversibleBarrier": null
+  },
+  "cancelStatePreserved": true,
+  "wallMs": 81.689042,
+  "diagnostics": {
+    "successfulInputSubmissionCount": 3,
+    "attemptedNodeCountByFamily": {
+      "choose_card": 3
+    },
+    "failedNodeCountByFamily": {},
+    "failedNodeCountByCode": {},
+    "candidateCount": 3,
+    "executedNodeCount": 3,
+    "expandedSearchNodeCount": 0,
+    "maxNodes": 128,
+    "maxExecutionNodes": 4096,
+    "maxFrontierNodes": 256,
+    "maxMilliseconds": 30000,
+    "executionLimitReached": false,
+    "remainingFrontierNodeCount": 0,
+    "remainingFrontierOriginCountByGoalDepth": {},
+    "frontierOriginCountByFamily": {},
+    "frontierNodeBreakdown": [],
+    "maxDepth": 15,
+    "maxProxyDepth": 15,
+    "secondaryAgentSearch": true,
+    "rootTargetCount": 3,
+    "rolloutVersion": "secondary-agent-rollout-v20",
+    "maxFrontierPerRoot": 1,
+    "maxFrontierSize": 3,
+    "maxRetainedFrontierSize": 3,
+    "maxFrontierOriginCount": 3,
+    "transpositionHitCount": 0,
+    "sharedPhysicalExecutionOriginCount": 0,
+    "targetEquivalentChoicePrunedCount": 0,
+    "unreachableRouteOriginCount": 0,
+    "completedGoalTransitionCount": 3,
+    "maxCompletedGoalDepth": 0,
+    "opponentExecutedNodeCount": 0,
+    "focalPlanningTurnAdvanceCount": 0,
+    "focalPassBoundaryLeafCount": 0,
+    "hiddenInformationFilteredActionCount": 2,
+    "hiddenInformationBarrierCountByCode": {
+      "hidden_alien_card": 2
+    },
+    "executedNodeCountByFamily": {
+      "choose_card": 3
+    },
+    "executedNodeCountByDecisionKind": {
+      "choose_card:residual-domain": 3
+    },
+    "executedNodeCountByActionSummary": {
+      "choose_card:取消": 1,
+      "choose_card:盲抽虫牌": 1,
+      "choose_card:获得展示的火星隔离实验室": 1
+    },
+    "executedNodeCountByActor": {
+      "player-blue": 3
+    },
+    "executedOriginCountByTarget": {
+      "decision:choose_card:657d4336": 1,
+      "decision:choose_card:b10e56e6": 1,
+      "decision:choose_card:db101618": 1
+    },
+    "executedOriginCountByTargetAndDecisionKind": {
+      "decision:choose_card:657d4336 -> choose_card:residual-domain": 1,
+      "decision:choose_card:b10e56e6 -> choose_card:residual-domain": 1,
+      "decision:choose_card:db101618 -> choose_card:residual-domain": 1
+    },
+    "routeEntryStatsByTarget": {
+      "decision:choose_card:657d4336": {
+        "bindingOriginCount": 1,
+        "distinctEntryStateCount": 1,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      },
+      "decision:choose_card:b10e56e6": {
+        "bindingOriginCount": 1,
+        "distinctEntryStateCount": 1,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      },
+      "decision:choose_card:db101618": {
+        "bindingOriginCount": 1,
+        "distinctEntryStateCount": 1,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      }
+    },
+    "completedRouteGroupsByTarget": {
+      "decision:choose_card:657d4336": [
+        {
+          "routeFamilies": [],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "decision:choose_card:b10e56e6": [
+        {
+          "routeFamilies": [],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "decision:choose_card:db101618": [
+        {
+          "routeFamilies": [],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ]
+    },
+    "goalClusters": [],
+    "prunedNodeCount": 0,
+    "beamPrunedOriginCount": 0,
+    "forkMilliseconds": 8.50416599999997,
+    "executionMilliseconds": 1.954667000000029,
+    "projectionMilliseconds": 1.4519160000000397,
+    "identityMilliseconds": 0.023250000000018645,
+    "checkpointMilliseconds": 0.7898330000000158,
+    "frontierMilliseconds": 0.03291699999996922,
+    "orchestrationMilliseconds": 17.569750999999968,
+    "totalMilliseconds": 30.32650000000001
+  },
+  "actionId": "choose_card:657d4336",
+  "passed": true
+}

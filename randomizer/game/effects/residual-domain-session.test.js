@@ -751,4 +751,27 @@ for (const companyId of ["层云核心", "芬威克研究中心", "哨兵探测�
   }
 }
 
+for (const speciesId of ["yichangdian", "banrenma", "chong", "amiba", "aomomo", "runezu"]) {
+  for (const hasCards of [false, true]) {
+    const root = createRoot();
+    const owner = createHarness(residual, "createResidualDomain");
+    const executor = owner.executors.get(residual.EFFECT_TYPES.ALIEN_CARD_DECISION);
+    const effect = { ownerId: "p1", payload: { speciesId } };
+    executor.getLegalChoices(root, effect, { state: root });
+    root.aliens[speciesId].cardDeck = hasCards ? [0, 1] : [];
+    root.aliens[speciesId].displayedCardIndex = hasCards ? 2 : null;
+    const choices = executor.getLegalChoices(root, effect, { state: root });
+    const cancel = choices.find(action => action.target.source === "cancel");
+    assert.ok(cancel, `${speciesId}保留取消选择`);
+    const before = structuredClone(root);
+    const settled = executor.resolveDecision(root, effect, cancel, { state: root });
+    assert.equal(settled.ok, true);
+    assert.ok(Object.hasOwn(settled, "nextState"), `${speciesId}取消必须返回正式nextState`);
+    assert.deepEqual(root, before, `${speciesId}取消不得改牌堆、玩家、RNG或序列`);
+    assert.deepEqual(settled.spawnedEffects, []);
+    assert.equal(settled.irreversible, null);
+    assert.equal((settled.events || []).length, 0);
+  }
+}
+
 console.log("residual-domain-session production proofs passed");
