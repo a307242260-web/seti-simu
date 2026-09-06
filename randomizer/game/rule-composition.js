@@ -1846,7 +1846,7 @@
               choice.family === "choose_payment" && choice.target?.kind === "confirm"
             ));
             let settleChoice = null;
-            if (discardCards.length && confirm) {
+            if (discardCards.length) {
               if (discardCards.length > 1) representativeChoice = true;
               // 正式选择状态由当前Effect持有；每次点选会生成新的DecisionEffect，
               // 不能按decisionId另存已选集合，也不能硬编码弃牌数量。
@@ -1858,6 +1858,8 @@
               }
               const selected = new Set(pending.selected.map(String));
               if (selected.size === pending.count) {
+                if (!confirm) return { failed: true, code: "COUNTERFACTUAL_DISCARD_CONFIRM_MISSING",
+                  message: "正式弃牌已选满但缺少确认输入" };
                 settleChoice = confirm;
               } else {
                 settleChoice = discardCards.find((c) => (

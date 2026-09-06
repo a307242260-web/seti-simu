@@ -241,17 +241,11 @@
           },
         } : {}),
       }));
-      const remaining = Math.max(0, required - selected.length);
-      // 确认弃牌：选满 required 张后可用（提交时仍兜底校验）。
-      cardChoices.push({
+      // Decision 只提供可执行输入；选满后才出现确认（提交仍校验费用）。
+      if (selected.length === required) cardChoices.push({
         target: { kind: "confirm", confirm: true },
         payload: {},
-        summary: remaining > 0
-          ? `确认弃牌（${selected.length}/${required}）`
-          : `确认弃牌（${required}/${required}）`,
-        ...(remaining > 0 ? {
-          disabledReason: `还需选择 ${remaining} 张牌`,
-        } : {}),
+        summary: `确认弃牌（${required}/${required}）`,
       });
       return cardChoices;
     }

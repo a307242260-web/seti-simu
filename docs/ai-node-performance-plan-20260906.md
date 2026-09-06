@@ -116,6 +116,12 @@ visitPlanet漏hasOwnOrbit。独立方案见orbit-visit-trigger-design-20260907.m
 QUICK_TRADE_DISCARD_INCOMPLETE，正式复现为禁用确认进入搜索候选。
 首个动作分歧410，因果仍待核对；整体门槛未通过。移动需求目录及计划证据仍待接通。
 
+516弃牌确认独立方案见trade-confirm-design-20260907.md：未选满不生成确认输入，
+搜索按正式count/selected排空。真实516已验证4个有效首选均可正确支付/取消/恢复，
+5→4节点、失败1→0、12成功输入不变，3输入计划可重放；真实42为4096节点/
+4804输入/零失败/15.241秒，30输入计划通过。生产改动完整局尚待验收，
+不把单点清零当作整局零异常，410分歧也未由本项解释。
+
 剩余失败定位：471三个候选从同一正式边界逐个执行，展示/盲抽成功，取消返回漏
 nextState而失败；拟按原result封装修正executor契约，不删除取消或放宽runtime。
 详见reports/iteration/choice-failure-471-review-20260907.md。433两次失败已捕获为

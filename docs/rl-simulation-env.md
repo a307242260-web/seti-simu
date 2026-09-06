@@ -157,6 +157,10 @@ rollout v18的搜索内部`executionEvents`只包含当前宏步成功提交新�
 启发式估值字段；正式选择仍使用原Action/Decision与恢复契约。
 多个origin共享物理执行事实，各自推进绑定与计划，不能共用可变来源。
 
+快速交易弃牌Decision只在`selected.length === count`时提供确认输入；此前只提供
+牌的点选/取消，Browser与Simulation共用枚举，不把禁用确认项当合法动作。
+费用执行器仍校验数量，Action身份及新版本内的保存恢复契约不变。
+
 蓝槽派生事实同样在Browser/Simulation共用的sanitize和outcome-model生成：
 `publicState.players[].blueBonusAssets`及`outcomeProjection.progress.blueBonusAssets`
 含`credits/energy/ordinaryCards`来源留存数量，不暴露对手牌身份；`dataProgress.blueSlots`

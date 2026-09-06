@@ -1,0 +1,249 @@
+{
+  "scope": "重放实际42至516，在新内核重新生成交易Decision；四个首选/取消/恢复/单次AI及计划重放",
+  "cases": [
+    {
+      "first": "choose_payment:83be3171",
+      "cancelled": true,
+      "recovered": true,
+      "handCost": 2,
+      "energyGain": 1
+    },
+    {
+      "first": "choose_payment:2064c5da",
+      "cancelled": true,
+      "recovered": true,
+      "handCost": 2,
+      "energyGain": 1
+    },
+    {
+      "first": "choose_payment:55476f72",
+      "cancelled": true,
+      "recovered": true,
+      "handCost": 2,
+      "energyGain": 1
+    },
+    {
+      "first": "choose_payment:56cf97db",
+      "cancelled": true,
+      "recovered": true,
+      "handCost": 2,
+      "energyGain": 1
+    }
+  ],
+  "wallMs": 143.3080829999999,
+  "searches": [
+    {
+      "kind": "strategic",
+      "diagnostics": {
+        "executedNodeCount": 4,
+        "maxExecutionNodes": 4096,
+        "executionLimitReached": false,
+        "successfulInputSubmissionCount": 12,
+        "attemptedNodeCountByFamily": {
+          "choose_payment": 4
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "choose_payment": 4
+        },
+        "executedNodeCountByDecisionKind": {
+          "choose_payment:discard-hand-card": 4
+        },
+        "executedNodeCountByActionSummary": {
+          "choose_payment:b_55.webp": 1,
+          "choose_payment:b_60.webp": 1,
+          "choose_payment:b_8.webp": 1,
+          "choose_payment:chong_9.webp": 1
+        },
+        "executedOriginCountByTarget": {
+          "decision:choose_payment:2064c5da": 1,
+          "decision:choose_payment:55476f72": 1,
+          "decision:choose_payment:56cf97db": 1,
+          "decision:choose_payment:83be3171": 1
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "decision:choose_payment:2064c5da -> choose_payment:discard-hand-card": 1,
+          "decision:choose_payment:55476f72 -> choose_payment:discard-hand-card": 1,
+          "decision:choose_payment:56cf97db -> choose_payment:discard-hand-card": 1,
+          "decision:choose_payment:83be3171 -> choose_payment:discard-hand-card": 1
+        },
+        "frontierOriginCountByFamily": {},
+        "totalMilliseconds": 35.19954200000029
+      }
+    }
+  ],
+  "diagnostics": {
+    "successfulInputSubmissionCount": 12,
+    "attemptedNodeCountByFamily": {
+      "choose_payment": 4
+    },
+    "failedNodeCountByFamily": {},
+    "failedNodeCountByCode": {},
+    "candidateCount": 4,
+    "executedNodeCount": 4,
+    "expandedSearchNodeCount": 0,
+    "maxNodes": 128,
+    "maxExecutionNodes": 4096,
+    "maxFrontierNodes": 256,
+    "maxMilliseconds": 30000,
+    "executionLimitReached": false,
+    "remainingFrontierNodeCount": 0,
+    "remainingFrontierOriginCountByGoalDepth": {},
+    "frontierOriginCountByFamily": {},
+    "frontierNodeBreakdown": [],
+    "maxDepth": 15,
+    "maxProxyDepth": 15,
+    "secondaryAgentSearch": true,
+    "rootTargetCount": 4,
+    "rolloutVersion": "secondary-agent-rollout-v20",
+    "maxFrontierPerRoot": 1,
+    "maxFrontierSize": 4,
+    "maxRetainedFrontierSize": 4,
+    "maxFrontierOriginCount": 4,
+    "transpositionHitCount": 0,
+    "sharedPhysicalExecutionOriginCount": 0,
+    "targetEquivalentChoicePrunedCount": 0,
+    "unreachableRouteOriginCount": 0,
+    "completedGoalTransitionCount": 4,
+    "maxCompletedGoalDepth": 0,
+    "opponentExecutedNodeCount": 0,
+    "focalPlanningTurnAdvanceCount": 0,
+    "focalPassBoundaryLeafCount": 0,
+    "hiddenInformationFilteredActionCount": 0,
+    "hiddenInformationBarrierCountByCode": {},
+    "executedNodeCountByFamily": {
+      "choose_payment": 4
+    },
+    "executedNodeCountByDecisionKind": {
+      "choose_payment:discard-hand-card": 4
+    },
+    "executedNodeCountByActionSummary": {
+      "choose_payment:b_55.webp": 1,
+      "choose_payment:b_60.webp": 1,
+      "choose_payment:b_8.webp": 1,
+      "choose_payment:chong_9.webp": 1
+    },
+    "executedNodeCountByActor": {
+      "player-blue": 4
+    },
+    "executedOriginCountByTarget": {
+      "decision:choose_payment:2064c5da": 1,
+      "decision:choose_payment:55476f72": 1,
+      "decision:choose_payment:56cf97db": 1,
+      "decision:choose_payment:83be3171": 1
+    },
+    "executedOriginCountByTargetAndDecisionKind": {
+      "decision:choose_payment:2064c5da -> choose_payment:discard-hand-card": 1,
+      "decision:choose_payment:55476f72 -> choose_payment:discard-hand-card": 1,
+      "decision:choose_payment:56cf97db -> choose_payment:discard-hand-card": 1,
+      "decision:choose_payment:83be3171 -> choose_payment:discard-hand-card": 1
+    },
+    "routeEntryStatsByTarget": {
+      "decision:choose_payment:2064c5da": {
+        "bindingOriginCount": 1,
+        "distinctEntryStateCount": 1,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      },
+      "decision:choose_payment:55476f72": {
+        "bindingOriginCount": 1,
+        "distinctEntryStateCount": 1,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      },
+      "decision:choose_payment:56cf97db": {
+        "bindingOriginCount": 1,
+        "distinctEntryStateCount": 1,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      },
+      "decision:choose_payment:83be3171": {
+        "bindingOriginCount": 1,
+        "distinctEntryStateCount": 1,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      }
+    },
+    "completedRouteGroupsByTarget": {
+      "decision:choose_payment:2064c5da": [
+        {
+          "routeFamilies": [],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "decision:choose_payment:55476f72": [
+        {
+          "routeFamilies": [],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "decision:choose_payment:56cf97db": [
+        {
+          "routeFamilies": [],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "decision:choose_payment:83be3171": [
+        {
+          "routeFamilies": [],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ]
+    },
+    "goalClusters": [],
+    "prunedNodeCount": 0,
+    "beamPrunedOriginCount": 0,
+    "forkMilliseconds": 8.187083000001621,
+    "executionMilliseconds": 0.9333329999990383,
+    "projectionMilliseconds": 0.9990429999998014,
+    "identityMilliseconds": 0.029874000001655077,
+    "checkpointMilliseconds": 1.0855000000001382,
+    "frontierMilliseconds": 0.039833000000726315,
+    "orchestrationMilliseconds": 23.92487599999731,
+    "totalMilliseconds": 35.19954200000029
+  },
+  "plan": {
+    "schemaVersion": "seti-action-plan-v2",
+    "nextActionId": "choose_payment:83be3171",
+    "steps": [
+      {
+        "actionId": "choose_payment:83be3171",
+        "actionKey": "{\"family\":\"choose_payment\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-33-pass-3-4\",\"kind\":\"discard-hand-card\",\"select\":true}}",
+        "actorId": "player-blue",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": []
+      },
+      {
+        "actionId": "choose_payment:f1f2b012",
+        "actionKey": "{\"family\":\"choose_payment\",\"payload\":{},\"target\":{\"confirm\":true,\"kind\":\"confirm\"}}",
+        "actorId": "player-blue",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": []
+      }
+    ]
+  },
+  "actionId": "choose_payment:2064c5da",
+  "replayed": [
+    "choose_payment:2064c5da",
+    "choose_payment:83be3171",
+    "choose_payment:f1f2b012"
+  ],
+  "passed": true
+}

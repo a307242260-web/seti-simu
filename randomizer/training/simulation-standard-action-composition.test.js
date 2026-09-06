@@ -174,6 +174,9 @@ function submitActionToCompletion(composition, action, quick = false) {
     // 弃牌换奖励决策（2张牌→信用点/能量/精选等）：先点选未选过的牌，
     // 选满 required 张后确认结算（交互与人工一致）。
     if (decision.choices.some((candidate) => candidate.target?.kind === "discard-hand-card")) {
+      const pending = composition.inspect().session.currentEffect.payload.decisionContext;
+      assert.equal(decision.choices.some(candidate => candidate.target?.kind === "confirm"),
+        pending.selected.length === pending.count, "确认输入只能在正式弃牌数量选满后出现");
       const cardChoice = decision.choices.find((candidate) => (
         candidate.target?.kind === "discard-hand-card"
         && !candidate.presentation?.selected

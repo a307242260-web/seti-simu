@@ -511,6 +511,8 @@ Production的地球坐标、探测路线context及正式Action context直接读�
 弃牌结算读取当前正式Effect的`decisionContext.count/selected`，不按decisionId另建
 已选牌缓存，不硬编码2张。每次点选更新正式Decision后重新读取状态，选满才确认；正式
 上下文缺失或选择状态不一致时显式失败。原有排空上限与隐藏信息捕获仍生效。
+快速交易未选满时不生成确认输入；排空以正式弃牌上下文识别阶段，不依赖确认项
+提前存在。选满后缺确认输入报`COUNTERFACTUAL_DISCARD_CONFIRM_MISSING`。
 除正式弃牌代表路线和计算机唯一选位外，仅单项支付/交易精选可直接排空；多个费用或牌面
 选择回到selector分组排序后执行，composition不固定取首项。弃牌/交易的手牌代表选择仍为
 既有策略近似，不等于完整枚举全部手牌用途。
