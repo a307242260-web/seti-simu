@@ -191,3 +191,15 @@ yichangdian_draw_then_two_corners保留标识，不再表示两次行动角：�
 另只读核对42优胜计划：扫描目标有nebulaId、选牌有cardInstanceId、交易有tradeId，
 但统计只读取target.kind，因而落入<none>。这证明部分属于统计分类缺失，不能外推
 全部none正常，也不允许用统一改名清零。后续按正式Action/Decision职责完整归类。
+
+## 下降差异的进一步取证
+
+`any-alien-divergence-v3-20260907.json`确认两版前409步完整replay一致，当前内核
+从42检查点正式重放至410的动作及状态摘要均一致。弃掉的card-79-0是b137，
+另两张手牌为dlc12、b18。408策略搜索两版均4096并截断，扫描分支计数有差异；
+记录未保存优胜叶评分，不能仅凭这些计数认定排序或RNG为原因。还需恢复408
+搜索的优胜计划取证；目前没有重跑完整局，也没有更改生产代码。
+
+重放同时暴露数据事件22条undefined路径（含历史副本）：analyze读取了能力返回
+错误层级，蓝槽事件无条件读取不存在的计算机placementSlot。独立设计见
+data-event-contract-design-20260907.md，不将这两处缺陷当成本轮导致或降分原因。

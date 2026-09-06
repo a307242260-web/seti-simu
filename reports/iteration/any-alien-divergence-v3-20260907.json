@@ -1,0 +1,2384 @@
+{
+  "scope": "复用42检查点重放共同前缀至408/410，读取手牌及已有搜索计数；不运行AI，不推断分数因果",
+  "sources": [
+    "reports/research/ddc98722.1f0d82ec.full.json",
+    "reports/research/0b8c855d.0caa713a.full.json"
+  ],
+  "checkpointPath": "reports/iteration/before-any-alien-408-20260907.json",
+  "undefinedPaths": [
+    "checkpoint.effectSessionJournals.36.events.0.clearedCount",
+    "checkpoint.effectSessionJournals.37.events.0.clearedCount",
+    "checkpoint.effectSessionJournals.57.events.0.clearedCount",
+    "checkpoint.effectSessionJournals.58.events.0.clearedCount",
+    "checkpoint.effectSessionJournals.65.events.0.clearedCount",
+    "checkpoint.effectSessionJournals.66.events.0.clearedCount",
+    "checkpoint.effectSessionJournals.236.events.0.placementSlot",
+    "checkpoint.effectSessionJournals.328.events.0.placementSlot",
+    "checkpoint.effectSessionJournals.329.events.0.placementSlot",
+    "checkpoint.effectSessionJournals.345.events.0.clearedCount",
+    "checkpoint.effectSessionJournals.346.events.0.clearedCount",
+    "checkpoint.replaySteps.36.effectSessionJournal.events.0.clearedCount",
+    "checkpoint.replaySteps.37.effectSessionJournal.events.0.clearedCount",
+    "checkpoint.replaySteps.57.effectSessionJournal.events.0.clearedCount",
+    "checkpoint.replaySteps.58.effectSessionJournal.events.0.clearedCount",
+    "checkpoint.replaySteps.65.effectSessionJournal.events.0.clearedCount",
+    "checkpoint.replaySteps.66.effectSessionJournal.events.0.clearedCount",
+    "checkpoint.replaySteps.236.effectSessionJournal.events.0.placementSlot",
+    "checkpoint.replaySteps.328.effectSessionJournal.events.0.placementSlot",
+    "checkpoint.replaySteps.329.effectSessionJournal.events.0.placementSlot",
+    "checkpoint.replaySteps.345.effectSessionJournal.events.0.clearedCount",
+    "checkpoint.replaySteps.346.effectSessionJournal.events.0.clearedCount"
+  ],
+  "green": {
+    "blueBonusResources": {
+      "credits": 0,
+      "energy": 0
+    },
+    "color": "green",
+    "completedTaskCount": 0,
+    "dataState": {
+      "discardedCount": 0,
+      "placedTokens": [],
+      "poolTokens": []
+    },
+    "hand": [
+      {
+        "cardId": "dlc_12.png",
+        "cardTypeCode": 0,
+        "discardActionCode": 1,
+        "faceUp": true,
+        "id": "card-31-pass-3-2",
+        "incomeCode": 0,
+        "price": 1,
+        "scanActionCode": 0,
+        "set": "space-agency"
+      },
+      {
+        "cardId": "b_137.webp",
+        "cardTypeCode": 0,
+        "discardActionCode": 2,
+        "faceUp": true,
+        "id": "card-79-0",
+        "incomeCode": 2,
+        "price": 3,
+        "scanActionCode": 2,
+        "set": "basic"
+      },
+      {
+        "cardId": "b_18.webp",
+        "cardTypeCode": 0,
+        "discardActionCode": 0,
+        "faceUp": true,
+        "id": "card-80-0",
+        "incomeCode": 0,
+        "price": 1,
+        "scanActionCode": 1,
+        "set": "basic"
+      }
+    ],
+    "id": "player-green",
+    "income": {
+      "additionalPublicScan": 0,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 2,
+      "publicity": 0
+    },
+    "industryBorrowedTechRound": 0,
+    "industryBorrowedTechTileId": null,
+    "industryBorrowedTechTurn": 0,
+    "industryHuanyuFreeMoveRound": 0,
+    "industryHuanyuFreeMoveTurn": 0,
+    "industryHuanyuFreeMovesLeft": 0,
+    "industryHuanyuMovedRocketIds": [],
+    "industryLastPlayedCardThisRound": null,
+    "industryPlayedCardRound": 0,
+    "industryPlayedCardThisRound": false,
+    "industryPlayedCardTurn": 0,
+    "industryRoundMarkRound": 0,
+    "industryRoundMarkTurn": 0,
+    "industrySentinelArmedRound": 0,
+    "industrySentinelArmedTurn": 0,
+    "industryStrategyPlayInteractionPending": false,
+    "industryStrategyPlayInteractionRound": 0,
+    "industryStrategyPlayScanCode": null,
+    "initialSelection": {
+      "industry": {
+        "id": "industry:寰宇动力.png"
+      },
+      "removedInitialCards": [
+        {
+          "id": "initial:14"
+        },
+        {
+          "id": "initial:20"
+        }
+      ]
+    },
+    "mainActionCompleted": true,
+    "name": "绿色玩家",
+    "orbitCount": 3,
+    "passCompletionPending": false,
+    "reservedCards": [],
+    "resources": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 3,
+      "handSize": 3,
+      "publicity": 0,
+      "score": 51
+    },
+    "scoreSources": {
+      "alienTraceBlueScore": 3,
+      "alienTraceYellowScore": 5,
+      "cardEffectScore": 8,
+      "initialScore": 7,
+      "landScore": 5,
+      "orbitScore": 18,
+      "scanScore": 2,
+      "techBonusScore": 3
+    },
+    "techState": {
+      "blueBoardSlots": {},
+      "disabledTiles": {},
+      "ownedTiles": {
+        "orange2": true,
+        "purple2": true,
+        "purple4": true
+      }
+    }
+  },
+  "paymentChoices": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "actionId": "choose_payment:56560af3",
+      "actorId": "player-green",
+      "stateVersion": 207,
+      "decisionVersion": 11,
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "payload": {
+        "energyCost": 1,
+        "requiredMovePoints": 1
+      },
+      "decision": null,
+      "summary": "消耗 1 能量"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "actionId": "choose_payment:93740a4c",
+      "actorId": "player-green",
+      "stateVersion": 207,
+      "decisionVersion": 11,
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-79-0",
+        "cardIds": [
+          "card-79-0"
+        ]
+      },
+      "payload": {
+        "energyCost": 0,
+        "requiredMovePoints": 1
+      },
+      "decision": null,
+      "summary": "弃 1 张移动牌"
+    }
+  ],
+  "nearbyReplay": [
+    [
+      {
+        "stepIndex": 407,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:70d77c1b",
+          "actorId": "player-green",
+          "stateVersion": 206,
+          "decisionVersion": 11,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        },
+        "phase": "main",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 3,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              41,
+              4,
+              4,
+              3,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              0,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 408,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:f7da222d",
+          "actorId": "player-green",
+          "stateVersion": 207,
+          "decisionVersion": 11,
+          "target": {
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 向外"
+        },
+        "phase": "quick",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 3,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              41,
+              4,
+              4,
+              3,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              0,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 409,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:93740a4c",
+          "actorId": "player-green",
+          "stateVersion": 207,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-79-0",
+            "cardIds": [
+              "card-79-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "弃 1 张移动牌"
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 3,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              41,
+              4,
+              4,
+              3,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              1,
+              2,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 410,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 208,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        "phase": "turn_control",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 4,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              41,
+              4,
+              4,
+              3,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              1,
+              2,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 411,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:a4087d46",
+          "actorId": "player-blue",
+          "stateVersion": 209,
+          "decisionVersion": 11,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        },
+        "phase": "main",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 4,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              4,
+              3,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              1,
+              2,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 412,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:d1bf767d",
+          "actorId": "player-blue",
+          "stateVersion": 210,
+          "decisionVersion": 11,
+          "target": {
+            "rocketId": 13,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 13 向外"
+        },
+        "phase": "quick",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 4,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              4,
+              3,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              1,
+              2,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 413,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:5d7f4364",
+          "actorId": "player-blue",
+          "stateVersion": 210,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "消耗 1 能量"
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 4,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              4,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              1,
+              2,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 414,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:c5d08fc3",
+          "actorId": "player-blue",
+          "stateVersion": 211,
+          "decisionVersion": 11,
+          "target": {
+            "rocketId": 13,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 13 逆时针"
+        },
+        "phase": "quick",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 4,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              4,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              1,
+              2,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 415,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:8009a2a3",
+          "actorId": "player-blue",
+          "stateVersion": 211,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-81-0",
+            "cardIds": [
+              "card-81-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "弃 1 张移动牌"
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 4,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              5,
+              3,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              1,
+              2,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 416,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:320f2608",
+          "actorId": "player-blue",
+          "stateVersion": 212,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        "phase": "turn_control",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 5,
+          "c": "player-brown",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              5,
+              3,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              1,
+              2,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 417,
+        "actorPlayerId": "player-brown",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:0ca111ac",
+          "actorId": "player-brown",
+          "stateVersion": 213,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描"
+        },
+        "phase": "main",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 5,
+          "c": "player-brown",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              5,
+              3,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              1,
+              2,
+              0
+            ],
+            "player-brown": [
+              53,
+              1,
+              0,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 418,
+        "actorPlayerId": "player-brown",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:c1cec196",
+          "actorId": "player-brown",
+          "stateVersion": 213,
+          "decisionVersion": 11,
+          "target": {
+            "choiceId": "nebula:sector-2-a",
+            "nebulaId": "sector-2-a",
+            "sectorX": 1
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "扫描 天狼星A"
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 5,
+          "c": "player-brown",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              5,
+              3,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              1,
+              2,
+              0
+            ],
+            "player-brown": [
+              53,
+              1,
+              0,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 419,
+        "actorPlayerId": "player-brown",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:c3d73fce",
+          "actorId": "player-brown",
+          "stateVersion": 213,
+          "decisionVersion": 11,
+          "target": {
+            "choiceId": "public:card-75-0:sector-3-b",
+            "cardInstanceId": "card-75-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-b"
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "dlc_1.png → 比邻星",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-75-0",
+            "imageSrc": "../assets/cards/space-agency/split/dlc_1.png",
+            "imageAlt": "dlc_1.png"
+          }
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 5,
+          "c": "player-brown",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              5,
+              3,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              1,
+              2,
+              0
+            ],
+            "player-brown": [
+              53,
+              1,
+              0,
+              6,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              4,
+              4,
+              3
+            ]
+          }
+        }
+      }
+    ],
+    [
+      {
+        "stepIndex": 407,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:70d77c1b",
+          "actorId": "player-green",
+          "stateVersion": 206,
+          "decisionVersion": 11,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        },
+        "phase": "main",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 3,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              41,
+              4,
+              4,
+              3,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              0,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 408,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:f7da222d",
+          "actorId": "player-green",
+          "stateVersion": 207,
+          "decisionVersion": 11,
+          "target": {
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 向外"
+        },
+        "phase": "quick",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 3,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              41,
+              4,
+              4,
+              3,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              3,
+              0,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 409,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:56560af3",
+          "actorId": "player-green",
+          "stateVersion": 207,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "消耗 1 能量"
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 3,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              41,
+              4,
+              4,
+              3,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              2,
+              1,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 410,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 208,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        "phase": "turn_control",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 4,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              41,
+              4,
+              4,
+              3,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              2,
+              1,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 411,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:a4087d46",
+          "actorId": "player-blue",
+          "stateVersion": 209,
+          "decisionVersion": 11,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        },
+        "phase": "main",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 4,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              4,
+              3,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              2,
+              1,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 412,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:d1bf767d",
+          "actorId": "player-blue",
+          "stateVersion": 210,
+          "decisionVersion": 11,
+          "target": {
+            "rocketId": 13,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 13 向外"
+        },
+        "phase": "quick",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 4,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              4,
+              3,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              2,
+              1,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 413,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:5d7f4364",
+          "actorId": "player-blue",
+          "stateVersion": 210,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "消耗 1 能量"
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 4,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              4,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              2,
+              1,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 414,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:c5d08fc3",
+          "actorId": "player-blue",
+          "stateVersion": 211,
+          "decisionVersion": 11,
+          "target": {
+            "rocketId": 13,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 13 逆时针"
+        },
+        "phase": "quick",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 4,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              4,
+              4,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              2,
+              1,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 415,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:8009a2a3",
+          "actorId": "player-blue",
+          "stateVersion": 211,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-81-0",
+            "cardIds": [
+              "card-81-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "弃 1 张移动牌"
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 4,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              5,
+              3,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              2,
+              1,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 416,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:320f2608",
+          "actorId": "player-blue",
+          "stateVersion": 212,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        "phase": "turn_control",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 5,
+          "c": "player-brown",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              5,
+              3,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              2,
+              1,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              2,
+              2,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 417,
+        "actorPlayerId": "player-brown",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:0ca111ac",
+          "actorId": "player-brown",
+          "stateVersion": 213,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描"
+        },
+        "phase": "main",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 5,
+          "c": "player-brown",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              5,
+              3,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              2,
+              1,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              1,
+              0,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 418,
+        "actorPlayerId": "player-brown",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:c1cec196",
+          "actorId": "player-brown",
+          "stateVersion": 213,
+          "decisionVersion": 11,
+          "target": {
+            "choiceId": "nebula:sector-2-a",
+            "nebulaId": "sector-2-a",
+            "sectorX": 1
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "扫描 天狼星A"
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 5,
+          "c": "player-brown",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              5,
+              3,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              2,
+              1,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              1,
+              0,
+              5,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              3,
+              4,
+              3
+            ]
+          }
+        }
+      },
+      {
+        "stepIndex": 419,
+        "actorPlayerId": "player-brown",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:c3d73fce",
+          "actorId": "player-brown",
+          "stateVersion": 213,
+          "decisionVersion": 11,
+          "target": {
+            "choiceId": "public:card-75-0:sector-3-b",
+            "cardInstanceId": "card-75-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-b"
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "dlc_1.png → 比邻星",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-75-0",
+            "imageSrc": "../assets/cards/space-agency/split/dlc_1.png",
+            "imageAlt": "dlc_1.png"
+          }
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 4,
+          "t": 5,
+          "c": "player-brown",
+          "p": {
+            "player-blue": [
+              41,
+              2,
+              3,
+              5,
+              3,
+              1
+            ],
+            "player-green": [
+              51,
+              4,
+              2,
+              1,
+              3,
+              0
+            ],
+            "player-brown": [
+              53,
+              1,
+              0,
+              6,
+              4,
+              3
+            ],
+            "player-white": [
+              28,
+              2,
+              4,
+              4,
+              4,
+              3
+            ]
+          }
+        }
+      }
+    ]
+  ],
+  "searches408": [
+    [
+      {
+        "step": 408,
+        "searchIndex": 0,
+        "seat": "player-green",
+        "action": "launch:70d77c1b",
+        "kind": "control",
+        "diagnostics": {
+          "executedNodeCount": 1,
+          "maxExecutionNodes": 1,
+          "executionLimitReached": false,
+          "successfulInputSubmissionCount": 1,
+          "attemptedNodeCountByFamily": {
+            "pass": 1
+          },
+          "failedNodeCountByFamily": {},
+          "failedNodeCountByCode": {},
+          "executedNodeCountByFamily": {
+            "pass": 1
+          },
+          "executedNodeCountByDecisionKind": {
+            "pass:pass": 1
+          },
+          "executedNodeCountByActionSummary": {
+            "pass:PASS": 1
+          },
+          "executedOriginCountByTarget": {
+            "<unbound>": 1
+          },
+          "executedOriginCountByTargetAndDecisionKind": {
+            "<unbound> -> pass:pass": 1
+          },
+          "frontierOriginCountByFamily": {},
+          "totalMilliseconds": 10.62562499998603
+        }
+      },
+      {
+        "step": 408,
+        "searchIndex": 1,
+        "seat": "player-green",
+        "action": "launch:70d77c1b",
+        "kind": "strategic",
+        "diagnostics": {
+          "executedNodeCount": 4096,
+          "maxExecutionNodes": 4096,
+          "executionLimitReached": true,
+          "successfulInputSubmissionCount": 4918,
+          "attemptedNodeCountByFamily": {
+            "card_corner": 50,
+            "choose_card": 1058,
+            "choose_payment": 110,
+            "choose_target": 1511,
+            "end_turn": 340,
+            "land": 114,
+            "launch": 49,
+            "move": 163,
+            "orbit": 77,
+            "pass": 56,
+            "place_data": 116,
+            "play_card": 113,
+            "quick_trade": 220,
+            "research_tech": 49,
+            "scan": 70
+          },
+          "failedNodeCountByFamily": {},
+          "failedNodeCountByCode": {},
+          "executedNodeCountByFamily": {
+            "card_corner": 50,
+            "choose_card": 1058,
+            "choose_payment": 110,
+            "choose_target": 1511,
+            "end_turn": 340,
+            "land": 114,
+            "launch": 49,
+            "move": 163,
+            "orbit": 77,
+            "pass": 56,
+            "place_data": 116,
+            "play_card": 113,
+            "quick_trade": 220,
+            "research_tech": 49,
+            "scan": 70
+          },
+          "executedNodeCountByDecisionKind": {
+            "card_corner:<none>": 50,
+            "choose_card:<none>": 321,
+            "choose_card:residual-domain": 684,
+            "choose_card:trade-card-selection": 53,
+            "choose_payment:move-payment": 110,
+            "choose_target:<none>": 599,
+            "choose_target:planet-reward-alien-trace": 912,
+            "end_turn:end-turn": 340,
+            "land:<none>": 114,
+            "launch:<none>": 49,
+            "move:<none>": 163,
+            "orbit:<none>": 77,
+            "pass:pass": 56,
+            "place_data:place-data": 116,
+            "play_card:<none>": 113,
+            "quick_trade:<none>": 220,
+            "research_tech:research-tech": 49,
+            "scan:standard-scan": 70
+          },
+          "executedNodeCountByActionSummary": {
+            "end_turn:结束回合": 340,
+            "choose_card:盲抽阿米巴牌": 228,
+            "choose_card:获得展示的低重力研究": 228,
+            "choose_target:扫描 开普勒22": 123,
+            "place_data:放置数据": 116,
+            "choose_card:盲抽虫牌": 114,
+            "choose_card:获得展示的虫": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 1 额外痕迹位（3分）": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄1号位": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄2号位（1分）": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄3号位（外星人牌）": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 2 额外痕迹位（3分）": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄1号位（4分）": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄3号位（3分+外星人牌）": 114,
+            "land:登陆": 114,
+            "choose_card:b_59.webp": 102,
+            "play_card:b_18.webp": 102,
+            "quick_trade:2张牌 → 1能量": 94,
+            "orbit:环绕金星 - 奖励：获得 6 分；获得 1 次收入（R12，1信用点 + 1能量）": 77,
+            "quick_trade:2信用点 → 1能量": 72,
+            "choose_target:扫描 天狼星A": 70,
+            "scan:扫描": 70,
+            "choose_target:扫描 南河三": 65,
+            "choose_payment:弃 1 张移动牌": 57,
+            "pass:PASS": 56,
+            "quick_trade:3宣传 → 精选1张牌": 54,
+            "choose_payment:消耗 1 能量": 53,
+            "choose_card:dlc_41.png → 南河三": 51,
+            "card_corner:b_18.webp：弃牌角标": 50,
+            "choose_card:收入 b_18.webp": 50,
+            "move:移动探测器 13 逆时针": 50,
+            "choose_card:dlc_1.png": 49,
+            "choose_card:dlc_41.png": 49,
+            "choose_target:研究 blue1（蓝槽 1）": 49,
+            "choose_target:研究 blue2（蓝槽 1）": 49,
+            "choose_target:研究 orange3": 49,
+            "launch:发射": 49,
+            "research_tech:研究科技": 49,
+            "choose_target:R12 逆时针": 40,
+            "choose_target:结束移动": 39,
+            "choose_card:收入 b_137.webp": 36,
+            "choose_target:R13 逆时针": 36,
+            "move:移动探测器 12 逆时针": 36,
+            "move:移动探测器 13 向外": 30,
+            "choose_target:R13 向外": 20,
+            "choose_target:R12 顺时针": 18,
+            "move:移动探测器 12 向内": 18,
+            "move:移动探测器 12 顺时针": 18,
+            "choose_card:收入 dlc_12.png": 17,
+            "choose_card:dlc_41.png → 天狼星A": 16,
+            "choose_target:R12 向外": 16,
+            "choose_target:R12 向内": 13,
+            "move:移动探测器 12 向外": 11,
+            "play_card:dlc_12.png": 11,
+            "choose_card:dlc_1.png → 比邻星": 4,
+            "choose_target:跳过": 4,
+            "choose_target:发射探测器": 2,
+            "choose_target:移动 12 向外": 2,
+            "choose_target:移动 12 逆时针": 2,
+            "choose_target:移动 12 顺时针": 2
+          },
+          "executedOriginCountByTarget": {
+            "land:mars:planet:": 2258,
+            "orbit:venus:planet:": 629,
+            "sector:win:sector-1-a:2": 420,
+            "tech:gain:blue1": 417,
+            "tech:gain:blue2": 270,
+            "tech:gain:orange3": 270,
+            "income:gain:6,2,0,0,2,0": 215,
+            "<unbound>": 127,
+            "sector:win:sector-3-a:2": 87,
+            "data:analyze": 36
+          },
+          "executedOriginCountByTargetAndDecisionKind": {
+            "land:mars:planet: -> choose_target:planet-reward-alien-trace": 912,
+            "land:mars:planet: -> choose_card:residual-domain": 684,
+            "tech:gain:blue1 -> choose_card:<none>": 147,
+            "sector:win:sector-1-a:2 -> quick_trade:<none>": 135,
+            "land:mars:planet: -> end_turn:end-turn": 134,
+            "land:mars:planet: -> choose_target:<none>": 130,
+            "orbit:venus:planet: -> choose_target:<none>": 117,
+            "sector:win:sector-1-a:2 -> choose_target:<none>": 115,
+            "land:mars:planet: -> land:<none>": 114,
+            "income:gain:6,2,0,0,2,0 -> place_data:place-data": 110,
+            "orbit:venus:planet: -> end_turn:end-turn": 109,
+            "tech:gain:blue1 -> place_data:place-data": 101,
+            "tech:gain:blue2 -> place_data:place-data": 101,
+            "tech:gain:orange3 -> place_data:place-data": 101,
+            "orbit:venus:planet: -> choose_card:<none>": 99,
+            "land:mars:planet: -> move:<none>": 86,
+            "orbit:venus:planet: -> move:<none>": 77,
+            "orbit:venus:planet: -> orbit:<none>": 77,
+            "<unbound> -> end_turn:end-turn": 71,
+            "land:mars:planet: -> choose_payment:move-payment": 60,
+            "sector:win:sector-3-a:2 -> choose_target:<none>": 58,
+            "<unbound> -> pass:pass": 56,
+            "land:mars:planet: -> play_card:<none>": 55,
+            "sector:win:sector-1-a:2 -> choose_card:<none>": 55,
+            "sector:win:sector-1-a:2 -> scan:standard-scan": 55,
+            "orbit:venus:planet: -> play_card:<none>": 51,
+            "orbit:venus:planet: -> choose_payment:move-payment": 50,
+            "tech:gain:blue1 -> card_corner:<none>": 50,
+            "tech:gain:blue2 -> card_corner:<none>": 50,
+            "tech:gain:orange3 -> card_corner:<none>": 50,
+            "orbit:venus:planet: -> launch:<none>": 49,
+            "tech:gain:blue1 -> choose_target:<none>": 49,
+            "tech:gain:blue1 -> research_tech:research-tech": 49,
+            "tech:gain:blue2 -> choose_target:<none>": 49,
+            "tech:gain:blue2 -> research_tech:research-tech": 49,
+            "tech:gain:orange3 -> choose_target:<none>": 49,
+            "tech:gain:orange3 -> research_tech:research-tech": 49,
+            "land:mars:planet: -> launch:<none>": 45,
+            "land:mars:planet: -> quick_trade:<none>": 38,
+            "sector:win:sector-1-a:2 -> choose_card:trade-card-selection": 38,
+            "income:gain:6,2,0,0,2,0 -> quick_trade:<none>": 36,
+            "sector:win:sector-3-a:2 -> play_card:<none>": 29,
+            "income:gain:6,2,0,0,2,0 -> choose_target:<none>": 27,
+            "sector:win:sector-1-a:2 -> end_turn:end-turn": 22,
+            "tech:gain:blue1 -> end_turn:end-turn": 21,
+            "tech:gain:blue2 -> end_turn:end-turn": 21,
+            "tech:gain:orange3 -> end_turn:end-turn": 21,
+            "income:gain:6,2,0,0,2,0 -> choose_card:<none>": 13,
+            "income:gain:6,2,0,0,2,0 -> scan:standard-scan": 13,
+            "income:gain:6,2,0,0,2,0 -> choose_card:trade-card-selection": 12,
+            "data:analyze -> quick_trade:<none>": 11,
+            "data:analyze -> choose_card:<none>": 7,
+            "data:analyze -> choose_target:<none>": 6,
+            "data:analyze -> place_data:place-data": 6,
+            "income:gain:6,2,0,0,2,0 -> end_turn:end-turn": 4,
+            "data:analyze -> choose_card:trade-card-selection": 3,
+            "data:analyze -> scan:standard-scan": 3
+          },
+          "frontierOriginCountByFamily": {
+            "end_turn": 134,
+            "place_data": 112,
+            "card_corner": 111,
+            "quick_trade": 23,
+            "pass": 9,
+            "choose_card": 1
+          },
+          "totalMilliseconds": 11789.621875000012
+        }
+      }
+    ],
+    [
+      {
+        "step": 408,
+        "searchIndex": 0,
+        "seat": "player-green",
+        "action": "launch:70d77c1b",
+        "kind": "control",
+        "diagnostics": {
+          "executedNodeCount": 1,
+          "maxExecutionNodes": 1,
+          "executionLimitReached": false,
+          "successfulInputSubmissionCount": 1,
+          "attemptedNodeCountByFamily": {
+            "pass": 1
+          },
+          "failedNodeCountByFamily": {},
+          "failedNodeCountByCode": {},
+          "executedNodeCountByFamily": {
+            "pass": 1
+          },
+          "executedNodeCountByDecisionKind": {
+            "pass:pass": 1
+          },
+          "executedNodeCountByActionSummary": {
+            "pass:PASS": 1
+          },
+          "executedOriginCountByTarget": {
+            "<unbound>": 1
+          },
+          "executedOriginCountByTargetAndDecisionKind": {
+            "<unbound> -> pass:pass": 1
+          },
+          "frontierOriginCountByFamily": {},
+          "totalMilliseconds": 11.344042000011541
+        }
+      },
+      {
+        "step": 408,
+        "searchIndex": 1,
+        "seat": "player-green",
+        "action": "launch:70d77c1b",
+        "kind": "strategic",
+        "diagnostics": {
+          "executedNodeCount": 4096,
+          "maxExecutionNodes": 4096,
+          "executionLimitReached": true,
+          "successfulInputSubmissionCount": 4928,
+          "attemptedNodeCountByFamily": {
+            "card_corner": 49,
+            "choose_card": 1057,
+            "choose_payment": 110,
+            "choose_target": 1510,
+            "end_turn": 341,
+            "land": 114,
+            "launch": 49,
+            "move": 163,
+            "orbit": 77,
+            "pass": 56,
+            "place_data": 117,
+            "play_card": 113,
+            "quick_trade": 221,
+            "research_tech": 48,
+            "scan": 71
+          },
+          "failedNodeCountByFamily": {},
+          "failedNodeCountByCode": {},
+          "executedNodeCountByFamily": {
+            "card_corner": 49,
+            "choose_card": 1057,
+            "choose_payment": 110,
+            "choose_target": 1510,
+            "end_turn": 341,
+            "land": 114,
+            "launch": 49,
+            "move": 163,
+            "orbit": 77,
+            "pass": 56,
+            "place_data": 117,
+            "play_card": 113,
+            "quick_trade": 221,
+            "research_tech": 48,
+            "scan": 71
+          },
+          "executedNodeCountByDecisionKind": {
+            "card_corner:<none>": 49,
+            "choose_card:<none>": 319,
+            "choose_card:residual-domain": 684,
+            "choose_card:trade-card-selection": 54,
+            "choose_payment:move-payment": 110,
+            "choose_target:<none>": 598,
+            "choose_target:planet-reward-alien-trace": 912,
+            "end_turn:end-turn": 341,
+            "land:<none>": 114,
+            "launch:<none>": 49,
+            "move:<none>": 163,
+            "orbit:<none>": 77,
+            "pass:pass": 56,
+            "place_data:place-data": 117,
+            "play_card:<none>": 113,
+            "quick_trade:<none>": 221,
+            "research_tech:research-tech": 48,
+            "scan:standard-scan": 71
+          },
+          "executedNodeCountByActionSummary": {
+            "end_turn:结束回合": 341,
+            "choose_card:盲抽阿米巴牌": 228,
+            "choose_card:获得展示的低重力研究": 228,
+            "choose_target:扫描 开普勒22": 123,
+            "place_data:放置数据": 117,
+            "choose_card:盲抽虫牌": 114,
+            "choose_card:获得展示的虫": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 1 额外痕迹位（3分）": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄1号位": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄2号位（1分）": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄3号位（外星人牌）": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 2 额外痕迹位（3分）": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄1号位（4分）": 114,
+            "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄3号位（3分+外星人牌）": 114,
+            "land:登陆": 114,
+            "choose_card:b_59.webp": 102,
+            "play_card:b_18.webp": 102,
+            "quick_trade:2张牌 → 1能量": 95,
+            "orbit:环绕金星 - 奖励：获得 6 分；获得 1 次收入（R12，1信用点 + 1能量）": 77,
+            "quick_trade:2信用点 → 1能量": 72,
+            "choose_target:扫描 天狼星A": 71,
+            "scan:扫描": 71,
+            "choose_target:扫描 南河三": 66,
+            "choose_payment:弃 1 张移动牌": 57,
+            "pass:PASS": 56,
+            "quick_trade:3宣传 → 精选1张牌": 54,
+            "choose_payment:消耗 1 能量": 53,
+            "choose_card:dlc_41.png → 南河三": 51,
+            "choose_card:收入 b_18.webp": 50,
+            "move:移动探测器 13 逆时针": 50,
+            "card_corner:b_18.webp：弃牌角标": 49,
+            "launch:发射": 49,
+            "choose_card:dlc_1.png": 48,
+            "choose_card:dlc_41.png": 48,
+            "choose_target:研究 blue1（蓝槽 1）": 48,
+            "choose_target:研究 blue2（蓝槽 1）": 48,
+            "choose_target:研究 orange3": 48,
+            "research_tech:研究科技": 48,
+            "choose_target:R12 逆时针": 40,
+            "choose_target:结束移动": 39,
+            "choose_card:收入 b_137.webp": 36,
+            "choose_target:R13 逆时针": 36,
+            "move:移动探测器 12 逆时针": 36,
+            "move:移动探测器 13 向外": 30,
+            "choose_target:R13 向外": 20,
+            "choose_target:R12 顺时针": 18,
+            "move:移动探测器 12 向内": 18,
+            "move:移动探测器 12 顺时针": 18,
+            "choose_card:dlc_41.png → 天狼星A": 17,
+            "choose_card:收入 dlc_12.png": 17,
+            "choose_target:R12 向外": 16,
+            "choose_target:R12 向内": 13,
+            "move:移动探测器 12 向外": 11,
+            "play_card:dlc_12.png": 11,
+            "choose_card:dlc_1.png → 比邻星": 4,
+            "choose_target:跳过": 4,
+            "choose_target:发射探测器": 2,
+            "choose_target:移动 12 向外": 2,
+            "choose_target:移动 12 逆时针": 2,
+            "choose_target:移动 12 顺时针": 2
+          },
+          "executedOriginCountByTarget": {
+            "land:mars:planet:": 2258,
+            "orbit:venus:planet:": 629,
+            "sector:win:sector-1-a:2": 420,
+            "tech:gain:blue1": 410,
+            "tech:gain:blue2": 266,
+            "tech:gain:orange3": 266,
+            "income:gain:6,2,0,0,2,0": 215,
+            "<unbound>": 129,
+            "sector:win:sector-3-a:2": 87,
+            "data:analyze": 43
+          },
+          "executedOriginCountByTargetAndDecisionKind": {
+            "land:mars:planet: -> choose_target:planet-reward-alien-trace": 912,
+            "land:mars:planet: -> choose_card:residual-domain": 684,
+            "tech:gain:blue1 -> choose_card:<none>": 144,
+            "sector:win:sector-1-a:2 -> quick_trade:<none>": 135,
+            "land:mars:planet: -> end_turn:end-turn": 134,
+            "land:mars:planet: -> choose_target:<none>": 130,
+            "orbit:venus:planet: -> choose_target:<none>": 117,
+            "sector:win:sector-1-a:2 -> choose_target:<none>": 115,
+            "land:mars:planet: -> land:<none>": 114,
+            "income:gain:6,2,0,0,2,0 -> place_data:place-data": 110,
+            "orbit:venus:planet: -> end_turn:end-turn": 109,
+            "tech:gain:blue1 -> place_data:place-data": 101,
+            "tech:gain:blue2 -> place_data:place-data": 101,
+            "tech:gain:orange3 -> place_data:place-data": 101,
+            "orbit:venus:planet: -> choose_card:<none>": 99,
+            "land:mars:planet: -> move:<none>": 86,
+            "orbit:venus:planet: -> move:<none>": 77,
+            "orbit:venus:planet: -> orbit:<none>": 77,
+            "<unbound> -> end_turn:end-turn": 73,
+            "land:mars:planet: -> choose_payment:move-payment": 60,
+            "sector:win:sector-3-a:2 -> choose_target:<none>": 58,
+            "<unbound> -> pass:pass": 56,
+            "land:mars:planet: -> play_card:<none>": 55,
+            "sector:win:sector-1-a:2 -> choose_card:<none>": 55,
+            "sector:win:sector-1-a:2 -> scan:standard-scan": 55,
+            "orbit:venus:planet: -> play_card:<none>": 51,
+            "orbit:venus:planet: -> choose_payment:move-payment": 50,
+            "orbit:venus:planet: -> launch:<none>": 49,
+            "tech:gain:blue1 -> card_corner:<none>": 49,
+            "tech:gain:blue2 -> card_corner:<none>": 49,
+            "tech:gain:orange3 -> card_corner:<none>": 49,
+            "tech:gain:blue1 -> choose_target:<none>": 48,
+            "tech:gain:blue1 -> research_tech:research-tech": 48,
+            "tech:gain:blue2 -> choose_target:<none>": 48,
+            "tech:gain:blue2 -> research_tech:research-tech": 48,
+            "tech:gain:orange3 -> choose_target:<none>": 48,
+            "tech:gain:orange3 -> research_tech:research-tech": 48,
+            "land:mars:planet: -> launch:<none>": 45,
+            "land:mars:planet: -> quick_trade:<none>": 38,
+            "sector:win:sector-1-a:2 -> choose_card:trade-card-selection": 38,
+            "income:gain:6,2,0,0,2,0 -> quick_trade:<none>": 36,
+            "sector:win:sector-3-a:2 -> play_card:<none>": 29,
+            "income:gain:6,2,0,0,2,0 -> choose_target:<none>": 27,
+            "sector:win:sector-1-a:2 -> end_turn:end-turn": 22,
+            "tech:gain:blue1 -> end_turn:end-turn": 20,
+            "tech:gain:blue2 -> end_turn:end-turn": 20,
+            "tech:gain:orange3 -> end_turn:end-turn": 20,
+            "income:gain:6,2,0,0,2,0 -> choose_card:<none>": 13,
+            "income:gain:6,2,0,0,2,0 -> scan:standard-scan": 13,
+            "data:analyze -> quick_trade:<none>": 12,
+            "income:gain:6,2,0,0,2,0 -> choose_card:trade-card-selection": 12,
+            "data:analyze -> choose_card:<none>": 8,
+            "data:analyze -> choose_target:<none>": 8,
+            "data:analyze -> place_data:place-data": 7,
+            "data:analyze -> choose_card:trade-card-selection": 4,
+            "data:analyze -> scan:standard-scan": 4,
+            "income:gain:6,2,0,0,2,0 -> end_turn:end-turn": 4
+          },
+          "frontierOriginCountByFamily": {
+            "end_turn": 133,
+            "place_data": 113,
+            "card_corner": 108,
+            "quick_trade": 23,
+            "pass": 9
+          },
+          "totalMilliseconds": 11916.396791999985
+        }
+      }
+    ]
+  ],
+  "sha256": {
+    "reports/research/ddc98722.1f0d82ec.full.json": "f8b5285764a97a594e4e8c1a8f6349fba4af0e7e308728dfd7833f521006d638",
+    "reports/research/0b8c855d.0caa713a.full.json": "69686fc82563d9c35f4aa18b5ae064ed320b9d033a19ab2f66e825c5d381cc98",
+    "seti-saves/seti-save-research-probe-scan-scope-20260907-1f0d82ec-full-v290.json": "b6aea58fddc57513845c5b99776600609e2e035281ea28639b315931bde33ed8",
+    "seti-saves/seti-save-research-any-alien-contract-20260907-0caa713a-full-v291.json": "6e8bded5462288c9f65cd6aadac520869190513eeb90b90c7d304fa835cec9ae"
+  },
+  "verified": true
+}
