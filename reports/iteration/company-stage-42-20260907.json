@@ -1,0 +1,690 @@
+{
+  "scope": "真实42公司首次六方向各执行一次，只读第二阶段合法描述符；不运行搜索，不把阶段样本外推全部公司",
+  "cases": [
+    {
+      "first": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:b849344b",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:out",
+          "rocketId": 1,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 1 向外"
+      },
+      "second": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:96f6cb01",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out"
+          },
+          "decision": null,
+          "summary": "移动 2 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:9d684f87",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:cw",
+            "rocketId": 2,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw"
+          },
+          "decision": null,
+          "summary": "移动 2 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:abf3937a",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:ccw",
+            "rocketId": 2,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw"
+          },
+          "decision": null,
+          "summary": "移动 2 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:49d31bca",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束移动"
+        }
+      ],
+      "ownerPayload": {
+        "companyId": "寰宇动力",
+        "abilityId": "huanyu_free_moves",
+        "step": "free_move",
+        "remaining": 1,
+        "usedRocketIds": [
+          1
+        ]
+      }
+    },
+    {
+      "first": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:baf97e87",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:cw",
+          "rocketId": 1,
+          "deltaX": 1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "cw"
+        },
+        "decision": null,
+        "summary": "移动 1 顺时针"
+      },
+      "second": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:96f6cb01",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out"
+          },
+          "decision": null,
+          "summary": "移动 2 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:9d684f87",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:cw",
+            "rocketId": 2,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw"
+          },
+          "decision": null,
+          "summary": "移动 2 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:abf3937a",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:ccw",
+            "rocketId": 2,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw"
+          },
+          "decision": null,
+          "summary": "移动 2 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:49d31bca",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束移动"
+        }
+      ],
+      "ownerPayload": {
+        "companyId": "寰宇动力",
+        "abilityId": "huanyu_free_moves",
+        "step": "free_move",
+        "remaining": 1,
+        "usedRocketIds": [
+          1
+        ]
+      }
+    },
+    {
+      "first": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:d69b7722",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:ccw",
+          "rocketId": 1,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw"
+        },
+        "decision": null,
+        "summary": "移动 1 逆时针"
+      },
+      "second": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:96f6cb01",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out"
+          },
+          "decision": null,
+          "summary": "移动 2 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:9d684f87",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:cw",
+            "rocketId": 2,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw"
+          },
+          "decision": null,
+          "summary": "移动 2 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:abf3937a",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:ccw",
+            "rocketId": 2,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw"
+          },
+          "decision": null,
+          "summary": "移动 2 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:49d31bca",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束移动"
+        }
+      ],
+      "ownerPayload": {
+        "companyId": "寰宇动力",
+        "abilityId": "huanyu_free_moves",
+        "step": "free_move",
+        "remaining": 1,
+        "usedRocketIds": [
+          1
+        ]
+      }
+    },
+    {
+      "first": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:96f6cb01",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:out",
+          "rocketId": 2,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 2 向外"
+      },
+      "second": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:b849344b",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out"
+          },
+          "decision": null,
+          "summary": "移动 1 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:baf97e87",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:cw",
+            "rocketId": 1,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw"
+          },
+          "decision": null,
+          "summary": "移动 1 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:d69b7722",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:ccw",
+            "rocketId": 1,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw"
+          },
+          "decision": null,
+          "summary": "移动 1 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:49d31bca",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束移动"
+        }
+      ],
+      "ownerPayload": {
+        "companyId": "寰宇动力",
+        "abilityId": "huanyu_free_moves",
+        "step": "free_move",
+        "remaining": 1,
+        "usedRocketIds": [
+          2
+        ]
+      }
+    },
+    {
+      "first": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:9d684f87",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:cw",
+          "rocketId": 2,
+          "deltaX": 1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "cw"
+        },
+        "decision": null,
+        "summary": "移动 2 顺时针"
+      },
+      "second": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:b849344b",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out"
+          },
+          "decision": null,
+          "summary": "移动 1 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:baf97e87",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:cw",
+            "rocketId": 1,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw"
+          },
+          "decision": null,
+          "summary": "移动 1 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:d69b7722",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:ccw",
+            "rocketId": 1,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw"
+          },
+          "decision": null,
+          "summary": "移动 1 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:49d31bca",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束移动"
+        }
+      ],
+      "ownerPayload": {
+        "companyId": "寰宇动力",
+        "abilityId": "huanyu_free_moves",
+        "step": "free_move",
+        "remaining": 1,
+        "usedRocketIds": [
+          2
+        ]
+      }
+    },
+    {
+      "first": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:abf3937a",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:ccw",
+          "rocketId": 2,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw"
+        },
+        "decision": null,
+        "summary": "移动 2 逆时针"
+      },
+      "second": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:b849344b",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out"
+          },
+          "decision": null,
+          "summary": "移动 1 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:baf97e87",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:cw",
+            "rocketId": 1,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw"
+          },
+          "decision": null,
+          "summary": "移动 1 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:d69b7722",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:ccw",
+            "rocketId": 1,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw"
+          },
+          "decision": null,
+          "summary": "移动 1 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:49d31bca",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束移动"
+        }
+      ],
+      "ownerPayload": {
+        "companyId": "寰宇动力",
+        "abilityId": "huanyu_free_moves",
+        "step": "free_move",
+        "remaining": 1,
+        "usedRocketIds": [
+          2
+        ]
+      }
+    }
+  ],
+  "passed": true
+}

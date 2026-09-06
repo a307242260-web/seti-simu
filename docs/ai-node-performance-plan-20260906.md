@@ -185,3 +185,8 @@ reports/iteration/policy-plan-full-review-20260906.md；不扩大到公司策略
 手牌身份也为10种不同状态。另1条缺交易支付身份，明确未完成；摘要省略end_turn
 与宏输入，不能冒充完整搜索回放。没有按同目标合并的证据，后续需完整chain/plan
 输入而非继续猜摘要。见reports/iteration/venus-preparation-review-20260907.md。
+
+观察成本筛选后恢复公司需求设计：旧42完整叶观察约0.69秒、inspect约0.51秒，
+不能视为全部可省，不优先新增缓存。真实42六个首次方向的第二阶段合法集已核对，
+当前允许火箭直接从合法描述符读取，无需新增阶段接口；下一步闭合免费可达性与
+访问收益，避免反复研究同一阶段疑问。见reports/iteration/company-stage-review-20260907.md。

@@ -1,0 +1,10 @@
+{
+  "source": "reports/iteration/movement-decision-42-20260906.cpuprofile",
+  "scope": "旧42原生CPU证据复算；每样本同名递归只计一次，inclusive不可相加，不是可节省时间或当前版本新计时",
+  "inclusiveMs": {
+    "projectionInner": 2216.049999999995,
+    "fullLeafObservation": 694.3740000000006,
+    "captureStep": 1415.5899999999995,
+    "inspect": 507.29299999999984
+  }
+}

@@ -53,6 +53,12 @@
 10.23秒、搜索累计9.10秒，因此优先保分支优化复制成本，本方案暂缓而非已实施。
 详见movement-cpu-review-20260906.md；不把暂缓作为Goal完成依据。
 
+2026-09-07恢复闭合设计：真实42全部6个首次方向已正式提交，各自第二阶段仅另一
+艘3方向+结束；listHuanyuMoveChoices已统一maxPoints:1与usedRocketIds过滤。
+仅过滤当前方向时，可直接消费合法描述符，不必新增公开阶段字段；前瞻额度仍不能
+靠合法火箭数量猜测。以上更新第2项的当前合法边界，未关闭免费可达性/访问收益。
+见company-stage-review-20260907.md与company-stage-42-20260907.json。
+
 本轮脚本语法和 `node tools/audit_v_state_inputs.js` 通过；未修改生产。
 已检查相关AI选择器、Production探测需求、公司流程及实现证据门禁；只更新本设计
 与性能计划。README/AGENTS、AI设计/RL契约及公司规则没有行为或接口变化，无需改写。
