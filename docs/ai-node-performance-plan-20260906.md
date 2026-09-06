@@ -153,3 +153,9 @@ reports/iteration/amiba-region-rule-design-20260906.md。官方中英文说明�
 正式执行，存在activeRocketId及同终点槽位差异，不直接固定顺序删除一半。
 下一项审查未绑定industry的需求准入；不关闭公司、不裁真实方向。详见
 reports/iteration/company-movement-hotspot-review-20260906.md。
+
+寰宇需求入口已核对：真实42合法公司行动没有目标绑定，6方向中4方向匹配原始
+probe下一步。现有资源准入先按付费移动成本过滤，不能只接公司并关闭无目标入口。
+第一/第二艘、免费额度、沿途访问和来源约束的方案义务已登记于
+reports/iteration/company-demand-design-20260906.md，尚未冻结、无生产改动。
+冻结前先补正式方向/成本公开读边界和第二艘/访问收益覆盖，不扩展其他公司。
