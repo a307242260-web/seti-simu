@@ -797,6 +797,34 @@ function runAmibaRemoveTraceRegionReward() {
   }
 }
 
+function runProbeSectorScanDependency() {
+  const root = createCanonicalState("b_53.webp");
+  for (const [playerId, x] of [["p1", 0], ["p1", 2], ["p2", 4]]) {
+    assert.equal(rockets.launchRocketAtSector(root.pieces, { x, y: 2 }, {
+      playerId, color: playerId === "p1" ? "brown" : "blue", root,
+    }).ok, true);
+  }
+  const expected = [0, 2].map(x => solar.getNebulaAtCoordinate(x, 5, root.solarSystem.sectorBySlot).id).sort();
+  const { composition } = createIntegratedComposition("b_53.webp", { state: root });
+  const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  assert.equal(result.ok, true, JSON.stringify(result));
+  const decision = composition.inspect().session.decision;
+  assert.deepEqual(decision.choices.map(c => c.target.nebulaId).sort(), expected);
+  const saved = composition.lifecycle.save().envelope;
+  const submission = { decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId, choice: decision.choices[0] };
+  const selectedNebula = decision.choices[0].target.nebulaId;
+  assert.equal(composition.inputPort.submitDecision(submission).ok, true);
+  const after = composition.lifecycle.save().envelope;
+  const state = composition.stateSourcePort.getSnapshot();
+  assert.ok(data.listNebulaTokens(state.data, selectedNebula).some(t => t.replacedByPlayerId === "p1"));
+  assert.equal(composition.lifecycle.restore(saved, { silent: true }).ok, true);
+  assert.equal(composition.inputPort.submitDecision(submission).ok, true);
+  assert.deepEqual(composition.lifecycle.save().envelope, after);
+  composition.dispose();
+}
+
+runProbeSectorScanDependency();
 runAmibaSingleSymbolReward();
 runAmibaRemoveTraceRegionReward();
 

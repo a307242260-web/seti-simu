@@ -10,6 +10,7 @@
   let tech = root.SetiTech;
   let cards = root.SetiCards;
   let solar = root.SetiSolarSystem;
+  let rockets = root.SetiRocketActions;
   let aliens = root.SetiAliens;
   let industryPassives = root.SetiIndustryPassives;
   let industryState = root.SetiIndustryState;
@@ -26,6 +27,7 @@
     tech = tech || require("../tech");
     cards = cards || require("../cards/deck");
     solar = solar || require("../../solar-system/core");
+    rockets = rockets || require("../rockets");
     aliens = aliens || require("../aliens");
     industryPassives = industryPassives || require("../industry/passives");
     industryState = industryState || require("../industry/state");
@@ -50,6 +52,7 @@
     helios,
     stateSequences,
     cardEffects,
+    rockets,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiScienceSession = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
@@ -68,6 +71,7 @@
   helios,
   stateSequences,
   cardEffects,
+  rockets,
 ) {
   "use strict";
 

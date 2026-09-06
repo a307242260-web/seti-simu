@@ -83,3 +83,8 @@ reports/iteration/amiba-region-rule-design-20260906.md。官方中英文说明�
 不能继续删真正的卡牌单选；详见reports/iteration/amiba-region-full-review-20260906.md。
 新轨迹还复现了旧probe扫描未导入rockets缺陷，留作独立修复，不混入阿米巴摘要。
 保留正确规则，不调权重补分；分差因果分解及后续高节点优化尚未完成。
+
+独立probe扫描依赖修复已实施：science显式接入共享rockets，585旧抛错消失，
+2614节点/11.48秒，无失败、根动作不变。466原rockets错误消失后仍有12次
+“阿米巴痕迹需要canonical alienEntity sequence”，已留档，下一项单独定位；
+暂不跑完整局，不降低108.5验收门槛。详见probe-scan-dependency-design-20260906.md。
