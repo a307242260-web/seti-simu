@@ -730,6 +730,12 @@ function capturePlanStep({ observation, action }) {
   const sectorRequirements = observation.sectorWinRequirements
     || observation.outcomeProjection?.progress?.sectorWinRequirements;
   const facts = {
+    probeScanSectorLayout: structuredClone(board.solarSystem?.sectorBySlot ?? null),
+    probeScanSources: (board.rockets || []).filter(rocket => rocket.playerId != null
+      && rocket.surface === "solar-board" && (rocket.kind || "standard") === "standard")
+      .map(rocket => ({ id: rocket.id, playerId: rocket.playerId,
+      surface: rocket.surface, kind: rocket.kind || "standard", sectorX: rocket.sectorX ?? null,
+      sectorY: rocket.sectorY ?? null, polar: structuredClone(rocket.polar ?? null) })),
     scanEarth: structuredClone(sectorRequirements?.standardScanEarthSource ?? null),
     routes: (probe?.candidates || []).map((candidate) => ({
       targetId: candidate.targetId, requirementId: candidate.requirementId,
@@ -801,6 +807,7 @@ function stepScopes(step, segment) {
   for (const item of segment) {
     if (item.action.family === "scan") add("scan-earth", "standard");
     const target = item.action.target || {};
+    if (target.probeScanSource === true) add("probe-scan-source", target.rocketId);
     if (target.tileId) {
       const choiceId = String(target.choiceId || "");
       if (choiceId === `final:${target.tileId}`) add("final-tile", target.tileId);
@@ -826,6 +833,10 @@ function stepScopes(step, segment) {
 }
 
 function scopedFact(facts, scope) {
+  if (scope.kind === "probe-scan-source") {
+    const rocket = facts.probeScanSources?.find(item => String(item.id) === scope.id);
+    return rocket && facts.probeScanSectorLayout != null ? { rocket, sectorBySlot: facts.probeScanSectorLayout } : undefined;
+  }
   if (scope.kind === "scan-earth") return facts.scanEarth ?? undefined;
   if (scope.kind === "route") {
     const routes = facts.routes.filter((item) => item.targetId === scope.id && item.sourceId === scope.sourceId)

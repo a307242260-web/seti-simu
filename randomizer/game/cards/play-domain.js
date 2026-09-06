@@ -419,7 +419,7 @@
           case cardEffects.EFFECT_TYPES.LANDING_SECTOR_SCAN:
             return { mode: "landing", gainData: e.options?.gainData !== false, label: e.label };
           case cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN:
-            return { mode: "probe", gainData: e.options?.gainData !== false, label: e.label };
+            return { ...clone(e.options), mode: "probe", label: e.label, selectedRocketIds: [] };
           case cardEffects.EFFECT_TYPES.CONDITIONAL_SECTOR_SCAN:
             return { mode: "conditional", condition: e.options?.condition, gainData: e.options?.gainData !== false, label: e.label };
           default:
@@ -428,12 +428,20 @@
       })();
       if (scanStepOptions) {
         const science = getScienceDomain();
+        const afterProbeScan = effect.type === cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN
+          && Number.isInteger(effect.options?.returnToHandIfSignalCount)
+          ? createSpawnedCardEffect({
+            id: `${effect.id}:return`, type: cardEffects.EFFECT_TYPES.RETURN_PLAYED_CARD_TO_HAND_IF,
+            options: { condition: { type: "probeScanSignalCount", count: effect.options.returnToHandIfSignalCount } },
+          }, ownerId, cardInstanceId)
+          : null;
         return {
           priority: "direct",
           effect: {
             type: science.EFFECT_TYPES.SCAN_STEP,
             ownerId,
-            payload: { options: scanStepOptions, cardInstanceId, cardEffect: clone(effect) },
+            payload: { options: scanStepOptions, cardInstanceId, cardEffect: clone(effect),
+              ...(afterProbeScan ? { afterProbeScan } : {}) },
           },
         };
       }
@@ -1658,7 +1666,14 @@
           claimedKeys: [],
         });
       } else if (effect.type === cardEffects.EFFECT_TYPES.RETURN_PLAYED_CARD_TO_HAND_IF) {
-        const met = options.condition?.type === "lastLandingHadAnyMarker"
+        const scanReturn = options.condition?.type === "probeScanSignalCount";
+        const scanResult = sessionEffect.payload.probeScanResult;
+        if (scanReturn && (!scanResult || scanResult.cardInstanceId !== sessionEffect.payload.cardInstanceId
+          || !Number.isInteger(scanResult.signalCount) || !scanResult.nebulaId)) {
+          return fail("CARD_RETURN_SCAN_FACTS_MISSING", "扫描回手缺少对应卡实例的正式信号事实");
+        }
+        const met = scanReturn ? scanResult.signalCount === options.condition.count
+          : options.condition?.type === "lastLandingHadAnyMarker"
           ? Boolean(root.match.cardPlayContext?.lastLanding?.hadAnyMarker)
           : conditionMet(root, actor, options.condition);
         if (met) {
@@ -1674,6 +1689,8 @@
             const [card] = source.splice(index, 1);
             actor.hand.push(card);
             actor.resources.handSize = actor.hand.length;
+          } else if (scanReturn) {
+            return fail("CARD_RETURN_SCAN_CARD_MISSING", "扫描回手的原卡实例已失效");
           }
         }
         event.conditionMet = met;

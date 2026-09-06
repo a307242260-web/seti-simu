@@ -1056,13 +1056,17 @@
         }
       } else if (mode === "probe") {
         const sectorBySlot = getWorkingSlice(root, "solarSystem").sectorBySlot;
-        const ids = [...new Set((getWorkingSlice(root, "pieces").rockets || [])
-          .filter((rocket) => rocket.playerId === actor.id && rocket.surface === "solar-board")
-          .map((rocket) => rockets.getRocketSectorCoordinate(rocket)?.x)
-          .filter((x) => x != null)
-          .map((x) => solar.getNebulaAtCoordinate(x, 5, sectorBySlot)?.id)
-          .filter(Boolean))];
-        choices.push(...listNebulaChoices(root, { nebulaIds: ids, gainData: opts.gainData }));
+        for (const rocket of getWorkingSlice(root, "pieces").rockets || []) {
+          if (!rockets.isControllablePlayerRocket(rocket)
+            || (opts.owner !== "any" && rocket.playerId !== actor.id)
+            || (opts.selectedRocketIds || []).includes(rocket.id)) continue;
+          const coordinate = rockets.getRocketSectorCoordinate(rocket);
+          const nebulaId = solar.getNebulaAtCoordinate(coordinate.x, 5, sectorBySlot)?.id;
+          if (!nebulaId) throw new TypeError("PROBE_SCAN_SECTOR_MISSING: 探测器缺少正式扇区");
+          choices.push(makeChoice("choose_target", `probe:${rocket.id}:${nebulaId}`,
+            { rocketId: rocket.id, nebulaId, probeScanSource: true }, {}, `探测器 ${rocket.id} → ${data.getNebulaLabel(nebulaId)}`));
+        }
+        if (Number(opts.maxTargets) > 1) choices.push(makeChoice("choose_target", "probe:done", { done: true }, {}, "结束探测器扫描"));
       } else if (mode === "conditional") {
         const sectorXs = [...new Set(Object.values(cardEffects.NEBULA_IDS_BY_COLOR)
           .flat().map((nebulaId) => getNebulaSectorX(root, nebulaId)).filter((x) => x != null))];
@@ -1087,6 +1091,29 @@
         choices.push(makeChoice(skipFamily, "skip", { skip: true }, {}, "跳过"));
       }
       return choices;
+    }
+
+    function probeScanStep(effect, options) {
+      return { priority: "direct", effect: { type: EFFECT_TYPES.SCAN_STEP, ownerId: effect.ownerId,
+        payload: { ...clone(effect.payload), options } } };
+    }
+
+    function beginProbeScan(state, root, effect, opts, actor, legal) {
+      const rocket = root.pieces.rockets.find(candidate => candidate.id === legal.target.rocketId);
+      const coordinate = rockets.getRocketSectorCoordinate(rocket);
+      const sectorXs = opts.includeAdjacent ? [coordinate.x, solar.mod8(coordinate.x - 1), solar.mod8(coordinate.x + 1)] : [coordinate.x];
+      const remaining = sectorXs.map(x => {
+        const nebulaId = solar.getNebulaAtCoordinate(x, 5, root.solarSystem.sectorBySlot)?.id;
+        if (!nebulaId) throw new TypeError("PROBE_SCAN_SECTOR_MISSING: 探测器扫描义务缺少正式扇区");
+        return { nebulaId, count: Math.max(1, Number(opts.repeat) || 1) };
+      });
+      const sourceOptions = { ...clone(opts), selectedRocketIds: [...(opts.selectedRocketIds || []), rocket.id] };
+      return scienceResult(state, root, `${EFFECT_TYPES.SCAN_STEP}:source`, {
+        spawnedEffects: [probeScanStep(effect, { mode: "specified", gainData: opts.gainData, label: opts.label,
+          nebulaIds: remaining.map(item => item.nebulaId),
+          probeFlow: { sourceRocketId: rocket.id, sourceOptions, remaining } })],
+        events: [{ type: "probeScanSourceSelected", playerId: actor.id, rocketId: rocket.id, nebulaId: legal.target.nebulaId }],
+      });
     }
 
     // 共享扫描结算：支付附加费用 → scanNebula → placeNebulaToken → 统一扇区结算；
@@ -1139,6 +1166,28 @@
           }, "choose_card"));
         }
       }
+      if (opts.probeFlow) {
+        const flow = clone(opts.probeFlow);
+        const scanned = flow.remaining.find(item => item.nebulaId === legal.target.nebulaId);
+        if (!scanned || scanned.count < 1) throw new TypeError("PROBE_SCAN_OBLIGATION_MISSING: 实际扫描没有对应剩余义务");
+        scanned.count -= 1;
+        flow.remaining = flow.remaining.filter(item => item.count > 0);
+        if (flow.remaining.length) {
+          spawnedEffects.push(probeScanStep(effect, { ...clone(opts), probeFlow: flow,
+            nebulaIds: flow.remaining.map(item => item.nebulaId) }));
+        } else if (flow.sourceOptions.selectedRocketIds.length < Number(flow.sourceOptions.maxTargets)
+          && scanStepChoices(root, actor, flow.sourceOptions).some(choice => choice.target.rocketId != null)) {
+          spawnedEffects.push(probeScanStep(effect, flow.sourceOptions));
+        } else if (effect.payload.afterProbeScan) {
+          // 只携带结算前的信号事实；搬回原卡仍由Card Play的既有卡实体owner执行。
+          const after = clone(effect.payload.afterProbeScan);
+          const ranking = data.getSectorRanking(root.data, legal.target.nebulaId);
+          const own = ranking.find(item => item.playerId === actor.id || item.playerColor === actor.color);
+          after.effect.payload.probeScanResult = { cardInstanceId: effect.payload.cardInstanceId,
+            nebulaId: legal.target.nebulaId, signalCount: own ? own.count : 0 };
+          spawnedEffects.push(after);
+        }
+      }
       return scienceResult(state, root, EFFECT_TYPES.SCAN_STEP, {
         spawnedEffects,
         events,
@@ -1185,7 +1234,7 @@
           spawnedEffects: choices.length ? [scanDecisionEffect(
             EFFECT_TYPES.SCAN_STEP,
             actor.id,
-            { options: clone(opts) },
+            { ...clone(effect.payload), options: clone(opts) },
             mode === "hand" ? "choose_card" : "choose_target",
           )] : [],
           events: choices.length ? [] : [{ type: "scanStepSkipped", reason: "no_legal_target" }],
@@ -1204,6 +1253,13 @@
         const mode = opts.mode || "specified";
         const actor = getActor(root, effect.ownerId);
         if (!actor) return fail("SCIENCE_SCAN_STEP_STALE", "扫描玩家已失效");
+        if (mode === "probe" && choice?.target?.done) {
+          const legal = scanStepChoices(root, actor, opts).find(candidate => candidate.target.done);
+          if (!legal) return fail("SCIENCE_SCAN_STEP_STALE", "当前探测器扫描不能提前结束");
+          return scienceResult(state, root, EFFECT_TYPES.SCAN_STEP, {
+            spawnedEffects: [], events: [{ type: "probeScanCompleted", playerId: actor.id, selectedRocketIds: clone(opts.selectedRocketIds || []) }],
+          });
+        }
         if (choice?.target?.skip) {
           return scienceResult(state, root, EFFECT_TYPES.SCAN_STEP, {
             spawnedEffects: [],
@@ -1222,6 +1278,7 @@
         const legal = scanStepChoices(root, actor, opts)
           .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
         if (!legal) return fail("SCIENCE_SCAN_STEP_STALE", "扫描选择已失效");
+        if (mode === "probe") return beginProbeScan(state, root, effect, opts, actor, legal);
         return resolveScanStep(state, root, effect, opts, actor, legal);
       },
     });

@@ -454,6 +454,29 @@ function planAction(id, family = "move", target = {}) {
 
 {
   const before = planObservation();
+  before.publicState.board.rockets = [
+    { id: 1, playerId: "p1", surface: "solar-board", sectorX: 2, sectorY: 1 },
+    { id: 2, playerId: "p2", surface: "solar-board", sectorX: 3, sectorY: 1 },
+  ];
+  before.publicState.board.solarSystem = { sectorBySlot: ["sector-a", "sector-b"] };
+  const choose = planAction("probe-scan", "choose_target", { rocketId: 2, nebulaId: "sector-a", probeScanSource: true });
+  const plan = storedSteps([stepEvidence(choose, before, "sector:win:sector-a:1")]);
+  assert.equal(planContinuation.planReuseCheck(plan, before, [choose]).hit, true);
+  const unrelated = structuredClone(before);
+  unrelated.publicState.board.rockets[0].sectorX = 4;
+  assert.equal(planContinuation.planReuseCheck(plan, unrelated, [choose]).hit, true);
+  const rotated = structuredClone(before);
+  rotated.publicState.board.solarSystem.sectorBySlot.reverse();
+  assert.equal(planContinuation.planReuseCheck(plan, rotated, [choose]).reason, "next-step-affected", "探测器未移动但对应扇区变化也使准备计划失效");
+  const moved = structuredClone(before);
+  moved.publicState.board.rockets[1].sectorX = 4;
+  assert.equal(planContinuation.planReuseCheck(plan, moved, [choose]).reason, "next-step-affected", "所选对手探测器移动使扫描计划失效");
+  moved.publicState.board.rockets.pop();
+  assert.equal(planContinuation.planReuseCheck(plan, moved, [choose]).hit, false, "来源消失不能继续复用");
+}
+
+{
+  const before = planObservation();
   const root = planAction("research", "research_tech");
   const choose = planAction("tile", "choose_target", { tileId: "blue1", publicSlotIndex: 0 });
   before.publicState.board.publicCards = [{ id: "card-a", cardId: "c1" }];

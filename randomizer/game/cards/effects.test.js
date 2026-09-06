@@ -538,7 +538,8 @@ cardEffects.ensureCardEffectState(b22);
 assert.ok(cardEffects.getCardModel("b_22.webp"));
 assert.equal(cardEffects.getDeferredCardModel("b_22.webp"), null);
 const b22Effects = cardEffects.buildPlayEffects(b22);
-assert.equal(b22Effects.length, 2);
+assert.equal(b22Effects.length, 1);
+assert.equal(b22Effects[0].options.repeat, 2, "同一探测器来源的两次标记保留在一条扫描义务中");
 assert.equal(b22Effects.every((effect) => effect.type === cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN), true);
 assert.equal(cardEffects.collectReadyTasks(signalPlayer, {
   data: {
@@ -903,7 +904,7 @@ assert.equal(cardEffects.buildPlayEffects({ cardId: "b_61.webp" })[0].type, card
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_62.webp" })[0].options.bonus.includePlanetIds[0], "jupiter");
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_64.webp" }).filter((effect) => (
   effect.type === cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN
-)).length, 2);
+)).length, 1);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_66.webp" })[0].options.bonus.distinctBy, "planetId");
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_79.webp" })[1].options.incomeKey, "handSize");
 

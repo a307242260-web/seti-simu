@@ -334,6 +334,14 @@ PASS 提交后（`passCompletionPending` 置位或已计入 `passedPlayerIds`）
 `science-session`显式注入共享`rockets`模块，探测器扇区读取统一使用
 `getRocketSectorCoordinate`；Browser与Node遵循相同依赖，不借用隐式全局变量。
 
+探测器扫描先选择普通太阳系探测器，按牌面限定己方或任意玩家；不按扇区去重丢掉
+同格多艘。b50至多选择3个不同探测器，可提前结束；b22/b64/b96的重复标记保持
+同一来源，b96不获得数据；b58在所选扇区和两个相邻扇区各标记一次，可选择顺序。
+剩余次数、已选实体及卡牌后续均保存在同一SCAN_STEP的payload中；指定单目标
+继续自动扫描，不增加另一套信号执行器。b88在标记后、SCAN_FINALIZE结算前按
+正式扇区排名的己方信号数检查回手，Science提供事实，由Card Play搬回原卡。
+未声明回手条件的模型不输出undefined字段。
+
 扫描 effect 由 `randomizer/game/actions/scan-effects.js` 构建，并由 `randomizer/game/effects/science-session.js` 在公共 Effect Session 中编排。**所有「往扇区放信号」的节点统一为一个 `SCAN_STEP`**（`science_domain_scan_step`）：按 `mode` 枚举目标（`specified` 指定星云/扇区、`any` 任意、`color` 颜色族、`planet` 行星扇区、`probe` 探测器扇区、`landing` 刚登陆扇区、`conditional` 条件扇区、`hand` 手牌扫描、`public` 公共牌扫描），共享扫描结算（`scanNebula` → `placeNebulaToken`）；固定单目标自动直接扫描，多目标/可跳过/公共牌提升为标准决策；`hand`/`public` 模式含弃牌与公共牌延迟补牌多步流。**扇区结算统一由扫描流串尾的 `SCAN_FINALIZE` 节点触发一次 `SETTLE`**（P13：不逐节点结算，同一 flow 内完成扇区不提前重置）；每个扫描流 spawn 源都在自己的 SCAN_STEP 串之后追加一个 `SCAN_FINALIZE`。扫描主行动（`scanQueue`）、行星奖励扫描、卡牌扫描家族（任意/颜色/固定/行星/登陆/探测器/条件/公共牌）全部收敛到该节点；`DRAW_THEN_SCAN`（盲抽后扫描）与 `SCAN_ACTION_4`（紫4 发射/移动，非放信号）保留独立流程（`DRAW_THEN_SCAN` 单节点扫描流同样追加 `SCAN_FINALIZE`；紫4 在流内，被串尾 `SCAN_FINALIZE` 覆盖）。
 
 - 标准扫描主行动开始时先支付扫描费用（受公司/被动修正影响），费用是行动触发条件，不作为效果队列节点；该支付仍随行动历史可撤销。

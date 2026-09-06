@@ -1,0 +1,835 @@
+{
+  "scope": "真实42盘面派生受控卡牌/棋子/信号状态，通过唯一Production正式输入验证全部扫描链和逐Decision恢复；非原固定局/非AI搜索",
+  "cases": [
+    {
+      "cardId": "b_50.webp",
+      "setup": "empty",
+      "marks": [
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-b",
+          "slotIndex": 1,
+          "playerId": "player-green"
+        },
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-a",
+          "slotIndex": 1,
+          "playerId": "player-green"
+        },
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-a",
+          "slotIndex": 2,
+          "playerId": "player-green"
+        }
+      ],
+      "chosenSources": 3,
+      "restoredDecisions": 3,
+      "returned": false,
+      "steps": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:45785149",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-39-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "handIndex": 3
+            },
+            "decision": null,
+            "summary": "b_50.webp"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:7a5d65d9",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "probe:3:sector-1-b",
+              "rocketId": 3,
+              "nebulaId": "sector-1-b",
+              "probeScanSource": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "探测器 3 → 织女一"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:545ee30d",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "probe:1:sector-1-a",
+              "rocketId": 1,
+              "nebulaId": "sector-1-a",
+              "probeScanSource": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "探测器 1 → 南河三"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:744c6ced",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "probe:2:sector-1-a",
+              "rocketId": 2,
+              "nebulaId": "sector-1-a",
+              "probeScanSource": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "探测器 2 → 南河三"
+          },
+          "ok": true
+        }
+      ],
+      "effectTypes": [
+        "card_play_domain_play",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_finalize",
+        "science_domain_settle"
+      ]
+    },
+    {
+      "cardId": "b_50.webp",
+      "setup": "empty",
+      "marks": [],
+      "chosenSources": 0,
+      "restoredDecisions": 1,
+      "returned": false,
+      "steps": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:45785149",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-39-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "handIndex": 3
+            },
+            "decision": null,
+            "summary": "b_50.webp"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:dbc676a8",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "probe:done",
+              "done": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结束探测器扫描"
+          },
+          "ok": true
+        }
+      ],
+      "effectTypes": [
+        "card_play_domain_play",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_finalize",
+        "science_domain_settle"
+      ]
+    },
+    {
+      "cardId": "b_50.webp",
+      "setup": "empty",
+      "marks": [
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-b",
+          "slotIndex": 1,
+          "playerId": "player-green"
+        }
+      ],
+      "chosenSources": 1,
+      "restoredDecisions": 2,
+      "returned": false,
+      "steps": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:45785149",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-39-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "handIndex": 3
+            },
+            "decision": null,
+            "summary": "b_50.webp"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:7a5d65d9",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "probe:3:sector-1-b",
+              "rocketId": 3,
+              "nebulaId": "sector-1-b",
+              "probeScanSource": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "探测器 3 → 织女一"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:dbc676a8",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "probe:done",
+              "done": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结束探测器扫描"
+          },
+          "ok": true
+        }
+      ],
+      "effectTypes": [
+        "card_play_domain_play",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_finalize",
+        "science_domain_settle"
+      ]
+    },
+    {
+      "cardId": "b_58.webp",
+      "setup": "empty",
+      "marks": [
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-a",
+          "slotIndex": 1,
+          "playerId": "player-green"
+        },
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-4-b",
+          "slotIndex": 1,
+          "playerId": "player-green"
+        },
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-b",
+          "slotIndex": 1,
+          "playerId": "player-green"
+        }
+      ],
+      "chosenSources": 1,
+      "restoredDecisions": 4,
+      "returned": false,
+      "steps": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:45785149",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-39-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "handIndex": 3
+            },
+            "decision": null,
+            "summary": "b_58.webp"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:5c22a423",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "1:0:1",
+              "rocketId": 1,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "requiredMovePoints": 1,
+              "remaining": 1
+            },
+            "decision": null,
+            "summary": "R1 向外"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:545ee30d",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "probe:1:sector-1-a",
+              "rocketId": 1,
+              "nebulaId": "sector-1-a",
+              "probeScanSource": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "探测器 1 → 南河三"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:606367a1",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "nebula:sector-1-a",
+              "nebulaId": "sector-1-a",
+              "sectorX": null
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 南河三"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:ef3d2b21",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "nebula:sector-4-b",
+              "nebulaId": "sector-4-b",
+              "sectorX": null
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 绘架座β"
+          },
+          "ok": true
+        }
+      ],
+      "effectTypes": [
+        "card_play_domain_play",
+        "card_play_domain_effect:effect:card_move",
+        "card_play_domain_effect:decision:card_move",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_finalize",
+        "science_domain_settle"
+      ]
+    },
+    {
+      "cardId": "b_88.webp",
+      "setup": "empty",
+      "marks": [
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-a",
+          "slotIndex": 1,
+          "playerId": "player-green"
+        }
+      ],
+      "chosenSources": 1,
+      "restoredDecisions": 1,
+      "returned": true,
+      "steps": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:f7fde46e",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-39-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 3
+            },
+            "decision": null,
+            "summary": "b_88.webp"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:545ee30d",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "probe:1:sector-1-a",
+              "rocketId": 1,
+              "nebulaId": "sector-1-a",
+              "probeScanSource": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "探测器 1 → 南河三"
+          },
+          "ok": true
+        }
+      ],
+      "effectTypes": [
+        "card_play_domain_play",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "card_play_domain_effect:effect:card_return_played_card_to_hand_if",
+        "science_domain_scan_finalize",
+        "science_domain_settle"
+      ]
+    },
+    {
+      "cardId": "b_88.webp",
+      "setup": "own-signal",
+      "marks": [
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-a",
+          "slotIndex": 2,
+          "playerId": "player-green"
+        }
+      ],
+      "chosenSources": 1,
+      "restoredDecisions": 1,
+      "returned": false,
+      "steps": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:f7fde46e",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-39-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 3
+            },
+            "decision": null,
+            "summary": "b_88.webp"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:545ee30d",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "probe:1:sector-1-a",
+              "rocketId": 1,
+              "nebulaId": "sector-1-a",
+              "probeScanSource": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "探测器 1 → 南河三"
+          },
+          "ok": true
+        }
+      ],
+      "effectTypes": [
+        "card_play_domain_play",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "card_play_domain_effect:effect:card_return_played_card_to_hand_if",
+        "science_domain_scan_finalize",
+        "science_domain_settle"
+      ]
+    },
+    {
+      "cardId": "b_88.webp",
+      "setup": "complete",
+      "marks": [
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-a",
+          "slotIndex": 5,
+          "playerId": "player-green"
+        }
+      ],
+      "chosenSources": 1,
+      "restoredDecisions": 2,
+      "returned": true,
+      "steps": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:f7fde46e",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-39-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 3
+            },
+            "decision": null,
+            "summary": "b_88.webp"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:545ee30d",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "probe:1:sector-1-a",
+              "rocketId": 1,
+              "nebulaId": "sector-1-a",
+              "probeScanSource": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "探测器 1 → 南河三"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:0cd46a3d",
+            "actorId": "player-blue",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "trace:1:pink",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "pink"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 粉色痕迹"
+          },
+          "ok": true
+        }
+      ],
+      "effectTypes": [
+        "card_play_domain_play",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "card_play_domain_effect:effect:card_return_played_card_to_hand_if",
+        "science_domain_scan_finalize",
+        "science_domain_settle",
+        "science_domain_alien_trace"
+      ]
+    },
+    {
+      "cardId": "b_22.webp",
+      "setup": "empty",
+      "marks": [
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-a",
+          "slotIndex": 1,
+          "playerId": "player-green"
+        },
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-a",
+          "slotIndex": 2,
+          "playerId": "player-green"
+        }
+      ],
+      "chosenSources": 1,
+      "restoredDecisions": 1,
+      "returned": false,
+      "steps": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:45785149",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-39-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 2
+              },
+              "handIndex": 3
+            },
+            "decision": null,
+            "summary": "b_22.webp"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:545ee30d",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "probe:1:sector-1-a",
+              "rocketId": 1,
+              "nebulaId": "sector-1-a",
+              "probeScanSource": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "探测器 1 → 南河三"
+          },
+          "ok": true
+        }
+      ],
+      "effectTypes": [
+        "card_play_domain_play",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_finalize",
+        "science_domain_settle"
+      ]
+    },
+    {
+      "cardId": "b_96.webp",
+      "setup": "empty",
+      "marks": [
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-a",
+          "slotIndex": 1,
+          "playerId": "player-green"
+        },
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-a",
+          "slotIndex": 2,
+          "playerId": "player-green"
+        },
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-a",
+          "slotIndex": 3,
+          "playerId": "player-green"
+        }
+      ],
+      "chosenSources": 1,
+      "restoredDecisions": 1,
+      "returned": false,
+      "steps": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:f7fde46e",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-39-0"
+            },
+            "payload": {
+              "cost": {
+                "credits": 1
+              },
+              "handIndex": 3
+            },
+            "decision": null,
+            "summary": "b_96.webp"
+          },
+          "ok": true
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:545ee30d",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "probe:1:sector-1-a",
+              "rocketId": 1,
+              "nebulaId": "sector-1-a",
+              "probeScanSource": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "探测器 1 → 南河三"
+          },
+          "ok": true
+        }
+      ],
+      "effectTypes": [
+        "card_play_domain_play",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_step",
+        "science_domain_scan_finalize",
+        "science_domain_settle"
+      ]
+    }
+  ],
+  "productionFiles": {
+    "randomizer/game/cards/effects.js": "0c1e41d844b51e5ed11f7517062f79825176cb98236e577ee1170b3c90c5539e",
+    "randomizer/game/cards/play-domain.js": "731a38844d4a270a91df41b9018b01a985ce0497cd4a9cd0ef9d26265687dee9",
+    "randomizer/game/effects/science-session.js": "3cdedc8fa52e45caeefc3af168c182cc5ff4c62a63d25e8078e716467f59b351"
+  },
+  "verified": true
+}

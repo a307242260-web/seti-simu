@@ -514,9 +514,9 @@
       repeat: Math.max(1, Math.round(Number(options.repeat || 1))),
       includeAdjacent: Boolean(options.includeAdjacent),
       gainData: options.gainData !== false,
-      returnToHandIfSignalCount: Number.isFinite(Number(options.returnToHandIfSignalCount))
-        ? Math.max(0, Math.round(Number(options.returnToHandIfSignalCount)))
-        : undefined,
+      ...(Number.isFinite(Number(options.returnToHandIfSignalCount))
+        ? { returnToHandIfSignalCount: Math.max(0, Math.round(Number(options.returnToHandIfSignalCount))) }
+        : {}),
     });
   }
 
@@ -3781,7 +3781,8 @@
 
   function shouldPreserveRepeatInBuildEffects(item) {
     return Boolean(item?.options?.noAutoRepeatExpansion)
-      || item?.type === EFFECT_TYPES.PUBLIC_SCAN;
+      || item?.type === EFFECT_TYPES.PUBLIC_SCAN
+      || item?.type === EFFECT_TYPES.PROBE_SECTOR_SCAN;
   }
 
   function expandEffectNode(item, repeatIndex, repeat) {

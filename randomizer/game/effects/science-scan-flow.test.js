@@ -451,4 +451,88 @@ for (const tileId of ["blue1", "blue2", "blue3", "blue4"]) {
   assert.equal(distinct.leaves.length, 2, "不同来源/槽位的两条真实完成路线都必须保留");
   assert.deepEqual(composition.lifecycle.save().envelope, before, "反事实比较不得污染canonical");
 }
+// 探测器扫描必须保留来源身份、份数与卡牌回手归属，不把模型字段视为已执行。
+{
+  const cardEffects = require("../cards/effects");
+  const deck = require("../cards/deck");
+  const cardPlay = require("../cards/play-domain");
+  const executors = new Map();
+  const options = { runtime: { registerExecutor(type, executor) {
+    executors.set(type, typeof executor === "function" ? { execute: executor } : executor);
+  } }, commitWorkingState(_state, context) { return { committedBy: context.source }; } };
+  scienceSession.createScienceDomain(options);
+  cardPlay.createExperimentalCardPlayDomain(options);
+  for (const [cardId, expectedSignals, existingSignals = 0, shouldReturn = cardId === "b_88.webp"] of [
+    ["b_22.webp", 2], ["b_50.webp", 3], ["b_50.webp", 0], ["b_50.webp", 1], ["b_53.webp", 1],
+    ["b_54.webp", 1], ["b_58.webp", 3], ["b_64.webp", 2], ["b_88.webp", 1],
+    ["b_88.webp", 1, 1, false], ["b_88.webp", 1, "complete", true], ["b_96.webp", 3]]) {
+    const { root } = createCanonicalState();
+    const actor = root.players.players[0];
+    root.data = data.createDefaultNebulaDataState();
+    data.fillAllNebulaData(root.data, { root, source: "probe-scan-test" });
+    actor.resources.availableData = 0;
+    actor.techState = players.normalizePlayerTechState(null);
+    for (const [playerId, color, x] of [[actor.id, actor.color, 5], [actor.id, actor.color, 5], ["p2", "blue", 6]]) {
+      assert.equal(rockets.launchRocketAtSector(root.pieces, { x, y: 1 }, { root, playerId, color }).ok, true);
+    }
+    assert.equal(rockets.createMovableTokenAtSector(root.pieces, { x: 7, y: 1 }, { root,
+      playerId: actor.id, color: actor.color, fossilId: "scan-excluded-fossil" }).ok, true);
+    const sourceNebula = solar.getNebulaAtCoordinate(5, 5, root.solarSystem.sectorBySlot).id;
+    const count = existingSignals === "complete" ? data.getNebulaCapacity(sourceNebula) - 1 : existingSignals;
+    for (let index = 0; index < count; index += 1) {
+      assert.equal(data.replaceNextNebulaDataToken(root.data, sourceNebula,
+        existingSignals === "complete" ? { id: "p2", color: "blue", resources: {} } : actor, { root }).ok, true);
+    }
+    const card = deck.createCardInstance(deck.getCatalogEntryForCard({ cardId }), 901);
+    actor.hand = [card]; actor.resources.handSize = 1;
+    const playResult = executors.get(cardPlay.EFFECT_TYPES.PLAY).execute(root, { ownerId: actor.id, payload: {
+      action: { actorId: actor.id, target: { cardInstanceId: card.id }, payload: { cost: cardEffects.getCardPlayCost(card) } },
+    } }, { state: root });
+    assert.equal(playResult.ok, true, JSON.stringify(playResult));
+    const starts = playResult.spawnedEffects.filter(entry => entry.effect.type === scienceSession.EFFECT_TYPES.SCAN_STEP);
+    assert.equal(starts.length, 1, `${cardId} 在来源选择前不得拆散重复扫描`);
+    // 这是扫描owner单元验证；b54/b58/b64的前置移动由移动域测试/完整composition验证。
+    const queue = [...starts], signals = [], sources = [];
+    let steps = 0;
+    while (queue.length) {
+      assert.ok(++steps < 30, "扫描有限义务应全部完成");
+      const effect = queue.shift().effect;
+      const executor = executors.get(effect.type);
+      assert.ok(executor, effect.type);
+      let result;
+      if (effect.kind === "decision") {
+        const choices = executor.getLegalChoices(root, effect, { state: root });
+        assert.ok(choices.length);
+        if (effect.payload.options?.mode === "probe") {
+          const probes = choices.filter(choice => choice.target.rocketId != null);
+          assert.ok(probes.length);
+          assert.ok(probes.every(choice => choice.target.rocketId !== 4), "化石不是扫描探测器");
+          assert.ok(probes.every(choice => !sources.includes(choice.target.rocketId)));
+          if (cardId !== "b_50.webp") assert.ok(probes.every(choice => choice.target.rocketId !== 3));
+          if (cardId === "b_50.webp" && !sources.length) assert.ok(probes.some(choice => choice.target.rocketId === 3));
+          const stop = cardId === "b_50.webp" && sources.length >= expectedSignals;
+          const choice = stop ? choices.find(choice => choice.target.done) : probes.find(choice => choice.target.rocketId === 3) || probes[0];
+          assert.ok(choice);
+          if (!stop) sources.push(choice.target.rocketId);
+          result = executor.resolveDecision(root, effect, choice, { state: root });
+        } else result = executor.resolveDecision(root, effect, choices.at(-1), { state: root });
+      } else result = executor.execute(root, effect, { state: root });
+      assert.equal(result.ok, true, JSON.stringify(result));
+      signals.push(...(result.events || []).filter(event => event.type === "signalMarked"));
+      queue.unshift(...(result.spawnedEffects || []));
+    }
+    assert.equal(signals.length, expectedSignals, `${cardId} 实际标记次数`);
+    assert.equal(sources.length, cardId === "b_50.webp" ? expectedSignals : 1);
+    if (["b_22.webp", "b_64.webp", "b_96.webp"].includes(cardId)) assert.equal(new Set(signals.map(event => event.nebulaId)).size, 1);
+    if (cardId === "b_58.webp") assert.deepEqual(signals.map(event => event.nebulaId).sort(),
+      [4, 5, 6].map(x => solar.getNebulaAtCoordinate(x, 5, root.solarSystem.sectorBySlot).id).sort());
+    if (cardId === "b_50.webp" && expectedSignals === 3) assert.equal(new Set(signals.map(event => event.nebulaId)).size, 2, "同格两艘仍有两份扫描");
+    if (cardId === "b_96.webp") assert.equal(actor.resources.availableData, 0);
+    if (cardId === "b_88.webp") {
+      assert.equal(actor.hand.filter(candidate => candidate.id === card.id).length, shouldReturn ? 1 : 0, "仅对应扇区恰好一个己方信号才回手");
+      assert.equal(root.cards.discardPile.some(candidate => candidate.id === card.id), !shouldReturn);
+      if (existingSignals === "complete") assert.equal(data.isSectorReadyToSettle(root.data, sourceNebula), true, "回手先于扇区结算");
+    }
+  }
+}
 console.log("science scan and blue reward tests passed");
