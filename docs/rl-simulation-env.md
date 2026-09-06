@@ -28,6 +28,8 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
   （见 `docs/save-replay-guide.md`）。Action/Observation 外层 schema 不变。
 - `runHeuristicPolicyDecision()` / `runOfflineTeacherDecision()`：经机器人玩家协调器（`machine-player-coordinator.js`）编排——裸调共享 composition 读边界、计划复用优先、未命中调用 Heuristic 决策函数（`heuristic-decision-function.js`，直调 Policy）、提交共享 `inputPort`（零转换）；replay/reward 记账由协调器 `recordStep` 钩子补做（env 提供实现，记录原生 action）。返回值含 `actionOutcomes`、`policyDecision` 与 `plan`。计划复用默认开（`planContinuationFastPath`，显式传 `false` 关闭）；新回合复用 `planNewTurnReuse` 默认开（`false` 关闭后新回合一律重新搜索）。
   返回的`searches`按本次实际evaluate记录`{kind: control|strategic, diagnostics}`；计划复用明确返回空数组，teacher同样透传本次统计。`getCounterfactualDiagnostics()`仅表示最后一次evaluate，不能用它累计整局搜索；evaluate入口清空旧值，早退无诊断时为null。统计不进入存档或PolicyDecision schema。
+  Heuristic内部传给Policy的叶视图省去`planSteps`，避免重复复制续用证据；这里返回的
+  `actionOutcomes`以及计划提取仍保留完整`planSteps`，不改变外部API或计划执行。
   **策略估值统一入口**：旧 `evaluateActionOutcomes()` 入口已删除——评估动作必须用 `runHeuristicPolicyDecision` 返回的 `actionOutcomes`（与决策函数同一搜索参数：secondary-agent 目标引导单一路径），不存在第二套搜索参数。反事实原语（任意候选评估）不是 env API：单动作结算链验证经规则层测试（`simulation-rule-composition.test.js` 或生产 composition 的 `counterfactualPort.evaluate`）。
 - `getDiagnostics()` / `getCounterfactualDiagnostics()`：只读性能诊断。
 - `dispose()`：释放单局环境。

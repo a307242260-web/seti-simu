@@ -1,0 +1,13 @@
+{
+  "scope": "同一真实输入离线比较，仅Policy视图排除planSteps；不执行AI搜索；单次时间为候选门禁非全局提速",
+  "baselineMs": 11040.499875000001,
+  "candidateMs": 6046.6945,
+  "actionId": "place_data:dbe01b29",
+  "actions": 25,
+  "leaves": 2938,
+  "candidateGraphBytes": 201276514,
+  "sameRemainingGraph": true,
+  "sameEvaluations": true,
+  "sourceUnchanged": true,
+  "passed": true
+}

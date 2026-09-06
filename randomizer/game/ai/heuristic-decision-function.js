@@ -245,7 +245,11 @@ function createHeuristicDecisionFunction(options = {}) {
       decisionVersion: legalActions[0].decisionVersion,
       observation,
       legalActions,
-      actionOutcomes,
+      // planSteps只供下方计划提取消费，不在Policy边界重复复制；原始证据完整保留。
+      actionOutcomes: actionOutcomes.map((outcome) => ({
+        ...outcome,
+        leaves: outcome.leaves.map(({ planSteps, ...leaf }) => leaf),
+      })),
       deterministicContext: {
         heuristicDecisionFunctionSchemaVersion: "seti-heuristic-decision-function-v1",
       },

@@ -43,6 +43,47 @@ function decision(current, overrides = {}) {
 }
 
 const current = context();
+// HDF的Policy输入不携带续用证据；相同证据仍保留给计划提取与外部诊断。
+{
+  const model = require("./outcome-model");
+  const plans = require("./plan-continuation");
+  const { createHeuristicDecisionFunction } = require("./heuristic-decision-function");
+  const root = { ...action("choose_target:root"), family: "choose_target", phase: "conditional" };
+  const next = { ...root, actionId: "choose_target:next" };
+  const observation = model.createDecisionObservation({
+    publicState: { roundNumber: 1, players: [{ playerId: "p1", resources: { score: 0 } }],
+      board: { planets: {}, aliens: {}, techSupply: { stacks: {} } } },
+    selfState: { playerId: "p1", hand: [] },
+  }, { seatId: "p1" });
+  const steps = [root, next].map(action => plans.capturePlanStep({ action, observation }));
+  let checked = false;
+  const decisionFunction = createHeuristicDecisionFunction({
+    composition: { counterfactualPort: { evaluate: () => [{
+      schemaVersion: model.OUTCOME_SCHEMA_VERSION, actionId: root.actionId,
+      status: "settled", confidence: "high", rootObservation: observation,
+      leaves: [{ leafId: "leaf", status: "settled", observation,
+        actionChain: [root.actionId, next.actionId], executionStepCount: 2, planSteps: steps,
+        legalSuccessors: [next], terminalReason: "settled" }],
+    }] } },
+    policy: {
+      getProvenance: () => ({ type: "heuristic", version: "test" }),
+      decide(context) {
+        const leaf = context.actionOutcomes[0].leaves[0];
+        assert.equal(Object.hasOwn(leaf, "planSteps"), false);
+        assert.deepEqual(leaf.actionChain, [root.actionId, next.actionId]);
+        assert.equal(Object.isFrozen(leaf.observation), true);
+        checked = true;
+        return policyPort.createPolicyDecision(context, { actionId: root.actionId,
+          policyType: "heuristic", policyVersion: "test" });
+      },
+    },
+  });
+  const result = decisionFunction.run({ seatId: "p1", legalActions: [root], observation });
+  assert.equal(checked, true);
+  assert.deepEqual(result.actionOutcomes[0].leaves[0].planSteps, steps);
+  assert.notEqual(result.actionOutcomes[0].leaves[0].planSteps, steps);
+  assert.equal(result.plan.nextActionId, next.actionId);
+}
 {
   const shared = { slots: [1, 2], nested: { value: 3 } };
   const input = { left: shared, right: shared, repeated: [shared, shared] };

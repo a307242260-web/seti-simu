@@ -1,0 +1,9 @@
+{
+  "scope": "保存真实42 Policy输入独立图，V8序列化保留共享引用；一次专门输入采集，不作为性能比较",
+  "output": "reports/iteration/policy-input-42-20260906.v8.gz",
+  "wallMs": 23031.970125,
+  "graphBytes": 237253962,
+  "actionId": "place_data:dbe01b29",
+  "nodes": 4096,
+  "submissions": 4804
+}

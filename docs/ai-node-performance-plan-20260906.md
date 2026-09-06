@@ -165,3 +165,9 @@ reports/iteration/company-demand-design-20260906.md，尚未冻结、无生产�
 优先在不删分支、不绕安全校验的前提下优化复制成本。节点4096/提交4804与开启诊断
 的冷运行一致，但仍不同于历史4819，尚未归因。下一项保留现有WeakMap/祖先集合机制，
 定位额外复制/校验成本，完整证据见reports/iteration/movement-cpu-review-20260906.md。
+
+复制瓶颈已实施一项完整优化：HDF传给Policy的叶视图不再携带仅供续用的planSteps，
+原actionOutcomes和计划提取证据完整保留，通用Policy安全校验不变。真实42输入
+2938叶的逐字段/共享关系、25动作评价及Decision相同；单决策23.032→16.915秒，
+4096节点/4804提交及29步计划不变。77 unit+唯一fullFlow及V输入审计通过，
+固定完整局待提交后按去重流程验证。详见policy-plan-evidence-design-20260906.md。

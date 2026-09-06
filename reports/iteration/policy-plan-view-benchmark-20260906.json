@@ -1,0 +1,10 @@
+{
+  "scope": "同一真实输入离线比较，仅Policy视图排除planSteps；不执行AI搜索；单次时间为候选门禁非全局提速",
+  "baselineMs": 11215.205917,
+  "candidateMs": 6065.022208,
+  "passed": false,
+  "error": {
+    "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ '96ccc5be1578b15d0d72ced70259f16d3db08759d9070061ab57ebbab5efe093'\n- 'd358469a2b73e4a2c9e939ee9adcebdc2df3ae956be1f8f8ffd571d585712ed2'\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ '96ccc5be1578b15d0d72ced70259f16d3db08759d9070061ab57ebbab5efe093'\n- 'd358469a2b73e4a2c9e939ee9adcebdc2df3ae956be1f8f8ffd571d585712ed2'\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/benchmark-policy-plan-view-20260906.js:27:12)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

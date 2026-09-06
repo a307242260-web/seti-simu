@@ -42,7 +42,7 @@ module.exports = Object.freeze({
     entry("randomizer/training/self-play-demo.test.js", "training/trajectory", "人类示范日志按 self-play 更新口径灌入 action-kind agent 并去重", "机器席位混入默认示范、错误终局分 target 或同一 demo 重复灌入"),
     entry("randomizer/app/browser-host/trajectory-recording.test.js", "architecture/browser-host", "Browser 轨迹录制只读 projection 与标准输入链，撤销后与确认 replay 对齐", "录制改写规则状态、失败提交入轨迹或 undo 后轨迹与已确认输入不一致"),
 
-    entry("randomizer/game/ai/policy-port.test.js", "architecture/policy-host", "Policy Port schema、取消、超时与迟到响应零副作用", "重复、迟到或未知 actionId 被宿主提交"),
+    entry("randomizer/game/ai/policy-port.test.js", "architecture/policy-host", "Policy Port校验隔离、输入不重复携带续用证据且完整计划仍可提取", "非法字段绕过校验或精简Policy输入时误删计划证据"),
     entry("randomizer/game/ai/outcome-projection.test.js", "architecture/policy-host", "标准结果投影保留逐步证据与元数据，重建观察且不污染来源", "复制优化丢字段、复用可变输入、冻结调用者对象或共享事实被外部改写"),
     entry("randomizer/app/ai/browser-machine-player.test.js", "architecture/policy-host", "Browser 机器席位经同一协调器装配（协调器读边界/决策函数注册/execute 提交/失败转 fail 结果）", "浏览器 AI 绕过公共 input port 直接执行规则或残留内联搜索拷贝"),
     entry("randomizer/game/ai/heuristic-policy.test.js", "policy/heuristic-policy", "启发式策略确定性选择且只返回 legal actionId", "空集、畸形配置、未知或 disabled action 未 fail-closed"),
