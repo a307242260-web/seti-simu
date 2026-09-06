@@ -1,0 +1,162 @@
+{
+  "scope": "基于真实42完整状态，受控加入b82保留牌并把一个已有探测器移到小行星，比较正式计分输入有无位置事实；不是历史终局重放，不运行AI",
+  "input": {
+    "playerId": "player-green",
+    "probe": {
+      "angleDegrees": -80.1,
+      "color": "green",
+      "id": 1,
+      "launchGrid": {
+        "x": 5,
+        "y": 1
+      },
+      "launchSectorCoordinate": {
+        "x": 5,
+        "y": 1
+      },
+      "playerId": "player-green",
+      "playerSequence": 1,
+      "radius": 69.42,
+      "sectorX": 0,
+      "sectorY": 1,
+      "slotIndex": 0,
+      "surface": "solar-board"
+    },
+    "card": {
+      "id": "diagnostic-b82",
+      "cardId": "b_82.webp",
+      "cardTypeCode": 3
+    },
+    "locations": {
+      "details": [
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "sectorX": 0,
+          "sectorY": 1,
+          "locationType": "asteroid",
+          "adjacentToEarth": false,
+          "distanceFromEarth": 3,
+          "planetId": null
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "sectorX": 5,
+          "sectorY": 1,
+          "locationType": "planet",
+          "adjacentToEarth": false,
+          "distanceFromEarth": 0,
+          "planetId": "earth"
+        }
+      ],
+      "index": {
+        "player-green": [
+          "asteroid",
+          "planet"
+        ],
+        "green": [
+          "asteroid",
+          "planet"
+        ]
+      }
+    }
+  },
+  "without": {
+    "playerId": "player-green",
+    "baseScore": 7,
+    "tileScore": 0,
+    "cardScore": 0,
+    "jiuzheCardScore": 0,
+    "runezuSymbolScore": 0,
+    "jiuzheThreat": 0,
+    "jiuzhePenaltyApplied": false,
+    "jiuzhePenaltyScore": 0,
+    "prePenaltyTotalScore": 7,
+    "totalScore": 7,
+    "tileScoresById": {
+      "a": 0,
+      "b": 0,
+      "c": 0,
+      "d": 0
+    },
+    "tiles": [],
+    "cards": [
+      {
+        "cardId": "b_82.webp",
+        "rule": {
+          "kind": "probeLocation",
+          "locationType": "asteroid",
+          "score": 13
+        },
+        "score": 0
+      }
+    ],
+    "jiuzheCards": []
+  },
+  "withLocations": {
+    "playerId": "player-green",
+    "baseScore": 7,
+    "tileScore": 0,
+    "cardScore": 13,
+    "jiuzheCardScore": 0,
+    "runezuSymbolScore": 0,
+    "jiuzheThreat": 0,
+    "jiuzhePenaltyApplied": false,
+    "jiuzhePenaltyScore": 0,
+    "prePenaltyTotalScore": 20,
+    "totalScore": 20,
+    "tileScoresById": {
+      "a": 0,
+      "b": 0,
+      "c": 0,
+      "d": 0
+    },
+    "tiles": [],
+    "cards": [
+      {
+        "cardId": "b_82.webp",
+        "rule": {
+          "kind": "probeLocation",
+          "locationType": "asteroid",
+          "score": 13
+        },
+        "score": 13
+      }
+    ],
+    "jiuzheCards": []
+  },
+  "browserBreakdown": {
+    "playerId": "player-green",
+    "baseScore": 7,
+    "tileScore": 0,
+    "cardScore": 0,
+    "jiuzheCardScore": 0,
+    "runezuSymbolScore": 0,
+    "jiuzheThreat": 0,
+    "jiuzhePenaltyApplied": false,
+    "jiuzhePenaltyScore": 0,
+    "prePenaltyTotalScore": 7,
+    "totalScore": 7,
+    "tileScoresById": {
+      "a": 0,
+      "b": 0,
+      "c": 0,
+      "d": 0
+    },
+    "tiles": [],
+    "cards": [
+      {
+        "cardId": "b_82.webp",
+        "rule": {
+          "kind": "probeLocation",
+          "locationType": "asteroid",
+          "score": 13
+        },
+        "score": 0
+      }
+    ],
+    "jiuzheCards": []
+  },
+  "reproduced": true
+}
