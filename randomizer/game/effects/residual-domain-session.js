@@ -1313,6 +1313,28 @@
     return true;
   }
 
+  // 只判定本事件推进与领取资格，不初始化数组、不发奖励；路线读取与正式结算共用。
+  // usedKey是待追加访问键；claimKey是待检查领取键，仅reward状态才追加领取记录。
+  function describeEventBonusProgress({ bonus, event, ownerId }) {
+    if ((bonus.ownerId || bonus.playerId) !== ownerId || !eventMatchesBonus(event, bonus)) {
+      return { status: "inapplicable" };
+    }
+    const usedKey = bonus.distinctBy ? String(event[bonus.distinctBy] ?? "") : null;
+    if (usedKey && bonus.usedKeys?.includes(usedKey)) return { status: "repeated" };
+    const usedCount = (bonus.usedKeys?.length || 0) + (usedKey ? 1 : 0);
+    const claimKey = bonus.onceKey || (
+      Number(bonus.minCount) > 0 && usedCount >= Number(bonus.minCount)
+        ? `${bonus.id}:min-count`
+        : null
+    );
+    const progress = { ...(usedKey ? { usedKey } : {}), ...(claimKey ? { claimKey } : {}) };
+    if (claimKey && bonus.claimedKeys?.includes(claimKey)) return { status: "claimed", ...progress };
+    if (Number(bonus.minCount) > 0 && usedCount < Number(bonus.minCount)) {
+      return { status: "progress", ...progress };
+    }
+    return { status: "reward", ...progress };
+  }
+
   function listFossilArrivalEvents(root) {
     if (!chong?.listTransportArrivalEvents || !solar) return [];
     // 性能：无运输任务时任何火箭都取不到 task（listTransportArrivalEvents 第 934 行
@@ -1432,25 +1454,15 @@
         }, "accept_optional_effect"));
       }
       for (const bonus of root.turn.cardTurnEventBonuses || []) {
-        if ((bonus.ownerId || bonus.playerId) !== owner.id) continue;
         for (const event of events) {
-          if (!eventMatchesBonus(event, bonus)) continue;
-          const distinctKey = bonus.distinctBy ? String(event[bonus.distinctBy] ?? "") : null;
-          if (distinctKey) {
+          const progress = describeEventBonusProgress({ bonus, event, ownerId: owner.id });
+          if (progress.status === "inapplicable" || progress.status === "repeated") continue;
+          if (progress.usedKey) {
             bonus.usedKeys = bonus.usedKeys || [];
-            if (bonus.usedKeys.includes(distinctKey)) continue;
-            bonus.usedKeys.push(distinctKey);
+            bonus.usedKeys.push(progress.usedKey);
           }
-          const claimKey = bonus.onceKey || (
-            Number(bonus.minCount) > 0 && (bonus.usedKeys?.length || 0) >= Number(bonus.minCount)
-              ? `${bonus.id}:min-count`
-              : null
-          );
           bonus.claimedKeys = bonus.claimedKeys || [];
-          if (claimKey && bonus.claimedKeys.includes(claimKey)) continue;
-          if (Number(bonus.minCount) > 0 && (bonus.usedKeys?.length || 0) < Number(bonus.minCount)) {
-            continue;
-          }
+          if (progress.status !== "reward") continue;
           const applied = applyFormalCardEffects(
             root,
             owner,
@@ -1470,7 +1482,7 @@
               },
             }, owner.id, null));
           }
-          if (claimKey) bonus.claimedKeys.push(claimKey);
+          if (progress.claimKey) bonus.claimedKeys.push(progress.claimKey);
         }
       }
     }
@@ -2343,6 +2355,7 @@
     HANDOFF_SCHEMA,
     EFFECT_TYPES,
     SPECIES_IDS,
+    describeEventBonusProgress,
     augmentEffectResult,
     createActionDefinitions,
     createResidualDomain,

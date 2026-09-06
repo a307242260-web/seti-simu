@@ -263,6 +263,13 @@ Decision 链只通过 active Effect Session 暴露的标准 choice 继续。主 
 阿米巴区域奖励属于确定性Effect：结算开始时区域内每个符号领奖一次后固定移动，不再
 生成排列搜索或重复领奖；卡牌单符号奖励保留真实Decision。计划只记录痕迹/卡牌等
 正式输入，区域奖励随该输入结算并保留真实事件及盲抽屏障，不构造虚假的choose_target。
+
+移动需求的规则读取（2026-09-07）：Residual提供共享只读
+`describeEventBonusProgress({bonus,event,ownerId})`，区分无关事件、重复目的、已领取、
+仅推进进度与可领奖，正式奖励也消费此判定。路线原型不再另算访问阈值/领取资格；
+只有正式提交才能写进度和发奖励。此接口是需求式移动的前置，生产根目标与移动
+候选尚未接入访问需求，不代表已消除无目标展开。
+
 分支数/深度超过安全上限时返回 `unresolved`，不把已结算一半的状态伪装为 leaf。Simulation 随机
 分支从 root identity 与 actionId 派生独立 RNG；一旦消费随机数，outcome 标为
 `low-confidence/COUNTERFACTUAL_RANDOM_SAMPLE`。Browser 无法安全聚合随机期望时同样返回

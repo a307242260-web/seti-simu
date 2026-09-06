@@ -18,6 +18,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/effects/standard-action-session.test.js", "architecture/effect-session", "Standard Action 领域只经统一 Session/Decision 入口", "conditional choice 绕过 owner/version 校验"),
     entry("randomizer/game/effects/probe-turn-session.test.js", "architecture/effect-session", "探测器、PASS 与纯回合推进只编排正式规则和跨域 handoff", "公司、收入、外星人或卡牌语义在 probe_turn 内执行或越过 handoff 先推进回合"),
     entry("randomizer/game/effects/residual-domain-session.test.js", "architecture/effect-session", "公司、外星人、收入、卡牌触发与终局消费真实 handoff 并由统一 Session 提交；轮初数据收入生成各席真实token并遵守容量和编号", "effectType 错读、公司误耗主行动、收入仅加数字而无可放置数据、任务空结算或终局未写玩家正式结果"),
+    entry("randomizer/game/effects/event-bonus-progress.test.js", "rules/card-event-bonus", "正式事件奖励与路线共用只读匹配、访问进度及领取资格", "首个行星提前发阈值奖励、重复访问再次领取、错误owner领奖或读取写入冻结状态"),
 
     entry("randomizer/game/state/state-store.test.js", "architecture/state-store", "StateStore 快照隔离、版本单调与 CAS", "修改只读快照或旧版本提交污染权威状态"),
     entry("randomizer/game/state/high-coupling-slices.test.js", "architecture/state-store", "高耦合 slices 以单一 root 原位水合", "restore 替换 root identity 或漏掉耦合 slice"),

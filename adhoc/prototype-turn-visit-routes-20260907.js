@@ -2,16 +2,17 @@
 const fs = require("node:fs"), assert = require("node:assert/strict"), crypto = require("node:crypto");
 const rockets = require("../randomizer/game/rockets"), solar = require("../randomizer/solar-system/core");
 const ability = require("../randomizer/game/abilities/rocket"), cards = require("../randomizer/game/cards/effects");
+const residual = require("../randomizer/game/effects/residual-domain-session");
 const input = "reports/iteration/current-movement-hotspots-20260907.json";
-const output = "reports/iteration/turn-visit-routes-20260907.json";
-const key = n => `${n.at.x},${n.at.y}/${n.card}/${n.free}/${n.visits.join(",")}`;
+const output = "reports/iteration/turn-visit-routes-shared-progress-20260907.json";
+const key = n => `${n.at.x},${n.at.y}/${n.card}/${n.free}/${JSON.stringify(n.progress)}/${n.complete}`;
 const compare = (a, b) => a.paid - b.paid || a.moves - b.moves;
 
 // 有限几何费用原型：先打当前手牌，卡牌移动结束后才能使用公司或付费移动。
 // 不运行规则搜索、不估计沿途其他收益，最短费用不能用于删除更贵的独立收益路线。
 function route(root, actor, rocket, bonus, points, free) {
   const first = { at: rockets.getRocketSectorCoordinate(rocket), card: points, free,
-    visits: [], paid: 0, moves: 0, path: [] };
+    visits: [], paid: 0, moves: 0, path: [], progress: { usedKeys: [], claimedKeys: [] }, complete: false };
   const best = new Map([[key(first), first]]), queue = [first];
   let expanded = 0;
   while (queue.length) {
@@ -20,7 +21,7 @@ function route(root, actor, rocket, bonus, points, free) {
     if (best.get(key(n)) !== n) continue;
     expanded++;
     assert.ok(expanded <= 4096, "原型达到上限必须显式失败，不能当完成");
-    if (n.visits.length >= (bonus.minCount || 1)) return { ...n, expanded };
+    if (n.complete) return { ...n, expanded };
     const edges = [];
     if (n.card > 0) edges.push({ ...n, card: 0, path: [...n.path, { mode: "finish-card" }] });
     const cost = ability.getRequiredMovePointsFromCoordinate({ ...root, state: root }, actor, n.at);
@@ -30,13 +31,23 @@ function route(root, actor, rocket, bonus, points, free) {
       if (!move.ok) continue;
       const content = solar.resolveVisibleContent(move.to.x, move.to.y, root.solarSystem).content;
       const visits = new Set(n.visits);
-      if (bonus.eventType === "visitComet" && content.kind === solar.layout.CONTENT_KIND.COMET) visits.add("comet");
-      if (bonus.eventType === "visitPlanet" && content.kind === solar.layout.CONTENT_KIND.PLANET && content.planetId !== "earth") visits.add(content.planetId);
+      const event = { type: "move", playerId: actor.id, sameRing: move.to.y === n.at.y };
+      if (content.kind === solar.layout.CONTENT_KIND.COMET) event.type = "visitComet";
+      if (content.kind === solar.layout.CONTENT_KIND.ASTEROID) event.type = "visitAsteroid";
+      if (content.kind === solar.layout.CONTENT_KIND.PLANET && content.planetId !== "earth") {
+        event.type = "visitPlanet"; event.planetId = content.planetId;
+      }
+      const progress = structuredClone(n.progress);
+      const transition = residual.describeEventBonusProgress({ bonus: { ...bonus, ...progress, ownerId: actor.id }, event, ownerId: actor.id });
+      if (transition.usedKey) progress.usedKeys.push(transition.usedKey);
+      const complete = transition.status === "reward";
+      if (complete && transition.claimKey) progress.claimedKeys.push(transition.claimKey);
+      if (["progress", "reward"].includes(transition.status)) visits.add(event.planetId || "comet");
       const variants = n.card > 0 ? (cost <= n.card ? [{ mode: "card", card: n.card - cost, free: n.free, paid: n.paid }] : [])
         : [{ mode: "paid", card: 0, free: n.free, paid: n.paid + cost },
           ...(n.free && cost === 1 ? [{ mode: "company", card: 0, free: 0, paid: n.paid }] : [])];
       for (const v of variants) edges.push({ at: move.to, card: v.card, free: v.free, paid: v.paid,
-        moves: n.moves + 1, visits: [...visits].sort(), path: [...n.path, { mode: v.mode, direction: d.id,
+        progress, complete, moves: n.moves + 1, visits: [...visits].sort(), path: [...n.path, { mode: v.mode, direction: d.id,
           from: n.at, to: move.to, points: cost, visits: [...visits].sort() }] });
     }
     for (const next of edges) {
@@ -77,6 +88,10 @@ else {
     assert.equal(JSON.stringify(root), before, "不修改正式状态或序号");
   }
   report.wallMs = performance.now() - start; report.verified = true;
+  const before = JSON.parse(fs.readFileSync("reports/iteration/turn-visit-routes-20260907.json"));
+  const comparable = rows => rows.map(({ step, cardId, rocketId, companyAllowance, paid, moves, visits, path }) =>
+    ({ step, cardId, rocketId, companyAllowance, paid, moves, visits, path }));
+  assert.deepEqual(comparable(report.rows), comparable(before.rows), "共享正式进度后实际目的路线与成本不变");
   fs.writeFileSync(output, JSON.stringify(report, null, 2) + "\n");
   console.log(JSON.stringify({ output, wallMs: report.wallMs, rows: report.rows.map(r => ({ step: r.step,
     company: r.companyAllowance, paid: r.paid, moves: r.moves, expanded: r.expanded, visits: r.visits,

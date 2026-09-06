@@ -148,6 +148,12 @@ actionChain长度表示提交数。非终局条件决策的同价值排序使用
 区域pending若携带多次结算字段会显式报AMIBA_LEGACY_REGION_DECISION，不能按新规则
 续接，需从区域结算前恢复。完整旧实验存档保留，不将旧多领奖轨迹当作新规则基线。
 
+事件奖励进度由Residual的`describeEventBonusProgress({bonus,event,ownerId})`只读
+判定，正式增补与移动路线原型共用。返回status为inapplicable/repeated/claimed/
+progress/reward；usedKey、claimKey仅适用时存在，不出现undefined占位。查询不写
+usedKeys/claimedKeys、不发奖励或生成Decision；正式owner仍按原顺序写进度、结算
+奖励/followup、记录领取。未新增observation/checkpoint字段，尚未接入AI访问目标目录。
+
 搜索叶`terminalReason=goal-completed`表示目标及附带Decision已经完成，但搜索仍可继续
 下一目标；这是已执行路径的真实结果，不是尚待执行的frontier。后续触顶时仍可用于
 评估，outcome的pruned/低置信度标记保留。次级搜索已取消结束叶饱和计数；此叶不改变
