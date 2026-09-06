@@ -183,3 +183,34 @@ industry入口，再依据掉分补漏。当前仍无移动生产修改或新全
 冻结项4的单步性能基准已更新为连续独立修复版本的相同真实42冷调用：均4096节点/
 4804输入；历史4819不再作为当前等价性能基准，历史差异尚未溯源，不宣称相同。
 继续闭合需求身份/两艘各自目的与免费可达性；不能只接环绕登陆后裁掉其他有效目的。
+
+## 2026-09-07额度读边界与第二艘设计决策
+
+本轮复用既有company-stage-42六条正式证据，不重跑动作。新核验
+company-allowance-contract-20260907.json保留来源SHA256和六条对应关系：
+每条首步后remaining=1、usedRocketIds精确包含首艘，另一艘3方向+结束；已移动
+火箭后续额度为0、另一艘为1。两次公司移动不能为同一条火箭路线抵扣2步。
+
+源码调用链已闭合：session-runtime.observe将inspect结果（含currentEffect.payload）
+传给Rule Composition的projectState；production-kernel.projectedRequirements已经
+接收session参数但未消费。cheap只跳过choice枚举，不丢currentEffect，所以可以
+在既有生产需求读边界提供公司阶段事实，不新增Host端口或靠方向数量推测额度。
+闲置态该参数为null；启用前额度由正式公司可用性判定，启用后的当前公司Decision
+读取remaining/usedRocketIds。奖励插入期间不得因当前effect不是公司而推断公司
+已完全结算，也不得给已用过的火箭重新发额度；此期间只解析奖励，不据此裁目标。
+
+第二艘方案：第一次移动仍绑定主要需求/火箭。第二阶段不再移动首艘，从其他
+当前可行需求中取能推进它们的正式方向并集，保留结束；不预先生成“两艘×两个
+目的地”的目标组合。第二艘的方向要携带可核对的目的依据，但不把次要准备目的
+冒充当前主目标已经完成。相同合法action只返回一次，不通过同actionId重复绑定
+多个目标（当前conditional路径按actionId归并route元数据）。
+
+目标完成边界无需另造：rule-composition已将completesRouteTarget记为
+goalCompletionPending，并且只有!execution.awaitingDecision才确认completedGoal。
+因此第一艘到达访问终点时仍继续结算公司第二阶段和奖励；后续方案必须保持该
+边界，不提前成叶。第二艘移动的计划依赖仍需核对plan-continuation对choose_target
+中rocketId的采集，不能只验证当次选择而漏掉之后的计划失效。
+
+状态：本节闭合了额度来源与第二艘不组合枚举的设计，不代表完整移动设计冻结或
+生产优化完成。余下具体工作是统一当前有效访问/位置需求目录及路线必要性判定，
+接入根/树内/条件选择和计划证据后一次验证；不得先删除无绑定入口再用掉分找遗漏。

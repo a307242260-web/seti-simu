@@ -1,0 +1,122 @@
+{
+  "scope": "复用既有六个正式首步及第二阶段ownerPayload，核对每艘一次和阶段额度，不执行公司动作或运行AI",
+  "source": "reports/iteration/company-stage-42-20260907.json",
+  "cases": [
+    {
+      "firstActionId": "choose_target:b849344b",
+      "firstRocketId": 1,
+      "remaining": 1,
+      "usedRocketIds": [
+        1
+      ],
+      "eligibleRocketIds": [
+        2
+      ],
+      "creditForAlreadyMovedRocket": 0,
+      "creditForOtherEligibleRocket": 1,
+      "secondDirectionIds": [
+        "out",
+        "cw",
+        "ccw"
+      ],
+      "canEndMovement": true
+    },
+    {
+      "firstActionId": "choose_target:baf97e87",
+      "firstRocketId": 1,
+      "remaining": 1,
+      "usedRocketIds": [
+        1
+      ],
+      "eligibleRocketIds": [
+        2
+      ],
+      "creditForAlreadyMovedRocket": 0,
+      "creditForOtherEligibleRocket": 1,
+      "secondDirectionIds": [
+        "out",
+        "cw",
+        "ccw"
+      ],
+      "canEndMovement": true
+    },
+    {
+      "firstActionId": "choose_target:d69b7722",
+      "firstRocketId": 1,
+      "remaining": 1,
+      "usedRocketIds": [
+        1
+      ],
+      "eligibleRocketIds": [
+        2
+      ],
+      "creditForAlreadyMovedRocket": 0,
+      "creditForOtherEligibleRocket": 1,
+      "secondDirectionIds": [
+        "out",
+        "cw",
+        "ccw"
+      ],
+      "canEndMovement": true
+    },
+    {
+      "firstActionId": "choose_target:96f6cb01",
+      "firstRocketId": 2,
+      "remaining": 1,
+      "usedRocketIds": [
+        2
+      ],
+      "eligibleRocketIds": [
+        1
+      ],
+      "creditForAlreadyMovedRocket": 0,
+      "creditForOtherEligibleRocket": 1,
+      "secondDirectionIds": [
+        "out",
+        "cw",
+        "ccw"
+      ],
+      "canEndMovement": true
+    },
+    {
+      "firstActionId": "choose_target:9d684f87",
+      "firstRocketId": 2,
+      "remaining": 1,
+      "usedRocketIds": [
+        2
+      ],
+      "eligibleRocketIds": [
+        1
+      ],
+      "creditForAlreadyMovedRocket": 0,
+      "creditForOtherEligibleRocket": 1,
+      "secondDirectionIds": [
+        "out",
+        "cw",
+        "ccw"
+      ],
+      "canEndMovement": true
+    },
+    {
+      "firstActionId": "choose_target:abf3937a",
+      "firstRocketId": 2,
+      "remaining": 1,
+      "usedRocketIds": [
+        2
+      ],
+      "eligibleRocketIds": [
+        1
+      ],
+      "creditForAlreadyMovedRocket": 0,
+      "creditForOtherEligibleRocket": 1,
+      "secondDirectionIds": [
+        "out",
+        "cw",
+        "ccw"
+      ],
+      "canEndMovement": true
+    }
+  ],
+  "sourceSha256": "15846c65228b0495cd16a62d251e2e02fa74831a1107107d2b690ae234ec8d0b",
+  "passed": true
+}
