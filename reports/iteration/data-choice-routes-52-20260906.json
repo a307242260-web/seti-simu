@@ -1,0 +1,11 @@
+{
+  "scope": "棕52单决策诊断；仅通过正式selectSuccessors参数包装记录输入输出，返回原结果，不改生产或预算；观察分组不是物理状态等价证明",
+  "routes": {},
+  "groups": [],
+  "wallMs": 12.401040999999992,
+  "passed": false,
+  "error": {
+    "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   actionId: 'pass:ac4b4ab2',\n-   actionId: 'place_data:50a9ac16',\n    decisionVersion: 0,\n    diagnostics: {\n+     reasonCode: 'heuristic:settled-fallback:pass',\n-     reasonCode: 'heuristic:place_data',\n      traceId: 'heuristic-decision:player-brown:16:0:20282f5c'\n    },\n    policy: {\n      modelChecksum: null,\n      type: 'heuristic',\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n  {\n+   actionId: 'pass:ac4b4ab2',\n-   actionId: 'place_data:50a9ac16',\n    decisionVersion: 0,\n    diagnostics: {\n+     reasonCode: 'heuristic:settled-fallback:pass',\n-     reasonCode: 'heuristic:place_data',\n      traceId: 'heuristic-decision:player-brown:16:0:20282f5c'\n    },\n    policy: {\n      modelChecksum: null,\n      type: 'heuristic',\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/audit-data-choice-routes-20260906.js:51:12)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

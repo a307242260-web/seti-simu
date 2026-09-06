@@ -1,0 +1,131 @@
+{
+  "scope": "棕52单决策诊断；仅通过正式selectSuccessors参数包装记录输入输出，返回原结果，不改生产或预算；观察分组不是物理状态等价证明",
+  "routes": {
+    "data:analyze|data:card:card-11-0": {
+      "calls": 626,
+      "singleton": 570,
+      "multiple": 0,
+      "empty": 56,
+      "choices": {
+        "第一排放置位 5": 112,
+        "第一排放置位 6": 356,
+        "blue1 下方": 102
+      }
+    },
+    "data:analyze|data:place_data": {
+      "calls": 204,
+      "singleton": 204,
+      "multiple": 0,
+      "empty": 0,
+      "choices": {
+        "blue1 下方": 7,
+        "第一排放置位 5": 122,
+        "第一排放置位 6": 36,
+        "第一排放置位 2": 13,
+        "第一排放置位 3": 13,
+        "第一排放置位 4": 13
+      }
+    },
+    "income:gain:3,1,1,0,1,0|income:data:computer-slot-4": {
+      "calls": 42,
+      "singleton": 42,
+      "multiple": 0,
+      "empty": 0,
+      "choices": {
+        "第一排放置位 2": 16,
+        "第一排放置位 3": 13,
+        "第一排放置位 4": 13
+      }
+    },
+    "tech:gain:blue2|tech:blue2:2": {
+      "calls": 1,
+      "singleton": 1,
+      "multiple": 0,
+      "empty": 0,
+      "choices": {
+        "第一排放置位 2": 1
+      }
+    },
+    "tech:gain:orange2|tech:orange2:": {
+      "calls": 4,
+      "singleton": 4,
+      "multiple": 0,
+      "empty": 0,
+      "choices": {
+        "第一排放置位 2": 4
+      }
+    },
+    "tech:gain:orange3|tech:orange3:": {
+      "calls": 4,
+      "singleton": 4,
+      "multiple": 0,
+      "empty": 0,
+      "choices": {
+        "第一排放置位 2": 4
+      }
+    },
+    "tech:gain:blue1|tech:blue1:2": {
+      "calls": 3,
+      "singleton": 3,
+      "multiple": 0,
+      "empty": 0,
+      "choices": {
+        "第一排放置位 2": 3
+      }
+    },
+    "data:analyze|data:scan": {
+      "calls": 70,
+      "singleton": 66,
+      "multiple": 0,
+      "empty": 4,
+      "choices": {
+        "blue2 下方": 56,
+        "第一排放置位 6": 10
+      }
+    },
+    "data:analyze|data:corner:card-19-0": {
+      "calls": 28,
+      "singleton": 28,
+      "multiple": 0,
+      "empty": 0,
+      "choices": {
+        "第一排放置位 6": 28
+      }
+    },
+    "data:analyze|data:corner:card-9-0": {
+      "calls": 48,
+      "singleton": 48,
+      "multiple": 0,
+      "empty": 0,
+      "choices": {
+        "第一排放置位 6": 48
+      }
+    },
+    "data:analyze|data:corner:card-39-0": {
+      "calls": 28,
+      "singleton": 28,
+      "multiple": 0,
+      "empty": 0,
+      "choices": {
+        "第一排放置位 6": 28
+      }
+    },
+    "income:gain:4,1,1,0,1,0|income:data:computer-slot-4": {
+      "calls": 21,
+      "singleton": 21,
+      "multiple": 0,
+      "empty": 0,
+      "choices": {
+        "第一排放置位 2": 15,
+        "第一排放置位 3": 6
+      }
+    }
+  },
+  "groups": [],
+  "wallMs": 10807.175958,
+  "passed": false,
+  "error": {
+    "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  [\n    {\n      actionId: 'launch:c1616852',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: 'd21787869572e750244a836859f6fc34d4bc6ea4b9d02773e951cf08c3f0741f'\n-     metadataHash: 'd99e738314d6e4418d5248e24d4172f5e93322c4236a3f2b7b1cbdf06da3c259'\n    },\n    {\n      actionId: 'scan:0ca111ac',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: '93e479bb7a1b3de291a9719ed428818d02c9060c9d6c68b678abbe17e4d886e6'\n-     metadataHash: '1214364a61d35b4b615a4380cba3e7d213658b20d1eb4b8dfcf3b1e6b5ee8d34'\n    },\n    {\n      actionId: 'research_tech:547c8803',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: '779c715be1b3c6c9c6350e310654fe68969406891b3ecb58e87689c2d8d62c83'\n-     metadataHash: '7194304a1e3da318170181dbd5e027d8c0b701676ac78f87b9a5be72e3dbe5f5'\n    },\n    {\n      actionId: 'play_card:3e8e8ea5',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: '05306858a03fbc277e70e0d9dbd4de970cf89aa974bc21d91fdfdfdbe924a024'\n-     metadataHash: '566b1a5ab32602ad9da31e06730db0407f74074e40436546a30c4ef7e8072f4e'\n    },\n    {\n      actionId: 'play_card:018d31b2',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: '82aa03a781e07b6863da53afffd7eddf464a79b1eaa851a1ec6319edf89bb3bb'\n-     metadataHash: '5edd40e92607bfd3c56348ab6952592954bd13934453f957109d1a937d4a6ecc'\n    },\n    {\n      actionId: 'play_card:b9fb4b56',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: 'dbbdb03a538f22cfdaa6cc4082ad5566eb91a97d8358fe1302416207288ced6c'\n-     metadataHash: '65fd32ed260a6832268a6eb912fb063fd769f5fa6a699e5cc58b0bc77153e1a7'\n    },\n    {\n      actionId: 'play_card:ec6835e9',\n      leaves: [],\n+     metadataHash: '60249e1f0babd8ad1ad25c3754961e919401e2fd3ca084c8e280e0fe684ed90c'\n-     metadataHash: '9c71a1089b71b86ac89c4d5fb4df4c4455feb78808826ec9059399cdc72ea576'\n    },\n    {\n      actionId: 'pass:ac4b4ab2',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: '1b69c947f553b40999044c243af1d1613e1bcbeaf64324ed04241037aa65622e'\n-     metadataHash: '12b4c6b23e3271c088a85cedd4e69540b6942684f61beaa4009227fc217ba6c4'\n    },\n    {\n      actionId: 'quick_trade:5ad269c5',\n      leaves: [],\n+     metadataHash: '5816a108380b936ff8bad3225903eee5127d3c606ab0a2b2db9a2e8425969a69'\n-     metadataHash: '662171f7e9fda3dea39c50f35ff1cc4cfab4401f8ad7cee5d7effa0207ba8bad'\n    },\n    {\n      actionId: 'quick_trade:aedbd0df',\n      leaves: [],\n+     metadataHash: '920d96af9b6bdb5e2a1cfe0b8a78837c906eba831dcd81dabef62913c12c4edf'\n-     metadataHash: '328a71d79e7e4732a3da6d5d5b0f692f90a68a2caf7afe5649e3b617a0f1adaa'\n    },\n    {\n      actionId: 'quick_trade:952695f9',\n      leaves: [],\n+     metadataHash: '6cf658f8e433d6ea90bc09ae6d26a85020fe6df345c1347d34977c1d971ca9a7'\n-     metadataHash: 'a8a503d913d4cd0cd4f9473e5c60b1068cf984196191e314ada14822cf2d4876'\n    },\n    {\n      actionId: 'quick_trade:9256f5c4',\n      leaves: [],\n+     metadataHash: '135ecd64d0d0cd490bc41a50e14e97fcc130a368a0943806d5dfcf1e0add77c4'\n-     metadataHash: '39d9443e8867bc5260955cf38c4cd3baaf5d012c488eb6e3cc5d3ead705a26e7'\n    },\n    {\n      actionId: 'quick_trade:c3f1770e',\n      leaves: [],\n+     metadataHash: '1c26fd08977bd837fe9c78c97cb63dd5170759daab30297ed5a8b513120e8392'\n-     metadataHash: 'a25e8693355637995f6ef37e3ef5a4d8547a71f90e403e985d20fa4975860811'\n    },\n    {\n      actionId: 'quick_trade:678cc831',\n      leaves: [],\n+     metadataHash: 'cca555f641cd050759cb8b87cdd710a7e39ade38eea33fc67370e07d50d28376'\n-     metadataHash: '292a3d188e7396cb30e1b5cb1f7eb30ca59092239ad71266d862a69bc57f68d6'\n    },\n    {\n      actionId: 'quick_trade:adfe3e7e',\n      leaves: [],\n+     metadataHash: '9ef4dafa3dc613fb2cc11399b6044f4e1c50993a88a102678e9c0f7f11150012'\n-     metadataHash: '63f422b00265799429efe7ed35587ab0d8f2dbde156605254e18e1dba7625047'\n    },\n    {\n      actionId: 'quick_trade:11754f92',\n      leaves: [],\n+     metadataHash: '3723e93c2bf019079ca543fe4a8d7c49bf8ffe0c297d816fc73aa74ab4ef5470'\n-     metadataHash: '07c46dbb0d7b5203a39fdbf66e0fed3f9ab7534f2d6e751eeeb5de23dbcd8249'\n    },\n    {\n      actionId: 'quick_trade:c49d725c',\n      leaves: [],\n+     metadataHash: 'f6c4903065db70e1d1379be14b3c8cd24787870488edd78d131157e555f26f40'\n-     metadataHash: 'cf94085c392314c44530e070e5032f0d4c755b9b30527a6017177c8c2ca8d700'\n    },\n    {\n      actionId: 'card_corner:d5283853',\n      leaves: [],\n+     metadataHash: 'a8d08a8c97e9c3ca45bb02ced90b5eb5f56ab520eff07ef53ce3083d9a00603e'\n-     metadataHash: '983319caa14f6b889a677242695f4e6a712e3cbcb5f5af7d8ae8bdbdc506c289'\n    },\n    {\n      actionId: 'card_corner:3390e0e3',\n      leaves: [],\n+     metadataHash: '715db8bf4af0d613d5880bdff54a7c7b725adf069ede9101eb33ea7f2ae24df8'\n-     metadataHash: 'e79d66d07bb8d4f2617a0218147e307d2a82b9bf89bb423119e4d2b3c418178e'\n    },\n    {\n      actionId: 'card_corner:27fd8eef',\n      leaves: [],\n+     metadataHash: '2e8e67d8601499ee7ce8c3457a092abf4739adc1e11c1270986c1f5165b04806'\n-     metadataHash: 'b01783fde8136f780d209b3bf9b584b70ed7d383123a4af0c7a148028834db8d'\n    },\n    {\n      actionId: 'card_corner:ac858e80',\n      leaves: [],\n+     metadataHash: '1b0e526c59eb02ab57a2cde5575520c33a37086179f986c7dd375b5b05450ee7'\n-     metadataHash: 'df122f895bcc2a3a234d3a4e2f096d0dd2fd83f2893c987bcaa2dc6bef9581d6'\n    },\n    {\n      actionId: 'place_data:50a9ac16',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: 'd6be8b9a06d15ad682c3cf8c8dae36f180552792ae09f94e887f0e68c2db9825'\n-     metadataHash: '7304d34a8cbaae1eb934ab5a2adbd3a7ad0859c3959a0e4f827d33f590d50392'\n    }\n  ]\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  [\n    {\n      actionId: 'launch:c1616852',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: 'd21787869572e750244a836859f6fc34d4bc6ea4b9d02773e951cf08c3f0741f'\n-     metadataHash: 'd99e738314d6e4418d5248e24d4172f5e93322c4236a3f2b7b1cbdf06da3c259'\n    },\n    {\n      actionId: 'scan:0ca111ac',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: '93e479bb7a1b3de291a9719ed428818d02c9060c9d6c68b678abbe17e4d886e6'\n-     metadataHash: '1214364a61d35b4b615a4380cba3e7d213658b20d1eb4b8dfcf3b1e6b5ee8d34'\n    },\n    {\n      actionId: 'research_tech:547c8803',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: '779c715be1b3c6c9c6350e310654fe68969406891b3ecb58e87689c2d8d62c83'\n-     metadataHash: '7194304a1e3da318170181dbd5e027d8c0b701676ac78f87b9a5be72e3dbe5f5'\n    },\n    {\n      actionId: 'play_card:3e8e8ea5',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: '05306858a03fbc277e70e0d9dbd4de970cf89aa974bc21d91fdfdfdbe924a024'\n-     metadataHash: '566b1a5ab32602ad9da31e06730db0407f74074e40436546a30c4ef7e8072f4e'\n    },\n    {\n      actionId: 'play_card:018d31b2',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: '82aa03a781e07b6863da53afffd7eddf464a79b1eaa851a1ec6319edf89bb3bb'\n-     metadataHash: '5edd40e92607bfd3c56348ab6952592954bd13934453f957109d1a937d4a6ecc'\n    },\n    {\n      actionId: 'play_card:b9fb4b56',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: 'dbbdb03a538f22cfdaa6cc4082ad5566eb91a97d8358fe1302416207288ced6c'\n-     metadataHash: '65fd32ed260a6832268a6eb912fb063fd769f5fa6a699e5cc58b0bc77153e1a7'\n    },\n    {\n      actionId: 'play_card:ec6835e9',\n      leaves: [],\n+     metadataHash: '60249e1f0babd8ad1ad25c3754961e919401e2fd3ca084c8e280e0fe684ed90c'\n-     metadataHash: '9c71a1089b71b86ac89c4d5fb4df4c4455feb78808826ec9059399cdc72ea576'\n    },\n    {\n      actionId: 'pass:ac4b4ab2',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: '1b69c947f553b40999044c243af1d1613e1bcbeaf64324ed04241037aa65622e'\n-     metadataHash: '12b4c6b23e3271c088a85cedd4e69540b6942684f61beaa4009227fc217ba6c4'\n    },\n    {\n      actionId: 'quick_trade:5ad269c5',\n      leaves: [],\n+     metadataHash: '5816a108380b936ff8bad3225903eee5127d3c606ab0a2b2db9a2e8425969a69'\n-     metadataHash: '662171f7e9fda3dea39c50f35ff1cc4cfab4401f8ad7cee5d7effa0207ba8bad'\n    },\n    {\n      actionId: 'quick_trade:aedbd0df',\n      leaves: [],\n+     metadataHash: '920d96af9b6bdb5e2a1cfe0b8a78837c906eba831dcd81dabef62913c12c4edf'\n-     metadataHash: '328a71d79e7e4732a3da6d5d5b0f692f90a68a2caf7afe5649e3b617a0f1adaa'\n    },\n    {\n      actionId: 'quick_trade:952695f9',\n      leaves: [],\n+     metadataHash: '6cf658f8e433d6ea90bc09ae6d26a85020fe6df345c1347d34977c1d971ca9a7'\n-     metadataHash: 'a8a503d913d4cd0cd4f9473e5c60b1068cf984196191e314ada14822cf2d4876'\n    },\n    {\n      actionId: 'quick_trade:9256f5c4',\n      leaves: [],\n+     metadataHash: '135ecd64d0d0cd490bc41a50e14e97fcc130a368a0943806d5dfcf1e0add77c4'\n-     metadataHash: '39d9443e8867bc5260955cf38c4cd3baaf5d012c488eb6e3cc5d3ead705a26e7'\n    },\n    {\n      actionId: 'quick_trade:c3f1770e',\n      leaves: [],\n+     metadataHash: '1c26fd08977bd837fe9c78c97cb63dd5170759daab30297ed5a8b513120e8392'\n-     metadataHash: 'a25e8693355637995f6ef37e3ef5a4d8547a71f90e403e985d20fa4975860811'\n    },\n    {\n      actionId: 'quick_trade:678cc831',\n      leaves: [],\n+     metadataHash: 'cca555f641cd050759cb8b87cdd710a7e39ade38eea33fc67370e07d50d28376'\n-     metadataHash: '292a3d188e7396cb30e1b5cb1f7eb30ca59092239ad71266d862a69bc57f68d6'\n    },\n    {\n      actionId: 'quick_trade:adfe3e7e',\n      leaves: [],\n+     metadataHash: '9ef4dafa3dc613fb2cc11399b6044f4e1c50993a88a102678e9c0f7f11150012'\n-     metadataHash: '63f422b00265799429efe7ed35587ab0d8f2dbde156605254e18e1dba7625047'\n    },\n    {\n      actionId: 'quick_trade:11754f92',\n      leaves: [],\n+     metadataHash: '3723e93c2bf019079ca543fe4a8d7c49bf8ffe0c297d816fc73aa74ab4ef5470'\n-     metadataHash: '07c46dbb0d7b5203a39fdbf66e0fed3f9ab7534f2d6e751eeeb5de23dbcd8249'\n    },\n    {\n      actionId: 'quick_trade:c49d725c',\n      leaves: [],\n+     metadataHash: 'f6c4903065db70e1d1379be14b3c8cd24787870488edd78d131157e555f26f40'\n-     metadataHash: 'cf94085c392314c44530e070e5032f0d4c755b9b30527a6017177c8c2ca8d700'\n    },\n    {\n      actionId: 'card_corner:d5283853',\n      leaves: [],\n+     metadataHash: 'a8d08a8c97e9c3ca45bb02ced90b5eb5f56ab520eff07ef53ce3083d9a00603e'\n-     metadataHash: '983319caa14f6b889a677242695f4e6a712e3cbcb5f5af7d8ae8bdbdc506c289'\n    },\n    {\n      actionId: 'card_corner:3390e0e3',\n      leaves: [],\n+     metadataHash: '715db8bf4af0d613d5880bdff54a7c7b725adf069ede9101eb33ea7f2ae24df8'\n-     metadataHash: 'e79d66d07bb8d4f2617a0218147e307d2a82b9bf89bb423119e4d2b3c418178e'\n    },\n    {\n      actionId: 'card_corner:27fd8eef',\n      leaves: [],\n+     metadataHash: '2e8e67d8601499ee7ce8c3457a092abf4739adc1e11c1270986c1f5165b04806'\n-     metadataHash: 'b01783fde8136f780d209b3bf9b584b70ed7d383123a4af0c7a148028834db8d'\n    },\n    {\n      actionId: 'card_corner:ac858e80',\n      leaves: [],\n+     metadataHash: '1b0e526c59eb02ab57a2cde5575520c33a37086179f986c7dd375b5b05450ee7'\n-     metadataHash: 'df122f895bcc2a3a234d3a4e2f096d0dd2fd83f2893c987bcaa2dc6bef9581d6'\n    },\n    {\n      actionId: 'place_data:50a9ac16',\n      leaves: [\n        {\n...\n      ],\n+     metadataHash: 'd6be8b9a06d15ad682c3cf8c8dae36f180552792ae09f94e887f0e68c2db9825'\n-     metadataHash: '7304d34a8cbaae1eb934ab5a2adbd3a7ad0859c3959a0e4f827d33f590d50392'\n    }\n  ]\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/audit-data-choice-routes-20260906.js:60:12)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}
