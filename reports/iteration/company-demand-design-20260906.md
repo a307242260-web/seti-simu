@@ -124,7 +124,7 @@ unmarkedFinalRightmost终局计分，dlc11的任务则是probeLocation/asteroid�
 
 初版诊断错误读取inspect.session.journal，尚未执行方向即失败，原始证据保留在
 company-arrivals-42-20260907.json。工具改为读取正式envelope与submitResult.journal
-后六方向全部成功；无生产改动。当前b10ae543完整局运行中，不提交或修改其生产版本。
+后六方向全部成功；无生产改动。取证时b10ae543完整局仍在运行，未混改其生产版本。
 
 小行星需求路线已进一步核验：asteroid-routes-42-20260907.json与对应只读脚本，
 每个首步复用正式canMoveFromCoordinate和getRequiredMovePointsFromCoordinate计算
@@ -134,3 +134,34 @@ company-arrivals-42-20260907.json。工具改为读取正式envelope与submitRes
 这是路线成本证据，不证明不同终点完整状态等价，也不把32格拓扑检查计为AI搜索节点。
 需求应按任务身份形成，路线比较复用正式成本并保留有用沿途收益；不能把每个方向
 重新包装成独立目标。手牌任务尚需打牌/支付与正式完成条件，不能把到达位置直接记成得分。
+
+## 位置条件有限目录与共享规则入口
+
+movement-demand-catalog-20260907.json遍历当前182个正式卡牌模型的全部condition/event，
+保留模型路径与参数；包含56个名称涉及move/probe/rocket的效果描述，后者是检索候选，
+不是56种独立需求或完整外星人机制覆盖。脚本只读模型，不运行搜索。
+
+| 位置条件 | 实际模型来源 | 规划职责 |
+|---|---|---|
+| probeLocation | b52打牌条件；b105彗星任务；dlc11小行星任务 | 分开打牌前置与任务准备，不把条件达成直接记为奖励 |
+| probeAdjacentEarthAsteroid | b81任务 | 同时满足位置类型与邻接，不能只取最近小行星 |
+| probeDistanceFromEarth | b101任务，至少5格 | 按正式距离字段判断，不误用路线累计移动点 |
+| probeAdjacentEarth | dlc5打牌条件 | 为实际牌面收益提供位置准备，不独立虚构分值 |
+| probesOnDifferentPlanets | dlc7任务，两个不同非地球行星 | 两个来源联合满足，不能让单艘完成两份义务 |
+| otherProbeAtPlanet | dlc14打牌条件，对手在地球 | 是他人状态条件，不可当作己方移动可达需求 |
+
+正式条件判定已有cardEffects.taskConditionMet导出；位置数据由
+cardPlayDomain.buildProbeLocationData生成，residual.buildCardTaskContext消费其index/details。
+这些位置分支只读取probeLocations/probeLocationDetails，下一阶段可复用同一正式
+位置读模型和条件判定，不能手写第二套“到小行星/距离地球/不同星球”的判断。
+
+独立move事件模型只有b124与b125：b124改变移动成本，本身不发奖励，不应成为
+移动目标；b125本回合一次同环移动有3分+1宣传，必须保留为真实收益需求。
+visit事件之外的卡牌扫描源、探测器堆叠与已揭示运输任务仍需结合动态状态核对；
+本目录不以模型名称计数冒充这些消费者已接入或完整设计已冻结。
+
+现有enumerateSecondaryAgentRootTargets和已绑定probe后续仅使用环绕/登陆候选，
+没有上述位置任务的准备路径。公司免费移动也没有进入probePlanActions；
+probeGoalResourceReachable直接消费含全部付费移动点的required.energy。
+因此下一生产方案必须同时解决需求目录、手段绑定与免费额度下界，不能先删无绑定
+industry入口，再依据掉分补漏。当前仍无移动生产修改或新全盘实验。

@@ -1,0 +1,2360 @@
+{
+  "scope": "遍历当前正式卡牌模型的全部condition/event与移动相关效果；用于闭合设计，不冒充运行状态已满足或已实现搜索支持",
+  "cardCount": 182,
+  "conditions": {
+    "completedSectorsByColor": [
+      {
+        "cardId": "b_1.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "completedSectorsByColor",
+          "color": "yellow",
+          "count": 2
+        }
+      },
+      {
+        "cardId": "b_15.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "completedSectorsByColor",
+          "color": "black",
+          "count": 1
+        }
+      },
+      {
+        "cardId": "b_102.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "completedSectorsByColor",
+          "color": "red",
+          "count": 2
+        }
+      },
+      {
+        "cardId": "b_114.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "completedSectorsByColor",
+          "color": "blue",
+          "count": 2
+        }
+      }
+    ],
+    "allAliensHavePlayerTrace": [
+      {
+        "cardId": "b_4.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "allAliensHavePlayerTrace",
+          "traceType": "blue"
+        }
+      },
+      {
+        "cardId": "b_8.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "allAliensHavePlayerTrace",
+          "traceType": "yellow"
+        }
+      },
+      {
+        "cardId": "b_46.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "allAliensHavePlayerTrace",
+          "traceType": "pink"
+        }
+      }
+    ],
+    "sectorCompletedDuringCard": [
+      {
+        "cardId": "b_5.webp",
+        "path": "model.temporaryTasks.0.condition",
+        "value": {
+          "type": "sectorCompletedDuringCard",
+          "count": 1
+        }
+      },
+      {
+        "cardId": "b_6.webp",
+        "path": "model.temporaryTasks.0.condition",
+        "value": {
+          "type": "sectorCompletedDuringCard",
+          "count": 1
+        }
+      },
+      {
+        "cardId": "b_133.webp",
+        "path": "model.temporaryTasks.0.condition",
+        "value": {
+          "type": "sectorCompletedDuringCard",
+          "count": 1
+        }
+      }
+    ],
+    "traceCount": [
+      {
+        "cardId": "b_12.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "traceCount",
+          "traceType": "blue",
+          "count": 3
+        }
+      },
+      {
+        "cardId": "b_51.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "traceCount",
+          "traceType": "pink",
+          "count": 3
+        }
+      },
+      {
+        "cardId": "b_121.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "traceCount",
+          "traceType": "yellow",
+          "count": 3
+        }
+      }
+    ],
+    "techCount": [
+      {
+        "cardId": "b_19.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "techCount",
+          "techType": "purple",
+          "count": 3
+        }
+      }
+    ],
+    "planetOrbitOrLand": [
+      {
+        "cardId": "b_21.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "planetOrbitOrLand",
+          "planetId": "saturn",
+          "count": 1
+        }
+      },
+      {
+        "cardId": "b_60.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "planetOrbitOrLand",
+          "planetId": "jupiter"
+        }
+      },
+      {
+        "cardId": "b_61.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "planetOrbitOrLand",
+          "planetId": "jupiter"
+        }
+      },
+      {
+        "cardId": "b_72.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "planetOrbitOrLand",
+          "planetId": "mars"
+        }
+      },
+      {
+        "cardId": "b_75.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "planetOrbitOrLand",
+          "planetId": "mercury"
+        }
+      },
+      {
+        "cardId": "b_77.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "planetOrbitOrLand",
+          "planetId": "mercury"
+        }
+      },
+      {
+        "cardId": "b_107.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "planetOrbitOrLand",
+          "planetId": "saturn"
+        }
+      },
+      {
+        "cardId": "b_126.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "planetOrbitOrLand",
+          "planetId": "neptune"
+        }
+      },
+      {
+        "cardId": "b_127.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "planetOrbitOrLand",
+          "planetId": "uranus"
+        }
+      },
+      {
+        "cardId": "b_129.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "planetOrbitOrLand",
+          "planetId": "venus"
+        }
+      },
+      {
+        "cardId": "b_130.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "planetOrbitOrLand",
+          "planetId": "venus"
+        }
+      }
+    ],
+    "distinctSignalSectors": [
+      {
+        "cardId": "b_22.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "distinctSignalSectors",
+          "count": 4
+        }
+      },
+      {
+        "cardId": "b_53.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "distinctSignalSectors",
+          "count": 4
+        }
+      },
+      {
+        "cardId": "dlc_19.png",
+        "path": "model.playEffects.0.options.condition",
+        "value": {
+          "type": "distinctSignalSectors",
+          "count": 3
+        }
+      }
+    ],
+    "probeLocation": [
+      {
+        "cardId": "b_52.webp",
+        "path": "model.playEffects.0.options.condition",
+        "value": {
+          "type": "probeLocation",
+          "locationType": "asteroid"
+        }
+      },
+      {
+        "cardId": "b_105.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "probeLocation",
+          "locationType": "comet"
+        }
+      },
+      {
+        "cardId": "dlc_11.png",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "probeLocation",
+          "locationType": "asteroid"
+        }
+      }
+    ],
+    "singleAlienTraceSet": [
+      {
+        "cardId": "b_67.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "singleAlienTraceSet",
+          "traceTypes": [
+            "pink",
+            "yellow",
+            "blue"
+          ]
+        }
+      }
+    ],
+    "resourceThreshold": [
+      {
+        "cardId": "b_68.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "resourceThreshold",
+          "resource": "publicity",
+          "count": 8
+        }
+      },
+      {
+        "cardId": "b_103.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "resourceThreshold",
+          "resource": "score",
+          "count": 50
+        }
+      },
+      {
+        "cardId": "b_112.webp",
+        "path": "model.playEffects.0.options.condition",
+        "value": {
+          "type": "resourceThreshold",
+          "resource": "publicity",
+          "count": 8
+        }
+      }
+    ],
+    "probeAdjacentEarthAsteroid": [
+      {
+        "cardId": "b_81.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "probeAdjacentEarthAsteroid"
+        }
+      }
+    ],
+    "handEmpty": [
+      {
+        "cardId": "b_83.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "handEmpty"
+        }
+      }
+    ],
+    "planetOrbitOrLandAll": [
+      {
+        "cardId": "b_85.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "planetOrbitOrLandAll",
+          "planetIds": [
+            "neptune",
+            "uranus"
+          ]
+        }
+      }
+    ],
+    "samePlanetOrbitAndLand": [
+      {
+        "cardId": "b_95.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "samePlanetOrbitAndLand"
+        }
+      }
+    ],
+    "probeDistanceFromEarth": [
+      {
+        "cardId": "b_101.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "probeDistanceFromEarth",
+          "minDistance": 5
+        }
+      }
+    ],
+    "orbitCount": [
+      {
+        "cardId": "b_104.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "orbitCount",
+          "count": 2
+        }
+      }
+    ],
+    "landingCount": [
+      {
+        "cardId": "b_116.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "landingCount",
+          "count": 3
+        }
+      }
+    ],
+    "orbitOrLandCount": [
+      {
+        "cardId": "b_117.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "orbitOrLandCount",
+          "count": 5
+        }
+      }
+    ],
+    "completedSameSectorColor": [
+      {
+        "cardId": "b_135.webp",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "completedSameSectorColor",
+          "count": 2
+        }
+      }
+    ],
+    "lastLandingHadAnyMarker": [
+      {
+        "cardId": "dlc_1.png",
+        "path": "model.playEffects.1.options.condition",
+        "value": {
+          "type": "lastLandingHadAnyMarker"
+        }
+      }
+    ],
+    "probeAdjacentEarth": [
+      {
+        "cardId": "dlc_5.png",
+        "path": "model.playEffects.2.options.condition",
+        "value": {
+          "type": "probeAdjacentEarth"
+        }
+      }
+    ],
+    "probesOnDifferentPlanets": [
+      {
+        "cardId": "dlc_7.png",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "probesOnDifferentPlanets",
+          "count": 2,
+          "excludePlanetIds": [
+            "earth"
+          ]
+        }
+      }
+    ],
+    "completedSectors": [
+      {
+        "cardId": "dlc_9.png",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "completedSectors",
+          "count": 3
+        }
+      }
+    ],
+    "otherProbeAtPlanet": [
+      {
+        "cardId": "dlc_14.png",
+        "path": "model.playEffects.2.options.condition",
+        "value": {
+          "type": "otherProbeAtPlanet",
+          "planetId": "earth"
+        }
+      }
+    ],
+    "resourceEquals": [
+      {
+        "cardId": "dlc_16.png",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "resourceEquals",
+          "resource": "publicity",
+          "count": 0
+        }
+      },
+      {
+        "cardId": "dlc_27.png",
+        "path": "model.playEffects.0.options.condition",
+        "value": {
+          "type": "resourceEquals",
+          "resource": "energy",
+          "count": 0
+        }
+      }
+    ],
+    "sectorSignalCount": [
+      {
+        "cardId": "dlc_22.png",
+        "path": "model.playEffects.0.options.condition",
+        "value": {
+          "type": "sectorSignalCount",
+          "minCount": 3
+        }
+      }
+    ],
+    "resourcesAndHandEmpty": [
+      {
+        "cardId": "dlc_28.png",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "resourcesAndHandEmpty",
+          "resources": [
+            "credits",
+            "energy"
+          ]
+        }
+      }
+    ],
+    "dataTotal": [
+      {
+        "cardId": "dlc_35.png",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "dataTotal",
+          "count": 12
+        }
+      }
+    ],
+    "hasPlayerSignal": [
+      {
+        "cardId": "dlc_37.png",
+        "path": "model.playEffects.0.options.condition",
+        "value": {
+          "type": "hasPlayerSignal"
+        }
+      }
+    ],
+    "signalsInAllColors": [
+      {
+        "cardId": "dlc_41.png",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "signalsInAllColors"
+        }
+      }
+    ],
+    "signalsOrWinsInAllSectors": [
+      {
+        "cardId": "dlc_42.png",
+        "path": "model.tasks.0.condition",
+        "value": {
+          "type": "signalsOrWinsInAllSectors"
+        }
+      }
+    ]
+  },
+  "events": {
+    "visitPlanet": [
+      {
+        "cardId": "b_2.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "visitPlanet",
+          "excludePlanetIds": [
+            "earth"
+          ]
+        }
+      },
+      {
+        "cardId": "b_2.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "visitPlanet",
+          "excludePlanetIds": [
+            "earth"
+          ]
+        }
+      },
+      {
+        "cardId": "b_2.webp",
+        "path": "model.triggers.2.event",
+        "value": {
+          "type": "visitPlanet",
+          "excludePlanetIds": [
+            "earth"
+          ]
+        }
+      },
+      {
+        "cardId": "b_44.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "visitPlanet",
+          "includePlanetIds": [
+            "venus"
+          ]
+        }
+      },
+      {
+        "cardId": "b_44.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "visitPlanet",
+          "includePlanetIds": [
+            "jupiter"
+          ]
+        }
+      },
+      {
+        "cardId": "b_49.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "turn",
+          "eventType": "visitPlanet",
+          "excludePlanetIds": [
+            "earth"
+          ],
+          "publicityToMoveFollowup": true,
+          "icon": "movement",
+          "rewards": []
+        }
+      },
+      {
+        "cardId": "b_62.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "turn",
+          "eventType": "visitPlanet",
+          "includePlanetIds": [
+            "jupiter"
+          ],
+          "onceKey": "b62-jupiter-score",
+          "icon": "score",
+          "rewards": [
+            {
+              "id": "b62-jupiter-score",
+              "type": "gain_resources",
+              "label": "访问木星：4分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "cardId": "b_66.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "turn",
+          "eventType": "visitPlanet",
+          "distinctBy": "planetId",
+          "icon": "score",
+          "rewards": [
+            {
+              "id": "b66-planet-score",
+              "type": "gain_resources",
+              "label": "访问不同星球：1分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 1
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "cardId": "b_71.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "visitPlanet",
+          "planetIds": [
+            "mercury"
+          ]
+        }
+      },
+      {
+        "cardId": "b_71.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "visitPlanet",
+          "planetIds": [
+            "venus"
+          ]
+        }
+      },
+      {
+        "cardId": "b_73.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "turn",
+          "eventType": "visitPlanet",
+          "includePlanetIds": [
+            "mars"
+          ],
+          "onceKey": "b73-mars-score",
+          "icon": "score",
+          "rewards": [
+            {
+              "id": "b73-mars-score",
+              "type": "gain_resources",
+              "label": "访问火星：4分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "cardId": "b_76.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "turn",
+          "eventType": "visitPlanet",
+          "includePlanetIds": [
+            "mercury"
+          ],
+          "onceKey": "b76-mercury-score",
+          "icon": "score",
+          "rewards": [
+            {
+              "id": "b76-mercury-score",
+              "type": "gain_resources",
+              "label": "访问水星：4分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "cardId": "b_92.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "visitPlanet",
+          "planetIds": [
+            "jupiter"
+          ]
+        }
+      },
+      {
+        "cardId": "b_92.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "visitPlanet",
+          "planetIds": [
+            "saturn"
+          ]
+        }
+      },
+      {
+        "cardId": "b_108.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "turn",
+          "eventType": "visitPlanet",
+          "includePlanetIds": [
+            "saturn"
+          ],
+          "onceKey": "b108-saturn-score",
+          "icon": "score",
+          "rewards": [
+            {
+              "id": "b108-score",
+              "type": "gain_resources",
+              "label": "访问土星：6分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 6
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "cardId": "b_131.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "turn",
+          "eventType": "visitPlanet",
+          "includePlanetIds": [
+            "venus"
+          ],
+          "onceKey": "b131-venus-score",
+          "icon": "score",
+          "rewards": [
+            {
+              "id": "b131-score",
+              "type": "gain_resources",
+              "label": "访问金星：3分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "cardId": "b_134.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "visitPlanet",
+          "planetIds": [
+            "uranus"
+          ]
+        }
+      },
+      {
+        "cardId": "b_134.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "visitPlanet",
+          "planetIds": [
+            "neptune"
+          ]
+        }
+      },
+      {
+        "cardId": "dlc_12.png",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "turn",
+          "eventType": "visitPlanet",
+          "distinctBy": "planetId",
+          "minCount": 2,
+          "onceKey": "dlc12-two-planets",
+          "icon": "score",
+          "rewards": [
+            {
+              "id": "dlc12-score",
+              "type": "gain_resources",
+              "label": "访问2个不同行星：3分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "cardId": "dlc_21.png",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "visitPlanet",
+          "requiresOwnOrbit": true
+        }
+      },
+      {
+        "cardId": "dlc_21.png",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "visitPlanet",
+          "requiresOwnOrbit": true
+        }
+      }
+    ],
+    "visitAsteroid": [
+      {
+        "cardId": "b_10.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "visitAsteroid"
+        }
+      },
+      {
+        "cardId": "b_10.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "visitAsteroid"
+        }
+      },
+      {
+        "cardId": "b_10.webp",
+        "path": "model.triggers.2.event",
+        "value": {
+          "type": "visitAsteroid"
+        }
+      },
+      {
+        "cardId": "b_11.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "turn",
+          "eventType": "visitAsteroid",
+          "onceKey": "b11-asteroid-data",
+          "icon": "data",
+          "rewards": [
+            {
+              "id": "b11-asteroid-data",
+              "type": "gain_data",
+              "label": "小行星飞掠：访问小行星获得1数据",
+              "icon": "data",
+              "options": {
+                "count": 1
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "launch": [
+      {
+        "cardId": "b_20.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "launch"
+        }
+      },
+      {
+        "cardId": "b_20.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "launch"
+        }
+      },
+      {
+        "cardId": "b_20.webp",
+        "path": "model.triggers.2.event",
+        "value": {
+          "type": "launch"
+        }
+      },
+      {
+        "cardId": "b_57.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "launch"
+        }
+      },
+      {
+        "cardId": "b_57.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "launch"
+        }
+      },
+      {
+        "cardId": "b_57.webp",
+        "path": "model.triggers.2.event",
+        "value": {
+          "type": "launch"
+        }
+      },
+      {
+        "cardId": "dlc_23.png",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "launch"
+        }
+      }
+    ],
+    "visitComet": [
+      {
+        "cardId": "b_24.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "turn",
+          "eventType": "visitComet",
+          "onceKey": "b24-comet-score",
+          "icon": "score",
+          "rewards": [
+            {
+              "id": "b24-comet-score",
+              "type": "gain_resources",
+              "label": "彗星遭遇：访问彗星获得4分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "signalMarked": [
+      {
+        "cardId": "b_25.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "signalMarked",
+          "color": "yellow"
+        }
+      },
+      {
+        "cardId": "b_25.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "signalMarked",
+          "color": "red"
+        }
+      },
+      {
+        "cardId": "b_25.webp",
+        "path": "model.triggers.2.event",
+        "value": {
+          "type": "signalMarked",
+          "color": "blue"
+        }
+      },
+      {
+        "cardId": "b_28.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "flow",
+          "eventType": "signalMarked",
+          "color": "yellow",
+          "icon": "score",
+          "rewards": [
+            {
+              "id": "b28-yellow-score",
+              "type": "gain_resources",
+              "label": "黄色扇区信号：2分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 2
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "cardId": "b_78.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "signalMarked",
+          "color": "pink"
+        }
+      },
+      {
+        "cardId": "b_78.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "signalMarked",
+          "color": "yellow"
+        }
+      },
+      {
+        "cardId": "b_78.webp",
+        "path": "model.triggers.2.event",
+        "value": {
+          "type": "signalMarked",
+          "color": "blue"
+        }
+      },
+      {
+        "cardId": "b_90.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "flow",
+          "eventType": "signalMarked",
+          "color": "red",
+          "icon": "score",
+          "rewards": [
+            {
+              "id": "b90-red-signal-score-effect",
+              "type": "gain_resources",
+              "label": "红色信号：2分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 2
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "cardId": "b_118.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "flow",
+          "eventType": "signalMarked",
+          "distinctBy": "sectorX",
+          "icon": "score",
+          "rewards": [
+            {
+              "id": "b118-sector-score",
+              "type": "gain_resources",
+              "label": "不同扫描扇区：2分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 2
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "cardId": "b_132.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "flow",
+          "eventType": "signalMarked",
+          "color": "blue",
+          "icon": "score",
+          "rewards": [
+            {
+              "id": "b132-score",
+              "type": "gain_resources",
+              "label": "蓝色信号：2分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 2
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "cardCorner": [
+      {
+        "cardId": "b_26.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "cardCorner",
+          "cornerKind": "publicity"
+        }
+      },
+      {
+        "cardId": "b_26.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "cardCorner",
+          "cornerKind": "data"
+        }
+      },
+      {
+        "cardId": "b_26.webp",
+        "path": "model.triggers.2.event",
+        "value": {
+          "type": "cardCorner",
+          "cornerKind": "move"
+        }
+      }
+    ],
+    "alienTrace": [
+      {
+        "cardId": "b_39.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "alienTrace",
+          "traceType": "blue"
+        }
+      },
+      {
+        "cardId": "b_39.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "alienTrace",
+          "traceType": "blue"
+        }
+      }
+    ],
+    "orbit": [
+      {
+        "cardId": "b_59.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "orbit"
+        }
+      },
+      {
+        "cardId": "b_138.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "types": [
+            "orbit",
+            "land"
+          ]
+        }
+      },
+      {
+        "cardId": "b_138.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "types": [
+            "orbit",
+            "land"
+          ]
+        }
+      },
+      {
+        "cardId": "b_140.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "types": [
+            "orbit",
+            "land",
+            "playCard"
+          ],
+          "planetIds": [
+            "mars"
+          ],
+          "cardIds": [
+            "b_72.webp",
+            "b_73.webp",
+            "b_74.webp",
+            "b_91.webp"
+          ]
+        }
+      },
+      {
+        "cardId": "b_140.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "types": [
+            "orbit",
+            "land",
+            "playCard"
+          ],
+          "planetIds": [
+            "mars"
+          ],
+          "cardIds": [
+            "b_72.webp",
+            "b_73.webp",
+            "b_74.webp",
+            "b_91.webp"
+          ]
+        }
+      },
+      {
+        "cardId": "dlc_23.png",
+        "path": "model.triggers.1.event",
+        "value": {
+          "types": [
+            "orbit",
+            "land"
+          ]
+        }
+      }
+    ],
+    "land": [
+      {
+        "cardId": "b_59.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "land"
+        }
+      },
+      {
+        "cardId": "b_138.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "types": [
+            "orbit",
+            "land"
+          ]
+        }
+      },
+      {
+        "cardId": "b_138.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "types": [
+            "orbit",
+            "land"
+          ]
+        }
+      },
+      {
+        "cardId": "b_140.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "types": [
+            "orbit",
+            "land",
+            "playCard"
+          ],
+          "planetIds": [
+            "mars"
+          ],
+          "cardIds": [
+            "b_72.webp",
+            "b_73.webp",
+            "b_74.webp",
+            "b_91.webp"
+          ]
+        }
+      },
+      {
+        "cardId": "b_140.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "types": [
+            "orbit",
+            "land",
+            "playCard"
+          ],
+          "planetIds": [
+            "mars"
+          ],
+          "cardIds": [
+            "b_72.webp",
+            "b_73.webp",
+            "b_74.webp",
+            "b_91.webp"
+          ]
+        }
+      },
+      {
+        "cardId": "dlc_23.png",
+        "path": "model.triggers.1.event",
+        "value": {
+          "types": [
+            "orbit",
+            "land"
+          ]
+        }
+      }
+    ],
+    "researchTech": [
+      {
+        "cardId": "b_80.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "researchTech",
+          "techType": "orange"
+        }
+      },
+      {
+        "cardId": "b_80.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "researchTech",
+          "techType": "purple"
+        }
+      },
+      {
+        "cardId": "b_80.webp",
+        "path": "model.triggers.2.event",
+        "value": {
+          "type": "researchTech",
+          "techType": "blue"
+        }
+      },
+      {
+        "cardId": "b_97.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "researchTech",
+          "techType": "orange"
+        }
+      },
+      {
+        "cardId": "b_97.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "researchTech",
+          "techType": "purple"
+        }
+      },
+      {
+        "cardId": "b_97.webp",
+        "path": "model.triggers.2.event",
+        "value": {
+          "type": "researchTech",
+          "techType": "blue"
+        }
+      },
+      {
+        "cardId": "b_122.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "researchTech",
+          "techType": "purple"
+        }
+      },
+      {
+        "cardId": "dlc_24.png",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "researchTech",
+          "techType": "orange"
+        }
+      },
+      {
+        "cardId": "dlc_24.png",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "researchTech",
+          "techType": "orange"
+        }
+      },
+      {
+        "cardId": "dlc_25.png",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "researchTech",
+          "techType": "purple"
+        }
+      },
+      {
+        "cardId": "dlc_25.png",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "researchTech",
+          "techType": "purple"
+        }
+      },
+      {
+        "cardId": "dlc_26.png",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "researchTech",
+          "techType": "blue"
+        }
+      },
+      {
+        "cardId": "dlc_26.png",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "researchTech",
+          "techType": "blue"
+        }
+      }
+    ],
+    "scanAction": [
+      {
+        "cardId": "b_111.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "scanAction"
+        }
+      },
+      {
+        "cardId": "b_111.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "scanAction"
+        }
+      },
+      {
+        "cardId": "b_111.webp",
+        "path": "model.triggers.2.event",
+        "value": {
+          "type": "scanAction"
+        }
+      },
+      {
+        "cardId": "b_122.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "scanAction"
+        }
+      },
+      {
+        "cardId": "b_123.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "scanAction"
+        }
+      },
+      {
+        "cardId": "b_123.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "scanAction"
+        }
+      },
+      {
+        "cardId": "b_123.webp",
+        "path": "model.triggers.2.event",
+        "value": {
+          "type": "scanAction"
+        }
+      }
+    ],
+    "playCard": [
+      {
+        "cardId": "b_120.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "price": 1
+        }
+      },
+      {
+        "cardId": "b_120.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "price": 2
+        }
+      },
+      {
+        "cardId": "b_120.webp",
+        "path": "model.triggers.2.event",
+        "value": {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "price": 3
+        }
+      },
+      {
+        "cardId": "b_140.webp",
+        "path": "model.triggers.0.event",
+        "value": {
+          "types": [
+            "orbit",
+            "land",
+            "playCard"
+          ],
+          "planetIds": [
+            "mars"
+          ],
+          "cardIds": [
+            "b_72.webp",
+            "b_73.webp",
+            "b_74.webp",
+            "b_91.webp"
+          ]
+        }
+      },
+      {
+        "cardId": "b_140.webp",
+        "path": "model.triggers.1.event",
+        "value": {
+          "types": [
+            "orbit",
+            "land",
+            "playCard"
+          ],
+          "planetIds": [
+            "mars"
+          ],
+          "cardIds": [
+            "b_72.webp",
+            "b_73.webp",
+            "b_74.webp",
+            "b_91.webp"
+          ]
+        }
+      }
+    ],
+    "move": [
+      {
+        "cardId": "b_124.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "turn",
+          "eventType": "move",
+          "icon": "movement",
+          "movementModifiers": {
+            "ignoreAsteroidRestriction": true
+          },
+          "rewards": []
+        }
+      },
+      {
+        "cardId": "b_125.webp",
+        "path": "model.playEffects.0.options.bonus",
+        "value": {
+          "duration": "turn",
+          "eventType": "move",
+          "sameRingOnly": true,
+          "onceKey": "b125-same-ring-reward",
+          "icon": "score",
+          "rewards": [
+            {
+              "id": "b125-same-ring-reward",
+              "type": "gain_resources",
+              "label": "同环移动：3分+1宣传",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3,
+                  "publicity": 1
+                }
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "pass": [
+      {
+        "cardId": "dlc_33.png",
+        "path": "model.triggers.0.event",
+        "value": {
+          "type": "pass"
+        }
+      }
+    ]
+  },
+  "movementEffects": [
+    {
+      "cardId": "b_2.webp",
+      "path": "model.triggers.2.effect",
+      "value": {
+        "id": "b2-free-move",
+        "type": "card_free_move",
+        "label": "高级导航系统：1免费移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_11.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b11-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_13.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b13-remove-marker",
+        "type": "card_remove_planet_marker",
+        "label": "移除己方环绕器",
+        "icon": "orbit",
+        "options": {
+          "owner": "current",
+          "markerKinds": [
+            "orbit"
+          ]
+        }
+      }
+    },
+    {
+      "cardId": "b_16.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b16-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_17.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b17-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_18.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b18-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_20.webp",
+      "path": "model.triggers.0.effect",
+      "value": {
+        "id": "b20-free-move-1",
+        "type": "card_free_move",
+        "label": "卡纳维拉尔角：发射后1免费移动 1/3",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_20.webp",
+      "path": "model.triggers.1.effect",
+      "value": {
+        "id": "b20-free-move-2",
+        "type": "card_free_move",
+        "label": "卡纳维拉尔角：发射后1免费移动 2/3",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_20.webp",
+      "path": "model.triggers.2.effect",
+      "value": {
+        "id": "b20-free-move-3",
+        "type": "card_free_move",
+        "label": "卡纳维拉尔角：发射后1免费移动 3/3",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_22.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b22-probe-sector-scan",
+        "type": "card_probe_sector_scan",
+        "label": "选择己方探测器所在扇区扫描两次",
+        "icon": "scan",
+        "options": {
+          "owner": "current",
+          "maxTargets": 1,
+          "repeat": 2,
+          "includeAdjacent": false,
+          "gainData": true
+        }
+      }
+    },
+    {
+      "cardId": "b_24.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b24-move",
+        "type": "card_move",
+        "label": "2移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 2
+        }
+      }
+    },
+    {
+      "cardId": "b_25.webp",
+      "path": "model.triggers.0.effect",
+      "value": {
+        "id": "b25-yellow-scan-move-effect",
+        "type": "card_free_move",
+        "label": "扫描黄色扇区：1免费移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_25.webp",
+      "path": "model.triggers.1.effect",
+      "value": {
+        "id": "b25-red-scan-move-effect",
+        "type": "card_free_move",
+        "label": "扫描红色扇区：1免费移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_25.webp",
+      "path": "model.triggers.2.effect",
+      "value": {
+        "id": "b25-blue-scan-move-effect",
+        "type": "card_free_move",
+        "label": "扫描蓝色扇区：1免费移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_26.webp",
+      "path": "model.triggers.2.effect",
+      "value": {
+        "id": "b26-move-corner-repeat",
+        "type": "card_move",
+        "label": "康奈尔大学：再获得一次移动角标奖励",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_49.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b49-move",
+        "type": "card_move",
+        "label": "2移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 2
+        }
+      }
+    },
+    {
+      "cardId": "b_50.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b50-probe-sector-scan",
+        "type": "card_probe_sector_scan",
+        "label": "选择最多3个探测器，各扫描所在扇区",
+        "icon": "scan",
+        "options": {
+          "owner": "any",
+          "maxTargets": 3,
+          "repeat": 1,
+          "includeAdjacent": false,
+          "gainData": true
+        }
+      }
+    },
+    {
+      "cardId": "b_52.webp",
+      "path": "model.playEffects.0.options.condition",
+      "value": {
+        "type": "probeLocation",
+        "locationType": "asteroid"
+      }
+    },
+    {
+      "cardId": "b_53.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b53-probe-sector-scan",
+        "type": "card_probe_sector_scan",
+        "label": "选择1个己方探测器，扫描所在扇区",
+        "icon": "scan",
+        "options": {
+          "owner": "current",
+          "maxTargets": 1,
+          "repeat": 1,
+          "includeAdjacent": false,
+          "gainData": true
+        }
+      }
+    },
+    {
+      "cardId": "b_54.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b54-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_54.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b54-probe-sector-scan",
+        "type": "card_probe_sector_scan",
+        "label": "选择1个己方探测器，扫描所在扇区",
+        "icon": "scan",
+        "options": {
+          "owner": "current",
+          "maxTargets": 1,
+          "repeat": 1,
+          "includeAdjacent": false,
+          "gainData": true
+        }
+      }
+    },
+    {
+      "cardId": "b_58.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b58-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_58.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b58-probe-adjacent-scan",
+        "type": "card_probe_sector_scan",
+        "label": "选择1个己方探测器，扫描所在及相邻扇区",
+        "icon": "scan",
+        "options": {
+          "owner": "current",
+          "maxTargets": 1,
+          "repeat": 1,
+          "includeAdjacent": true,
+          "gainData": true
+        }
+      }
+    },
+    {
+      "cardId": "b_62.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b62-move",
+        "type": "card_move",
+        "label": "2移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 2
+        }
+      }
+    },
+    {
+      "cardId": "b_64.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b64-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_64.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b64-probe-sector-scan",
+        "type": "card_probe_sector_scan",
+        "label": "选择1个己方探测器，扫描所在扇区两次",
+        "icon": "scan",
+        "options": {
+          "owner": "current",
+          "maxTargets": 1,
+          "repeat": 2,
+          "includeAdjacent": false,
+          "gainData": true
+        }
+      }
+    },
+    {
+      "cardId": "b_66.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b66-move",
+        "type": "card_move",
+        "label": "4移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 4
+        }
+      }
+    },
+    {
+      "cardId": "b_73.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b73-move",
+        "type": "card_move",
+        "label": "2移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 2
+        }
+      }
+    },
+    {
+      "cardId": "b_76.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b76-move",
+        "type": "card_move",
+        "label": "2移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 2
+        }
+      }
+    },
+    {
+      "cardId": "b_77.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b77-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_81.webp",
+      "path": "model.tasks.0.condition",
+      "value": {
+        "type": "probeAdjacentEarthAsteroid"
+      }
+    },
+    {
+      "cardId": "b_87.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b87-earth-sector-move",
+        "type": "card_earth_sector_content_move",
+        "label": "地球扇区每个行星或彗星：1移动",
+        "icon": "movement",
+        "options": {
+          "contentKinds": [
+            "planet",
+            "comet"
+          ]
+        }
+      }
+    },
+    {
+      "cardId": "b_88.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b88-probe-sector-scan",
+        "type": "card_probe_sector_scan",
+        "label": "选择己方探测器所在扇区扫描",
+        "icon": "scan",
+        "options": {
+          "owner": "current",
+          "maxTargets": 1,
+          "repeat": 1,
+          "includeAdjacent": false,
+          "gainData": true,
+          "returnToHandIfSignalCount": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_89.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b89-probe-asteroid-data",
+        "type": "card_probe_location_reward",
+        "label": "选择己方探测器按小行星位置获得数据",
+        "icon": "data",
+        "options": {
+          "owner": "current",
+          "asteroidData": 2,
+          "adjacentAsteroidData": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_96.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b96-probe-sector-scan",
+        "type": "card_probe_sector_scan",
+        "label": "选择己方探测器所在扇区扫描3次（不获得数据）",
+        "icon": "scan",
+        "options": {
+          "owner": "current",
+          "maxTargets": 1,
+          "repeat": 3,
+          "includeAdjacent": false,
+          "gainData": false
+        }
+      }
+    },
+    {
+      "cardId": "b_98.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b98-hand-move-corners",
+        "type": "card_count_hand_corner_move",
+        "label": "手牌每张移动角标：1免费移动",
+        "icon": "movement",
+        "options": {}
+      }
+    },
+    {
+      "cardId": "b_101.webp",
+      "path": "model.tasks.0.condition",
+      "value": {
+        "type": "probeDistanceFromEarth",
+        "minDistance": 5
+      }
+    },
+    {
+      "cardId": "b_105.webp",
+      "path": "model.tasks.0.condition",
+      "value": {
+        "type": "probeLocation",
+        "locationType": "comet"
+      }
+    },
+    {
+      "cardId": "b_106.webp",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "b106-remove-lander",
+        "type": "card_remove_planet_marker",
+        "label": "移除己方登陆标记",
+        "icon": "orbitOrLand",
+        "options": {
+          "owner": "current",
+          "markerKinds": [
+            "land",
+            "satelliteLand"
+          ]
+        }
+      }
+    },
+    {
+      "cardId": "b_108.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b108-move",
+        "type": "card_move",
+        "label": "3移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 3
+        }
+      }
+    },
+    {
+      "cardId": "b_116.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b116-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_124.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b124-move",
+        "type": "card_move",
+        "label": "2移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 2
+        }
+      }
+    },
+    {
+      "cardId": "b_125.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b125-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "b_131.webp",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "b131-move",
+        "type": "card_move",
+        "label": "2移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 2
+        }
+      }
+    },
+    {
+      "cardId": "dlc_4.png",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "dlc4-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "dlc_5.png",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "dlc5-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "dlc_5.png",
+      "path": "model.playEffects.2.options.condition",
+      "value": {
+        "type": "probeAdjacentEarth"
+      }
+    },
+    {
+      "cardId": "dlc_6.png",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "dlc6-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "dlc_7.png",
+      "path": "model.tasks.0.condition",
+      "value": {
+        "type": "probesOnDifferentPlanets",
+        "count": 2,
+        "excludePlanetIds": [
+          "earth"
+        ]
+      }
+    },
+    {
+      "cardId": "dlc_11.png",
+      "path": "model.tasks.0.condition",
+      "value": {
+        "type": "probeLocation",
+        "locationType": "asteroid"
+      }
+    },
+    {
+      "cardId": "dlc_12.png",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "dlc12-move",
+        "type": "card_move",
+        "label": "2移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 2
+        }
+      }
+    },
+    {
+      "cardId": "dlc_27.png",
+      "path": "model.playEffects.0.options.rewards.0",
+      "value": {
+        "id": "dlc27-energy",
+        "type": "card_count_rockets_reward",
+        "label": "每个己方太阳系探测器或虫族搬运化石：1能量",
+        "icon": "energy",
+        "options": {
+          "owner": "current",
+          "location": "solar",
+          "includeNonStandard": false,
+          "includeTransportedChongFossils": true,
+          "resource": "energy",
+          "per": 1
+        }
+      }
+    },
+    {
+      "cardId": "dlc_38.png",
+      "path": "model.playEffects.1",
+      "value": {
+        "id": "dlc38-move",
+        "type": "card_move",
+        "label": "1移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 1
+        }
+      }
+    },
+    {
+      "cardId": "dlc_38.png",
+      "path": "model.playEffects.2",
+      "value": {
+        "id": "dlc38-stack-score",
+        "type": "card_probe_stack_reward",
+        "label": "若自己的探测器与任意探测器在同一位置，获得3分",
+        "icon": "score",
+        "options": {
+          "rewards": [
+            {
+              "id": "dlc38-score",
+              "type": "gain_resources",
+              "label": "同位置探测器：3分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "cardId": "dlc_39.png",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "dlc39-move",
+        "type": "card_move",
+        "label": "2移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 2
+        }
+      }
+    },
+    {
+      "cardId": "dlc_40.png",
+      "path": "model.playEffects.0",
+      "value": {
+        "id": "dlc40-move",
+        "type": "card_move",
+        "label": "5移动",
+        "icon": "movement",
+        "options": {
+          "movementPoints": 5
+        }
+      }
+    }
+  ]
+}
