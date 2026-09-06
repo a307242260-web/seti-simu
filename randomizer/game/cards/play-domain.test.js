@@ -16,7 +16,7 @@ const aliens = require("../aliens");
 const solar = require("../../solar-system/core");
 const rockets = require("../rockets");
 
-assert.equal(playDomain.REACHABLE_PLAY_EFFECT_TYPES.length, 45);
+assert.equal(playDomain.REACHABLE_PLAY_EFFECT_TYPES.length, 66);
 assert.deepEqual(
   playDomain.OWNED_PLAY_EFFECT_TYPES,
   playDomain.REACHABLE_RECURSIVE_EFFECT_TYPES,
@@ -24,8 +24,8 @@ assert.deepEqual(
 );
 assert.equal(
   playDomain.REACHABLE_RECURSIVE_EFFECT_TYPES.length,
-  46,
-  "182 张牌的递归 effect 闭包必须包含 45 个顶层类型与嵌套探测器计数奖励",
+  52,
+  "全部242模型须包含异常点六种专属类型与嵌套探测器计数奖励",
 );
 assert.ok(
   playDomain.REACHABLE_RECURSIVE_EFFECT_TYPES.includes(
@@ -1321,8 +1321,9 @@ for (const cardId of exhaustiveCardIds) {
 assert.equal(exhaustiveCardIds.length, 182, "基础牌与 DLC 牌必须逐张进入正式 composition");
 assert.deepEqual(
   [...exhaustiveEffectTypes].sort(),
-  [...playDomain.REACHABLE_PLAY_EFFECT_TYPES].sort(),
-  "逐张 composition 证明必须覆盖 46/46 可达 top-level effect type",
+  [...new Set(Object.keys(cardEffects.CARD_REFERENCE_MAP).flatMap(cardId =>
+    cardEffects.buildPlayEffects({ cardId }).map(effect => effect.type)))].sort(),
+  "本组182张参考牌的逐张composition证据只证明该组，不外推全部外星人模型",
 );
 
 // —— 哨兵探测网络「打牌后结算弃牌角标」——
@@ -1532,4 +1533,66 @@ function runCompanyPassivesOnPlay() {
 
 runCompanyPassivesOnPlay();
 
+// 异常点计分读取全部异常扇区己方信号，不发放标记奖励；奖励函数成功契约完整。
+{
+  const executors = new Map();
+  playDomain.createExperimentalCardPlayDomain({ runtime: { registerExecutor(type, executor) {
+    executors.set(type, executor);
+  } }, commitWorkingState() { return {}; } });
+  const root = createCanonicalState("yichangdian_0.webp"), actor = root.players.players[0];
+  const sectors = [0, 1, 2].map(x => solar.getNebulaAtCoordinate(x, 5, root.solarSystem.sectorBySlot).id);
+  root.aliens.yichangdian = { anomalies: [{ sectorX: 0, markerId: "a_2" }, { sectorX: 1, markerId: "c_2" }] };
+  for (const [nebulaId, owner] of [[sectors[0], actor], [sectors[0], actor], [sectors[1], actor],
+    [sectors[1], { id: "other", color: "blue", resources: {} }], [sectors[2], actor]]) {
+    assert.equal(data.replaceNextNebulaDataToken(root.data, nebulaId, owner, { root }).ok, true);
+  }
+  const type = cardEffects.EFFECT_TYPES.YICHANGDIAN_ANOMALY_SIGNAL_SCORE;
+  const fn = executors.get(`card_play_domain_effect:effect:${type}`);
+  const before = actor.resources.score;
+  const result = fn(root, { ownerId: actor.id, payload: { cardInstanceId: "source", cardEffect: { type } } }, { state: root });
+  assert.equal(result.ok, true);
+  assert.equal(actor.resources.score - before, 3);
+  assert.equal(result.spawnedEffects.length, 0, "按信号计分不发异常奖励");
+  const earth = solar.collectPlanetLocations(root.solarSystem).find(p => p.planetId === "earth");
+  root.aliens.yichangdian.anomalies = [{ sectorX: solar.mod8(earth.x - 1), markerId: "c_2" }];
+  const rewardType = cardEffects.EFFECT_TYPES.YICHANGDIAN_NEXT_ANOMALY_REWARD;
+  const reward = executors.get(`card_play_domain_effect:effect:${rewardType}`)(root,
+    { ownerId: actor.id, payload: { cardInstanceId: "reward-source", cardEffect: { type: rewardType } } }, { state: root });
+  assert.equal(reward.ok, true, "发放奖励后必须返回完整成功契约");
+  const drawType = cardEffects.EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS;
+  const drawDecision = executors.get(`card_play_domain_effect:decision:${drawType}`);
+  for (const incomeCode of [0, 1, 2]) {
+    const incomeRoot = createCanonicalState("b_1.webp"), target = incomeRoot.players.players[0];
+    target.hand.push({ id: "drawn-income", cardId: "b_2.webp", incomeCode },
+      { id: "drawn-keep", cardId: "b_3.webp", incomeCode: 0 });
+    target.resources.handSize = target.hand.length;
+    const originalIncome = structuredClone(target.income), beforeResources = { ...target.resources };
+    const stage = { ownerId: target.id, payload: { cardInstanceId: "y8-source",
+      cardEffect: { type: drawType }, stage: "income", drawnCardIds: ["drawn-income", "drawn-keep"] } };
+    const choices = drawDecision.getLegalChoices(incomeRoot, stage, { state: incomeRoot });
+    assert.deepEqual(choices.map(c => c.target.cardInstanceId).sort(), ["drawn-income", "drawn-keep"]);
+    const beforeWrongChoice = structuredClone(incomeRoot);
+    assert.equal(drawDecision.resolveDecision(incomeRoot, stage,
+      { target: { cardInstanceId: target.hand[0].id } }, { state: incomeRoot }).ok, false);
+    assert.deepEqual(incomeRoot, beforeWrongChoice, "原手牌不能代替新抽牌且拒绝不得改变状态");
+    const resolved = drawDecision.resolveDecision(incomeRoot, stage, choices.find(c => c.target.cardInstanceId === "drawn-income"), { state: incomeRoot });
+    assert.equal(resolved.ok, true);
+    for (const spawned of resolved.spawnedEffects) {
+      const executor = executors.get(spawned.effect.type);
+      const applied = (typeof executor === "function" ? executor : executor.execute)(incomeRoot, spawned.effect, { state: incomeRoot });
+      assert.equal(applied.ok, true, JSON.stringify(applied));
+    }
+    assert.deepEqual(target.income, originalIncome);
+    assert.equal(target.resources.credits - beforeResources.credits, incomeCode === 0 ? 1 : 0);
+    assert.equal(target.resources.energy - beforeResources.energy, incomeCode === 1 ? 1 : 0);
+    assert.equal(target.hand.length, incomeCode === 2 ? 3 : 2);
+    assert(incomeRoot.cards.discardPile.some(c => c.id === "drawn-income"));
+    assert(target.hand.some(c => c.id === "drawn-keep"));
+  }
+  const launchType = cardEffects.EFFECT_TYPES.YICHANGDIAN_LAUNCH_ANOMALY_MOVE;
+  const launchFollowup = executors.get(`card_play_domain_effect:effect:${launchType}`);
+  const missing = launchFollowup(root, { ownerId: actor.id,
+    payload: { cardInstanceId: "current-card", cardEffect: { type: launchType } } }, { state: root });
+  assert.equal(missing.ok, false, "没有本卡发射事实不能从地球位置推断奖励");
+}
 console.log("card play domain production composition tests passed");

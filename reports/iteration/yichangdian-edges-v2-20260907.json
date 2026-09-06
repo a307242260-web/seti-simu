@@ -1,0 +1,249 @@
+{
+  "scope": "真实42派生受控卡牌及异常位置；唯一Production执行与逐Decision恢复，不执行AI",
+  "cases": [
+    {
+      "index": 0,
+      "setup": "complete",
+      "drawnIds": [],
+      "discardedIds": [],
+      "steps": [
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f595b919",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "nebula:sector-4-a",
+              "nebulaId": "sector-4-a",
+              "sectorX": null
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 室女座61"
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        },
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f36c783c",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "trace:1:pink",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "pink"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 粉色痕迹"
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        }
+      ],
+      "events": [
+        {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "playerId": "player-green",
+          "cardId": "yichangdian_0.webp",
+          "sourceCardInstanceId": "alien-yichangdian-0-1",
+          "price": 1,
+          "executorId": "card_play:executor:v1"
+        },
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-4-a",
+          "slotIndex": 6,
+          "playerId": "player-green"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y0-anomaly-score",
+          "effectType": "yichangdian_anomaly_signal_score",
+          "playerId": "player-green"
+        },
+        {
+          "type": "yichangdian_anomaly_signal_score",
+          "playerId": "player-green",
+          "sectors": [
+            {
+              "nebulaId": "sector-4-a",
+              "count": 6
+            }
+          ],
+          "score": 6
+        },
+        {
+          "type": "science_resource_bonus",
+          "playerId": "player-green",
+          "gain": {
+            "publicity": 1
+          },
+          "sourceKey": "scanScore"
+        },
+        {
+          "type": "sectorCompleted",
+          "ok": true,
+          "sectorId": "sector-4-a",
+          "settlementNumber": 1,
+          "winner": {
+            "playerKey": "player-green",
+            "playerId": "player-green",
+            "playerColor": "green",
+            "playerLabel": "green",
+            "count": 6,
+            "latestReplacementOrder": 16
+          },
+          "second": null,
+          "participants": [
+            {
+              "playerKey": "player-green",
+              "playerId": "player-green",
+              "playerColor": "green",
+              "playerLabel": "green",
+              "count": 6,
+              "latestReplacementOrder": 16
+            }
+          ],
+          "fillResults": [
+            {
+              "ok": true,
+              "nebulaId": "sector-4-a",
+              "added": [
+                {
+                  "token": {
+                    "id": "nebula-data-91",
+                    "index": 46,
+                    "nebulaId": "sector-4-a",
+                    "slotIndex": 1,
+                    "replacedByPlayerId": null,
+                    "replacedByPlayerColor": null,
+                    "replacementOrder": null
+                  },
+                  "layout": {
+                    "slotIndex": 1,
+                    "percentX": 41.98,
+                    "percentY": 62.64,
+                    "scalePercent": 11.8
+                  }
+                },
+                {
+                  "token": {
+                    "id": "nebula-data-92",
+                    "index": 47,
+                    "nebulaId": "sector-4-a",
+                    "slotIndex": 2,
+                    "replacedByPlayerId": null,
+                    "replacedByPlayerColor": null,
+                    "replacementOrder": null
+                  },
+                  "layout": {
+                    "slotIndex": 2,
+                    "percentX": 48.14,
+                    "percentY": 57.49,
+                    "scalePercent": 11.8
+                  }
+                },
+                {
+                  "token": {
+                    "id": "nebula-data-93",
+                    "index": 48,
+                    "nebulaId": "sector-4-a",
+                    "slotIndex": 3,
+                    "replacedByPlayerId": null,
+                    "replacedByPlayerColor": null,
+                    "replacementOrder": null
+                  },
+                  "layout": {
+                    "slotIndex": 3,
+                    "percentX": 55.32,
+                    "percentY": 52.68,
+                    "scalePercent": 11.8
+                  }
+                },
+                {
+                  "token": {
+                    "id": "nebula-data-94",
+                    "index": 49,
+                    "nebulaId": "sector-4-a",
+                    "slotIndex": 4,
+                    "replacedByPlayerId": null,
+                    "replacedByPlayerColor": null,
+                    "replacementOrder": null
+                  },
+                  "layout": {
+                    "slotIndex": 4,
+                    "percentX": 62.52,
+                    "percentY": 48.5,
+                    "scalePercent": 11.8
+                  }
+                },
+                {
+                  "token": {
+                    "id": "nebula-data-95",
+                    "index": 50,
+                    "nebulaId": "sector-4-a",
+                    "slotIndex": 5,
+                    "replacedByPlayerId": null,
+                    "replacedByPlayerColor": null,
+                    "replacementOrder": null
+                  },
+                  "layout": {
+                    "slotIndex": 5,
+                    "percentX": 69.96,
+                    "percentY": 45.29,
+                    "scalePercent": 11.8
+                  }
+                },
+                {
+                  "token": {
+                    "id": "nebula-data-96",
+                    "index": 51,
+                    "nebulaId": "sector-4-a",
+                    "slotIndex": 6,
+                    "replacedByPlayerId": null,
+                    "replacedByPlayerColor": null,
+                    "replacementOrder": null
+                  },
+                  "layout": {
+                    "slotIndex": 6,
+                    "percentX": 77.92,
+                    "percentY": 42.72,
+                    "scalePercent": 11.8
+                  }
+                }
+              ],
+              "message": "填充 室女座61 +6：序号46 槽位1；序号47 槽位2；序号48 槽位3；序号49 槽位4；序号50 槽位5；序号51 槽位6"
+            }
+          ],
+          "message": "室女座61第1次结算：green获胜，无第二名保留标记"
+        },
+        {
+          "type": "alienTrace",
+          "playerId": "player-green",
+          "traceType": "pink",
+          "alienSlotId": 1,
+          "region": null
+        }
+      ]
+    }
+  ],
+  "verified": false,
+  "error": {
+    "message": "{\"setup\":\"a_1\",\"events\":[{\"type\":\"playCard\",\"timing\":\"after_play_card\",\"playerId\":\"player-green\",\"cardId\":\"yichangdian_1.webp\",\"sourceCardInstanceId\":\"alien-yichangdian-1-1\",\"price\":1,\"executorId\":\"card_play:executor:v1\"},{\"type\":\"card_effect\",\"effectId\":\"y1-next-anomaly-reward\",\"effectType\":\"yichangdian_next_anomaly_reward\",\"playerId\":\"player-green\"},{\"type\":\"yichangdian_anomaly_reward\",\"markerId\":\"a_1\",\"gain\":{\"credits\":1}},{\"type\":\"alienTrace\",\"playerId\":\"player-green\",\"traceType\":\"pink\",\"alienSlotId\":1,\"region\":null}]}",
+    "stack": "AssertionError [ERR_ASSERTION]: {\"setup\":\"a_1\",\"events\":[{\"type\":\"playCard\",\"timing\":\"after_play_card\",\"playerId\":\"player-green\",\"cardId\":\"yichangdian_1.webp\",\"sourceCardInstanceId\":\"alien-yichangdian-1-1\",\"price\":1,\"executorId\":\"card_play:executor:v1\"},{\"type\":\"card_effect\",\"effectId\":\"y1-next-anomaly-reward\",\"effectType\":\"yichangdian_next_anomaly_reward\",\"playerId\":\"player-green\"},{\"type\":\"yichangdian_anomaly_reward\",\"markerId\":\"a_1\",\"gain\":{\"credits\":1}},{\"type\":\"alienTrace\",\"playerId\":\"player-green\",\"traceType\":\"pink\",\"alienSlotId\":1,\"region\":null}]}\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/verify-yichangdian-flow-20260907.js:104:9)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

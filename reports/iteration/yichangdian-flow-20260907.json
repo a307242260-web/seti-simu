@@ -1,0 +1,167 @@
+{
+  "scope": "真实42派生受控卡牌及异常位置；唯一Production执行与逐Decision恢复，不执行AI",
+  "cases": [
+    {
+      "index": 8,
+      "setup": "draw",
+      "drawnIds": [
+        "card-39-0",
+        "card-40-0",
+        "card-41-0"
+      ],
+      "discardedIds": [
+        "card-39-0",
+        "card-40-0"
+      ],
+      "steps": [
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:1e1b217d",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "card-39-0",
+              "cardInstanceId": "card-39-0",
+              "index": 0
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "dlc_38.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-39-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_38.png",
+              "imageAlt": "dlc_38.png"
+            }
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        },
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:8dd0e319",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "card-40-0",
+              "cardInstanceId": "card-40-0",
+              "index": 0
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "b_11.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-40-0",
+              "imageSrc": "../assets/cards/basic/split/b_11.webp",
+              "imageAlt": "b_11.webp"
+            }
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        }
+      ],
+      "events": [
+        {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "playerId": "player-green",
+          "cardId": "yichangdian_8.webp",
+          "sourceCardInstanceId": "alien-yichangdian-8-1",
+          "price": 1,
+          "executorId": "card_play:executor:v1"
+        },
+        {
+          "type": "yichangdian_draw_then_discard",
+          "drawn": [
+            "card-39-0",
+            "card-40-0",
+            "card-41-0"
+          ]
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y8-draw-corners",
+          "effectType": "yichangdian_draw_then_two_corners",
+          "playerId": "player-green"
+        },
+        {
+          "type": "yichangdian_draw_discard",
+          "stage": "corner",
+          "cardInstanceId": "card-39-0"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "corner:card-39-0:0:data",
+          "effectType": "gain_data",
+          "playerId": "player-green"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y8-draw-corners",
+          "effectType": "yichangdian_draw_then_two_corners",
+          "playerId": "player-green"
+        },
+        {
+          "type": "yichangdian_draw_discard",
+          "stage": "income",
+          "cardInstanceId": "card-40-0"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y8-income:card-40-0:draw",
+          "effectType": "draw_cards",
+          "playerId": "player-green",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "setup": "full",
+      "drawnIds": [],
+      "discardedIds": [],
+      "steps": [],
+      "events": [
+        {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "playerId": "player-green",
+          "cardId": "yichangdian_9.webp",
+          "sourceCardInstanceId": "alien-yichangdian-9-1",
+          "price": 1,
+          "executorId": "card_play:executor:v1"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y9-launch",
+          "effectType": "launch",
+          "playerId": "player-green",
+          "skipped": true,
+          "reason": "rocket_limit"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y9-anomaly-move",
+          "effectType": "yichangdian_launch_anomaly_move",
+          "playerId": "player-green",
+          "skipped": true,
+          "reason": "launch_skipped"
+        }
+      ]
+    }
+  ],
+  "verified": false,
+  "error": {
+    "message": "Expected values to be strictly equal:\n\nfalse !== true\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/verify-yichangdian-flow-20260907.js:28:14)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

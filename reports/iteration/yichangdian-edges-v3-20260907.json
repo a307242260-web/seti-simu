@@ -1,0 +1,825 @@
+{
+  "scope": "真实42派生受控卡牌及异常位置；唯一Production执行与逐Decision恢复，不执行AI",
+  "cases": [
+    {
+      "index": 0,
+      "setup": "complete",
+      "drawnIds": [],
+      "discardedIds": [],
+      "steps": [
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f595b919",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "nebula:sector-4-a",
+              "nebulaId": "sector-4-a",
+              "sectorX": null
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 室女座61"
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        },
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f36c783c",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "trace:1:pink",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "pink"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 粉色痕迹"
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        }
+      ],
+      "events": [
+        {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "playerId": "player-green",
+          "cardId": "yichangdian_0.webp",
+          "sourceCardInstanceId": "alien-yichangdian-0-1",
+          "price": 1,
+          "executorId": "card_play:executor:v1"
+        },
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-4-a",
+          "slotIndex": 6,
+          "playerId": "player-green"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y0-anomaly-score",
+          "effectType": "yichangdian_anomaly_signal_score",
+          "playerId": "player-green"
+        },
+        {
+          "type": "yichangdian_anomaly_signal_score",
+          "playerId": "player-green",
+          "sectors": [
+            {
+              "nebulaId": "sector-4-a",
+              "count": 6
+            }
+          ],
+          "score": 6
+        },
+        {
+          "type": "science_resource_bonus",
+          "playerId": "player-green",
+          "gain": {
+            "publicity": 1
+          },
+          "sourceKey": "scanScore"
+        },
+        {
+          "type": "sectorCompleted",
+          "ok": true,
+          "sectorId": "sector-4-a",
+          "settlementNumber": 1,
+          "winner": {
+            "playerKey": "player-green",
+            "playerId": "player-green",
+            "playerColor": "green",
+            "playerLabel": "green",
+            "count": 6,
+            "latestReplacementOrder": 16
+          },
+          "second": null,
+          "participants": [
+            {
+              "playerKey": "player-green",
+              "playerId": "player-green",
+              "playerColor": "green",
+              "playerLabel": "green",
+              "count": 6,
+              "latestReplacementOrder": 16
+            }
+          ],
+          "fillResults": [
+            {
+              "ok": true,
+              "nebulaId": "sector-4-a",
+              "added": [
+                {
+                  "token": {
+                    "id": "nebula-data-91",
+                    "index": 46,
+                    "nebulaId": "sector-4-a",
+                    "slotIndex": 1,
+                    "replacedByPlayerId": null,
+                    "replacedByPlayerColor": null,
+                    "replacementOrder": null
+                  },
+                  "layout": {
+                    "slotIndex": 1,
+                    "percentX": 41.98,
+                    "percentY": 62.64,
+                    "scalePercent": 11.8
+                  }
+                },
+                {
+                  "token": {
+                    "id": "nebula-data-92",
+                    "index": 47,
+                    "nebulaId": "sector-4-a",
+                    "slotIndex": 2,
+                    "replacedByPlayerId": null,
+                    "replacedByPlayerColor": null,
+                    "replacementOrder": null
+                  },
+                  "layout": {
+                    "slotIndex": 2,
+                    "percentX": 48.14,
+                    "percentY": 57.49,
+                    "scalePercent": 11.8
+                  }
+                },
+                {
+                  "token": {
+                    "id": "nebula-data-93",
+                    "index": 48,
+                    "nebulaId": "sector-4-a",
+                    "slotIndex": 3,
+                    "replacedByPlayerId": null,
+                    "replacedByPlayerColor": null,
+                    "replacementOrder": null
+                  },
+                  "layout": {
+                    "slotIndex": 3,
+                    "percentX": 55.32,
+                    "percentY": 52.68,
+                    "scalePercent": 11.8
+                  }
+                },
+                {
+                  "token": {
+                    "id": "nebula-data-94",
+                    "index": 49,
+                    "nebulaId": "sector-4-a",
+                    "slotIndex": 4,
+                    "replacedByPlayerId": null,
+                    "replacedByPlayerColor": null,
+                    "replacementOrder": null
+                  },
+                  "layout": {
+                    "slotIndex": 4,
+                    "percentX": 62.52,
+                    "percentY": 48.5,
+                    "scalePercent": 11.8
+                  }
+                },
+                {
+                  "token": {
+                    "id": "nebula-data-95",
+                    "index": 50,
+                    "nebulaId": "sector-4-a",
+                    "slotIndex": 5,
+                    "replacedByPlayerId": null,
+                    "replacedByPlayerColor": null,
+                    "replacementOrder": null
+                  },
+                  "layout": {
+                    "slotIndex": 5,
+                    "percentX": 69.96,
+                    "percentY": 45.29,
+                    "scalePercent": 11.8
+                  }
+                },
+                {
+                  "token": {
+                    "id": "nebula-data-96",
+                    "index": 51,
+                    "nebulaId": "sector-4-a",
+                    "slotIndex": 6,
+                    "replacedByPlayerId": null,
+                    "replacedByPlayerColor": null,
+                    "replacementOrder": null
+                  },
+                  "layout": {
+                    "slotIndex": 6,
+                    "percentX": 77.92,
+                    "percentY": 42.72,
+                    "scalePercent": 11.8
+                  }
+                }
+              ],
+              "message": "填充 室女座61 +6：序号46 槽位1；序号47 槽位2；序号48 槽位3；序号49 槽位4；序号50 槽位5；序号51 槽位6"
+            }
+          ],
+          "message": "室女座61第1次结算：green获胜，无第二名保留标记"
+        },
+        {
+          "type": "alienTrace",
+          "playerId": "player-green",
+          "traceType": "pink",
+          "alienSlotId": 1,
+          "region": null
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "setup": "a_1",
+      "drawnIds": [],
+      "discardedIds": [],
+      "steps": [
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f36c783c",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "trace:1:pink",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "pink"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "异常奖励：外星人痕迹 → 外星人 1 粉色痕迹"
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        }
+      ],
+      "events": [
+        {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "playerId": "player-green",
+          "cardId": "yichangdian_1.webp",
+          "sourceCardInstanceId": "alien-yichangdian-1-1",
+          "price": 1,
+          "executorId": "card_play:executor:v1"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y1-next-anomaly-reward",
+          "effectType": "yichangdian_next_anomaly_reward",
+          "playerId": "player-green"
+        },
+        {
+          "type": "yichangdian_anomaly_reward",
+          "markerId": "a_1",
+          "gain": {
+            "credits": 1
+          }
+        },
+        {
+          "type": "alienTrace",
+          "playerId": "player-green",
+          "traceType": "pink",
+          "alienSlotId": 1,
+          "region": null
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "setup": "a_2",
+      "drawnIds": [],
+      "discardedIds": [],
+      "steps": [
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f36c783c",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "trace:1:pink",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "pink"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "异常奖励：外星人痕迹 → 外星人 1 粉色痕迹"
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        }
+      ],
+      "events": [
+        {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "playerId": "player-green",
+          "cardId": "yichangdian_1.webp",
+          "sourceCardInstanceId": "alien-yichangdian-1-1",
+          "price": 1,
+          "executorId": "card_play:executor:v1"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y1-next-anomaly-reward",
+          "effectType": "yichangdian_next_anomaly_reward",
+          "playerId": "player-green"
+        },
+        {
+          "type": "yichangdian_anomaly_reward",
+          "markerId": "a_2",
+          "gain": {
+            "score": 4
+          }
+        },
+        {
+          "type": "alienTrace",
+          "playerId": "player-green",
+          "traceType": "pink",
+          "alienSlotId": 1,
+          "region": null
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "setup": "b_1",
+      "drawnIds": [],
+      "discardedIds": [],
+      "steps": [
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:74926e94",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "trace:1:yellow",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "yellow"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "异常奖励：外星人痕迹 → 外星人 1 黄色痕迹"
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        }
+      ],
+      "events": [
+        {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "playerId": "player-green",
+          "cardId": "yichangdian_1.webp",
+          "sourceCardInstanceId": "alien-yichangdian-1-1",
+          "price": 1,
+          "executorId": "card_play:executor:v1"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y1-next-anomaly-reward",
+          "effectType": "yichangdian_next_anomaly_reward",
+          "playerId": "player-green"
+        },
+        {
+          "type": "yichangdian_anomaly_reward",
+          "markerId": "b_1",
+          "gain": {
+            "publicity": 2
+          }
+        },
+        {
+          "type": "alienTrace",
+          "playerId": "player-green",
+          "traceType": "yellow",
+          "alienSlotId": 1,
+          "region": null
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "setup": "b_2",
+      "drawnIds": [],
+      "discardedIds": [],
+      "steps": [
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:47c3c348",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "public:0",
+              "source": "public",
+              "slotIndex": 0
+            },
+            "payload": {
+              "cardInstanceId": "card-17-0"
+            },
+            "decision": null,
+            "summary": "b_2.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-17-0",
+              "imageSrc": "../assets/cards/basic/split/b_2.webp",
+              "imageAlt": "b_2.webp"
+            }
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        },
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:74926e94",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "trace:1:yellow",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "yellow"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "异常奖励：外星人痕迹 → 外星人 1 黄色痕迹"
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        }
+      ],
+      "events": [
+        {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "playerId": "player-green",
+          "cardId": "yichangdian_1.webp",
+          "sourceCardInstanceId": "alien-yichangdian-1-1",
+          "price": 1,
+          "executorId": "card_play:executor:v1"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y1-next-anomaly-reward",
+          "effectType": "yichangdian_next_anomaly_reward",
+          "playerId": "player-green"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y1-pick-b_2",
+          "effectType": "pick_card",
+          "playerId": "player-green",
+          "awaitingDecision": true,
+          "legalChoiceCount": 4
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y1-pick-b_2",
+          "effectType": "pick_card",
+          "playerId": "player-green",
+          "cardInstanceId": "card-17-0",
+          "source": "public"
+        },
+        {
+          "type": "alienTrace",
+          "playerId": "player-green",
+          "traceType": "yellow",
+          "alienSlotId": 1,
+          "region": null
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "setup": "c_1",
+      "drawnIds": [],
+      "discardedIds": [],
+      "steps": [
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:7876797c",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "trace:1:blue",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "异常奖励：外星人痕迹 → 外星人 1 蓝色痕迹"
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        }
+      ],
+      "events": [
+        {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "playerId": "player-green",
+          "cardId": "yichangdian_1.webp",
+          "sourceCardInstanceId": "alien-yichangdian-1-1",
+          "price": 1,
+          "executorId": "card_play:executor:v1"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y1-next-anomaly-reward",
+          "effectType": "yichangdian_next_anomaly_reward",
+          "playerId": "player-green"
+        },
+        {
+          "type": "alienTrace",
+          "playerId": "player-green",
+          "traceType": "blue",
+          "alienSlotId": 1,
+          "region": null
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "setup": "c_2",
+      "drawnIds": [],
+      "discardedIds": [],
+      "steps": [
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:7876797c",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "trace:1:blue",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "异常奖励：外星人痕迹 → 外星人 1 蓝色痕迹"
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        }
+      ],
+      "events": [
+        {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "playerId": "player-green",
+          "cardId": "yichangdian_1.webp",
+          "sourceCardInstanceId": "alien-yichangdian-1-1",
+          "price": 1,
+          "executorId": "card_play:executor:v1"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y1-next-anomaly-reward",
+          "effectType": "yichangdian_next_anomaly_reward",
+          "playerId": "player-green"
+        },
+        {
+          "type": "yichangdian_anomaly_reward",
+          "markerId": "c_2",
+          "gain": {
+            "energy": 1
+          }
+        },
+        {
+          "type": "alienTrace",
+          "playerId": "player-green",
+          "traceType": "blue",
+          "alienSlotId": 1,
+          "region": null
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "setup": "movement",
+      "drawnIds": [
+        "card-39-0",
+        "card-40-0",
+        "card-41-0"
+      ],
+      "discardedIds": [
+        "card-39-0",
+        "card-40-0"
+      ],
+      "steps": [
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:1e1b217d",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "card-39-0",
+              "cardInstanceId": "card-39-0",
+              "index": 0
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "dlc_41.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-39-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_41.png",
+              "imageAlt": "dlc_41.png"
+            }
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        },
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:5c22a423",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "1:0:1",
+              "rocketId": 1,
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            "payload": {
+              "requiredMovePoints": 1,
+              "remaining": 1
+            },
+            "decision": null,
+            "summary": "R1 向外"
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        },
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:8dd0e319",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "card-40-0",
+              "cardInstanceId": "card-40-0",
+              "index": 0
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "b_6.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-40-0",
+              "imageSrc": "../assets/cards/basic/split/b_6.webp",
+              "imageAlt": "b_6.webp"
+            }
+          },
+          "restored": true,
+          "wrongOwnerRejected": true
+        }
+      ],
+      "events": [
+        {
+          "type": "playCard",
+          "timing": "after_play_card",
+          "playerId": "player-green",
+          "cardId": "yichangdian_8.webp",
+          "sourceCardInstanceId": "alien-yichangdian-8-1",
+          "price": 1,
+          "executorId": "card_play:executor:v1"
+        },
+        {
+          "type": "yichangdian_draw_then_discard",
+          "drawn": [
+            "card-39-0",
+            "card-40-0",
+            "card-41-0"
+          ]
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y8-draw-corners",
+          "effectType": "yichangdian_draw_then_two_corners",
+          "playerId": "player-green"
+        },
+        {
+          "type": "yichangdian_draw_discard",
+          "stage": "corner",
+          "cardInstanceId": "card-39-0"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "corner:card-39-0:0:move",
+          "effectType": "card_move",
+          "playerId": "player-green",
+          "awaitingDecision": true,
+          "legalChoiceCount": 7
+        },
+        {
+          "type": "card_effect",
+          "effectId": "corner:card-39-0:0:move",
+          "effectType": "card_move",
+          "playerId": "player-green"
+        },
+        {
+          "type": "move",
+          "rocketId": 1,
+          "playerId": "player-green",
+          "source": "card",
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 5,
+            "y": 2
+          },
+          "sameRing": false
+        },
+        {
+          "type": "visitPlanet",
+          "planetId": "mars",
+          "rocketId": 1,
+          "tokenKind": "standard",
+          "fossilId": null,
+          "playerId": "player-green",
+          "source": "card",
+          "publicityReward": 1,
+          "publicityGained": 1,
+          "hasOwnOrbit": false
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y8-draw-corners",
+          "effectType": "yichangdian_draw_then_two_corners",
+          "playerId": "player-green"
+        },
+        {
+          "type": "yichangdian_draw_discard",
+          "stage": "income",
+          "cardInstanceId": "card-40-0"
+        },
+        {
+          "type": "card_effect",
+          "effectId": "y8-income:card-40-0:gain",
+          "effectType": "gain_resources",
+          "playerId": "player-green"
+        }
+      ]
+    }
+  ],
+  "codeSha256": "3b4ee7c31f2ce18289932dda16ab22a263793b0ec9c11961d829b4d6a753dbdd",
+  "verified": true
+}

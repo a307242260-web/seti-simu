@@ -94,7 +94,7 @@
   const EXECUTOR_ID = `${DOMAIN_ID}:executor:v1`;
   const REACHABLE_PLAY_EFFECT_TYPES = Object.freeze((() => {
     const types = new Set();
-    for (const cardId of Object.keys(cardEffects.CARD_REFERENCE_MAP || {})) {
+    for (const cardId of Object.keys(cardEffects.MODELS)) {
       for (const effect of cardEffects.buildPlayEffects({ cardId })) types.add(effect.type);
     }
     return [...types].sort();
@@ -117,7 +117,7 @@
   }
   const REACHABLE_RECURSIVE_EFFECT_TYPES = Object.freeze((() => {
     const types = new Set();
-    for (const cardId of Object.keys(cardEffects.CARD_REFERENCE_MAP || {})) {
+    for (const cardId of Object.keys(cardEffects.MODELS)) {
       collectRecursiveEffectTypes(cardEffects.buildPlayEffects({ cardId }), types);
     }
     return [...types].sort();
@@ -917,6 +917,9 @@
       if (!effect.options?.ignoreRocketLimit
         && abilities.rocket.getActiveRocketCountForPlayer(context.pieces, actor.id)
           >= abilities.rocket.getRocketLimitForPlayer(actor, context)) {
+        root.match.cardPlayContext = { ...(root.match.cardPlayContext || {}), cardLaunch: {
+          cardInstanceId: sessionEffect.payload.cardInstanceId, actorId: actor.id, skipped: true,
+        } };
         return cardEffectResult(state, root, sessionEffect, {
           event: { skipped: true, reason: "rocket_limit" },
           history: { skipped: true, reason: "rocket_limit" },
@@ -933,6 +936,9 @@
         },
       );
       if (!result.ok) return result;
+      root.match.cardPlayContext = { ...(root.match.cardPlayContext || {}), cardLaunch: {
+        cardInstanceId: sessionEffect.payload.cardInstanceId, actorId: actor.id, rocketId: result.rocket.id, skipped: false,
+      } };
       return {
         ok: true,
         nextState: commitWorkingState(state, { source: effect.type }),
@@ -2426,7 +2432,7 @@
           options: { allowedTraceTypes: [reward.traceType] },
         }, actor.id, cardInstanceId));
       }
-      return { events, spawnedEffects };
+      return { ok: true, events, spawnedEffects };
     }
 
     function executeYichangdianAnomalySignalScore(state, sessionEffect, workingContext) {
@@ -2434,25 +2440,20 @@
       const actor = getActor(root, sessionEffect.ownerId);
       if (!actor) return fail("CARD_YICHANGDIAN_OWNER_STALE", "异常点效果 owner 已失效");
       const alienState = getWorkingSlice(root, "aliens");
-      const lastScanNebulaId = root.match?.cardPlayContext?.lastScanNebulaId;
-      if (!lastScanNebulaId || typeof yichangdian?.getAnomalyBySectorX !== "function") {
-        return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "no_last_scan" } });
-      }
-      const sectorX = getNebulaSectorX(root, lastScanNebulaId);
-      const anomaly = sectorX == null ? null : yichangdian.getAnomalyBySectorX(alienState, sectorX);
-      if (!anomaly) {
-        return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "scan_sector_not_anomaly" } });
-      }
-      const reward = typeof yichangdian.getAnomalyReward === "function"
-        ? (yichangdian.getAnomalyReward(anomaly.markerId) || {})
-        : {};
-      const applied = applyYichangdianAnomalyReward(
-        root, actor, anomaly, sessionEffect.payload?.cardInstanceId || null, reward,
-      );
-      if (!applied.ok) return applied;
+      const nebulaIds = [...new Set((alienState.yichangdian?.anomalies || []).map(anomaly => {
+        const nebula = solar.getNebulaAtCoordinate(anomaly.sectorX, 5, root.solarSystem.sectorBySlot);
+        if (!nebula) throw new TypeError("CARD_ANOMALY_SECTOR_MISSING: 异常缺少正式扇区");
+        return nebula.id;
+      }))];
+      const sectors = nebulaIds.map(nebulaId => {
+        const own = data.getSectorRanking(root.data, nebulaId)
+          .find(entry => entry.playerId === actor.id || entry.playerColor === actor.color);
+        return { nebulaId, count: own ? own.count : 0 };
+      });
+      const score = sectors.reduce((total, entry) => total + entry.count, 0);
+      players.gainResources(actor, { score }, "alienEffectScore");
       return cardEffectResult(state, root, sessionEffect, {
-        events: [{ type: "yichangdian_anomaly_signal_score", nebulaId: lastScanNebulaId, markerId: anomaly.markerId }, ...applied.events],
-        spawnedEffects: applied.spawnedEffects,
+        events: [{ type: "yichangdian_anomaly_signal_score", playerId: actor.id, sectors, score }],
       });
     }
 
@@ -2519,12 +2520,19 @@
       const actor = getActor(root, sessionEffect.ownerId);
       if (!actor) return fail("CARD_YICHANGDIAN_OWNER_STALE", "异常点效果 owner 已失效");
       const alienState = getWorkingSlice(root, "aliens");
-      const earth = solar.createSolarSnapshot(getWorkingSlice(root, "solarSystem"))
-        .planetLocations?.find((planet) => planet.planetId === "earth");
-      const inAnomaly = Boolean(earth) && typeof yichangdian?.getAnomalyBySectorX === "function"
-        && Boolean(yichangdian.getAnomalyBySectorX(alienState, earth.x));
+      const launched = root.match.cardPlayContext?.cardLaunch;
+      if (!launched || launched.cardInstanceId !== sessionEffect.payload.cardInstanceId || launched.actorId !== actor.id) {
+        return fail("CARD_YICHANGDIAN_LAUNCH_FACTS_MISSING", "缺少本卡实际发射结果");
+      }
+      if (launched.skipped) return cardEffectResult(state, root, sessionEffect, {
+        event: { skipped: true, reason: "launch_skipped" },
+      });
+      const rocket = root.pieces.rockets.find(entry => entry.id === launched.rocketId && entry.playerId === actor.id);
+      if (!rocket) return fail("CARD_YICHANGDIAN_LAUNCH_SOURCE_MISSING", "本卡发射实体已丢失");
+      const coordinate = rockets.getRocketSectorCoordinate(rocket);
+      const inAnomaly = Boolean(yichangdian.getAnomalyBySectorX(alienState, coordinate.x));
       if (!inAnomaly) {
-        return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "earth_not_in_anomaly" } });
+        return cardEffectResult(state, root, sessionEffect, { event: { skipped: true, reason: "launched_probe_not_in_anomaly" } });
       }
       return cardEffectResult(state, root, sessionEffect, {
         spawnedEffects: [createSpawnedCardEffect({
@@ -2577,6 +2585,14 @@
       };
     }
 
+    function yichangdianDrawChoice(sessionEffect, drawnCardIds, stage) {
+      return { priority: "direct", effect: {
+        type: genericEffectRuntimeType(cardEffects.EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS, true),
+        kind: "decision", decisionKind: "choose_card", ownerId: sessionEffect.ownerId,
+        payload: { ...clone(sessionEffect.payload), drawnCardIds, stage },
+      } };
+    }
+
     function executeYichangdianDrawThenTwoCorners(state, sessionEffect, workingContext) {
       const root = getWorkingRoot(state, workingContext);
       const actor = getActor(root, sessionEffect.ownerId);
@@ -2594,23 +2610,59 @@
         if (!result.ok) return result;
         drawn.push(result.card);
       }
-      const spawnedEffects = [];
-      for (let index = 0; index < 2; index += 1) {
-        spawnedEffects.push(createSpawnedCardEffect({
-          id: `y8-corner-${index + 1}`,
-          type: cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD,
-          label: `结算角标 ${index + 1}/2`,
-          options: {},
-        }, actor.id, sessionEffect.payload?.cardInstanceId || null));
-      }
       return {
         ok: true,
         nextState: commitWorkingState(state, { source: sessionEffect.payload?.cardEffect?.type || EFFECT_TYPES.EFFECT }),
-        spawnedEffects,
-        events: [{ type: "yichangdian_draw_then_two_corners", drawn: drawn.map((card) => card.id) }],
+        spawnedEffects: [yichangdianDrawChoice(sessionEffect, drawn.map(card => card.id), "corner")],
+        events: [{ type: "yichangdian_draw_then_discard", drawn: drawn.map((card) => card.id) }],
         irreversible: { code: "hidden_card_draw", reason: "盲抽 3 张翻开隐藏牌" },
       };
     }
+
+    const yichangdianDrawDecision = {
+      getLegalChoices(state, sessionEffect, workingContext) {
+        const root = getWorkingRoot(state, workingContext);
+        const { stage, drawnCardIds } = sessionEffect.payload;
+        if (!["corner", "income"].includes(stage) || !Array.isArray(drawnCardIds)
+          || drawnCardIds.length !== (stage === "corner" ? 3 : 2)) {
+          throw new TypeError("CARD_YICHANGDIAN_DRAW_FACTS_INVALID: 抽牌阶段或实体来源缺失");
+        }
+        const actor = getActor(root, sessionEffect.ownerId);
+        const selected = (actor?.hand || []).filter(card => drawnCardIds.includes(card.id));
+        if (selected.length !== drawnCardIds.length) throw new TypeError("CARD_YICHANGDIAN_DRAW_SOURCE_MISSING: 新抽牌实体丢失");
+        return getScienceDomain().formalizeChoices(root, sessionEffect.ownerId, listCardChoices(selected));
+      },
+      resolveDecision(state, sessionEffect, choice, workingContext) {
+        const root = getWorkingRoot(state, workingContext);
+        const legal = yichangdianDrawDecision.getLegalChoices(state, sessionEffect, workingContext)
+          .find(candidate => candidate.target.cardInstanceId === choice?.target?.cardInstanceId);
+        if (!legal) return fail("CARD_YICHANGDIAN_DRAW_CHOICE_STALE", "只能选择本次新抽且尚未弃置的牌");
+        const actor = getActor(root, sessionEffect.ownerId);
+        const index = actor.hand.findIndex(card => card.id === legal.target.cardInstanceId);
+        const selected = actor.hand[index];
+        const stage = sessionEffect.payload.stage;
+        const gain = stage === "income" ? cards.getIncomeGainForCard(selected) : null;
+        if (stage === "income" && !gain) return fail("CARD_YICHANGDIAN_INCOME_UNKNOWN", "收入资源码无法识别");
+        const removed = cards.discardFromHandAtIndex(actor, index);
+        if (!removed.ok) return removed;
+        cards.addToDiscardPile(root.cards, removed.card);
+        let spawnedEffects;
+        if (stage === "corner") {
+          spawnedEffects = [...spawnCardEffects(cornerEffects(removed.card), sessionEffect),
+            yichangdianDrawChoice(sessionEffect, sessionEffect.payload.drawnCardIds.filter(id => id !== selected.id), "income")];
+        } else {
+          const { handSize = 0, availableData = 0, ...resources } = gain;
+          spawnedEffects = spawnCardEffects(cards.buildRewardEffects({ gain: resources,
+            drawCards: handSize, dataCount: availableData, label: "弃牌获得收入资源" }, `y8-income:${selected.id}`), sessionEffect);
+        }
+        return cardEffectResult(state, root, sessionEffect, {
+          spawnedEffects, events: [{ type: "yichangdian_draw_discard", stage, cardInstanceId: selected.id }],
+        });
+      },
+    };
+    runtime.registerExecutor(
+      genericEffectRuntimeType(cardEffects.EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS, true), yichangdianDrawDecision,
+    );
 
     runtime.registerExecutor(
       genericEffectRuntimeType(cardEffects.EFFECT_TYPES.YICHANGDIAN_ANOMALY_SIGNAL_SCORE),

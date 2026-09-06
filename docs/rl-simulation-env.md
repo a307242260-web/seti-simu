@@ -107,7 +107,15 @@ b88的probeScanResult仅承载结算前正式信号事实，Card Play验证后�
 同扇区剩余标记次数。首次选择后转specified唯一扇区，后续逐次执行原扫描内核，
 不再次选址、不增加流末结算。独立的多个ANY效果仍各自选址，不合并来源。
 计划从公开board.rockets及board.solarSystem.sectorBySlot采集所选来源依赖，
-没有新增私有信息读取。规则目录、节点预算和启发式权重不变。
+没有新增私有信息读取。节点预算和启发式权重不变。
+
+Card Play准入目录从全部MODELS递归构建，不再用182张参考牌代替242模型。
+异常点8的专属choose_card Decision payload携带drawnCardIds与stage（corner/income），
+保留cardInstanceId；首次弃牌的行动角后续完成后才进入收入阶段，阶段恢复不重抽。
+卡牌LAUNCH在match.cardPlayContext.cardLaunch记录cardInstanceId、actorId以及
+skipped或rocketId；异常点9仅消费本卡同owner的实际发射结果。缺少必需来源或
+非法阶段显式失败，不从旧卡事实或默认值补齐。异常点0的计分事件保存逐异常扇区
+己方信号count和总score；发生于扫描流末结算之前。
 
 Production地球坐标及探测/正式行动context通过共享太阳系内核的
 `collectPlanetLocations`读取行星数组，省略无关的完整快照计算；Browser与Simulation
