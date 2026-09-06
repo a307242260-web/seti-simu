@@ -1,0 +1,418 @@
+{
+  "scope": "卡牌共享痕迹流程修复，真实检查点单决策；非完整局验收",
+  "commit": "6cd56452",
+  "step": 466,
+  "wallMs": 14649.827042,
+  "actionId": "launch:c1616852",
+  "searches": [
+    {
+      "kind": "control",
+      "diagnostics": {
+        "executedNodeCount": 1,
+        "maxExecutionNodes": 1,
+        "executionLimitReached": false,
+        "successfulInputSubmissionCount": 1,
+        "attemptedNodeCountByFamily": {
+          "pass": 1
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "pass": 1
+        },
+        "executedNodeCountByDecisionKind": {
+          "pass:pass": 1
+        },
+        "executedNodeCountByActionSummary": {
+          "pass:PASS": 1
+        },
+        "executedOriginCountByTarget": {
+          "<unbound>": 1
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "<unbound> -> pass:pass": 1
+        },
+        "frontierOriginCountByFamily": {},
+        "totalMilliseconds": 11.283416999999986
+      }
+    },
+    {
+      "kind": "strategic",
+      "diagnostics": {
+        "executedNodeCount": 4096,
+        "maxExecutionNodes": 4096,
+        "executionLimitReached": true,
+        "successfulInputSubmissionCount": 4605,
+        "attemptedNodeCountByFamily": {
+          "analyze": 81,
+          "card_corner": 115,
+          "choose_card": 1297,
+          "choose_payment": 163,
+          "choose_target": 1386,
+          "end_turn": 307,
+          "industry": 26,
+          "land": 74,
+          "launch": 30,
+          "move": 111,
+          "orbit": 75,
+          "pass": 13,
+          "place_data": 119,
+          "play_card": 53,
+          "quick_trade": 147,
+          "scan": 99
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "analyze": 81,
+          "card_corner": 115,
+          "choose_card": 1297,
+          "choose_payment": 163,
+          "choose_target": 1386,
+          "end_turn": 307,
+          "industry": 26,
+          "land": 74,
+          "launch": 30,
+          "move": 111,
+          "orbit": 75,
+          "pass": 13,
+          "place_data": 119,
+          "play_card": 53,
+          "quick_trade": 147,
+          "scan": 99
+        },
+        "executedNodeCountByDecisionKind": {
+          "analyze:computer": 81,
+          "card_corner:<none>": 115,
+          "choose_card:<none>": 270,
+          "choose_card:residual-domain": 1027,
+          "choose_payment:move-payment": 163,
+          "choose_target:<none>": 196,
+          "choose_target:planet-reward-alien-trace": 1165,
+          "choose_target:residual-domain": 25,
+          "end_turn:end-turn": 307,
+          "industry:<none>": 26,
+          "land:<none>": 74,
+          "launch:<none>": 30,
+          "move:<none>": 111,
+          "orbit:<none>": 75,
+          "pass:pass": 13,
+          "place_data:place-data": 119,
+          "play_card:<none>": 53,
+          "quick_trade:<none>": 147,
+          "scan:standard-scan": 99
+        },
+        "executedNodeCountByActionSummary": {
+          "choose_card:盲抽阿米巴牌": 310,
+          "choose_card:获得展示的低重力研究": 310,
+          "end_turn:结束回合": 307,
+          "choose_card:盲抽虫牌": 157,
+          "choose_card:获得展示的虫": 157,
+          "place_data:放置数据": 119,
+          "scan:扫描": 99,
+          "choose_target:扫描 巴纳德": 95,
+          "choose_card:dlc_41.png → 南河三": 94,
+          "choose_payment:弃 1 张移动牌": 82,
+          "quick_trade:2张牌 → 1信用点": 82,
+          "analyze:分析": 81,
+          "choose_payment:消耗 1 能量": 81,
+          "choose_target:外星人 1 蓝7号位（化石奖励）": 81,
+          "choose_target:外星人 1 蓝8号位（3分+外星人牌）": 81,
+          "choose_target:外星人 1 额外痕迹位（3分）": 81,
+          "choose_target:外星人 2 蓝1号位": 81,
+          "choose_target:外星人 2 蓝3号位（外星人牌）": 81,
+          "choose_target:外星人 2 蓝4号位（1分+外星人牌）": 81,
+          "choose_target:外星人 2 额外痕迹位（3分）": 81,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 额外痕迹位（3分）": 74,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄1号位（4分）": 74,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄3号位（3分+外星人牌）": 74,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 额外痕迹位（3分）": 74,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄1号位": 74,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄2号位（1分）": 74,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄3号位（外星人牌）": 74,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄4号位（1分+外星人牌）": 74,
+          "land:登陆": 74,
+          "move:移动探测器 10 逆时针": 72,
+          "choose_target:blue1 下方": 60,
+          "orbit:环绕金星 - 奖励：获得 6 分；获得 1 次收入（R10，1信用点 + 1能量）": 57,
+          "quick_trade:2能量 → 1信用点": 53,
+          "card_corner:b_23.webp：弃牌角标": 51,
+          "choose_card:收入 b_58.webp": 51,
+          "choose_card:收入 b_23.webp": 36,
+          "card_corner:b_58.webp：弃牌角标": 35,
+          "launch:发射": 30,
+          "card_corner:b_32.webp：弃牌角标": 29,
+          "industry:赫利昂联合体 1x 行动": 26,
+          "choose_card:b_23.webp": 25,
+          "choose_target:无效 orange3": 25,
+          "choose_card:b_129.webp": 24,
+          "choose_card:收入 b_32.webp": 22,
+          "move:移动探测器 10 向外": 21,
+          "play_card:b_58.webp": 21,
+          "choose_card:收入 b_134.webp": 20,
+          "orbit:环绕金星 - 奖励：获得 6 分；获得 1 次收入（R9，1信用点 + 1能量）": 18,
+          "choose_card:收入 b_129.webp": 17,
+          "choose_target:结束移动": 16,
+          "move:移动探测器 9 逆时针": 16,
+          "choose_card:b_58.webp": 13,
+          "pass:PASS": 13,
+          "play_card:b_23.webp": 12,
+          "quick_trade:2张牌 → 1能量": 12,
+          "choose_card:b_130.webp": 11,
+          "choose_card:b_134.webp": 10,
+          "choose_card:b_32.webp": 10,
+          "choose_target:扫描 比邻星": 10,
+          "choose_target:R9 逆时针": 9,
+          "choose_card:b_135.webp": 8,
+          "choose_card:b_19.webp": 8,
+          "choose_card:dlc_41.png": 8,
+          "play_card:b_130.webp": 7,
+          "play_card:b_134.webp": 7,
+          "choose_card:收入 b_130.webp": 6,
+          "play_card:b_32.webp": 6,
+          "choose_target:扫描 天狼星A": 5,
+          "choose_target:在已有黄色痕迹的外星人上再放1个黄色痕迹 → 外星人 1 额外痕迹位（3分）": 2,
+          "choose_target:在已有黄色痕迹的外星人上再放1个黄色痕迹 → 外星人 1 黄1号位（4分）": 2,
+          "choose_target:在已有黄色痕迹的外星人上再放1个黄色痕迹 → 外星人 1 黄3号位（3分+外星人牌）": 2,
+          "move:移动探测器 9 向外": 2,
+          "choose_target:R9 向外": 1
+        },
+        "executedOriginCountByTarget": {
+          "data:analyze": 1869,
+          "land:mars:planet:": 1411,
+          "orbit:venus:planet:": 504,
+          "sector:win:sector-1-a:3": 152,
+          "income:gain:5,6,1,0,4,0": 136,
+          "tech:gain:blue2": 86,
+          "tech:gain:blue3": 86,
+          "tech:gain:blue4": 86,
+          "<unbound>": 79,
+          "decision:choose_card:6f99198e": 16,
+          "decision:choose_card:6d7baede": 8,
+          "decision:choose_card:dbcfd22b": 8,
+          "decision:choose_target:b7ba7fe8": 8,
+          "income:gain:5,6,1,0,3,0": 8,
+          "decision:choose_target:9b846ddd": 6,
+          "decision:choose_target:c9f32e97": 6,
+          "decision:choose_target:4796243f": 2,
+          "decision:choose_target:d3ce74a0": 2
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "data:analyze -> choose_target:planet-reward-alien-trace": 630,
+          "land:mars:planet: -> choose_target:planet-reward-alien-trace": 592,
+          "data:analyze -> choose_card:residual-domain": 540,
+          "land:mars:planet: -> choose_card:residual-domain": 444,
+          "orbit:venus:planet: -> choose_card:<none>": 152,
+          "data:analyze -> choose_target:<none>": 130,
+          "data:analyze -> place_data:place-data": 128,
+          "data:analyze -> end_turn:end-turn": 117,
+          "data:analyze -> analyze:computer": 90,
+          "income:gain:5,6,1,0,4,0 -> choose_card:residual-domain": 88,
+          "land:mars:planet: -> choose_payment:move-payment": 88,
+          "tech:gain:blue2 -> card_corner:<none>": 86,
+          "tech:gain:blue3 -> card_corner:<none>": 86,
+          "tech:gain:blue4 -> card_corner:<none>": 86,
+          "land:mars:planet: -> end_turn:end-turn": 81,
+          "data:analyze -> scan:standard-scan": 75,
+          "orbit:venus:planet: -> choose_payment:move-payment": 75,
+          "orbit:venus:planet: -> orbit:<none>": 75,
+          "land:mars:planet: -> land:<none>": 74,
+          "orbit:venus:planet: -> end_turn:end-turn": 73,
+          "data:analyze -> choose_card:<none>": 70,
+          "land:mars:planet: -> move:<none>": 66,
+          "data:analyze -> quick_trade:<none>": 60,
+          "orbit:venus:planet: -> quick_trade:<none>": 51,
+          "orbit:venus:planet: -> move:<none>": 45,
+          "<unbound> -> play_card:<none>": 44,
+          "sector:win:sector-1-a:3 -> scan:standard-scan": 38,
+          "sector:win:sector-1-a:3 -> choose_card:<none>": 33,
+          "sector:win:sector-1-a:3 -> choose_target:<none>": 33,
+          "data:analyze -> card_corner:<none>": 29,
+          "land:mars:planet: -> launch:<none>": 27,
+          "income:gain:5,6,1,0,4,0 -> choose_target:residual-domain": 24,
+          "income:gain:5,6,1,0,4,0 -> industry:<none>": 24,
+          "land:mars:planet: -> quick_trade:<none>": 24,
+          "sector:win:sector-1-a:3 -> end_turn:end-turn": 24,
+          "sector:win:sector-1-a:3 -> quick_trade:<none>": 24,
+          "<unbound> -> end_turn:end-turn": 22,
+          "orbit:venus:planet: -> launch:<none>": 18,
+          "<unbound> -> pass:pass": 13,
+          "land:mars:planet: -> choose_target:<none>": 10,
+          "orbit:venus:planet: -> choose_target:<none>": 10,
+          "decision:choose_card:6d7baede -> choose_card:<none>": 8,
+          "decision:choose_card:6f99198e -> choose_card:<none>": 8,
+          "decision:choose_card:6f99198e -> choose_target:<none>": 8,
+          "decision:choose_card:dbcfd22b -> choose_card:<none>": 8,
+          "decision:choose_target:b7ba7fe8 -> choose_target:<none>": 8,
+          "decision:choose_target:9b846ddd -> choose_target:<none>": 6,
+          "income:gain:5,6,1,0,3,0 -> choose_card:residual-domain": 5,
+          "land:mars:planet: -> play_card:<none>": 5,
+          "orbit:venus:planet: -> play_card:<none>": 5,
+          "decision:choose_target:c9f32e97 -> choose_card:residual-domain": 4,
+          "decision:choose_target:4796243f -> choose_target:planet-reward-alien-trace": 2,
+          "decision:choose_target:c9f32e97 -> choose_target:planet-reward-alien-trace": 2,
+          "decision:choose_target:d3ce74a0 -> choose_target:planet-reward-alien-trace": 2,
+          "income:gain:5,6,1,0,3,0 -> industry:<none>": 2,
+          "income:gain:5,6,1,0,3,0 -> choose_target:residual-domain": 1
+        },
+        "frontierOriginCountByFamily": {
+          "card_corner": 189,
+          "end_turn": 59,
+          "quick_trade": 42,
+          "industry": 31,
+          "play_card": 17,
+          "choose_card": 15,
+          "scan": 14,
+          "launch": 12,
+          "choose_target": 9,
+          "move": 9,
+          "place_data": 8,
+          "pass": 7,
+          "choose_payment": 1
+        },
+        "totalMilliseconds": 10738.476042
+      }
+    }
+  ],
+  "outcomes": [
+    {
+      "actionId": "launch:c1616852",
+      "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+      "message": null,
+      "status": "settled",
+      "leaves": 2163
+    },
+    {
+      "actionId": "scan:0ca111ac",
+      "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+      "message": null,
+      "status": "settled",
+      "leaves": 21
+    },
+    {
+      "actionId": "play_card:b24f41bf",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "play_card:c404f157",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "play_card:255e7ad7",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "play_card:57c9b700",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "play_card:1b66f9c7",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "pass:ac4b4ab2",
+      "code": null,
+      "message": null,
+      "status": "settled",
+      "leaves": 1
+    },
+    {
+      "actionId": "quick_trade:5ad269c5",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:aedbd0df",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:952695f9",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:9256f5c4",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:c3f1770e",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:678cc831",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:adfe3e7e",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:c49d725c",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "industry:2259bbe0",
+      "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+      "message": null,
+      "status": "settled",
+      "leaves": 16
+    },
+    {
+      "actionId": "card_corner:c41ccc7f",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "card_corner:be861566",
+      "code": null,
+      "message": null,
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "card_corner:7af269c3",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    },
+    {
+      "actionId": "card_corner:a4f56e25",
+      "code": null,
+      "message": null,
+      "status": "settled",
+      "leaves": 3
+    },
+    {
+      "actionId": "card_corner:d0649f20",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "status": "unresolved",
+      "leaves": 0
+    }
+  ],
+  "passed": true
+}

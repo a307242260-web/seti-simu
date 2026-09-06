@@ -1,13 +1,13 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-06T06:32:02.091Z",
+  "builtAt": "2026-09-06T11:35:16.152Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "79e31cd1",
-  "currentBaseline": "linguistic-trace-set-20260906",
+  "headCommit": "6cd56452",
+  "currentBaseline": "card-trace-owner-20260906",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -98,24 +98,427 @@
         "scoreSourceNote": "702步，正式终局96/84/130/124、均108.5，较R2e基线106.75提高1.75；总模拟527450ms。第三/第四轮当前累计实现验收通过，见ai-rounds-final-review-20260906.md；历史失败候选不改判，旧30秒超时根因未明，整局提速未完成。"
       },
       {
-        "value": 106.75,
-        "white": 97,
+        "value": 107.25,
+        "white": 106,
         "bestPlayer": {
-          "color": "绿",
-          "score": 134
+          "color": "棕",
+          "score": 130
         },
-        "versionId": "blue-future-r2e-20260905",
-        "name": "第二轮蓝科技未来收益纠重（通过）",
-        "runKey": "baea50cc.20feca27.full",
+        "versionId": "card-trace-owner-20260906",
+        "name": "卡牌共享痕迹结算",
+        "runKey": "220d6a11.6cd56452.full",
         "provenance": "save-final",
-        "steps": 667,
-        "wallMs": 181396,
-        "msPerStep": 272,
-        "scoreSourceNote": "同提交从200步续跑至667步，正式终局79/134/117/97、均106.75；比修正前S1均98.5提高8.25，比最近通过R1均99.75提高7。蓝科技重复估值修正符合公式，第二轮按固定盘面验收通过；47次搜索触顶及两项既有测试失败仍显式保留，不外推整体搜索完备性。"
+        "steps": 629,
+        "wallMs": 406149,
+        "msPerStep": 646,
+        "scoreSourceNote": "629步，正式终局106/87/130/106、均107.25，较上一版106.25提高1，但低于108.5门槛1.25，未通过效果验收。快速153182+续跑406149=559331ms；31次策略4096满额。抛异常类别清零，仍有5813次EFFECT_EXECUTION_FAILED，不宣称所有分支正确。见card-trace-full-review-20260906.md。"
       }
     ]
   },
   "versions": [
+    {
+      "id": "card-trace-owner-20260906",
+      "name": "卡牌共享痕迹结算",
+      "date": "2026-09-06",
+      "baseline": "linguistic-trace-set-20260906",
+      "head": "6cd56452",
+      "commits": [
+        {
+          "hash": "6cd56452",
+          "date": "2026-09-06",
+          "subject": "统一卡牌痕迹目标与领奖流程并修正所选颜色后计分"
+        }
+      ],
+      "summary": "卡牌与任务痕迹统一到Science目标枚举和领奖流程，执行来源颜色及物种限制，嗜极生物研究改为领奖后按所选颜色痕迹数计分，删除旧卡牌痕迹路径。",
+      "diffStat": "16 files changed, 623 insertions(+), 107 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/verify-card-trace-owner-20260906.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 7,
+          "deletions": 0
+        },
+        {
+          "file": "docs/alien-design.md",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "docs/card-modeling-dsl-spec.md",
+          "insertions": 4,
+          "deletions": 2
+        },
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "docs/save-replay-guide.md",
+          "insertions": 6,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/cards/effects.js",
+          "insertions": 22,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.js",
+          "insertions": 3,
+          "deletions": 80
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.test.js",
+          "insertions": 187,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/residual-domain-session.js",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/science-session.js",
+          "insertions": 81,
+          "deletions": 10
+        },
+        {
+          "file": "reports/iteration/card-trace-owner-design-20260906.md",
+          "insertions": 40,
+          "deletions": 7
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 106,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 13,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 106,
+          "deletions": 4
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "220d6a11.6cd56452.quick-200.json",
+          "recordPath": "reports/research/220d6a11.6cd56452.quick-200.json",
+          "mode": "quick-200",
+          "steps": 200,
+          "stepsLimit": 200,
+          "terminal": false,
+          "wallMs": 153182,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "6cd56452",
+          "createdAt": "2026-09-06T11:26:45.029Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "200步，阶段均24.75，153182ms。与be6bd7b6的完整200步replay相同，47727节点、59203次提交；不是终局验收。运行期间生产代码与6cd56452一致，仅记录、文档和只读核对脚本有变动。",
+          "scores": {
+            "player-blue": 43,
+            "player-green": 20,
+            "player-brown": 18,
+            "player-white": 18
+          },
+          "avgScore": 24.75,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-card-trace-owner-20260906-6cd56452-quick-200-v93.json",
+          "reportPath": "reports/iteration/card-trace-owner-20260906/220d6a11.6cd56452.quick-200.action-log.html",
+          "reportExists": true
+        },
+        {
+          "recordFile": "220d6a11.6cd56452.full.json",
+          "recordPath": "reports/research/220d6a11.6cd56452.full.json",
+          "mode": "full",
+          "steps": 629,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 406149,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "6cd56452",
+          "createdAt": "2026-09-06T11:34:02.088Z",
+          "resumeStep": 200,
+          "seed": "seti-free-analyze-v1",
+          "note": "629步，正式终局106/87/130/106、均107.25，较上一版106.25提高1，但低于108.5门槛1.25，未通过效果验收。快速153182+续跑406149=559331ms；31次策略4096满额。抛异常类别清零，仍有5813次EFFECT_EXECUTION_FAILED，不宣称所有分支正确。见card-trace-full-review-20260906.md。",
+          "scores": {
+            "player-blue": 106,
+            "player-green": 87,
+            "player-brown": 130,
+            "player-white": 106
+          },
+          "avgScore": 107.25,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 106,
+              "base": 61,
+              "tile": 41,
+              "card": 4,
+              "tileScoresById": {
+                "a": 33,
+                "b": 8,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 1,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 6,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 0,
+                "orbitScore": 15,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-green": {
+              "total": 87,
+              "base": 68,
+              "tile": 19,
+              "card": 0,
+              "tileScoresById": {
+                "a": 16,
+                "b": 0,
+                "c": 0,
+                "d": 3
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 3,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 12,
+                "blueTechScore": 0,
+                "cardEffectScore": 3,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 23,
+                "orbitScore": 9,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 130,
+              "base": 80,
+              "tile": 50,
+              "card": 0,
+              "tileScoresById": {
+                "a": 25,
+                "b": 0,
+                "c": 4,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 5,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 25,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 4,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 13,
+                "blueTechScore": 6,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 16,
+                "orbitScore": 6,
+                "scanScore": 12,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            },
+            "player-white": {
+              "total": 106,
+              "base": 75,
+              "tile": 31,
+              "card": 0,
+              "tileScoresById": {
+                "a": 15,
+                "b": 6,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 16,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 6,
+                "orbitScore": 11,
+                "scanScore": 15,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-card-trace-owner-20260906-6cd56452-full-v313.json",
+          "reportPath": "reports/iteration/card-trace-owner-20260906/220d6a11.6cd56452.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "220d6a11.6cd56452.quick-200",
+            "path": "reports/iteration/card-trace-owner-20260906/220d6a11.6cd56452.quick-200.action-log.html",
+            "mode": "quick-200"
+          },
+          {
+            "runKey": "220d6a11.6cd56452.full",
+            "path": "reports/iteration/card-trace-owner-20260906/220d6a11.6cd56452.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "linguistic-trace-set-20260906",
       "name": "语言学分析三色任务",
@@ -210,7 +613,7 @@
       ],
       "results": [],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": false,
         "save": false,
