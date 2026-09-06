@@ -1,0 +1,64 @@
+{
+  "scope": "真实42派生受控规则反例：把实际公共dlc21移至保留区并设置火星标记；正式公司移动到火星，不复制卡牌、不运行AI、不冒充原固定局实际发生",
+  "cases": [
+    {
+      "markerOwner": "absent",
+      "visit": {
+        "type": "visitPlanet",
+        "planetId": "mars",
+        "rocketId": 1,
+        "tokenKind": "standard",
+        "fossilId": null,
+        "playerId": "player-green",
+        "source": "industry",
+        "publicityReward": 1,
+        "publicityGained": 1
+      },
+      "hasOwnOrbitFieldPresent": false,
+      "expectedTriggerChoices": 0,
+      "actualTriggerChoices": 0,
+      "finalPhase": "idle",
+      "conditionMatchesWhenFactSupplied": 0
+    },
+    {
+      "markerOwner": "player-blue",
+      "visit": {
+        "type": "visitPlanet",
+        "planetId": "mars",
+        "rocketId": 1,
+        "tokenKind": "standard",
+        "fossilId": null,
+        "playerId": "player-green",
+        "source": "industry",
+        "publicityReward": 1,
+        "publicityGained": 1
+      },
+      "hasOwnOrbitFieldPresent": false,
+      "expectedTriggerChoices": 0,
+      "actualTriggerChoices": 0,
+      "finalPhase": "idle",
+      "conditionMatchesWhenFactSupplied": 0
+    },
+    {
+      "markerOwner": "player-green",
+      "visit": {
+        "type": "visitPlanet",
+        "planetId": "mars",
+        "rocketId": 1,
+        "tokenKind": "standard",
+        "fossilId": null,
+        "playerId": "player-green",
+        "source": "industry",
+        "publicityReward": 1,
+        "publicityGained": 1
+      },
+      "hasOwnOrbitFieldPresent": false,
+      "expectedTriggerChoices": 2,
+      "actualTriggerChoices": 0,
+      "finalPhase": "idle",
+      "conditionMatchesWhenFactSupplied": 2
+    }
+  ],
+  "ruleBugConfirmed": true,
+  "rulesGatePassed": false
+}

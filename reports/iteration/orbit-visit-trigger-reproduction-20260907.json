@@ -1,0 +1,9 @@
+{
+  "scope": "真实42派生受控规则反例：仅添加dlc21保留卡及火星标记；正式公司移动到火星，不运行AI、不冒充原固定局实际发生",
+  "cases": [],
+  "ruleBugConfirmed": false,
+  "error": {
+    "message": "Expected values to be strictly equal:\n\nfalse !== true\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/reproduce-orbit-visit-trigger-20260907.js:25:14)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}
