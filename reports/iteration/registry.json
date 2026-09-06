@@ -1,13 +1,13 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-06T05:20:21.417Z",
+  "builtAt": "2026-09-06T05:28:18.875Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "be6bd7b6",
-  "currentBaseline": "amiba-region-rule-20260906",
+  "headCommit": "559f3ce9",
+  "currentBaseline": "probe-scan-dependency-20260906",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -116,6 +116,163 @@
     ]
   },
   "versions": [
+    {
+      "id": "probe-scan-dependency-20260906",
+      "name": "探测器扫描依赖修复",
+      "date": "2026-09-06",
+      "baseline": "amiba-region-rule-20260906",
+      "head": "559f3ce9",
+      "commits": [
+        {
+          "hash": "559f3ce9",
+          "date": "2026-09-06",
+          "subject": "补齐探测器扫描共享火箭依赖并验证正式选择与恢复"
+        }
+      ],
+      "summary": "为共享扫描内核补齐火箭坐标模块依赖",
+      "diffStat": "26 files changed, 10128 insertions(+), 16 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/audit-amiba-region-failures-20260906.js",
+          "insertions": 43,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-amiba-region-full-20260906.js",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-probe-scan-dependency-20260906.js",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 11,
+          "deletions": 1
+        },
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 5,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.test.js",
+          "insertions": 28,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/science-session.js",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-before-step-466-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-before-step-585-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-failure-step-466-20260906-v2.json",
+          "insertions": 382,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-failure-step-466-20260906.json",
+          "insertions": 10,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-failure-step-585-20260906-v2.json",
+          "insertions": 311,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-full-review-20260906.md",
+          "insertions": 89,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-full-verification-20260906.json",
+          "insertions": 345,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-rule-20260906/857426ea.be6bd7b6.full.action-log.html",
+          "insertions": 2137,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-rule-20260906/857426ea.be6bd7b6.quick-200.action-log.html",
+          "insertions": 698,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-rule-design-20260906.md",
+          "insertions": 5,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/probe-scan-dependency-design-20260906.md",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-scan-dependency-step-466-20260906.json",
+          "insertions": 415,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-scan-dependency-step-585-20260906.json",
+          "insertions": 326,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 607,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/search-distribution-be6bd7b6-full-20260906.json",
+          "insertions": 2575,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/search-distribution-be6bd7b6-quick-200-20260906.json",
+          "insertions": 1394,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 607,
+          "deletions": 4
+        }
+      ],
+      "results": [],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": false,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
     {
       "id": "amiba-region-rule-20260906",
       "name": "阿米巴区域奖励规则修复",
@@ -700,7 +857,7 @@
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

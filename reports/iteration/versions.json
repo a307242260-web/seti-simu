@@ -7,6 +7,19 @@
   },
   "versions": [
     {
+      "id": "probe-scan-dependency-20260906",
+      "name": "探测器扫描依赖修复",
+      "date": "2026-09-06",
+      "baseline": "amiba-region-rule-20260906",
+      "head": "559f3ce9",
+      "commits": [
+        "559f3ce9"
+      ],
+      "summary": "为共享扫描内核补齐火箭坐标模块依赖",
+      "records": {},
+      "roadmap": null
+    },
+    {
       "id": "amiba-region-rule-20260906",
       "name": "阿米巴区域奖励规则修复",
       "date": "2026-09-06",
