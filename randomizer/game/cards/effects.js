@@ -4443,6 +4443,27 @@
       .some(([slotId, slot]) => slotHasPlayerTraceSet(aliensState, slotId, slot, playerKeys, traceTypes));
   }
 
+  function isAlienTraceTargetAllowed(player, aliensState, alienSlotId, traceType, options = {}) {
+    if (options.targetRule && !["playerHasSameTrace", "singleAlienTraceSet"].includes(options.targetRule)) {
+      throw new TypeError(`CARD_TRACE_TARGET_RULE_INVALID: ${options.targetRule}`);
+    }
+    const types = options.requiredTraceTypes;
+    if (options.targetRule === "singleAlienTraceSet" && (!Array.isArray(types) || !types.length
+      || types.some((type) => !["pink", "yellow", "blue"].includes(type)))) {
+      throw new TypeError("CARD_TRACE_REQUIRED_TYPES_INVALID: 三色目标缺少有效 requiredTraceTypes");
+    }
+    const slot = aliensState?.aliens?.[alienSlotId];
+    if (!player || !slot) return false;
+    const playerKeys = getPlayerKeys(player);
+    if (!options.targetRule) return true;
+    if (options.targetRule === "playerHasSameTrace") {
+      return alienSlotHasPlayerTrace(aliensState, alienSlotId, slot, playerKeys, traceType);
+    }
+    if (options.targetRule === "singleAlienTraceSet") {
+      return slotHasPlayerTraceSet(aliensState, alienSlotId, slot, playerKeys, types);
+    }
+  }
+
   function playerHasSingleAlienTraceCount(player, aliensState, count, traceTypes = null) {
     const playerKeys = getPlayerKeys(player);
     const required = Math.max(1, Math.round(Number(count || 1)));
@@ -4696,6 +4717,7 @@
     hasProbeStackReward,
     getMatchingConditionalSectorXs,
     taskConditionMet,
+    isAlienTraceTargetAllowed,
     areAllTriggersConsumed,
     getConsumedTriggerIndexes,
   });

@@ -144,6 +144,7 @@ Decision：
 外星人由 `randomizer/game/aliens/` 管理，当前有两个未揭示槽位（外星人 1 / 外星人 2）：
 
 - **痕迹放置统一内核** `aliens.placeTraceForActor`：首次痕迹（含首痕迹奖励）/ 额外痕迹（state 额外位与未揭示槽，含额外奖励）/ 已揭示槽物种正面放置全部收敛到一处；红黄蓝三种痕迹颜色统一按 `traceType` 参数化（无按颜色分支，计分来源 `alienTrace<颜色>Score`）。science ALIEN_TRACE 决策（分析/扇区胜利/行星奖励）、卡牌痕迹奖励（异常点等）、初始牌痕迹（`awardRewards:false` 豁免）共用该内核；物种痕迹 API 映射 `getSpeciesTraceApi` 也统一在 aliens 模块。
+- **卡牌痕迹流程**：打牌、嵌套效果和任务奖励经 `science.createAlienTraceEffect` 进入同一 `ALIEN_TRACE` 枚举/提交/领奖流程，保留卡牌身份和来源选色限制。正面实体使用正式 `alienEntity` 序列，位置选牌与阿米巴区域全部奖励沿既有执行器结算。单色复制痕迹牌只允许本人已有同色痕迹的物种；语言学分析限本人三色齐全的物种。无合法目标记录 `alienTraceSkipped` 并完成。嗜极生物研究的 `ALIEN_TRACE_SCORE` 在位置领奖之后按所选颜色的放置后总数计分。旧卡牌专用痕迹 Effect/Decision 已删除，旧 pending 显式拒绝，不做静默恢复。
 - 牌库共 8 种外星人（见 `catalog.js`：`九折`、`半人马`、`奥陌陌`、`异常点`、`方舟`、`符文族`、`虫`、`阿米巴`）。
 - 开局时 `randomizeAlienAssignments` 只重置两个未揭示槽位，不预先写入物种；正式主动发现发生在触发玩家回合结束确认时，`revealRandomAlien` 从八种物种中随机翻开一个尚未翻开的物种，两个槽位不能相同。
 - 每种外星人需要三种首标记：`yellow`（黄色痕迹）、`pink`（粉色痕迹）、`blue`（蓝色痕迹）。

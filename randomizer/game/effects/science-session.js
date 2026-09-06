@@ -99,6 +99,7 @@
     ANALYZE: "science_domain_analyze",
     RESEARCH: "science_domain_research",
     ALIEN_TRACE: "science_domain_alien_trace",
+    ALIEN_TRACE_SCORE: "science_domain_alien_trace_score",
     SETTLE: "science_domain_settle",
     PUBLIC_REFILL: "science_domain_public_refill",
   });
@@ -561,6 +562,38 @@
     return choices;
   }
 
+  function createAlienTraceEffect(ownerId, cardEffect, cardInstanceId) {
+    return {
+      type: EFFECT_TYPES.ALIEN_TRACE,
+      ownerId,
+      payload: { cardEffect: clone(cardEffect), cardInstanceId, label: cardEffect.label },
+    };
+  }
+
+  function listEffectAlienTraceChoices(root, effect) {
+    const options = effect.payload?.cardEffect?.options || {};
+    const allowed = options.allowedTraceTypes || aliens.TRACE_TYPES;
+    if (!Array.isArray(allowed) || allowed.some((type) => !aliens.TRACE_TYPES.includes(type))
+      || (effect.payload?.traceType && !aliens.TRACE_TYPES.includes(effect.payload.traceType))) {
+      throw new TypeError("SCIENCE_TRACE_TYPES_INVALID: 无效的痕迹颜色限制");
+    }
+    if (options.afterTraceReward && (options.afterTraceReward.kind !== "traceCountScore"
+      || !Number.isFinite(options.afterTraceReward.scorePer) || options.afterTraceReward.scorePer < 0)) {
+      throw new TypeError("SCIENCE_TRACE_AFTER_REWARD_INVALID: 无效的痕迹后续计分");
+    }
+    const actor = getActor(root, effect.ownerId);
+    const alienState = getWorkingSlice(root, "aliens");
+    const traceTypes = effect.payload?.traceType
+      ? allowed.filter((type) => type === effect.payload.traceType) : allowed;
+    return traceTypes.flatMap((traceType) => {
+      const allowedSlots = new Set(aliens.ALIEN_SLOT_IDS.filter((slotId) => cardEffects.isAlienTraceTargetAllowed(
+        actor, alienState, slotId, traceType, options,
+      )));
+      return listAlienTraceChoices(root, effect.ownerId, traceType)
+        .filter((choice) => allowedSlots.has(choice.target.alienSlotId));
+    });
+  }
+
   function traceTypeLabel(traceType) {
     const labels = { pink: "粉", yellow: "黄", blue: "蓝" };
     return labels[traceType] || traceType;
@@ -584,10 +617,10 @@
     return parts.join("+");
   }
 
-  function placeAlienTrace(root, actorId, choice) {
-    const actor = getActor(root, actorId);
+  function placeAlienTrace(root, effect, choice) {
+    const actor = getActor(root, effect.ownerId);
     const alienState = getWorkingSlice(root, "aliens");
-    const legal = listAlienTraceChoices(root, actorId, choice?.target?.traceType)
+    const legal = listEffectAlienTraceChoices(root, effect)
       .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
     if (!actor || !legal) return fail("SCIENCE_TRACE_CHOICE_STALE", "外星人痕迹选择已失效");
     // 方舟：解锁对应颜色 card2 解锁牌，进手牌（痕迹入口统一选项，先于放置）。
@@ -1533,14 +1566,22 @@
     });
 
     runtime.registerExecutor(EFFECT_TYPES.ALIEN_TRACE, {
+      execute(state, effect, workingContext) {
+        const root = getWorkingRoot(state, workingContext);
+        if (!getActor(root, effect.ownerId)) return fail("SCIENCE_TRACE_ACTOR_STALE", "外星人痕迹放置者已失效");
+        const choices = listEffectAlienTraceChoices(root, effect);
+        return scienceResult(state, root, EFFECT_TYPES.ALIEN_TRACE, {
+          spawnedEffects: choices.length
+            ? [scanDecisionEffect(EFFECT_TYPES.ALIEN_TRACE, effect.ownerId, effect.payload)] : [],
+          events: choices.length ? [] : [{
+            type: "alienTraceSkipped", playerId: effect.ownerId,
+            cardInstanceId: effect.payload?.cardInstanceId, reason: "no_legal_target",
+          }],
+        });
+      },
       getLegalChoices(state, effect, workingContext) {
         const root = getWorkingRoot(state, workingContext);
-        const traceTypes = effect.payload?.traceType
-          ? [effect.payload.traceType]
-          : (aliens.TRACE_TYPES || ["pink", "yellow", "blue"]);
-        const choices = traceTypes.flatMap((traceType) => (
-          listAlienTraceChoices(root, effect.ownerId, traceType)
-        ));
+        const choices = listEffectAlienTraceChoices(root, effect);
         // 来源标签（如「任意外星人标记 1/2」）拼到每个选项前，玩家能看清这是第几次放置
         const sourceLabel = effect.payload?.label;
         if (sourceLabel && choices.length) {
@@ -1553,7 +1594,7 @@
       resolveDecision(state, effect, choice, workingContext) {
         const root = getWorkingRoot(state, workingContext);
         const actor = getActor(root, effect.ownerId);
-        const result = placeAlienTrace(root, effect.ownerId, choice);
+        const result = placeAlienTrace(root, effect, choice);
         if (!actor || !result?.ok) return result || fail("SCIENCE_TRACE_ACTOR_STALE", "外星人痕迹放置者已失效");
         const spawnedEffects = [];
         let irreversible = null;
@@ -1606,6 +1647,22 @@
             });
           }
         }
+        const afterTraceReward = effect.payload?.cardEffect?.options?.afterTraceReward;
+        if (afterTraceReward) {
+          // 本次位置领奖（含外星牌选择、区域奖励）全部完成后，再按所选颜色计数。
+          spawnedEffects.push({
+            priority: "direct",
+            effect: {
+              type: EFFECT_TYPES.ALIEN_TRACE_SCORE,
+              ownerId: effect.ownerId,
+              payload: {
+                traceType: choice.target.traceType,
+                scorePer: afterTraceReward.scorePer,
+                cardInstanceId: effect.payload.cardInstanceId,
+              },
+            },
+          });
+        }
         return scienceResult(state, root, EFFECT_TYPES.ALIEN_TRACE, {
           spawnedEffects,
           irreversible,
@@ -1618,6 +1675,19 @@
           }],
         });
       },
+    });
+
+    runtime.registerExecutor(EFFECT_TYPES.ALIEN_TRACE_SCORE, (state, effect, workingContext) => {
+      const root = getWorkingRoot(state, workingContext);
+      const actor = getActor(root, effect.ownerId);
+      const { traceType, scorePer, cardInstanceId } = effect.payload;
+      if (!actor) return fail("SCIENCE_TRACE_ACTOR_STALE", "外星人痕迹放置者已失效");
+      const count = cardEffects.countTraceMarkers(actor, getWorkingSlice(root, "aliens"), traceType);
+      const score = count * scorePer;
+      players.gainResources(actor, { score }, "alienEffectScore");
+      return scienceResult(state, root, EFFECT_TYPES.ALIEN_TRACE_SCORE, {
+        events: [{ type: "cardTraceScore", playerId: actor.id, traceType, count, score, cardInstanceId }],
+      });
     });
 
     runtime.registerExecutor(EFFECT_TYPES.RESEARCH, {
@@ -1750,6 +1820,7 @@
     EFFECT_TYPES,
     createActionDefinitions,
     createScienceDomain,
+    createAlienTraceEffect,
     createActionContext,
     getPlanetScanSource,
     listNebulaChoices,

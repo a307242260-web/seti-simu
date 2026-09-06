@@ -1,6 +1,6 @@
 # 卡牌痕迹提交路径缺陷取证与设计边界（2026-09-06）
 
-状态：原因已复现，来源目录已取证；生产尚未修改，完整迁移设计待闭合。
+状态：2026-09-06 设计闭合并冻结，开始批量实现；行为验收尚未完成。
 这不是仅给阿米巴加序号的修复，也不是所有外星人的全面规则重写。
 
 ## 已证明的原因
@@ -49,11 +49,44 @@ options；science.placeAlienTrace则经正式stateSequences.take提供alienEntit
 linguistic-trace-set-design-20260906.md；v2 目录保留为修正前证据，不覆盖历史快照。
 后续迁移须读取当前模型的 requiredTraceTypes，不再沿用旧 requiredTraceCount。
 
-尚待闭合：后续计分owner；runtime对空合法集的
-science Decision处理，以及旧pending明确失败证据。未知项不能通过默认分支吞掉。
-发现的targetRule和b36旧缺陷不擅自以当前错误行为作为迁移契约，也不夹带其他
-物种奖励表修订。完成这一有限路径设计后再批量实现，不做“补一行→看下一个错”。
+## 冻结的实现矩阵
+
+| 语义项 | 唯一 owner、状态及执行边界 | 可证伪验证 / 删除证据 |
+|---|---|---|
+| 11 个模型来源及运行期异常奖励 | Card/Residual 两个 converter 共用 Science 的 createAlienTraceEffect；保留 cardEffect/cardInstanceId/ownerId，入口仍按 direct/trigger 优先级插入 | 正式打牌、嵌套 b112、任务 b67、异常点牌来源执行；递归目录逐项核对转换可达 |
+| 选择前准备 | 同一 Science ALIEN_TRACE executor 增加 execute，非 decision 入口先筛合法集，再生成同类型 Decision；空集成功记录 alienTraceSkipped，不生成空 Decision | 无同色既有痕迹的 b27 正常完成且不放置；无 actor 属错误，不按空集吞掉 |
+| 目标资格 | Card Effects 纯函数 isAlienTraceTargetAllowed 复用 alienSlotHasPlayerTrace/slotHasPlayerTraceSet；无新缓存和状态；未知 targetRule 显式抛错 | b27/32/35 三色分别只允许本人已有同色的槽；b67 只允许本人三色齐全的槽，不能借其他玩家痕迹 |
+| 允许颜色 | Science 在同一枚举函数中交集处理来源 traceType 和 cardEffect.options.allowedTraceTypes；非法颜色/规则不降级 | 所有暴露选项满足颜色限制；resolver 从同一个最新受限集合再校验 |
+| 放置及物种奖励 | 仍由现有 Science placeAlienTrace/ALIEN_TRACE resolve 执行；players/aliens/meta 为 working root，alienEntity 经 take；选牌交 Residual，区域奖励交既有确定性 Amiba effect | 实际 b32 正面黄色放置：序号一次、区域奖励一次、固定移动；真实466不再丢分支或抛序号异常 |
+| b36 后计分 | Science 新确定性 ALIEN_TRACE_SCORE effect 排在该次位置领奖效果之后、外层后续卡牌效果之前；payload 只携带选中 traceType、倍率、cardInstanceId；计数调用 countTraceMarkers(actor,aliens,traceType) | 粉/黄/蓝总数不同的状态逐色验证，包含本次新痕迹；不生成额外玩家选择，不在多选领奖前提前完成 |
+| RNG/隐藏信息 | 准备/枚举/评分无 RNG 或 id 写；领奖沿既有 draw context 与不可逆屏障，无复制物种奖励表 | 区域盲抽后的 RNG/手牌/序号/完整存档恢复重放一致 |
+| 输入与恢复 | Science Decision owner 不变；runtime 既有完整合法项比较拒绝伪造、wrong-owner、stale/late；保存 payload 自足，不用闭包 | pending 保存恢复后合法集与执行 envelope 相同；拒绝错误输入不改变 committed root |
+| 旧 pending | 不迁移旧 card_play_domain_effect:{effect,decision}:alien_trace；物理删除注册后 runtime 明确 EFFECT_EXECUTOR_NOT_REGISTERED / EFFECT_DECISION_EXECUTOR_MISSING | 修改保存的 pending 为旧类型，恢复/提交显式失败，禁止退回 generic |
+| 保留项 | 标准分析/行星等已有 kind=decision Science 来源不改变准备方式；初始牌 awardRewards:false 豁免不变；卡牌单细胞器真实选择不动 | 原有 Science/initial/Amiba 测试与唯一 fullFlow 回归 |
+
+后计分来源仍沿用旧 alienEffectScore，不夹带计分归因改名。b36 牌面“然后每拥有一个
+该颜色痕迹获得1分”已由本地 b_36.webp 核对。目标限制三张单色牌亦逐张核对牌面。
+本轮不引入搜索去重、自动选择唯一目标、减少预算或新增通用回调设施。
+完整修复后再集中运行行为测试，单决策验证通过前不跑完整局。
+
+验证边界补充：真实打出 b52 的小行星条件被既有 buildProbeLocationData 中固定
+locationType="solar" 阻断，未进入奖励。本轮不改变位置分类；嵌套路径改由同一个
+CONDITIONAL_REWARD 入口的 b112 验证。b52 转换后的痕迹处理仍由相同 spawnCardEffects
+负责，但不能宣称 b52 端到端通过。该上游既有缺陷独立待处理；另见旧
+PROBE_LOCATION_REWARD 对 resolveVisibleContent 参数顺序也有可疑调用，尚未单独验证。
+
+来源复核另发现运行期异常奖励辅助函数 applyYichangdianAnomalyReward 的成功返回缺少
+ok:true，调用方却检查 !applied.ok；该来源会在派发痕迹前失败。本轮 converter 已
+映射新路径，但不把该运行期来源写成端到端通过。独立修复该成功返回契约后再补
+真实异常奖励行为证据，不对调用方加忽略失败的旁路。异常点7打牌来源已实际通过。
+
+## 当前验证
+
+已通过正式 Card Play composition：三张单色目标牌的本人/他人/空目标；b32 区域
+数据+盲抽+固定移动及一次序号；b36 三色差异计分与跨选牌后计分；b112 嵌套条件
+奖励；b67 完成任务目标限制；异常点7任意痕迹；错误 owner/stale/伪造颜色拒绝、
+完整 envelope 恢复重放、旧 Decision pending 显式拒绝。回归77 unit+1 fullFlow
+通过（沿用两项用户指定排除）；最终批次与单决策诊断结果将追加记录。
 
 本轮未运行新的全盘，没有新分数。旧559f3ce9局部结果与未通过状态保持原样。
-已核对AI/RL契约、外星人总纲和两正式domain；本轮仅取证与设计记录，生产接口和
-行为未改，无需改其当前实现说明。同步性能计划，不改项目记忆。
+实现时同步机制参考、外星人总纲、卡牌 DSL 与性能计划；不改项目记忆。

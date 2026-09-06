@@ -217,9 +217,17 @@ function createIntegratedComposition(cardId, extra = {}) {
         getAuthority: (context) => context.standardActionAuthority,
       });
       registry.register(standardAction.createOptionDefinition("play_card", provider));
+      if (extra.residual) {
+        for (const definition of residualDomain.createActionDefinitions()) registry.register(definition);
+      }
       return registry;
     },
     effectDomains: [
+      ...(extra.residual ? [{
+        id: residualDomain.DOMAIN_ID,
+        families: residualDomain.ACTION_FAMILIES,
+        create: residualDomain.createResidualDomain,
+      }] : []),
       {
         id: "card_play_test_boundary",
         families: ["play_card"],
@@ -824,6 +832,185 @@ function runProbeSectorScanDependency() {
   composition.dispose();
 }
 
+function submitTraceChoice(composition, predicate) {
+  const decision = composition.inspect().session.decision;
+  const choice = decision.choices.find(predicate);
+  assert.ok(choice, JSON.stringify(decision.choices));
+  const result = composition.inputPort.submitDecision({
+    decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId, choice,
+  });
+  assert.equal(result.ok, true, JSON.stringify(result));
+  return result;
+}
+
+function runCardTraceRestrictions() {
+  for (const [cardId, traceType] of [["b_27.webp", "pink"], ["b_32.webp", "yellow"], ["b_35.webp", "blue"]]) {
+    for (const hasOwnTrace of [false, true]) {
+      const root = createCanonicalState(cardId);
+      root.aliens = aliens.createDefaultAlienState();
+      // 槽2只有其他玩家的同色痕迹，不能成为本人的合法目标。
+      assert.equal(aliens.placeFirstTrace(root.aliens, 2, traceType, "white").ok, true);
+      if (hasOwnTrace) assert.equal(aliens.placeFirstTrace(root.aliens, 1, traceType, "brown").ok, true);
+      const { composition } = createIntegratedComposition(cardId, { state: root });
+      const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+      assert.equal(result.ok, true, JSON.stringify(result));
+      if (hasOwnTrace) {
+        const decision = composition.inspect().session.decision;
+        assert.equal(decision.choices.length, 1);
+        assert.equal(decision.choices[0].target.traceType, traceType);
+        assert.equal(decision.choices[0].target.alienSlotId, 1);
+        submitTraceChoice(composition, () => true);
+        assert.equal(composition.stateSourcePort.getSnapshot().players.players[0].resources.score, 3);
+      } else {
+        assert.equal(result.phase, "completed", "无合法目标不得停在空Decision");
+        assert.deepEqual(composition.stateSourcePort.getSnapshot().aliens, root.aliens);
+      }
+      composition.dispose();
+    }
+  }
+}
+
+function runCardTraceRegionAndRecovery() {
+  const root = createCanonicalState("b_32.webp");
+  const actor = root.players.players[0];
+  root.meta.sequences.alienEntity = 14;
+  root.aliens = aliens.createDefaultAlienState();
+  for (const type of aliens.TRACE_TYPES) assert.equal(aliens.placeFirstTrace(root.aliens, 1, type, "brown").ok, true);
+  Object.assign(root.aliens.aliens[1], { revealed: true, alienId: aliens.amiba.ALIEN_ID });
+  assert.equal(aliens.amiba.initializeAmibaReveal(root.aliens, 1, actor, () => 0.5).ok, true);
+  setAmibaSymbolLayout(root, { orange_1: "symbol_2", orange_2: "symbol_4" });
+  root.cards.drawPile = [{ id: "trace-blind-card", cardId: "b_2.webp" }];
+  const { composition } = createIntegratedComposition("b_32.webp", { state: root });
+  assert.equal(composition.inputPort.submitAction(getOnlyPlayAction(composition)).ok, true);
+  const decision = composition.inspect().session.decision;
+  assert.ok(decision.choices.some(c => c.target.stateExtra), "已揭示槽的state额外位仍是合法真实选择");
+  assert.ok(decision.choices.every(c => c.target.traceType === "yellow" && c.target.alienSlotId === 1));
+  const saved = composition.lifecycle.save().envelope;
+  const choice = decision.choices.find(c => c.target.position === 2);
+  assert.ok(choice);
+  const submission = { decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,
+    ownerId: decision.ownerId, choice };
+  assert.equal(composition.inputPort.submitDecision({ ...submission, ownerId: "p2" }).ok, false);
+  assert.equal(composition.inputPort.submitDecision({ ...submission, decisionVersion: decision.decisionVersion - 1 }).ok, false);
+  assert.equal(composition.inputPort.submitDecision({ ...submission,
+    choice: { ...choice, target: { ...choice.target, traceType: "pink" } } }).ok, false);
+  assert.deepEqual(composition.lifecycle.save().envelope, saved, "拒绝错误输入不得改动状态或pending");
+  assert.equal(composition.inputPort.submitDecision(submission).ok, true);
+  const after = composition.lifecycle.save().envelope;
+  const state = composition.stateSourcePort.getSnapshot();
+  assert.equal(state.meta.sequences.alienEntity, 15, "一次正面放置只消费一次正式序号");
+  assert.equal(state.players.players[0].resources.score, 1, "位置奖励不能遗漏或重复");
+  assert.equal(state.players.players[0].resources.availableData, 1);
+  assert.equal(state.players.players[0].hand.length, 1, "区域盲抽必须实际发牌");
+  assert.deepEqual(state.aliens.amiba.symbolSlots, { orange_2: "symbol_2", blue_1: "symbol_4" });
+  assert.equal(composition.lifecycle.restore(saved, { silent: true }).ok, true);
+  assert.deepEqual(composition.inspect().session.decision.choices, decision.choices);
+  assert.equal(composition.inputPort.submitDecision(submission).ok, true);
+  assert.deepEqual(composition.lifecycle.save().envelope, after, "奖励、RNG、实体和journal完整恢复重放一致");
+  // 旧pending不允许恢复到已删除的卡牌专用痕迹解析器。
+  const legacy = structuredClone(saved);
+  legacy.session.session.queue[0].type = "card_play_domain_effect:decision:alien_trace";
+  const restored = composition.lifecycle.restore(legacy, { silent: true });
+  const rejected = restored.ok ? composition.inputPort.submitDecision(submission) : restored;
+  assert.equal(rejected.ok, false);
+  assert.match(JSON.stringify(rejected), /EFFECT_DECISION_EXECUTOR_MISSING/);
+  composition.dispose();
+}
+
+function runCardTraceColorScoreAndNested() {
+  for (const [traceType, beforeCount] of [["pink", 1], ["yellow", 2], ["blue", 3]]) {
+    const root = createCanonicalState("b_36.webp");
+    root.aliens = aliens.createDefaultAlienState();
+    for (const [type, count] of [["pink", 1], ["yellow", 2], ["blue", 3]]) {
+      root.aliens.aliens[1].traces[type] = { firstPlaced: true, ownerPlayerColor: "brown", extraCount: count - 1 };
+    }
+    const { composition } = createIntegratedComposition("b_36.webp", { state: root });
+    assert.equal(composition.inputPort.submitAction(getOnlyPlayAction(composition)).ok, true);
+    submitTraceChoice(composition, c => c.target.traceType === traceType && c.target.alienSlotId === 1);
+    assert.equal(composition.stateSourcePort.getSnapshot().players.players[0].resources.score, 3 + beforeCount + 1,
+      "额外位3分与放置后的所选颜色计数奖励均须结算");
+    composition.dispose();
+  }
+  const root = createCanonicalState("b_112.webp");
+  root.players.players[0].resources.publicity = 8;
+  root.aliens = aliens.createDefaultAlienState();
+  for (const slotId of aliens.ALIEN_SLOT_IDS) assert.equal(aliens.placeFirstTrace(root.aliens, slotId, "pink", "brown").ok, true);
+  const { composition } = createIntegratedComposition("b_112.webp", { state: root });
+  assert.equal(composition.inputPort.submitAction(getOnlyPlayAction(composition)).ok, true);
+  assert.ok(composition.inspect().session.decision.choices.every(c => c.target.traceType === "pink"));
+  submitTraceChoice(composition, c => c.target.alienSlotId === 1);
+  assert.equal(composition.stateSourcePort.getSnapshot().players.players[0].resources.score, 3);
+  composition.dispose();
+}
+
+function runTaskTraceTarget() {
+  const root = createCanonicalState("b_67.webp");
+  root.aliens = aliens.createDefaultAlienState();
+  const actor = root.players.players[0];
+  actor.reservedCards = actor.hand;
+  actor.hand = [];
+  actor.resources.handSize = 0;
+  for (const type of aliens.TRACE_TYPES) assert.equal(aliens.placeFirstTrace(root.aliens, 1, type, "brown").ok, true);
+  root.aliens.aliens[2].traces.yellow = { firstPlaced: true, ownerPlayerColor: "brown", extraCount: 2 };
+  const { composition } = createIntegratedComposition("b_67.webp", { state: root, residual: true });
+  const task = composition.inputPort.enumerateActions({ family: "complete_task" })[0];
+  assert.ok(task);
+  const result = composition.inputPort.submitAction(task);
+  assert.equal(result.ok, true, JSON.stringify(result));
+  const decision = composition.inspect().session.decision;
+  assert.equal(decision.choices.length, 3);
+  assert.ok(decision.choices.every(c => c.target.alienSlotId === 1), "任务奖励不能放到另一未集齐三色的物种");
+  submitTraceChoice(composition, c => c.target.traceType === "pink");
+  const state = composition.stateSourcePort.getSnapshot();
+  assert.equal(state.players.players[0].resources.score, 3);
+  assert.equal(state.players.players[0].reservedCards.length, 0);
+  composition.dispose();
+}
+
+function runAlienCardTraceAndDeferredScore() {
+  const alienRoot = createCanonicalState("yichangdian_7.webp");
+  alienRoot.aliens = aliens.createDefaultAlienState();
+  alienRoot.players.players[0].hand = [{ ...aliens.yichangdian.createAlienCard(7, 1), id: "instance:yichangdian_7.webp" }];
+  const alienComposition = createIntegratedComposition("yichangdian_7.webp", { state: alienRoot }).composition;
+  assert.equal(alienComposition.inputPort.submitAction(getOnlyPlayAction(alienComposition)).ok, true);
+  assert.equal(alienComposition.inspect().session.decision.choices.length, 6);
+  submitTraceChoice(alienComposition, c => c.target.alienSlotId === 2 && c.target.traceType === "blue");
+  assert.equal(alienComposition.stateSourcePort.getSnapshot().players.players[0].resources.score, 3);
+  alienComposition.dispose();
+
+  const root = createCanonicalState("b_36.webp");
+  root.meta.sequences.alienEntity = 14;
+  root.aliens = aliens.createDefaultAlienState();
+  const actor = root.players.players[0];
+  for (const type of aliens.TRACE_TYPES) assert.equal(aliens.placeFirstTrace(root.aliens, 1, type, "brown").ok, true);
+  Object.assign(root.aliens.aliens[1], { revealed: true, alienId: aliens.amiba.ALIEN_ID });
+  assert.equal(aliens.amiba.initializeAmibaReveal(root.aliens, 1, actor, () => 0.5).ok, true);
+  setAmibaSymbolLayout(root, {});
+  const { composition } = createIntegratedComposition("b_36.webp", { state: root, residual: true });
+  assert.equal(composition.inputPort.submitAction(getOnlyPlayAction(composition)).ok, true);
+  submitTraceChoice(composition, c => c.target.traceType === "yellow" && c.target.position === 3);
+  const saved = composition.lifecycle.save().envelope;
+  assert.equal(saved.session.session.workingState.players.players[0].resources.score, 0,
+    "位置选牌未结束时不能提前结算卡牌后续分数");
+  const pick = composition.inspect().session.decision;
+  assert.equal(pick.decisionKind, "choose_card");
+  submitTraceChoice(composition, () => true);
+  const state = composition.stateSourcePort.getSnapshot();
+  assert.equal(state.players.players[0].resources.score, 2, "位置选牌之后计入本次黄色痕迹");
+  assert.equal(state.players.players[0].hand.length, 1);
+  const after = composition.lifecycle.save().envelope;
+  assert.equal(composition.lifecycle.restore(saved, { silent: true }).ok, true);
+  submitTraceChoice(composition, () => true);
+  assert.deepEqual(composition.lifecycle.save().envelope, after, "跨选牌边界仍保持后计分及隐藏信息恢复一致");
+  composition.dispose();
+}
+
+runCardTraceRestrictions();
+runCardTraceRegionAndRecovery();
+runCardTraceColorScoreAndNested();
+runTaskTraceTarget();
+runAlienCardTraceAndDeferredScore();
 runProbeSectorScanDependency();
 runAmibaSingleSymbolReward();
 runAmibaRemoveTraceRegionReward();

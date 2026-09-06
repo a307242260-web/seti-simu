@@ -360,6 +360,9 @@
     }
 
     function createSpawnedCardEffect(effect, ownerId, cardInstanceId) {
+      if (effect.type === cardEffects.REWARD_TYPES.ALIEN_TRACE) {
+        return { priority: "direct", effect: getScienceDomain().createAlienTraceEffect(ownerId, effect, cardInstanceId) };
+      }
       if (effect.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH) {
         const science = getScienceDomain();
         return {
@@ -1531,35 +1534,6 @@
       );
     }
 
-    function listSpeciesTraceChoices(alienState, alienSlotId, traceType, actor) {
-      const slot = aliens.getAlienSlot(alienState, alienSlotId);
-      // 统一物种痕迹 API：与 science 共用 aliens.getSpeciesTraceApi
-      const species = aliens.getSpeciesTraceApi(slot);
-      if (!slot?.revealed || !species) return [];
-      const positions = species.api.TRACE_POSITIONS
-        || species.api.getPositionsForTraceType?.(traceType)
-        || [];
-      return positions.flatMap((position) => {
-        const check = species.api[species.canMethod]?.(
-          alienState,
-          alienSlotId,
-          traceType,
-          position,
-          actor,
-          {},
-        );
-        return check?.ok
-          ? [makeChoice(
-            "choose_target",
-            `${alienSlotId}:${traceType}:${species.speciesId}:${position}`,
-            { alienSlotId, traceType, speciesId: species.speciesId, position },
-            {},
-            `${aliens.getAlienSlotLabel(alienSlotId)} ${aliens.getTraceTypeLabel(traceType)} ${position}`,
-          )]
-          : [];
-      });
-    }
-
     // 区域全部奖励与卡牌单选共用正式发奖入口；移动在奖励成功后统一执行。
     function awardAmibaSymbols(root, actor, symbols) {
       let irreversible = null;
@@ -1986,33 +1960,6 @@
             `R${rocket.id}`,
           ));
       }
-      if (effect.type === cardEffects.REWARD_TYPES.ALIEN_TRACE) {
-        const choices = [];
-        const allowed = options.allowedTraceTypes || aliens.TRACE_TYPES;
-        const alienState = getWorkingSlice(root, "aliens");
-        for (const alienSlotId of aliens.ALIEN_SLOT_IDS || []) {
-          const slot = aliens.getAlienSlot(alienState, alienSlotId);
-          for (const traceType of allowed) {
-            if (slot?.revealed) {
-              choices.push(...listSpeciesTraceChoices(
-                alienState,
-                alienSlotId,
-                traceType,
-                actor,
-              ));
-            } else if (slot) {
-              choices.push(makeChoice(
-                "choose_target",
-                `${alienSlotId}:${traceType}`,
-                { alienSlotId, traceType },
-                {},
-                `${aliens.getAlienSlotLabel(alienSlotId)} ${aliens.getTraceTypeLabel(traceType)}`,
-              ));
-            }
-          }
-        }
-        return choices;
-      }
       return [];
     }
 
@@ -2358,29 +2305,6 @@
         for (let index = 0; index < amount; index += 1) {
           data.gainData(actor, { source: "probe_location_reward", root });
         }
-      } else if (effect.type === cardEffects.REWARD_TYPES.ALIEN_TRACE) {
-        const alienState = getWorkingSlice(root, "aliens");
-        // 统一痕迹放置内核：首次/额外/物种正面放置 + 首痕迹/额外奖励，与
-        // science ALIEN_TRACE 决策、初始牌来源共用 aliens.placeTraceForActor。
-        const placed = aliens.placeTraceForActor(
-          players,
-          alienState,
-          actor,
-          legal.target.alienSlotId,
-          legal.target.traceType,
-          legal.target.position,
-          {},
-        );
-        if (!placed?.ok) return placed;
-        if (options.afterTraceReward?.kind === "traceCountScore") {
-          const count = cardEffects.countTraceMarkers(
-            alienState,
-            actor,
-          );
-          players.gainResources(actor, {
-            score: count * Math.max(0, Number(options.afterTraceReward.scorePer) || 0),
-          }, "alienEffectScore");
-        }
       } else {
         return fail("CARD_EFFECT_DECISION_INCOMPLETE", `未实现卡牌 Decision ${effect.type}`);
       }
@@ -2394,7 +2318,6 @@
     }
 
     const GENERIC_EFFECT_DESCRIPTORS = Object.freeze({
-      [cardEffects.REWARD_TYPES.ALIEN_TRACE]: { decisionKind: "choose_target" },
       [cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD]: { decisionKind: "choose_card" },
       [cardEffects.EFFECT_TYPES.CONDITIONAL_REWARD]: {},
       [cardEffects.EFFECT_TYPES.COUNT_HAND_CORNER_MOVE]: { decisionKind: "choose_target" },

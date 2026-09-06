@@ -1028,6 +1028,9 @@
   }
 
   function createFormalCardEffectNode(effect, ownerId, cardInstanceId) {
+    if (effect.type === cardEffects.REWARD_TYPES.ALIEN_TRACE) {
+      return { priority: "trigger", effect: science.createAlienTraceEffect(ownerId, effect, cardInstanceId) };
+    }
     const payload = { cardEffect: clone(effect), cardInstanceId };
     let type = `${cardPlayDomain.EFFECT_TYPES.EFFECT}:effect:${effect.type}`;
     let kind = null;

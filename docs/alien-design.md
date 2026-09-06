@@ -25,6 +25,7 @@
 - `randomizer/game/aliens/randomizer.js`：设置阶段重置槽位和本局揭示池，主动发现时从揭示池随机选择不重复的外星人。
 - `randomizer/game/aliens/placement.js`：公共首痕迹坐标和各外星人正面格位坐标。
 - `randomizer/game/aliens/<alien>.js`：物种专属状态、揭示初始化、痕迹放置、奖励、卡牌模型。
+- `randomizer/game/effects/science-session.js`：普通与卡牌来源共用的痕迹目标枚举、放置、正式实体序号及领奖派发。卡牌转换使用 `createAlienTraceEffect(ownerId, cardEffect, cardInstanceId)`，保留来源允许颜色/目标条件；目标资格复用 Card Effects 的纯规则函数，不复制物种格位规则。空合法集在非 Decision 准备阶段明确记录落空。卡牌按痕迹数量的后计分在位置奖励（含选牌）之后执行。
 - `randomizer/game/effects/residual-domain-session.js`：物种奖励、机会队列、followup、撤销与 journal 的唯一规则 owner。
 - `randomizer/app/browser-host/decision-ui.js`、`resident-renderer.js`：只消费 BrowserProjection 的物种 Decision 与面板 presentation。
 - `randomizer/app.js`：只装配 Production Composition、投影、输入与 DOM。

@@ -6,6 +6,12 @@
 
 ## 1. 旧档不兼容的两个真实原因
 
+2026-09-06卡牌痕迹改为共享 Science 流程。旧 pending 类型
+`card_play_domain_effect:effect:alien_trace` / `card_play_domain_effect:decision:alien_trace`
+已无执行器，恢复或推进时显式拒绝。请使用该次打牌/任务结算开始前的存档重新选择；
+不要仅改 pending 类型或动作 id，因为旧路径可能漏发位置/区域奖励，状态与 RNG
+未必等价。新 Science pending 带来源卡牌和限制，支持正常保存恢复。
+
 2026-09-05新增蓝槽来源字段`players[].blueBonusResources`与卡实例`blueBonusOwnerId`，
 新checkpoint随正式状态保存、恢复和撤销。旧档缺字段仍可读，不追溯猜测旧奖励来源；
 从旧checkpoint续玩只记录后续新奖励。如需从开局完整记录来源，应使用原始replay迁移，
