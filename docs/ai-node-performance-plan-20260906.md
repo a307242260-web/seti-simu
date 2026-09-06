@@ -126,3 +126,8 @@ reports/iteration/amiba-region-rule-design-20260906.md。官方中英文说明�
 仍有795次失败（404步白738）；下一项取证该集中失败，并细分仍占大头的目标选择。
 见company-free-move-review-20260906.md、company-free-move-design-20260906.md
 及company-free-move-contract-20260906.json；原失败证据保留于company-free-move-cause-20260906.md。
+
+404步集中失败已直接复现：阿米巴区域获得数据时池已满，正式gainData返回discarded，
+共享发奖误当执行失败，中断后续奖励/移动。旧单细胞器路径同样误用该返回，非公司
+修复引入。已按独立设计只接受明确溢出、记录弃置事件，其他错误继续失败；实际分支
+与单步搜索/全局效果需依次验证。见reports/iteration/amiba-data-overflow-design-20260906.md。

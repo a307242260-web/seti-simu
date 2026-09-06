@@ -871,9 +871,11 @@ function runCardTraceRestrictions() {
   }
 }
 
-function runCardTraceRegionAndRecovery() {
+function runCardTraceRegionAndRecovery(initialData = 0) {
   const root = createCanonicalState("b_32.webp");
   const actor = root.players.players[0];
+  for (let index = 0; index < initialData; index++) assert.equal(data.gainData(actor, { root }).ok, true);
+  const dataSequenceBefore = root.meta.sequences.dataToken;
   root.meta.sequences.alienEntity = 14;
   root.aliens = aliens.createDefaultAlienState();
   for (const type of aliens.TRACE_TYPES) assert.equal(aliens.placeFirstTrace(root.aliens, 1, type, "brown").ok, true);
@@ -896,12 +898,17 @@ function runCardTraceRegionAndRecovery() {
   assert.equal(composition.inputPort.submitDecision({ ...submission,
     choice: { ...choice, target: { ...choice.target, traceType: "pink" } } }).ok, false);
   assert.deepEqual(composition.lifecycle.save().envelope, saved, "拒绝错误输入不得改动状态或pending");
-  assert.equal(composition.inputPort.submitDecision(submission).ok, true);
+  const submitted = composition.inputPort.submitDecision(submission);
+  assert.equal(submitted.ok, true);
   const after = composition.lifecycle.save().envelope;
   const state = composition.stateSourcePort.getSnapshot();
   assert.equal(state.meta.sequences.alienEntity, 15, "一次正面放置只消费一次正式序号");
   assert.equal(state.players.players[0].resources.score, 1, "位置奖励不能遗漏或重复");
-  assert.equal(state.players.players[0].resources.availableData, 1);
+  assert.equal(state.players.players[0].resources.availableData, Math.min(6, initialData + 1));
+  assert.equal(state.players.players[0].dataState.discardedCount, initialData === 6 ? 1 : 0);
+  assert.equal(state.meta.sequences.dataToken, dataSequenceBefore + (initialData === 6 ? 0 : 1));
+  const overflowEvents = submitted.journal.events.filter(event => event.type === "amiba_data_discarded");
+  assert.equal(overflowEvents.length, initialData === 6 ? 1 : 0);
   assert.equal(state.players.players[0].hand.length, 1, "区域盲抽必须实际发牌");
   assert.deepEqual(state.aliens.amiba.symbolSlots, { orange_2: "symbol_2", blue_1: "symbol_4" });
   assert.equal(composition.lifecycle.restore(saved, { silent: true }).ok, true);
@@ -1008,6 +1015,8 @@ function runAlienCardTraceAndDeferredScore() {
 
 runCardTraceRestrictions();
 runCardTraceRegionAndRecovery();
+runCardTraceRegionAndRecovery(5);
+runCardTraceRegionAndRecovery(6);
 runCardTraceColorScoreAndNested();
 runTaskTraceTarget();
 runAlienCardTraceAndDeferredScore();

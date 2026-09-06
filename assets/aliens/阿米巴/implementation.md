@@ -31,6 +31,7 @@
 - 区域奖励锁定结算开始时该区域全部 symbol，每个只领奖一次，然后同时按箭头移动；外圈后位先计算可实现相同落点，移动后仍在本区域的 symbol 不再领奖。
 - 放置痕迹与移除痕迹共用 `RESOLVE_REGION_REWARD` 确定性 Effect；不产生逐 symbol 选择。卡牌单细胞器图标仍用 `CHOOSE_SYMBOL_REWARD`，任选一个且仅结算一次。
 - 资源、数据实体与盲抽共用正式发奖入口；盲抽标记隐藏信息屏障。旧错误区域选择中的多次结算 pending 显式拒绝，需从区域结算前恢复。
+- 满数据池时，该枚奖励数据由正式数据原语弃置并增加 `discardedCount`，记录 `amiba_data_discarded`；继续结算其他奖励和固定移动，不把正常溢出当成效果失败。区域与单细胞器奖励同用此规则；其他数据获得错误仍显式失败。
 - 默认坐标定义在 `AMIBA_SYMBOL_MARKER_SLOTS`，symbol 默认显示倍率为 `AMIBA_SYMBOL_DISPLAY_SCALE`。
 - 揭示时随机 symbol 初始化属于不可逆边界；单次 symbol 移动本身是确定性结算，应使用快照撤销。
 

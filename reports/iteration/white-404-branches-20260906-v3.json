@@ -1,0 +1,761 @@
+{
+  "scope": "真实404隔离分支直接执行发射/移动/下一己方回合/登陆环绕及条件奖励；不运行AI搜索",
+  "routes": [
+    {
+      "useCard": false,
+      "destination": "venus",
+      "actions": [
+        {
+          "family": "orbit",
+          "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R11，1信用点 + 1能量）"
+        },
+        {
+          "family": "land",
+          "summary": "登陆"
+        },
+        {
+          "family": "scan",
+          "summary": "扫描"
+        },
+        {
+          "family": "play_card",
+          "summary": "b_140.webp"
+        },
+        {
+          "family": "play_card",
+          "summary": "b_17.webp"
+        },
+        {
+          "family": "play_card",
+          "summary": "b_58.webp"
+        },
+        {
+          "family": "pass",
+          "summary": "PASS"
+        },
+        {
+          "family": "move",
+          "summary": "移动探测器 11 向外"
+        },
+        {
+          "family": "move",
+          "summary": "移动探测器 11 顺时针"
+        },
+        {
+          "family": "move",
+          "summary": "移动探测器 11 逆时针"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2信用点 → 1能量"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2信用点 → 1张牌"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 1信用点"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 1能量"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 精选1张牌"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2能量 → 1张牌"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2能量 → 1信用点"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "3宣传 → 精选1张牌"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "1能量 → 移动1步"
+        },
+        {
+          "family": "industry",
+          "summary": "深空探测 1x 行动"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_138.webp：弃牌角标"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_140.webp：弃牌角标"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_17.webp：弃牌角标"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_58.webp：弃牌角标"
+        },
+        {
+          "family": "place_data",
+          "summary": "放置数据"
+        }
+      ]
+    },
+    {
+      "useCard": false,
+      "destination": "mars",
+      "actions": [
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R11，1信用点 + 1能量）"
+        },
+        {
+          "family": "land",
+          "summary": "登陆"
+        },
+        {
+          "family": "scan",
+          "summary": "扫描"
+        },
+        {
+          "family": "play_card",
+          "summary": "b_140.webp"
+        },
+        {
+          "family": "play_card",
+          "summary": "b_17.webp"
+        },
+        {
+          "family": "play_card",
+          "summary": "b_58.webp"
+        },
+        {
+          "family": "pass",
+          "summary": "PASS"
+        },
+        {
+          "family": "move",
+          "summary": "移动探测器 11 向外"
+        },
+        {
+          "family": "move",
+          "summary": "移动探测器 11 顺时针"
+        },
+        {
+          "family": "move",
+          "summary": "移动探测器 11 逆时针"
+        },
+        {
+          "family": "move",
+          "summary": "移动探测器 11 向内"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2信用点 → 1能量"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2信用点 → 1张牌"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 1信用点"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 1能量"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 精选1张牌"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2能量 → 1张牌"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2能量 → 1信用点"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "3宣传 → 精选1张牌"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "1能量 → 移动1步"
+        },
+        {
+          "family": "industry",
+          "summary": "深空探测 1x 行动"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_138.webp：弃牌角标"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_140.webp：弃牌角标"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_17.webp：弃牌角标"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_58.webp：弃牌角标"
+        },
+        {
+          "family": "place_data",
+          "summary": "放置数据"
+        }
+      ]
+    }
+  ],
+  "failures": [
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "登陆",
+        "获得 1 个黄色外星人标记 → 外星人 1 黄1号位"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:e7ca3da2",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "choiceId": "trace:1:yellow:amiba:1",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "yellow",
+          "speciesId": "amiba",
+          "position": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄1号位"
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "数据池已满（6/6），本次数据被弃置",
+        "effectId": "effect-session-1:effect:5",
+        "type": "card_play_domain_effect:effect:amiba_resolve_region_reward"
+      }
+    },
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "登陆",
+        "获得 1 个黄色外星人标记 → 外星人 1 黄2号位（1分）"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:6dc1e570",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "choiceId": "trace:1:yellow:amiba:2",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "yellow",
+          "speciesId": "amiba",
+          "position": 2
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄2号位（1分）"
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "数据池已满（6/6），本次数据被弃置",
+        "effectId": "effect-session-1:effect:5",
+        "type": "card_play_domain_effect:effect:amiba_resolve_region_reward"
+      }
+    },
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "登陆",
+        "获得 1 个黄色外星人标记 → 外星人 1 黄3号位（外星人牌）",
+        "获得展示的低重力研究"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:2ebd81c6",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "amiba:display:9",
+          "source": "display",
+          "cardIndex": 9
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "获得展示的低重力研究",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "9",
+          "imageSrc": "../assets/aliens/阿米巴/cards/9.webp",
+          "imageAlt": "低重力研究"
+        }
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "数据池已满（6/6），本次数据被弃置",
+        "effectId": "effect-session-1:effect:6",
+        "type": "card_play_domain_effect:effect:amiba_resolve_region_reward"
+      }
+    },
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "登陆",
+        "获得 1 个黄色外星人标记 → 外星人 1 黄3号位（外星人牌）",
+        "盲抽阿米巴牌"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:c5e2c9c0",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "amiba:blind",
+          "source": "blind"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "盲抽阿米巴牌"
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "数据池已满（6/6），本次数据被弃置",
+        "effectId": "effect-session-1:effect:6",
+        "type": "card_play_domain_effect:effect:amiba_resolve_region_reward"
+      }
+    },
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "登陆",
+        "获得 1 个黄色外星人标记 → 外星人 1 黄3号位（外星人牌）",
+        "取消"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:7aa9f95e",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "amiba:cancel",
+          "source": "cancel"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "取消"
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "residual_alien_card_decision 未返回 { ok: true, nextState }",
+        "effectId": "effect-session-1:effect:5",
+        "type": "residual_alien_card_decision"
+      }
+    },
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "登陆",
+        "获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+        "获得展示的低重力研究"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:2ebd81c6",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "amiba:display:9",
+          "source": "display",
+          "cardIndex": 9
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "获得展示的低重力研究",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "9",
+          "imageSrc": "../assets/aliens/阿米巴/cards/9.webp",
+          "imageAlt": "低重力研究"
+        }
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "数据池已满（6/6），本次数据被弃置",
+        "effectId": "effect-session-1:effect:6",
+        "type": "card_play_domain_effect:effect:amiba_resolve_region_reward"
+      }
+    },
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "登陆",
+        "获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+        "盲抽阿米巴牌"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:c5e2c9c0",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "amiba:blind",
+          "source": "blind"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "盲抽阿米巴牌"
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "数据池已满（6/6），本次数据被弃置",
+        "effectId": "effect-session-1:effect:6",
+        "type": "card_play_domain_effect:effect:amiba_resolve_region_reward"
+      }
+    },
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "登陆",
+        "获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+        "取消"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:7aa9f95e",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "amiba:cancel",
+          "source": "cancel"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "取消"
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "residual_alien_card_decision 未返回 { ok: true, nextState }",
+        "effectId": "effect-session-1:effect:5",
+        "type": "residual_alien_card_decision"
+      }
+    },
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "登陆",
+        "获得 1 个黄色外星人标记 → 外星人 2 黄3号位（3分+外星人牌）",
+        "取消"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:e9e03c9f",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "chong:cancel",
+          "source": "cancel"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "取消"
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "residual_alien_card_decision 未返回 { ok: true, nextState }",
+        "effectId": "effect-session-1:effect:5",
+        "type": "residual_alien_card_decision"
+      }
+    },
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 向外",
+        "消耗 1 能量",
+        "环绕火星 - 奖励：精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R11，1信用点 + 1能量）",
+        "dlc_41.png",
+        "扫描 比邻星",
+        "外星人 1 粉3号位（外星人牌）",
+        "取消"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:7aa9f95e",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "amiba:cancel",
+          "source": "cancel"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "取消"
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "residual_alien_card_decision 未返回 { ok: true, nextState }",
+        "effectId": "effect-session-1:effect:11",
+        "type": "residual_alien_card_decision"
+      }
+    },
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 向外",
+        "消耗 1 能量",
+        "环绕火星 - 奖励：精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R11，1信用点 + 1能量）",
+        "dlc_41.png",
+        "扫描 比邻星",
+        "外星人 1 粉4号位（1分+外星人牌）",
+        "取消"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:7aa9f95e",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "amiba:cancel",
+          "source": "cancel"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "取消"
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "residual_alien_card_decision 未返回 { ok: true, nextState }",
+        "effectId": "effect-session-1:effect:11",
+        "type": "residual_alien_card_decision"
+      }
+    },
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 向外",
+        "消耗 1 能量",
+        "环绕火星 - 奖励：精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R11，1信用点 + 1能量）",
+        "dlc_41.png",
+        "扫描 比邻星",
+        "外星人 2 粉3号位（3分+外星人牌）",
+        "取消"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:e9e03c9f",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "chong:cancel",
+          "source": "cancel"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "取消"
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "residual_alien_card_decision 未返回 { ok: true, nextState }",
+        "effectId": "effect-session-1:effect:11",
+        "type": "residual_alien_card_decision"
+      }
+    },
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 向外",
+        "消耗 1 能量",
+        "环绕火星 - 奖励：精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R11，1信用点 + 1能量）",
+        "dlc_41.png",
+        "扫描 比邻星",
+        "外星人 2 粉4号位（5分+外星人牌）",
+        "取消"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:e9e03c9f",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "chong:cancel",
+          "source": "cancel"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "取消"
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "residual_alien_card_decision 未返回 { ok: true, nextState }",
+        "effectId": "effect-session-1:effect:11",
+        "type": "residual_alien_card_decision"
+      }
+    },
+    {
+      "chain": [
+        "普通发射",
+        "移动探测器 11 逆时针",
+        "消耗 1 能量",
+        "正式规划推进下一己方回合",
+        "移动探测器 11 向外",
+        "消耗 1 能量",
+        "环绕火星 - 奖励：精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R11，1信用点 + 1能量）",
+        "dlc_1.png",
+        "扫描 比邻星",
+        "外星人 1 粉3号位（外星人牌）",
+        "取消"
+      ],
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:7aa9f95e",
+        "actorId": "player-white",
+        "stateVersion": 208,
+        "decisionVersion": 11,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "amiba:cancel",
+          "source": "cancel"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "取消"
+      },
+      "failure": {
+        "code": "EFFECT_EXECUTION_FAILED",
+        "message": "residual_alien_card_decision 未返回 { ok: true, nextState }",
+        "effectId": "effect-session-1:effect:11",
+        "type": "residual_alien_card_decision"
+      }
+    }
+  ],
+  "submissions": 183,
+  "passed": false,
+  "error": {
+    "message": "诊断边界耗尽，不能称为遍历完成",
+    "stack": "AssertionError [ERR_ASSERTION]: 诊断边界耗尽，不能称为遍历完成\n    at walk (/Users/bilibili/code/seti-simu/adhoc/diagnose-white-404-branches-20260906.js:25:12)\n    at walk (/Users/bilibili/code/seti-simu/adhoc/diagnose-white-404-branches-20260906.js:29:40)\n    at walk (/Users/bilibili/code/seti-simu/adhoc/diagnose-white-404-branches-20260906.js:29:40)\n    at walk (/Users/bilibili/code/seti-simu/adhoc/diagnose-white-404-branches-20260906.js:29:40)\n    at walk (/Users/bilibili/code/seti-simu/adhoc/diagnose-white-404-branches-20260906.js:29:40)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/diagnose-white-404-branches-20260906.js:57:46)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)"
+  }
+}

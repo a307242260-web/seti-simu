@@ -1537,13 +1537,18 @@
     // 区域全部奖励与卡牌单选共用正式发奖入口；移动在奖励成功后统一执行。
     function awardAmibaSymbols(root, actor, symbols) {
       let irreversible = null;
+      const events = [];
       for (const symbol of symbols) {
         const reward = symbol.reward || {};
         if (reward.gain) players.gainResources(actor, reward.gain, "alienEffectScore");
         const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
         for (let index = 0; index < dataCount; index += 1) {
           const gained = data.gainData(actor, { source: "amiba_region_reward", root });
-          if (!gained.ok) return gained;
+          if (!gained.ok && !gained.discarded) return gained;
+          // 满池弃置已由正式数据原语记账，是奖励结果，不应中断其他奖励或移动。
+          if (gained.discarded) events.push({
+            type: "amiba_data_discarded", playerId: actor.id, symbolId: symbol.symbolId,
+          });
         }
         const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
         if (drawCount > 0) {
@@ -1558,7 +1563,7 @@
           irreversible = { code: "hidden_card_draw", reason: "阿米巴细胞器奖励盲抽翻开隐藏牌" };
         }
       }
-      return { ok: true, irreversible };
+      return { ok: true, irreversible, events };
     }
 
     function genericExecute(state, sessionEffect, workingContext) {
@@ -1582,10 +1587,10 @@
         if (!resolved.ok) return resolved;
         return cardEffectResult(state, root, sessionEffect, {
           irreversible: awarded.irreversible,
-          events: resolved.results.map((entry) => ({
+          events: [...awarded.events, ...resolved.results.map((entry) => ({
             type: "amiba_symbol_resolved", symbolId: entry.symbolId,
             slotId: entry.slotId, region: options.region,
-          })),
+          }))],
           history: { region: options.region, symbolIds: symbols.map((entry) => entry.symbolId) },
         });
       }
@@ -2098,7 +2103,7 @@
         const resolved = aliens.amiba.resolveSymbolAtSlot(alienState, legal.target.slotId);
         if (!resolved?.ok) return resolved;
         return cardEffectResult(state, root, sessionEffect, {
-          events: [{
+          events: [...awarded.events, {
             type: "amiba_symbol_resolved",
             symbolId: resolved.symbolId,
             slotId: legal.target.slotId,

@@ -1,0 +1,114 @@
+{
+  "scope": "真实404隔离分支直接执行普通发射/两次逆时针移动/下一己方回合/登陆黄色奖励；按现有AI不选取消，仅展开拿牌；不运行AI搜索",
+  "routes": [
+    {
+      "useCard": false,
+      "destination": "venus",
+      "actions": [
+        {
+          "family": "orbit",
+          "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R11，1信用点 + 1能量）"
+        },
+        {
+          "family": "land",
+          "summary": "登陆"
+        },
+        {
+          "family": "scan",
+          "summary": "扫描"
+        },
+        {
+          "family": "play_card",
+          "summary": "b_140.webp"
+        },
+        {
+          "family": "play_card",
+          "summary": "b_17.webp"
+        },
+        {
+          "family": "play_card",
+          "summary": "b_58.webp"
+        },
+        {
+          "family": "pass",
+          "summary": "PASS"
+        },
+        {
+          "family": "move",
+          "summary": "移动探测器 11 向外"
+        },
+        {
+          "family": "move",
+          "summary": "移动探测器 11 顺时针"
+        },
+        {
+          "family": "move",
+          "summary": "移动探测器 11 逆时针"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2信用点 → 1能量"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2信用点 → 1张牌"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 1信用点"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 1能量"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 精选1张牌"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2能量 → 1张牌"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2能量 → 1信用点"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "3宣传 → 精选1张牌"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "1能量 → 移动1步"
+        },
+        {
+          "family": "industry",
+          "summary": "深空探测 1x 行动"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_138.webp：弃牌角标"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_140.webp：弃牌角标"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_17.webp：弃牌角标"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_58.webp：弃牌角标"
+        },
+        {
+          "family": "place_data",
+          "summary": "放置数据"
+        }
+      ]
+    }
+  ],
+  "failures": [],
+  "submissions": 21,
+  "passed": true
+}

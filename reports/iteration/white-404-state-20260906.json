@@ -1,0 +1,639 @@
+{
+  "scope": "仅重放既有动作并检查404状态，不重新搜索",
+  "checkpointPath": "reports/iteration/company-before-step-404-20260906.json",
+  "player": {
+    "blueBonusResources": {
+      "credits": 0,
+      "energy": 0
+    },
+    "color": "white",
+    "completedTaskCount": 0,
+    "dataState": {
+      "discardedCount": 0,
+      "placedTokens": [],
+      "poolTokens": [
+        {
+          "id": "data-token-13",
+          "index": 7,
+          "slotIndex": 2
+        },
+        {
+          "id": "data-token-29",
+          "index": 8,
+          "slotIndex": 1
+        },
+        {
+          "id": "data-token-30",
+          "index": 9,
+          "slotIndex": 3
+        },
+        {
+          "id": "data-token-31",
+          "index": 10,
+          "slotIndex": 4
+        },
+        {
+          "id": "data-token-32",
+          "index": 11,
+          "slotIndex": 5
+        },
+        {
+          "id": "data-token-33",
+          "index": 12,
+          "slotIndex": 6
+        }
+      ]
+    },
+    "hand": [
+      {
+        "cardId": "b_138.webp",
+        "cardTypeCode": 1,
+        "discardActionCode": 0,
+        "faceUp": true,
+        "id": "card-34-pass-3-5",
+        "incomeCode": 2,
+        "price": 3,
+        "scanActionCode": 1,
+        "set": "basic"
+      },
+      {
+        "cardId": "b_140.webp",
+        "cardTypeCode": 1,
+        "discardActionCode": 1,
+        "faceUp": true,
+        "id": "card-76-0",
+        "incomeCode": 0,
+        "price": 1,
+        "scanActionCode": 2,
+        "set": "basic"
+      },
+      {
+        "cardId": "b_17.webp",
+        "cardTypeCode": 0,
+        "discardActionCode": 0,
+        "faceUp": true,
+        "id": "card-77-0",
+        "incomeCode": 0,
+        "price": 1,
+        "scanActionCode": 2,
+        "set": "basic"
+      },
+      {
+        "cardId": "b_58.webp",
+        "cardTypeCode": 0,
+        "discardActionCode": 0,
+        "faceUp": true,
+        "id": "card-78-0",
+        "incomeCode": 1,
+        "price": 2,
+        "scanActionCode": 0,
+        "set": "basic"
+      }
+    ],
+    "id": "player-white",
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 4,
+      "handSize": 3,
+      "publicity": 0
+    },
+    "industryBorrowedTechRound": 0,
+    "industryBorrowedTechTileId": null,
+    "industryBorrowedTechTurn": 0,
+    "industryHuanyuFreeMoveRound": 0,
+    "industryHuanyuFreeMoveTurn": 0,
+    "industryHuanyuFreeMovesLeft": 0,
+    "industryHuanyuMovedRocketIds": [],
+    "industryLastPlayedCardThisRound": null,
+    "industryPlayedCardRound": 0,
+    "industryPlayedCardThisRound": false,
+    "industryPlayedCardTurn": 0,
+    "industryRoundMarkRound": 0,
+    "industryRoundMarkTurn": 0,
+    "industrySentinelArmedRound": 0,
+    "industrySentinelArmedTurn": 0,
+    "industryStrategyPlayInteractionPending": false,
+    "industryStrategyPlayInteractionRound": 0,
+    "industryStrategyPlayScanCode": null,
+    "initialSelection": {
+      "industry": {
+        "id": "industry:深空探测.png"
+      },
+      "removedInitialCards": [
+        {
+          "id": "initial:21"
+        },
+        {
+          "id": "initial:1"
+        }
+      ]
+    },
+    "mainActionCompleted": false,
+    "name": "白色玩家",
+    "orbitCount": 1,
+    "passCompletionPending": false,
+    "reservedCards": [
+      {
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "dlc_9.png"
+        },
+        "cardId": "dlc_9.png",
+        "cardTypeCode": 2,
+        "discardActionCode": 1,
+        "faceUp": true,
+        "id": "card-15-0",
+        "incomeCode": 2,
+        "price": 3,
+        "scanActionCode": 2,
+        "set": "space-agency"
+      },
+      {
+        "cardEffectState": {
+          "completedTaskIds": [],
+          "consumedTriggerIds": [],
+          "modelCardId": "dlc_28.png"
+        },
+        "cardId": "dlc_28.png",
+        "cardTypeCode": 2,
+        "discardActionCode": 1,
+        "faceUp": true,
+        "id": "card-50-0",
+        "incomeCode": 0,
+        "price": 1,
+        "scanActionCode": 1,
+        "set": "space-agency"
+      },
+      {
+        "cardId": "dlc_8.png",
+        "cardTypeCode": 3,
+        "discardActionCode": 0,
+        "faceUp": true,
+        "id": "card-68-0",
+        "incomeCode": 1,
+        "price": 3,
+        "scanActionCode": 0,
+        "set": "space-agency"
+      }
+    ],
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 6,
+      "credits": 4,
+      "energy": 5,
+      "handSize": 4,
+      "publicity": 3,
+      "score": 28
+    },
+    "scoreSources": {
+      "alienTraceBlueScore": 5,
+      "alienTraceYellowScore": 3,
+      "initialScore": 6,
+      "landScore": 5,
+      "scanScore": 2,
+      "techBonusScore": 7
+    },
+    "techState": {
+      "blueBoardSlots": {
+        "blue1": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "orange2": true,
+        "orange3": true,
+        "purple2": true
+      }
+    }
+  },
+  "rockets": [],
+  "actions": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "card_corner",
+      "phase": "quick",
+      "actionId": "card_corner:58367f40",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "cardInstanceId": "card-78-0"
+      },
+      "payload": {
+        "kind": "resource",
+        "multiplier": 1
+      },
+      "decision": null,
+      "summary": "b_58.webp：弃牌角标"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "card_corner",
+      "phase": "quick",
+      "actionId": "card_corner:6a748ec5",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "cardInstanceId": "card-34-pass-3-5"
+      },
+      "payload": {
+        "kind": "resource",
+        "multiplier": 1
+      },
+      "decision": null,
+      "summary": "b_138.webp：弃牌角标"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "card_corner",
+      "phase": "quick",
+      "actionId": "card_corner:b105f0f6",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "cardInstanceId": "card-76-0"
+      },
+      "payload": {
+        "kind": "resource",
+        "multiplier": 1
+      },
+      "decision": null,
+      "summary": "b_140.webp：弃牌角标"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "card_corner",
+      "phase": "quick",
+      "actionId": "card_corner:f9977aa3",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "cardInstanceId": "card-77-0"
+      },
+      "payload": {
+        "kind": "resource",
+        "multiplier": 1
+      },
+      "decision": null,
+      "summary": "b_17.webp：弃牌角标"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "industry",
+      "phase": "quick",
+      "actionId": "industry:e887dc52",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "companyId": "深空探测",
+        "abilityId": "deepspace_swap_cards"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "深空探测 1x 行动"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "launch",
+      "phase": "main",
+      "actionId": "launch:c94cda79",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": null,
+      "payload": {},
+      "decision": null,
+      "summary": "发射"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "pass",
+      "phase": "main",
+      "actionId": "pass:a1f33c73",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "kind": "pass"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "PASS"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "place_data",
+      "phase": "quick",
+      "actionId": "place_data:8fd12fd3",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "放置数据"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:2e224f59",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "cardInstanceId": "card-77-0"
+      },
+      "payload": {
+        "cost": {
+          "credits": 1
+        },
+        "handIndex": 2
+      },
+      "decision": null,
+      "summary": "b_17.webp"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:4910493e",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "cardInstanceId": "card-78-0"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "handIndex": 3
+      },
+      "decision": null,
+      "summary": "b_58.webp"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:5c83275d",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "cardInstanceId": "card-76-0"
+      },
+      "payload": {
+        "cost": {
+          "credits": 1
+        },
+        "handIndex": 1
+      },
+      "decision": null,
+      "summary": "b_140.webp"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:914c82d7",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "cardInstanceId": "card-34-pass-3-5"
+      },
+      "payload": {
+        "cost": {
+          "credits": 3
+        },
+        "handIndex": 0
+      },
+      "decision": null,
+      "summary": "b_138.webp"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:122c43fc",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "tradeId": "energy-for-card"
+      },
+      "payload": {
+        "cost": {
+          "energy": 2
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "2能量 → 1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:12411a2c",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "tradeId": "cards-for-credit"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "credits": 1
+        }
+      },
+      "decision": null,
+      "summary": "2张牌 → 1信用点"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:37140fcf",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "tradeId": "cards-for-pick-card"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "2张牌 → 精选1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:49c75492",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "tradeId": "credits-for-card"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "2信用点 → 1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:71814d67",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "tradeId": "publicity-for-card"
+      },
+      "payload": {
+        "cost": {
+          "publicity": 3
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "3宣传 → 精选1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:a39c1a77",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "tradeId": "cards-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "decision": null,
+      "summary": "2张牌 → 1能量"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:be9dd0cd",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "tradeId": "energy-for-move"
+      },
+      "payload": {
+        "cost": {
+          "energy": 1
+        },
+        "gain": {}
+      },
+      "decision": null,
+      "summary": "1能量 → 移动1步"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:df811f99",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "tradeId": "energy-for-credit"
+      },
+      "payload": {
+        "cost": {
+          "energy": 2
+        },
+        "gain": {
+          "credits": 1
+        }
+      },
+      "decision": null,
+      "summary": "2能量 → 1信用点"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:f385e2ac",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "decision": null,
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "scan",
+      "phase": "main",
+      "actionId": "scan:2d21a323",
+      "actorId": "player-white",
+      "stateVersion": 203,
+      "decisionVersion": 11,
+      "target": {
+        "kind": "standard-scan"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "扫描"
+    }
+  ],
+  "passed": true
+}
