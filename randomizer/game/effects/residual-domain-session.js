@@ -1346,6 +1346,17 @@
     );
   }
 
+  function completeVisitOrbitFacts(root, events) {
+    return events.map((event) => {
+      if (event.type !== "visitPlanet") return event;
+      const visitor = event.playerId != null ? actor(root, event.playerId) : null;
+      if (!visitor || !event.planetId) throw new TypeError("VISIT_PLANET_FACTS_MISSING: 访问事件缺少有效玩家或行星");
+      return { ...event, hasOwnOrbit: endGameScoring.countPlanetMarkers(
+        visitor, root.planets, event.planetId, "orbit", { aliens: root.aliens },
+      ) > 0 };
+    });
+  }
+
   function augmentEffectResult(root, executorResult, sourceEffect) {
     if (!executorResult || executorResult.ok !== true || !root?.players) {
       return executorResult;
@@ -1366,7 +1377,7 @@
     const arrivalEvents = listFossilArrivalEvents(root);
     if (!Array.isArray(executorResult.events) || !executorResult.events.length) {
       if (!arrivalEvents.length) return { ...executorResult, spawnedEffects };
-      const events = arrivalEvents.filter((event) => event?.type);
+      const events = completeVisitOrbitFacts(root, arrivalEvents.filter((event) => event?.type));
       const ownerId = sourceEffect?.ownerId || events.find((event) => event.playerId)?.playerId;
       const owner = actor(root, ownerId);
       if (owner) {
@@ -1382,7 +1393,7 @@
       }
       return { ...executorResult, spawnedEffects, events };
     }
-    const events = [...(executorResult.events.filter((event) => event?.type)), ...arrivalEvents];
+    const events = completeVisitOrbitFacts(root, [...(executorResult.events.filter((event) => event?.type)), ...arrivalEvents]);
     const ownerId = sourceEffect?.ownerId || events.find((event) => event.playerId)?.playerId;
     const owner = actor(root, ownerId);
     if (owner) {
@@ -1463,7 +1474,7 @@
         }
       }
     }
-    return { ...executorResult, spawnedEffects };
+    return { ...executorResult, spawnedEffects, events };
   }
 
   // 发放 1 枚化石奖励（交虫族搬运任务时，按任务卡 fossilRewardRepeat 重复）。

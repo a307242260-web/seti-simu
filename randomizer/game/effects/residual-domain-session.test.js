@@ -10,6 +10,9 @@ const data = require("../data");
 const solar = require("../../solar-system/core");
 const finalReadModel = require("../final-read-model");
 const endGameScoring = require("../end-game-scoring");
+const rocketAbility = require("../abilities/rocket");
+const rockets = require("../rockets");
+const planetStats = require("../planet-stats");
 const { buildRuleObservation } = require("../../app/rule-observation");
 
 function createRoot() {
@@ -474,6 +477,62 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   assert.equal(choices.some((entry) => entry.target.choiceId.startsWith("skip:")), true);
   const settled = executor.resolveDecision(root, first, confirms[0], { state: root });
   assert.equal(settled.ok, true);
+})();
+
+(function visitOwnOrbitUsesFormalArrivalAndConsumesOneSlot() {
+  for (const markerKind of ["absent", "opponent", "landing", "own"]) {
+    const root = createRoot(), player = root.players.players[0];
+    const card = { id: "orbit-refuel", cardId: "dlc_21.png" };
+    cardEffects.ensureCardEffectState(card);
+    player.reservedCards = [card];
+    root.meta.sequences.rocket = 1;
+    root.solarSystem = solar.createBaselineState();
+    root.pieces = rockets.createRocketState();
+    root.planets = planetStats.createPlanetStatsState();
+    if (markerKind === "own" || markerKind === "opponent") {
+      assert.equal(planetStats.addPlanetOrbitMarker(root.planets, "mars",
+        markerKind === "own" ? player : root.players.players[1]).ok, true);
+    } else if (markerKind === "landing") {
+      assert.equal(planetStats.addPlanetLandingMarker(root.planets, "mars", player).ok, true);
+    }
+    const mars = solar.createSolarSnapshot(root.solarSystem).planetLocations.find(p => p.planetId === "mars");
+    const from = { x: solar.mod8(mars.x - 1), y: mars.y };
+    assert.equal(rockets.launchRocketAtSector(root.pieces, from, { playerId: player.id, color: player.color, root }).ok, true);
+    const rocket = root.pieces.rockets[0];
+    const owner = createHarness(residual, "createResidualDomain");
+    const executor = owner.executors.get(residual.EFFECT_TYPES.CARD_DECISION);
+    const arrive = () => {
+      assert.equal(rockets.placeRocketByPriority(root.pieces, rocket, from.x, from.y), true);
+      const context = { ...root, state: root };
+      const points = rocketAbility.getRequiredMovePointsFromCoordinate(context, player, from);
+      const moved = rocketAbility.moveProbe(context, { rocketId: rocket.id, deltaX: 1, deltaY: 0, movementPoints: points });
+      assert.equal(moved.ok, true);
+      const result = residual.augmentEffectResult(root, moved, { ownerId: player.id });
+      assert.equal(result.events.find(e => e.type === "visitPlanet").hasOwnOrbit, markerKind === "own");
+      return result.spawnedEffects.filter(e => e.effect.type === residual.EFFECT_TYPES.CARD_DECISION);
+    };
+    const first = arrive();
+    assert.equal(first.length, markerKind === "own" ? 1 : 0);
+    if (markerKind !== "own") continue;
+    let effect = first[0].effect;
+    let choices = executor.getLegalChoices(root, effect, { state: root });
+    assert.equal(choices.filter(c => c.target.choiceId.startsWith("confirm:")).length, 2);
+    const skipped = choices.find(c => c.target.choiceId.startsWith("skip:"));
+    assert.ok(skipped);
+    assert.equal(executor.resolveDecision(root, effect, skipped, { state: root }).ok, true);
+    assert.equal(card.cardEffectState.consumedTriggerIds.length, 0, "取消不消耗槽");
+    for (const remaining of [2, 1]) {
+      effect = arrive()[0].effect;
+      choices = executor.getLegalChoices(root, effect, { state: root }).filter(c => c.target.choiceId.startsWith("confirm:"));
+      assert.equal(choices.length, remaining);
+      const energy = player.resources.energy;
+      assert.equal(executor.resolveDecision(root, effect, choices[0], { state: root }).ok, true);
+      assert.equal(player.resources.energy, energy + 1, "一次访问只领取一个1能量槽");
+    }
+    assert.equal(arrive().length, 0, "两个槽用尽后不重复触发");
+  }
+  const root = createRoot();
+  assert.throws(() => residual.augmentEffectResult(root, { ok: true, events: [{ type: "visitPlanet", planetId: "mars" }] }, { ownerId: "p1" }), /VISIT_PLANET_FACTS_MISSING/);
 })();
 
 (function testHandAndPublicCardPickChoicesCarryCardFace() {

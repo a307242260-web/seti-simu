@@ -153,6 +153,7 @@ agent 最终应把人工描述转换成以下规范对象。当前实现可以�
 新增普通卡条件统一写成枚举，不写卡号特判：
 
 - 事件条件：`visitPlanet`、`signalMarked`、`scanAction`、`playCard`、`researchTech`、`orbit`、`land`、`launch`、`pass`；事件可带 `planetIds`、`types`、`price`、`cardIds`、`timing`、`techType`、`color`、`requiresOwnOrbit` 等限制。同一张 1 型卡的重复触发槽必须作为独立槽记录；同一次事件命中多个槽时，只能由玩家选择并消耗其中 1 个。
+- `visitPlanet.hasOwnOrbit` 由 Residual 在正式事件增补、触发匹配前读取该访问玩家的环绕标记并写入 journal；不是调用者自行传入的假设。共用 `end-game-scoring.countPlanetMarkers(player, planetsState, planetId, kind, context)`，普通星球与奥陌陌使用各自正式标记源，登陆标记不算环绕。访问缺有效玩家或行星显式报错。轨道加注（dlc21）每次访问只选择一个未使用槽，取消不消耗。
 - 状态条件：`handEmpty`、`resourceThreshold`、`resourceEquals`、`resourcesAndHandEmpty`、`dataTotal`、`completedSectors`、`signalsInAllColors`、`signalsOrWinsInAllSectors`、`planetOrbitOrLand`、`planetOrbitOrLandAll`、`samePlanetOrbitAndLand`、`orbitCount`、`landingCount`、`orbitOrLandCount`、`completedSameSectorColor`、`probeLocation`、`probeAdjacentEarth`、`probeAdjacentEarthAsteroid`、`probeDistanceFromEarth`、`probesOnDifferentPlanets`、`lastLandingHadAnyMarker`。
 - 移动条件：只影响当前 `card_move` 节点的局部规则仍可声明 `ignoreAsteroidRestriction`、`sameRingReward` 或 `distinctEventReward`。牌面写“本回合”的移动附加规则必须先登记 `duration: "turn"` 的事件奖励或 `movementModifiers`，再执行牌自带移动；这样之后通过能量、弃牌角标、科技/公司免费移动等来源产生的移动也会命中同一持续效果。移动能力统一发出带 `sameRing` 的 `move` 事件。
 - 终局计分：终局卡可声明 `sectorWinsByColor`、`traceCount`、`techCount`、`planetOrbitOrLand`、`probeLocation`、`unmarkedFinalRightmost`、`remainingResource`、`planetLandingPairs`、`allOrbitOrLand` 等 `endGameScoring.kind`。

@@ -150,6 +150,11 @@ rollout v18的搜索内部`executionEvents`只包含当前宏步成功提交新�
 每次折叠提交按增量读取；缺journal或长度倒退显式失败。`getBranchPriority`和
 `completesRouteTarget`消费同一增量；`advanceRoutePlan`按正式launch身份推进来源。
 事件与逐步绑定只驻留反事实执行结果，不加入Production状态、Browser存档或replay schema。
+
+正式 `visitPlanet` 事件在 Residual 增补后包含布尔 `hasOwnOrbit`，按事件实际
+`playerId` 与目标行星的环绕标记生成，并用于卡牌访问触发；缺玩家/行星报
+`VISIT_PLANET_FACTS_MISSING`。该事实属于共享规则 journal，不是AI新增目标或
+启发式估值字段；正式选择仍使用原Action/Decision与恢复契约。
 多个origin共享物理执行事实，各自推进绑定与计划，不能共用可变来源。
 
 蓝槽派生事实同样在Browser/Simulation共用的sanitize和outcome-model生成：

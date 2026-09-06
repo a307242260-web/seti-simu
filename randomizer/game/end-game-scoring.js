@@ -416,13 +416,19 @@
     return count;
   }
 
-  function countPlanetOrbitOrLand(player, planetsState, planetId, context = {}) {
-    if (planetId === "pluto") return countPlutoMarkers(player, context, "all");
+  function countPlanetMarkers(player, planetsState, planetId, kind, context = {}) {
+    if (!["all", "orbit", "land"].includes(kind)) throw new TypeError("星球标记计数缺少有效种类");
+    if (planetId === "pluto") return countPlutoMarkers(player, context, kind);
     if (isAomomoPlanetId(planetId)) {
-      return countAomomoMarkers(player, context, "all");
+      // 物种列表原语会初始化其状态；计数隔离输入，不修改正式状态或冻结观察。
+      return countAomomoMarkers(player, { ...context, aliens: structuredClone(context.aliens) }, kind);
     }
     const record = planetsState?.planets?.[planetId];
-    return countPlanetRecordMarkers(player, record, "all");
+    return countPlanetRecordMarkers(player, record, kind);
+  }
+
+  function countPlanetOrbitOrLand(player, planetsState, planetId, context = {}) {
+    return countPlanetMarkers(player, planetsState, planetId, "all", context);
   }
 
   function countOrbitOrLandMarkers(player, planetsState, context = {}) {
@@ -881,6 +887,7 @@
     countTraceMarkers,
     countOwnedTech,
     countTotalOwnedTech,
+    countPlanetMarkers,
     countPlanetOrbitOrLand,
     countOrbitOrLandMarkers,
     countPlanetLandingPairs,

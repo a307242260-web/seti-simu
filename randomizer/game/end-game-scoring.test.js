@@ -199,6 +199,30 @@ assert.equal(
 );
 
 const slotThreeState = finalScoring.createFinalScoringState(["c"]);
+// 访问条件与终局共用标记归属，但访问只认可环绕，不把登陆混入。
+{
+  const markerState = { planets: { mars: {
+    orbitMarkers: [{ playerId: white.id }, { playerId: "other" }],
+    landingMarkers: [{ playerId: white.id }], satelliteLandings: [{ playerId: white.id }],
+  } } };
+  assert.equal(endGameScoring.countPlanetMarkers(white, markerState, "mars", "orbit"), 1);
+  assert.equal(endGameScoring.countPlanetMarkers(white, markerState, "mars", "land"), 2);
+  assert.equal(endGameScoring.countPlanetOrbitOrLand(white, markerState, "mars"), 3);
+  assert.equal(endGameScoring.countPlanetMarkers(white, markerState, "venus", "orbit"), 0);
+  const context = { aliens: structuredClone(aomomoMarkerState) };
+  const before = JSON.stringify(context);
+  const freeze = value => {
+    if (value && typeof value === "object") { Object.values(value).forEach(freeze); Object.freeze(value); }
+    return value;
+  };
+  freeze(context);
+  assert.equal(endGameScoring.countPlanetMarkers(white, markerState, "aomomo", "orbit", context), 1);
+  assert.equal(endGameScoring.countPlanetMarkers(white, markerState, "aomomo", "land", context), 2);
+  assert.equal(JSON.stringify(context), before, "奥陌陌标记计数不初始化或修改输入");
+  assert.equal(endGameScoring.countPlanetMarkers(white, markerState, "pluto", "orbit", {
+    plutoMarkers: [{ playerId: white.id, kind: "land" }, { playerId: white.id, kind: "orbit" }],
+  }), 1);
+}
 finalScoring.setTileVariants(slotThreeState, { c: 1 });
 const slotThreePlayer = player({
   id: "player-brown",
