@@ -1,0 +1,69 @@
+{
+  "scope": "已有证据完整性、观察优化前后等价与固定终局只读复核；不是重新运行历史行为证据，也不是完整实现证明",
+  "auditedHead": "bc2a343910753c2196dc9106d13f082042aff2e7",
+  "productionCommit": "213f34db",
+  "productionDiffEmpty": true,
+  "equalDecisionOutcomes": 16,
+  "equalLeaves": 2212,
+  "steps": 702,
+  "scores": {
+    "player-blue": 96,
+    "player-green": 84,
+    "player-brown": 130,
+    "player-white": 124
+  },
+  "mean": 108.5,
+  "previousAcceptedMean": 106.75,
+  "simulationMs": 527450,
+  "evidence": [
+    {
+      "path": "reports/iteration/plan-steps-r3-profile-20260905-d2f49e3e.json",
+      "sha256": "e51e250ca2dd9ec271c0c65bbcb070f9d07a79c8e594c9acf7921aaa16bc5d36"
+    },
+    {
+      "path": "reports/iteration/r3-brown-plan-realization-20260906.json",
+      "sha256": "7c1ee0948656d5ad876bd5c4d35d09b258b153ab3fe2bb86dd58cea5d051cc7d"
+    },
+    {
+      "path": "reports/iteration/r3-tile-dependency-realization-20260906.json",
+      "sha256": "216a0fb6f7a4c6156cb22bf7fd2f6d54f9ae59d4b7dc35343961f75a4d5718ae"
+    },
+    {
+      "path": "reports/iteration/r3-scan-earth-verification-20260906.json",
+      "sha256": "7fd3e084cb476cdbad59d543867411a0dbab83467ecb2855d8ea18d3178dd257"
+    },
+    {
+      "path": "reports/iteration/probe-source-plan-verification-20260906.json",
+      "sha256": "d392130e5c9bba7676ba0a618332ca66d6c571c7e5109bd52210e81c5945da4b"
+    },
+    {
+      "path": "reports/iteration/search-equivalence-r4-20260906-v2.json",
+      "sha256": "5296b345ea0fab60700ce2c6ab2a9482d628fc93d4c9bd26dbf37df0e8932b50"
+    },
+    {
+      "path": "reports/iteration/completion-state-r4-20260906.json",
+      "sha256": "4d7ca3f8caaec2501158e52d84cee04825da908dc49b5216ba7c4a3006348701"
+    },
+    {
+      "path": "reports/iteration/score-corner-r4-real-20260906.json",
+      "sha256": "f33d0f71a23455999b38184234128a0db2dfc24b7c750b5c5f7d0d6fcf37d616"
+    },
+    {
+      "path": "reports/iteration/round-data-income-r4-real-20260906.json",
+      "sha256": "8c31081bfb586ed3bc93f766dd9af3ff09fd3e28632dda27091fa4b51952e852"
+    },
+    {
+      "path": "reports/iteration/observe-decision-search-before-20260906.json",
+      "sha256": "a658f50cb0ebe272a0daff525e367b6a619968aad97da00343b875e46a99c4d9"
+    },
+    {
+      "path": "reports/iteration/observe-decision-search-after-20260906.json",
+      "sha256": "0453899e3e65503919803dc5d5d220a1aef152ce856d0dda9d8a40e2f25f8506"
+    },
+    {
+      "path": "reports/iteration/observe-decision-full-verification-20260906.json",
+      "sha256": "22f3f0a4d65ddff1076e883477439a1fdffa1815e530384ed9a3d1c0ad385c7f"
+    }
+  ],
+  "passed": true
+}

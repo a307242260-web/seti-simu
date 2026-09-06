@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-06T00:14:55.837Z",
+  "builtAt": "2026-09-06T00:26:03.507Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "213f34db",
+  "headCommit": "bc2a3439",
   "currentBaseline": "observe-decision-r4-20260906",
   "worktreeDirty": true,
   "bestOf": {
@@ -102,13 +102,13 @@ const REGISTRY = {
     "bestAvg": {
       "value": 108.5,
       "versionId": "observe-decision-r4-20260906",
-      "name": "单次观察枚举复用（终局均108.5，待综合验收）",
+      "name": "单次观察枚举复用（四轮累计验收通过）",
       "runKey": "2848eba2.213f34db.full",
       "provenance": "save-final",
       "steps": 702,
       "wallMs": 389609,
       "msPerStep": 555,
-      "scoreSourceNote": "702步，正式终局96/84/130/124、均108.5，较已通过基线106.75提高1.75；总模拟527450ms。终局与前缀校验通过，待第三/第四轮综合实现验收，不把均分提升单独作为收口依据。"
+      "scoreSourceNote": "702步，正式终局96/84/130/124、均108.5，较R2e基线106.75提高1.75；总模拟527450ms。第三/第四轮当前累计实现验收通过，见ai-rounds-final-review-20260906.md；历史失败候选不改判，旧30秒超时根因未明，整局提速未完成。"
     },
     "bestPlayer": {
       "value": 152,
@@ -151,13 +151,13 @@ const REGISTRY = {
           "score": 130
         },
         "versionId": "observe-decision-r4-20260906",
-        "name": "单次观察枚举复用（终局均108.5，待综合验收）",
+        "name": "单次观察枚举复用（四轮累计验收通过）",
         "runKey": "2848eba2.213f34db.full",
         "provenance": "save-final",
         "steps": 702,
         "wallMs": 389609,
         "msPerStep": 555,
-        "scoreSourceNote": "702步，正式终局96/84/130/124、均108.5，较已通过基线106.75提高1.75；总模拟527450ms。终局与前缀校验通过，待第三/第四轮综合实现验收，不把均分提升单独作为收口依据。"
+        "scoreSourceNote": "702步，正式终局96/84/130/124、均108.5，较R2e基线106.75提高1.75；总模拟527450ms。第三/第四轮当前累计实现验收通过，见ai-rounds-final-review-20260906.md；历史失败候选不改判，旧30秒超时根因未明，整局提速未完成。"
       },
       {
         "value": 106.75,
@@ -196,7 +196,7 @@ const REGISTRY = {
   "versions": [
     {
       "id": "observe-decision-r4-20260906",
-      "name": "单次观察枚举复用（终局均108.5，待综合验收）",
+      "name": "单次观察枚举复用（四轮累计验收通过）",
       "date": "2026-09-06",
       "baseline": "blue-future-r2e-20260905",
       "head": "213f34db",
@@ -553,7 +553,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T00:13:21.013Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
-          "note": "702步，正式终局96/84/130/124、均108.5，较已通过基线106.75提高1.75；总模拟527450ms。终局与前缀校验通过，待第三/第四轮综合实现验收，不把均分提升单独作为收口依据。",
+          "note": "702步，正式终局96/84/130/124、均108.5，较R2e基线106.75提高1.75；总模拟527450ms。第三/第四轮当前累计实现验收通过，见ai-rounds-final-review-20260906.md；历史失败候选不改判，旧30秒超时根因未明，整局提速未完成。",
           "scores": {
             "player-blue": 96,
             "player-green": 84,
