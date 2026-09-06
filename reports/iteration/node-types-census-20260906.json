@@ -1,0 +1,976 @@
+{
+  "scope": "五个固定输入样本独立统计，不代表整局分布；失败尝试在executeNode返回后、成功family计数前退出；具体错误原因尚未计数",
+  "productionCommit": "213f34db",
+  "rawBudgetHitRows": 347,
+  "budgetHitCaveat": "复用计划时会重复携带旧诊断，不是独立搜索次数",
+  "rows": [
+    {
+      "path": "reports/iteration/node-types-baseline-step-24-20260906.json",
+      "step": 24,
+      "wallMs": 10232.220375,
+      "chosen": "place_data:8fd12fd3",
+      "nodes": 4096,
+      "successfulClassifiedNodes": 4096,
+      "failedExecutionAttempts": 0,
+      "familyCounts": {
+        "analyze": 213,
+        "card_corner": 49,
+        "choose_card": 1052,
+        "choose_payment": 30,
+        "choose_target": 749,
+        "end_turn": 497,
+        "industry": 34,
+        "land": 39,
+        "launch": 13,
+        "move": 40,
+        "orbit": 51,
+        "pass": 9,
+        "place_data": 497,
+        "play_card": 12,
+        "quick_trade": 590,
+        "research_tech": 31,
+        "scan": 190
+      },
+      "computerChoiceCount": 0,
+      "computerChoices": {},
+      "topChoices": [
+        [
+          "end_turn:结束回合",
+          497
+        ],
+        [
+          "place_data:放置数据",
+          497
+        ],
+        [
+          "choose_target:扫描 南河三",
+          317
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          316
+        ],
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          227
+        ],
+        [
+          "analyze:分析",
+          213
+        ],
+        [
+          "choose_target:外星人 1 蓝色痕迹",
+          213
+        ],
+        [
+          "scan:扫描",
+          190
+        ],
+        [
+          "choose_card:b_2.webp",
+          179
+        ],
+        [
+          "choose_card:dlc_21.png",
+          109
+        ],
+        [
+          "choose_card:b_48.webp",
+          94
+        ],
+        [
+          "choose_card:收入 dlc_21.png",
+          79
+        ],
+        [
+          "choose_card:收入 b_48.webp",
+          75
+        ],
+        [
+          "choose_card:收入 b_117.webp",
+          73
+        ],
+        [
+          "choose_card:收入 b_2.webp",
+          72
+        ]
+      ],
+      "targetOriginCounts": {
+        "data:analyze": 2942,
+        "orbit:mars:planet:": 887,
+        "land:mars:planet:": 508,
+        "tech:gain:blue2": 282,
+        "sector:win:sector-3-a:1": 256,
+        "income:gain:4,2,0,0,2,1": 238,
+        "tech:gain:orange3": 190,
+        "tech:gain:blue1": 174,
+        "<unbound>": 126,
+        "decision:choose_card:6c3308e4": 24,
+        "decision:choose_card:f88a4f80": 24,
+        "tech:gain:purple4": 20,
+        "tech:gain:orange2": 16,
+        "income:gain:4,3,0,0,1,1": 7,
+        "decision:choose_target:8821e7b0": 6,
+        "income:gain:4,2,0,0,1,1": 6,
+        "decision:choose_target:062d2a7a": 2,
+        "decision:choose_target:8dd1ded6": 2,
+        "decision:choose_target:f2938768": 2
+      },
+      "targetDecisionKindOriginCounts": {
+        "data:analyze -> place_data:place-data": 559,
+        "data:analyze -> quick_trade:<none>": 420,
+        "data:analyze -> end_turn:end-turn": 401,
+        "data:analyze -> choose_card:<none>": 358,
+        "orbit:mars:planet: -> choose_card:<none>": 350,
+        "data:analyze -> analyze:computer": 259,
+        "data:analyze -> choose_target:planet-reward-alien-trace": 259,
+        "orbit:mars:planet: -> choose_target:<none>": 219,
+        "data:analyze -> choose_target:<none>": 196,
+        "data:analyze -> scan:standard-scan": 196,
+        "data:analyze -> choose_card:trade-card-selection": 138,
+        "tech:gain:blue2 -> choose_card:<none>": 134,
+        "land:mars:planet: -> quick_trade:<none>": 115,
+        "sector:win:sector-3-a:1 -> quick_trade:<none>": 108,
+        "data:analyze -> choose_card:residual-domain": 94,
+        "land:mars:planet: -> choose_target:<none>": 82,
+        "orbit:mars:planet: -> quick_trade:<none>": 73,
+        "income:gain:4,2,0,0,2,1 -> quick_trade:<none>": 66,
+        "land:mars:planet: -> end_turn:end-turn": 63,
+        "data:analyze -> card_corner:<none>": 62,
+        "tech:gain:orange3 -> choose_target:<none>": 62,
+        "tech:gain:orange3 -> research_tech:research-tech": 62,
+        "<unbound> -> end_turn:end-turn": 61,
+        "land:mars:planet: -> choose_card:trade-card-selection": 56,
+        "orbit:mars:planet: -> orbit:<none>": 56,
+        "orbit:mars:planet: -> end_turn:end-turn": 55,
+        "tech:gain:blue1 -> choose_target:<none>": 54,
+        "tech:gain:blue1 -> research_tech:research-tech": 54,
+        "tech:gain:blue2 -> choose_target:<none>": 54,
+        "tech:gain:blue2 -> research_tech:research-tech": 54,
+        "income:gain:4,2,0,0,2,1 -> place_data:place-data": 52,
+        "income:gain:4,2,0,0,2,1 -> choose_card:<none>": 48,
+        "land:mars:planet: -> move:<none>": 45,
+        "<unbound> -> industry:<none>": 44,
+        "land:mars:planet: -> choose_target:planet-reward-alien-trace": 43,
+        "land:mars:planet: -> land:<none>": 43,
+        "orbit:mars:planet: -> move:<none>": 42,
+        "orbit:mars:planet: -> choose_card:trade-card-selection": 36,
+        "sector:win:sector-3-a:1 -> choose_card:<none>": 36,
+        "sector:win:sector-3-a:1 -> choose_target:<none>": 36,
+        "sector:win:sector-3-a:1 -> scan:standard-scan": 36,
+        "land:mars:planet: -> choose_payment:move-payment": 30,
+        "orbit:mars:planet: -> choose_payment:move-payment": 30,
+        "tech:gain:blue1 -> choose_card:<none>": 26,
+        "tech:gain:orange3 -> choose_card:<none>": 26,
+        "decision:choose_card:6c3308e4 -> choose_card:residual-domain": 24,
+        "decision:choose_card:f88a4f80 -> choose_card:residual-domain": 24,
+        "tech:gain:blue1 -> end_turn:end-turn": 24,
+        "tech:gain:blue2 -> end_turn:end-turn": 24,
+        "tech:gain:orange3 -> end_turn:end-turn": 24,
+        "income:gain:4,2,0,0,2,1 -> choose_target:<none>": 22,
+        "income:gain:4,2,0,0,2,1 -> scan:standard-scan": 22,
+        "land:mars:planet: -> launch:<none>": 22,
+        "sector:win:sector-3-a:1 -> choose_card:trade-card-selection": 21,
+        "income:gain:4,2,0,0,2,1 -> choose_card:trade-card-selection": 20,
+        "sector:win:sector-3-a:1 -> end_turn:end-turn": 19,
+        "orbit:mars:planet: -> launch:<none>": 17,
+        "<unbound> -> pass:pass": 16,
+        "tech:gain:blue1 -> place_data:place-data": 16,
+        "tech:gain:blue2 -> place_data:place-data": 16,
+        "tech:gain:orange3 -> place_data:place-data": 16,
+        "tech:gain:purple4 -> choose_target:<none>": 10,
+        "land:mars:planet: -> play_card:<none>": 9,
+        "orbit:mars:planet: -> play_card:<none>": 9,
+        "income:gain:4,2,0,0,2,1 -> end_turn:end-turn": 8,
+        "tech:gain:orange2 -> choose_target:<none>": 8,
+        "tech:gain:orange2 -> research_tech:research-tech": 8,
+        "tech:gain:purple4 -> research_tech:research-tech": 8,
+        "<unbound> -> play_card:<none>": 5,
+        "decision:choose_target:8821e7b0 -> choose_card:<none>": 4,
+        "income:gain:4,3,0,0,1,1 -> choose_card:<none>": 4,
+        "income:gain:4,2,0,0,1,1 -> choose_card:<none>": 3,
+        "income:gain:4,2,0,0,1,1 -> place_data:place-data": 3,
+        "income:gain:4,3,0,0,1,1 -> place_data:place-data": 3,
+        "decision:choose_target:062d2a7a -> choose_target:<none>": 2,
+        "decision:choose_target:8821e7b0 -> choose_target:<none>": 2,
+        "decision:choose_target:8dd1ded6 -> choose_target:<none>": 2,
+        "decision:choose_target:f2938768 -> choose_target:<none>": 2,
+        "tech:gain:purple4 -> play_card:<none>": 2
+      }
+    },
+    {
+      "path": "reports/iteration/node-types-baseline-step-42-20260906.json",
+      "step": 42,
+      "wallMs": 10299.019166,
+      "chosen": "move:2729ba3d",
+      "nodes": 4096,
+      "successfulClassifiedNodes": 2698,
+      "failedExecutionAttempts": 1398,
+      "familyCounts": {
+        "analyze": 20,
+        "card_corner": 27,
+        "choose_card": 452,
+        "choose_target": 586,
+        "end_turn": 215,
+        "industry": 255,
+        "land": 13,
+        "launch": 13,
+        "move": 161,
+        "orbit": 4,
+        "pass": 145,
+        "place_data": 287,
+        "play_card": 57,
+        "quick_trade": 254,
+        "research_tech": 155,
+        "scan": 54
+      },
+      "computerChoiceCount": 0,
+      "computerChoices": {},
+      "topChoices": [
+        [
+          "place_data:放置数据",
+          287
+        ],
+        [
+          "industry:寰宇动力 1x 行动",
+          255
+        ],
+        [
+          "end_turn:结束回合",
+          215
+        ],
+        [
+          "choose_card:dlc_21.png",
+          188
+        ],
+        [
+          "choose_target:研究 blue1（蓝槽 1）",
+          155
+        ],
+        [
+          "choose_target:研究 blue2（蓝槽 1）",
+          155
+        ],
+        [
+          "choose_target:研究 orange3",
+          155
+        ],
+        [
+          "research_tech:研究科技",
+          155
+        ],
+        [
+          "choose_card:b_2.webp",
+          152
+        ],
+        [
+          "pass:PASS",
+          145
+        ],
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          122
+        ],
+        [
+          "quick_trade:2信用点 → 1能量",
+          66
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          62
+        ],
+        [
+          "choose_target:扫描 南河三",
+          57
+        ],
+        [
+          "scan:扫描",
+          54
+        ]
+      ],
+      "targetOriginCounts": {
+        "tech:gain:blue2": 842,
+        "<unbound>": 676,
+        "tech:gain:blue1": 533,
+        "tech:gain:orange3": 533,
+        "income:gain:6,1,0,0,1,0": 359,
+        "sector:win:sector-1-a:1": 269,
+        "data:analyze": 248,
+        "land:mars:planet:": 179,
+        "orbit:venus:planet:": 50,
+        "orbit:mars:planet:": 23,
+        "income:gain:5,1,0,0,1,0": 14
+      },
+      "targetDecisionKindOriginCounts": {
+        "tech:gain:blue2 -> choose_card:<none>": 313,
+        "income:gain:6,1,0,0,1,0 -> place_data:place-data": 259,
+        "<unbound> -> industry:<none>": 255,
+        "tech:gain:blue1 -> choose_target:<none>": 159,
+        "tech:gain:blue1 -> research_tech:research-tech": 159,
+        "tech:gain:blue2 -> choose_target:<none>": 159,
+        "tech:gain:blue2 -> research_tech:research-tech": 159,
+        "tech:gain:orange3 -> choose_target:<none>": 159,
+        "tech:gain:orange3 -> research_tech:research-tech": 159,
+        "tech:gain:blue1 -> place_data:place-data": 149,
+        "tech:gain:blue2 -> place_data:place-data": 149,
+        "tech:gain:orange3 -> place_data:place-data": 149,
+        "<unbound> -> pass:pass": 145,
+        "<unbound> -> end_turn:end-turn": 117,
+        "sector:win:sector-1-a:1 -> quick_trade:<none>": 92,
+        "<unbound> -> move:<none>": 89,
+        "land:mars:planet: -> quick_trade:<none>": 85,
+        "<unbound> -> play_card:<none>": 57,
+        "sector:win:sector-1-a:1 -> choose_card:<none>": 52,
+        "data:analyze -> choose_target:planet-reward-alien-trace": 44,
+        "data:analyze -> end_turn:end-turn": 44,
+        "land:mars:planet: -> move:<none>": 44,
+        "income:gain:6,1,0,0,1,0 -> quick_trade:<none>": 43,
+        "data:analyze -> quick_trade:<none>": 42,
+        "tech:gain:blue1 -> end_turn:end-turn": 41,
+        "tech:gain:blue2 -> end_turn:end-turn": 41,
+        "tech:gain:orange3 -> end_turn:end-turn": 41,
+        "data:analyze -> place_data:place-data": 36,
+        "sector:win:sector-1-a:1 -> choose_target:<none>": 35,
+        "sector:win:sector-1-a:1 -> scan:standard-scan": 35,
+        "data:analyze -> analyze:computer": 30,
+        "orbit:venus:planet: -> move:<none>": 28,
+        "income:gain:6,1,0,0,1,0 -> choose_card:<none>": 26,
+        "sector:win:sector-1-a:1 -> choose_target:planet-reward-alien-trace": 21,
+        "tech:gain:blue1 -> card_corner:<none>": 21,
+        "tech:gain:blue2 -> card_corner:<none>": 21,
+        "tech:gain:orange3 -> card_corner:<none>": 21,
+        "sector:win:sector-1-a:1 -> end_turn:end-turn": 19,
+        "data:analyze -> choose_card:<none>": 18,
+        "orbit:mars:planet: -> choose_card:<none>": 15,
+        "orbit:venus:planet: -> quick_trade:<none>": 15,
+        "sector:win:sector-1-a:1 -> choose_card:trade-card-selection": 15,
+        "data:analyze -> choose_target:<none>": 14,
+        "data:analyze -> scan:standard-scan": 14,
+        "land:mars:planet: -> choose_card:trade-card-selection": 14,
+        "<unbound> -> launch:<none>": 13,
+        "land:mars:planet: -> choose_target:planet-reward-alien-trace": 13,
+        "land:mars:planet: -> land:<none>": 13,
+        "income:gain:6,1,0,0,1,0 -> choose_target:<none>": 10,
+        "income:gain:6,1,0,0,1,0 -> scan:standard-scan": 10,
+        "land:mars:planet: -> end_turn:end-turn": 10,
+        "income:gain:5,1,0,0,1,0 -> choose_card:<none>": 8,
+        "data:analyze -> card_corner:<none>": 6,
+        "income:gain:6,1,0,0,1,0 -> choose_card:trade-card-selection": 6,
+        "income:gain:5,1,0,0,1,0 -> place_data:place-data": 4,
+        "orbit:mars:planet: -> move:<none>": 4,
+        "tech:gain:blue1 -> choose_card:<none>": 4,
+        "tech:gain:orange3 -> choose_card:<none>": 4,
+        "income:gain:6,1,0,0,1,0 -> end_turn:end-turn": 3,
+        "orbit:mars:planet: -> choose_target:<none>": 3,
+        "orbit:venus:planet: -> orbit:<none>": 3,
+        "income:gain:6,1,0,0,1,0 -> choose_target:planet-reward-alien-trace": 2,
+        "orbit:venus:planet: -> choose_card:trade-card-selection": 2,
+        "income:gain:5,1,0,0,1,0 -> choose_target:<none>": 1,
+        "income:gain:5,1,0,0,1,0 -> scan:standard-scan": 1,
+        "orbit:mars:planet: -> orbit:<none>": 1,
+        "orbit:venus:planet: -> choose_card:<none>": 1,
+        "orbit:venus:planet: -> end_turn:end-turn": 1
+      }
+    },
+    {
+      "path": "reports/iteration/node-types-baseline-step-49-20260906.json",
+      "step": 49,
+      "wallMs": 10929.200832999999,
+      "chosen": "play_card:6eb4a6de",
+      "nodes": 4096,
+      "successfulClassifiedNodes": 4096,
+      "failedExecutionAttempts": 0,
+      "familyCounts": {
+        "accept_optional_effect": 121,
+        "card_corner": 128,
+        "choose_card": 243,
+        "choose_payment": 142,
+        "choose_target": 1292,
+        "end_turn": 612,
+        "industry": 157,
+        "land": 86,
+        "launch": 171,
+        "move": 356,
+        "orbit": 77,
+        "pass": 118,
+        "place_data": 72,
+        "play_card": 44,
+        "quick_trade": 296,
+        "research_tech": 64,
+        "scan": 117
+      },
+      "computerChoiceCount": 1,
+      "computerChoices": {
+        "choose_target:第一排放置位 2": 1
+      },
+      "topChoices": [
+        [
+          "end_turn:结束回合",
+          612
+        ],
+        [
+          "launch:发射",
+          171
+        ],
+        [
+          "choose_target:借用 orange3",
+          157
+        ],
+        [
+          "industry:图灵系统 1x 行动",
+          157
+        ],
+        [
+          "choose_target:借用 purple2",
+          156
+        ],
+        [
+          "move:移动探测器 3 逆时针",
+          145
+        ],
+        [
+          "accept_optional_effect:结算 dlc_23.png",
+          121
+        ],
+        [
+          "quick_trade:2信用点 → 1能量",
+          120
+        ],
+        [
+          "pass:PASS",
+          118
+        ],
+        [
+          "scan:扫描",
+          117
+        ],
+        [
+          "card_corner:b_106.webp：弃牌角标",
+          98
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          91
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄色痕迹",
+          86
+        ],
+        [
+          "land:登陆",
+          86
+        ],
+        [
+          "choose_card:dlc_38.png → 开普勒22",
+          83
+        ]
+      ],
+      "targetOriginCounts": {
+        "land:mars:planet:": 737,
+        "<unbound>": 726,
+        "orbit:venus:planet:": 496,
+        "sector:win:sector-3-a:1": 468,
+        "tech:gain:orange2": 245,
+        "tech:gain:orange3": 226,
+        "income:gain:4,2,0,1,1,0": 216,
+        "tech:gain:purple4": 185,
+        "decision:choose_target:01c733aa": 157,
+        "decision:choose_target:1bbc6216": 156,
+        "tech:gain:purple2": 143,
+        "income:gain:4,3,0,1,1,0": 100,
+        "income:gain:4,2,0,1,2,0": 94,
+        "decision:choose_target:505cd48a": 81,
+        "decision:choose_target:7176d5b6": 80,
+        "decision:choose_target:a16ac402": 80,
+        "decision:choose_target:b8fbeffa": 80,
+        "decision:choose_target:dd16a166": 79,
+        "decision:choose_target:f70ace96": 79,
+        "land:mercury:planet:": 78,
+        "orbit:uranus:planet:": 63,
+        "decision:choose_target:bd873b4c": 54,
+        "tech:gain:blue2": 52,
+        "data:analyze": 49,
+        "tech:gain:blue1": 43,
+        "decision:choose_target:098c8070": 21,
+        "decision:choose_target:b8bba63c": 12
+      },
+      "targetDecisionKindOriginCounts": {
+        "<unbound> -> end_turn:end-turn": 316,
+        "<unbound> -> industry:<none>": 157,
+        "decision:choose_target:01c733aa -> choose_target:residual-domain": 157,
+        "decision:choose_target:1bbc6216 -> choose_target:residual-domain": 156,
+        "land:mars:planet: -> move:<none>": 140,
+        "sector:win:sector-3-a:1 -> quick_trade:<none>": 126,
+        "<unbound> -> pass:pass": 118,
+        "orbit:venus:planet: -> move:<none>": 116,
+        "land:mars:planet: -> end_turn:end-turn": 110,
+        "tech:gain:orange2 -> card_corner:<none>": 103,
+        "tech:gain:orange3 -> card_corner:<none>": 98,
+        "<unbound> -> launch:<none>": 95,
+        "land:mars:planet: -> choose_payment:move-payment": 90,
+        "sector:win:sector-3-a:1 -> choose_target:<none>": 88,
+        "sector:win:sector-3-a:1 -> scan:standard-scan": 87,
+        "land:mars:planet: -> choose_target:planet-reward-alien-trace": 86,
+        "land:mars:planet: -> land:<none>": 86,
+        "orbit:venus:planet: -> end_turn:end-turn": 84,
+        "decision:choose_target:505cd48a -> choose_target:residual-domain": 81,
+        "sector:win:sector-3-a:1 -> choose_card:<none>": 81,
+        "decision:choose_target:7176d5b6 -> choose_target:residual-domain": 80,
+        "decision:choose_target:a16ac402 -> choose_target:residual-domain": 80,
+        "decision:choose_target:b8fbeffa -> choose_target:residual-domain": 80,
+        "tech:gain:purple2 -> card_corner:<none>": 80,
+        "decision:choose_target:dd16a166 -> choose_target:residual-domain": 79,
+        "decision:choose_target:f70ace96 -> choose_target:residual-domain": 79,
+        "orbit:venus:planet: -> orbit:<none>": 77,
+        "land:mars:planet: -> quick_trade:<none>": 76,
+        "land:mars:planet: -> accept_optional_effect:residual-domain": 68,
+        "land:mars:planet: -> launch:<none>": 67,
+        "tech:gain:purple4 -> card_corner:<none>": 62,
+        "tech:gain:orange2 -> choose_target:<none>": 58,
+        "orbit:venus:planet: -> launch:<none>": 57,
+        "sector:win:sector-3-a:1 -> end_turn:end-turn": 56,
+        "tech:gain:orange3 -> choose_target:<none>": 55,
+        "orbit:uranus:planet: -> move:<none>": 54,
+        "tech:gain:orange2 -> research_tech:research-tech": 54,
+        "orbit:venus:planet: -> choose_payment:move-payment": 52,
+        "tech:gain:orange3 -> research_tech:research-tech": 50,
+        "tech:gain:purple4 -> choose_target:<none>": 49,
+        "land:mercury:planet: -> move:<none>": 46,
+        "tech:gain:purple4 -> research_tech:research-tech": 46,
+        "income:gain:4,2,0,1,1,0 -> place_data:place-data": 44,
+        "<unbound> -> play_card:<none>": 40,
+        "income:gain:4,2,0,1,1,0 -> choose_card:<none>": 40,
+        "orbit:venus:planet: -> accept_optional_effect:residual-domain": 40,
+        "orbit:venus:planet: -> quick_trade:<none>": 40,
+        "income:gain:4,2,0,1,1,0 -> quick_trade:<none>": 38,
+        "decision:choose_target:bd873b4c -> choose_target:<none>": 36,
+        "income:gain:4,2,0,1,1,0 -> choose_target:<none>": 32,
+        "land:mercury:planet: -> accept_optional_effect:residual-domain": 32,
+        "income:gain:4,2,0,1,1,0 -> scan:standard-scan": 30,
+        "sector:win:sector-3-a:1 -> choose_card:trade-card-selection": 27,
+        "tech:gain:purple2 -> choose_target:<none>": 26,
+        "tech:gain:purple2 -> research_tech:research-tech": 26,
+        "orbit:venus:planet: -> choose_card:<none>": 25,
+        "tech:gain:blue1 -> card_corner:<none>": 25,
+        "tech:gain:orange2 -> end_turn:end-turn": 25,
+        "tech:gain:purple4 -> end_turn:end-turn": 25,
+        "data:analyze -> quick_trade:<none>": 22,
+        "income:gain:4,2,0,1,2,0 -> quick_trade:<none>": 22,
+        "income:gain:4,3,0,1,1,0 -> quick_trade:<none>": 20,
+        "decision:choose_target:bd873b4c -> choose_target:orbit": 18,
+        "tech:gain:orange3 -> end_turn:end-turn": 17,
+        "income:gain:4,2,0,1,1,0 -> choose_card:trade-card-selection": 16,
+        "tech:gain:blue2 -> card_corner:<none>": 16,
+        "tech:gain:blue2 -> choose_card:<none>": 16,
+        "income:gain:4,3,0,1,1,0 -> choose_card:<none>": 15,
+        "income:gain:4,3,0,1,1,0 -> choose_target:<none>": 15,
+        "income:gain:4,3,0,1,1,0 -> place_data:place-data": 15,
+        "income:gain:4,3,0,1,1,0 -> scan:standard-scan": 15,
+        "decision:choose_target:098c8070 -> choose_target:<none>": 14,
+        "income:gain:4,2,0,1,2,0 -> choose_card:<none>": 14,
+        "income:gain:4,2,0,1,2,0 -> choose_target:<none>": 14,
+        "income:gain:4,2,0,1,2,0 -> place_data:place-data": 14,
+        "income:gain:4,2,0,1,2,0 -> scan:standard-scan": 14,
+        "land:mars:planet: -> choose_card:trade-card-selection": 14,
+        "income:gain:4,2,0,1,1,0 -> end_turn:end-turn": 13,
+        "data:analyze -> choose_card:trade-card-selection": 12,
+        "income:gain:4,2,0,1,2,0 -> end_turn:end-turn": 12,
+        "tech:gain:purple2 -> end_turn:end-turn": 11,
+        "income:gain:4,3,0,1,1,0 -> choose_card:trade-card-selection": 10,
+        "income:gain:4,3,0,1,1,0 -> end_turn:end-turn": 10,
+        "orbit:uranus:planet: -> accept_optional_effect:residual-domain": 9,
+        "tech:gain:blue2 -> choose_target:<none>": 9,
+        "decision:choose_target:b8bba63c -> choose_target:<none>": 8,
+        "tech:gain:blue1 -> choose_target:<none>": 8,
+        "tech:gain:blue1 -> research_tech:research-tech": 8,
+        "tech:gain:blue2 -> research_tech:research-tech": 8,
+        "decision:choose_target:098c8070 -> choose_target:orbit": 7,
+        "data:analyze -> choose_target:<none>": 6,
+        "data:analyze -> scan:standard-scan": 6,
+        "orbit:venus:planet: -> choose_card:trade-card-selection": 5,
+        "decision:choose_target:b8bba63c -> choose_target:land": 4,
+        "income:gain:4,2,0,1,2,0 -> choose_card:trade-card-selection": 4,
+        "tech:gain:orange3 -> play_card:<none>": 4,
+        "data:analyze -> end_turn:end-turn": 3,
+        "income:gain:4,2,0,1,1,0 -> choose_target:planet-reward-alien-trace": 3,
+        "sector:win:sector-3-a:1 -> choose_target:planet-reward-alien-trace": 3,
+        "tech:gain:blue2 -> place_data:place-data": 3,
+        "tech:gain:orange2 -> play_card:<none>": 3,
+        "tech:gain:purple4 -> play_card:<none>": 3,
+        "tech:gain:blue1 -> place_data:place-data": 2,
+        "tech:gain:orange2 -> place_data:place-data": 2,
+        "tech:gain:orange3 -> place_data:place-data": 2
+      }
+    },
+    {
+      "path": "reports/iteration/node-types-baseline-step-52-20260906.json",
+      "step": 52,
+      "wallMs": 10893.950875,
+      "chosen": "place_data:50a9ac16",
+      "nodes": 4096,
+      "successfulClassifiedNodes": 4096,
+      "failedExecutionAttempts": 0,
+      "familyCounts": {
+        "analyze": 367,
+        "card_corner": 79,
+        "choose_card": 576,
+        "choose_payment": 67,
+        "choose_target": 1243,
+        "end_turn": 542,
+        "industry": 2,
+        "land": 21,
+        "launch": 25,
+        "move": 84,
+        "orbit": 22,
+        "pass": 35,
+        "place_data": 686,
+        "play_card": 42,
+        "quick_trade": 159,
+        "research_tech": 35,
+        "scan": 111
+      },
+      "computerChoiceCount": 410,
+      "computerChoices": {
+        "choose_target:第一排放置位 6": 247,
+        "choose_target:第一排放置位 5": 111,
+        "choose_target:第一排放置位 2": 23,
+        "choose_target:第一排放置位 3": 16,
+        "choose_target:第一排放置位 4": 13
+      },
+      "topChoices": [
+        [
+          "place_data:放置数据",
+          686
+        ],
+        [
+          "end_turn:结束回合",
+          542
+        ],
+        [
+          "analyze:分析",
+          367
+        ],
+        [
+          "choose_target:外星人 1 蓝色痕迹",
+          367
+        ],
+        [
+          "choose_target:第一排放置位 6",
+          247
+        ],
+        [
+          "choose_target:第一排放置位 5",
+          111
+        ],
+        [
+          "scan:扫描",
+          111
+        ],
+        [
+          "choose_card:dlc_21.png",
+          107
+        ],
+        [
+          "choose_card:dlc_38.png",
+          107
+        ],
+        [
+          "choose_card:b_2.webp",
+          104
+        ],
+        [
+          "choose_card:dlc_38.png → 开普勒22",
+          103
+        ],
+        [
+          "choose_target:扫描 室女座61",
+          88
+        ],
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          61
+        ],
+        [
+          "choose_target:blue1 下方",
+          54
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          54
+        ]
+      ],
+      "targetOriginCounts": {
+        "data:analyze": 5929,
+        "sector:win:sector-3-a:1": 521,
+        "income:gain:4,1,1,0,1,0": 472,
+        "tech:gain:purple4": 260,
+        "land:mars:planet:": 233,
+        "orbit:venus:planet:": 221,
+        "<unbound>": 200,
+        "income:gain:3,1,1,0,1,0": 155,
+        "tech:gain:orange3": 147,
+        "tech:gain:orange2": 127,
+        "tech:gain:blue2": 114,
+        "income:gain:3,1,1,0,2,0": 78,
+        "tech:gain:blue1": 66,
+        "orbit:uranus:planet:": 15
+      },
+      "targetDecisionKindOriginCounts": {
+        "data:analyze -> choose_target:<none>": 1357,
+        "data:analyze -> place_data:place-data": 1264,
+        "data:analyze -> end_turn:end-turn": 846,
+        "data:analyze -> analyze:computer": 741,
+        "data:analyze -> choose_target:planet-reward-alien-trace": 741,
+        "data:analyze -> choose_card:<none>": 628,
+        "sector:win:sector-3-a:1 -> quick_trade:<none>": 174,
+        "tech:gain:purple4 -> choose_card:<none>": 156,
+        "income:gain:4,1,1,0,1,0 -> quick_trade:<none>": 155,
+        "data:analyze -> card_corner:<none>": 142,
+        "data:analyze -> scan:standard-scan": 121,
+        "<unbound> -> end_turn:end-turn": 84,
+        "sector:win:sector-3-a:1 -> choose_card:<none>": 83,
+        "sector:win:sector-3-a:1 -> choose_target:<none>": 83,
+        "sector:win:sector-3-a:1 -> scan:standard-scan": 83,
+        "income:gain:4,1,1,0,1,0 -> place_data:place-data": 73,
+        "income:gain:4,1,1,0,1,0 -> choose_card:trade-card-selection": 70,
+        "income:gain:4,1,1,0,1,0 -> choose_target:<none>": 70,
+        "data:analyze -> quick_trade:<none>": 69,
+        "<unbound> -> pass:pass": 68,
+        "land:mars:planet: -> move:<none>": 68,
+        "sector:win:sector-3-a:1 -> choose_card:trade-card-selection": 68,
+        "tech:gain:orange3 -> choose_target:<none>": 68,
+        "tech:gain:orange3 -> research_tech:research-tech": 67,
+        "income:gain:3,1,1,0,1,0 -> choose_card:<none>": 66,
+        "tech:gain:blue2 -> choose_card:<none>": 58,
+        "tech:gain:orange2 -> choose_target:<none>": 56,
+        "orbit:venus:planet: -> choose_payment:move-payment": 53,
+        "tech:gain:orange2 -> research_tech:research-tech": 52,
+        "tech:gain:purple4 -> choose_target:<none>": 52,
+        "tech:gain:purple4 -> research_tech:research-tech": 52,
+        "income:gain:4,1,1,0,1,0 -> choose_card:<none>": 49,
+        "income:gain:4,1,1,0,1,0 -> scan:standard-scan": 49,
+        "land:mars:planet: -> choose_payment:move-payment": 46,
+        "income:gain:3,1,1,0,1,0 -> place_data:place-data": 45,
+        "income:gain:3,1,1,0,1,0 -> choose_target:<none>": 42,
+        "orbit:venus:planet: -> move:<none>": 41,
+        "orbit:venus:planet: -> choose_card:<none>": 34,
+        "<unbound> -> play_card:<none>": 33,
+        "orbit:venus:planet: -> end_turn:end-turn": 30,
+        "sector:win:sector-3-a:1 -> end_turn:end-turn": 30,
+        "income:gain:3,1,1,0,2,0 -> quick_trade:<none>": 26,
+        "land:mars:planet: -> end_turn:end-turn": 26,
+        "land:mars:planet: -> launch:<none>": 25,
+        "orbit:venus:planet: -> launch:<none>": 25,
+        "orbit:venus:planet: -> orbit:<none>": 22,
+        "land:mars:planet: -> choose_target:planet-reward-alien-trace": 21,
+        "land:mars:planet: -> land:<none>": 21,
+        "tech:gain:blue1 -> choose_target:<none>": 21,
+        "data:analyze -> play_card:<none>": 20,
+        "land:mars:planet: -> quick_trade:<none>": 19,
+        "tech:gain:blue2 -> choose_target:<none>": 19,
+        "<unbound> -> launch:<none>": 15,
+        "orbit:uranus:planet: -> move:<none>": 15,
+        "tech:gain:blue1 -> research_tech:research-tech": 15,
+        "tech:gain:blue2 -> research_tech:research-tech": 15,
+        "tech:gain:blue1 -> play_card:<none>": 13,
+        "tech:gain:blue2 -> play_card:<none>": 13,
+        "income:gain:3,1,1,0,2,0 -> choose_card:<none>": 10,
+        "income:gain:3,1,1,0,2,0 -> choose_target:<none>": 10,
+        "income:gain:3,1,1,0,2,0 -> place_data:place-data": 10,
+        "income:gain:3,1,1,0,2,0 -> scan:standard-scan": 10,
+        "orbit:venus:planet: -> quick_trade:<none>": 10,
+        "tech:gain:orange2 -> card_corner:<none>": 10,
+        "tech:gain:blue1 -> card_corner:<none>": 9,
+        "income:gain:3,1,1,0,2,0 -> choose_card:trade-card-selection": 8,
+        "tech:gain:blue2 -> card_corner:<none>": 7,
+        "income:gain:4,1,1,0,1,0 -> end_turn:end-turn": 6,
+        "tech:gain:orange2 -> place_data:place-data": 5,
+        "income:gain:3,1,1,0,2,0 -> end_turn:end-turn": 4,
+        "tech:gain:blue1 -> choose_card:<none>": 4,
+        "tech:gain:blue1 -> place_data:place-data": 4,
+        "tech:gain:orange2 -> choose_card:<none>": 4,
+        "tech:gain:orange3 -> card_corner:<none>": 4,
+        "tech:gain:orange3 -> place_data:place-data": 4,
+        "tech:gain:orange3 -> play_card:<none>": 4,
+        "land:mars:planet: -> choose_target:<none>": 3,
+        "land:mars:planet: -> play_card:<none>": 3,
+        "orbit:venus:planet: -> choose_target:<none>": 3,
+        "orbit:venus:planet: -> play_card:<none>": 3,
+        "income:gain:3,1,1,0,1,0 -> industry:<none>": 2,
+        "tech:gain:blue2 -> place_data:place-data": 2,
+        "land:mars:planet: -> choose_card:trade-card-selection": 1
+      }
+    },
+    {
+      "path": "reports/iteration/observe-decision-search-after-20260906.json",
+      "step": 210,
+      "wallMs": 11719.984417,
+      "chosen": "move:2bb2c433",
+      "nodes": 4096,
+      "successfulClassifiedNodes": 4093,
+      "failedExecutionAttempts": 3,
+      "familyCounts": {
+        "analyze": 24,
+        "card_corner": 27,
+        "choose_card": 320,
+        "choose_payment": 11,
+        "choose_target": 3070,
+        "end_turn": 106,
+        "industry": 1,
+        "land": 2,
+        "move": 20,
+        "orbit": 3,
+        "pass": 5,
+        "place_data": 209,
+        "quick_trade": 141,
+        "research_tech": 44,
+        "scan": 110
+      },
+      "computerChoiceCount": 0,
+      "computerChoices": {},
+      "topChoices": [
+        [
+          "choose_target:blue_1（1数据）",
+          720
+        ],
+        [
+          "choose_target:blue_2（1盲抽）",
+          720
+        ],
+        [
+          "choose_target:blue_3（1宣传）",
+          720
+        ],
+        [
+          "place_data:放置数据",
+          209
+        ],
+        [
+          "choose_target:blue_2（1数据）",
+          144
+        ],
+        [
+          "scan:扫描",
+          110
+        ],
+        [
+          "choose_card:dlc_34.png → 巴纳德",
+          109
+        ],
+        [
+          "choose_target:扫描 室女座61",
+          109
+        ],
+        [
+          "end_turn:结束回合",
+          106
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          95
+        ],
+        [
+          "choose_target:标记 A",
+          76
+        ],
+        [
+          "choose_target:标记 B",
+          76
+        ],
+        [
+          "choose_target:标记 C",
+          76
+        ],
+        [
+          "choose_target:标记 D",
+          76
+        ],
+        [
+          "choose_card:盲抽阿米巴牌",
+          52
+        ]
+      ],
+      "targetOriginCounts": {
+        "data:analyze": 5505,
+        "sector:win:sector-4-a:1": 228,
+        "tech:gain:blue1": 180,
+        "tech:gain:blue2": 180,
+        "tech:gain:orange3": 180,
+        "land:venus:planet:": 88,
+        "<unbound>": 53,
+        "income:gain:6,1,0,0,2,0": 50,
+        "orbit:venus:planet:": 23,
+        "card:resolve:alien-amiba-1-2": 10,
+        "land:saturn:planet:": 8,
+        "decision:choose_target:18e1d107": 5,
+        "decision:choose_target:1e92db57": 5,
+        "decision:choose_target:20b7159b": 5,
+        "decision:choose_target:a7cb985b": 5
+      },
+      "targetDecisionKindOriginCounts": {
+        "data:analyze -> choose_target:<none>": 3972,
+        "data:analyze -> place_data:place-data": 272,
+        "data:analyze -> choose_target:planet-reward-alien-trace": 240,
+        "data:analyze -> choose_target:residual-domain": 228,
+        "data:analyze -> choose_card:<none>": 186,
+        "data:analyze -> choose_card:residual-domain": 160,
+        "data:analyze -> quick_trade:<none>": 150,
+        "data:analyze -> scan:standard-scan": 132,
+        "data:analyze -> end_turn:end-turn": 69,
+        "land:venus:planet: -> choose_target:<none>": 60,
+        "sector:win:sector-4-a:1 -> choose_target:residual-domain": 60,
+        "data:analyze -> choose_card:trade-card-selection": 56,
+        "tech:gain:blue1 -> choose_target:residual-domain": 56,
+        "tech:gain:blue2 -> choose_target:residual-domain": 56,
+        "tech:gain:orange3 -> choose_target:residual-domain": 56,
+        "tech:gain:blue1 -> choose_target:<none>": 44,
+        "tech:gain:blue1 -> research_tech:research-tech": 44,
+        "tech:gain:blue2 -> choose_target:<none>": 44,
+        "tech:gain:blue2 -> research_tech:research-tech": 44,
+        "tech:gain:orange3 -> choose_target:<none>": 44,
+        "tech:gain:orange3 -> research_tech:research-tech": 44,
+        "sector:win:sector-4-a:1 -> quick_trade:<none>": 41,
+        "data:analyze -> analyze:computer": 40,
+        "<unbound> -> end_turn:end-turn": 37,
+        "sector:win:sector-4-a:1 -> scan:standard-scan": 34,
+        "sector:win:sector-4-a:1 -> choose_card:<none>": 33,
+        "sector:win:sector-4-a:1 -> choose_target:<none>": 33,
+        "income:gain:6,1,0,0,2,0 -> place_data:place-data": 29,
+        "tech:gain:blue1 -> card_corner:<none>": 22,
+        "tech:gain:blue2 -> card_corner:<none>": 22,
+        "tech:gain:orange3 -> card_corner:<none>": 22,
+        "income:gain:6,1,0,0,2,0 -> choose_card:<none>": 18,
+        "sector:win:sector-4-a:1 -> end_turn:end-turn": 15,
+        "tech:gain:blue1 -> end_turn:end-turn": 14,
+        "tech:gain:blue2 -> end_turn:end-turn": 14,
+        "tech:gain:orange3 -> end_turn:end-turn": 14,
+        "land:venus:planet: -> choose_target:planet-reward-alien-trace": 12,
+        "sector:win:sector-4-a:1 -> choose_card:trade-card-selection": 12,
+        "<unbound> -> move:<none>": 10,
+        "land:venus:planet: -> choose_card:residual-domain": 8,
+        "orbit:venus:planet: -> choose_payment:move-payment": 7,
+        "orbit:venus:planet: -> move:<none>": 6,
+        "<unbound> -> pass:pass": 5,
+        "card:resolve:alien-amiba-1-2 -> card_corner:<none>": 5,
+        "card:resolve:alien-amiba-1-2 -> choose_target:<none>": 5,
+        "decision:choose_target:18e1d107 -> choose_target:residual-domain": 5,
+        "decision:choose_target:1e92db57 -> choose_target:residual-domain": 5,
+        "decision:choose_target:20b7159b -> choose_target:residual-domain": 5,
+        "decision:choose_target:a7cb985b -> choose_target:residual-domain": 5,
+        "land:saturn:planet: -> choose_payment:move-payment": 4,
+        "land:saturn:planet: -> move:<none>": 4,
+        "orbit:venus:planet: -> choose_card:<none>": 4,
+        "land:venus:planet: -> choose_payment:move-payment": 3,
+        "orbit:venus:planet: -> orbit:<none>": 3,
+        "income:gain:6,1,0,0,2,0 -> scan:standard-scan": 2,
+        "land:venus:planet: -> land:<none>": 2,
+        "land:venus:planet: -> move:<none>": 2,
+        "orbit:venus:planet: -> end_turn:end-turn": 2,
+        "<unbound> -> industry:<none>": 1,
+        "income:gain:6,1,0,0,2,0 -> choose_target:<none>": 1,
+        "land:venus:planet: -> quick_trade:<none>": 1,
+        "orbit:venus:planet: -> quick_trade:<none>": 1
+      }
+    }
+  ]
+}

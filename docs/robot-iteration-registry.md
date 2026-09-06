@@ -57,6 +57,10 @@ seti-saves/*.json（存档，可选）    │      └→ reports/iteration/regi
 
 本标准是后续迭代的固定流程，不因某轮得分提高而省略；详见当轮计划与验收矩阵。
 
+2026-09-06新增高节点性能Goal：计划见`docs/ai-node-performance-plan-20260906.md`，
+初始分类与优化顺序见`reports/iteration/node-types-review-20260906.md`。从当前通过
+版本213f34db/均108.5继续；取证不冒充新策略版本，生产改动仍按下述标准登记。
+
 ### 2.2 执行与登记
 
 每次迭代只做两件事：**改核心策略 + 分析历史版本**。迭代闭环：

@@ -17,7 +17,9 @@
 - 搜索executeNode累计约5684ms；其中包含观察投影等嵌套调用，不能与各子项相加。
 - 复制调用栈中，session恢复约637ms、构造规则观察约402ms、结果观察投影约291ms；
   这些也是采样累计，不是独立精确计时。
-- 3070/4096执行节点为choose_target；其中三种蓝科技背面奖励各720次。
+- 3070/4096执行节点为choose_target；其中三种阿米巴符号奖励各720次。
+  2026-09-06分类纠正：原文误记为蓝科技背面；正式生产者是play-domain的
+  CHOOSE_SYMBOL_REWARD，choiceId为symbol:<slotId>，不是科技奖励。原始计数不变。
   这说明条件分支占比较高，不证明可删除这些非等价选择，也不证明原30秒超时根因。
 
 证据：round-income-green-profile-20260906.json、原始压缩CPUprofile、
