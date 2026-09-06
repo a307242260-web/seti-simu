@@ -1,0 +1,19 @@
+{
+  "scope": "只读1f0d82ec的全部242个正式卡牌模型，递归枚举ANY_SECTOR_SCAN；不执行AI，不改变正在运行的固定局代码",
+  "codeCommit": "1f0d82ec",
+  "modelCount": 242,
+  "source": "randomizer/game/cards/effects.js:MODELS/getCardModel",
+  "entries": [
+    { "cardId": "yichangdian_0.webp", "path": "model.playEffects.0", "gainData": true },
+    { "cardId": "banrenma_8.webp", "path": "model.playEffects.0", "gainData": true, "repeat": 2 },
+    { "cardId": "b_9.webp", "path": "model.playEffects.1", "gainData": true },
+    { "cardId": "b_19.webp", "path": "model.playEffects.0", "gainData": true },
+    { "cardId": "dlc_19.png", "path": "model.playEffects.0.options.rewards.0", "gainData": false },
+    { "cardId": "dlc_19.png", "path": "model.playEffects.0.options.rewards.1", "gainData": false }
+  ],
+  "formalSectorCatalog": ["sector-4-a", "sector-3-a", "sector-2-b", "sector-3-b", "sector-2-a", "sector-1-a", "sector-1-b", "sector-4-b"],
+  "defect": "Science scanStepChoices的any分支未传nebulaIds；listNebulaChoices默认空数组，因此prepare静默跳过。前一轮实际owner测试已观察spawnedEffects.length为0。",
+  "repairBoundary": "any调用点显式使用正式完整扇区目录；不把通用listNebulaChoices的空目录改为全盘，避免扩大指定空集/未知扫描代码。",
+  "pendingProofs": ["全部六处模型含嵌套奖励和repeat的正式执行", "八扇区合法集与每次真实信号", "gainData开关", "满扇区额外信号及统一流末结算", "逐Decision恢复/RNG/序号", "单决策及新版本唯一固定完整局"],
+  "status": "待独立设计及修复，不宣称行为已通过"
+}

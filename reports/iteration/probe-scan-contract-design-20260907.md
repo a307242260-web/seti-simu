@@ -116,7 +116,7 @@ README/AGENTS入口、浏览器装配、部署方式未变化，无需更新。�
 场景/恢复和42单决策复核，再以新提交运行唯一固定局。本版记录保留，不重跑覆盖。
 本候选范围门槛未通过；none/undefined完整核验、目的式移动与place_data仍未完成。
 
-## 透传范围收紧（新候选，完整局待验收）
+## 透传范围收紧（1f0d82ec，局部通过）
 
 严格按上节已冻结边界实施：generic prepare仅在mode=probe或options.probeFlow时
 保留payload，普通扫描仍只传options。未改变任何扫描目标、信号结算、评分或预算。
@@ -138,3 +138,11 @@ AI评分/计划契约、mechanics规则、DSL、README/AGENTS入口、运行方�
 重放成功，根动作不变；见`probe-scan-scoped-decision-42-20260907.json`。未证明提速。
 全量回归77/79 unit、1/1 fullFlow；失败仍为既有beam与data目标释放断言，未新增。
 未新增V输入路径，不需要新增装配审计；语法通过。完整局在生产提交后按新版本登记。
+
+完整局已完成且仅运行一次：`reports/research/ddc98722.1f0d82ec.full.json`。
+581步终局113/95/135/112、均113.75，全部动作及终局状态同def25c80；
+167搜索、124241节点不变，正式输入152820→152813，0规则失败，32截断不变。
+耗时444391→440588ms，不据此宣称稳定提速。对比证据见
+`probe-scan-scope-full-verification-20260907.json`。范围修正按均分不变且边界
+合理通过；整体Goal未通过。any空目录/重复义务另见any-scan-design-20260907.md，
+不能用本局零规则报错掩盖被静默跳过的合法扫描。

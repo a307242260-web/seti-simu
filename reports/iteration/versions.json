@@ -7,6 +7,23 @@
   },
   "versions": [
     {
+      "id": "probe-scan-scope-20260907",
+      "name": "扫描证据透传范围收紧（整体目标未通过）",
+      "date": "2026-09-07",
+      "baseline": "probe-scan-contract-20260907",
+      "head": "1f0d82ec",
+      "commits": [
+        "1f0d82ec"
+      ],
+      "summary": "将扫描来源与回手证据透传限定到探测器扫描流程，普通扫描Decision恢复仅保留options",
+      "records": {
+        "ddc98722.1f0d82ec.full.json": {
+          "note": "581步终局113/95/135/112、均113.75，与def25c80全部动作及终局状态一致。167次搜索、124241节点、152813正式输入（减少7）、0规则失败、23策略+9控制截断共32次。440588ms对444391ms，不据单次差异宣称提速。普通扫描payload边界反例修复，8模型扫描、9正式场景、16次Decision恢复及42的30输入计划重放通过；本轮范围修正按均分不变且边界合理通过。整体Goal仍未通过：any扫描空目录及同扇区重复义务待独立修复，none/undefined全面核验、目的式移动和place_data合并未完成。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "probe-scan-contract-20260907",
       "name": "探测器扫描契约修复（范围验收未通过）",
       "date": "2026-09-07",
