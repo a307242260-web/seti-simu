@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-06T20:21:47.969Z",
+  "builtAt": "2026-09-06T20:38:13.240Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "7613a096",
-  "currentBaseline": "orbit-visit-trigger-20260907",
+  "headCommit": "de8a4056",
+  "currentBaseline": "trade-confirm-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,426 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "trade-confirm-20260907",
+      "name": "弃牌确认准入修复（整体搜索目标未通过）",
+      "date": "2026-09-07",
+      "baseline": "orbit-visit-trigger-20260907",
+      "head": "de8a4056",
+      "commits": [
+        {
+          "hash": "de8a4056",
+          "date": "2026-09-07",
+          "subject": "快速交易选满弃牌后才生成确认输入并同步搜索结算"
+        }
+      ],
+      "summary": "快速交易弃牌选满后才生成确认输入；搜索依据正式已选状态继续选牌或确认，不再依赖禁用确认项。",
+      "diffStat": "22 files changed, 12384 insertions(+), 24 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/inspect-trade-failure-516-20260907.js",
+          "insertions": 53,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-trade-confirm-516-20260907.js",
+          "insertions": 89,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 2,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 10,
+          "deletions": 2
+        },
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 2,
+          "deletions": 0
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/production-composition.js",
+          "insertions": 3,
+          "deletions": 9
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/training/simulation-standard-action-composition.test.js",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/before-trade-516-20260907.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-demand-design-20260906.md",
+          "insertions": 4,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/orbit-visit-trigger-20260907/64334dc7.7613a096.full.action-log.html",
+          "insertions": 2120,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/orbit-visit-trigger-design-20260907.md",
+          "insertions": 18,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/orbit-visit-trigger-full-verification-20260907.json",
+          "insertions": 1133,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 489,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/trade-confirm-516-verification-20260907.json",
+          "insertions": 249,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trade-confirm-decision-42-20260907.json",
+          "insertions": 6240,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trade-confirm-design-20260907.md",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trade-failure-516-20260907.json",
+          "insertions": 1413,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 489,
+          "deletions": 4
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "7ac3da29.de8a4056.full.json",
+          "recordPath": "reports/research/7ac3da29.de8a4056.full.json",
+          "mode": "full",
+          "steps": 572,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 416701,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "de8a4056",
+          "createdAt": "2026-09-06T20:36:36.281Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "真实516四个首选的支付/取消/保存恢复及完整计划通过，失败确认不再枚举。固定572步终局112/96/118/102、均107，与7613a096全部动作及完整终局状态一致。178次搜索、116451节点（减少1）、142797成功输入不变，规则失败1→0；22策略+9控制截断共31次不变。416701ms对427207ms，单次波动不宣称稳定提速。修复行为通过，但未达108.5/零截断/none完整分类门槛，第一Goal继续。",
+          "scores": {
+            "player-blue": 112,
+            "player-green": 96,
+            "player-brown": 118,
+            "player-white": 102
+          },
+          "avgScore": 107,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 112,
+              "base": 67,
+              "tile": 41,
+              "card": 4,
+              "tileScoresById": {
+                "a": 33,
+                "b": 8,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 12,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 17,
+                "orbitScore": 12,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 96,
+              "base": 76,
+              "tile": 20,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 0,
+                  "formulaId": "b1",
+                  "multiplier": 4,
+                  "score": 0,
+                  "slotIndex": 3,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 9,
+                "blueTechScore": 0,
+                "cardEffectScore": 11,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 19,
+                "orbitScore": 18,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 118,
+              "base": 72,
+              "tile": 42,
+              "card": 4,
+              "tileScoresById": {
+                "a": 15,
+                "b": 6,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "chong_2.webp",
+                  "rule": {
+                    "kind": "chongTraceCount",
+                    "scorePer": 1
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 9,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 12,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 7,
+                "orbitScore": 3,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 11
+              }
+            },
+            "player-white": {
+              "total": 102,
+              "base": 55,
+              "tile": 38,
+              "card": 9,
+              "tileScoresById": {
+                "a": 32,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 32,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 9
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 11,
+                "orbitScore": 6,
+                "scanScore": 9,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-trade-confirm-20260907-de8a4056-full-v289.json",
+          "reportPath": "reports/iteration/trade-confirm-20260907/7ac3da29.de8a4056.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "7ac3da29.de8a4056.full",
+            "path": "reports/iteration/trade-confirm-20260907/7ac3da29.de8a4056.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "orbit-visit-trigger-20260907",
       "name": "轨道加注访问事实修复（零异常门槛未通过）",
@@ -665,7 +1085,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

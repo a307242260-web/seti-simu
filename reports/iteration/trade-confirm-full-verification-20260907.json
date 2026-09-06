@@ -1,0 +1,1024 @@
+{
+  "scope": "只读指定位置读取修复版本的完整记录/存档，分开核对终局、动作差异、失败和截断；不运行AI",
+  "sources": [
+    "reports/research/64334dc7.7613a096.full.json",
+    "reports/research/7ac3da29.de8a4056.full.json"
+  ],
+  "measurements": [
+    {
+      "commit": "7613a096",
+      "steps": 572,
+      "wallMs": 427207,
+      "searches": 178,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "total": 112
+        },
+        {
+          "playerId": "player-green",
+          "total": 96
+        },
+        {
+          "playerId": "player-brown",
+          "total": 118
+        },
+        {
+          "playerId": "player-white",
+          "total": 102
+        }
+      ],
+      "mean": 107,
+      "nodes": 116452,
+      "submissions": 142797,
+      "attemptedNodesByFamily": {
+        "pass": 3758,
+        "analyze": 1844,
+        "card_corner": 1724,
+        "choose_card": 20272,
+        "choose_payment": 2290,
+        "choose_target": 43382,
+        "end_turn": 10772,
+        "industry": 2023,
+        "land": 1665,
+        "launch": 696,
+        "move": 4451,
+        "orbit": 1482,
+        "place_data": 8437,
+        "play_card": 1433,
+        "quick_trade": 7981,
+        "research_tech": 815,
+        "scan": 2360,
+        "accept_optional_effect": 770,
+        "choose_reward": 288,
+        "complete_task": 9
+      },
+      "fullBudgetSteps": [
+        24,
+        42,
+        59,
+        62,
+        148,
+        152,
+        160,
+        164,
+        180,
+        270,
+        286,
+        291,
+        303,
+        321,
+        395,
+        404,
+        408,
+        412,
+        433,
+        465,
+        495,
+        504
+      ],
+      "cutOffs": [
+        {
+          "step": 24,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 106,
+            "industry": 103,
+            "quick_trade": 58,
+            "card_corner": 48,
+            "place_data": 47,
+            "choose_card": 44,
+            "choose_target": 26
+          }
+        },
+        {
+          "step": 42,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "quick_trade": 69,
+            "place_data": 65,
+            "move": 59,
+            "card_corner": 33,
+            "choose_card": 29,
+            "choose_target": 27,
+            "industry": 24,
+            "end_turn": 23,
+            "play_card": 10,
+            "pass": 4
+          }
+        },
+        {
+          "step": 59,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "card_corner": 120,
+            "choose_card": 59,
+            "end_turn": 50,
+            "quick_trade": 47,
+            "industry": 45,
+            "place_data": 33,
+            "choose_target": 7
+          }
+        },
+        {
+          "step": 62,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "quick_trade": 181,
+            "end_turn": 161,
+            "choose_card": 89,
+            "place_data": 64,
+            "choose_target": 43,
+            "card_corner": 16,
+            "research_tech": 9,
+            "scan": 8,
+            "industry": 3,
+            "move": 2,
+            "pass": 1,
+            "play_card": 1
+          }
+        },
+        {
+          "step": 148,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "move": 123,
+            "end_turn": 72,
+            "industry": 31,
+            "choose_target": 20,
+            "quick_trade": 17,
+            "choose_payment": 12,
+            "research_tech": 9,
+            "scan": 8,
+            "pass": 6,
+            "play_card": 6,
+            "launch": 5,
+            "orbit": 4,
+            "choose_card": 2
+          }
+        },
+        {
+          "step": 152,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "choose_target": 69,
+            "end_turn": 63,
+            "pass": 56,
+            "place_data": 31,
+            "play_card": 19,
+            "move": 10,
+            "industry": 5,
+            "scan": 5,
+            "quick_trade": 3
+          }
+        },
+        {
+          "step": 160,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "choose_payment": 144,
+            "end_turn": 50,
+            "choose_target": 20,
+            "place_data": 14,
+            "land": 10,
+            "pass": 9,
+            "quick_trade": 8,
+            "launch": 6,
+            "move": 6,
+            "choose_card": 4,
+            "play_card": 4,
+            "scan": 4,
+            "industry": 2
+          }
+        },
+        {
+          "step": 164,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 212,
+            "move": 68,
+            "place_data": 50,
+            "play_card": 4,
+            "card_corner": 3,
+            "choose_payment": 2,
+            "choose_target": 1,
+            "quick_trade": 1
+          }
+        },
+        {
+          "step": 180,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 136,
+            "place_data": 94,
+            "move": 20,
+            "card_corner": 12,
+            "choose_target": 6,
+            "industry": 4,
+            "quick_trade": 4,
+            "scan": 2
+          }
+        },
+        {
+          "step": 197,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 4
+          }
+        },
+        {
+          "step": 198,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 4
+          }
+        },
+        {
+          "step": 223,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 4
+          }
+        },
+        {
+          "step": 232,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 4
+          }
+        },
+        {
+          "step": 264,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 4
+          }
+        },
+        {
+          "step": 270,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "card_corner": 543,
+            "end_turn": 294,
+            "industry": 174,
+            "move": 75,
+            "place_data": 27,
+            "choose_card": 15,
+            "pass": 3
+          }
+        },
+        {
+          "step": 286,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "choose_card": 56,
+            "card_corner": 51,
+            "end_turn": 43,
+            "industry": 29,
+            "choose_target": 25,
+            "place_data": 18,
+            "quick_trade": 13,
+            "play_card": 11,
+            "scan": 5,
+            "move": 4,
+            "launch": 2,
+            "choose_payment": 1,
+            "pass": 1
+          }
+        },
+        {
+          "step": 291,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 139,
+            "industry": 63,
+            "quick_trade": 48,
+            "choose_card": 2,
+            "complete_task": 2,
+            "scan": 2,
+            "pass": 1
+          }
+        },
+        {
+          "step": 303,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "choose_card": 217,
+            "place_data": 18,
+            "end_turn": 14,
+            "industry": 6,
+            "card_corner": 2
+          }
+        },
+        {
+          "step": 321,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "card_corner": 82,
+            "choose_card": 65,
+            "end_turn": 57,
+            "place_data": 55,
+            "industry": 21,
+            "quick_trade": 19,
+            "pass": 6,
+            "play_card": 1
+          }
+        },
+        {
+          "step": 389,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 3
+          }
+        },
+        {
+          "step": 395,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "choose_card": 205,
+            "quick_trade": 100,
+            "place_data": 60,
+            "choose_target": 24,
+            "end_turn": 21
+          }
+        },
+        {
+          "step": 404,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 89,
+            "choose_card": 86,
+            "industry": 66,
+            "play_card": 16,
+            "card_corner": 15,
+            "accept_optional_effect": 14,
+            "launch": 8,
+            "move": 6,
+            "pass": 4,
+            "scan": 1
+          }
+        },
+        {
+          "step": 408,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 134,
+            "place_data": 112,
+            "card_corner": 111,
+            "quick_trade": 23,
+            "pass": 9,
+            "choose_card": 1
+          }
+        },
+        {
+          "step": 412,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 103,
+            "card_corner": 87,
+            "industry": 32,
+            "place_data": 30,
+            "quick_trade": 28,
+            "choose_card": 17,
+            "research_tech": 15,
+            "scan": 12,
+            "choose_target": 4
+          }
+        },
+        {
+          "step": 433,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "choose_card": 241,
+            "choose_target": 7,
+            "card_corner": 3,
+            "end_turn": 3,
+            "research_tech": 3,
+            "play_card": 2,
+            "industry": 1,
+            "place_data": 1,
+            "quick_trade": 1,
+            "scan": 1
+          }
+        },
+        {
+          "step": 465,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "place_data": 199,
+            "end_turn": 99,
+            "card_corner": 51,
+            "move": 31,
+            "industry": 18,
+            "choose_target": 14,
+            "play_card": 10,
+            "quick_trade": 6,
+            "pass": 4,
+            "choose_card": 2,
+            "launch": 2,
+            "orbit": 1
+          }
+        },
+        {
+          "step": 480,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 2
+          }
+        },
+        {
+          "step": 495,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "place_data": 104,
+            "end_turn": 103,
+            "quick_trade": 39,
+            "pass": 21,
+            "complete_task": 10,
+            "card_corner": 6,
+            "research_tech": 3,
+            "scan": 2,
+            "choose_target": 1,
+            "industry": 1
+          }
+        },
+        {
+          "step": 504,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "place_data": 92,
+            "move": 71,
+            "pass": 49,
+            "end_turn": 43,
+            "choose_card": 5,
+            "choose_target": 2
+          }
+        },
+        {
+          "step": 562,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 3
+          }
+        },
+        {
+          "step": 568,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 2
+          }
+        }
+      ],
+      "failures": [
+        {
+          "step": 516,
+          "counts": {
+            "QUICK_TRADE_DISCARD_INCOMPLETE": 1
+          }
+        }
+      ]
+    },
+    {
+      "commit": "de8a4056",
+      "steps": 572,
+      "wallMs": 416701,
+      "searches": 178,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "total": 112
+        },
+        {
+          "playerId": "player-green",
+          "total": 96
+        },
+        {
+          "playerId": "player-brown",
+          "total": 118
+        },
+        {
+          "playerId": "player-white",
+          "total": 102
+        }
+      ],
+      "mean": 107,
+      "nodes": 116451,
+      "submissions": 142797,
+      "attemptedNodesByFamily": {
+        "pass": 3758,
+        "analyze": 1844,
+        "card_corner": 1724,
+        "choose_card": 20272,
+        "choose_payment": 2289,
+        "choose_target": 43382,
+        "end_turn": 10772,
+        "industry": 2023,
+        "land": 1665,
+        "launch": 696,
+        "move": 4451,
+        "orbit": 1482,
+        "place_data": 8437,
+        "play_card": 1433,
+        "quick_trade": 7981,
+        "research_tech": 815,
+        "scan": 2360,
+        "accept_optional_effect": 770,
+        "choose_reward": 288,
+        "complete_task": 9
+      },
+      "fullBudgetSteps": [
+        24,
+        42,
+        59,
+        62,
+        148,
+        152,
+        160,
+        164,
+        180,
+        270,
+        286,
+        291,
+        303,
+        321,
+        395,
+        404,
+        408,
+        412,
+        433,
+        465,
+        495,
+        504
+      ],
+      "cutOffs": [
+        {
+          "step": 24,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 106,
+            "industry": 103,
+            "quick_trade": 58,
+            "card_corner": 48,
+            "place_data": 47,
+            "choose_card": 44,
+            "choose_target": 26
+          }
+        },
+        {
+          "step": 42,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "quick_trade": 69,
+            "place_data": 65,
+            "move": 59,
+            "card_corner": 33,
+            "choose_card": 29,
+            "choose_target": 27,
+            "industry": 24,
+            "end_turn": 23,
+            "play_card": 10,
+            "pass": 4
+          }
+        },
+        {
+          "step": 59,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "card_corner": 120,
+            "choose_card": 59,
+            "end_turn": 50,
+            "quick_trade": 47,
+            "industry": 45,
+            "place_data": 33,
+            "choose_target": 7
+          }
+        },
+        {
+          "step": 62,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "quick_trade": 181,
+            "end_turn": 161,
+            "choose_card": 89,
+            "place_data": 64,
+            "choose_target": 43,
+            "card_corner": 16,
+            "research_tech": 9,
+            "scan": 8,
+            "industry": 3,
+            "move": 2,
+            "pass": 1,
+            "play_card": 1
+          }
+        },
+        {
+          "step": 148,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "move": 123,
+            "end_turn": 72,
+            "industry": 31,
+            "choose_target": 20,
+            "quick_trade": 17,
+            "choose_payment": 12,
+            "research_tech": 9,
+            "scan": 8,
+            "pass": 6,
+            "play_card": 6,
+            "launch": 5,
+            "orbit": 4,
+            "choose_card": 2
+          }
+        },
+        {
+          "step": 152,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "choose_target": 69,
+            "end_turn": 63,
+            "pass": 56,
+            "place_data": 31,
+            "play_card": 19,
+            "move": 10,
+            "industry": 5,
+            "scan": 5,
+            "quick_trade": 3
+          }
+        },
+        {
+          "step": 160,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "choose_payment": 144,
+            "end_turn": 50,
+            "choose_target": 20,
+            "place_data": 14,
+            "land": 10,
+            "pass": 9,
+            "quick_trade": 8,
+            "launch": 6,
+            "move": 6,
+            "choose_card": 4,
+            "play_card": 4,
+            "scan": 4,
+            "industry": 2
+          }
+        },
+        {
+          "step": 164,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 212,
+            "move": 68,
+            "place_data": 50,
+            "play_card": 4,
+            "card_corner": 3,
+            "choose_payment": 2,
+            "choose_target": 1,
+            "quick_trade": 1
+          }
+        },
+        {
+          "step": 180,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 136,
+            "place_data": 94,
+            "move": 20,
+            "card_corner": 12,
+            "choose_target": 6,
+            "industry": 4,
+            "quick_trade": 4,
+            "scan": 2
+          }
+        },
+        {
+          "step": 197,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 4
+          }
+        },
+        {
+          "step": 198,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 4
+          }
+        },
+        {
+          "step": 223,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 4
+          }
+        },
+        {
+          "step": 232,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 4
+          }
+        },
+        {
+          "step": 264,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 4
+          }
+        },
+        {
+          "step": 270,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "card_corner": 543,
+            "end_turn": 294,
+            "industry": 174,
+            "move": 75,
+            "place_data": 27,
+            "choose_card": 15,
+            "pass": 3
+          }
+        },
+        {
+          "step": 286,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "choose_card": 56,
+            "card_corner": 51,
+            "end_turn": 43,
+            "industry": 29,
+            "choose_target": 25,
+            "place_data": 18,
+            "quick_trade": 13,
+            "play_card": 11,
+            "scan": 5,
+            "move": 4,
+            "launch": 2,
+            "choose_payment": 1,
+            "pass": 1
+          }
+        },
+        {
+          "step": 291,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 139,
+            "industry": 63,
+            "quick_trade": 48,
+            "choose_card": 2,
+            "complete_task": 2,
+            "scan": 2,
+            "pass": 1
+          }
+        },
+        {
+          "step": 303,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "choose_card": 217,
+            "place_data": 18,
+            "end_turn": 14,
+            "industry": 6,
+            "card_corner": 2
+          }
+        },
+        {
+          "step": 321,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "card_corner": 82,
+            "choose_card": 65,
+            "end_turn": 57,
+            "place_data": 55,
+            "industry": 21,
+            "quick_trade": 19,
+            "pass": 6,
+            "play_card": 1
+          }
+        },
+        {
+          "step": 389,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 3
+          }
+        },
+        {
+          "step": 395,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "choose_card": 205,
+            "quick_trade": 100,
+            "place_data": 60,
+            "choose_target": 24,
+            "end_turn": 21
+          }
+        },
+        {
+          "step": 404,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 89,
+            "choose_card": 86,
+            "industry": 66,
+            "play_card": 16,
+            "card_corner": 15,
+            "accept_optional_effect": 14,
+            "launch": 8,
+            "move": 6,
+            "pass": 4,
+            "scan": 1
+          }
+        },
+        {
+          "step": 408,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 134,
+            "place_data": 112,
+            "card_corner": 111,
+            "quick_trade": 23,
+            "pass": 9,
+            "choose_card": 1
+          }
+        },
+        {
+          "step": 412,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "end_turn": 103,
+            "card_corner": 87,
+            "industry": 32,
+            "place_data": 30,
+            "quick_trade": 28,
+            "choose_card": 17,
+            "research_tech": 15,
+            "scan": 12,
+            "choose_target": 4
+          }
+        },
+        {
+          "step": 433,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "choose_card": 241,
+            "choose_target": 7,
+            "card_corner": 3,
+            "end_turn": 3,
+            "research_tech": 3,
+            "play_card": 2,
+            "industry": 1,
+            "place_data": 1,
+            "quick_trade": 1,
+            "scan": 1
+          }
+        },
+        {
+          "step": 465,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "place_data": 199,
+            "end_turn": 99,
+            "card_corner": 51,
+            "move": 31,
+            "industry": 18,
+            "choose_target": 14,
+            "play_card": 10,
+            "quick_trade": 6,
+            "pass": 4,
+            "choose_card": 2,
+            "launch": 2,
+            "orbit": 1
+          }
+        },
+        {
+          "step": 480,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 2
+          }
+        },
+        {
+          "step": 495,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "place_data": 104,
+            "end_turn": 103,
+            "quick_trade": 39,
+            "pass": 21,
+            "complete_task": 10,
+            "card_corner": 6,
+            "research_tech": 3,
+            "scan": 2,
+            "choose_target": 1,
+            "industry": 1
+          }
+        },
+        {
+          "step": 504,
+          "kind": "strategic",
+          "budget": 4096,
+          "frontier": {
+            "place_data": 92,
+            "move": 71,
+            "pass": 49,
+            "end_turn": 43,
+            "choose_card": 5,
+            "choose_target": 2
+          }
+        },
+        {
+          "step": 562,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 3
+          }
+        },
+        {
+          "step": 568,
+          "kind": "control",
+          "budget": 1,
+          "frontier": {
+            "choose_target": 2
+          }
+        }
+      ],
+      "failures": []
+    }
+  ],
+  "sameReplay": true,
+  "sameFinalState": true,
+  "firstReplayDifference": null,
+  "scoreGatePassed": false,
+  "noRuleFailures": true,
+  "noExecutionCutOffs": false,
+  "goalPassed": false,
+  "sha256": {
+    "reports/research/64334dc7.7613a096.full.json": "da37379298dd1dd18388167b7bac8b95a8d7e8e7064d2335670ab072b42fe8bf",
+    "reports/research/7ac3da29.de8a4056.full.json": "61b7267db40301aa0db681ffc4fad04b08ba34ecfb8a00b2896bc65c52faffc2",
+    "seti-saves/seti-save-research-orbit-visit-trigger-20260907-7613a096-full-v289.json": "e7e5e8055a41d69620699d5dd904154f12b6bf7b74f345790fceacba8d4596e4",
+    "seti-saves/seti-save-research-trade-confirm-20260907-de8a4056-full-v289.json": "000765634b4971074895f5529aa9dd769da43fb9da7cdd3787f3796539382e8d"
+  },
+  "verified": true
+}
