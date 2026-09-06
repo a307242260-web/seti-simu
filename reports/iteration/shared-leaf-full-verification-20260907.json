@@ -1,0 +1,91 @@
+{
+  "scope": "只读两版本完整记录/存档；核对正式计分、全部replay、终局完整状态及逐次非时间搜索诊断",
+  "sources": [
+    "reports/research/91f9a83a.73e7b2ca.full.json",
+    "reports/research/dd9a1dab.a4453b64.full.json"
+  ],
+  "mean": 109,
+  "scores": [
+    {
+      "playerId": "player-blue",
+      "total": 121
+    },
+    {
+      "playerId": "player-green",
+      "total": 88
+    },
+    {
+      "playerId": "player-brown",
+      "total": 118
+    },
+    {
+      "playerId": "player-white",
+      "total": 109
+    }
+  ],
+  "steps": 569,
+  "sameReplay": true,
+  "sameFinalState": true,
+  "sameSearchDiagnosticsExceptTime": true,
+  "measurements": [
+    {
+      "commit": "73e7b2ca",
+      "wallMs": 375302,
+      "searches": 171,
+      "nodes": 107100,
+      "submissions": 132190,
+      "searchMs": 263155.089209,
+      "fullBudgetSearches": 21,
+      "failedSearches": [
+        {
+          "step": 433,
+          "seat": "player-white",
+          "failures": {
+            "EFFECT_EXECUTION_FAILED": 2
+          }
+        },
+        {
+          "step": 471,
+          "seat": "player-blue",
+          "failures": {
+            "EFFECT_EXECUTION_FAILED": 1
+          }
+        }
+      ]
+    },
+    {
+      "commit": "a4453b64",
+      "wallMs": 387053,
+      "searches": 171,
+      "nodes": 107100,
+      "submissions": 132190,
+      "searchMs": 278096.6270859997,
+      "fullBudgetSearches": 21,
+      "failedSearches": [
+        {
+          "step": 433,
+          "seat": "player-white",
+          "failures": {
+            "EFFECT_EXECUTION_FAILED": 2
+          }
+        },
+        {
+          "step": 471,
+          "seat": "player-blue",
+          "failures": {
+            "EFFECT_EXECUTION_FAILED": 1
+          }
+        }
+      ]
+    }
+  ],
+  "savedMs": -11751,
+  "wallReductionPercent": -3.1310784381644647,
+  "sha256": {
+    "reports/research/91f9a83a.73e7b2ca.full.json": "ba594c3a6837a4fbeb0a2f1ff8c6af2a39e6f62dc14e427a0abb10029c2cee64",
+    "reports/research/dd9a1dab.a4453b64.full.json": "1094f4cb132bd8d25bf3443d3dd385395f839ff627ccd81d83fe545f97682d48",
+    "seti-saves/seti-save-research-policy-plan-evidence-20260906-73e7b2ca-full-v283.json": "fbfc1d00207901595b419c43f0ab61984464e6396d2d864122033e15d38b0899",
+    "seti-saves/seti-save-research-shared-leaf-observation-20260907-a4453b64-full-v283.json": "f0b46851374eb1e34ca521625699181bbe30785fc53932c1454d040519a19343"
+  },
+  "passed": true
+}

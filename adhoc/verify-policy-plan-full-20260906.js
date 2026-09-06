@@ -1,7 +1,9 @@
 "use strict";
 const fs = require("node:fs"), assert = require("node:assert/strict"), crypto = require("node:crypto");
-const output = "reports/iteration/policy-plan-full-verification-20260906.json";
-const sources = ["reports/research/25c65ece.795cd6eb.full.json", "reports/research/91f9a83a.73e7b2ca.full.json"];
+if (process.argv.length !== 2 && process.argv.length !== 5) throw new Error("参数须为：输出JSON 改动前记录 改动后记录；或不传参数使用原验证");
+const output = process.argv[2] || "reports/iteration/policy-plan-full-verification-20260906.json";
+const sources = process.argv.length === 5 ? process.argv.slice(3)
+  : ["reports/research/25c65ece.795cd6eb.full.json", "reports/research/91f9a83a.73e7b2ca.full.json"];
 const read = file => JSON.parse(fs.readFileSync(file));
 const stripTiming = search => { const { totalMilliseconds, ...diagnostics } = search.diagnostics; return { ...search, diagnostics }; };
 if (fs.existsSync(output)) console.log(`已有核验，跳过：${output}`);

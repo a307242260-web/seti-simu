@@ -7,6 +7,23 @@
   },
   "versions": [
     {
+      "id": "shared-leaf-observation-20260907",
+      "name": "冻结叶观察共享（整局提速未证实）",
+      "date": "2026-09-07",
+      "baseline": "policy-plan-evidence-20260906",
+      "head": "a4453b64",
+      "commits": [
+        "a4453b64"
+      ],
+      "summary": "HDF内部Policy视图共享同批完整相等的冻结叶观察，保留独立搜索链与原始计划证据",
+      "records": {
+        "dd9a1dab.a4453b64.full.json": {
+          "note": "569步正式121/88/118/109、均109；全replay、完整终局状态与171次非时间诊断相同。107100节点/132190规则执行/21满额/3失败不变。单42耗时16.915→14.393秒，但整局375302→387053ms（+3.13%），不宣称整局提速；正确性与效果门槛通过，整体性能收益未证实。详见shared-leaf-full-review-20260907.md。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "policy-plan-evidence-20260906",
       "name": "Policy计划证据复制优化",
       "date": "2026-09-06",

@@ -1,13 +1,13 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-06T16:01:23.084Z",
+  "builtAt": "2026-09-06T16:59:31.606Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "73e7b2ca",
-  "currentBaseline": "policy-plan-evidence-20260906",
+  "headCommit": "a4453b64",
+  "currentBaseline": "shared-leaf-observation-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -23,14 +23,14 @@
     },
     "bestAvg": {
       "value": 109,
-      "versionId": "policy-plan-evidence-20260906",
-      "name": "Policy计划证据复制优化",
-      "runKey": "91f9a83a.73e7b2ca.full",
+      "versionId": "shared-leaf-observation-20260907",
+      "name": "冻结叶观察共享（整局提速未证实）",
+      "runKey": "dd9a1dab.a4453b64.full",
       "provenance": "save-final",
       "steps": 569,
-      "wallMs": 375302,
-      "msPerStep": 660,
-      "scoreSourceNote": "569步，正式终局121/88/118/109、均109；全部replay、终局完整状态及171次非时间搜索诊断与795cd6eb一致。107100节点、132190提交、21次满额、原有3次分支失败均不变。总耗时398875→375302ms（-5.91%），搜索内部263033→263155ms基本不变；按均分不变、实现合理且实耗改善通过。单决策42为23.032→16.915秒，评价及29步计划相同；不外推所有状态等比例提速。详见policy-plan-full-review-20260906.md。"
+      "wallMs": 387053,
+      "msPerStep": 680,
+      "scoreSourceNote": "569步正式121/88/118/109、均109；全replay、完整终局状态与171次非时间诊断相同。107100节点/132190规则执行/21满额/3失败不变。单42耗时16.915→14.393秒，但整局375302→387053ms（+3.13%），不宣称整局提速；正确性与效果门槛通过，整体性能收益未证实。详见shared-leaf-full-review-20260907.md。"
     },
     "bestPlayer": {
       "value": 152,
@@ -72,6 +72,22 @@
           "color": "蓝",
           "score": 121
         },
+        "versionId": "shared-leaf-observation-20260907",
+        "name": "冻结叶观察共享（整局提速未证实）",
+        "runKey": "dd9a1dab.a4453b64.full",
+        "provenance": "save-final",
+        "steps": 569,
+        "wallMs": 387053,
+        "msPerStep": 680,
+        "scoreSourceNote": "569步正式121/88/118/109、均109；全replay、完整终局状态与171次非时间诊断相同。107100节点/132190规则执行/21满额/3失败不变。单42耗时16.915→14.393秒，但整局375302→387053ms（+3.13%），不宣称整局提速；正确性与效果门槛通过，整体性能收益未证实。详见shared-leaf-full-review-20260907.md。"
+      },
+      {
+        "value": 109,
+        "white": 109,
+        "bestPlayer": {
+          "color": "蓝",
+          "score": 121
+        },
         "versionId": "policy-plan-evidence-20260906",
         "name": "Policy计划证据复制优化",
         "runKey": "91f9a83a.73e7b2ca.full",
@@ -96,26 +112,530 @@
         "wallMs": 398875,
         "msPerStep": 701,
         "scoreSourceNote": "569步，正式终局121/88/118/109、均109，全部569步replay与553e19c6一致；按均分不变且实现合理通过。398875ms、107100节点、132190成功提交、21次策略满额，失败795→3；剩余433步2次打牌与471步1次选牌失败。运行期间生产保持795cd6eb，仅只读报告脚本和记录变动。详见amiba-data-overflow-review-20260906.md。"
-      },
-      {
-        "value": 109,
-        "white": 109,
-        "bestPlayer": {
-          "color": "蓝",
-          "score": 121
-        },
-        "versionId": "company-free-move-20260906",
-        "name": "公司免费移动执行修复",
-        "runKey": "ffb71a57.553e19c6.full",
-        "provenance": "save-final",
-        "steps": 569,
-        "wallMs": 398848,
-        "msPerStep": 701,
-        "scoreSourceNote": "569步，正式终局121/88/118/109，均109，超过108.5门槛0.5；398848ms，107100节点、131422成功提交、21次策略4096满额。仍有795次执行失败，其中404步738次，不宣称全部分支正确。生产代码全程保持553e19c6；运行期间仅新增只读取证脚本与报告。见company-free-move-review-20260906.md。"
       }
     ]
   },
   "versions": [
+    {
+      "id": "shared-leaf-observation-20260907",
+      "name": "冻结叶观察共享（整局提速未证实）",
+      "date": "2026-09-07",
+      "baseline": "policy-plan-evidence-20260906",
+      "head": "a4453b64",
+      "commits": [
+        {
+          "hash": "a4453b64",
+          "date": "2026-09-07",
+          "subject": "共享同批完整相等的冻结叶观察，减少策略输入重复复制"
+        }
+      ],
+      "summary": "HDF内部Policy视图共享同批完整相等的冻结叶观察，保留独立搜索链与原始计划证据",
+      "diffStat": "42 files changed, 58580 insertions(+), 199 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/benchmark-leaf-interning-20260907.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-safe-leaf-sharing-20260907.js",
+          "insertions": 60,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/build-search-report-20260907.js",
+          "insertions": 72,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/census-card-choices-20260907.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/census-leaf-observations-20260907.js",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-company-stage-42-20260907.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/replay-venus-preparation-433-20260907.js",
+          "insertions": 80,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-observation-cost-20260907.js",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-venus-preparation-20260907.js",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-policy-plan-full-20260906.js",
+          "insertions": 43,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-policy-plan-view-42-20260906.js",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 32,
+          "deletions": 1
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 2,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 13,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-decision-function.js",
+          "insertions": 41,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/game/ai/policy-port.test.js",
+          "insertions": 17,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/card-choice-census-20260907.json",
+          "insertions": 2792,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-choice-review-20260907.md",
+          "insertions": 52,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-demand-design-20260906.md",
+          "insertions": 6,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-stage-42-20260907.json",
+          "insertions": 690,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-stage-review-20260907.md",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/leaf-interning-benchmark-20260907.json",
+          "insertions": 15,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/leaf-observation-census-20260907.json",
+          "insertions": 2344,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/leaf-observation-sharing-design-20260907.md",
+          "insertions": 86,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/observation-cost-42-20260907.json",
+          "insertions": 10,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/policy-plan-evidence-20260906/91f9a83a.73e7b2ca.full.action-log.html",
+          "insertions": 2052,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/policy-plan-evidence-design-20260906.md",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/policy-plan-full-review-20260906.md",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/policy-plan-full-verification-20260906.json",
+          "insertions": 91,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 678,
+          "deletions": 93
+        },
+        {
+          "file": "reports/iteration/safe-leaf-sharing-benchmark-20260907.json",
+          "insertions": 11,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/search-node-report-20260907.html",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/search-node-report-20260907.json",
+          "insertions": 11,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/shared-leaf-decision-42-20260907.json",
+          "insertions": 12,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/venus-preparation-433-20260907-v2.json",
+          "insertions": 32576,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/venus-preparation-433-20260907.json",
+          "insertions": 15461,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/venus-preparation-facts-20260907.json",
+          "insertions": 299,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/venus-preparation-review-20260907.md",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 678,
+          "deletions": 93
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 1
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "dd9a1dab.a4453b64.full.json",
+          "recordPath": "reports/research/dd9a1dab.a4453b64.full.json",
+          "mode": "full",
+          "steps": 569,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 387053,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "a4453b64",
+          "createdAt": "2026-09-06T16:56:27.334Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "569步正式121/88/118/109、均109；全replay、完整终局状态与171次非时间诊断相同。107100节点/132190规则执行/21满额/3失败不变。单42耗时16.915→14.393秒，但整局375302→387053ms（+3.13%），不宣称整局提速；正确性与效果门槛通过，整体性能收益未证实。详见shared-leaf-full-review-20260907.md。",
+          "scores": {
+            "player-blue": 121,
+            "player-green": 88,
+            "player-brown": 118,
+            "player-white": 109
+          },
+          "avgScore": 109,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 121,
+              "base": 70,
+              "tile": 47,
+              "card": 4,
+              "tileScoresById": {
+                "a": 33,
+                "b": 8,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 12,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 17,
+                "orbitScore": 12,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 88,
+              "base": 68,
+              "tile": 20,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 0,
+                "cardEffectScore": 11,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 13,
+                "orbitScore": 18,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 5
+              }
+            },
+            "player-brown": {
+              "total": 118,
+              "base": 72,
+              "tile": 42,
+              "card": 4,
+              "tileScoresById": {
+                "a": 15,
+                "b": 6,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "chong_2.webp",
+                  "rule": {
+                    "kind": "chongTraceCount",
+                    "scorePer": 1
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 9,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 12,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 7,
+                "orbitScore": 3,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 11
+              }
+            },
+            "player-white": {
+              "total": 109,
+              "base": 53,
+              "tile": 38,
+              "card": 18,
+              "tileScoresById": {
+                "a": 32,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 32,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 18
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 5,
+                "orbitScore": 6,
+                "scanScore": 16,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-shared-leaf-observation-20260907-a4453b64-full-v283.json",
+          "reportPath": "reports/iteration/shared-leaf-observation-20260907/dd9a1dab.a4453b64.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "dd9a1dab.a4453b64.full",
+            "path": "reports/iteration/shared-leaf-observation-20260907/dd9a1dab.a4453b64.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "policy-plan-evidence-20260906",
       "name": "Policy计划证据复制优化",
@@ -687,7 +1207,7 @@
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
