@@ -1,13 +1,13 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-06T05:28:18.875Z",
+  "builtAt": "2026-09-06T06:32:02.091Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "559f3ce9",
-  "currentBaseline": "probe-scan-dependency-20260906",
+  "headCommit": "79e31cd1",
+  "currentBaseline": "linguistic-trace-set-20260906",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -116,6 +116,108 @@
     ]
   },
   "versions": [
+    {
+      "id": "linguistic-trace-set-20260906",
+      "name": "语言学分析三色任务",
+      "date": "2026-09-06",
+      "baseline": "probe-scan-dependency-20260906",
+      "head": "79e31cd1",
+      "commits": [
+        {
+          "hash": "79e31cd1",
+          "date": "2026-09-06",
+          "subject": "修正语言学分析任务为同一物种三色痕迹并同步奖励目标声明"
+        }
+      ],
+      "summary": "语言学分析任务改为同一物种本人粉黄蓝痕迹各一，奖励目标声明同步改为三色齐全的物种。",
+      "diffStat": "15 files changed, 920 insertions(+), 15 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/catalog-card-trace-sources-20260906.js",
+          "insertions": 19,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-card-trace-sequence-cause-20260906.js",
+          "insertions": 32,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 12,
+          "deletions": 0
+        },
+        {
+          "file": "docs/card-modeling-dsl-spec.md",
+          "insertions": 7,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/cards/effects.js",
+          "insertions": 4,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/game/cards/effects.test.js",
+          "insertions": 12,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/card-trace-owner-design-20260906.md",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-trace-sequence-cause-20260906.json",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-trace-source-catalog-20260906-v2.json",
+          "insertions": 189,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-trace-source-catalog-20260906.json",
+          "insertions": 177,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/linguistic-trace-set-design-20260906.md",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 161,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 13,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 161,
+          "deletions": 4
+        }
+      ],
+      "results": [],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": false,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
     {
       "id": "probe-scan-dependency-20260906",
       "name": "探测器扫描依赖修复",
@@ -265,7 +367,7 @@
       ],
       "results": [],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": false,
         "save": false,

@@ -7,6 +7,19 @@
   },
   "versions": [
     {
+      "id": "linguistic-trace-set-20260906",
+      "name": "语言学分析三色任务",
+      "date": "2026-09-06",
+      "baseline": "probe-scan-dependency-20260906",
+      "head": "79e31cd1",
+      "commits": [
+        "79e31cd1"
+      ],
+      "summary": "语言学分析任务改为同一物种本人粉黄蓝痕迹各一，奖励目标声明同步改为三色齐全的物种。",
+      "records": {},
+      "roadmap": null
+    },
+    {
       "id": "probe-scan-dependency-20260906",
       "name": "探测器扫描依赖修复",
       "date": "2026-09-06",
