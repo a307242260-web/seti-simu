@@ -683,6 +683,82 @@ function runAsteroidTaskSettlement() {
 runAsteroidTaskSettlement();
 runProbeLocationConditions();
 
+function runProbeLocationDataReward() {
+  for (const [x, y, expected, pool] of [[1, 1, 0, 0], [6, 1, 2, 0], [7, 2, 4, 0], [0, 1, 1, 0], [7, 2, 4, 5]]) {
+    const root = createCanonicalState("b_89.webp"), player = root.players.players[0];
+    data.ensurePlayerDataState(player);
+    for (let index = 0; index < pool; index += 1) assert.equal(data.gainData(player, { root }).ok, true);
+    assert.equal(rockets.launchRocketAtSector(root.pieces, { x, y }, { playerId: player.id, color: player.color, root }).ok, true);
+    const rocketId = root.pieces.rockets[0].id;
+    player.techState = players.normalizePlayerTechState({ ownedTiles: { orange1: true } });
+    assert.equal(rockets.launchRocketAtSector(root.pieces, { x: 7, y: 3 }, { playerId: player.id, color: player.color, root }).ok, true);
+    const ownIds = root.pieces.rockets.map(r => r.id);
+    // 对手探测器、化石搬运棋子与参考图标记不是本卡的候选。
+    root.pieces.rockets.push(
+      { ...root.pieces.rockets[1], id: "other-owner", playerId: "p2" },
+      { ...root.pieces.rockets[1], id: "fossil", kind: rockets.ROCKET_KIND.CHONG_FOSSIL, fossilId: "fossil-1" },
+      { ...root.pieces.rockets[1], id: "reference", surface: "planet-reference" },
+    );
+    const { composition } = createIntegratedComposition("b_89.webp", { state: root });
+    assert.equal(composition.inputPort.submitAction(getOnlyPlayAction(composition)).ok, true);
+    const decision = composition.inspect().session.decision;
+    assert.deepEqual(decision.choices.map(c => c.target.rocketId).sort(), ownIds.sort());
+    const choice = decision.choices.find(c => c.target.rocketId === rocketId);
+    assert.ok(choice);
+    const saved = composition.lifecycle.save().envelope;
+    const submission = { decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,
+      ownerId: decision.ownerId, choice };
+    const result = composition.inputPort.submitDecision(submission);
+    assert.equal(result.ok, true, JSON.stringify(result));
+    const after = composition.stateSourcePort.getSnapshot().players.players[0];
+    assert.equal(after.resources.availableData, Math.min(6, pool + expected), `(${x},${y})所在和每个相邻小行星数据必须累加`);
+    assert.equal(after.dataState.discardedCount, Math.max(0, pool + expected - 6));
+    const event = result.journal.events.find(e => e.type === "card_effect"
+      && e.effectType === cardEffects.EFFECT_TYPES.PROBE_LOCATION_REWARD && e.rocketId === rocketId);
+    assert.ok(event, "必须记录选中探测器的正式结算事件");
+    assert.equal(event.amount, expected);
+    assert.equal(event.gainedCount + event.discardedCount, expected);
+    const finalSave = composition.lifecycle.save().envelope;
+    assert.equal(composition.lifecycle.restore(saved, { silent: true }).ok, true);
+    assert.equal(composition.inputPort.submitDecision(submission).ok, true);
+    assert.deepEqual(composition.lifecycle.save().envelope, finalSave, "位置数据奖励恢复后实体序号/弃置数/状态一致");
+    composition.dispose();
+  }
+}
+
+runProbeLocationDataReward();
+
+function runProbeLocationDataRead() {
+  const baseline = createCanonicalState("b_89.webp");
+  const options = { asteroidData: 2, adjacentAsteroidData: 1 };
+  const freeze = (value) => {
+    if (value && typeof value === "object") {
+      Object.values(value).forEach(freeze);
+      Object.freeze(value);
+    }
+    return value;
+  };
+  for (const rotation of [baseline.solarSystem.rotation, solar.applySolarOrbitRotation(baseline.solarSystem.rotation)]) {
+    for (let y = 1; y <= 4; y += 1) for (let x = 0; x < 8; x += 1) {
+      const root = structuredClone(baseline);
+      root.solarSystem.rotation = rotation;
+      assert.equal(rockets.launchRocketAtSector(root.pieces, { x, y }, { playerId: "p1", color: "brown", root }).ok, true);
+      const asteroids = solar.collectVisibleCoordinateContents(root.solarSystem).filter(c => c.content.kind === "asteroid");
+      const expected = asteroids.reduce((total, c) => {
+        const distance = Math.min(Math.abs(c.x - x), 8 - Math.abs(c.x - x)) + Math.abs(c.y - y);
+        return total + (distance === 0 ? 2 : distance === 1 ? 1 : 0);
+      }, 0);
+      const before = JSON.stringify(root);
+      freeze(root);
+      const reward = playDomain.getProbeLocationReward(root, root.pieces.rockets[0], options);
+      assert.equal(reward.amount, expected, `旋转后(${x},${y})按实际可见小行星结算`);
+      assert.equal(JSON.stringify(root), before, "奖励预读不得改变盘面或序号");
+    }
+  }
+}
+
+runProbeLocationDataRead();
+
 function runScanCompletesSectorSettlement() {
   // 室女座61（sector-4-a，容量 6）预填 5 个已替换 token，打 b_1（repeat 2 固定扫描该扇区）
   // 第 1 次扫描即补满最后一个槽 → 必须触发扇区结算

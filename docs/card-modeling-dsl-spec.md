@@ -170,6 +170,7 @@ agent 最终应把人工描述转换成以下规范对象。当前实现可以�
 | `remove_orbit_to_probe` | 无 | `choice` | 选择己方环绕标记，移除后在该星球当前太阳系位置放置探测器，可忽略火箭数量上限。 |
 | `probe_sector_scan` | `owner`、`maxTargets`、`repeat`、`includeAdjacent` | `choice`/`auto` | 选择己方或任意玩家探测器，扫描其所在扇区；可扩展到左右相邻扇区。 |
 | `probe_stack_reward` | `rewards` | `auto` | 当前玩家至少 1 个探测器与任意玩家探测器处于同一扇区时追加奖励；对手探测器计入同位置数量。 |
+| `probe_location_reward` | `asteroidData`、`adjacentAsteroidData` | `choice` | 选择己方一个太阳系普通探测器；所在小行星奖励与每个正交相邻小行星奖励累加，环向折返、径向不越界。Card Play 的只读 `getProbeLocationReward` 与正式执行共用计数；逐枚调用 `gainData`，满池按正式弃置处理，其他失败显式返回。结算事件记录 `amount/gainedCount/discardedCount`。 |
 | `planet_sector_scan` | `planetId`、`repeat` | `auto`/`choice` | 扫描指定星球当前所在扇区。 |
 | `register_event_bonus` | `eventType`、`duration`、`rewards`、`distinctBy` | `auto` | 注册本次卡牌流程或本回合的后续事件奖励，如访问不同星球得分。 |
 | `card_corner_event_reward` | `cornerKind` 或事件载荷 | `auto`/`choice` | 响应左上角快速行动事件，重复同类别资源/数据奖励，移动角标会在当前移动选择完成后再触发。 |

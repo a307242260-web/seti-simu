@@ -201,6 +201,24 @@
     return root?.[key] || {};
   }
 
+  // 位置数据奖励的只读规则入口：所在小行星与每个正交相邻小行星累加。
+  function getProbeLocationReward(root, rocket, options) {
+    if (!rockets.isControllablePlayerRocket(rocket)) {
+      throw new TypeError("位置数据奖励需要太阳系普通探测器");
+    }
+    const coordinate = rockets.getRocketSectorCoordinate(rocket);
+    if (!coordinate || !root?.solarSystem) throw new TypeError("位置数据奖励缺少正式盘面位置");
+    const onAsteroid = solar.resolveVisibleContent(coordinate.x, coordinate.y, root.solarSystem).content.kind === "asteroid";
+    const adjacentAsteroidCount = [[1, 0], [-1, 0], [0, 1], [0, -1]].filter(([dx, dy]) => {
+      const y = coordinate.y + dy;
+      return y >= rockets.SECTOR_RING_MIN && y <= rockets.SECTOR_RING_MAX
+        && solar.resolveVisibleContent(solar.mod8(coordinate.x + dx), y, root.solarSystem).content.kind === "asteroid";
+    }).length;
+    return { rocketId: rocket.id, onAsteroid, adjacentAsteroidCount,
+      amount: (onAsteroid ? Number(options.asteroidData) : 0)
+        + adjacentAsteroidCount * Number(options.adjacentAsteroidData) };
+  }
+
   function getActor(root, actorId = null) {
     const playersState = getWorkingSlice(root, "players");
     const resolvedId = actorId || root?.turn?.currentPlayerId || null;
@@ -1929,7 +1947,7 @@
         return choices;
       }
       if (effect.type === cardEffects.EFFECT_TYPES.PROBE_LOCATION_REWARD) {
-        return listPlayerRockets(root, actor.id)
+        return rockets.getRocketsForPlayer(root.pieces, actor.id)
           .map((rocket) => makeChoice(
             "choose_target",
             String(rocket.id),
@@ -2269,20 +2287,17 @@
         const markers = planet?.[key] || [];
         const [marker] = markers.splice(legal.target.index, 1);
       } else if (effect.type === cardEffects.EFFECT_TYPES.PROBE_LOCATION_REWARD) {
-        const rocket = listPlayerRockets(root, actor.id)
+        const rocket = rockets.getRocketsForPlayer(root.pieces, actor.id)
           .find((entry) => String(entry.id) === String(legal.target.rocketId));
-        const content = solar.resolveVisibleContent(
-          getWorkingSlice(root, "solarSystem"),
-          rocket.sectorX,
-          rocket.sectorY,
-        )?.content;
-        const isAsteroid = content?.kind === "asteroid";
-        const amount = isAsteroid
-          ? Number(options.asteroidData || 0)
-          : Number(options.adjacentAsteroidData || 0);
-        for (let index = 0; index < amount; index += 1) {
-          data.gainData(actor, { source: "probe_location_reward", root });
+        const reward = getProbeLocationReward(root, rocket, options);
+        let gainedCount = 0, discardedCount = 0;
+        for (let index = 0; index < reward.amount; index += 1) {
+          const gained = data.gainData(actor, { source: "probe_location_reward", root });
+          if (!gained.ok && !gained.discarded) return gained;
+          if (gained.discarded) discardedCount += 1;
+          else gainedCount += 1;
         }
+        Object.assign(event, reward, { gainedCount, discardedCount });
       } else {
         return fail("CARD_EFFECT_DECISION_INCOMPLETE", `未实现卡牌 Decision ${effect.type}`);
       }
@@ -2635,5 +2650,6 @@
     OWNED_PLAY_EFFECT_TYPES,
     createPlayCardProvider,
     createExperimentalCardPlayDomain,
+    getProbeLocationReward,
   });
 });

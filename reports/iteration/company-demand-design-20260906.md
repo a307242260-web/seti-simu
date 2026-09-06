@@ -214,3 +214,7 @@ goalCompletionPending，并且只有!execution.awaitingDecision才确认complete
 状态：本节闭合了额度来源与第二艘不组合枚举的设计，不代表完整移动设计冻结或
 生产优化完成。余下具体工作是统一当前有效访问/位置需求目录及路线必要性判定，
 接入根/树内/条件选择和计划证据后一次验证；不得先删除无绑定入口再用掉分找遗漏。
+
+位置收益目录核对又发现b89正式位置数据结算错误，独立修复见
+probe-location-data-design-20260907.md。后续移动需求消费Card Play的
+getProbeLocationReward只读正式计数，不另建AI奖励公式；本次不混入移动剪枝。
