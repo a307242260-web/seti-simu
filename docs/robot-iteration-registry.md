@@ -242,6 +242,8 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 | 版本 | head | 说明 |
 |---|---|---|
+| `amiba-data-overflow-20260906` | `795cd6eb` | 当前通过版本：阿米巴满池数据按弃置继续领奖；569步121/88/118/109，均109，与公司修复版全程动作一致；失败795→3，107100节点、398875ms |
+| `company-free-move-20260906` | `553e19c6` | 公司免费移动方向、结束选择与移动事件修复；569步均109，107100节点、398848ms，通过108.5门槛 |
 | `probe-scan-dependency-20260906` | `559f3ce9` | 独立补齐science的rockets依赖；585无失败，466另有痕迹实体序号错误；仅局部验证，未跑终局，见probe-scan-dependency-design-20260906 |
 | `amiba-region-rule-20260906` | `be6bd7b6` | 阿米巴区域重复领奖/选择规则修复；639步正式终局106/89/124/106、均106.25，低于108.5；局部规则验证通过，效果与整局性能未通过，详见amiba-region-full-review-20260906 |
 | `observe-decision-r4-20260906` | `213f34db` | **当前验收版本**：四轮累计实现通过，见ai-rounds-final-review-20260906；702步正式终局96/84/130/124、均108.5，较R2e+1.75；总模拟527450ms，整局提速和旧超时根因未完成 |
@@ -273,10 +275,10 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 - 记录 `summary.scores` 为运行当时口径；有存档的终局运行由 build 从存档 finalScores
   读取完整终局分（save-final），total = base + 板块 + 卡牌。
-- `registry.currentBaseline` 按代码祖先解析为`probe-scan-dependency-20260906`，只表示当前
-  代码归属，不表示验收通过；最近通过效果基线为`observe-decision-r4-20260906`及
-  行为相同的`search-statistics-p1-20260906`（均108.5）。新阿米巴规则保留，效果与
-  整局性能尚未通过；四轮历史计划见`docs/ai-iteration-plan-20260905.md`。
+- `registry.currentBaseline` 按代码祖先解析；当前策略归属为
+  `amiba-data-overflow-20260906`，完整终局均109，已通过本Goal的108.5效果门槛。
+  高节点性能Goal尚未完成，不能把规则修复通过等同于性能优化收口。
+  四轮历史计划见`docs/ai-iteration-plan-20260905.md`。
 - 2026-09-05 用户追加验收：每轮必须验证固定盘面完整终局，均分提高，或均分不变且逻辑
   更合理才可收口；200步快速结果不替代终局验收，续跑使用同代码提交的快速存档。
 
