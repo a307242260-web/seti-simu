@@ -166,8 +166,12 @@ probeGoalResourceReachable直接消费含全部付费移动点的required.energy
 因此下一生产方案必须同时解决需求目录、手段绑定与免费额度下界，不能先删无绑定
 industry入口，再依据掉分补漏。当前仍无移动生产修改或新全盘实验。
 
-继续读取拟复用的位置读模型时发现独立缺陷：buildProbeLocationData目前把类型固定
+继续读取拟复用的位置读模型时发现独立缺陷：buildProbeLocationData原先把类型固定
 为solar、planetId固定null且漏distanceFromEarth。真实42地球/正式火星位置已复现，
 见probe-location-read-20260907.json与probe-location-read-design-20260907.md。
 必须先修复正式位置事实，再使用taskConditionMet生成需求；不能在AI侧另写正确位置
 判断掩盖正式任务执行仍然判否的差异。本项作为独立规则读模型修复，不混作移动剪枝。
+
+该独立修复已实施：当前可见类型/行星/格距读入正式条件，dlc11任务领取与64格位置
+条件回归通过。真实42冷决策15.820秒，4096节点/4804输入、根动作不变，完整30输入
+计划重放通过、规则失败0；未带来节点下降，完整局待验。需求式移动仍未实施。

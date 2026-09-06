@@ -469,6 +469,7 @@ journal 统一处理。
 - 卡牌源数据保持 CSV，方便手工校对和继续补内容。`assets/cards/card_model.csv` 承载资产编号、费用、角标和切图元数据；浏览器加载的 `randomizer/game/card-catalog.js` 和 Node 使用的 `assets/cards/card_model.json` 由 `python tools/build_card_catalog_js.py` 生成，改 CSV 后必须同步生成。
 - `randomizer/game/cards/effects.js` 维护卡牌来源映射与可执行模型；实现状态以该文件和当前测试 inventory 为准，不再引用仓库外资料路径或已删除的中间说明文档。
 - `randomizer/game/cards/task-state.js` 维护 1 / 2 型任务统一状态。任务匹配产生正式 Effect/Decision，并由 Production Composition 在同一 session 内结算；Browser 只展示 projection 和提交选择，不负责刷新任务、续跑队列或修改任务状态。
+- 卡牌效果与状态任务的位置条件共用 `cards/play-domain.buildProbeLocationData`：只读取太阳系普通探测器的当前可见地点类型、行星身份和距地球格数，排除化石与参考图标记。距离按环向最短格数加径向格数，不按移动能量；非行星的行星身份为不适用的 `null`，缺少普通探测器位置则显式报错。完整条件契约见 `docs/card-modeling-dsl-spec.md`。
 - 半人马 8 号牌只选择 1 次扇区，然后把同一扇区中选定的星云目标固化为两个连续扫描节点；不能在两次扫描之间改选其它扇区，两个节点都保持原打牌玩家为执行者。
 - 当前基础牌 `b_1.webp` 到 `b_70.webp` 已全部建立参考映射并建模为 `implemented`；实现状态以 `randomizer/game/cards/effects.js` 和 `effects.test.js` 为准。已迁移模型遵循：
   - 0 型卡：打出后展开为 `playEffects` 效果队列，复用现有扫描、公共牌扫描、盲抽、科技、发射、卡牌内免费移动等效果执行器。

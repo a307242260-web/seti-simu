@@ -578,6 +578,111 @@ function runLaunchLimitSettlement() {
 
 runLaunchLimitSettlement();
 
+function runProbeLocationConditions() {
+  const root = createCanonicalState("dlc_11.png");
+  const player = root.players.players[0];
+  const contextFor = (state) => {
+    const observed = playDomain.buildProbeLocationData(state);
+    return { probeLocations: observed.index, probeLocationDetails: observed.details };
+  };
+  const meets = (condition, context, owner = player) => cardEffects.taskConditionMet({ condition }, owner, context);
+  const place = (state, coordinate, owner = player) => {
+    const result = rockets.launchRocketAtSector(state.pieces, coordinate, {
+      playerId: owner.id, color: owner.color, root: state,
+    });
+    assert.equal(result.ok, true);
+  };
+  const freeze = (value) => {
+    if (value && typeof value === "object") {
+      Object.values(value).forEach(freeze);
+      Object.freeze(value);
+    }
+    return value;
+  };
+  // 每个输入只有一个探测器；遍历显示格和一次旋转，不制造超上限盘面。
+  const kinds = new Set();
+  for (const rotation of [root.solarSystem.rotation, solar.applySolarOrbitRotation(root.solarSystem.rotation)]) {
+    for (let y = 1; y <= 4; y += 1) for (let x = 0; x < 8; x += 1) {
+      const state = structuredClone(root);
+      state.solarSystem.rotation = rotation;
+      place(state, { x, y });
+      freeze(state);
+      const before = JSON.stringify(state), context = contextFor(state);
+      const content = solar.resolveVisibleContent(x, y, state.solarSystem).content;
+      const earth = solar.createSolarSnapshot(state.solarSystem).planetLocations.find(p => p.planetId === "earth");
+      const distance = Math.min((x - earth.x + 8) % 8, (earth.x - x + 8) % 8) + Math.abs(y - earth.y);
+      kinds.add(content.kind);
+      assert.equal(meets({ type: "probeLocation", locationType: content.kind }, context), true);
+      assert.equal(meets({ type: "probeDistanceFromEarth", minDistance: 5 }, context), distance >= 5);
+      assert.equal(meets({ type: "probeAdjacentEarth" }, context), distance === 1);
+      assert.equal(meets({ type: "probeAdjacentEarthAsteroid" }, context), distance === 1 && content.kind === "asteroid");
+      assert.equal(meets({ type: "otherProbeAtPlanet", planetId: "earth" }, context, { id: "p2", color: "blue" }), content.planetId === "earth");
+      assert.equal(meets({ type: "otherProbeAtPlanet", planetId: "earth" }, context), false);
+      assert.equal(context.probeLocationDetails[0].distanceFromEarth, distance);
+      assert.equal(context.probeLocationDetails[0].planetId, content.kind === "planet" ? content.planetId : null);
+      assert.equal(JSON.stringify(state), before, "位置读取不改变状态/RNG/序号");
+    }
+  }
+  for (const kind of ["planet", "asteroid", "comet", "empty_space"]) assert.ok(kinds.has(kind));
+  const planets = solar.createSolarSnapshot(root.solarSystem).planetLocations;
+  const mars = planets.find(p => p.planetId === "mars"), venus = planets.find(p => p.planetId === "venus");
+  player.techState = players.normalizePlayerTechState({ ownedTiles: { orange1: true } });
+  place(root, mars);
+  place(root, venus);
+  assert.equal(meets({ type: "probesOnDifferentPlanets", count: 2, excludePlanetIds: ["earth"] }, contextFor(root)), true);
+  root.pieces.rockets[1].playerId = "p2";
+  root.pieces.rockets[1].color = "blue";
+  assert.equal(meets({ type: "probesOnDifferentPlanets", count: 2 }, contextFor(root)), false, "不能借用对手探测器满足自己的任务");
+  const polarOnly = structuredClone(root);
+  for (const rocket of polarOnly.pieces.rockets) {
+    delete rocket.sectorX;
+    delete rocket.sectorY;
+  }
+  assert.deepEqual(contextFor(polarOnly), contextFor(root), "正式极坐标探测器也需读取同一位置");
+  const missing = structuredClone(polarOnly);
+  delete missing.pieces.rockets[0].radius;
+  delete missing.pieces.rockets[0].angleDegrees;
+  assert.throws(() => contextFor(missing), /缺少太阳系位置/, "必需位置缺失不得静默返回无任务");
+  root.pieces.rockets[0].kind = rockets.ROCKET_KIND.CHONG_FOSSIL;
+  root.pieces.rockets[1].surface = "planet-reference";
+  assert.deepEqual(playDomain.buildProbeLocationData(root), { details: [], index: {} }, "化石与参考图标记不属于这些探测器条件");
+}
+
+function runAsteroidTaskSettlement() {
+  for (const kind of ["asteroid", "empty_space"]) {
+    const root = createCanonicalState("dlc_11.png");
+    const coordinate = solar.collectVisibleCoordinateContents(root.solarSystem).find(c => c.content.kind === kind);
+    assert.ok(coordinate);
+    assert.equal(rockets.launchRocketAtSector(root.pieces, coordinate, { playerId: "p1", color: "brown", root }).ok, true);
+    const { composition } = createIntegratedComposition("dlc_11.png", { state: root, residual: true });
+    const played = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+    assert.equal(played.ok, true, JSON.stringify(played));
+    assert.equal(played.phase, "completed");
+    assert.equal(composition.stateSourcePort.getSnapshot().players.players[0].resources.score, 0, "任务不能自动领取");
+    const actions = composition.inputPort.enumerateActions({ family: "complete_task" });
+    assert.equal(actions.length, kind === "asteroid" ? 1 : 0, "正式任务合法集应识别小行星位置");
+    if (kind === "asteroid") {
+      const saved = composition.lifecycle.save().envelope;
+      const settled = composition.inputPort.submitAction(actions[0]);
+      assert.equal(settled.ok, true, JSON.stringify(settled));
+      const player = composition.stateSourcePort.getSnapshot().players.players[0];
+      assert.equal(player.resources.score, 3);
+      assert.equal(player.resources.energy, 12);
+      assert.equal(player.completedTaskCount, 1);
+      assert.equal(player.reservedCards.length, 0);
+      assert.equal(composition.inputPort.enumerateActions({ family: "complete_task" }).length, 0, "任务不可重复领取");
+      const after = composition.lifecycle.save().envelope;
+      assert.equal(composition.lifecycle.restore(saved, { silent: true }).ok, true);
+      assert.equal(composition.inputPort.submitAction(actions[0]).ok, true);
+      assert.deepEqual(composition.lifecycle.save().envelope, after, "位置任务保存恢复重放一致");
+    }
+    composition.dispose();
+  }
+}
+
+runAsteroidTaskSettlement();
+runProbeLocationConditions();
+
 function runScanCompletesSectorSettlement() {
   // 室女座61（sector-4-a，容量 6）预填 5 个已替换 token，打 b_1（repeat 2 固定扫描该扇区）
   // 第 1 次扫描即补满最后一个槽 → 必须触发扇区结算

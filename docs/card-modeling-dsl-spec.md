@@ -258,6 +258,10 @@ agent 最终应把人工描述转换成以下规范对象。当前实现可以�
 | `traceCount` | `traceType`、`count` | 当前玩家指定颜色外星人痕迹总数达到阈值，包含专属外星人网格痕迹。 |
 | `resourceThreshold` | `resource`、`count` | 当前玩家指定资源达到阈值。 |
 | `probeLocation` | `locationType` | 当前玩家至少一个探测器位于指定地点类型，如 `asteroid`。 |
+| `probeAdjacentEarth` / `probeAdjacentEarthAsteroid` | 无 | 己方探测器在地球正交相邻格；后者还要求小行星。 |
+| `probeDistanceFromEarth` | `minDistance` | 己方探测器距地球至少指定格数；环向取折返最短格数，加径向格数，不含小行星移动加价。 |
+| `probesOnDifferentPlanets` | `count`、`excludePlanetIds` | 己方探测器所在的不同行星数达到阈值，排除指定行星；不是参考图环绕/登陆标记。 |
+| `otherProbeAtPlanet` | `planetId` | 其他玩家有探测器在指定行星格。 |
 | `singleAlienTraceSet` | `traceTypes` | 同一个外星人上已有当前玩家指定多种颜色痕迹。 |
 | `visitPlanet` | `includePlanetIds`、`excludePlanetIds` | 火箭进入星球格的事件；已停在该星球不触发。 |
 | `visitAsteroid` | 无 | 火箭进入小行星格的事件；已停在小行星或从小行星移出不触发。 |
@@ -267,6 +271,13 @@ agent 最终应把人工描述转换成以下规范对象。当前实现可以�
 | `alienTrace` | `traceType`、`alienId` | 当前玩家获得外星人痕迹后的事件。 |
 | `launch` | 无 | 当前玩家完成发射后的事件。 |
 | `orbit` / `land` | `planetId` | 当前玩家完成环绕或登陆后的事件。 |
+
+位置条件由 `cards/play-domain.buildProbeLocationData` 统一为卡牌效果与状态任务构建
+只读输入：复用普通可控探测器判定及正式坐标读取，排除虫族化石、无所属玩家和非
+太阳系实体；按当前旋转后的可见内容提供 `locationType`、`planetId`、
+`distanceFromEarth`、`adjacentToEarth`。非行星的 `planetId: null` 表示不适用，
+不是位置读取失败。普通探测器缺位置或盘面缺地球显式抛错，不返回空条件掩盖异常。
+不缓存跨状态位置；移动或旋转后的下一次判定读取新位置。此入口不替代终局读模型的装配。
 
 语言学分析（`b_67.webp`，牌面编号 102）使用 `singleAlienTraceSet`：同一物种上
 本人粉、黄、蓝痕迹各至少一个；三个同色痕迹或分布在两个物种的三色不满足条件。

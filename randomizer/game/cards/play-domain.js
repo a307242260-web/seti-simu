@@ -198,33 +198,34 @@
   }
 
   // 构建探测器位置索引（供卡牌条件/任务判定）：
-  // details 每项带 playerId/color、sectorX/Y、adjacentToEarth（与地球扇区正交相邻，
-  // 含环向 x 与径向 y，曼哈顿距离为 1）；index 按玩家 id/color 汇总 locationType。
+  // 只读太阳系普通探测器的当前可见内容；距地球为环向折返+径向格数，不是移动费用。
+  // 非行星的 planetId 为 null；index 按玩家 id/color 汇总 locationType。
   function buildProbeLocationData(root) {
     const solarSystemState = getWorkingSlice(root, "solarSystem");
     const earth = solar.createSolarSnapshot(solarSystemState)
       .planetLocations.find((planet) => planet.planetId === "earth");
-    const earthX = earth?.x;
-    const earthY = earth?.y;
+    if (!earth) throw new TypeError("探测器位置读取缺少地球位置");
     const details = [];
     const index = {};
     for (const rocket of (root?.pieces?.rockets || [])) {
-      if (!rocket.playerId) continue;
-      const onBoard = Number.isInteger(rocket.sectorX) && Number.isInteger(rocket.sectorY);
-      const adjacentToEarth = onBoard && earthX != null && earthY != null
-        && (Math.min(
-          solar.mod8(rocket.sectorX - earthX),
-          solar.mod8(earthX - rocket.sectorX),
-        ) + Math.abs(rocket.sectorY - earthY)) === 1;
-      const locationType = "solar";
+      if (!rockets.isControllablePlayerRocket(rocket)) continue;
+      const coordinate = rockets.getRocketSectorCoordinate(rocket);
+      if (!coordinate) throw new TypeError(`探测器 ${rocket.id} 缺少太阳系位置`);
+      const content = solar.resolveVisibleContent(coordinate.x, coordinate.y, solarSystemState).content;
+      const distanceFromEarth = Math.min(
+        solar.mod8(coordinate.x - earth.x),
+        solar.mod8(earth.x - coordinate.x),
+      ) + Math.abs(coordinate.y - earth.y);
+      const locationType = content.kind;
       const detail = {
         playerId: rocket.playerId,
         color: rocket.color || null,
-        sectorX: onBoard ? rocket.sectorX : null,
-        sectorY: onBoard ? rocket.sectorY : null,
+        sectorX: coordinate.x,
+        sectorY: coordinate.y,
         locationType,
-        adjacentToEarth: Boolean(adjacentToEarth),
-        planetId: null,
+        adjacentToEarth: distanceFromEarth === 1,
+        distanceFromEarth,
+        planetId: locationType === "planet" ? content.planetId : null,
       };
       details.push(detail);
       for (const key of [rocket.playerId, rocket.color].filter(Boolean).map(String)) {
