@@ -54,3 +54,6 @@ CHOOSE_SYMBOL_REWARD生产者核对为阿米巴符号奖励；计数不变，不
 棕52需求来源取证已完成：见reports/iteration/data-choice-route-review-20260906.md。
 同观察/合法选位下，收入目标与分析目标确实选择不同位置；不能跨origin强制统一。
 正式选择器在外层来源推进后运行，执行层折叠在推进前，完整设计尚须闭合这一边界。
+P2的有限语义目录与执行方案见reports/iteration/data-settlement-p2-design-20260906.md；
+新合并只接受已绑定分析/数据收入/科技目标的共同单选，独立节点的RNG重置与错误
+来源归属仍待闭合，当前不得宣称设计冻结或已实现提速。
