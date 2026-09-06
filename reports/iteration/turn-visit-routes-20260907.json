@@ -1,0 +1,357 @@
+{
+  "scope": "真实148/497打当前收益牌后的单探测器同回合几何费用；公司额度分别有/无，不证明额度当前可用或其他收益支配，不含资源交换/科技/旋转/其他卡/多探测器",
+  "input": "reports/iteration/current-movement-hotspots-20260907.json",
+  "inputSha256": "7253400424f65a80a7b0f10f5549860f314026bd952af489197189551fffc831",
+  "rows": [
+    {
+      "step": 148,
+      "cardId": "b_24.webp",
+      "rocketId": 2,
+      "companyAllowance": 0,
+      "initialEnergy": 2,
+      "bonus": {
+        "duration": "turn",
+        "eventType": "visitComet",
+        "onceKey": "b24-comet-score",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b24-comet-score",
+            "type": "gain_resources",
+            "label": "彗星遭遇：访问彗星获得4分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 4
+              }
+            }
+          }
+        ]
+      },
+      "at": {
+        "x": 5,
+        "y": 4
+      },
+      "card": 0,
+      "free": 0,
+      "paid": 2,
+      "moves": 4,
+      "visits": [
+        "comet"
+      ],
+      "path": [
+        {
+          "mode": "card",
+          "direction": "out",
+          "from": {
+            "x": 6,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 2
+          },
+          "points": 1,
+          "visits": []
+        },
+        {
+          "mode": "card",
+          "direction": "out",
+          "from": {
+            "x": 6,
+            "y": 2
+          },
+          "to": {
+            "x": 6,
+            "y": 3
+          },
+          "points": 1,
+          "visits": []
+        },
+        {
+          "mode": "paid",
+          "direction": "out",
+          "from": {
+            "x": 6,
+            "y": 3
+          },
+          "to": {
+            "x": 6,
+            "y": 4
+          },
+          "points": 1,
+          "visits": []
+        },
+        {
+          "mode": "paid",
+          "direction": "ccw",
+          "from": {
+            "x": 6,
+            "y": 4
+          },
+          "to": {
+            "x": 5,
+            "y": 4
+          },
+          "points": 1,
+          "visits": [
+            "comet"
+          ]
+        }
+      ],
+      "expanded": 22
+    },
+    {
+      "step": 148,
+      "cardId": "b_24.webp",
+      "rocketId": 2,
+      "companyAllowance": 1,
+      "initialEnergy": 2,
+      "bonus": {
+        "duration": "turn",
+        "eventType": "visitComet",
+        "onceKey": "b24-comet-score",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b24-comet-score",
+            "type": "gain_resources",
+            "label": "彗星遭遇：访问彗星获得4分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 4
+              }
+            }
+          }
+        ]
+      },
+      "at": {
+        "x": 5,
+        "y": 4
+      },
+      "card": 0,
+      "free": 0,
+      "paid": 1,
+      "moves": 4,
+      "visits": [
+        "comet"
+      ],
+      "path": [
+        {
+          "mode": "card",
+          "direction": "out",
+          "from": {
+            "x": 6,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 2
+          },
+          "points": 1,
+          "visits": []
+        },
+        {
+          "mode": "card",
+          "direction": "out",
+          "from": {
+            "x": 6,
+            "y": 2
+          },
+          "to": {
+            "x": 6,
+            "y": 3
+          },
+          "points": 1,
+          "visits": []
+        },
+        {
+          "mode": "company",
+          "direction": "out",
+          "from": {
+            "x": 6,
+            "y": 3
+          },
+          "to": {
+            "x": 6,
+            "y": 4
+          },
+          "points": 1,
+          "visits": []
+        },
+        {
+          "mode": "paid",
+          "direction": "ccw",
+          "from": {
+            "x": 6,
+            "y": 4
+          },
+          "to": {
+            "x": 5,
+            "y": 4
+          },
+          "points": 1,
+          "visits": [
+            "comet"
+          ]
+        }
+      ],
+      "expanded": 38
+    },
+    {
+      "step": 497,
+      "cardId": "dlc_12.png",
+      "rocketId": 12,
+      "companyAllowance": 0,
+      "initialEnergy": 2,
+      "bonus": {
+        "duration": "turn",
+        "eventType": "visitPlanet",
+        "distinctBy": "planetId",
+        "minCount": 2,
+        "onceKey": "dlc12-two-planets",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "dlc12-score",
+            "type": "gain_resources",
+            "label": "访问2个不同行星：3分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 3
+              }
+            }
+          }
+        ]
+      },
+      "at": {
+        "x": 0,
+        "y": 2
+      },
+      "card": 0,
+      "free": 0,
+      "paid": 0,
+      "moves": 2,
+      "visits": [
+        "mars",
+        "saturn"
+      ],
+      "path": [
+        {
+          "mode": "card",
+          "direction": "out",
+          "from": {
+            "x": 0,
+            "y": 2
+          },
+          "to": {
+            "x": 0,
+            "y": 3
+          },
+          "points": 1,
+          "visits": [
+            "saturn"
+          ]
+        },
+        {
+          "mode": "card",
+          "direction": "in",
+          "from": {
+            "x": 0,
+            "y": 3
+          },
+          "to": {
+            "x": 0,
+            "y": 2
+          },
+          "points": 1,
+          "visits": [
+            "mars",
+            "saturn"
+          ]
+        }
+      ],
+      "expanded": 14
+    },
+    {
+      "step": 497,
+      "cardId": "dlc_12.png",
+      "rocketId": 12,
+      "companyAllowance": 1,
+      "initialEnergy": 2,
+      "bonus": {
+        "duration": "turn",
+        "eventType": "visitPlanet",
+        "distinctBy": "planetId",
+        "minCount": 2,
+        "onceKey": "dlc12-two-planets",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "dlc12-score",
+            "type": "gain_resources",
+            "label": "访问2个不同行星：3分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 3
+              }
+            }
+          }
+        ]
+      },
+      "at": {
+        "x": 0,
+        "y": 2
+      },
+      "card": 0,
+      "free": 1,
+      "paid": 0,
+      "moves": 2,
+      "visits": [
+        "mars",
+        "saturn"
+      ],
+      "path": [
+        {
+          "mode": "card",
+          "direction": "out",
+          "from": {
+            "x": 0,
+            "y": 2
+          },
+          "to": {
+            "x": 0,
+            "y": 3
+          },
+          "points": 1,
+          "visits": [
+            "saturn"
+          ]
+        },
+        {
+          "mode": "card",
+          "direction": "in",
+          "from": {
+            "x": 0,
+            "y": 3
+          },
+          "to": {
+            "x": 0,
+            "y": 2
+          },
+          "points": 1,
+          "visits": [
+            "mars",
+            "saturn"
+          ]
+        }
+      ],
+      "expanded": 18
+    }
+  ],
+  "wallMs": 3.54362500000002,
+  "verified": true
+}

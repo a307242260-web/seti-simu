@@ -1,0 +1,950 @@
+{
+  "scope": "真实148/497直接打收益牌后按目的路线正式执行，不加资源，不结束回合；逐输入恢复重交一致，非AI性能验收",
+  "input": "reports/iteration/turn-visit-routes-20260907.json",
+  "rows": [
+    {
+      "step": 148,
+      "companyAllowance": 0,
+      "inputs": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:269f8980",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-21-pass-1-2"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_24.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:60d1e992",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "choiceId": "2:0:1",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 2
+          },
+          "decision": null,
+          "summary": "R2 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:6f9b314b",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "choiceId": "2:0:1",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R2 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:8fb1f33c",
+          "actorId": "player-green",
+          "stateVersion": 70,
+          "decisionVersion": 2,
+          "target": {
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:56560af3",
+          "actorId": "player-green",
+          "stateVersion": 70,
+          "decisionVersion": 2,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "消耗 1 能量"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:cc916f6c",
+          "actorId": "player-green",
+          "stateVersion": 71,
+          "decisionVersion": 2,
+          "target": {
+            "rocketId": 2,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:56560af3",
+          "actorId": "player-green",
+          "stateVersion": 71,
+          "decisionVersion": 2,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "消耗 1 能量"
+        }
+      ],
+      "moves": [
+        {
+          "mode": "card",
+          "direction": "out",
+          "to": {
+            "x": 6,
+            "y": 2
+          },
+          "scoreGain": 0,
+          "bonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          ]
+        },
+        {
+          "mode": "card",
+          "direction": "out",
+          "to": {
+            "x": 6,
+            "y": 3
+          },
+          "scoreGain": 0,
+          "bonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          ]
+        },
+        {
+          "mode": "paid",
+          "direction": "out",
+          "to": {
+            "x": 6,
+            "y": 4
+          },
+          "scoreGain": 0,
+          "bonuses": [
+            {
+              "claimedKeys": [],
+              "duration": "turn",
+              "effectId": "b24-turn-comet-score",
+              "eventType": "visitComet",
+              "icon": "score",
+              "id": "b24-turn-comet-score",
+              "onceKey": "b24-comet-score",
+              "ownerId": "player-green",
+              "playerId": "player-green",
+              "rewards": [
+                {
+                  "icon": "score",
+                  "id": "b24-comet-score",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  },
+                  "type": "gain_resources"
+                }
+              ],
+              "usedKeys": []
+            }
+          ]
+        },
+        {
+          "mode": "paid",
+          "direction": "ccw",
+          "to": {
+            "x": 5,
+            "y": 4
+          },
+          "scoreGain": 4,
+          "bonuses": [
+            {
+              "claimedKeys": [
+                "b24-comet-score"
+              ],
+              "duration": "turn",
+              "effectId": "b24-turn-comet-score",
+              "eventType": "visitComet",
+              "icon": "score",
+              "id": "b24-turn-comet-score",
+              "onceKey": "b24-comet-score",
+              "ownerId": "player-green",
+              "playerId": "player-green",
+              "rewards": [
+                {
+                  "icon": "score",
+                  "id": "b24-comet-score",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  },
+                  "type": "gain_resources"
+                }
+              ],
+              "usedKeys": []
+            }
+          ]
+        }
+      ],
+      "finalResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 7,
+        "score": 19
+      },
+      "scoreGain": 4,
+      "recoveryEqual": true
+    },
+    {
+      "step": 148,
+      "companyAllowance": 1,
+      "inputs": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:269f8980",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-21-pass-1-2"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_24.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:60d1e992",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "choiceId": "2:0:1",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 2
+          },
+          "decision": null,
+          "summary": "R2 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:6f9b314b",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "choiceId": "2:0:1",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R2 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "industry",
+          "phase": "quick",
+          "actionId": "industry:5bda1856",
+          "actorId": "player-green",
+          "stateVersion": 70,
+          "decisionVersion": 2,
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "寰宇动力 1x 行动"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:96f6cb01",
+          "actorId": "player-green",
+          "stateVersion": 70,
+          "decisionVersion": 2,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out"
+          },
+          "decision": null,
+          "summary": "移动 2 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:cc916f6c",
+          "actorId": "player-green",
+          "stateVersion": 71,
+          "decisionVersion": 2,
+          "target": {
+            "rocketId": 2,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:56560af3",
+          "actorId": "player-green",
+          "stateVersion": 71,
+          "decisionVersion": 2,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "消耗 1 能量"
+        }
+      ],
+      "moves": [
+        {
+          "mode": "card",
+          "direction": "out",
+          "to": {
+            "x": 6,
+            "y": 2
+          },
+          "scoreGain": 0,
+          "bonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          ]
+        },
+        {
+          "mode": "card",
+          "direction": "out",
+          "to": {
+            "x": 6,
+            "y": 3
+          },
+          "scoreGain": 0,
+          "bonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          ]
+        },
+        {
+          "mode": "company",
+          "direction": "out",
+          "to": {
+            "x": 6,
+            "y": 4
+          },
+          "scoreGain": 0,
+          "bonuses": [
+            {
+              "claimedKeys": [],
+              "duration": "turn",
+              "effectId": "b24-turn-comet-score",
+              "eventType": "visitComet",
+              "icon": "score",
+              "id": "b24-turn-comet-score",
+              "onceKey": "b24-comet-score",
+              "ownerId": "player-green",
+              "playerId": "player-green",
+              "rewards": [
+                {
+                  "icon": "score",
+                  "id": "b24-comet-score",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  },
+                  "type": "gain_resources"
+                }
+              ],
+              "usedKeys": []
+            }
+          ]
+        },
+        {
+          "mode": "paid",
+          "direction": "ccw",
+          "to": {
+            "x": 5,
+            "y": 4
+          },
+          "scoreGain": 4,
+          "bonuses": [
+            {
+              "claimedKeys": [
+                "b24-comet-score"
+              ],
+              "duration": "turn",
+              "effectId": "b24-turn-comet-score",
+              "eventType": "visitComet",
+              "icon": "score",
+              "id": "b24-turn-comet-score",
+              "onceKey": "b24-comet-score",
+              "ownerId": "player-green",
+              "playerId": "player-green",
+              "rewards": [
+                {
+                  "icon": "score",
+                  "id": "b24-comet-score",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  },
+                  "type": "gain_resources"
+                }
+              ],
+              "usedKeys": []
+            }
+          ]
+        }
+      ],
+      "finalResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 1,
+        "handSize": 2,
+        "publicity": 7,
+        "score": 19
+      },
+      "scoreGain": 4,
+      "recoveryEqual": true
+    },
+    {
+      "step": 497,
+      "companyAllowance": 0,
+      "inputs": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:57da1d07",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "cardInstanceId": "card-31-pass-3-2"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "dlc_12.png"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:d37b0828",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "12:0:1",
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 2
+          },
+          "decision": null,
+          "summary": "R12 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:3c8f9031",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "12:0:-1",
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": -1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R12 向内"
+        }
+      ],
+      "moves": [
+        {
+          "mode": "card",
+          "direction": "out",
+          "to": {
+            "x": 0,
+            "y": 3
+          },
+          "scoreGain": 0,
+          "bonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitPlanet",
+              "distinctBy": "planetId",
+              "minCount": 2,
+              "onceKey": "dlc12-two-planets",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "dlc12-score",
+                  "type": "gain_resources",
+                  "label": "访问2个不同行星：3分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  }
+                }
+              ],
+              "id": "dlc12-turn-distinct-planets",
+              "effectId": "dlc12-turn-distinct-planets",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [
+                "saturn"
+              ],
+              "claimedKeys": []
+            }
+          ]
+        },
+        {
+          "mode": "card",
+          "direction": "in",
+          "to": {
+            "x": 0,
+            "y": 2
+          },
+          "scoreGain": 3,
+          "bonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitPlanet",
+              "distinctBy": "planetId",
+              "minCount": 2,
+              "onceKey": "dlc12-two-planets",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "dlc12-score",
+                  "type": "gain_resources",
+                  "label": "访问2个不同行星：3分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  }
+                }
+              ],
+              "id": "dlc12-turn-distinct-planets",
+              "effectId": "dlc12-turn-distinct-planets",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [
+                "saturn",
+                "mars"
+              ],
+              "claimedKeys": [
+                "dlc12-two-planets"
+              ]
+            }
+          ]
+        }
+      ],
+      "finalResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 2,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 4,
+        "score": 54
+      },
+      "scoreGain": 3,
+      "recoveryEqual": true
+    },
+    {
+      "step": 497,
+      "companyAllowance": 1,
+      "inputs": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:57da1d07",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "cardInstanceId": "card-31-pass-3-2"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "dlc_12.png"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:d37b0828",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "12:0:1",
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 2
+          },
+          "decision": null,
+          "summary": "R12 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:3c8f9031",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "12:0:-1",
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": -1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R12 向内"
+        }
+      ],
+      "moves": [
+        {
+          "mode": "card",
+          "direction": "out",
+          "to": {
+            "x": 0,
+            "y": 3
+          },
+          "scoreGain": 0,
+          "bonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitPlanet",
+              "distinctBy": "planetId",
+              "minCount": 2,
+              "onceKey": "dlc12-two-planets",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "dlc12-score",
+                  "type": "gain_resources",
+                  "label": "访问2个不同行星：3分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  }
+                }
+              ],
+              "id": "dlc12-turn-distinct-planets",
+              "effectId": "dlc12-turn-distinct-planets",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [
+                "saturn"
+              ],
+              "claimedKeys": []
+            }
+          ]
+        },
+        {
+          "mode": "card",
+          "direction": "in",
+          "to": {
+            "x": 0,
+            "y": 2
+          },
+          "scoreGain": 3,
+          "bonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitPlanet",
+              "distinctBy": "planetId",
+              "minCount": 2,
+              "onceKey": "dlc12-two-planets",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "dlc12-score",
+                  "type": "gain_resources",
+                  "label": "访问2个不同行星：3分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  }
+                }
+              ],
+              "id": "dlc12-turn-distinct-planets",
+              "effectId": "dlc12-turn-distinct-planets",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [
+                "saturn",
+                "mars"
+              ],
+              "claimedKeys": [
+                "dlc12-two-planets"
+              ]
+            }
+          ]
+        }
+      ],
+      "finalResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 2,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 4,
+        "score": 54
+      },
+      "scoreGain": 3,
+      "recoveryEqual": true
+    }
+  ],
+  "verified": true
+}
