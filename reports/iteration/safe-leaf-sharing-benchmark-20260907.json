@@ -1,0 +1,11 @@
+{
+  "scope": "冻结真实保存图后离线测严格可共享子集；冻结恢复模拟生产已冻结状态，不计入处理时间；不修改生产",
+  "boundaryChecks": true,
+  "baselineMs": 5959.793583000001,
+  "sharingMs": 1115.563000000002,
+  "candidateTotalMs": 2211.688291999999,
+  "leaves": 2938,
+  "distinctObservationObjects": 949,
+  "sameValuesAndEvaluations": true,
+  "passed": true
+}

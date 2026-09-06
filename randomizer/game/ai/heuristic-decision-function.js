@@ -102,6 +102,46 @@ function isInitialSetupBoundary(legalActions) {
   ));
 }
 
+function policyOutcomeView(outcomes) {
+  const eligible = new WeakMap();
+  const observations = new Map();
+  function canShare(value) {
+    if (value === null || typeof value === "string" || typeof value === "boolean") return true;
+    if (typeof value === "number") return Number.isFinite(value) && !Object.is(value, -0);
+    if (typeof value !== "object") return false;
+    if (eligible.has(value)) return eligible.get(value);
+    // 递归中的对象不能作为已验证共享值；不符合条件时仍交原Policy校验，不吞错误。
+    eligible.set(value, false);
+    const array = Array.isArray(value);
+    if (!Object.isFrozen(value)
+      || Object.getPrototypeOf(value) !== (array ? Array.prototype : Object.prototype)
+      || Object.getOwnPropertyDescriptor(Object.prototype, "toJSON")
+      || (array && Object.getOwnPropertyDescriptor(Array.prototype, "toJSON"))) return false;
+    const keys = Reflect.ownKeys(value);
+    if (array && keys.length !== value.length + 1) return false;
+    for (const key of keys) {
+      if (array && key === "length") continue;
+      if (typeof key !== "string" || key === "toJSON") return false;
+      if (array && (!/^(0|[1-9][0-9]*)$/.test(key) || Number(key) >= value.length)) return false;
+      const descriptor = Object.getOwnPropertyDescriptor(value, key);
+      if (!descriptor.enumerable || !Object.hasOwn(descriptor, "value")
+        || !canShare(descriptor.value)) return false;
+    }
+    eligible.set(value, true);
+    return true;
+  }
+  return outcomes.map((outcome) => ({
+    ...outcome,
+    leaves: outcome.leaves.map(({ planSteps, ...leaf }) => {
+      // 完整值包含席位/版本/路线摘要与已遮蔽内容；不合并叶、来源或计划证据。
+      if (!canShare(leaf.observation)) return leaf;
+      const key = JSON.stringify(leaf.observation);
+      if (!observations.has(key)) observations.set(key, leaf.observation);
+      return { ...leaf, observation: observations.get(key) };
+    }),
+  }));
+}
+
 function createHeuristicDecisionFunction(options = {}) {
   const composition = options.composition;
   if (!composition?.counterfactualPort?.evaluate) {
@@ -246,10 +286,7 @@ function createHeuristicDecisionFunction(options = {}) {
       observation,
       legalActions,
       // planSteps只供下方计划提取消费，不在Policy边界重复复制；原始证据完整保留。
-      actionOutcomes: actionOutcomes.map((outcome) => ({
-        ...outcome,
-        leaves: outcome.leaves.map(({ planSteps, ...leaf }) => leaf),
-      })),
+      actionOutcomes: policyOutcomeView(actionOutcomes),
       deterministicContext: {
         heuristicDecisionFunctionSchemaVersion: "seti-heuristic-decision-function-v1",
       },

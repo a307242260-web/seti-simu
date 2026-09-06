@@ -30,6 +30,8 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
   返回的`searches`按本次实际evaluate记录`{kind: control|strategic, diagnostics}`；计划复用明确返回空数组，teacher同样透传本次统计。`getCounterfactualDiagnostics()`仅表示最后一次evaluate，不能用它累计整局搜索；evaluate入口清空旧值，早退无诊断时为null。统计不进入存档或PolicyDecision schema。
   Heuristic内部传给Policy的叶视图省去`planSteps`，避免重复复制续用证据；这里返回的
   `actionOutcomes`以及计划提取仍保留完整`planSteps`，不改变外部API或计划执行。
+  内部视图还可在本次调用内共享完整值相同的冻结叶观察，资格与隔离见AI设计§2；
+  返回的原始结果不做该合并，搜索链、节点数、规则输入和随机状态不变。
   **策略估值统一入口**：旧 `evaluateActionOutcomes()` 入口已删除——评估动作必须用 `runHeuristicPolicyDecision` 返回的 `actionOutcomes`（与决策函数同一搜索参数：secondary-agent 目标引导单一路径），不存在第二套搜索参数。反事实原语（任意候选评估）不是 env API：单动作结算链验证经规则层测试（`simulation-rule-composition.test.js` 或生产 composition 的 `counterfactualPort.evaluate`）。
 - `getDiagnostics()` / `getCounterfactualDiagnostics()`：只读性能诊断。
 - `dispose()`：释放单局环境。

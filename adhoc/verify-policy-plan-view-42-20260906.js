@@ -4,7 +4,7 @@ const assert = require("node:assert/strict");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const evaluator = require("../randomizer/game/ai/expected-score-evaluator");
 const plans = require("../randomizer/game/ai/plan-continuation");
-const output = "reports/iteration/policy-plan-view-decision-42-20260906.json";
+const output = process.argv[2] || "reports/iteration/policy-plan-view-decision-42-20260906.json";
 if (fs.existsSync(output)) console.log(`已有验证，跳过：${output}`);
 else {
   const env = createSimulationEnv(), report = { scope: "真实42改动后单决策；与改动前保存输入逐动作估值、完整计划及搜索数量对照" };
@@ -22,6 +22,7 @@ else {
     assert.equal(diagnostics.executedNodeCount, before.nodes);
     assert.equal(diagnostics.successfulInputSubmissionCount, before.submissions);
     const actual = { ...input, actionOutcomes: result.actionOutcomes };
+    assert.deepEqual(result.actionOutcomes, input.actionOutcomes);
     assert.deepEqual(input.legalActions.map(a => evaluator.evaluateAction(actual, a)),
       input.legalActions.map(a => evaluator.evaluateAction(input, a)));
     const expectedPlan = plans.buildPlanFromSnapshot(plans.extractPlanSnapshot({ seatId: input.seatId,
@@ -30,6 +31,7 @@ else {
     assert.deepEqual(result.plan, expectedPlan);
     report.actionId = before.actionId; report.nodes = before.nodes; report.submissions = before.submissions;
     report.sameEvaluations = true; report.samePlan = true;
+    report.sameCompleteOutcomes = true;
     report.planSteps = result.plan?.steps?.length || 0;
     report.passed = true;
   } catch (error) {

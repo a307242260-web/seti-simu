@@ -1,0 +1,12 @@
+{
+  "scope": "真实42改动后单决策；与改动前保存输入逐动作估值、完整计划及搜索数量对照",
+  "wallMs": 14393.059333000001,
+  "actionId": "place_data:dbe01b29",
+  "nodes": 4096,
+  "submissions": 4804,
+  "sameEvaluations": true,
+  "samePlan": true,
+  "sameCompleteOutcomes": true,
+  "planSteps": 29,
+  "passed": true
+}

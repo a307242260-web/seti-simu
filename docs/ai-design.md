@@ -67,6 +67,10 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   祖先集合在本次遍历内维护，进入节点时加入、退出时在finally移除，不再逐层复制Set。
   Heuristic决策函数传入Policy的叶视图不携带仅供计划续用的`planSteps`；其他字段继续
   全量校验复制。原actionOutcomes保留完整证据供计划提取和对外返回，不减少搜索叶。
+  该内部视图在单次调用内共享完整值相同的冻结叶观察（含viewer/authority/路线摘要/
+  遮蔽结果）。只对严格普通JSON树生成键；accessor、toJSON、特殊对象、循环、稀疏
+  数组、undefined、非有限数及负零不共享，原样进入既有校验。不是搜索状态去重，
+  不共享叶/来源/计划，也不改变对外actionOutcomes或跨请求缓存。
 - `game/ai/machine-player-coordinator.js`：机器人玩家协调器（Browser/Simulation 共用一份实现）——席位决策函数注册表、裸调共享 composition 读边界（合法集原生 + 观察直接 createDecisionObservation(projection.state)）、计划复用（`planReuseCheck`）、调用决策函数、execute 提交共享 inputPort、recordStep 记账钩子（sim 训练补记 replay/reward，browser 空操作）；失败直接抛错。
 - `game/ai/heuristic-decision-function.js`：Heuristic 决策函数（AI 类型）——统一反事实搜索（目标引导 + 需求引导单一路径）+ 直调启发式 Policy + 从 winning leaf 构建 plan；实现 `(ctx) => ({ actionId, plan? })` 接口。开关（traceCounterfactualGoalClusters 等）经同一 config 源透传，Browser/Simulation 一份装配。
 - `game/ai/heuristic-policy.js`：Browser、teacher 与冻结 opponent 共用的版本化启发式 Policy。

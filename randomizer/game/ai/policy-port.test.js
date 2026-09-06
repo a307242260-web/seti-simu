@@ -57,13 +57,18 @@ const current = context();
   }, { seatId: "p1" });
   const steps = [root, next].map(action => plans.capturePlanStep({ action, observation }));
   let checked = false;
+  let invalidObservation = false;
+  const policyObservations = [];
   const decisionFunction = createHeuristicDecisionFunction({
     composition: { counterfactualPort: { evaluate: () => [{
       schemaVersion: model.OUTCOME_SCHEMA_VERSION, actionId: root.actionId,
       status: "settled", confidence: "high", rootObservation: observation,
-      leaves: [{ leafId: "leaf", status: "settled", observation,
+      leaves: [0, 1].map(index => ({ leafId: `leaf:${index}`, status: "settled",
+        observation: invalidObservation && index === 1
+          ? { ...observation, publicState: { ...observation.publicState, invalidNumber: NaN } }
+          : observation,
         actionChain: [root.actionId, next.actionId], executionStepCount: 2, planSteps: steps,
-        legalSuccessors: [next], terminalReason: "settled" }],
+        legalSuccessors: [next], terminalReason: "settled" })),
     }] } },
     policy: {
       getProvenance: () => ({ type: "heuristic", version: "test" }),
@@ -72,6 +77,9 @@ const current = context();
         assert.equal(Object.hasOwn(leaf, "planSteps"), false);
         assert.deepEqual(leaf.actionChain, [root.actionId, next.actionId]);
         assert.equal(Object.isFrozen(leaf.observation), true);
+        assert.equal(leaf.observation, context.actionOutcomes[0].leaves[1].observation,
+          "同批相等的不可变叶观察共享，叶和链仍独立保留");
+        policyObservations.push(leaf.observation);
         checked = true;
         return policyPort.createPolicyDecision(context, { actionId: root.actionId,
           policyType: "heuristic", policyVersion: "test" });
@@ -83,6 +91,13 @@ const current = context();
   assert.deepEqual(result.actionOutcomes[0].leaves[0].planSteps, steps);
   assert.notEqual(result.actionOutcomes[0].leaves[0].planSteps, steps);
   assert.equal(result.plan.nextActionId, next.actionId);
+  assert.notEqual(result.actionOutcomes[0].leaves[0].observation,
+    result.actionOutcomes[0].leaves[1].observation, "原始对外结果不进行驻留合并");
+  decisionFunction.run({ seatId: "p1", legalActions: [root], observation });
+  assert.notEqual(policyObservations[0], policyObservations[1], "不跨请求持有共享观察");
+  invalidObservation = true;
+  assert.throws(() => decisionFunction.run({ seatId: "p1", legalActions: [root], observation }),
+    error => error.code === "POLICY_NOT_SERIALIZABLE", "无效观察不能被已有有效代表覆盖");
 }
 {
   const shared = { slots: [1, 2], nested: { value: 3 } };

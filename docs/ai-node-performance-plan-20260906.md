@@ -195,3 +195,10 @@ reports/iteration/policy-plan-full-review-20260906.md；不扩大到公司策略
 离线合并引用且保留完整值/全部叶后，含索引的Policy处理5484→1387ms，评分与
 决策一致。尚非生产优化，必须先闭合异常值/对象语义及来源隔离，不能直接用JSON键
 替代校验。详见reports/iteration/leaf-observation-sharing-design-20260907.md。
+
+该候选已完成严格值边界设计并实施于HDF内部Policy视图：仅本批次冻结的严格JSON
+完整值共享，不合并叶/计划/来源，不改外部结果或通用Policy校验。真实42单点
+16.915→14.393秒，4096节点/4804规则执行次数不变，完整outcomes、评分及29步
+计划相同；77 unit+唯一fullFlow与V审计通过（两项用户豁免既有失败未运行）。
+这项收益来自重复复制减少，不是节点裁剪；完整固定局待生产提交后按去重流程验证，
+尚未登记为通过版本。验证证据见shared-leaf-decision-42-20260907.json。
