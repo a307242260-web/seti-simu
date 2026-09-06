@@ -1560,6 +1560,33 @@
       });
     }
 
+    // 区域全部奖励与卡牌单选共用正式发奖入口；移动在奖励成功后统一执行。
+    function awardAmibaSymbols(root, actor, symbols) {
+      let irreversible = null;
+      for (const symbol of symbols) {
+        const reward = symbol.reward || {};
+        if (reward.gain) players.gainResources(actor, reward.gain, "alienEffectScore");
+        const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
+        for (let index = 0; index < dataCount; index += 1) {
+          const gained = data.gainData(actor, { source: "amiba_region_reward", root });
+          if (!gained.ok) return gained;
+        }
+        const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
+        if (drawCount > 0) {
+          const drawCtx = cards.createCardDrawContext(
+            getWorkingSlice(root, "cards"), getWorkingSlice(root, "players"),
+            () => nextCommittedRandom(root), { root },
+          );
+          for (let index = 0; index < drawCount; index += 1) {
+            const drawn = drawCtx.blindDraw(actor);
+            if (!drawn.ok) return drawn;
+          }
+          irreversible = { code: "hidden_card_draw", reason: "阿米巴细胞器奖励盲抽翻开隐藏牌" };
+        }
+      }
+      return { ok: true, irreversible };
+    }
+
     function genericExecute(state, sessionEffect, workingContext) {
       const root = getWorkingRoot(state, workingContext);
       const effect = sessionEffect.payload?.cardEffect;
@@ -1569,6 +1596,25 @@
         return fail("CARD_EFFECT_CONTEXT_STALE", "卡牌效果上下文已失效");
       }
       const descriptor = GENERIC_EFFECT_DESCRIPTORS[effect.type];
+      if (effect.type === aliens.amiba?.EFFECT_TYPES?.RESOLVE_REGION_REWARD) {
+        if (!["orange", "red", "blue"].includes(options.region)) {
+          return fail("AMIBA_REGION_INVALID", "阿米巴区域奖励缺少有效颜色");
+        }
+        const alienState = getWorkingSlice(root, "aliens");
+        const symbols = aliens.amiba.listSymbolsInRegion(alienState, options.region);
+        const awarded = awardAmibaSymbols(root, actor, symbols);
+        if (!awarded.ok) return awarded;
+        const resolved = aliens.amiba.resolveRegionReward(alienState, options.region);
+        if (!resolved.ok) return resolved;
+        return cardEffectResult(state, root, sessionEffect, {
+          irreversible: awarded.irreversible,
+          events: resolved.results.map((entry) => ({
+            type: "amiba_symbol_resolved", symbolId: entry.symbolId,
+            slotId: entry.slotId, region: options.region,
+          })),
+          history: { region: options.region, symbolIds: symbols.map((entry) => entry.symbolId) },
+        });
+      }
       if (descriptor.decisionKind) {
         const choices = listGenericChoices(root, sessionEffect);
         if (!choices.length) {
@@ -1787,11 +1833,12 @@
         return [...orbitChoices, ...landChoices];
       }
       if (effect.type === aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) {
-        // 阿米巴区域 symbol 奖励：让玩家选择结算区域内哪个细胞器（symbol）。
-        // 同一区域最多结算 3 次（蓝/红/橙各 3 个细胞器位），到达上限不再提供选择。
+        // 仅用于卡牌的单细胞器图标；旧错误区域pending不能被当作单选继续恢复。
+        if (Number(sessionEffect.payload?.maxSettles) > 1 || Number(sessionEffect.payload?.settledCount) > 0) {
+          throw new Error("AMIBA_LEGACY_REGION_DECISION: 旧区域奖励选择已失效，请从区域结算前恢复");
+        }
         const region = options.region;
         if (!region) return [];
-        if ((Number(sessionEffect.payload?.settledCount) || 0) >= 3) return [];
         const symbols = aliens.amiba.listSymbolsInRegion(getWorkingSlice(root, "aliens"), region);
         return symbols.map((entry) => (
           makeChoice(
@@ -2094,65 +2141,23 @@
         return resolvePlanet(state, sessionEffect, choice, workingContext, actionType);
       }
       if (effect.type === aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) {
-        // 结算玩家选中的阿米巴细胞器（symbol）：移动 + 发放奖励
+        // 单细胞器图标：只发所选符号的一次奖励，再移动，不追加区域选择。
         const alienState = getWorkingSlice(root, "aliens");
+        const symbol = aliens.amiba.getSymbolEntry(alienState, legal.target.slotId);
+        const awarded = awardAmibaSymbols(root, actor, [{
+          ...symbol, reward: aliens.amiba.getSymbolReward(legal.target.symbolId),
+        }]);
+        if (!awarded.ok) return awarded;
         const resolved = aliens.amiba.resolveSymbolAtSlot(alienState, legal.target.slotId);
         if (!resolved?.ok) return resolved;
-        const reward = resolved.reward || {};
-        let irreversible = null;
-        if (reward.gain) players.gainResources(actor, reward.gain, "alienEffectScore");
-        const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
-        for (let dataIndex = 0; dataIndex < dataCount; dataIndex += 1) {
-          const gained = data.gainData(actor, { source: "amiba_region_reward", root });
-          if (!gained.ok) return gained;
-        }
-        const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
-        if (drawCount > 0) {
-          const drawCtx = cards.createCardDrawContext(
-            getWorkingSlice(root, "cards"),
-            getWorkingSlice(root, "players"),
-            () => nextCommittedRandom(root),
-            { root },
-          );
-          for (let drawIndex = 0; drawIndex < drawCount; drawIndex += 1) {
-            const drawn = drawCtx.blindDraw(actor);
-            if (!drawn.ok) return drawn;
-          }
-        }
-        if (drawCount > 0) {
-          irreversible = { code: "hidden_card_draw", reason: "阿米巴细胞器奖励盲抽翻开隐藏牌" };
-        }
-        // 选细胞器的顺序影响最终位置：结算一个后若区域内还有细胞器位，
-        // 继续让玩家选择下一个（每结算一个 symbol 就移动一次）。
-        // 结算次数上限由来源决定：放置痕迹/移除痕迹触发区域结算 maxSettles=3
-        // （蓝/红/橙各 3 个细胞器位）；卡牌任务奖励（如阿米巴1拿科技）默认 1 个。
-        const spawnedEffects = [];
-        const settledCount = Math.max(0, Number(sessionEffect.payload?.settledCount) || 0) + 1;
-        const maxSettles = Math.max(1, Number(sessionEffect.payload?.maxSettles) || 1);
-        if (settledCount < maxSettles && aliens.amiba.listSymbolsInRegion(alienState, legal.target.region).length) {
-          spawnedEffects.push({
-            priority: "direct",
-            effect: {
-              type: genericEffectRuntimeType(aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD, true),
-              kind: "decision",
-              decisionKind: "choose_target",
-              ownerId: actor.id,
-              payload: {
-                ...clone(sessionEffect.payload),
-                settledCount,
-              },
-            },
-          });
-        }
         return cardEffectResult(state, root, sessionEffect, {
-          spawnedEffects,
           events: [{
             type: "amiba_symbol_resolved",
             symbolId: resolved.symbolId,
             slotId: legal.target.slotId,
             region: legal.target.region,
           }],
-          irreversible,
+          irreversible: awarded.irreversible,
           historyType: "card_effect_decision",
           history: { choiceId: legal.target.choiceId, symbolId: resolved.symbolId },
         });
@@ -2172,24 +2177,20 @@
         if (!removed.ok) return removed;
         const region = legal.target.region || removed.reward?.region || null;
         const spawnedEffects = [];
-        // 统一区域结算：移除痕迹后让玩家逐个选择该区域细胞器（symbol），
-        // 选择顺序决定 symbol 移动后的位置。
+        // 移除哪个痕迹仍由玩家选择；该区域奖励是确定性结算。
         if (region && aliens.amiba.listSymbolsInRegion(alienState, region).length) {
           spawnedEffects.push({
             priority: "direct",
             effect: {
-              type: genericEffectRuntimeType(aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD, true),
-              kind: "decision",
-              decisionKind: "choose_target",
+              type: genericEffectRuntimeType(aliens.amiba.EFFECT_TYPES.RESOLVE_REGION_REWARD),
+              kind: "effect",
               ownerId: actor.id,
               payload: {
                 cardEffect: {
-                  type: aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD,
+                  type: aliens.amiba.EFFECT_TYPES.RESOLVE_REGION_REWARD,
                   options: { region },
                 },
                 cardInstanceId: null,
-                // 移除痕迹结算区域：结算区域内全部细胞器（最多 3 个）
-                maxSettles: 3,
               },
             },
           });
@@ -2421,6 +2422,7 @@
       [cardEffects.EFFECT_TYPES.RETURN_PLAYED_CARD_TO_HAND_IF]: {},
       [cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND]: { decisionKind: "choose_card" },
       [aliens.amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD]: { decisionKind: "choose_target" },
+      [aliens.amiba?.EFFECT_TYPES?.RESOLVE_REGION_REWARD]: {},
       [aliens.amiba?.EFFECT_TYPES?.REMOVE_TRACE_FOR_REGION_REWARD]: { decisionKind: "choose_target" },
       [aliens.chong?.EFFECT_TYPES?.CHONG_LAND_FOR_PICKUP]: { decisionKind: "choose_target" },
       [aliens.chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP]: { decisionKind: "choose_target" },

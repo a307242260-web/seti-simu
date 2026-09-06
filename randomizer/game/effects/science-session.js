@@ -1580,27 +1580,23 @@
             },
           });
         }
-        // 阿米巴痕迹区域奖励：让玩家逐个选择该区域细胞器（symbol），选择顺序
-        // 影响 symbol 移动后的位置。统一走 play-domain 的 CHOOSE_SYMBOL_REWARD
-        // 决策（card_play_domain_effect:decision:...，跨域 spawn，与阿米巴牌效果同一入口）。
+        // 阿米巴区域奖励：锁定区域内全部符号领奖一次，再按固定方向移动。
+        // 与移除痕迹共用play-domain的确定性Effect，不生成逐符号Decision。
         if (result.reward?.region) {
           const alienState = getWorkingSlice(root, "aliens");
           if (aliens.amiba.listSymbolsInRegion(alienState, result.reward.region).length) {
             spawnedEffects.push({
               priority: "direct",
               effect: {
-                type: "card_play_domain_effect:decision:amiba_choose_symbol_reward",
-                kind: "decision",
-                decisionKind: "choose_target",
+                type: "card_play_domain_effect:effect:amiba_resolve_region_reward",
+                kind: "effect",
                 ownerId: effect.ownerId,
                 payload: {
                   cardEffect: {
-                    type: aliens.amiba.EFFECT_TYPES.CHOOSE_SYMBOL_REWARD,
+                    type: aliens.amiba.EFFECT_TYPES.RESOLVE_REGION_REWARD,
                     options: { region: result.reward.region },
                   },
                   cardInstanceId: null,
-                  // 放置痕迹触发区域结算：结算区域内全部细胞器（最多 3 个）
-                  maxSettles: 3,
                 },
               },
             });

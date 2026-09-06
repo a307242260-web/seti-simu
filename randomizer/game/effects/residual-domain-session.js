@@ -1137,8 +1137,8 @@
             runezu.gainPlayerSymbol(player, symbolId);
           }
         } else if (effect.type === "amiba_choose_symbol_reward") {
-          // 阿米巴区域 symbol 奖励：转成玩家选择决策（选该区域哪个细胞器结算），
-          // 与打牌路径一致，不再自动结算全部。
+          // 阿米巴卡牌单细胞器图标：转成区域内任选一个的决策，与打牌路径一致。
+          // 痕迹的区域全部奖励由独立确定性 Effect 负责。
           spawnedEffects.push({
             priority: "direct",
             effect: {

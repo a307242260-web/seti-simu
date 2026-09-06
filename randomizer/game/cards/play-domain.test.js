@@ -686,10 +686,18 @@ function runCardLandGrantsStandardPlanetRewards() {
   composition.dispose();
 }
 
-function runAmibaCardTriggersRegionReward() {
-  // amiba_0（3 数据 + 蓝色区域 symbol 奖励）：打出阿米巴牌必须触发蓝色区域结算
+function setAmibaSymbolLayout(root, slots) {
+  root.aliens.amiba.symbolSlots = slots;
+  root.aliens.amiba.symbolsById = Object.fromEntries(Object.entries(slots).map(([slotId, symbolId]) => (
+    [symbolId, { ...root.aliens.amiba.symbolsById[symbolId], symbolId, slotId }]
+  )));
+}
+
+function runAmibaSingleSymbolReward() {
+  // 单细胞器图标必须保留选择，不能变成区域全部奖励。
   const root = createCanonicalState("amiba_0.webp");
   const amibaCard = aliens.amiba.createAlienCard(0, 1);
+  amibaCard.id = "instance:amiba_0.webp";
   root.players.players[0].hand = [amibaCard];
   root.players.players[0].resources.handSize = 1;
   // 揭示阿米巴（槽位1）：初始 symbol 槽含 blue_3
@@ -700,20 +708,29 @@ function runAmibaCardTriggersRegionReward() {
     () => 0.5,
   );
   assert.equal(initialized.ok, true);
-  assert.ok(
-    aliens.amiba.getSymbolEntry(root.aliens, "blue_3")?.symbolId,
-    "阿米巴揭示后 blue_3 槽位必须有 symbol",
-  );
+  setAmibaSymbolLayout(root, { blue_1: "symbol_3", blue_2: "symbol_5" });
   const { composition } = createIntegratedComposition("amiba_0.webp", { state: root });
   let result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
   assert.equal(result.ok, true, JSON.stringify(result));
   let guard = 0;
-  let blueRewardSeen = false;
+  let symbolChoices = 0;
   while (result.ok && composition.inspect().phase === "awaiting_input") {
     const decision = composition.inspect().session.decision;
     const choices = decision.choices;
-    if (choices.some((candidate) => /蓝色|blue|symbol/i.test(String(candidate.summary || "")))) {
-      blueRewardSeen = true;
+    if (choices.some((candidate) => candidate.target.symbolId)) {
+      symbolChoices += 1;
+      assert.deepEqual(choices.map((candidate) => candidate.target.symbolId), ["symbol_3", "symbol_5"]);
+      const legacyEnvelope = structuredClone(composition.lifecycle.save().envelope);
+      legacyEnvelope.session.session.queue[0].payload.maxSettles = 3;
+      const restored = createIntegratedComposition("amiba_0.webp").composition;
+      assert.equal(restored.lifecycle.restore(legacyEnvelope, { silent: true }).ok, true);
+      const rejected = restored.inputPort.submitDecision({
+        decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,
+        ownerId: decision.ownerId, choice: choices[0],
+      });
+      assert.equal(rejected.ok, false);
+      assert.match(rejected.failure.message, /AMIBA_LEGACY_REGION_DECISION/);
+      restored.dispose();
     }
     result = composition.inputPort.submitDecision({
       decisionId: decision.decisionId,
@@ -734,14 +751,54 @@ function runAmibaCardTriggersRegionReward() {
     Number(player.resources.availableData) + Number(player.resources.placedData || 0) >= 3,
     "amiba_0 必须给 3 个数据",
   );
-  // 蓝色区域结算后 blue_3 的 symbol 应被消费/移动
-  const blueSlotEntry = aliens.amiba.getSymbolEntry(committed.aliens, "blue_3");
-  assert.ok(
-    !blueSlotEntry || blueSlotEntry.symbolId == null || blueRewardSeen,
-    "amiba_0 蓝色区域 symbol 奖励必须被触发",
-  );
+  assert.equal(symbolChoices, 1);
+  assert.equal(player.resources.score, 4);
+  assert.deepEqual(committed.aliens.amiba.symbolSlots, { blue_2: "symbol_5", red_1: "symbol_3" });
   composition.dispose();
 }
+
+function runAmibaRemoveTraceRegionReward() {
+  for (const [traceType, region, nextOuter, nextInner] of [
+    ["yellow", "orange", "blue_1", "red_3"],
+    ["blue", "blue", "red_1", "orange_3"],
+    ["pink", "red", "orange_1", "blue_3"],
+  ]) {
+    for (const empty of [false, true]) {
+      const root = createCanonicalState("amiba_3.webp");
+      const actor = root.players.players[0];
+      actor.hand = [{ ...aliens.amiba.createAlienCard(3, 1), id: "instance:amiba_3.webp" }];
+      root.aliens.aliens = { 1: { revealed: true, alienId: aliens.amiba.ALIEN_ID, traces: {} } };
+      aliens.amiba.initializeAmibaReveal(root.aliens, 1, actor, () => 0.5);
+      assert.equal(aliens.amiba.placeAmibaTrace(root.aliens, 1, traceType, 2, actor, { sequence: 1 }).ok, true);
+      setAmibaSymbolLayout(root, empty ? {} : {
+        [`${region}_1`]: "symbol_3", [`${region}_2`]: "symbol_5", [`${region}_3`]: "symbol_1",
+      });
+      const { composition } = createIntegratedComposition("amiba_3.webp", { state: root });
+      let result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+      assert.equal(result.ok, true, JSON.stringify(result));
+      const decision = composition.inspect().session.decision;
+      const choice = decision.choices.find((entry) => entry.target.traceType === traceType && entry.target.position === 2);
+      assert.ok(choice, "移除痕迹保留真实目标选择");
+      result = composition.inputPort.submitDecision({
+        decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,
+        ownerId: decision.ownerId, choice,
+      });
+      assert.equal(result.ok, true, JSON.stringify(result));
+      assert.equal(result.phase, "completed", "区域奖励不得追加细胞器选择");
+      const committed = composition.stateSourcePort.getSnapshot();
+      assert.equal(committed.players.players[0].resources.score, empty ? 0 : 6);
+      assert.equal(committed.players.players[0].resources.publicity, empty ? 0 : 1);
+      assert.equal(aliens.amiba.countTraceMarkers(committed.aliens, actor, traceType), 0);
+      assert.deepEqual(committed.aliens.amiba.symbolSlots, empty ? {} : {
+        [`${region}_2`]: "symbol_3", [nextOuter]: "symbol_5", [nextInner]: "symbol_1",
+      });
+      composition.dispose();
+    }
+  }
+}
+
+runAmibaSingleSymbolReward();
+runAmibaRemoveTraceRegionReward();
 
 runFixedScan();
 runColorDecisions();

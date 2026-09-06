@@ -117,6 +117,7 @@
   });
   const EFFECT_TYPES = Object.freeze({
     CHOOSE_SYMBOL_REWARD: "amiba_choose_symbol_reward",
+    RESOLVE_REGION_REWARD: "amiba_resolve_region_reward",
     REMOVE_TRACE_FOR_REGION_REWARD: "amiba_remove_trace_for_region_reward",
   });
 

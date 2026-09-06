@@ -106,6 +106,11 @@ Production地球坐标及探测/正式行动context通过共享太阳系内核�
 actionChain长度表示提交数。非终局条件决策的同价值排序使用该计数，终局不使用；它不
 写入正式游戏状态或改变replay/plan结构。
 
+阿米巴区域奖励在正式Effect中一次完成，锁定开始时的符号，分别领奖一次后固定移动。
+放置/移除痕迹不再生成逐符号choose_target；卡牌“任选一个”仍产生Decision。旧错误
+区域pending若携带多次结算字段会显式报AMIBA_LEGACY_REGION_DECISION，不能按新规则
+续接，需从区域结算前恢复。完整旧实验存档保留，不将旧多领奖轨迹当作新规则基线。
+
 搜索叶`terminalReason=goal-completed`表示目标及附带Decision已经完成，但搜索仍可继续
 下一目标；这是已执行路径的真实结果，不是尚待执行的frontier。后续触顶时仍可用于
 评估，outcome的pruned/低置信度标记保留。次级搜索已取消结束叶饱和计数；此叶不改变

@@ -251,6 +251,9 @@ Policy 输出只包含版本化 provenance、所选 `actionId` 与诊断。Polic
 
 Decision 链只通过 active Effect Session 暴露的标准 choice 继续。主 Action 产生的必要 Decision
 必须沿同一生产提交链结算到下一稳定策略边界；`awaiting_decision` 不是 leaf，不进入估值。
+阿米巴区域奖励属于确定性Effect：结算开始时区域内每个符号领奖一次后固定移动，不再
+生成排列搜索或重复领奖；卡牌单符号奖励保留真实Decision。计划只记录痕迹/卡牌等
+正式输入，区域奖励随该输入结算并保留真实事件及盲抽屏障，不构造虚假的choose_target。
 分支数/深度超过安全上限时返回 `unresolved`，不把已结算一半的状态伪装为 leaf。Simulation 随机
 分支从 root identity 与 actionId 派生独立 RNG；一旦消费随机数，outcome 标为
 `low-confidence/COUNTERFACTUAL_RANDOM_SAMPLE`。Browser 无法安全聚合随机期望时同样返回

@@ -1,6 +1,6 @@
 # 阿米巴实现说明
 
-机制来源：`face_detail.md`。通用外星人生命周期见 `docs/alien-design.md`。
+机制来源：`rules/seti-alien-species-space-agencies-zh-s.pdf`及英文版第5–6页（CGE官方外星人规则册）。通用外星人生命周期见 `docs/alien-design.md`。
 
 ## 机制入口
 
@@ -28,7 +28,9 @@
 - `symbol_3` 奖励为 4 分。
 - `symbol_4` 奖励为 1 盲抽。
 - `symbol_5` 奖励为 2 分。
-- 区域奖励按区域内已占用 symbol 的顺序逐个结算并移动 symbol。
+- 区域奖励锁定结算开始时该区域全部 symbol，每个只领奖一次，然后同时按箭头移动；外圈后位先计算可实现相同落点，移动后仍在本区域的 symbol 不再领奖。
+- 放置痕迹与移除痕迹共用 `RESOLVE_REGION_REWARD` 确定性 Effect；不产生逐 symbol 选择。卡牌单细胞器图标仍用 `CHOOSE_SYMBOL_REWARD`，任选一个且仅结算一次。
+- 资源、数据实体与盲抽共用正式发奖入口；盲抽标记隐藏信息屏障。旧错误区域选择中的多次结算 pending 显式拒绝，需从区域结算前恢复。
 - 默认坐标定义在 `AMIBA_SYMBOL_MARKER_SLOTS`，symbol 默认显示倍率为 `AMIBA_SYMBOL_DISPLAY_SCALE`。
 - 揭示时随机 symbol 初始化属于不可逆边界；单次 symbol 移动本身是确定性结算，应使用快照撤销。
 
