@@ -1,0 +1,160 @@
+diff --git a/docs/ai-design.md b/docs/ai-design.md
+index a15fc990..962f5db7 100644
+--- a/docs/ai-design.md
++++ b/docs/ai-design.md
+@@ -497,7 +497,11 @@ Production的地球坐标、探测路线context及正式Action context直接读
+ 弃牌结算读取当前正式Effect的`decisionContext.count/selected`，不按decisionId另建
+ 已选牌缓存，不硬编码2张。每次点选更新正式Decision后重新读取状态，选满才确认；正式
+ 上下文缺失或选择状态不一致时显式失败。原有排空上限与隐藏信息捕获仍生效。
+-除正式弃牌代表路线和计算机唯一选位外，仅单项支付/交易精选可直接排空；多个费用或牌面
++P2候选新增数据选位共识：place_data起手后的第一次数据决策，已绑定分析、数据收入或
++科技目标的所有来源均返回同一合法单选且绑定不变时，复用正式selector并在当前fork
++提交。条件根、奖励待完成、空结果和来源冲突不合并；收入/精选牌仍保留正式决策。
++该候选尚未通过性能验收，见reports/iteration/data-settlement-p2-design-20260906.md。
++除正式弃牌代表路线、计算机唯一选位和上述需求共识外，仅单项支付/交易精选可直接排空；多个费用或牌面
+ 选择回到selector分组排序后执行，composition不固定取首项。弃牌/交易的手牌代表选择仍为
+ 既有策略近似，不等于完整枚举全部手牌用途。
+ 
+diff --git a/docs/rl-simulation-env.md b/docs/rl-simulation-env.md
+index f29e1b2f..55146c31 100644
+--- a/docs/rl-simulation-env.md
++++ b/docs/rl-simulation-env.md
+@@ -25,6 +25,7 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
+ - `createCheckpoint()` / `loadCheckpoint()`：保存和恢复当前 composition envelope、RNG 与 replay cursor。
+ - `runHeuristicPolicyDecision()` / `runOfflineTeacherDecision()`：经机器人玩家协调器（`machine-player-coordinator.js`）编排——裸调共享 composition 读边界、计划复用优先、未命中调用 Heuristic 决策函数（`heuristic-decision-function.js`，直调 Policy）、提交共享 `inputPort`（零转换）；replay/reward 记账由协调器 `recordStep` 钩子补做（env 提供实现，记录原生 action）。返回值含 `actionOutcomes`、`policyDecision` 与 `plan`。计划复用默认开（`planContinuationFastPath`，显式传 `false` 关闭）；新回合复用 `planNewTurnReuse` 默认开（`false` 关闭后新回合一律重新搜索）。
+   返回的`searches`按本次实际evaluate记录`{kind: control|strategic, diagnostics}`；计划复用明确返回空数组，teacher同样透传本次统计。`getCounterfactualDiagnostics()`仅表示最后一次evaluate，不能用它累计整局搜索；evaluate入口清空旧值，早退无诊断时为null。统计不进入存档或PolicyDecision schema。
++  P2候选通过共享Heuristic的`secondaryAgentSearch.selectDataSettlement`合并需求一致的数据选位，仍逐次正式提交并记录计划；不新增环境专用执行入口。候选尚未通过性能验收，不作为已验收优化。
+   **策略估值统一入口**：旧 `evaluateActionOutcomes()` 入口已删除——评估动作必须用 `runHeuristicPolicyDecision` 返回的 `actionOutcomes`（与决策函数同一搜索参数：secondary-agent 目标引导单一路径），不存在第二套搜索参数。反事实原语（任意候选评估）不是 env API：单动作结算链验证经规则层测试（`simulation-rule-composition.test.js` 或生产 composition 的 `counterfactualPort.evaluate`）。
+ - `getDiagnostics()` / `getCounterfactualDiagnostics()`：只读性能诊断。
+ - `dispose()`：释放单局环境。
+diff --git a/randomizer/game/ai/expected-score-evaluator.js b/randomizer/game/ai/expected-score-evaluator.js
+index 27cd3e30..cc9db532 100644
+--- a/randomizer/game/ai/expected-score-evaluator.js
++++ b/randomizer/game/ai/expected-score-evaluator.js
+@@ -1159,6 +1159,37 @@
+     return [];
+   }
+ 
++  // 仅place_data起手后的需求选位共识；不代替外层目标推进或奖励选择。
++  function selectSecondaryAgentDataSettlement(input = {}) {
++    if (input.currentAction?.family !== "place_data" || !input.origins?.length
++      || !input.legalSuccessors?.length || !input.legalSuccessors.every(action => (
++        action.family === "choose_target"
++        && ["computer", "blueBonus"].includes(action.target?.target)
++        && String(action.target?.choiceId || "").startsWith("data:")
++      ))) return null;
++    let choice = null;
++    let prunedChoiceCount = 0;
++    for (const origin of input.origins) {
++      const target = String(origin.routeTargetId || "");
++      if (origin.rootWasConditional || origin.goalCompletionPending
++        || !(target === DATA_ANALYZE_ROUTE_TARGET || target.startsWith("tech:gain:")
++          || (target.startsWith("income:gain:") && origin.routePlanId === "income:data:computer-slot-4"))) return null;
++      const selected = selectSecondaryAgentSuccessors({ ...input, ...origin,
++        actionChain: [...(origin.chain || []), input.currentAction.actionId],
++        focalProxyDepth: origin.proxyDepth || 0,
++      });
++      if (selected.length !== 1) return null;
++      const candidate = selected[0];
++      if (candidate.routeTargetId !== origin.routeTargetId
++        || candidate.routePlanId !== origin.routePlanId
++        || JSON.stringify(candidate.routeResultTargetIds || []) !== JSON.stringify(origin.routeResultTargetIds || [])
++        || (choice && choice.actionId !== candidate.actionId)) return null;
++      choice = candidate;
++      prunedChoiceCount += Number(candidate.targetEquivalentChoiceCount) || 0;
++    }
++    return { actionId: choice.actionId, prunedChoiceCount };
++  }
++
+   function actionMatchesProbeStep(action, step) {
+     if (!action || !step) return false;
+     if (action.family !== step.family) return false;
+@@ -3437,5 +3468,6 @@
+     evaluateAction: evaluateOutcome,
+     evaluateOutcome,
+     selectSecondaryAgentSuccessors,
++    selectSecondaryAgentDataSettlement,
+   });
+ });
+diff --git a/randomizer/game/ai/heuristic-decision-function.js b/randomizer/game/ai/heuristic-decision-function.js
+index 1c2184b0..a5bf8eba 100644
+--- a/randomizer/game/ai/heuristic-decision-function.js
++++ b/randomizer/game/ai/heuristic-decision-function.js
+@@ -143,6 +143,7 @@ function createHeuristicDecisionFunction(options = {}) {
+         rolloutVersion: expectedScoreEvaluator.SECONDARY_AGENT_ROLLOUT_VERSION,
+         selectRootTargets: expectedScoreEvaluator.enumerateSecondaryAgentRootTargets,
+         selectSuccessors: expectedScoreEvaluator.selectSecondaryAgentSuccessors,
++        selectDataSettlement: expectedScoreEvaluator.selectSecondaryAgentDataSettlement,
+         selectRouteTarget: expectedScoreEvaluator.selectSecondaryAgentRouteTarget,
+         completesRouteTarget: expectedScoreEvaluator.completesSecondaryAgentRouteTarget,
+         advanceRoutePlan: expectedScoreEvaluator.advanceSecondaryAgentRoutePlan,
+diff --git a/randomizer/game/rule-composition.js b/randomizer/game/rule-composition.js
+index 31a2e268..6881c10d 100644
+--- a/randomizer/game/rule-composition.js
++++ b/randomizer/game/rule-composition.js
+@@ -1798,8 +1798,8 @@
+           // 爆炸 → 暴力搜索搜不完 → 僵局。这里在**同一节点内**连续执行纯结算
+           // 决策到"下一个主行动决策"或"策略级选择"边界，整链只算 1 个节点。
+           // 策略级决策（探测目标/科技/外星痕迹位置等价值相关 choose_target /
+-          // choose_card）**不折叠**（折叠会断链——协调器路径 rootObservation 缺
+-          // requirements 无法选最优），保持展开让价值进入搜索。
++          // choose_card）保留分支；数据选位仅在下方正式需求选择器逐来源达成
++          // 共识时合并，不能固定首项代替需求。
+           let drainGuard = 0;
+           let executionStepCount = 1; // 当前节点已成功提交的根动作/决策。
+           let representativeChoice = false;
+@@ -1818,8 +1818,7 @@
+             // 快速行动，从 0 填到收入直接连续填 4 个数据，不需要占据 4 个节点，
+             // 选位折叠进 place_data 节点）。
+             // 策略级选择（探测目标/科技/外星痕迹位置等多选一 choose_target/
+-            // choose_card）**不折叠**——折叠会断链（协调器路径 rootObservation 缺
+-            // requirements，selectSuccessors 无法选最优 → 效果结算无叶 → unresolved）。
++            // choose_card）保留原路径；数据选位的额外合并需要正式需求共识。
+             const drainable = drainChoices.length > 0 && drainChoices.every((choice) => (
+               (choice.family === "choose_payment" && (
+                 drainChoices.length === 1
+@@ -1837,7 +1836,27 @@
+                 && choice.target?.choiceId === "data:computer"
+               )
+             ));
+-            if (!drainable) break;
++            let demandSettlement = null;
++            if (!drainable && executionStepCount === 1 && current.family === "place_data"
++              && typeof secondaryAgentSearch?.selectDataSettlement === "function") {
++              const projected = composition.projection({ ...(viewer || {}), cheap: true }).state;
++              const branchObservation = planInformationMasked
++                ? sanitizeHiddenInformationObservation(rootObservation, projected, planInformationBarrier)
++                : projected;
++              const legalSuccessors = planInformationMasked
++                ? sanitizeHiddenInformationActions(rootObservation, drainChoices).actions : drainChoices;
++              try {
++                demandSettlement = secondaryAgentSearch.selectDataSettlement({
++                  currentAction: current, branchObservation, legalSuccessors,
++                  focalSeatId, maxProxyDepth, origins: node.origins,
++                });
++              } catch (_error) {
++                // 不在共享执行层改写selector错误归属。停在当前决策，外层原
++                // selectSuccessors会对相同输入逐来源重算并由markFailure显式报告。
++                break;
++              }
++            }
++            if (!drainable && !demandSettlement) break;
+             const discardCards = drainChoices.filter((choice) => (
+               choice.family === "choose_payment" && choice.target?.kind === "discard-hand-card"
+             ));
+@@ -1868,7 +1887,14 @@
+                 }
+               }
+             } else {
+-              settleChoice = drainChoices[0];
++              settleChoice = demandSettlement
++                ? drainChoices.find(choice => choice.actionId === demandSettlement.actionId)
++                : drainChoices[0];
++              if (demandSettlement) {
++                if (!settleChoice) throw new Error("COUNTERFACTUAL_DATA_SETTLEMENT_STALE");
++                targetEquivalentChoicePrunedCount += demandSettlement.prunedChoiceCount;
++                if (demandSettlement.prunedChoiceCount > 0) representativeChoice = true;
++              }
+             }
+             const settlePlanStep = captureStep(settleChoice);
+             const settleResult = composition.inputPort.submitDecision({

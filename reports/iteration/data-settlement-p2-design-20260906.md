@@ -1,5 +1,14 @@
 # P2：需求确定的数据选位结算方案（2026-09-06）
 
+最新状态：按用户指令暂停填数据，优先阿米巴。未验收生产候选已保存为
+data-settlement-p2-paused-20260906.patch并移出工作树，不用于后续阿米巴实验。
+下文为候选设计和历史证据，不是当前生产契约。
+
+补证：冲突重放漏掉宏chain折叠的computer第1格提交和后继place_data；补齐后
+分析选blue1、收入选computer的冲突与边界判断通过。随后RNG元数据断言失败：
+1702029963→1428043238；因此仅以业务函数不直接调用random来证明RNG等价不充分。
+见data-settlement-p2-contract-20260906-complete.json；未修改规则以迎合断言。
+
 生产基点06738145，证据HEAD33299335。目的：省掉已经由需求选择器确定的数据
 选位重入队列及fork恢复成本，不统一不同目标的资源取舍，不调整搜索预算或权重。
 第一验收输入为棕52。全局数据选位仅1.75%，若局部实耗收益不足，不扩成搜索框架重写。
@@ -18,7 +27,7 @@
 | 计算机/蓝槽输入 | science-session PLACE_DATA → abilities.placeData → data规则 | 唯一inputPort提交；保留token序号、资源、槽位、分数与事件 |
 | 收入选牌/精选牌 | science-session INCOME/PICK_CARD | 新合并只接受data:computer/data:blueBonus选位，不吞掉后续choose_card |
 | 嵌套奖励/揭示 | 正式Effect队列及既有captureStep/retainStep | 每次正式提交前采集计划，提交后累积事件/hidden barrier；遇非data决策继续原排空判定 |
-| 连续填数据 | 既有nextPlaceData循环 | 沿用现有行动合法性与规则提交；每次新数据选位重新调用需求selector，不缓存第一次的资源选择 |
+| 连续填数据 | 既有nextPlaceData循环 | 本轮只新增起手第一次选位的共识，后续沿用原规则，不复用第一次的资源选择 |
 
 ## 为什么不用执行前的过期目标猜选位
 
@@ -53,7 +62,7 @@ science-session的place_data起手只排入PLACE_DATA决策，不消耗数据或
 合并会改变宏深度、actionChain和预算内树覆盖，不能要求旧叶ID逐字相等或宣称
 所有搜索排序不变；真实输入计划必须完整、资源及奖励正确，固定盘面均分须至少108.5。
 每次随机分支种子与隐藏信息处理必须明确：原独立选位节点会resetBranch，合并后
-不可未经证明改变含随机奖励路径的抽样。**RNG边界仍待闭合，尚不能写生产patch。**
+不可未经证明改变含随机奖励路径的抽样；实施前闭合见下文，不覆盖其他含随机输入。
 
 ## 可证伪验收
 
@@ -65,4 +74,31 @@ science-session的place_data起手只排入PLACE_DATA决策，不消耗数据或
   无显著收益，先解释是否预算空间被更多真实搜索占用，不以节点变少直接通过。
 - 单决策通过后提交并登记P2，再去重quick→full终局均分≥108.5；独立缺陷单列。
 
-状态：语义目录与执行方案已收敛；独立选位的RNG重置和错误来源归属仍是生产门禁。
+## 门禁闭合（实施前复核）
+
+science-session PLACE_DATA的完整执行闭包为abilities/data.placeData →
+data/state.placeDataToComputer → token移动/奖励描述 → appendResourceBonus或排入
+INCOME/PICK_CARD。没有抽牌或随机调用；listPickCardChoices只读取publicCards。
+随机补牌发生在后续choose_card提交，新合并不执行它；后继节点仍以同一正式
+envelope/action重置branch RNG。新合并因此只允许“place_data起手后第一次选位”，
+不扩大既有连续填数据循环的随机语义；已有循环继续按原规则执行。
+
+为保持原selector错误逐来源归属，新合并只消费无异常的共识；选择器异常必须返回
+原外层selectSuccessors路径，由原markFailure([origin])显式记录，不在执行层把它
+扩大到整个共享节点。实现需明确标注这是延迟到原错误owner报告，而非忽略错误。
+若后续状态不再对应异常输入，则不得继续折叠，应在当前边界退出执行。
+
+方案按以上范围冻结；测试仍需验证正式奖励边界与RNG不消耗，未完成不宣称通过。
+
+## 未提交候选进展
+
+生产候选已实现共识回调与既有排空链连接。棕52单决策：动作仍为place_data:50a9ac16，
+4096节点，choose_target981（旧1243），实际成功输入5837次，完整决策12197.84ms
+（旧10893.95ms）。15个计划输入可连续正式执行。仅该项不证明完整计划/奖励正确，
+也未通过实际提速门槛；不运行quick/full，不把节点分类减少当作提速。
+
+预算/统计unit通过。真实来源冲突验证两次未通过预设差异断言：直接根和按旧宏
+actionChain执行后，分析/收入均选computer；旧搜索诊断曾出现blue1/computer分歧。
+宏actionChain不是完整正式输入轨迹，是否缺少折叠输入或遮蔽上下文仍待核对，
+不能据此修改生产selector以迎合测试。失败证据保留data-settlement-p2-contract*
+记录。候选仍未提交、未验收；所有后续实验必须继续如实标明该状态。
