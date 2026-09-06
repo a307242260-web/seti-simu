@@ -1,0 +1,137 @@
+{
+  "scope": "真实433根状态三张合法牌逐个正式提交，不运行AI搜索",
+  "cases": [
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:5c83275d",
+        "actorId": "player-white",
+        "stateVersion": 218,
+        "decisionVersion": 12,
+        "target": {
+          "cardInstanceId": "card-76-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 1
+        },
+        "decision": null,
+        "summary": "b_140.webp"
+      },
+      "ok": true,
+      "phase": "completed",
+      "failure": null
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:2e224f59",
+        "actorId": "player-white",
+        "stateVersion": 218,
+        "decisionVersion": 12,
+        "target": {
+          "cardInstanceId": "card-77-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 2
+        },
+        "decision": null,
+        "summary": "b_17.webp"
+      },
+      "ok": true,
+      "pending": {
+        "schemaVersion": "seti-effect-session-v1",
+        "effectId": "effect-session-1:effect:5",
+        "groupId": "effect-session-1:group:5",
+        "groupKind": "spawned",
+        "type": "card_play_domain_effect:decision:card_move",
+        "kind": "decision",
+        "ownerId": "player-white",
+        "decisionKind": "choose_target",
+        "allowQuickActions": false,
+        "payload": {
+          "cardEffect": {
+            "id": "b17-move",
+            "type": "card_move",
+            "label": "1移动",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1,
+              "repeat": 1
+            },
+            "status": "pending"
+          },
+          "cardInstanceId": "card-77-0"
+        },
+        "source": {
+          "parentEffectId": "effect-session-1:effect:2",
+          "priority": "direct"
+        },
+        "groupIndex": 0
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:4910493e",
+        "actorId": "player-white",
+        "stateVersion": 218,
+        "decisionVersion": 12,
+        "target": {
+          "cardInstanceId": "card-78-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "handIndex": 3
+        },
+        "decision": null,
+        "summary": "b_58.webp"
+      },
+      "ok": true,
+      "pending": {
+        "schemaVersion": "seti-effect-session-v1",
+        "effectId": "effect-session-1:effect:5",
+        "groupId": "effect-session-1:group:5",
+        "groupKind": "spawned",
+        "type": "card_play_domain_effect:decision:card_move",
+        "kind": "decision",
+        "ownerId": "player-white",
+        "decisionKind": "choose_target",
+        "allowQuickActions": false,
+        "payload": {
+          "cardEffect": {
+            "id": "b58-move",
+            "type": "card_move",
+            "label": "1移动",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1,
+              "repeat": 1
+            },
+            "status": "pending"
+          },
+          "cardInstanceId": "card-78-0"
+        },
+        "source": {
+          "parentEffectId": "effect-session-1:effect:2",
+          "priority": "direct"
+        },
+        "groupIndex": 0
+      }
+    }
+  ],
+  "inspectionComplete": true
+}

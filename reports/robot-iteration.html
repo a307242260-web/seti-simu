@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-06T17:18:28.715Z",
+  "builtAt": "2026-09-06T17:39:51.244Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "61cc94af",
-  "currentBaseline": "alien-card-cancel-20260907",
+  "headCommit": "744c5cf9",
+  "currentBaseline": "projection-isolation-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,402 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "projection-isolation-20260907",
+      "name": "完整投影隔离修复（整体门槛未通过）",
+      "date": "2026-09-07",
+      "baseline": "alien-card-cancel-20260907",
+      "head": "744c5cf9",
+      "commits": [
+        {
+          "hash": "744c5cf9",
+          "date": "2026-09-07",
+          "subject": "隔离活跃会话完整投影快照，防止冻结后续规则状态"
+        }
+      ],
+      "summary": "活跃Session完整投影先复制再冻结，隔离仍需执行的规则状态并保持旧快照稳定",
+      "diffStat": "19 files changed, 5496 insertions(+), 11 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/capture-cancel-ranking-471-20260907.js",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-projection-freeze-471-20260907.js",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 13,
+          "deletions": 0
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/app/simulation-state-checkpoint.test.js",
+          "insertions": 28,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/alien-card-cancel-20260907/e81fab58.61cc94af.full.action-log.html",
+          "insertions": 2035,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-card-cancel-full-review-20260907.md",
+          "insertions": 57,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/cancel-ranking-471-20260907.json",
+          "insertions": 2243,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/cancel-ranking-input-471-20260907.v8.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/projection-freeze-471-20260907.json",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/projection-freeze-design-20260907.md",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/projection-freeze-fixed-471-20260907.json",
+          "insertions": 46,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/projection-isolation-decision-42-20260907.json",
+          "insertions": 12,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 425,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 425,
+          "deletions": 4
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 1
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "0eee8b82.744c5cf9.full.json",
+          "recordPath": "reports/research/0eee8b82.744c5cf9.full.json",
+          "mode": "full",
+          "steps": 562,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 376016,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "744c5cf9",
+          "createdAt": "2026-09-06T17:34:47.060Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "562步，正式终局109/88/118/107、均105.5，低于108.5；与61cc94af全部动作、终局完整状态及179次非时间搜索诊断相同。105127节点、129504次成功规则输入、21次满额，433仍有2次规则失败；376016ms。投影隔离行为验证通过，整体Goal未通过。",
+          "scores": {
+            "player-blue": 109,
+            "player-green": 88,
+            "player-brown": 118,
+            "player-white": 107
+          },
+          "avgScore": 105.5,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 109,
+              "base": 64,
+              "tile": 41,
+              "card": 4,
+              "tileScoresById": {
+                "a": 33,
+                "b": 8,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 9,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 11,
+                "orbitScore": 12,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 88,
+              "base": 68,
+              "tile": 20,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 0,
+                "cardEffectScore": 11,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 13,
+                "orbitScore": 18,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 5
+              }
+            },
+            "player-brown": {
+              "total": 118,
+              "base": 72,
+              "tile": 42,
+              "card": 4,
+              "tileScoresById": {
+                "a": 15,
+                "b": 6,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "chong_2.webp",
+                  "rule": {
+                    "kind": "chongTraceCount",
+                    "scorePer": 1
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 9,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 12,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 7,
+                "orbitScore": 3,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 11
+              }
+            },
+            "player-white": {
+              "total": 107,
+              "base": 51,
+              "tile": 38,
+              "card": 18,
+              "tileScoresById": {
+                "a": 32,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 32,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 18
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 5,
+                "orbitScore": 6,
+                "scanScore": 14,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-projection-isolation-20260907-744c5cf9-full-v279.json",
+          "reportPath": "reports/iteration/projection-isolation-20260907/0eee8b82.744c5cf9.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "0eee8b82.744c5cf9.full",
+            "path": "reports/iteration/projection-isolation-20260907/0eee8b82.744c5cf9.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "alien-card-cancel-20260907",
       "name": "外星人拿牌取消修复（效果未通过）",
@@ -601,7 +997,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

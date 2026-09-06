@@ -1,0 +1,74 @@
+{
+  "scope": "只读既有完整局；投影隔离行为等价与整体Goal门禁分开核验",
+  "sources": [
+    "reports/research/e81fab58.61cc94af.full.json",
+    "reports/research/0eee8b82.744c5cf9.full.json"
+  ],
+  "sameNonTimeDiagnostics": true,
+  "sameFinalState": true,
+  "sameReplay": true,
+  "scores": [
+    {
+      "playerId": "player-blue",
+      "total": 109
+    },
+    {
+      "playerId": "player-green",
+      "total": 88
+    },
+    {
+      "playerId": "player-brown",
+      "total": 118
+    },
+    {
+      "playerId": "player-white",
+      "total": 107
+    }
+  ],
+  "mean": 105.5,
+  "scoreGatePassed": false,
+  "measurements": [
+    {
+      "commit": "61cc94af",
+      "steps": 562,
+      "wallMs": 380303,
+      "searches": 179,
+      "nodes": 105127,
+      "submissions": 129504,
+      "fullBudgetSearches": 21,
+      "failures": [
+        {
+          "step": 433,
+          "failures": {
+            "EFFECT_EXECUTION_FAILED": 2
+          }
+        }
+      ]
+    },
+    {
+      "commit": "744c5cf9",
+      "steps": 562,
+      "wallMs": 376016,
+      "searches": 179,
+      "nodes": 105127,
+      "submissions": 129504,
+      "fullBudgetSearches": 21,
+      "failures": [
+        {
+          "step": 433,
+          "failures": {
+            "EFFECT_EXECUTION_FAILED": 2
+          }
+        }
+      ]
+    }
+  ],
+  "sha256": {
+    "reports/research/e81fab58.61cc94af.full.json": "79eac30f00f015853ce4edebd46bb62a874692a06f0d92b665f89696f033a4fa",
+    "reports/research/0eee8b82.744c5cf9.full.json": "55bfd5769fa23c71b4c6fbdc933d753ed7fe79312a49de306e5ca1cad65203e3",
+    "seti-saves/seti-save-research-alien-card-cancel-20260907-61cc94af-full-v279.json": "c0ee6ef9e78f93895b10d352981c4c933a7c9f95e905d2a761fadf9521726ccb",
+    "seti-saves/seti-save-research-projection-isolation-20260907-744c5cf9-full-v279.json": "95f3edf6235539e6e3661b6e26601740707556bce5b50dbcc03a04c8138f620a"
+  },
+  "behaviorParityPassed": true,
+  "goalPassed": false
+}
