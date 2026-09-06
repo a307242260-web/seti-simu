@@ -1,0 +1,206 @@
+{
+  "scope": "真实42正式公司两阶段的计划证据接口审查；目标标签为拟接入方案，不冒充当前搜索已输出这些目标或当前计划已发生错误复用",
+  "input": "reports/iteration/company-movement-input-42-20260906.json",
+  "inputSha256": "4225620b390098056682f64e81e859343d5a3d64afaf4e8f66a46becff786122",
+  "cases": [
+    {
+      "first": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:b849344b",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:out",
+          "rocketId": 1,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 1 向外"
+      },
+      "second": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:9d684f87",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:cw",
+          "rocketId": 2,
+          "deltaX": 1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "cw"
+        },
+        "decision": null,
+        "summary": "移动 2 顺时针"
+      },
+      "ownerPayload": {
+        "companyId": "寰宇动力",
+        "abilityId": "huanyu_free_moves",
+        "step": "free_move",
+        "remaining": 1,
+        "usedRocketIds": [
+          1
+        ]
+      },
+      "primaryRoute": {
+        "targetId": "orbit:mars:planet:",
+        "requirementId": "rocket:1:orbit:mars:planet:",
+        "sourceId": "rocket:1",
+        "rocketId": 1,
+        "movementSteps": 0,
+        "markers": 0
+      },
+      "compiledPrimary": {
+        "actionId": "choose_target:9d684f87",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"direction\":\"cw\"},\"target\":{\"choiceId\":\"move:2:cw\",\"deltaX\":1,\"deltaY\":0,\"kind\":\"residual-domain\",\"rocketId\":2}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:mars:planet:",
+              "sourceId": "rocket:1"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:mars:planet:",
+                "requirementId": "rocket:1:orbit:mars:planet:",
+                "sourceId": "rocket:1",
+                "rocketId": 1,
+                "movementSteps": 0,
+                "markers": 0
+              }
+            ]
+          }
+        ]
+      },
+      "compiledPosition": {
+        "actionId": "choose_target:9d684f87",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"direction\":\"cw\"},\"target\":{\"choiceId\":\"move:2:cw\",\"deltaX\":1,\"deltaY\":0,\"kind\":\"residual-domain\",\"rocketId\":2}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": false,
+        "reason": "plan-target-scope-unknown",
+        "dependencies": []
+      },
+      "secondSubmissionOk": true,
+      "finalPhase": "idle"
+    },
+    {
+      "first": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:96f6cb01",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:out",
+          "rocketId": 2,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 2 向外"
+      },
+      "second": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:baf97e87",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:cw",
+          "rocketId": 1,
+          "deltaX": 1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "cw"
+        },
+        "decision": null,
+        "summary": "移动 1 顺时针"
+      },
+      "ownerPayload": {
+        "companyId": "寰宇动力",
+        "abilityId": "huanyu_free_moves",
+        "step": "free_move",
+        "remaining": 1,
+        "usedRocketIds": [
+          2
+        ]
+      },
+      "primaryRoute": {
+        "targetId": "orbit:mars:planet:",
+        "requirementId": "rocket:2:orbit:mars:planet:",
+        "sourceId": "rocket:2",
+        "rocketId": 2,
+        "movementSteps": 0,
+        "markers": 0
+      },
+      "compiledPrimary": {
+        "actionId": "choose_target:baf97e87",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"direction\":\"cw\"},\"target\":{\"choiceId\":\"move:1:cw\",\"deltaX\":1,\"deltaY\":0,\"kind\":\"residual-domain\",\"rocketId\":1}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:mars:planet:",
+              "sourceId": "rocket:2"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:mars:planet:",
+                "requirementId": "rocket:2:orbit:mars:planet:",
+                "sourceId": "rocket:2",
+                "rocketId": 2,
+                "movementSteps": 0,
+                "markers": 0
+              }
+            ]
+          }
+        ]
+      },
+      "compiledPosition": {
+        "actionId": "choose_target:baf97e87",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"direction\":\"cw\"},\"target\":{\"choiceId\":\"move:1:cw\",\"deltaX\":1,\"deltaY\":0,\"kind\":\"residual-domain\",\"rocketId\":1}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": false,
+        "reason": "plan-target-scope-unknown",
+        "dependencies": []
+      },
+      "secondSubmissionOk": true,
+      "finalPhase": "idle"
+    }
+  ],
+  "verified": true
+}

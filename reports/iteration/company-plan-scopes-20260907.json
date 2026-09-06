@@ -1,0 +1,11 @@
+{
+  "scope": "真实42正式公司两阶段的计划证据接口审查；目标标签为拟接入方案，不冒充当前搜索已输出这些目标或当前计划已发生错误复用",
+  "input": "reports/iteration/company-movement-input-42-20260906.json",
+  "inputSha256": "4225620b390098056682f64e81e859343d5a3d64afaf4e8f66a46becff786122",
+  "cases": [],
+  "verified": false,
+  "error": {
+    "message": "两艘各有正式向外方向\n\n0 !== 2\n",
+    "stack": "AssertionError [ERR_ASSERTION]: 两艘各有正式向外方向\n\n0 !== 2\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/audit-company-plan-scopes-20260907.js:23:12)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

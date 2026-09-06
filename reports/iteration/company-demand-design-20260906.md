@@ -218,3 +218,30 @@ goalCompletionPending，并且只有!execution.awaitingDecision才确认complete
 位置收益目录核对又发现b89正式位置数据结算错误，独立修复见
 probe-location-data-design-20260907.md。后续移动需求消费Card Play的
 getProbeLocationReward只读正式计数，不另建AI奖励公式；本次不混入移动剪枝。
+
+## 2026-09-07逐步计划与来源保留边界（实证后确定）
+
+证据company-plan-scopes-v2-20260907.json使用当前正式42检查点，不运行AI。
+两种首艘分别正式向外到火星，再取得另一艘顺时针的实际Decision。给第二步附上
+拟接入方案的首艘火星环绕目标与真实requirementId后，现有compilePlanSteps返回
+valid=true，但依赖只含首艘来源；拟接入的位置目标返回plan-target-scope-unknown。
+两次第二艘正式提交均成功。这证明现有接口不足以承载新方案，不证明当前生产搜索
+已生成这些标签或已经发生错误复用，不能夸大为已复现线上计划bug。
+
+初版诊断将方向误读为target.directionId，在执行首步前断言失败；实际字段为
+payload.direction（out/cw/ccw），原始失败checkpoint保留。生产匹配应消费正式
+target.rocketId/deltaX/deltaY，与已有probe nextStep一致，不新增方向别名适配层。
+
+| 新方案执行边界 | 确定的设计义务 | 可证伪验收 |
+|---|---|---|
+| 主要目标身份 | 公司第二阶段仍保留首艘主目标；不拿第二艘的位置需求覆盖routeTargetId/routePlanId | 首艘已到火星不等于已环绕，第二艘方向不改变主目标 |
+| 第二艘目的证据 | 选择器为每个实际保留方向给出一个确定的有效目的身份、来源与推进证据；同方向的其他可替代目的不重复展开 | 每个保留方向都能反查需求，不能把所有方向包成decision目标 |
+| 证据归属 | 次要目的属于origin，不写入正式Action或共享物理状态；在来源去重键中保留，不能只通过actionId全局映射 | 同物理动作但不同主/次目的不丢来源，各自计划证据不串 |
+| 条件选择传递 | 当前conditionalSuccessors先按actionId取回合法描述符，仅显式转移routeTargetId/routePlanId/routeResultTargetIds；新目的必须显式随origin传递 | selector输出到下一origin、再到真实planStep逐段相同，不能在legalById回查时丢失 |
+| 计划依赖 | capturePlanStep从正式需求读边界采集位置/访问事实及公司阶段；编译时分别保留主目标与实际选中的次要目的依赖 | 当前反例中第二艘来源、位置条件/奖励是否可用必须可检查，不能只留下首艘路线 |
+| 奖励插入与完成 | 主目标完成标志与次要目的证据独立；奖励期间不凭非公司currentEffect恢复免费额度或宣告公司完成 | 首艘到达、第二艘移动、插入奖励/旋转、后续环绕均走正式链，计划重放一致 |
+| 新增事实缺失 | 必需目的/来源/额度事实缺失显式失败，不默认空数组或复用primary路线 | 新目标不应再落入unknown scope，真实缺失则必须有具名诊断 |
+
+这使计划改动范围落到现有选择器→origin→逐步证据→计划复用链，不另起计划系统。
+读取端、完成判定与缓存依赖仍须在访问需求目录和路线算法冻结时统一接入；本节
+只闭合计划传递职责，尚未冻结整个移动生产方案，不宣称节点已减少。
