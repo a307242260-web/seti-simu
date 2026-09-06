@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-06T02:51:23.885Z",
+  "builtAt": "2026-09-06T05:20:21.417Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "06738145",
-  "currentBaseline": "search-statistics-p1-20260906",
+  "headCommit": "be6bd7b6",
+  "currentBaseline": "amiba-region-rule-20260906",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,609 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "amiba-region-rule-20260906",
+      "name": "阿米巴区域奖励规则修复",
+      "date": "2026-09-06",
+      "baseline": "search-statistics-p1-20260906",
+      "head": "be6bd7b6",
+      "commits": [
+        {
+          "hash": "be6bd7b6",
+          "date": "2026-09-06",
+          "subject": "修正阿米巴区域奖励为起始细胞器各一次并固定移动"
+        }
+      ],
+      "summary": "区域奖励改为起始细胞器各领奖一次并固定移动，删除重复选择链，保留卡牌单细胞器选择",
+      "diffStat": "56 files changed, 92963 insertions(+), 146 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/audit-data-choice-routes-20260906.js",
+          "insertions": 85,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-amiba-a1-20260906.js",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-amiba-region-rule-20260906.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-data-settlement-p2-20260906.js",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-amiba-choices-20260906.js",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-amiba-repeated-states-20260906.js",
+          "insertions": 75,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-amiba-snapshot-cost-20260906.js",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-search-statistics-20260906.js",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-amiba-continuation-20260906.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-amiba-region-rule-20260906.js",
+          "insertions": 55,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-amiba-save-boundary-20260906.js",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-data-settlement-p2-contract-20260906.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-search-statistics-full-20260906.js",
+          "insertions": 32,
+          "deletions": 0
+        },
+        {
+          "file": "assets/aliens/阿米巴/implementation.md",
+          "insertions": 4,
+          "deletions": 2
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 33,
+          "deletions": 1
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/aliens/amiba.js",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.js",
+          "insertions": 62,
+          "deletions": 60
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.test.js",
+          "insertions": 72,
+          "deletions": 15
+        },
+        {
+          "file": "randomizer/game/effects/residual-domain-session.js",
+          "insertions": 2,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/effects/science-session.js",
+          "insertions": 5,
+          "deletions": 9
+        },
+        {
+          "file": "reports/iteration/amiba-a1-green210-20260906.json",
+          "insertions": 623,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-a1-owned-save-green210-20260906.json",
+          "insertions": 695,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-a1-unaccepted-20260906.patch",
+          "insertions": 125,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-choice-profile-210-20260906.json",
+          "insertions": 6160,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-continuation-contract-20260906.json",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-node-review-20260906.md",
+          "insertions": 101,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-rule-design-20260906.md",
+          "insertions": 97,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-rule-green210-20260906.json",
+          "insertions": 725,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-rule-real-trace-20260906-v2.json",
+          "insertions": 158,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-region-rule-real-trace-20260906.json",
+          "insertions": 162,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-repeated-full-states-210-20260906.json",
+          "insertions": 21464,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-repeated-states-210-20260906.json",
+          "insertions": 17430,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-save-boundary-20260906.json",
+          "insertions": 475,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/amiba-snapshot-cost-20260906.json",
+          "insertions": 1620,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-choice-route-review-20260906.md",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-choice-routes-52-20260906-root.json",
+          "insertions": 131,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-choice-routes-52-20260906-verified.json",
+          "insertions": 32540,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-choice-routes-52-20260906.json",
+          "insertions": 11,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-settlement-p2-contract-20260906-complete.json",
+          "insertions": 35,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-settlement-p2-contract-20260906-route.json",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-settlement-p2-contract-20260906.json",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-settlement-p2-design-20260906.md",
+          "insertions": 104,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-settlement-p2-paused-20260906.patch",
+          "insertions": 160,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-settlement-p2-step52-20260906.json",
+          "insertions": 1294,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 611,
+          "deletions": 28
+        },
+        {
+          "file": "reports/iteration/search-distribution-06738145-full-20260906.json",
+          "insertions": 2422,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/search-distribution-06738145-quick-200-20260906.json",
+          "insertions": 1380,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/search-statistics-design-20260906.md",
+          "insertions": 12,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/search-statistics-full-review-20260906.md",
+          "insertions": 61,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/search-statistics-full-verification-20260906.json",
+          "insertions": 22,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/search-statistics-p1-20260906/4e84be21.06738145.full.action-log.html",
+          "insertions": 2035,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/search-statistics-p1-20260906/4e84be21.06738145.quick-200.action-log.html",
+          "insertions": 698,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 611,
+          "deletions": 28
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "857426ea.be6bd7b6.quick-200.json",
+          "recordPath": "reports/research/857426ea.be6bd7b6.quick-200.json",
+          "mode": "quick-200",
+          "steps": 200,
+          "stepsLimit": 200,
+          "terminal": false,
+          "wallMs": 168427,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "be6bd7b6",
+          "createdAt": "2026-09-06T05:06:27.449Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "200步，阶段均24.75、168427ms。前189步动作及状态摘要与基线相同；第190步开始选法不同。54次搜索、47727节点，与旧快速阶段总数相同。代码与be6bd7b6一致，运行期间仅有文档、诊断脚本及记录产物变动。",
+          "scores": {
+            "player-blue": 43,
+            "player-green": 20,
+            "player-brown": 18,
+            "player-white": 18
+          },
+          "avgScore": 24.75,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-amiba-region-rule-20260906-be6bd7b6-quick-200-v93.json",
+          "reportPath": "reports/iteration/amiba-region-rule-20260906/857426ea.be6bd7b6.quick-200.action-log.html",
+          "reportExists": true
+        },
+        {
+          "recordFile": "857426ea.be6bd7b6.full.json",
+          "recordPath": "reports/research/857426ea.be6bd7b6.full.json",
+          "mode": "full",
+          "steps": 639,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 499604,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "be6bd7b6",
+          "createdAt": "2026-09-06T05:15:11.888Z",
+          "resumeStep": 200,
+          "seed": "seti-free-analyze-v1",
+          "note": "639步，正式终局106/89/124/106、均106.25，低于基线108.5计2.25；规则行为验证通过，效果验收未通过。总耗时668031ms（快速168427+续跑499604），旧547927ms；152074节点、32次策略4096满额。阿米巴细胞器选择39197→11，但其他分支增加，整局未提速。详见amiba-region-full-review-20260906.md；保留正确规则，不以调权重或恢复非法奖励补分。",
+          "scores": {
+            "player-blue": 106,
+            "player-green": 89,
+            "player-brown": 124,
+            "player-white": 106
+          },
+          "avgScore": 106.25,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 106,
+              "base": 61,
+              "tile": 41,
+              "card": 4,
+              "tileScoresById": {
+                "a": 33,
+                "b": 8,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 1,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 6,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 0,
+                "orbitScore": 15,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-green": {
+              "total": 89,
+              "base": 67,
+              "tile": 22,
+              "card": 0,
+              "tileScoresById": {
+                "a": 16,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 11,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 23,
+                "orbitScore": 9,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 124,
+              "base": 79,
+              "tile": 45,
+              "card": 0,
+              "tileScoresById": {
+                "a": 20,
+                "b": 0,
+                "c": 4,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 20,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 4,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 11,
+                "blueTechScore": 6,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 16,
+                "orbitScore": 6,
+                "scanScore": 12,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            },
+            "player-white": {
+              "total": 106,
+              "base": 75,
+              "tile": 31,
+              "card": 0,
+              "tileScoresById": {
+                "a": 15,
+                "b": 6,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 16,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 6,
+                "orbitScore": 11,
+                "scanScore": 15,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-amiba-region-rule-20260906-be6bd7b6-full-v321.json",
+          "reportPath": "reports/iteration/amiba-region-rule-20260906/857426ea.be6bd7b6.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "857426ea.be6bd7b6.quick-200",
+            "path": "reports/iteration/amiba-region-rule-20260906/857426ea.be6bd7b6.quick-200.action-log.html",
+            "mode": "quick-200"
+          },
+          {
+            "runKey": "857426ea.be6bd7b6.full",
+            "path": "reports/iteration/amiba-region-rule-20260906/857426ea.be6bd7b6.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "search-statistics-p1-20260906",
       "name": "逐次搜索节点统计",
@@ -758,7 +1361,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

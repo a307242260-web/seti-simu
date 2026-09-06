@@ -1,6 +1,7 @@
 # 阿米巴区域奖励规则修复（独立缺陷，2026-09-06）
 
-状态：生产规则已实施，局部行为及性能验证通过，待版本化固定盘面终局验收。本项替代A1/A2所依赖的
+状态：生产规则已实施，局部行为及性能验证通过；完整终局均106.25低于基线108.5，
+整局668031ms也未提速，效果/整局性能验收未通过，详见amiba-region-full-review-20260906.md。本项替代A1/A2所依赖的
 “区域奖励可以任意选择顺序”假设，不是进一步优化A1快照实现。
 
 正式依据现已补齐且用户确认：rules/seti-alien-species-space-agencies-zh-s.pdf与
@@ -86,10 +87,10 @@ cebfe452的提交说明将maxSettles=3称为“区域全部”，没有新增任
   合法集一致。证据amiba-region-rule-real-trace-20260906-v2.json。
   首份记录仅恢复脚本失败：未清除checkpoint内已执行replaySteps，导致重放旧前缀；
   保留失败记录，没有据此修改生产恢复逻辑。
-- 单状态amiba-region-rule-green210-20260906.json：4096→2227成功物理节点，
+- 单状态amiba-region-rule-green210-20260906.json：4096→2227物理尝试节点（含21次失败），
   choose_target从3070→718，正式输入3351，11.72→7.63秒（约35%下降）。根动作
-  仍move:2bb2c433，计划可提交10个后续输入，到新牌相关动作边界停止；不宣称整个
-  旧计划可跨揭示直接执行。无COUNTERFACTUAL_EXECUTION_FAILED；21次规则失败计数
+  仍move:2bb2c433，计划可提交10个后续输入，第11个动作不在当前合法集而停止；
+  这里只验可执行前缀，不宣称整个计划可无条件继续。无COUNTERFACTUAL_EXECUTION_FAILED；21次规则失败计数
   与旧A1取证相同，scan outcome明细“已在边界，无法继续移动”，不混入本次修复。
 - 77项unit、唯一full-flow通过，V输入审计通过；用户指定两项既有失败测试排除。
   未把无匹配science-session筛选的零项结果当成验证；science行为由正式回归覆盖。

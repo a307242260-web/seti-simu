@@ -242,6 +242,7 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 | 版本 | head | 说明 |
 |---|---|---|
+| `amiba-region-rule-20260906` | `be6bd7b6` | 阿米巴区域重复领奖/选择规则修复；639步正式终局106/89/124/106、均106.25，低于108.5；局部规则验证通过，效果与整局性能未通过，详见amiba-region-full-review-20260906 |
 | `observe-decision-r4-20260906` | `213f34db` | **当前验收版本**：四轮累计实现通过，见ai-rounds-final-review-20260906；702步正式终局96/84/130/124、均108.5，较R2e+1.75；总模拟527450ms，整局提速和旧超时根因未完成 |
 | `round-data-income-r4-20260906` | `6d67a974` | 轮初数据实体发放修复；快速200步阶段均25.25，138940ms；全盘续跑第二轮绿方30秒搜索超时，无完整终局，第三/第四轮未通过 |
 | `score-corner-r4-20260906` | `0d21aebf` | 得分角标准入；579步74/118/116/108、均104，较上一候选+2.5但低于R2e基线2.75；总模拟495050ms，第三/第四轮未通过 |
@@ -271,9 +272,10 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 - 记录 `summary.scores` 为运行当时口径；有存档的终局运行由 build 从存档 finalScores
   读取完整终局分（save-final），total = base + 板块 + 卡牌。
-- `registry.currentBaseline` 按代码祖先解析为`observe-decision-r4-20260906`，只表示当前
-  代码归属，不表示验收通过；最近通过版本仍为`blue-future-r2e-20260905`。四轮计划与
-  验收证据见`docs/ai-iteration-plan-20260905.md`。
+- `registry.currentBaseline` 按代码祖先解析为`amiba-region-rule-20260906`，只表示当前
+  代码归属，不表示验收通过；最近通过效果基线为`observe-decision-r4-20260906`及
+  行为相同的`search-statistics-p1-20260906`（均108.5）。新阿米巴规则保留，效果与
+  整局性能尚未通过；四轮历史计划见`docs/ai-iteration-plan-20260905.md`。
 - 2026-09-05 用户追加验收：每轮必须验证固定盘面完整终局，均分提高，或均分不变且逻辑
   更合理才可收口；200步快速结果不替代终局验收，续跑使用同代码提交的快速存档。
 
