@@ -1234,7 +1234,11 @@
           spawnedEffects: choices.length ? [scanDecisionEffect(
             EFFECT_TYPES.SCAN_STEP,
             actor.id,
-            { ...clone(effect.payload), options: clone(opts) },
+            // 只有探测器来源流程需要跨Decision保存原卡与回手后续。
+            // 普通扫描保持原options边界，避免无关元数据改变搜索状态身份。
+            mode === "probe" || opts.probeFlow
+              ? { ...clone(effect.payload), options: clone(opts) }
+              : { options: clone(opts) },
             mode === "hand" ? "choose_card" : "choose_target",
           )] : [],
           events: choices.length ? [] : [{ type: "scanStepSkipped", reason: "no_legal_target" }],

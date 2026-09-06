@@ -100,8 +100,9 @@ Production状态或存档，缺失事实仍拒绝复用。
 探测器扫描沿用choose_target与Science SCAN_STEP，不增加Action family：来源
 选择target包含rocketId、nebulaId、probeScanSource=true；b50的结束选择带done。
 options.probeFlow保存来源、剩余扇区/次数及已选来源，恢复后仍由同一内核推进；
-原卡实例及具体afterProbeScan后续effect不会在prepare转Decision时丢失。b88的
-probeScanResult仅承载结算前正式信号事实，Card Play验证后执行原卡回手。
+原卡实例及具体afterProbeScan后续effect不会在prepare转Decision时丢失。
+该透传仅限mode=probe或options.probeFlow，普通扫描Decision仍只携带options。
+b88的probeScanResult仅承载结算前正式信号事实，Card Play验证后执行原卡回手。
 计划从公开board.rockets及board.solarSystem.sectorBySlot采集所选来源依赖，
 没有新增私有信息读取。规则目录、节点预算和启发式权重不变。
 

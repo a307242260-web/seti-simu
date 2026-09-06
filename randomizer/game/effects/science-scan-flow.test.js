@@ -462,6 +462,22 @@ for (const tileId of ["blue1", "blue2", "blue3", "blue4"]) {
   } }, commitWorkingState(_state, context) { return { committedBy: context.source }; } };
   scienceSession.createScienceDomain(options);
   cardPlay.createExperimentalCardPlayDomain(options);
+  // 非探测器扫描沿用既有Decision边界，不携入卡牌桥接元数据改变搜索状态身份。
+  for (const mode of ["specified", "color"]) {
+    const { root } = createCanonicalState();
+    const scanOptions = { mode, color: Object.keys(cardEffects.NEBULA_IDS_BY_COLOR)[0] };
+    // specified使用明确的正式太阳系扇区，确保进入多目标Decision。
+    if (mode === "specified") scanOptions.nebulaIds = [0, 1].map(x =>
+      solar.getNebulaAtCoordinate(x, 5, root.solarSystem.sectorBySlot).id);
+    const result = executors.get(scienceSession.EFFECT_TYPES.SCAN_STEP).execute(root, {
+      ownerId: root.players.players[0].id,
+      payload: { options: scanOptions, cardInstanceId: "source-card", cardEffect: { type: "SCAN" } },
+    }, { state: root });
+    assert.equal(result.ok, true);
+    assert.equal(result.spawnedEffects.length, 1);
+    assert.deepEqual(result.spawnedEffects[0].effect.payload, { options: scanOptions },
+      "非probe扫描不得扩大Decision payload");
+  }
   for (const [cardId, expectedSignals, existingSignals = 0, shouldReturn = cardId === "b_88.webp"] of [
     ["b_22.webp", 2], ["b_50.webp", 3], ["b_50.webp", 0], ["b_50.webp", 1], ["b_53.webp", 1],
     ["b_54.webp", 1], ["b_58.webp", 3], ["b_64.webp", 2], ["b_88.webp", 1],

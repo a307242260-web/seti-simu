@@ -4,7 +4,7 @@ const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const deck = require("../randomizer/game/cards/deck"), rockets = require("../randomizer/game/rockets");
 const solar = require("../randomizer/solar-system/core"), data = require("../randomizer/game/data");
 const science = require("../randomizer/game/effects/science-session");
-const output = "reports/iteration/probe-scan-production-20260907.json";
+const output = process.argv[2] || "reports/iteration/probe-scan-production-20260907.json";
 if (fs.existsSync(output)) console.log(`已有正式验证：${output}`);
 else {
   const env = createSimulationEnv(), report = { scope: "真实42盘面派生受控卡牌/棋子/信号状态，通过唯一Production正式输入验证全部扫描链和逐Decision恢复；非原固定局/非AI搜索", cases: [] };

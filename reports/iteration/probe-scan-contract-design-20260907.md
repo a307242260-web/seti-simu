@@ -115,3 +115,26 @@ README/AGENTS入口、浏览器装配、部署方式未变化，无需更新。�
 改变卡牌主链、RNG、ID或Decision owner。用非probe原边界断言、现有8模型、9个正式
 场景/恢复和42单决策复核，再以新提交运行唯一固定局。本版记录保留，不重跑覆盖。
 本候选范围门槛未通过；none/undefined完整核验、目的式移动与place_data仍未完成。
+
+## 透传范围收紧（新候选，完整局待验收）
+
+严格按上节已冻结边界实施：generic prepare仅在mode=probe或options.probeFlow时
+保留payload，普通扫描仍只传options。未改变任何扫描目标、信号结算、评分或预算。
+先以正式specified多扇区扫描复现Decision多出cardInstanceId/cardEffect，收紧后
+specified及color原边界断言通过；既有8模型扫描与计划测试通过。正式Production
+9场景、16次Decision恢复验证全部通过，证据`probe-scan-scoped-production-20260907.json`。
+
+边界验证期间另见独立缺陷：mode=any调用listNebulaChoices时未提供nebulaIds，
+而该函数默认空数组，实际prepare输出零个后续。初始测试实测0而非1，未进入payload
+断言。该问题不是本次透传产生，不在本次改动中混修；下一独立修复需复核全部any
+调用者、正式完整扇区目录以及无数据/奖励/保存恢复边界。不得将无目标跳过当作正常
+完成。此项与现有未分类none一起保持未解决，不宣称零异常门槛已通过。
+
+文档同步检查：本次只调整Science内部Decision保留范围，RL接口与本设计同步；
+AI评分/计划契约、mechanics规则、DSL、README/AGENTS入口、运行方式及长期记忆
+没有进一步变化，无需修改。既有扫描测试文件已在Node清单内，无新增测试入口。
+
+收紧后单点42：15.406秒、4096节点、4804正式输入、0规则失败、30个计划输入
+重放成功，根动作不变；见`probe-scan-scoped-decision-42-20260907.json`。未证明提速。
+全量回归77/79 unit、1/1 fullFlow；失败仍为既有beam与data目标释放断言，未新增。
+未新增V输入路径，不需要新增装配审计；语法通过。完整局在生产提交后按新版本登记。
