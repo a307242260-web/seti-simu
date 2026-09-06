@@ -1,0 +1,1433 @@
+{
+  "scope": "只读旧两版终局及当前独立408冷计划；得分账面与计划用途证据，不证明旧版排序改变原因",
+  "sources": [
+    "reports/research/ddc98722.1f0d82ec.full.json",
+    "reports/research/0b8c855d.0caa713a.full.json",
+    "seti-saves/seti-save-research-probe-scan-scope-20260907-1f0d82ec-full-v290.json",
+    "seti-saves/seti-save-research-any-alien-contract-20260907-0caa713a-full-v291.json",
+    "reports/iteration/data-event-decision-408-20260907.json"
+  ],
+  "scoreDeltas": {
+    "alienTraceYellowScore": -3,
+    "cardQuickScore": -1,
+    "landScore": -6,
+    "orbitScore": 6
+  },
+  "finals": [
+    {
+      "baseScore": 75,
+      "cardScore": 0,
+      "cards": [],
+      "jiuzheCardScore": 0,
+      "jiuzheCards": [],
+      "jiuzhePenaltyApplied": false,
+      "jiuzhePenaltyScore": 0,
+      "jiuzheThreat": 0,
+      "playerId": "player-green",
+      "prePenaltyTotalScore": 95,
+      "runezuSymbolScore": 0,
+      "tileScore": 20,
+      "tileScoresById": {
+        "a": 10,
+        "b": 0,
+        "c": 0,
+        "d": 10
+      },
+      "tiles": [
+        {
+          "baseValue": 2,
+          "formulaId": "a2",
+          "multiplier": 5,
+          "score": 10,
+          "slotIndex": 3,
+          "tileId": "a",
+          "variant": 2
+        },
+        {
+          "baseValue": 0,
+          "formulaId": "b1",
+          "multiplier": 4,
+          "score": 0,
+          "slotIndex": 3,
+          "tileId": "b",
+          "variant": 1
+        },
+        {
+          "baseValue": 2,
+          "formulaId": "d2",
+          "multiplier": 5,
+          "score": 10,
+          "slotIndex": 2,
+          "tileId": "d",
+          "variant": 2
+        }
+      ],
+      "totalScore": 95
+    },
+    {
+      "baseScore": 71,
+      "cardScore": 0,
+      "cards": [],
+      "jiuzheCardScore": 0,
+      "jiuzheCards": [],
+      "jiuzhePenaltyApplied": false,
+      "jiuzhePenaltyScore": 0,
+      "jiuzheThreat": 0,
+      "playerId": "player-green",
+      "prePenaltyTotalScore": 91,
+      "runezuSymbolScore": 0,
+      "tileScore": 20,
+      "tileScoresById": {
+        "a": 10,
+        "b": 0,
+        "c": 0,
+        "d": 10
+      },
+      "tiles": [
+        {
+          "baseValue": 2,
+          "formulaId": "a2",
+          "multiplier": 5,
+          "score": 10,
+          "slotIndex": 3,
+          "tileId": "a",
+          "variant": 2
+        },
+        {
+          "baseValue": 0,
+          "formulaId": "b1",
+          "multiplier": 4,
+          "score": 0,
+          "slotIndex": 3,
+          "tileId": "b",
+          "variant": 1
+        },
+        {
+          "baseValue": 2,
+          "formulaId": "d2",
+          "multiplier": 5,
+          "score": 10,
+          "slotIndex": 2,
+          "tileId": "d",
+          "variant": 2
+        }
+      ],
+      "totalScore": 91
+    }
+  ],
+  "greenReplayAfter408": [
+    [
+      {
+        "step": 408,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:70d77c1b",
+          "actorId": "player-green",
+          "stateVersion": 206,
+          "decisionVersion": 11,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        }
+      },
+      {
+        "step": 409,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:f7da222d",
+          "actorId": "player-green",
+          "stateVersion": 207,
+          "decisionVersion": 11,
+          "target": {
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 向外"
+        }
+      },
+      {
+        "step": 410,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:93740a4c",
+          "actorId": "player-green",
+          "stateVersion": 207,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-79-0",
+            "cardIds": [
+              "card-79-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "弃 1 张移动牌"
+        }
+      },
+      {
+        "step": 411,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 208,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      },
+      {
+        "step": 441,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:57da1d07",
+          "actorId": "player-green",
+          "stateVersion": 220,
+          "decisionVersion": 12,
+          "target": {
+            "cardInstanceId": "card-31-pass-3-2"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "dlc_12.png"
+        }
+      },
+      {
+        "step": 442,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:19bc288a",
+          "actorId": "player-green",
+          "stateVersion": 220,
+          "decisionVersion": 12,
+          "target": {
+            "choiceId": "12:-1:0",
+            "rocketId": 12,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 2
+          },
+          "decision": null,
+          "summary": "R12 逆时针"
+        }
+      },
+      {
+        "step": 443,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:0cb0f2f1",
+          "actorId": "player-green",
+          "stateVersion": 220,
+          "decisionVersion": 12,
+          "target": {
+            "choiceId": "12:0:1",
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R12 向外"
+        }
+      },
+      {
+        "step": 444,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 221,
+          "decisionVersion": 12,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      },
+      {
+        "step": 482,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "land",
+          "phase": "main",
+          "actionId": "land:1cbade2c",
+          "actorId": "player-green",
+          "stateVersion": 239,
+          "decisionVersion": 12,
+          "target": {
+            "select": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "登陆"
+        }
+      },
+      {
+        "step": 483,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:010fa58c",
+          "actorId": "player-green",
+          "stateVersion": 239,
+          "decisionVersion": 12,
+          "target": {
+            "choiceId": "trace:2:yellow:chong:3",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "yellow",
+            "speciesId": "chong",
+            "position": 3
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄3号位（3分+外星人牌）"
+        }
+      },
+      {
+        "step": 484,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:367bfe7f",
+          "actorId": "player-green",
+          "stateVersion": 239,
+          "decisionVersion": 12,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "chong:blind",
+            "source": "blind"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "盲抽虫牌"
+        }
+      },
+      {
+        "step": 485,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 240,
+          "decisionVersion": 12,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      },
+      {
+        "step": 505,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:70d77c1b",
+          "actorId": "player-green",
+          "stateVersion": 251,
+          "decisionVersion": 12,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        }
+      },
+      {
+        "step": 506,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 12,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      },
+      {
+        "step": 545,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 268,
+          "decisionVersion": 17,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据"
+        }
+      },
+      {
+        "step": 546,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:52efd39a",
+          "actorId": "player-green",
+          "stateVersion": 268,
+          "decisionVersion": 17,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "第一排放置位 1"
+        }
+      },
+      {
+        "step": 547,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 269,
+          "decisionVersion": 17,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据"
+        }
+      },
+      {
+        "step": 548,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:52efd39a",
+          "actorId": "player-green",
+          "stateVersion": 269,
+          "decisionVersion": 17,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "第一排放置位 2"
+        }
+      },
+      {
+        "step": 549,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:e08f7e17",
+          "actorId": "player-green",
+          "stateVersion": 270,
+          "decisionVersion": 17,
+          "target": {
+            "cardInstanceId": "card-80-0"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "b_18.webp：弃牌角标"
+        }
+      },
+      {
+        "step": 550,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "research_tech",
+          "phase": "main",
+          "actionId": "research_tech:f86fc96a",
+          "actorId": "player-green",
+          "stateVersion": 271,
+          "decisionVersion": 17,
+          "target": {
+            "kind": "research-tech"
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究科技"
+        }
+      },
+      {
+        "step": 551,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:0975381b",
+          "actorId": "player-green",
+          "stateVersion": 271,
+          "decisionVersion": 17,
+          "target": {
+            "choiceId": "tech:orange3",
+            "tileId": "orange3",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 orange3"
+        }
+      },
+      {
+        "step": 552,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 272,
+          "decisionVersion": 17,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      },
+      {
+        "step": 569,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:cf5b2c26",
+          "actorId": "player-green",
+          "stateVersion": 281,
+          "decisionVersion": 18,
+          "target": {
+            "cardInstanceId": "alien-chong-4-16"
+          },
+          "payload": {
+            "kind": "move",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "chong_4.webp：弃牌角标"
+        }
+      },
+      {
+        "step": 570,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:57017d3b",
+          "actorId": "player-green",
+          "stateVersion": 281,
+          "decisionVersion": 18,
+          "target": {
+            "choiceId": "15:0:1",
+            "rocketId": 15,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R15 向外"
+        }
+      },
+      {
+        "step": 571,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "land",
+          "phase": "main",
+          "actionId": "land:1cbade2c",
+          "actorId": "player-green",
+          "stateVersion": 282,
+          "decisionVersion": 18,
+          "target": {
+            "select": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "登陆"
+        }
+      },
+      {
+        "step": 572,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:55d7dbcd",
+          "actorId": "player-green",
+          "stateVersion": 282,
+          "decisionVersion": 18,
+          "target": {
+            "choiceId": "trace:2:yellow:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "yellow",
+            "stateExtra": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得 1 个黄色外星人标记 → 外星人 2 额外痕迹位（3分）"
+        }
+      },
+      {
+        "step": 573,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 283,
+          "decisionVersion": 18,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      },
+      {
+        "step": 574,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:20b7159b",
+          "actorId": "player-green",
+          "stateVersion": 283,
+          "decisionVersion": 18,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "final:b",
+            "tileId": "b"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "标记 B",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "b",
+            "imageSrc": "../assets/final/final_b1.png",
+            "imageAlt": "终局计分板块 B"
+          }
+        }
+      },
+      {
+        "step": 580,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "pass",
+          "phase": "main",
+          "actionId": "pass:ff716055",
+          "actorId": "player-green",
+          "stateVersion": 288,
+          "decisionVersion": 18,
+          "target": {
+            "kind": "pass"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "PASS"
+        }
+      }
+    ],
+    [
+      {
+        "step": 408,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:70d77c1b",
+          "actorId": "player-green",
+          "stateVersion": 206,
+          "decisionVersion": 11,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        }
+      },
+      {
+        "step": 409,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:f7da222d",
+          "actorId": "player-green",
+          "stateVersion": 207,
+          "decisionVersion": 11,
+          "target": {
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 向外"
+        }
+      },
+      {
+        "step": 410,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:56560af3",
+          "actorId": "player-green",
+          "stateVersion": 207,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "消耗 1 能量"
+        }
+      },
+      {
+        "step": 411,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 208,
+          "decisionVersion": 11,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      },
+      {
+        "step": 441,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:57da1d07",
+          "actorId": "player-green",
+          "stateVersion": 220,
+          "decisionVersion": 12,
+          "target": {
+            "cardInstanceId": "card-31-pass-3-2"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "dlc_12.png"
+        }
+      },
+      {
+        "step": 442,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:19bc288a",
+          "actorId": "player-green",
+          "stateVersion": 220,
+          "decisionVersion": 12,
+          "target": {
+            "choiceId": "12:-1:0",
+            "rocketId": 12,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 2
+          },
+          "decision": null,
+          "summary": "R12 逆时针"
+        }
+      },
+      {
+        "step": 443,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:0cb0f2f1",
+          "actorId": "player-green",
+          "stateVersion": 220,
+          "decisionVersion": 12,
+          "target": {
+            "choiceId": "12:0:1",
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R12 向外"
+        }
+      },
+      {
+        "step": 444,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 221,
+          "decisionVersion": 12,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      },
+      {
+        "step": 482,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "land",
+          "phase": "main",
+          "actionId": "land:1cbade2c",
+          "actorId": "player-green",
+          "stateVersion": 239,
+          "decisionVersion": 12,
+          "target": {
+            "select": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "登陆"
+        }
+      },
+      {
+        "step": 483,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:010fa58c",
+          "actorId": "player-green",
+          "stateVersion": 239,
+          "decisionVersion": 12,
+          "target": {
+            "choiceId": "trace:2:yellow:chong:3",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "yellow",
+            "speciesId": "chong",
+            "position": 3
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄3号位（3分+外星人牌）"
+        }
+      },
+      {
+        "step": 484,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:367bfe7f",
+          "actorId": "player-green",
+          "stateVersion": 239,
+          "decisionVersion": 12,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "chong:blind",
+            "source": "blind"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "盲抽虫牌"
+        }
+      },
+      {
+        "step": 485,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 240,
+          "decisionVersion": 12,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      },
+      {
+        "step": 505,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 251,
+          "decisionVersion": 12,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据"
+        }
+      },
+      {
+        "step": 506,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:52efd39a",
+          "actorId": "player-green",
+          "stateVersion": 251,
+          "decisionVersion": 12,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "第一排放置位 1"
+        }
+      },
+      {
+        "step": 507,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 12,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据"
+        }
+      },
+      {
+        "step": 508,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:52efd39a",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 12,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "第一排放置位 2"
+        }
+      },
+      {
+        "step": 509,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:e08f7e17",
+          "actorId": "player-green",
+          "stateVersion": 253,
+          "decisionVersion": 12,
+          "target": {
+            "cardInstanceId": "card-80-0"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "b_18.webp：弃牌角标"
+        }
+      },
+      {
+        "step": 510,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "research_tech",
+          "phase": "main",
+          "actionId": "research_tech:f86fc96a",
+          "actorId": "player-green",
+          "stateVersion": 254,
+          "decisionVersion": 12,
+          "target": {
+            "kind": "research-tech"
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究科技"
+        }
+      },
+      {
+        "step": 511,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:e69d0876",
+          "actorId": "player-green",
+          "stateVersion": 254,
+          "decisionVersion": 12,
+          "target": {
+            "choiceId": "tech:blue2:slot:1",
+            "tileId": "blue2",
+            "blueSlot": 1
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 blue2（蓝槽 1）"
+        }
+      },
+      {
+        "step": 512,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 255,
+          "decisionVersion": 12,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      },
+      {
+        "step": 551,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:70d77c1b",
+          "actorId": "player-green",
+          "stateVersion": 271,
+          "decisionVersion": 17,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        }
+      },
+      {
+        "step": 552,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:29ae7948",
+          "actorId": "player-green",
+          "stateVersion": 272,
+          "decisionVersion": 17,
+          "target": {
+            "rocketId": 15,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 15 逆时针"
+        }
+      },
+      {
+        "step": 553,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:1dca93ce",
+          "actorId": "player-green",
+          "stateVersion": 272,
+          "decisionVersion": 17,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "alien-chong-4-16",
+            "cardIds": [
+              "alien-chong-4-16"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "弃 1 张移动牌"
+        }
+      },
+      {
+        "step": 554,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:29ae7948",
+          "actorId": "player-green",
+          "stateVersion": 273,
+          "decisionVersion": 17,
+          "target": {
+            "rocketId": 15,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 15 逆时针"
+        }
+      },
+      {
+        "step": 555,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:93740a4c",
+          "actorId": "player-green",
+          "stateVersion": 273,
+          "decisionVersion": 17,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-79-0",
+            "cardIds": [
+              "card-79-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "弃 1 张移动牌"
+        }
+      },
+      {
+        "step": 556,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 274,
+          "decisionVersion": 17,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      },
+      {
+        "step": 573,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "orbit",
+          "phase": "main",
+          "actionId": "orbit:4304d8e2",
+          "actorId": "player-green",
+          "stateVersion": 283,
+          "decisionVersion": 18,
+          "target": {
+            "rocketId": 15,
+            "planetId": "venus"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R15，1信用点 + 1能量）"
+        }
+      },
+      {
+        "step": 574,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 284,
+          "decisionVersion": 18,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      },
+      {
+        "step": 575,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:20b7159b",
+          "actorId": "player-green",
+          "stateVersion": 284,
+          "decisionVersion": 18,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "final:b",
+            "tileId": "b"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "标记 B",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "b",
+            "imageSrc": "../assets/final/final_b1.png",
+            "imageAlt": "终局计分板块 B"
+          }
+        }
+      },
+      {
+        "step": 581,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "pass",
+          "phase": "main",
+          "actionId": "pass:ff716055",
+          "actorId": "player-green",
+          "stateVersion": 289,
+          "decisionVersion": 18,
+          "target": {
+            "kind": "pass"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "PASS"
+        }
+      }
+    ]
+  ],
+  "currentPlan": {
+    "source": "reports/iteration/data-event-decision-408-20260907.json",
+    "actionIds": [
+      "launch:70d77c1b",
+      "move:f7da222d",
+      "choose_payment:56560af3",
+      "end_turn:1f65daa3",
+      "play_card:57da1d07",
+      "choose_target:19bc288a",
+      "choose_target:0cb0f2f1",
+      "end_turn:1f65daa3",
+      "move:4c45c4af",
+      "choose_payment:93740a4c",
+      "land:1cbade2c",
+      "choose_target:efec5458",
+      "place_data:dbe01b29",
+      "choose_target:52efd39a",
+      "place_data:dbe01b29",
+      "choose_target:52efd39a",
+      "card_corner:e08f7e17",
+      "end_turn:1f65daa3",
+      "research_tech:f86fc96a",
+      "choose_target:8cf17172",
+      "choose_card:f49d02dd"
+    ],
+    "immediatePayment": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "actionId": "choose_payment:56560af3",
+      "actorId": "player-green",
+      "stateVersion": 207,
+      "decisionVersion": 11,
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "payload": {
+        "energyCost": 1,
+        "requiredMovePoints": 1
+      },
+      "decision": null,
+      "summary": "消耗 1 能量"
+    },
+    "laterCardPayment": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "actionId": "choose_payment:93740a4c",
+      "actorId": "player-green",
+      "stateVersion": 213,
+      "decisionVersion": 11,
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-79-0",
+        "cardIds": [
+          "card-79-0"
+        ]
+      },
+      "payload": {
+        "energyCost": 0,
+        "requiredMovePoints": 1
+      },
+      "decision": null,
+      "summary": "弃 1 张移动牌"
+    },
+    "precedingMove": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "move",
+      "phase": "quick",
+      "actionId": "move:4c45c4af",
+      "actorId": "player-green",
+      "stateVersion": 213,
+      "decisionVersion": 11,
+      "target": {
+        "rocketId": 12,
+        "deltaX": 0,
+        "deltaY": -1
+      },
+      "payload": {
+        "direction": "in",
+        "requiredMovePoints": 1
+      },
+      "decision": null,
+      "summary": "移动探测器 12 向内"
+    }
+  },
+  "conclusion": "当前计划保留b137供之后R12向内移动支付，故不是无用途保牌；实际旧两版482都直接登陆，与当前冷计划不能混同。未证明降分由规则错误或本轮引入缺陷造成。",
+  "sha256": {
+    "reports/research/ddc98722.1f0d82ec.full.json": "f8b5285764a97a594e4e8c1a8f6349fba4af0e7e308728dfd7833f521006d638",
+    "reports/research/0b8c855d.0caa713a.full.json": "69686fc82563d9c35f4aa18b5ae064ed320b9d033a19ab2f66e825c5d381cc98",
+    "seti-saves/seti-save-research-probe-scan-scope-20260907-1f0d82ec-full-v290.json": "b6aea58fddc57513845c5b99776600609e2e035281ea28639b315931bde33ed8",
+    "seti-saves/seti-save-research-any-alien-contract-20260907-0caa713a-full-v291.json": "6e8bded5462288c9f65cd6aadac520869190513eeb90b90c7d304fa835cec9ae",
+    "reports/iteration/data-event-decision-408-20260907.json": "b831295e07e180fbee8bba78203ce55b908d1728b239866db92e51bab07efae1"
+  },
+  "verified": true
+}
