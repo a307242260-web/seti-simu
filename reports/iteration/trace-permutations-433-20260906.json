@@ -1,0 +1,3503 @@
+{
+  "source": "reports/iteration/trace-analysis-hotspot-433-20260906.json",
+  "sourceSha256": "24af85c911d1ad9196c46a3e075092699e01c8e2e77e000aebeb10ddc6c57b3d",
+  "scope": "目标簇内family+target多重集合相同、执行顺序不同的候选；不是物理节点或语义等价数量",
+  "clusters": [
+    {
+      "path": [
+        "orbit:venus:planet:"
+      ],
+      "variants": 11,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "land:mars:planet:"
+      ],
+      "variants": 33,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "data:analyze"
+      ],
+      "variants": 52,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1"
+      ],
+      "variants": 4,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2"
+      ],
+      "variants": 1,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3"
+      ],
+      "variants": 1,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4"
+      ],
+      "variants": 1,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-b:1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1"
+      ],
+      "variants": 12,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze"
+      ],
+      "variants": 13,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "orbit:venus:planet:"
+      ],
+      "variants": 5,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "land:mars:planet:"
+      ],
+      "variants": 5,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "sector:win:sector-2-b:1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "sector:win:sector-2-a:1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "orbit:venus:planet:"
+      ],
+      "variants": 4,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "land:mars:planet:"
+      ],
+      "variants": 6,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "income:gain:4,4,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "data:analyze"
+      ],
+      "variants": 20,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "tech:gain:blue4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "orbit:venus:planet:"
+      ],
+      "variants": 3,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "land:mars:planet:"
+      ],
+      "variants": 6,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "income:gain:4,4,0,0,3,1"
+      ],
+      "variants": 3,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "data:analyze"
+      ],
+      "variants": 15,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "tech:gain:blue4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "tech:gain:blue4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "orbit:venus:planet:"
+      ],
+      "variants": 3,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "orbit:venus:planet:"
+      ],
+      "variants": 3,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "land:mars:planet:"
+      ],
+      "variants": 5,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "land:mars:planet:"
+      ],
+      "variants": 5,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "income:gain:4,4,0,0,3,1"
+      ],
+      "variants": 3,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "data:analyze"
+      ],
+      "variants": 15,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "income:gain:4,4,0,0,3,1"
+      ],
+      "variants": 3,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "data:analyze"
+      ],
+      "variants": 15,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze"
+      ],
+      "variants": 5,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze"
+      ],
+      "variants": 5,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze"
+      ],
+      "variants": 5,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2a4a8b2c"
+      ],
+      "variants": 3,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2f23f2bc"
+      ],
+      "variants": 3,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:c2c97dd0"
+      ],
+      "variants": 3,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "income:gain:4,4,0,0,4,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variants": 766,
+      "permutationGroupCount": 23
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "sector:win:sector-2-a:1"
+      ],
+      "variants": 24,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "land:mars:planet:"
+      ],
+      "variants": 11,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:26c1632c"
+      ],
+      "variants": 3,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "data:analyze",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "data:analyze",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "data:analyze",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "data:analyze",
+        "tech:gain:orange1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "data:analyze",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "land:mars:planet:",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "land:mars:planet:",
+        "income:gain:4,4,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "land:mars:planet:",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "land:mars:planet:",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "land:mars:planet:",
+        "sector:win:sector-2-a:1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "land:mars:planet:",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "land:mars:planet:",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "land:mars:planet:",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "income:gain:4,5,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "income:gain:5,4,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "tech:gain:orange1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "land:mars:planet:",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "land:mars:planet:",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "land:mars:planet:",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "orbit:venus:planet:",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "income:gain:4,4,0,0,3,1",
+        "orbit:venus:planet:",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze",
+        "income:gain:4,5,0,0,4,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze",
+        "income:gain:5,4,0,0,4,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze",
+        "sector:win:sector-2-a:1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze",
+        "sector:win:sector-3-a:2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:26c1632c",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:26c1632c",
+        "income:gain:4,4,0,0,4,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:26c1632c",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:26c1632c",
+        "sector:win:sector-2-a:1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:26c1632c",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:26c1632c",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:26c1632c",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2a4a8b2c",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2a4a8b2c",
+        "income:gain:4,4,0,0,4,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2a4a8b2c",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2a4a8b2c",
+        "sector:win:sector-2-a:1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2a4a8b2c",
+        "sector:win:sector-2-b:1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2a4a8b2c",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2a4a8b2c",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2a4a8b2c",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2f23f2bc",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2f23f2bc",
+        "income:gain:4,4,0,0,4,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2f23f2bc",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2f23f2bc",
+        "sector:win:sector-2-a:1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2f23f2bc",
+        "sector:win:sector-2-b:1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2f23f2bc",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2f23f2bc",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:2f23f2bc",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:c2c97dd0",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:c2c97dd0",
+        "income:gain:4,4,0,0,4,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:c2c97dd0",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:c2c97dd0",
+        "sector:win:sector-2-a:1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:c2c97dd0",
+        "sector:win:sector-2-b:1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:c2c97dd0",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:c2c97dd0",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "decision:choose_card:c2c97dd0",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "land:mars:planet:",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "land:mars:planet:",
+        "income:gain:4,4,0,0,4,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "land:mars:planet:",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "land:mars:planet:",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "land:mars:planet:",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "sector:win:sector-2-a:1",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "sector:win:sector-2-a:1",
+        "income:gain:4,4,0,0,4,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "sector:win:sector-2-a:1",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "sector:win:sector-2-a:1",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "sector:win:sector-2-a:1",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "data:analyze",
+        "income:gain:5,4,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "data:analyze",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "data:analyze",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "data:analyze",
+        "sector:win:sector-3-a:2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "data:analyze",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "data:analyze",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "data:analyze",
+        "tech:gain:orange1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "data:analyze",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "land:mars:planet:",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "land:mars:planet:",
+        "income:gain:4,4,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "land:mars:planet:",
+        "sector:win:sector-1-a:2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "land:mars:planet:",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "land:mars:planet:",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "land:mars:planet:",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "orbit:venus:planet:",
+        "income:gain:4,4,0,0,4,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "orbit:venus:planet:",
+        "income:gain:4,5,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "orbit:venus:planet:",
+        "income:gain:5,4,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "orbit:venus:planet:",
+        "sector:win:sector-1-a:2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "orbit:venus:planet:",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "orbit:venus:planet:",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "sector:win:sector-2-a:1",
+        "orbit:venus:planet:",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "data:analyze",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "data:analyze",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "data:analyze",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "data:analyze",
+        "tech:gain:orange1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "data:analyze",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "income:gain:4,4,0,0,3,1",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "income:gain:4,4,0,0,3,1",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "income:gain:4,4,0,0,3,1",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "income:gain:4,4,0,0,3,1",
+        "tech:gain:blue4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "income:gain:4,4,0,0,3,1",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "land:mars:planet:",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "land:mars:planet:",
+        "income:gain:4,4,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "land:mars:planet:",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "land:mars:planet:",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "land:mars:planet:",
+        "tech:gain:blue4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "land:mars:planet:",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "orbit:venus:planet:",
+        "income:gain:4,4,0,0,4,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "orbit:venus:planet:",
+        "income:gain:5,4,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "orbit:venus:planet:",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "orbit:venus:planet:",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "orbit:venus:planet:",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "orbit:venus:planet:",
+        "tech:gain:blue4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "orbit:venus:planet:",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "data:analyze",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "data:analyze",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "data:analyze",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "data:analyze",
+        "tech:gain:orange1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "data:analyze",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "income:gain:4,4,0,0,3,1",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "income:gain:4,4,0,0,3,1",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "income:gain:4,4,0,0,3,1",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "income:gain:4,4,0,0,3,1",
+        "tech:gain:blue4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "income:gain:4,4,0,0,3,1",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "land:mars:planet:",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "land:mars:planet:",
+        "income:gain:4,4,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "land:mars:planet:",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "land:mars:planet:",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "land:mars:planet:",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "land:mars:planet:",
+        "tech:gain:blue4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "land:mars:planet:",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "orbit:venus:planet:",
+        "income:gain:4,4,0,0,4,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "orbit:venus:planet:",
+        "income:gain:5,4,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "orbit:venus:planet:",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "orbit:venus:planet:",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "orbit:venus:planet:",
+        "tech:gain:blue4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "orbit:venus:planet:",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "data:analyze",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "data:analyze",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "data:analyze",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "data:analyze",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "data:analyze",
+        "tech:gain:orange1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "income:gain:4,4,0,0,3,1",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "income:gain:4,4,0,0,3,1",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "income:gain:4,4,0,0,3,1",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "income:gain:4,4,0,0,3,1",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "income:gain:4,4,0,0,3,1",
+        "tech:gain:blue4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "land:mars:planet:",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "land:mars:planet:",
+        "income:gain:4,4,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "land:mars:planet:",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "land:mars:planet:",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "land:mars:planet:",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "land:mars:planet:",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "land:mars:planet:",
+        "tech:gain:blue4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "orbit:venus:planet:",
+        "income:gain:4,4,0,0,4,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "orbit:venus:planet:",
+        "income:gain:5,4,0,0,3,1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "orbit:venus:planet:",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "orbit:venus:planet:",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "orbit:venus:planet:",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "orbit:venus:planet:",
+        "tech:gain:blue4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "tech:gain:orange1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue2",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "tech:gain:orange1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:blue3",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "tech:gain:purple4"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "land:mars:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "orbit:venus:planet:"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "tech:gain:blue2"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "tech:gain:blue3"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    },
+    {
+      "path": [
+        "tech:gain:purple4",
+        "income:gain:4,4,0,0,3,1",
+        "data:analyze",
+        "tech:gain:orange1"
+      ],
+      "variants": 0,
+      "permutationGroupCount": 0
+    }
+  ],
+  "permutationGroups": [
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        113,
+        118
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        115,
+        120
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        127,
+        134
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        129,
+        136
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        166,
+        176
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽阿米巴牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "amiba:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的低重力研究",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "amiba:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的低重力研究",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "amiba:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽阿米巴牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "amiba:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        230,
+        242
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        232,
+        244
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        256,
+        268
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        258,
+        270
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        364,
+        366
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽阿米巴牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "amiba:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的低重力研究",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "amiba:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的低重力研究",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "amiba:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽阿米巴牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "amiba:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        429,
+        434
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽阿米巴牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "amiba:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的低重力研究",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "amiba:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的低重力研究",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "amiba:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽阿米巴牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "amiba:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        466,
+        472
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        468,
+        474
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        481,
+        488
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        483,
+        490
+      ],
+      "differences": [
+        {
+          "index": 11,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        580,
+        590
+      ],
+      "differences": [
+        {
+          "index": 12,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 16,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        582,
+        592
+      ],
+      "differences": [
+        {
+          "index": 12,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 16,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        604,
+        616
+      ],
+      "differences": [
+        {
+          "index": 12,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 16,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        606,
+        618
+      ],
+      "differences": [
+        {
+          "index": 12,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 16,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        714,
+        724
+      ],
+      "differences": [
+        {
+          "index": 12,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 16,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        716,
+        726
+      ],
+      "differences": [
+        {
+          "index": 12,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 16,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        738,
+        750
+      ],
+      "differences": [
+        {
+          "index": 12,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 16,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": [
+        "orbit:venus:planet:",
+        "data:analyze"
+      ],
+      "variantIndices": [
+        740,
+        752
+      ],
+      "differences": [
+        {
+          "index": 12,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            }
+          ]
+        },
+        {
+          "index": 16,
+          "choices": [
+            {
+              "family": "choose_card",
+              "summary": "获得展示的虫",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:display:9",
+                "source": "display",
+                "cardIndex": 9
+              }
+            },
+            {
+              "family": "choose_card",
+              "summary": "盲抽虫牌",
+              "target": {
+                "kind": "residual-domain",
+                "choiceId": "chong:blind",
+                "source": "blind"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "allDifferencesAreBlindDisplayCardOrder": true,
+  "passed": true
+}
