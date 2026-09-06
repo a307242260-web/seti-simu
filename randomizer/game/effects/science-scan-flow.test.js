@@ -551,4 +551,46 @@ for (const tileId of ["blue1", "blue2", "blue3", "blue4"]) {
     }
   }
 }
+// 任意扫描的真实扇区合法集与单来源剩余义务。
+{
+  const cardEffects = require("../cards/effects");
+  const executors = new Map();
+  scienceSession.createScienceDomain({ runtime: { registerExecutor(type, executor) {
+    executors.set(type, typeof executor === "function" ? { execute: executor } : executor);
+  } }, commitWorkingState() { return {}; } });
+  const sectors = Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat();
+  for (const gainData of [true, false]) for (const nebulaId of sectors) {
+    const { root } = createCanonicalState();
+    root.data = data.createDefaultNebulaDataState();
+    data.fillAllNebulaData(root.data, { root, source: "any-scan-test" });
+    const actor = root.players.players[0];
+    actor.resources.availableData = 0;
+    actor.techState = players.normalizePlayerTechState(null);
+    assert.deepEqual(scienceSession.listNebulaChoices(root, { nebulaIds: [] }), [], "指定空集不得变成全盘");
+    const executor = executors.get(scienceSession.EFFECT_TYPES.SCAN_STEP);
+    const prepared = executor.execute(root, { ownerId: actor.id,
+      payload: { options: { mode: "any", gainData, sameSectorRemaining: 2 } } }, { state: root });
+    assert.equal(prepared.ok, true);
+    assert.equal(prepared.spawnedEffects.length, 1, "任意扫描不得静默跳过");
+    const decision = prepared.spawnedEffects[0].effect;
+    const choices = executor.getLegalChoices(root, decision, { state: root });
+    assert.deepEqual(choices.map(c => c.target.nebulaId).sort(), [...sectors].sort());
+    let result = executor.resolveDecision(root, decision, choices.find(c => c.target.nebulaId === nebulaId), { state: root });
+    assert.equal(result.ok, true);
+    const marks = [...result.events.filter(e => e.type === "signalMarked")];
+    assert.equal(result.spawnedEffects.length, 1);
+    const remaining = result.spawnedEffects[0].effect;
+    assert.notEqual(remaining.kind, "decision", "同扇区重复不得再次选择来源");
+    result = executor.execute(root, remaining, { state: root });
+    assert.equal(result.ok, true);
+    marks.push(...result.events.filter(e => e.type === "signalMarked"));
+    assert.deepEqual(marks.map(e => e.nebulaId), [nebulaId, nebulaId]);
+    assert.equal(result.spawnedEffects.length, 0);
+    assert.equal(actor.resources.availableData, gainData ? 2 : 0);
+  }
+  const repeated = cardEffects.buildPlayEffects({ cardId: "banrenma_8.webp" })
+    .filter(e => e.type === cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN);
+  assert.equal(repeated.length, 1);
+  assert.equal(repeated[0].options.repeat, 2);
+}
 console.log("science scan and blue reward tests passed");

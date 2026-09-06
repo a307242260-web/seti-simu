@@ -134,7 +134,7 @@ agent 最终应把人工描述转换成以下规范对象。当前实现可以�
 | `scan_nebula` | `nebulaId`、`gainData` | `auto` | 扫描确定星云。成功后必须推进当前节点。 |
 | `choose_colored_nebula_scan` | `color`、`gainData` | `choice` | 颜色二选一扫描。 |
 | `choose_sector_scan` | `sectorXs`、`gainData` | `choice` | 从指定扇区集合中选一个星云。 |
-| `any_sector_scan` | `gainData` | `choice` | 8 个外圈扇区任选。 |
+| `any_sector_scan` | `gainData`、`repeat` | `choice`/`auto` | 8 个外圈扇区任选；同一效果的repeat保留到执行期，先选一次，再在同一扇区逐次标记。多个独立效果仍各自选择。 |
 | `public_card_scan` | `maxSelectable`、`minSelectable` | `choice` | 选公共牌，按该牌扫描角标选星云；扫描行动的额外公共扫描可在上限内少选，卡牌多次公共扫描通常要求选满牌面次数。弃牌先留下空公共牌位，等对应扫描相关 flow 收尾统一补牌。 |
 | `hand_card_scan` | `count` | `choice` | 选手牌，按该牌扫描角标选星云，确认后弃牌。 |
 | `expand_scan_action` | `skipBaseCost` | `expand` | 插入扫描行动后续节点。卡牌来源必须 `skipBaseCost: true`，除非牌明确要求支付扫描费；紫2/紫3/紫4等科技追加费用仍正常支付或消耗。 |

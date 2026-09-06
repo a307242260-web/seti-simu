@@ -3782,6 +3782,7 @@
   function shouldPreserveRepeatInBuildEffects(item) {
     return Boolean(item?.options?.noAutoRepeatExpansion)
       || item?.type === EFFECT_TYPES.PUBLIC_SCAN
+      || item?.type === EFFECT_TYPES.ANY_SECTOR_SCAN
       || item?.type === EFFECT_TYPES.PROBE_SECTOR_SCAN;
   }
 

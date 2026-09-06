@@ -1031,7 +1031,9 @@
       const choices = [];
       const mode = opts.mode || "specified";
       if (mode === "any") {
-        choices.push(...listNebulaChoices(root, { gainData: opts.gainData }));
+        choices.push(...listNebulaChoices(root, {
+          nebulaIds: Object.values(cardEffects.NEBULA_IDS_BY_COLOR).flat(), gainData: opts.gainData,
+        }));
       } else if (mode === "color") {
         choices.push(...listNebulaChoices(root, {
           nebulaIds: cardEffects.NEBULA_IDS_BY_COLOR[opts.color] || [],
@@ -1140,6 +1142,14 @@
       // 同一 flow 内完成扇区不提前重置，后续信号只能放额外标记。
       const spawnedEffects = [];
       const events = clone(result.events || []);
+      if (opts.sameSectorRemaining > 1) {
+        // 任意扫描先选扇区，再逐次完成同一扇区的标记；链尾统一结算不在此新增。
+        spawnedEffects.push({ priority: "direct", effect: {
+          type: EFFECT_TYPES.SCAN_STEP, ownerId: actor.id,
+          payload: { options: { mode: "specified", nebulaIds: [legal.target.nebulaId],
+            gainData: opts.gainData, label: opts.label, sameSectorRemaining: opts.sameSectorRemaining - 1 } },
+        } });
+      }
       if (mode === "hand") {
         const index = actor.hand.findIndex((card) => card.id === legal.target.cardInstanceId);
         const removed = cards.discardFromHandAtIndex(actor, index);

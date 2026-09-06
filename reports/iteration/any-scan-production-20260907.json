@@ -1,0 +1,50 @@
+{
+  "scope": "真实42盘面派生受控卡牌/信号；唯一Production打牌、全部后续和逐Decision恢复；非AI/非固定整局",
+  "cases": [
+    {
+      "cardId": "b_19.webp",
+      "setup": "empty",
+      "anyDecisions": 1,
+      "marks": [
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-4-a",
+          "slotIndex": 1,
+          "playerId": "player-green"
+        }
+      ],
+      "settles": 1,
+      "data": 3,
+      "steps": [
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f595b919",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "nebula:sector-4-a",
+              "nebulaId": "sector-4-a",
+              "sectorX": null
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 室女座61"
+          },
+          "isAny": true,
+          "restored": true
+        }
+      ]
+    }
+  ],
+  "verified": false,
+  "error": {
+    "message": "Cannot read properties of null (reading 'card_id')",
+    "stack": "TypeError: Cannot read properties of null (reading 'card_id')\n    at createCardInstance (/Users/bilibili/code/seti-simu/randomizer/game/cards/deck.js:141:21)\n    at Object.createCommittedCardInstance (/Users/bilibili/code/seti-simu/randomizer/game/cards/deck.js:156:61)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/verify-any-scan-production-20260907.js:28:25)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)"
+  }
+}

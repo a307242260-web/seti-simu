@@ -103,6 +103,9 @@ options.probeFlow保存来源、剩余扇区/次数及已选来源，恢复后�
 原卡实例及具体afterProbeScan后续effect不会在prepare转Decision时丢失。
 该透传仅限mode=probe或options.probeFlow，普通扫描Decision仍只携带options。
 b88的probeScanResult仅承载结算前正式信号事实，Card Play验证后执行原卡回手。
+任意扇区扫描使用正式八扇区目录；options.sameSectorRemaining保存含当前在内的
+同扇区剩余标记次数。首次选择后转specified唯一扇区，后续逐次执行原扫描内核，
+不再次选址、不增加流末结算。独立的多个ANY效果仍各自选址，不合并来源。
 计划从公开board.rockets及board.solarSystem.sectorBySlot采集所选来源依赖，
 没有新增私有信息读取。规则目录、节点预算和启发式权重不变。
 

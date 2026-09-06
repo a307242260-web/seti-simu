@@ -1,0 +1,116 @@
+{
+  "scope": "真实42盘面派生受控卡牌/信号；唯一Production打牌、全部后续和逐Decision恢复；非AI/非固定整局",
+  "cases": [
+    {
+      "cardId": "b_9.webp",
+      "setup": "empty",
+      "anyDecisions": 1,
+      "marks": [
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-1-a",
+          "slotIndex": 1,
+          "playerId": "player-green"
+        },
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-2-a",
+          "slotIndex": 1,
+          "playerId": "player-green"
+        },
+        {
+          "type": "signalMarked",
+          "nebulaId": "sector-4-a",
+          "slotIndex": 1,
+          "playerId": "player-green"
+        }
+      ],
+      "settles": 2,
+      "data": 5,
+      "steps": [
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:a2b5645b",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "nebula:sector-1-a",
+              "nebulaId": "sector-1-a",
+              "sectorX": 5
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 南河三"
+          },
+          "isAny": false,
+          "restored": true
+        },
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:eb7defbe",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "public:card-17-0:sector-2-a",
+              "cardInstanceId": "card-17-0",
+              "publicSlotIndex": 0,
+              "nebulaId": "sector-2-a"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "b_2.webp → 天狼星A",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-17-0",
+              "imageSrc": "../assets/cards/basic/split/b_2.webp",
+              "imageAlt": "b_2.webp"
+            }
+          },
+          "isAny": false,
+          "restored": true
+        },
+        {
+          "choice": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:f595b919",
+            "actorId": "player-green",
+            "stateVersion": 11,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "nebula:sector-4-a",
+              "nebulaId": "sector-4-a",
+              "sectorX": null
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 室女座61"
+          },
+          "isAny": true,
+          "restored": true
+        }
+      ]
+    }
+  ],
+  "productionFiles": {
+    "randomizer/game/cards/effects.js": "2fcbf8dcdadd16fb00ff7f0fc423780226cc123f5eb30ef53cdbb5932ec59bb9",
+    "randomizer/game/cards/play-domain.js": "3fe075715e53d3bce1a016fe4bbf8312749e270c8b151f9698cfcb6330efb478",
+    "randomizer/game/effects/science-session.js": "d6a7dd7c5fe3f4c3527270dff62e2827a18e792effd0546c098728e4287bf69c"
+  },
+  "verified": true
+}

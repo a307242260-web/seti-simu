@@ -411,7 +411,8 @@
           case cardEffects.EFFECT_TYPES.SCAN_NEBULA:
             return { mode: "specified", nebulaIds: [e.options?.nebulaId].filter(Boolean), gainData: e.options?.gainData !== false, label: e.label };
           case cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN:
-            return { mode: "any", gainData: e.options?.gainData !== false, label: e.label };
+            return { mode: "any", gainData: e.options?.gainData !== false, label: e.label,
+              sameSectorRemaining: e.options?.repeat ?? 1 };
           case cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE:
             return { mode: "color", color: e.options?.color, gainData: e.options?.gainData !== false, label: e.label };
           case cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN:
