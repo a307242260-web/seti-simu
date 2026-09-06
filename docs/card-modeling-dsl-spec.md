@@ -161,7 +161,7 @@ agent 最终应把人工描述转换成以下规范对象。当前实现可以�
 
 | DSL | 参数 | `kind` | 说明 |
 | --- | --- | --- | --- |
-| `launch` | `skipCost` 或 `cost` | `auto`/`choice` | 卡牌来源默认 `skipCost: true` 或显式卡牌费用覆盖。 |
+| `launch` | `skipCost` 或 `cost`、`ignoreRocketLimit` | `auto` | 卡牌来源默认免发射费用；未声明忽略上限且探测器已满额时，正式节点记录 `skipped: true, reason: "rocket_limit"` 并继续其他效果（官方 FAQ General Q2）。上限未满时必须执行，其他内核错误仍显式失败；不禁止整张牌。 |
 | `move` | `movementPoints`、`skipCost` | `choice` | 需要选择火箭和方向；`movementPoints > 1` 保持为单个移动效果，并用效果角标显示剩余移动力。普通移动消耗 1 点，移出小行星消耗 2 点，玩家可随时跳过剩余移动。 |
 | `research_tech` | `techTypes`、`skipCost` | `choice` | 卡牌来源默认 `skipCost: true`，后续仍展开旋转、bonus、即时效果。 |
 | `alien_trace` | `traceTypes` | `choice` | 选择外星人槽和痕迹颜色。 |

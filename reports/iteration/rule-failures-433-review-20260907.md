@@ -18,4 +18,5 @@ skipCost=true、ignoreRocketLimit=false、repeat=1。需要先核对规则：打
 上限但需要发射”为例，要求跳过该效果并继续其他效果；Q1 要求本可执行的行动效果
 正常执行。27页英文原件已下载到 rules/seti-faq-base-en-202411.pdf，pypdf校验内容，
 不是HTML跳转页。修复方向已确定：不禁止整张牌、不忽略上限、不捕获所有失败。
-设计边界见 card-launch-limit-design-20260907.md；生产修复尚未实施。
+设计边界见 card-launch-limit-design-20260907.md；正式节点已实现，六种边界回归通过，
+真实433单决策与完整局结果仍须分别验证。

@@ -1,0 +1,33 @@
+{
+  "scope": "只读既有433搜索结果，在正式fork按原单席位规划契约重放完整链，不运行AI或模拟对手",
+  "steps": [
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:2e224f59",
+        "actorId": "player-white",
+        "stateVersion": 218,
+        "decisionVersion": 12,
+        "target": {
+          "cardInstanceId": "card-77-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 2
+        },
+        "decision": null,
+        "summary": "b_17.webp"
+      },
+      "ok": true
+    }
+  ],
+  "passed": false,
+  "error": {
+    "message": "搜索计划动作必须正式可执行：choose_target:a4b269bb",
+    "stack": "AssertionError [ERR_ASSERTION]: 搜索计划动作必须正式可执行：choose_target:a4b269bb\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/replay-card-launch-433-20260907.js:17:14)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

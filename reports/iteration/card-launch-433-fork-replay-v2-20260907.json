@@ -1,0 +1,698 @@
+{
+  "scope": "只读既有433搜索结果，在正式fork按原单席位规划契约重放完整链，不运行AI或模拟对手",
+  "steps": [
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:2e224f59",
+        "actorId": "player-white",
+        "stateVersion": 218,
+        "decisionVersion": 12,
+        "target": {
+          "cardInstanceId": "card-77-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 2
+        },
+        "decision": null,
+        "summary": "b_17.webp"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:a4b269bb",
+        "actorId": "player-white",
+        "stateVersion": 218,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "11:-1:0",
+          "rocketId": 11,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "requiredMovePoints": 1,
+          "remaining": 1
+        },
+        "decision": null,
+        "summary": "R11 逆时针"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:ce8aa997",
+        "actorId": "player-white",
+        "stateVersion": 218,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "nebula:sector-2-b",
+          "nebulaId": "sector-2-b",
+          "sectorX": null
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 巴纳德"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 219,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "orbit",
+        "phase": "main",
+        "actionId": "orbit:d63c16ac",
+        "actorId": "player-white",
+        "stateVersion": 221,
+        "decisionVersion": 12,
+        "target": {
+          "rocketId": 11,
+          "planetId": "venus"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R11，1信用点 + 1能量）"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:481d456e",
+        "actorId": "player-white",
+        "stateVersion": 221,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "income:card-34-pass-3-5",
+          "cardInstanceId": "card-34-pass-3-5"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_138.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-34-pass-3-5",
+          "imageSrc": "../assets/cards/basic/split/b_138.webp",
+          "imageAlt": "b_138.webp"
+        }
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 222,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 224,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 224,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 1"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 225,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:44b74627",
+        "actorId": "player-white",
+        "stateVersion": 225,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "data:blueBonus:1",
+          "target": "blueBonus",
+          "blueSlot": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "blue1 下方"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 226,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 226,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 2"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 227,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 227,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 3"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 228,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 228,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 4"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:c6b314bc",
+        "actorId": "player-white",
+        "stateVersion": 228,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "income:card-76-0",
+          "cardInstanceId": "card-76-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_140.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-76-0",
+          "imageSrc": "../assets/cards/basic/split/b_140.webp",
+          "imageAlt": "b_140.webp"
+        }
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 229,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 229,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 5"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:2d21a323",
+        "actorId": "player-white",
+        "stateVersion": 230,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:8a5d7b2d",
+        "actorId": "player-white",
+        "stateVersion": 230,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "nebula:sector-2-a",
+          "nebulaId": "sector-2-a",
+          "sectorX": 1
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 天狼星A"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:8bbb074c",
+        "actorId": "player-white",
+        "stateVersion": 230,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "public:card-87-0:sector-1-a",
+          "cardInstanceId": "card-87-0",
+          "publicSlotIndex": 0,
+          "nebulaId": "sector-1-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "dlc_41.png → 南河三",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-87-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_41.png",
+          "imageAlt": "dlc_41.png"
+        }
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:26431437",
+        "actorId": "player-white",
+        "stateVersion": 230,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "public:card-88-0:sector-3-a",
+          "cardInstanceId": "card-88-0",
+          "publicSlotIndex": 1,
+          "nebulaId": "sector-3-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "b_134.webp → 开普勒22",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-88-0",
+          "imageSrc": "../assets/cards/basic/split/b_134.webp",
+          "imageAlt": "b_134.webp"
+        }
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:756e7901",
+        "actorId": "player-white",
+        "stateVersion": 230,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "nebula:sector-1-a",
+          "nebulaId": "sector-1-a",
+          "sectorX": 5
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 南河三"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:314aec90",
+        "actorId": "player-white",
+        "stateVersion": 230,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "trace:2:pink:chong:4",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 2,
+          "traceType": "pink",
+          "speciesId": "chong",
+          "position": 4
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 2 粉4号位（5分+外星人牌）"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:aef646a1",
+        "actorId": "player-white",
+        "stateVersion": 230,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "chong:blind",
+          "source": "blind"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "盲抽虫牌"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 231,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 231,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 6"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 232,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "analyze",
+        "phase": "main",
+        "actionId": "analyze:a5629aa3",
+        "actorId": "player-white",
+        "stateVersion": 234,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "computer",
+          "requiredSlot": 6
+        },
+        "payload": {
+          "skipCost": true
+        },
+        "decision": null,
+        "summary": "分析"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:06ca6510",
+        "actorId": "player-white",
+        "stateVersion": 234,
+        "decisionVersion": 12,
+        "target": {
+          "choiceId": "trace:1:blue:amiba:4",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "blue",
+          "speciesId": "amiba",
+          "position": 4
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 1 蓝4号位（1分+外星人牌）"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:2ebd81c6",
+        "actorId": "player-white",
+        "stateVersion": 234,
+        "decisionVersion": 12,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "amiba:display:9",
+          "source": "display",
+          "cardIndex": 9
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "获得展示的低重力研究",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "9",
+          "imageSrc": "../assets/aliens/阿米巴/cards/9.webp",
+          "imageAlt": "低重力研究"
+        }
+      },
+      "ok": true
+    }
+  ],
+  "passed": true
+}

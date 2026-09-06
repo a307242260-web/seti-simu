@@ -522,6 +522,62 @@ function runLaunchAndPick() {
   return semanticState(committed);
 }
 
+function runLaunchLimitSettlement() {
+  for (const [cardId, count, orange1, launches] of [
+    ["b_138.webp", 1, false, 0],
+    ["b_138.webp", 0, false, 1],
+    ["b_138.webp", 1, true, 1],
+    ["b_138.webp", 2, true, 0],
+    ["b_37.webp", 1, false, 2],
+    ["b_21.webp", 1, false, 0],
+  ]) {
+    const root = createCanonicalState(cardId);
+    root.players.players[0].techState = players.normalizePlayerTechState({ ownedTiles: { orange1 } });
+    for (let index = 0; index < count; index += 1) {
+      assert.equal(rockets.launchRocketAtSector(root.pieces, { x: index, y: 2 }, {
+        playerId: "p1", color: "brown", root,
+      }).ok, true);
+    }
+    const beforePieces = structuredClone(root.pieces), beforeSequence = root.meta.sequences.rocket;
+    const { composition } = createIntegratedComposition(cardId, { state: root });
+    const opened = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+    assert.equal(opened.ok, true, `${cardId}满额效果须按规则结算：${JSON.stringify(opened)}`);
+    let result = opened;
+    if (cardId === "b_21.webp") {
+      const decision = composition.inspect().session.decision;
+      const choice = decision.choices.find(c => c.target.choiceId === "blind");
+      assert.ok(choice, "跳过发射后仍须继续拿牌选择");
+      const saved = composition.lifecycle.save().envelope;
+      const submission = { decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,
+        ownerId: decision.ownerId, choice };
+      result = composition.inputPort.submitDecision(submission);
+      assert.equal(result.ok, true, JSON.stringify(result));
+      const after = composition.lifecycle.save().envelope;
+      assert.equal(composition.lifecycle.restore(saved, { silent: true }).ok, true);
+      assert.equal(composition.inputPort.submitDecision(submission).ok, true);
+      assert.deepEqual(composition.lifecycle.save().envelope, after, "跳过后奖励恢复重放保持RNG/实体/状态一致");
+    }
+    assert.equal(result.phase, "completed");
+    const state = composition.stateSourcePort.getSnapshot();
+    assert.equal(state.pieces.rockets.length, count + launches);
+    assert.equal(state.meta.sequences.rocket, beforeSequence + launches);
+    assert.equal(result.journal.events.filter(e => e.type === "launch").length, launches);
+    const skipped = result.journal.events.filter(e => e.type === "card_effect" && e.reason === "rocket_limit");
+    assert.equal(skipped.length, launches === 0 ? 1 : 0);
+    if (launches === 0) {
+      assert.equal(skipped[0].skipped, true);
+      assert.deepEqual(state.pieces, beforePieces, "跳过发射不改变已有探测器或当前探测器");
+      assert.ok(result.journal.history.some(h => h.reason === "rocket_limit" && h.skipped === true));
+    }
+    assert.equal(state.players.players[0].resources.credits, 8, "只支付牌面费用，跳过不撤销打牌费用");
+    if (cardId === "b_21.webp") assert.equal(state.players.players[0].hand.length, 1);
+    if (cardId === "b_37.webp") assert.equal(state.players.players[0].resources.publicity, 1);
+    composition.dispose();
+  }
+}
+
+runLaunchLimitSettlement();
+
 function runScanCompletesSectorSettlement() {
   // 室女座61（sector-4-a，容量 6）预填 5 个已替换 token，打 b_1（repeat 2 固定扫描该扇区）
   // 第 1 次扫描即补满最后一个槽 → 必须触发扇区结算

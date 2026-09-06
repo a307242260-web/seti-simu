@@ -922,9 +922,20 @@
       if (!actor || effect?.type !== cardEffects.REWARD_TYPES.LAUNCH) {
         return fail("CARD_LAUNCH_CONTEXT_STALE", "卡牌发射上下文已失效");
       }
+      const context = createActionContext(root, actor.id);
+      // 官方FAQ General Q2：满额时只跳过卡牌发射效果，其余效果仍须继续。
+      // 在调用能力前判断规则限制；其他执行失败不能当作可跳过效果吞掉。
+      if (!effect.options?.ignoreRocketLimit
+        && abilities.rocket.getActiveRocketCountForPlayer(context.pieces, actor.id)
+          >= abilities.rocket.getRocketLimitForPlayer(actor, context)) {
+        return cardEffectResult(state, root, sessionEffect, {
+          event: { skipped: true, reason: "rocket_limit" },
+          history: { skipped: true, reason: "rocket_limit" },
+        });
+      }
       const result = abilities.executeAbility(
         "launchProbe",
-        createActionContext(root, actor.id),
+        context,
         {
           ...(clone(effect.options || {})),
           skipCost: effect.options?.skipCost !== false,
