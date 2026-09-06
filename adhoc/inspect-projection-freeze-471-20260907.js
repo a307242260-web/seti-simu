@@ -1,7 +1,7 @@
 "use strict";
 const fs = require("node:fs"), assert = require("node:assert/strict");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
-const output = "reports/iteration/projection-freeze-471-20260907.json";
+const output = process.argv[2] || "reports/iteration/projection-freeze-471-20260907.json";
 if (fs.existsSync(output)) console.log(fs.readFileSync(output, "utf8"));
 else {
   const env = createSimulationEnv();
@@ -28,6 +28,7 @@ else {
       } finally { fork.dispose(); }
     }
     report.inspectionComplete = true;
+    if (process.argv[2]) assert.ok(report.cases.every(entry => entry.result.ok), "修复后所有读取方式都应正常执行");
   } catch (error) {
     report.inspectionComplete = false; report.error = { message: error.message, stack: error.stack }; process.exitCode = 1;
   } finally {

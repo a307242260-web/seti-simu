@@ -562,7 +562,8 @@
         stateVersion: readStoreSnapshot().meta.stateVersion,
       };
       // 同上：cheap 中间观测跳过 deepFreeze，叶/根/宿主仍走冻结完整观测。
-      return viewer?.cheap === true ? observed : deepFreeze(observed);
+      // 完整快照先隔离working state引用，不能把仍待执行的规则状态一起冻结。
+      return viewer?.cheap === true ? observed : deepFreeze(clone(observed));
     }
 
     function inspect(skipChoices = false) {

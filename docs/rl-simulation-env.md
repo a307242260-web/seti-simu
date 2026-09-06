@@ -73,6 +73,10 @@ Composition drain，不伪装成策略动作。
 共享Effect Session的一次完整观察只枚举一次当前Decision，投影器与返回decision
 使用独立副本；不跨观察缓存，不改viewer可见性、合法项身份或枚举错误语义。
 
+活跃Session的完整投影由Rule Composition先复制返回图再冻结，不能冻结仍待执行
+的working state；保存旧投影后继续提交不会改变旧快照。idle投影沿用隔离的committed
+snapshot；cheap仅供内部即时只读，不作为可跨执行持有的完整快照。
+
 卡牌效果的插收入选择与精选选择均在play-domain经共享`formalizeChoices`输出完整
 Standard Action身份；恢复存档时重新枚举，AI与浏览器不补写actionId/actorId。
 

@@ -52,6 +52,34 @@ assert.deepEqual(sourceNextResult.reward, forkNextResult.reward);
 assert.deepEqual(sourceNext.createCheckpoint(), forkNextCheckpoint);
 sourceNext.dispose();
 
+{
+  const env = createSimulationEnv();
+  const saved = structuredClone(checkpoint);
+  delete saved.replaySteps;
+  env.loadCheckpoint(saved);
+  const reference = env.createCounterfactualFork().composition;
+  const observed = env.createCounterfactualFork().composition;
+  try {
+    const held = observed.projection({ role: "simulation" });
+    const heldValue = structuredClone(held);
+    assert.equal(Object.isFrozen(held.state.meta), true);
+    const advance = composition => {
+      const decision = composition.inspect().session.decision;
+      assert.ok(decision);
+      const result = composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+        decisionVersion: decision.decisionVersion, ownerId: decision.ownerId,
+        choice: decision.choices[0] }, { skipProjection: true });
+      assert.equal(result.ok, true, JSON.stringify(result.failure));
+    };
+    advance(reference);
+    advance(observed);
+    assert.deepEqual(observed.lifecycle.save().envelope, reference.lifecycle.save().envelope,
+      "完整观察不能冻结可变规则状态或改变正式执行结果");
+    observed.projection({ role: "simulation" });
+    assert.deepEqual(held, heldValue, "继续执行和复读不能改变先前完整快照");
+  } finally { reference.dispose(); observed.dispose(); env.dispose(); }
+}
+
 const unknownSequenceCheckpoint = structuredClone(checkpoint);
 const unknownCommittedState = JSON.parse(unknownSequenceCheckpoint.coreState.committedState);
 unknownCommittedState.meta.sequences.unknownClosure = 1;

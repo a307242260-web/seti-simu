@@ -1,0 +1,46 @@
+{
+  "scope": "同一真实471取消输入，仅改变执行前投影读取方式；不运行AI搜索",
+  "cases": [
+    {
+      "name": "no-read",
+      "result": {
+        "ok": true,
+        "phase": "completed",
+        "failure": null
+      }
+    },
+    {
+      "name": "simulation-full",
+      "result": {
+        "ok": true,
+        "phase": "completed",
+        "failure": null
+      }
+    },
+    {
+      "name": "simulation-cheap",
+      "result": {
+        "ok": true,
+        "phase": "completed",
+        "failure": null
+      }
+    },
+    {
+      "name": "player-full",
+      "result": {
+        "ok": true,
+        "phase": "completed",
+        "failure": null
+      }
+    },
+    {
+      "name": "player-cheap",
+      "result": {
+        "ok": true,
+        "phase": "completed",
+        "failure": null
+      }
+    }
+  ],
+  "inspectionComplete": true
+}

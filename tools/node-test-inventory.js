@@ -34,7 +34,7 @@ module.exports = Object.freeze({
     entry("randomizer/app/simulation-decision-owner.test.js", "architecture/simulation-host", "Simulation Decision owner 与合法集一致", "非 owner 观察或提交隐藏 choice"),
     entry("randomizer/app/simulation-effect-session-worker-recovery.test.js", "architecture/simulation-host", "worker 恢复 active Session 与 journal", "恢复只还原 committed state 而丢失 active Decision 链"),
     entry("randomizer/app/simulation-no-browser-globals.test.js", "architecture/simulation-host", "rules-only Simulation 不依赖 DOM/Window", "训练入口加载浏览器全局或 app composition"),
-    entry("randomizer/app/simulation-state-checkpoint.test.js", "architecture/simulation-host", "checkpoint 当前 schema round-trip 保持 action identity", "未知 schema 或非零版本恢复后 legal set 漂移"),
+    entry("randomizer/app/simulation-state-checkpoint.test.js", "architecture/simulation-host", "checkpoint round-trip保持action identity；完整投影独立且不妨碍后续正式执行", "未知schema、非零版本恢复后legal set漂移或读投影冻结可变规则状态"),
     entry("randomizer/app/simulation-counterfactual-outcome.test.js", "architecture/policy-host", "真实决策（runHeuristicPolicyDecision）actionOutcomes 覆盖全部合法 action 且已结算/显式原因，叶 projection 与直接标准执行一致", "actionOutcomes 静默占位、与合法集不对齐或失败 fork 污染 canonical root"),
     entry("randomizer/app/simulation-training-replay.test.js", "architecture/simulation-host", "训练 replay 逐步复现 observation/action/reward", "stale 或篡改 replay 被静默接受"),
     entry("randomizer/training/simulation-rule-composition.test.js", "architecture/simulation-host", "生产 rules-only composition 经正式 Decision 提交", "直接 helper 调用绕过 composition working root"),
