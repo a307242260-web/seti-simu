@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-06T14:24:34.278Z",
+  "builtAt": "2026-09-06T14:46:14.275Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "553e19c6",
-  "currentBaseline": "company-free-move-20260906",
+  "headCommit": "795cd6eb",
+  "currentBaseline": "amiba-data-overflow-20260906",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -101,14 +101,14 @@ const REGISTRY = {
     },
     "bestAvg": {
       "value": 109,
-      "versionId": "company-free-move-20260906",
-      "name": "公司免费移动执行修复",
-      "runKey": "ffb71a57.553e19c6.full",
+      "versionId": "amiba-data-overflow-20260906",
+      "name": "阿米巴满池奖励结算修复",
+      "runKey": "25c65ece.795cd6eb.full",
       "provenance": "save-final",
       "steps": 569,
-      "wallMs": 398848,
+      "wallMs": 398875,
       "msPerStep": 701,
-      "scoreSourceNote": "569步，正式终局121/88/118/109，均109，超过108.5门槛0.5；398848ms，107100节点、131422成功提交、21次策略4096满额。仍有795次执行失败，其中404步738次，不宣称全部分支正确。生产代码全程保持553e19c6；运行期间仅新增只读取证脚本与报告。见company-free-move-review-20260906.md。"
+      "scoreSourceNote": "569步，正式终局121/88/118/109、均109，全部569步replay与553e19c6一致；按均分不变且实现合理通过。398875ms、107100节点、132190成功提交、21次策略满额，失败795→3；剩余433步2次打牌与471步1次选牌失败。运行期间生产保持795cd6eb，仅只读报告脚本和记录变动。详见amiba-data-overflow-review-20260906.md。"
     },
     "bestPlayer": {
       "value": 152,
@@ -150,6 +150,22 @@ const REGISTRY = {
           "color": "蓝",
           "score": 121
         },
+        "versionId": "amiba-data-overflow-20260906",
+        "name": "阿米巴满池奖励结算修复",
+        "runKey": "25c65ece.795cd6eb.full",
+        "provenance": "save-final",
+        "steps": 569,
+        "wallMs": 398875,
+        "msPerStep": 701,
+        "scoreSourceNote": "569步，正式终局121/88/118/109、均109，全部569步replay与553e19c6一致；按均分不变且实现合理通过。398875ms、107100节点、132190成功提交、21次策略满额，失败795→3；剩余433步2次打牌与471步1次选牌失败。运行期间生产保持795cd6eb，仅只读报告脚本和记录变动。详见amiba-data-overflow-review-20260906.md。"
+      },
+      {
+        "value": 109,
+        "white": 109,
+        "bestPlayer": {
+          "color": "蓝",
+          "score": 121
+        },
         "versionId": "company-free-move-20260906",
         "name": "公司免费移动执行修复",
         "runKey": "ffb71a57.553e19c6.full",
@@ -174,26 +190,455 @@ const REGISTRY = {
         "wallMs": 403228,
         "msPerStep": 574,
         "scoreSourceNote": "702步，正式终局96/84/130/124、均108.5；全部动作及状态摘要与基线一致。191次搜索、148749节点，32次4096策略满额贡献88.12%节点。总模拟547927ms，较基线增加3.88%；只完成统计观测验收，无提速成果。详见search-statistics-full-review-20260906.md。"
-      },
-      {
-        "value": 108.5,
-        "white": 124,
-        "bestPlayer": {
-          "color": "棕",
-          "score": 130
-        },
-        "versionId": "observe-decision-r4-20260906",
-        "name": "单次观察枚举复用（四轮累计验收通过）",
-        "runKey": "2848eba2.213f34db.full",
-        "provenance": "save-final",
-        "steps": 702,
-        "wallMs": 389609,
-        "msPerStep": 555,
-        "scoreSourceNote": "702步，正式终局96/84/130/124、均108.5，较R2e基线106.75提高1.75；总模拟527450ms。第三/第四轮当前累计实现验收通过，见ai-rounds-final-review-20260906.md；历史失败候选不改判，旧30秒超时根因未明，整局提速未完成。"
       }
     ]
   },
   "versions": [
+    {
+      "id": "amiba-data-overflow-20260906",
+      "name": "阿米巴满池奖励结算修复",
+      "date": "2026-09-06",
+      "baseline": "company-free-move-20260906",
+      "head": "795cd6eb",
+      "commits": [
+        {
+          "hash": "795cd6eb",
+          "date": "2026-09-06",
+          "subject": "修复阿米巴满数据池奖励中断并记录弃置事件"
+        }
+      ],
+      "summary": "阿米巴细胞器奖励在满数据池时记录弃置并继续其他奖励与固定移动，保留非溢出错误显式失败",
+      "diffStat": "27 files changed, 9263 insertions(+), 66 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/benchmark-amiba-overflow-20260906.js",
+          "insertions": 29,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/diagnose-white-404-20260906.js",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/diagnose-white-404-branches-20260906.js",
+          "insertions": 75,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-company-full-20260906.js",
+          "insertions": 32,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-company-search-plan-20260906.js",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "assets/aliens/阿米巴/implementation.md",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 11,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.js",
+          "insertions": 10,
+          "deletions": 5
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.test.js",
+          "insertions": 12,
+          "deletions": 3
+        },
+        {
+          "file": "reports/iteration/amiba-data-overflow-design-20260906.md",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-before-step-404-20260906.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-free-move-20260906/ffb71a57.553e19c6.full.action-log.html",
+          "insertions": 2052,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-free-move-design-20260906.md",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/company-free-move-review-20260906.md",
+          "insertions": 73,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-free-move-search-605-553e19c6-20260906.json",
+          "insertions": 968,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-full-verification-553e19c6-20260906.json",
+          "insertions": 308,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-search-plan-prefix-553e19c6-20260906.json",
+          "insertions": 102,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 478,
+          "deletions": 28
+        },
+        {
+          "file": "reports/iteration/search-distribution-553e19c6-full-20260906.json",
+          "insertions": 2436,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/white-404-branches-20260906-v2.json",
+          "insertions": 186,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/white-404-branches-20260906-v3.json",
+          "insertions": 761,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/white-404-branches-20260906-v4.json",
+          "insertions": 349,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/white-404-branches-20260906.json",
+          "insertions": 11,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/white-404-overflow-fixed-20260906.json",
+          "insertions": 114,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/white-404-state-20260906.json",
+          "insertions": 639,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 478,
+          "deletions": 28
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "25c65ece.795cd6eb.full.json",
+          "recordPath": "reports/research/25c65ece.795cd6eb.full.json",
+          "mode": "full",
+          "steps": 569,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 398875,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "795cd6eb",
+          "createdAt": "2026-09-06T14:44:35.463Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "569步，正式终局121/88/118/109、均109，全部569步replay与553e19c6一致；按均分不变且实现合理通过。398875ms、107100节点、132190成功提交、21次策略满额，失败795→3；剩余433步2次打牌与471步1次选牌失败。运行期间生产保持795cd6eb，仅只读报告脚本和记录变动。详见amiba-data-overflow-review-20260906.md。",
+          "scores": {
+            "player-blue": 121,
+            "player-green": 88,
+            "player-brown": 118,
+            "player-white": 109
+          },
+          "avgScore": 109,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 121,
+              "base": 70,
+              "tile": 47,
+              "card": 4,
+              "tileScoresById": {
+                "a": 33,
+                "b": 8,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 12,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 17,
+                "orbitScore": 12,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 88,
+              "base": 68,
+              "tile": 20,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 0,
+                "cardEffectScore": 11,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 13,
+                "orbitScore": 18,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 5
+              }
+            },
+            "player-brown": {
+              "total": 118,
+              "base": 72,
+              "tile": 42,
+              "card": 4,
+              "tileScoresById": {
+                "a": 15,
+                "b": 6,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "chong_2.webp",
+                  "rule": {
+                    "kind": "chongTraceCount",
+                    "scorePer": 1
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 9,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 12,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 7,
+                "orbitScore": 3,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 11
+              }
+            },
+            "player-white": {
+              "total": 109,
+              "base": 53,
+              "tile": 38,
+              "card": 18,
+              "tileScoresById": {
+                "a": 32,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 32,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 18
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 5,
+                "orbitScore": 6,
+                "scanScore": 16,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-amiba-data-overflow-20260906-795cd6eb-full-v283.json",
+          "reportPath": "reports/iteration/amiba-data-overflow-20260906/25c65ece.795cd6eb.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "25c65ece.795cd6eb.full",
+            "path": "reports/iteration/amiba-data-overflow-20260906/25c65ece.795cd6eb.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "company-free-move-20260906",
       "name": "公司免费移动执行修复",
@@ -630,7 +1075,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

@@ -41,7 +41,8 @@ if(!gained.ok)return逻辑（父提交同处亦存在），不能称为公司移
 验证实际token上限、弃置次数、dataToken序号、盲抽与固定移动、事件、错误输入不变及
 完整保存恢复；已完成session的journal从提交结果检查，不从已清除pending取值。
 77unit+1fullFlow通过（6.54s+0.51s），按用户要求排除两项既有测试，不宣称无遗漏。
-单步搜索与固定完整局待完成。
+单步搜索404失败738→0；完整局569步均109，全部replay与前版一致、失败795→3，
+按均分不变且实现合理通过。分项性能和剩余义务见amiba-data-overflow-review-20260906.md。
 
 文档核对：已更新阿米巴实现说明及性能计划；机制手册现有“满池增加discardedCount”
 与本次一致，README/AGENTS/AI设计/RL入口及schema未变，无需修改；长期记忆未动。

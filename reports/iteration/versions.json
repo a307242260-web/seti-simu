@@ -7,6 +7,23 @@
   },
   "versions": [
     {
+      "id": "amiba-data-overflow-20260906",
+      "name": "阿米巴满池奖励结算修复",
+      "date": "2026-09-06",
+      "baseline": "company-free-move-20260906",
+      "head": "795cd6eb",
+      "commits": [
+        "795cd6eb"
+      ],
+      "summary": "阿米巴细胞器奖励在满数据池时记录弃置并继续其他奖励与固定移动，保留非溢出错误显式失败",
+      "records": {
+        "25c65ece.795cd6eb.full.json": {
+          "note": "569步，正式终局121/88/118/109、均109，全部569步replay与553e19c6一致；按均分不变且实现合理通过。398875ms、107100节点、132190成功提交、21次策略满额，失败795→3；剩余433步2次打牌与471步1次选牌失败。运行期间生产保持795cd6eb，仅只读报告脚本和记录变动。详见amiba-data-overflow-review-20260906.md。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "company-free-move-20260906",
       "name": "公司免费移动执行修复",
       "date": "2026-09-06",

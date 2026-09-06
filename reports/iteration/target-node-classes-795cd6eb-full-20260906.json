@@ -1,0 +1,146 @@
+{
+  "source": "reports/research/25c65ece.795cd6eb.full.json",
+  "scope": "只读既有物理节点；成功choose_target按完整summary规则分组，失败单列；不是冗余判定，不将origin重复相加",
+  "all": {
+    "nodes": 107100,
+    "attemptedTargets": 40531,
+    "failedTargets": 0,
+    "classes": {
+      "扫描扇区": 3416,
+      "痕迹位置": 17316,
+      "科技选择": 4787,
+      "移动选择": 9119,
+      "待逐项核对": 626,
+      "数据放置": 3100,
+      "终局板块标记": 2167
+    },
+    "unclassified": {
+      "移除 saturn orbit": 30,
+      "移除 mars orbit": 34,
+      "跳过": 50,
+      "无效 purple4": 19,
+      "无效 orange2": 289,
+      "无效 orange3": 22,
+      "移除 venus orbit": 7,
+      "发射探测器": 7,
+      "无效 purple2": 110,
+      "环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（R4，0）": 14,
+      "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R4，0）": 8,
+      "蓝色痕迹 1号位": 17,
+      "blue_3（1宣传）": 3,
+      "无效 orange1": 16
+    },
+    "byDecisionKind": {
+      "choose_target:<none>": 10927,
+      "choose_target:planet-reward-alien-trace": 17316,
+      "choose_target:residual-domain": 12217,
+      "choose_target:orbit": 71
+    },
+    "ranking": [
+      {
+        "group": "痕迹位置",
+        "nodes": 17316,
+        "percentOfAll": 16.168067226890756
+      },
+      {
+        "group": "移动选择",
+        "nodes": 9119,
+        "percentOfAll": 8.514472455648926
+      },
+      {
+        "group": "科技选择",
+        "nodes": 4787,
+        "percentOfAll": 4.469654528478058
+      },
+      {
+        "group": "扫描扇区",
+        "nodes": 3416,
+        "percentOfAll": 3.189542483660131
+      },
+      {
+        "group": "数据放置",
+        "nodes": 3100,
+        "percentOfAll": 2.8944911297852474
+      },
+      {
+        "group": "终局板块标记",
+        "nodes": 2167,
+        "percentOfAll": 2.023342670401494
+      },
+      {
+        "group": "待逐项核对",
+        "nodes": 626,
+        "percentOfAll": 0.5845004668534081
+      }
+    ]
+  },
+  "fullBudget": {
+    "nodes": 86016,
+    "attemptedTargets": 35289,
+    "failedTargets": 0,
+    "classes": {
+      "扫描扇区": 2479,
+      "痕迹位置": 16725,
+      "科技选择": 4152,
+      "移动选择": 8433,
+      "待逐项核对": 246,
+      "数据放置": 1898,
+      "终局板块标记": 1356
+    },
+    "unclassified": {
+      "移除 saturn orbit": 30,
+      "移除 mars orbit": 34,
+      "移除 venus orbit": 7,
+      "跳过": 31,
+      "发射探测器": 7,
+      "无效 purple2": 36,
+      "环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（R4，0）": 14,
+      "无效 orange2": 77,
+      "无效 orange3": 7,
+      "blue_3（1宣传）": 3
+    },
+    "byDecisionKind": {
+      "choose_target:<none>": 8189,
+      "choose_target:planet-reward-alien-trace": 16725,
+      "choose_target:residual-domain": 10304,
+      "choose_target:orbit": 71
+    },
+    "ranking": [
+      {
+        "group": "痕迹位置",
+        "nodes": 16725,
+        "percentOfAll": 19.444056919642858
+      },
+      {
+        "group": "移动选择",
+        "nodes": 8433,
+        "percentOfAll": 9.803989955357142
+      },
+      {
+        "group": "科技选择",
+        "nodes": 4152,
+        "percentOfAll": 4.827008928571429
+      },
+      {
+        "group": "扫描扇区",
+        "nodes": 2479,
+        "percentOfAll": 2.882021949404762
+      },
+      {
+        "group": "数据放置",
+        "nodes": 1898,
+        "percentOfAll": 2.2065662202380953
+      },
+      {
+        "group": "终局板块标记",
+        "nodes": 1356,
+        "percentOfAll": 1.5764508928571428
+      },
+      {
+        "group": "待逐项核对",
+        "nodes": 246,
+        "percentOfAll": 0.28599330357142855
+      }
+    ]
+  }
+}
