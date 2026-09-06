@@ -190,3 +190,8 @@ reports/iteration/policy-plan-full-review-20260906.md；不扩大到公司策略
 不能视为全部可省，不优先新增缓存。真实42六个首次方向的第二阶段合法集已核对，
 当前允许火箭直接从合法描述符读取，无需新增阶段接口；下一步闭合免费可达性与
 访问收益，避免反复研究同一阶段疑问。见reports/iteration/company-stage-review-20260907.md。
+
+叶观察重复复制发现实际候选：42的2938叶观察仅949种完整值，1989独立对象重复；
+离线合并引用且保留完整值/全部叶后，含索引的Policy处理5484→1387ms，评分与
+决策一致。尚非生产优化，必须先闭合异常值/对象语义及来源隔离，不能直接用JSON键
+替代校验。详见reports/iteration/leaf-observation-sharing-design-20260907.md。

@@ -1,0 +1,15 @@
+{
+  "source": "reports/iteration/policy-input-42-20260906.v8.gz",
+  "scope": "已保存可信叶观察的离线完整值驻留实验；保留所有叶和元数据、通用Policy校验，不是生产实现或节点优化；计时含完整JSON生成与索引",
+  "baselineMs": 5484.239958,
+  "internMs": 295.1810830000004,
+  "candidateTotalMs": 1386.9096250000002,
+  "sameCompleteValues": true,
+  "sameEvaluations": true,
+  "sameDecision": true,
+  "sourceUnchanged": true,
+  "leaves": 2938,
+  "distinctObservations": 949,
+  "actionId": "place_data:dbe01b29",
+  "passed": true
+}

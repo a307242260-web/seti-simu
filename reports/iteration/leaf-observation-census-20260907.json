@@ -1,0 +1,2344 @@
+{
+  "source": "reports/iteration/policy-input-42-20260906.v8.gz",
+  "sha256": "8d52e39508d99950e8c141485450938944993cf5e2e10c4f88b9df5a99665256",
+  "scope": "只读真实42已保留叶；按完整JSON值分组并深比较验证重复，不裁字段；不同键顺序不合并，保守计数；不是物理状态/节点去重证明",
+  "fields": {
+    "observation": {
+      "occurrences": 2938,
+      "identities": 2938,
+      "distinctFullValues": 949,
+      "repeatedIndependentCopies": 1989,
+      "uniqueIdentityJsonBytes": 154085155,
+      "distinctValueJsonBytes": 49277372,
+      "duplicateGroups": [
+        {
+          "copies": 24,
+          "jsonBytesEach": 52583
+        },
+        {
+          "copies": 20,
+          "jsonBytesEach": 52583
+        },
+        {
+          "copies": 18,
+          "jsonBytesEach": 52792
+        },
+        {
+          "copies": 17,
+          "jsonBytesEach": 52743
+        },
+        {
+          "copies": 17,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 16,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 16,
+          "jsonBytesEach": 52603
+        },
+        {
+          "copies": 16,
+          "jsonBytesEach": 52583
+        },
+        {
+          "copies": 14,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 14,
+          "jsonBytesEach": 52743
+        },
+        {
+          "copies": 13,
+          "jsonBytesEach": 53080
+        },
+        {
+          "copies": 13,
+          "jsonBytesEach": 52763
+        },
+        {
+          "copies": 13,
+          "jsonBytesEach": 52905
+        },
+        {
+          "copies": 13,
+          "jsonBytesEach": 52938
+        },
+        {
+          "copies": 12,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 12,
+          "jsonBytesEach": 52792
+        },
+        {
+          "copies": 12,
+          "jsonBytesEach": 52603
+        },
+        {
+          "copies": 12,
+          "jsonBytesEach": 52583
+        },
+        {
+          "copies": 12,
+          "jsonBytesEach": 55046
+        },
+        {
+          "copies": 11,
+          "jsonBytesEach": 52905
+        },
+        {
+          "copies": 11,
+          "jsonBytesEach": 53080
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52645
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52853
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52499
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52824
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52824
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52499
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52763
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52678
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52649
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52678
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52853
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52645
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52938
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52649
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52674
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52470
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52674
+        },
+        {
+          "copies": 10,
+          "jsonBytesEach": 52470
+        },
+        {
+          "copies": 9,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 9,
+          "jsonBytesEach": 52601
+        },
+        {
+          "copies": 9,
+          "jsonBytesEach": 52792
+        },
+        {
+          "copies": 9,
+          "jsonBytesEach": 52763
+        },
+        {
+          "copies": 9,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 9,
+          "jsonBytesEach": 52938
+        },
+        {
+          "copies": 9,
+          "jsonBytesEach": 52630
+        },
+        {
+          "copies": 9,
+          "jsonBytesEach": 52743
+        },
+        {
+          "copies": 9,
+          "jsonBytesEach": 52776
+        },
+        {
+          "copies": 9,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 54869
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52743
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52776
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52763
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52968
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52450
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52457
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52743
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52678
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52715
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52477
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52792
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52625
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52506
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52824
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52938
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52560
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52632
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52632
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52616
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52649
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52645
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52919
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52540
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52645
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52681
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52630
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52470
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52499
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52674
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52735
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52853
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52490
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52652
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52665
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52763
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52938
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52441
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52470
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52457
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52601
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 8,
+          "jsonBytesEach": 54845
+        },
+        {
+          "copies": 7,
+          "jsonBytesEach": 51592
+        },
+        {
+          "copies": 7,
+          "jsonBytesEach": 51415
+        },
+        {
+          "copies": 7,
+          "jsonBytesEach": 52503
+        },
+        {
+          "copies": 7,
+          "jsonBytesEach": 51384
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52949
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52632
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52506
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52499
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52763
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 51834
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 53098
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52649
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52560
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52735
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52938
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52470
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52757
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52743
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52923
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52450
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52853
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52043
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52625
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52715
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52824
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52665
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 51865
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52645
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 53081
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52616
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52681
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52457
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52678
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52674
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52939
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52470
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52645
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52457
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52490
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52652
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52632
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52441
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52540
+        },
+        {
+          "copies": 6,
+          "jsonBytesEach": 52477
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52791
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52938
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52966
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52966
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 51340
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52804
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52938
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52450
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52457
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52743
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52743
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52792
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52625
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52791
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52756
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52612
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52792
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52581
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52629
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52804
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52625
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52629
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52450
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52804
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52763
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52756
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52625
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52612
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52450
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 51371
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 51548
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52625
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52763
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52757
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52787
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52581
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52629
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52787
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52450
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52804
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52629
+        },
+        {
+          "copies": 5,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52650
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52612
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52792
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 51930
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52838
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52853
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 51752
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52877
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52626
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52625
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52968
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52629
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52939
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52646
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52966
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52619
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52476
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52854
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 51721
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52795
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52620
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52461
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52764
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52949
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52794
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52674
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52651
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52806
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52652
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52675
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52603
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52636
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52862
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52043
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52460
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52675
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52506
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52633
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52653
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52825
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52650
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52919
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52985
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52923
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 53098
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52736
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52674
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52824
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52630
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52777
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52619
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52778
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 53009
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 51954
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52804
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52666
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 51834
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52854
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52756
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52633
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52702
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52681
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52905
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52743
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52810
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52794
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52682
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52792
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52791
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52477
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52834
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52617
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52787
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52632
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52854
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 53080
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52506
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52581
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52625
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52612
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52716
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52499
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 53080
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52681
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52679
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 51776
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52804
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52939
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52450
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52825
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52825
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52825
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52635
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52499
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52589
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52776
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52787
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 51745
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52589
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52757
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52764
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 51865
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52601
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52777
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52937
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52806
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52646
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52674
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52919
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52645
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52762
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52450
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52646
+        },
+        {
+          "copies": 4,
+          "jsonBytesEach": 52629
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52938
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 51768
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52777
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52825
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52589
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52877
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52651
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 38898
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52499
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52938
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52787
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52506
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 51548
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52476
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52764
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52756
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52612
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52601
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52629
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52678
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52679
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52825
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52630
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52629
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52778
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52806
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52674
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52652
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52589
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52681
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52905
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52854
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52619
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 51340
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52635
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52966
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52612
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 51371
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52762
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52804
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52457
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52461
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52499
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 51459
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52743
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52619
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52787
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52603
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 51559
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52794
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 53080
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52632
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52758
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52650
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52620
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52650
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 51590
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52674
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52681
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52776
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52370
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 51251
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52743
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 51282
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52702
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52581
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52757
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52450
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52625
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52506
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52477
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52743
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52795
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52794
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52460
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52636
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52776
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 53099
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52804
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52764
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52792
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52625
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52791
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52792
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52450
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 52937
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 38893
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 60313
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 54885
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 55221
+        },
+        {
+          "copies": 3,
+          "jsonBytesEach": 60306
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 53914
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 55214
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 54297
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 55207
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 54095
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 55033
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 54122
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 54304
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 53605
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 54088
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 54724
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 53813
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52757
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52826
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52968
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52645
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52678
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52626
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52626
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52630
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52938
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52601
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52616
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52765
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52678
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52776
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52853
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52806
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52966
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52777
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52637
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52757
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52626
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52968
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52853
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52776
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52675
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52824
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52674
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52674
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52735
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52630
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 51671
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52470
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52601
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52652
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52645
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52632
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52826
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52673
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52756
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52678
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52777
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52824
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52066
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52777
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52674
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52650
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 53081
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52649
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52823
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52765
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52625
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52499
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52646
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52682
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52855
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 51702
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52625
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52787
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52650
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52825
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52625
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52517
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52825
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52614
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52796
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52919
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52630
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52499
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52652
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52788
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 51705
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 53099
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52678
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52776
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52636
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52776
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52632
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52788
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52918
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52499
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52601
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52826
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 51398
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52650
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52776
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52853
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52824
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52675
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52938
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52779
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52804
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52878
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52645
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52645
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52653
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52626
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52715
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52757
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52649
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52470
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52854
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52682
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 53010
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52852
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52986
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52601
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52499
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52825
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52665
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52778
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52795
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52649
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52804
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52758
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52470
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52967
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52470
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 51528
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52795
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52806
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52681
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52630
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52825
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52532
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52644
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 51606
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52675
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52805
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52938
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52939
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52788
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 38898
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52776
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52650
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 51429
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52788
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52678
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52636
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52499
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52825
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52825
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52919
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52649
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 51880
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52825
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52826
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 51497
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52806
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 52968
+        },
+        {
+          "copies": 2,
+          "jsonBytesEach": 54930
+        }
+      ]
+    },
+    "rootActionObservation": {
+      "occurrences": 2937,
+      "identities": 3,
+      "distinctFullValues": 3,
+      "repeatedIndependentCopies": 0,
+      "uniqueIdentityJsonBytes": 135841,
+      "distinctValueJsonBytes": 135841,
+      "duplicateGroups": []
+    },
+    "rootActionSettledObservation": {
+      "occurrences": 2937,
+      "identities": 3,
+      "distinctFullValues": 3,
+      "repeatedIndependentCopies": 0,
+      "uniqueIdentityJsonBytes": 135520,
+      "distinctValueJsonBytes": 135520,
+      "duplicateGroups": []
+    }
+  },
+  "passed": true
+}
