@@ -1,0 +1,2035 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SETI 行动复盘 · observe-decision-r4-20260906 · 2848eba2.213f34db.full</title>
+<style>
+:root{--bg:#f7f8fa;--panel:#fff;--line:#dde3ea;--text:#1c2333;--muted:#7a8494;--blue:#3d83d7;--green:#54a96b;--brown:#9a623f;--white:#333;--accent:#2f6fed;--good:#27ae60;--bad:#c0392b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.page{width:min(1280px,calc(100% - 32px));margin:auto;padding:30px 0 60px}
+.eyebrow{color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.08em}
+h1{margin:4px 0 10px;font-size:26px}
+.meta{color:var(--muted);font-size:12.5px;margin:6px 0 2px}
+.links{font-size:12.5px;margin:4px 0 18px}
+.links a{color:var(--accent);text-decoration:none}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:18px 0}
+.panel h2{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+th{background:#f0f2f6;font-weight:600;white-space:nowrap}
+td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td.actor{white-space:nowrap;font-weight:600}
+td.sum{min-width:220px;word-break:break-word}
+.main-act{font-weight:600}
+.quick-list{margin-top:3px;font-size:11px;color:var(--muted);font-weight:400}
+.final-details{margin-top:10px;display:grid;gap:4px}
+.final-detail{font-size:12px;line-height:1.5}
+tr.round-head td{background:#eef2f9;font-weight:700;color:#4a5568}
+.avg-row td{background:#eaf7ea}
+.hero td:first-child{font-weight:700}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+.c-player-blue{background:var(--blue)}.c-player-green{background:var(--green)}.c-player-brown{background:var(--brown)}.c-player-white{background:var(--white)}
+.dp{color:var(--good);font-weight:700}.dm{color:var(--bad);font-weight:700}.d0{color:#c3c9d2}
+.ph{display:inline-block;padding:1px 6px;border-radius:4px;background:#eef1f6;color:#556;font-size:11px;margin-right:4px}
+.fam{font-weight:600}
+.muted{color:var(--muted)}
+code{background:#f0f2f6;padding:1px 4px;border-radius:3px;font-size:12px}
+.version-badge{display:inline-block;padding:2px 10px;border-radius:8px;background:#e8eefa;color:var(--accent);font-weight:700;font-size:14px}
+@media(max-width:760px){.page{width:100%;padding:16px 10px}table{font-size:11.5px}td.sum{min-width:0}}
+</style>
+</head>
+<body><main class="page">
+  <span class="eyebrow">SETI · 机器人行动复盘（纯重放存档 replaySteps，无 AI 重跑）</span>
+  <h1><span class="version-badge">observe-decision-r4-20260906</span> 2848eba2.213f34db.full</h1>
+  <div class="meta">seed=seti-free-analyze-v1 · gitCommit=213f34db · policy=seti-heuristic-policy-v0 · flags=默认装配 · 模式=full · 步数 702 · 耗时 6m30s</div>
+  <div class="links">记录: <a href="../../../research/2848eba2.213f34db.full.json">2848eba2.213f34db.full.json</a> · 存档: <code>seti-saves/seti-save-research-observe-decision-r4-20260906-213f34db-full-v329.json</code></div>
+  <section class="panel final">
+        <h2>终局分数（完整终局口径，存档 finalScores）</h2>
+        <table><thead><tr><th>玩家</th><th>完整终局分</th><th>base</th><th>板块</th><th>卡牌</th></tr></thead><tbody><tr><td>蓝</td><td class="num"><b>96</b></td><td class="num">64</td><td class="num">30</td><td class="num">2</td></tr><tr><td>绿</td><td class="num"><b>84</b></td><td class="num">63</td><td class="num">18</td><td class="num">3</td></tr><tr><td>棕</td><td class="num"><b>130</b></td><td class="num">85</td><td class="num">45</td><td class="num">0</td></tr><tr class="hero"><td>白</td><td class="num"><b>124</b></td><td class="num">98</td><td class="num">26</td><td class="num">0</td></tr>
+        <tr class="avg-row"><td>均分</td><td class="num"><b>108.50</b></td><td colspan="3" class="muted">白色为人类席位（本轮评估侧重）</td></tr>
+        </tbody></table>
+        <div class="final-details"><div class="final-detail"><b>蓝</b>：base 64（外星痕迹·蓝 8 + 外星痕迹·粉 5 + 外星痕迹·黄 3 + 蓝科技 4 + 卡牌·效果 3 + 初始 7 + 登陆 5 + 环绕 9 + 扫描 11 + 科技bonus 9） + 板块 30（每套收入 11×2=22 + 每套痕迹 8×1=8） + 卡牌 2（建造欧几里得望远锐 2）</div><div class="final-detail"><b>绿</b>：base 63（外星卡·效果 10 + 外星痕迹·蓝 4 + 外星痕迹·粉 3 + 外星痕迹·黄 11 + 初始 7 + 登陆 16 + 环绕 3 + 扫描 9） + 板块 18（每套收入 8×1=8 + 每两个科技 5×2=10） + 卡牌 3（观测巴纳德星 3）</div><div class="final-detail"><b>棕</b>：base 85（外星卡·效果 18 + 外星痕迹·蓝 7 + 外星痕迹·粉 5 + 蓝科技 8 + 卡牌·快速 1 + 初始 8 + 环绕 15 + 扫描 7 + 任务卡 7 + 科技bonus 9） + 板块 45（每套收入 5×6=30 + 完成任务 3×2=6 + 每两个科技 3×3=9）</div><div class="final-detail"><b>白</b>：base 98（外星卡·效果 16 + 外星痕迹·蓝 17 + 外星痕迹·粉 2 + 外星痕迹·黄 6 + 初始 6 + 登陆 18 + 扫描 23 + 科技bonus 10） + 板块 26（每套收入 5×3=15 + 完成任务 4×1=4 + 每两个科技 7×1=7）</div></div>
+      </section>
+  <section class="panel">
+      <h2><span class="dot c-player-blue"></span>蓝色玩家 · 25 个回合</h2>
+      <table>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <tbody><tr>
+      <td class="num">R1·T1</td>
+
+      <td class="sum"><div class="main-act">① 选牌 选择公司：图灵系统（主行动）</div><div class="quick-list">② 初始牌 10（外星人2黄色痕迹） · ③ 初始牌 5（4分、2宣传、土星环绕器）</div></td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">7</td>
+      <td class="res muted">6 钱 · 2 电 · 4 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T3</td>
+
+      <td class="sum"><div class="main-act">① 打牌 建造欧几里得望远锐（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">9</td>
+      <td class="res muted">3 钱 · 2 电 · 5 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T7</td>
+
+      <td class="sum"><div class="main-act">① 打牌 中性浮力训练（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">9</td>
+      <td class="res muted">2 钱 · 2 电 · 6 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T11</td>
+
+      <td class="sum"><div class="main-act">① 研究 orange2，背面 bonus：1 能量（主行动）</div><div class="quick-list">② 图灵系统 1x 行动</div></td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">11</td>
+      <td class="res muted">2 钱 · 3 电 · 0 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T15</td>
+
+      <td class="sum"><div class="main-act">① 发射 发射（主行动）</div><div class="quick-list">② 抽牌 MUREP创意竞赛 · ③ 移动探测器 3 逆时针 · ④ 移动探测器 3 逆时针 · ⑤ 2张牌 → 1信用点</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">11</td>
+      <td class="res muted">1 钱 · 1 电 · 2 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T19</td>
+
+      <td class="sum"><div class="main-act">① 环绕 环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+12</span></td>
+      <td class="num">23</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T20</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">23</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T1</td>
+
+      <td class="sum"><div class="main-act">① 选牌 维护任务（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">23</td>
+      <td class="res muted">4 钱 · 2 电 · 2 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T2</td>
+
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放痕迹 外星人1·粉 · ③ 图灵系统 1x 行动 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 放置数据 · ⑦ 维护任务：弃牌角标</div></td>
+      <td class="num">14 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">28</td>
+      <td class="res muted">3 钱 · 0 电 · 6 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T3</td>
+
+      <td class="sum"><div class="main-act">① 选择目标 标记 A（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">28</td>
+      <td class="res muted">3 钱 · 0 电 · 6 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T6</td>
+
+      <td class="sum"><div class="main-act">① 研究 blue2，背面 bonus：精选 1 张牌（主行动）</div><div class="quick-list">② 抽牌 更优太阳能板</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">30</td>
+      <td class="res muted">3 钱 · 0 电 · 1 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T10</td>
+
+      <td class="sum"><div class="main-act">④ 研究 purple2，背面 bonus：3 分（主行动）</div><div class="quick-list">① 自动分析：弃牌角标 · ② 繁殖样本：弃牌角标 · ③ 更优太阳能板：弃牌角标</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">33</td>
+      <td class="res muted">3 钱 · 0 电 · 0 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T14</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">33</td>
+      <td class="res muted">3 钱 · 0 电 · 0 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T15</td>
+
+      <td class="sum"><div class="main-act">① 选牌 业余天文学家（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">33</td>
+      <td class="res muted">3 钱 · 0 电 · 0 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T1</td>
+
+      <td class="sum"><div class="main-act">③ 扫描 扫描（主行动）</div><div class="quick-list">① 放置数据 · ② 收入 双探测器（获得 能量+1） · ④ 放置数据 · ⑤ 放置数据 · ⑥ 2信用点 → 1能量</div></td>
+      <td class="num">12 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">33</td>
+      <td class="res muted">4 钱 · 2 电 · 0 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T5</td>
+
+      <td class="sum"><div class="main-act">④ land 登陆（主行动）</div><div class="quick-list">① 移动探测器 5 逆时针 · ② 移动探测器 5 逆时针 · ③ 2信用点 → 1能量</div></td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+8</span></td>
+      <td class="num">41</td>
+      <td class="res muted">2 钱 · 0 电 · 2 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T9</td>
+
+      <td class="sum"><div class="main-act">① 打牌 业余天文学家（主行动）</div><div class="quick-list">② 抽牌 建造叶夫帕托里亚望远锐 · ③ 抽牌 Wow!讯号</div></td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">43</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T13</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">43</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T14</td>
+
+      <td class="sum"><div class="main-act">① 选牌 国际合作（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">43</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T4</td>
+
+      <td class="sum"><div class="main-act">② 分析 分析（主行动）</div><div class="quick-list">① 放置数据 · ③ 放痕迹 外星人1·蓝（5分+外星人牌） · ④ 抽牌 蜂巢样本</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">48</td>
+      <td class="res muted">4 钱 · 2 电 · 2 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T8</td>
+
+      <td class="sum"><div class="main-act">③ 扫描 扫描（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 收入 国际合作（获得 1 张随机牌） · ⑦ 放置数据 · ⑧ 2张牌 → 1能量</div></td>
+      <td class="num">20 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">52</td>
+      <td class="res muted">3 钱 · 2 电 · 3 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T9</td>
+
+      <td class="sum"><div class="main-act">① 选择目标 标记 B（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">52</td>
+      <td class="res muted">3 钱 · 2 电 · 3 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T12</td>
+
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放置数据 · ③ 放置数据 · ④ 2信用点 → 1能量</div></td>
+      <td class="num">9 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">54</td>
+      <td class="res muted">0 钱 · 1 电 · 2 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T16</td>
+
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div><div class="quick-list">② 放痕迹 外星人1·蓝（3分+外星人牌） · ③ 抽牌 虫 · ④ 放置数据</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+10</span></td>
+      <td class="num">64</td>
+      <td class="res muted">0 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T20</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">64</td>
+      <td class="res muted">0 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr>
+<tr class="round-head"><td colspan="6">终局结算（完整终局口径）</td></tr>
+<tr><td colspan="6" class="final-detail"><b>蓝</b>：base 64（外星痕迹·蓝 8 + 外星痕迹·粉 5 + 外星痕迹·黄 3 + 蓝科技 4 + 卡牌·效果 3 + 初始 7 + 登陆 5 + 环绕 9 + 扫描 11 + 科技bonus 9） + 板块 30（每套收入 11×2=22 + 每套痕迹 8×1=8） + 卡牌 2（建造欧几里得望远锐 2）</td></tr></tbody>
+      </table>
+    </section>
+<section class="panel">
+      <h2><span class="dot c-player-green"></span>绿色玩家 · 27 个回合</h2>
+      <table>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <tbody><tr>
+      <td class="num">R1·T1</td>
+
+      <td class="sum"><div class="main-act">① 选牌 选择公司：寰宇动力（主行动）</div><div class="quick-list">② 初始牌 14（3分、1能量、1盲抽） · ③ 初始牌 20（开普勒22扫描两次）</div></td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">7</td>
+      <td class="res muted">4 钱 · 3 电 · 3 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T2</td>
+
+      <td class="sum"><div class="main-act">② 环绕 环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（主行动）</div><div class="quick-list">① 移动探测器 1 向外 · ③ 抽牌 大巡游计划 · ④ 收入 大巡游计划（获得 信用点+1）</div></td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">12</td>
+      <td class="res muted">4 钱 · 1 电 · 4 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T6</td>
+
+      <td class="sum"><div class="main-act">① 打牌 NASA系外行星档案（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">12</td>
+      <td class="res muted">3 钱 · 1 电 · 4 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T10</td>
+
+      <td class="sum"><div class="main-act">⑤ 扫描 扫描（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ③ 放置数据 · ④ 2信用点 → 1能量 · ⑥ 放置数据 · ⑦ 收入 案尔维会议（获得 1 张随机牌）</div></td>
+      <td class="num">14 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">12</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T14</td>
+
+      <td class="sum"><div class="main-act">④ 分析 分析（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ③ 2张牌 → 1能量 · ⑤ 放痕迹 外星人1·蓝</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">15</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T18</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T19</td>
+
+      <td class="sum"><div class="main-act">① 选牌 突破讯息（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T1</td>
+
+      <td class="sum"><div class="main-act">② 研究 purple4，背面 bonus：1 能量（主行动）</div><div class="quick-list">① 突破讯息：弃牌角标</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">6 钱 · 2 电 · 0 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T5</td>
+
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放痕迹 外星人2·粉 · ③ 放置数据 · ④ 放置数据 · ⑤ 2信用点 → 1能量 · ⑥ 2信用点 → 1能量</div></td>
+      <td class="num">11 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">20</td>
+      <td class="res muted">1 钱 · 2 电 · 4 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T9</td>
+
+      <td class="sum"><div class="main-act">② land 登陆（主行动）</div><div class="quick-list">① 移动探测器 2 逆时针 · ③ 放痕迹 外星人1·黄</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+10</span></td>
+      <td class="num">30</td>
+      <td class="res muted">1 钱 · 0 电 · 6 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T10</td>
+
+      <td class="sum"><div class="main-act">① 选择目标 标记 A（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">30</td>
+      <td class="res muted">1 钱 · 0 电 · 6 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T13</td>
+
+      <td class="sum"><div class="main-act">④ 研究 orange3，背面 bonus：1 宣传（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ③ 收入 轨道监测（获得 信用点+1）</div></td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">30</td>
+      <td class="res muted">2 钱 · 0 电 · 2 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T17</td>
+
+      <td class="sum"><div class="main-act">① 打牌 观测巴纳德星（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">32</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T20</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">32</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T21</td>
+
+      <td class="sum"><div class="main-act">① 选牌 &quot;远射&quot;计划（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">32</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T4</td>
+
+      <td class="sum"><div class="main-act">③ 分析 分析（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ④ 放痕迹 外星人2·蓝（1分）</div></td>
+      <td class="num">9 步</td>
+      <td class="num"><span class="dp">+11</span></td>
+      <td class="num">43</td>
+      <td class="res muted">7 钱 · 0 电 · 2 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T8</td>
+
+      <td class="sum"><div class="main-act">③ 研究 purple2，背面 bonus：1 能量（主行动）</div><div class="quick-list">① 阿番西博天文台：弃牌角标 · ② 量子数据存储：弃牌角标</div></td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">43</td>
+      <td class="res muted">7 钱 · 1 电 · 0 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T12</td>
+
+      <td class="sum"><div class="main-act">① 打牌 &quot;远射&quot;计划（主行动）</div><div class="quick-list">② 抽牌 火星科学实验室</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">43</td>
+      <td class="res muted">4 钱 · 1 电 · 0 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T16</td>
+
+      <td class="sum"><div class="main-act">① 发射 发射（主行动）</div><div class="quick-list">② 移动探测器 8 逆时针 · ③ 移动探测器 8 逆时针 · ④ 2信用点 → 1能量</div></td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">43</td>
+      <td class="res muted">0 钱 · 1 电 · 2 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T19</td>
+
+      <td class="sum"><div class="main-act">① land 登陆（主行动）</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+8</span></td>
+      <td class="num">51</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T20</td>
+
+      <td class="sum"><div class="main-act">① 选择目标 标记 D（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">51</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T22</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">51</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T23</td>
+
+      <td class="sum"><div class="main-act">① 选牌 双行星飞越机动（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">51</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T3</td>
+
+      <td class="sum"><div class="main-act">② 扫描 扫描（主行动）</div><div class="quick-list">① 2张牌 → 1能量 · ③ 放置数据 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 2信用点 → 1能量 · ⑦ 2信用点 → 1能量</div></td>
+      <td class="num">16 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">54</td>
+      <td class="res muted">2 钱 · 2 电 · 3 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T7</td>
+
+      <td class="sum"><div class="main-act">① 发射 发射（主行动）</div><div class="quick-list">② 移动探测器 10 向外 · ③ 移动探测器 10 逆时针 · ④ 3宣传 → 精选1张牌 · ⑤ 抽牌 甚大阵 · ⑥ 2张牌 → 1能量</div></td>
+      <td class="num">11 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">54</td>
+      <td class="res muted">0 钱 · 1 电 · 3 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T11</td>
+
+      <td class="sum"><div class="main-act">① land 登陆（主行动）</div><div class="quick-list">② 放置数据 · ③ 放置数据</div></td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+9</span></td>
+      <td class="num">63</td>
+      <td class="res muted">0 钱 · 0 电 · 3 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T16</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">63</td>
+      <td class="res muted">0 钱 · 0 电 · 4 宣 · 0 手</td>
+    </tr>
+<tr class="round-head"><td colspan="6">终局结算（完整终局口径）</td></tr>
+<tr><td colspan="6" class="final-detail"><b>绿</b>：base 63（外星卡·效果 10 + 外星痕迹·蓝 4 + 外星痕迹·粉 3 + 外星痕迹·黄 11 + 初始 7 + 登陆 16 + 环绕 3 + 扫描 9） + 板块 18（每套收入 8×1=8 + 每两个科技 5×2=10） + 卡牌 3（观测巴纳德星 3）</td></tr></tbody>
+      </table>
+    </section>
+<section class="panel">
+      <h2><span class="dot c-player-brown"></span>棕色玩家 · 33 个回合</h2>
+      <table>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <tbody><tr>
+      <td class="num">R1·T1</td>
+
+      <td class="sum"><div class="main-act">① 选牌 选择公司：赫利昂联合体（主行动）</div><div class="quick-list">② 初始牌 17（室女座61扫描两次） · ③ 初始牌 19（比邻星扫描两次）</div></td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="dp">+8</span></td>
+      <td class="num">8</td>
+      <td class="res muted">3 钱 · 2 电 · 7 宣 · 4 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T4</td>
+
+      <td class="sum"><div class="main-act">⑥ 打牌 大型强子对撞机（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ③ 放置数据 · ④ 放置数据 · ⑤ 收入 超环面仪器（获得 信用点+1） · ⑦ 放置数据 · ⑧ 放置数据</div></td>
+      <td class="num">15 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">15</td>
+      <td class="res muted">1 钱 · 2 电 · 8 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T8</td>
+
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div><div class="quick-list">② 放痕迹 外星人2·蓝</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 1 电 · 9 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T12</td>
+
+      <td class="sum"><div class="main-act">① 研究 purple4，背面 bonus：精选 1 张牌（主行动）</div><div class="quick-list">② 抽牌 飞掠小行星 · ③ 赫利昂联合体 1x 行动 · ④ 抽牌 延期发射 · ⑤ 飞掠小行星：弃牌角标</div></td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 1 电 · 4 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T16</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 1 电 · 4 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T17</td>
+
+      <td class="sum"><div class="main-act">① 选牌 飞掠彗星（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 1 电 · 4 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T3</td>
+
+      <td class="sum"><div class="main-act">① 打牌 重组（主行动）</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">4 钱 · 6 电 · 5 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T7</td>
+
+      <td class="sum"><div class="main-act">② 研究 purple2，背面 bonus：精选 1 张牌（主行动）</div><div class="quick-list">① 极端条件测试：弃牌角标 · ③ 抽牌 新型AI模型</div></td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">4 钱 · 6 电 · 1 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T11</td>
+
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放置数据 · ③ 放置数据 · ④ 放置数据</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">3 钱 · 4 电 · 1 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T15</td>
+
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放痕迹 外星人1·粉（5分+外星人牌） · ③ 抽牌 首次接触 · ④ 赫利昂联合体 1x 行动 · ⑤ 放置数据 · ⑥ 收入 首次接触（获得 1 张随机牌） · ⑦ 放置数据 · ⑧ 迭代工程：弃牌角标 · ⑨ 放置数据</div></td>
+      <td class="num">18 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">25</td>
+      <td class="res muted">3 钱 · 2 电 · 3 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T16</td>
+
+      <td class="sum"><div class="main-act">① 选择目标 标记 A（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">25</td>
+      <td class="res muted">3 钱 · 2 电 · 3 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T18</td>
+
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">28</td>
+      <td class="res muted">3 钱 · 1 电 · 3 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T21</td>
+
+      <td class="sum"><div class="main-act">② 扫描 扫描（主行动）</div><div class="quick-list">① 2信用点 → 1能量 · ③ 放置数据 · ④ 放置数据</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">28</td>
+      <td class="res muted">0 钱 · 0 电 · 6 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T22</td>
+
+      <td class="sum"><div class="main-act">② 研究 orange2，背面 bonus：1 宣传（主行动）</div><div class="quick-list">① 抽牌 小行星研究</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">28</td>
+      <td class="res muted">0 钱 · 1 电 · 1 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T23</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">28</td>
+      <td class="res muted">0 钱 · 1 电 · 1 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T1</td>
+
+      <td class="sum"><div class="main-act">① 选牌 赫歇尔空间天文台（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">28</td>
+      <td class="res muted">5 钱 · 6 电 · 2 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T2</td>
+
+      <td class="sum"><div class="main-act">① 发射 发射（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">28</td>
+      <td class="res muted">3 钱 · 6 电 · 2 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T6</td>
+
+      <td class="sum"><div class="main-act">② 打牌 突破摄星（主行动）</div><div class="quick-list">① 移动探测器 6 逆时针</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">31</td>
+      <td class="res muted">2 钱 · 6 电 · 4 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T10</td>
+
+      <td class="sum"><div class="main-act">① 环绕 环绕金星 - 奖励：获得 6 分；获得 1 次收入（主行动）</div><div class="quick-list">② 收入 现场着陆直播（获得 1 张随机牌）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">37</td>
+      <td class="res muted">1 钱 · 5 电 · 4 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T14</td>
+
+      <td class="sum"><div class="main-act">② 发射 发射（主行动）</div><div class="quick-list">① 2能量 → 1信用点 · ③ 移动探测器 7 逆时针 · ④ 移动探测器 7 逆时针 · ⑤ 2张牌 → 1信用点</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">37</td>
+      <td class="res muted">1 钱 · 1 电 · 6 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T17</td>
+
+      <td class="sum"><div class="main-act">① 环绕 环绕金星 - 奖励：获得 6 分；获得 1 次收入（主行动）</div><div class="quick-list">② 收入 韦断特v克综合孔径射电|远锐（获得 能量+1）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">43</td>
+      <td class="res muted">0 钱 · 1 电 · 6 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T20</td>
+
+      <td class="sum"><div class="main-act">① 研究 blue3，背面 bonus：精选 1 张牌（主行动）</div><div class="quick-list">② 抽牌 跟踪与数据中继卫星 · ③ 放置数据 · ④ 放置数据 · ⑤ 收入 跟踪与数据中继卫星（获得 1 张随机牌）</div></td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">45</td>
+      <td class="res muted">0 钱 · 1 电 · 0 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T23</td>
+
+      <td class="sum"><div class="main-act">② PASS PASS（主行动）</div><div class="quick-list">① 赫利昂联合体 1x 行动</div></td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">45</td>
+      <td class="res muted">0 钱 · 2 电 · 0 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T1</td>
+
+      <td class="sum"><div class="main-act">② 打牌 金星号探测器（主行动）</div><div class="quick-list">① 抽牌 信使号探测器 · ③ 移动探测器 9 向外 · ④ 移动探测器 9 逆时针</div></td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">45</td>
+      <td class="res muted">2 钱 · 7 电 · 4 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T2</td>
+
+      <td class="sum"><div class="main-act">① 接受可选效果 结算 金星号探测器（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">52</td>
+      <td class="res muted">2 钱 · 7 电 · 5 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T3</td>
+
+      <td class="sum"><div class="main-act">① 选择目标 标记 D（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">52</td>
+      <td class="res muted">2 钱 · 7 电 · 5 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T5</td>
+
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">54</td>
+      <td class="res muted">1 钱 · 5 电 · 5 宣 · 5 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T9</td>
+
+      <td class="sum"><div class="main-act">③ 分析 分析（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ④ 放痕迹 外星人2·蓝（1分+外星人牌） · ⑤ 抽牌 生物特征筛选</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="dp">+13</span></td>
+      <td class="num">67</td>
+      <td class="res muted">1 钱 · 4 电 · 7 宣 · 6 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T13</td>
+
+      <td class="sum"><div class="main-act">13. 环绕 环绕水星 - 奖励：首次环绕：额外获得 3 分；盲抽 1 张卡牌；水星扇区扫描 1/2；水星扇区扫描 2/2；获得 1 次收入（主行动）</div><div class="quick-list">① 移动探测器 9 逆时针 · ② 移动探测器 9 逆时针 · ③ 移动探测器 9 逆时针 · ④ 2张牌 → 1能量 · ⑤ 移动探测器 9 向内 · ⑥ 2张牌 → 1能量 · ⑦ 2张牌 → 1能量 · ⑧ 3宣传 → 精选1张牌 · ⑨ 抽牌 望远锐时间分配 · ⑩ 3宣传 → 精选1张牌 · 11. 抽牌 飞掠土星 · 12. 2张牌 → 1能量 · 14. 收入 平方公里阵（获得 信用点+1）</div></td>
+      <td class="num">33 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">72</td>
+      <td class="res muted">1 钱 · 2 电 · 4 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T14</td>
+
+      <td class="sum"><div class="main-act">① 选择目标 标记 C（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">72</td>
+      <td class="res muted">1 钱 · 2 电 · 4 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T17</td>
+
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放痕迹 外星人2·粉（外星人牌） · ③ 抽牌 基因组表征 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 抽牌 隼鸟号 · ⑦ 放置数据 · ⑧ 放置数据</div></td>
+      <td class="num">17 步</td>
+      <td class="num"><span class="dp">+10</span></td>
+      <td class="num">82</td>
+      <td class="res muted">0 钱 · 0 电 · 6 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T20</td>
+
+      <td class="sum"><div class="main-act">① 研究 blue4，背面 bonus：1 能量（主行动）</div><div class="quick-list">② 放置数据 · ③ 收入 隼鸟号（获得 1 张随机牌） · ④ 基因组表征：弃牌角标 · ⑤ 放置数据</div></td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">85</td>
+      <td class="res muted">0 钱 · 1 电 · 2 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T23</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">85</td>
+      <td class="res muted">0 钱 · 1 电 · 2 宣 · 1 手</td>
+    </tr>
+<tr class="round-head"><td colspan="6">终局结算（完整终局口径）</td></tr>
+<tr><td colspan="6" class="final-detail"><b>棕</b>：base 85（外星卡·效果 18 + 外星痕迹·蓝 7 + 外星痕迹·粉 5 + 蓝科技 8 + 卡牌·快速 1 + 初始 8 + 环绕 15 + 扫描 7 + 任务卡 7 + 科技bonus 9） + 板块 45（每套收入 5×6=30 + 完成任务 3×2=6 + 每两个科技 3×3=9）</td></tr></tbody>
+      </table>
+    </section>
+<section class="panel">
+      <h2><span class="dot c-player-white"></span>白色玩家 · 29 个回合</h2>
+      <table>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <tbody><tr>
+      <td class="num">R1·T1</td>
+
+      <td class="sum"><div class="main-act">⑩ 扫描 扫描（主行动）</div><div class="quick-list">① 初始牌 21（3分、1数据、1宣传、木星环绕器） · ② 初始牌 1（天狼星A扫描两次） · ③ 放置数据 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 放置数据 · ⑦ 收入 航天飞机（获得 1 张随机牌） · ⑧ 霍尔效应推进器：弃牌角标 · ⑨ 放置数据 · 11. 放置数据</div></td>
+      <td class="num">24 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">6</td>
+      <td class="res muted">4 钱 · 0 电 · 5 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T5</td>
+
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div><div class="quick-list">② 放痕迹 外星人1·蓝</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">11</td>
+      <td class="res muted">4 钱 · 0 电 · 6 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T9</td>
+
+      <td class="sum"><div class="main-act">① 打牌 月坑射电望远镜（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">13</td>
+      <td class="res muted">1 钱 · 0 电 · 7 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T13</td>
+
+      <td class="sum"><div class="main-act">① 研究 orange3，背面 bonus：3 分（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 0 电 · 1 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T17</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 0 电 · 1 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R1·T18</td>
+
+      <td class="sum"><div class="main-act">① 选牌 引力弹弓（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 0 电 · 1 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T4</td>
+
+      <td class="sum"><div class="main-act">① 发射 发射（主行动）</div><div class="quick-list">② 移动探测器 4 逆时针</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">3 钱 · 2 电 · 2 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T8</td>
+
+      <td class="sum"><div class="main-act">② 扫描 扫描（主行动）</div><div class="quick-list">① 放置数据 · ③ 放置数据 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 收入 机智号直升机（获得 信用点+1）</div></td>
+      <td class="num">14 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">22</td>
+      <td class="res muted">3 钱 · 0 电 · 3 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T12</td>
+
+      <td class="sum"><div class="main-act">⑥ 扫描 扫描（主行动）</div><div class="quick-list">① 放置数据 · ② 2信用点 → 1能量 · ③ 3宣传 → 精选1张牌 · ④ 抽牌 观测比邻星 · ⑤ 2张牌 → 1能量 · ⑦ 放痕迹 外星人2·粉（1分+外星人牌） · ⑧ 抽牌 低重力研究 · ⑨ 放置数据</div></td>
+      <td class="num">20 步</td>
+      <td class="num"><span class="dp">+9</span></td>
+      <td class="num">31</td>
+      <td class="res muted">0 钱 · 0 电 · 1 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T13</td>
+
+      <td class="sum"><div class="main-act">① 选择目标 标记 A（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">31</td>
+      <td class="res muted">0 钱 · 0 电 · 1 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T16</td>
+
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div><div class="quick-list">② 低重力研究：弃牌角标 · ③ 移动探测器 4 逆时针</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">34</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T19</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">34</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R2·T20</td>
+
+      <td class="sum"><div class="main-act">① 选牌 NASA天体生物学研究所（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">34</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T3</td>
+
+      <td class="sum"><div class="main-act">② 扫描 扫描（主行动）</div><div class="quick-list">① 放置数据 · ③ 放置数据 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 收入 NASA天体生物学研究所（获得 1 张随机牌） · ⑦ 移动探测器 4 逆时针 · ⑧ 2信用点 → 1能量</div></td>
+      <td class="num">17 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">39</td>
+      <td class="res muted">2 钱 · 1 电 · 6 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T7</td>
+
+      <td class="sum"><div class="main-act">① 打牌 突破聆听（主行动）</div><div class="quick-list">② 3宣传 → 精选1张牌 · ③ 抽牌 NASA深空网络 · ④ 2张牌 → 1能量</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">42</td>
+      <td class="res muted">1 钱 · 2 电 · 5 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T8</td>
+
+      <td class="sum"><div class="main-act">① 接受可选效果 结算 月坑射电望远镜（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">42</td>
+      <td class="res muted">1 钱 · 2 电 · 8 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T11</td>
+
+      <td class="sum"><div class="main-act">① land 登陆（主行动）</div><div class="quick-list">② 放痕迹 外星人1·黄（5分+外星人牌） · ③ 抽牌 探测车探索 · ④ 放置数据 · ⑤ 放置数据</div></td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+17</span></td>
+      <td class="num">59</td>
+      <td class="res muted">1 钱 · 0 电 · 8 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T12</td>
+
+      <td class="sum"><div class="main-act">① 选择目标 标记 D（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">59</td>
+      <td class="res muted">1 钱 · 0 电 · 8 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T15</td>
+
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">62</td>
+      <td class="res muted">1 钱 · 0 电 · 8 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T18</td>
+
+      <td class="sum"><div class="main-act">① 研究 orange2，背面 bonus：3 分（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">65</td>
+      <td class="res muted">1 钱 · 0 电 · 2 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T21</td>
+
+      <td class="sum"><div class="main-act">⑤ PASS PASS（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ③ 放置数据 · ④ 探测车探索：弃牌角标</div></td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">65</td>
+      <td class="res muted">1 钱 · 0 电 · 5 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R3·T22</td>
+
+      <td class="sum"><div class="main-act">① 选牌 月球门户空间站（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">65</td>
+      <td class="res muted">1 钱 · 0 电 · 5 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T2</td>
+
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放置数据 · ③ 收入 阿波罗1号任务（获得 能量+1） · ④ 终局标记 c（第1槽/70分 · c1：完成任务）</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">71</td>
+      <td class="res muted">5 钱 · 1 电 · 4 宣 · 3 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T6</td>
+
+      <td class="sum"><div class="main-act">② 扫描 扫描（主行动）</div><div class="quick-list">① 2张牌 → 1能量 · ③ 放痕迹 外星人2·粉（1分） · ④ 深空探测 1x 行动 · ⑤ 抽牌 三叉戟号探测器 · ⑥ 放置数据 · ⑦ 放置数据</div></td>
+      <td class="num">19 步</td>
+      <td class="num"><span class="dp">+11</span></td>
+      <td class="num">82</td>
+      <td class="res muted">4 钱 · 0 电 · 5 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T10</td>
+
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div><div class="quick-list">② 放置数据 · ③ 放置数据 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 收入 三叉戟号探测器（获得 1 张随机牌）</div></td>
+      <td class="num">11 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">88</td>
+      <td class="res muted">4 钱 · 0 电 · 7 宣 · 1 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T14</td>
+
+      <td class="sum"><div class="main-act">① 发射 发射（主行动）</div><div class="quick-list">② 移动探测器 11 向外 · ③ 2信用点 → 1能量 · ④ 移动探测器 11 逆时针 · ⑤ 3宣传 → 精选1张牌 · ⑥ 抽牌 穿越小行星带 · ⑦ 3宣传 → 精选1张牌 · ⑧ 抽牌 观测室女座 · ⑨ 2张牌 → 1能量</div></td>
+      <td class="num">14 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">88</td>
+      <td class="res muted">0 钱 · 1 电 · 3 宣 · 0 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T18</td>
+
+      <td class="sum"><div class="main-act">① land 登陆（主行动）</div><div class="quick-list">② 放痕迹 外星人2·黄（1分+外星人牌） · ③ 抽牌 突破性理论 · ④ 抽牌 夏洛克光谱仪</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">95</td>
+      <td class="res muted">0 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T21</td>
+
+      <td class="sum"><div class="main-act">③ 分析 分析（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据</div></td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">98</td>
+      <td class="res muted">0 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr>
+<tr>
+      <td class="num">R4·T23</td>
+
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">98</td>
+      <td class="res muted">0 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr>
+<tr class="round-head"><td colspan="6">终局结算（完整终局口径）</td></tr>
+<tr><td colspan="6" class="final-detail"><b>白</b>：base 98（外星卡·效果 16 + 外星痕迹·蓝 17 + 外星痕迹·粉 2 + 外星痕迹·黄 6 + 初始 6 + 登陆 18 + 扫描 23 + 科技bonus 10） + 板块 26（每套收入 5×3=15 + 完成任务 4×1=4 + 每两个科技 7×1=7）</td></tr></tbody>
+      </table>
+    </section>
+  <section class="panel">
+    <h2>全程依次复盘（114 个玩家回合 · 702 步）</h2>
+    <table>
+      <thead><tr><th>轮/回合</th><th>玩家</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+      <tbody><tr class="round-head"><td colspan="7">第 1 轮</td></tr><tr>
+      <td class="num">R1·T1</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">⑩ 扫描 扫描（主行动）</div><div class="quick-list">① 初始牌 21（3分、1数据、1宣传、木星环绕器） · ② 初始牌 1（天狼星A扫描两次） · ③ 放置数据 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 放置数据 · ⑦ 收入 航天飞机（获得 1 张随机牌） · ⑧ 霍尔效应推进器：弃牌角标 · ⑨ 放置数据 · 11. 放置数据</div></td>
+      <td class="num">24 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">6</td>
+      <td class="res muted">4 钱 · 0 电 · 5 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R1·T1</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① 选牌 选择公司：寰宇动力（主行动）</div><div class="quick-list">② 初始牌 14（3分、1能量、1盲抽） · ③ 初始牌 20（开普勒22扫描两次）</div></td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">7</td>
+      <td class="res muted">4 钱 · 3 电 · 3 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R1·T1</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 选牌 选择公司：图灵系统（主行动）</div><div class="quick-list">② 初始牌 10（外星人2黄色痕迹） · ③ 初始牌 5（4分、2宣传、土星环绕器）</div></td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">7</td>
+      <td class="res muted">6 钱 · 2 电 · 4 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R1·T1</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 选牌 选择公司：赫利昂联合体（主行动）</div><div class="quick-list">② 初始牌 17（室女座61扫描两次） · ③ 初始牌 19（比邻星扫描两次）</div></td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="dp">+8</span></td>
+      <td class="num">8</td>
+      <td class="res muted">3 钱 · 2 电 · 7 宣 · 4 手</td>
+    </tr><tr>
+      <td class="num">R1·T2</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">② 环绕 环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（主行动）</div><div class="quick-list">① 移动探测器 1 向外 · ③ 抽牌 大巡游计划 · ④ 收入 大巡游计划（获得 信用点+1）</div></td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">12</td>
+      <td class="res muted">4 钱 · 1 电 · 4 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R1·T3</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 打牌 建造欧几里得望远锐（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">9</td>
+      <td class="res muted">3 钱 · 2 电 · 5 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R1·T4</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">⑥ 打牌 大型强子对撞机（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ③ 放置数据 · ④ 放置数据 · ⑤ 收入 超环面仪器（获得 信用点+1） · ⑦ 放置数据 · ⑧ 放置数据</div></td>
+      <td class="num">15 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">15</td>
+      <td class="res muted">1 钱 · 2 电 · 8 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R1·T5</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div><div class="quick-list">② 放痕迹 外星人1·蓝</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">11</td>
+      <td class="res muted">4 钱 · 0 电 · 6 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R1·T6</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① 打牌 NASA系外行星档案（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">12</td>
+      <td class="res muted">3 钱 · 1 电 · 4 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R1·T7</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 打牌 中性浮力训练（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">9</td>
+      <td class="res muted">2 钱 · 2 电 · 6 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R1·T8</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div><div class="quick-list">② 放痕迹 外星人2·蓝</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 1 电 · 9 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R1·T9</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 打牌 月坑射电望远镜（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">13</td>
+      <td class="res muted">1 钱 · 0 电 · 7 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R1·T10</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">⑤ 扫描 扫描（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ③ 放置数据 · ④ 2信用点 → 1能量 · ⑥ 放置数据 · ⑦ 收入 案尔维会议（获得 1 张随机牌）</div></td>
+      <td class="num">14 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">12</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R1·T11</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 研究 orange2，背面 bonus：1 能量（主行动）</div><div class="quick-list">② 图灵系统 1x 行动</div></td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">11</td>
+      <td class="res muted">2 钱 · 3 电 · 0 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R1·T12</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 研究 purple4，背面 bonus：精选 1 张牌（主行动）</div><div class="quick-list">② 抽牌 飞掠小行星 · ③ 赫利昂联合体 1x 行动 · ④ 抽牌 延期发射 · ⑤ 飞掠小行星：弃牌角标</div></td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 1 电 · 4 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R1·T13</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 研究 orange3，背面 bonus：3 分（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 0 电 · 1 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R1·T14</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">④ 分析 分析（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ③ 2张牌 → 1能量 · ⑤ 放痕迹 外星人1·蓝</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">15</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R1·T15</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 发射 发射（主行动）</div><div class="quick-list">② 抽牌 MUREP创意竞赛 · ③ 移动探测器 3 逆时针 · ④ 移动探测器 3 逆时针 · ⑤ 2张牌 → 1信用点</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">11</td>
+      <td class="res muted">1 钱 · 1 电 · 2 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R1·T16</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 1 电 · 4 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R1·T17</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 选牌 飞掠彗星（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 1 电 · 4 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R1·T17</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 0 电 · 1 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R1·T18</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 选牌 引力弹弓（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">1 钱 · 0 电 · 1 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R1·T18</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R1·T19</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① 选牌 突破讯息（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R1·T19</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 环绕 环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+12</span></td>
+      <td class="num">23</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R1·T20</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">23</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr><tr class="round-head"><td colspan="7">第 2 轮</td></tr><tr>
+      <td class="num">R2·T1</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 选牌 维护任务（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">23</td>
+      <td class="res muted">4 钱 · 2 电 · 2 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R2·T1</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">② 研究 purple4，背面 bonus：1 能量（主行动）</div><div class="quick-list">① 突破讯息：弃牌角标</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">15</td>
+      <td class="res muted">6 钱 · 2 电 · 0 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R2·T2</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放痕迹 外星人1·粉 · ③ 图灵系统 1x 行动 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 放置数据 · ⑦ 维护任务：弃牌角标</div></td>
+      <td class="num">14 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">28</td>
+      <td class="res muted">3 钱 · 0 电 · 6 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R2·T3</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 选择目标 标记 A（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">28</td>
+      <td class="res muted">3 钱 · 0 电 · 6 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R2·T3</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 打牌 重组（主行动）</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">4 钱 · 6 电 · 5 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R2·T4</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 发射 发射（主行动）</div><div class="quick-list">② 移动探测器 4 逆时针</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">3 钱 · 2 电 · 2 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R2·T5</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放痕迹 外星人2·粉 · ③ 放置数据 · ④ 放置数据 · ⑤ 2信用点 → 1能量 · ⑥ 2信用点 → 1能量</div></td>
+      <td class="num">11 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">20</td>
+      <td class="res muted">1 钱 · 2 电 · 4 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R2·T6</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 研究 blue2，背面 bonus：精选 1 张牌（主行动）</div><div class="quick-list">② 抽牌 更优太阳能板</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">30</td>
+      <td class="res muted">3 钱 · 0 电 · 1 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R2·T7</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">② 研究 purple2，背面 bonus：精选 1 张牌（主行动）</div><div class="quick-list">① 极端条件测试：弃牌角标 · ③ 抽牌 新型AI模型</div></td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">4 钱 · 6 电 · 1 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R2·T8</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">② 扫描 扫描（主行动）</div><div class="quick-list">① 放置数据 · ③ 放置数据 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 收入 机智号直升机（获得 信用点+1）</div></td>
+      <td class="num">14 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">22</td>
+      <td class="res muted">3 钱 · 0 电 · 3 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R2·T9</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">② land 登陆（主行动）</div><div class="quick-list">① 移动探测器 2 逆时针 · ③ 放痕迹 外星人1·黄</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+10</span></td>
+      <td class="num">30</td>
+      <td class="res muted">1 钱 · 0 电 · 6 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R2·T10</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① 选择目标 标记 A（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">30</td>
+      <td class="res muted">1 钱 · 0 电 · 6 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R2·T10</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">④ 研究 purple2，背面 bonus：3 分（主行动）</div><div class="quick-list">① 自动分析：弃牌角标 · ② 繁殖样本：弃牌角标 · ③ 更优太阳能板：弃牌角标</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">33</td>
+      <td class="res muted">3 钱 · 0 电 · 0 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R2·T11</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放置数据 · ③ 放置数据 · ④ 放置数据</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">18</td>
+      <td class="res muted">3 钱 · 4 电 · 1 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R2·T12</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">⑥ 扫描 扫描（主行动）</div><div class="quick-list">① 放置数据 · ② 2信用点 → 1能量 · ③ 3宣传 → 精选1张牌 · ④ 抽牌 观测比邻星 · ⑤ 2张牌 → 1能量 · ⑦ 放痕迹 外星人2·粉（1分+外星人牌） · ⑧ 抽牌 低重力研究 · ⑨ 放置数据</div></td>
+      <td class="num">20 步</td>
+      <td class="num"><span class="dp">+9</span></td>
+      <td class="num">31</td>
+      <td class="res muted">0 钱 · 0 电 · 1 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R2·T13</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 选择目标 标记 A（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">31</td>
+      <td class="res muted">0 钱 · 0 电 · 1 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R2·T13</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">④ 研究 orange3，背面 bonus：1 宣传（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ③ 收入 轨道监测（获得 信用点+1）</div></td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">30</td>
+      <td class="res muted">2 钱 · 0 电 · 2 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R2·T14</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">33</td>
+      <td class="res muted">3 钱 · 0 电 · 0 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R2·T15</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 选牌 业余天文学家（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">33</td>
+      <td class="res muted">3 钱 · 0 电 · 0 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R2·T15</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放痕迹 外星人1·粉（5分+外星人牌） · ③ 抽牌 首次接触 · ④ 赫利昂联合体 1x 行动 · ⑤ 放置数据 · ⑥ 收入 首次接触（获得 1 张随机牌） · ⑦ 放置数据 · ⑧ 迭代工程：弃牌角标 · ⑨ 放置数据</div></td>
+      <td class="num">18 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">25</td>
+      <td class="res muted">3 钱 · 2 电 · 3 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R2·T16</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 选择目标 标记 A（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">25</td>
+      <td class="res muted">3 钱 · 2 电 · 3 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R2·T16</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div><div class="quick-list">② 低重力研究：弃牌角标 · ③ 移动探测器 4 逆时针</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">34</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R2·T17</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① 打牌 观测巴纳德星（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">32</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R2·T18</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">28</td>
+      <td class="res muted">3 钱 · 1 电 · 3 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R2·T19</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">34</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R2·T20</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 选牌 NASA天体生物学研究所（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">34</td>
+      <td class="res muted">0 钱 · 0 电 · 5 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R2·T20</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">32</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R2·T21</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① 选牌 &quot;远射&quot;计划（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">32</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R2·T21</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">② 扫描 扫描（主行动）</div><div class="quick-list">① 2信用点 → 1能量 · ③ 放置数据 · ④ 放置数据</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">28</td>
+      <td class="res muted">0 钱 · 0 电 · 6 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R2·T22</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">② 研究 orange2，背面 bonus：1 宣传（主行动）</div><div class="quick-list">① 抽牌 小行星研究</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">28</td>
+      <td class="res muted">0 钱 · 1 电 · 1 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R2·T23</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">28</td>
+      <td class="res muted">0 钱 · 1 电 · 1 宣 · 1 手</td>
+    </tr><tr class="round-head"><td colspan="7">第 3 轮</td></tr><tr>
+      <td class="num">R3·T1</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 选牌 赫歇尔空间天文台（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">28</td>
+      <td class="res muted">5 钱 · 6 电 · 2 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R3·T1</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">③ 扫描 扫描（主行动）</div><div class="quick-list">① 放置数据 · ② 收入 双探测器（获得 能量+1） · ④ 放置数据 · ⑤ 放置数据 · ⑥ 2信用点 → 1能量</div></td>
+      <td class="num">12 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">33</td>
+      <td class="res muted">4 钱 · 2 电 · 0 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R3·T2</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 发射 发射（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">28</td>
+      <td class="res muted">3 钱 · 6 电 · 2 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R3·T3</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">② 扫描 扫描（主行动）</div><div class="quick-list">① 放置数据 · ③ 放置数据 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 收入 NASA天体生物学研究所（获得 1 张随机牌） · ⑦ 移动探测器 4 逆时针 · ⑧ 2信用点 → 1能量</div></td>
+      <td class="num">17 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">39</td>
+      <td class="res muted">2 钱 · 1 电 · 6 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R3·T4</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">③ 分析 分析（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ④ 放痕迹 外星人2·蓝（1分）</div></td>
+      <td class="num">9 步</td>
+      <td class="num"><span class="dp">+11</span></td>
+      <td class="num">43</td>
+      <td class="res muted">7 钱 · 0 电 · 2 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R3·T5</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">④ land 登陆（主行动）</div><div class="quick-list">① 移动探测器 5 逆时针 · ② 移动探测器 5 逆时针 · ③ 2信用点 → 1能量</div></td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="dp">+8</span></td>
+      <td class="num">41</td>
+      <td class="res muted">2 钱 · 0 电 · 2 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T6</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">② 打牌 突破摄星（主行动）</div><div class="quick-list">① 移动探测器 6 逆时针</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">31</td>
+      <td class="res muted">2 钱 · 6 电 · 4 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R3·T7</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 打牌 突破聆听（主行动）</div><div class="quick-list">② 3宣传 → 精选1张牌 · ③ 抽牌 NASA深空网络 · ④ 2张牌 → 1能量</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">42</td>
+      <td class="res muted">1 钱 · 2 电 · 5 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T8</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 接受可选效果 结算 月坑射电望远镜（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">42</td>
+      <td class="res muted">1 钱 · 2 电 · 8 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T8</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">③ 研究 purple2，背面 bonus：1 能量（主行动）</div><div class="quick-list">① 阿番西博天文台：弃牌角标 · ② 量子数据存储：弃牌角标</div></td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">43</td>
+      <td class="res muted">7 钱 · 1 电 · 0 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T9</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 打牌 业余天文学家（主行动）</div><div class="quick-list">② 抽牌 建造叶夫帕托里亚望远锐 · ③ 抽牌 Wow!讯号</div></td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">43</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T10</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 环绕 环绕金星 - 奖励：获得 6 分；获得 1 次收入（主行动）</div><div class="quick-list">② 收入 现场着陆直播（获得 1 张随机牌）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">37</td>
+      <td class="res muted">1 钱 · 5 电 · 4 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R3·T11</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① land 登陆（主行动）</div><div class="quick-list">② 放痕迹 外星人1·黄（5分+外星人牌） · ③ 抽牌 探测车探索 · ④ 放置数据 · ⑤ 放置数据</div></td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+17</span></td>
+      <td class="num">59</td>
+      <td class="res muted">1 钱 · 0 电 · 8 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T12</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 选择目标 标记 D（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">59</td>
+      <td class="res muted">1 钱 · 0 电 · 8 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T12</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① 打牌 &quot;远射&quot;计划（主行动）</div><div class="quick-list">② 抽牌 火星科学实验室</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">43</td>
+      <td class="res muted">4 钱 · 1 电 · 0 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T13</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">43</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T14</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 选牌 国际合作（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">43</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T14</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">② 发射 发射（主行动）</div><div class="quick-list">① 2能量 → 1信用点 · ③ 移动探测器 7 逆时针 · ④ 移动探测器 7 逆时针 · ⑤ 2张牌 → 1信用点</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">37</td>
+      <td class="res muted">1 钱 · 1 电 · 6 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T15</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">62</td>
+      <td class="res muted">1 钱 · 0 电 · 8 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T16</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① 发射 发射（主行动）</div><div class="quick-list">② 移动探测器 8 逆时针 · ③ 移动探测器 8 逆时针 · ④ 2信用点 → 1能量</div></td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">43</td>
+      <td class="res muted">0 钱 · 1 电 · 2 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T17</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 环绕 环绕金星 - 奖励：获得 6 分；获得 1 次收入（主行动）</div><div class="quick-list">② 收入 韦断特v克综合孔径射电|远锐（获得 能量+1）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">43</td>
+      <td class="res muted">0 钱 · 1 电 · 6 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T18</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 研究 orange2，背面 bonus：3 分（主行动）</div></td>
+      <td class="num">2 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">65</td>
+      <td class="res muted">1 钱 · 0 电 · 2 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T19</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① land 登陆（主行动）</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+8</span></td>
+      <td class="num">51</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T20</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① 选择目标 标记 D（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">51</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T20</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 研究 blue3，背面 bonus：精选 1 张牌（主行动）</div><div class="quick-list">② 抽牌 跟踪与数据中继卫星 · ③ 放置数据 · ④ 放置数据 · ⑤ 收入 跟踪与数据中继卫星（获得 1 张随机牌）</div></td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">45</td>
+      <td class="res muted">0 钱 · 1 电 · 0 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T21</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">⑤ PASS PASS（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ③ 放置数据 · ④ 探测车探索：弃牌角标</div></td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">65</td>
+      <td class="res muted">1 钱 · 0 电 · 5 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T22</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 选牌 月球门户空间站（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">65</td>
+      <td class="res muted">1 钱 · 0 电 · 5 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T22</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">51</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R3·T23</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① 选牌 双行星飞越机动（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">51</td>
+      <td class="res muted">0 钱 · 0 电 · 2 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R3·T23</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">② PASS PASS（主行动）</div><div class="quick-list">① 赫利昂联合体 1x 行动</div></td>
+      <td class="num">4 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">45</td>
+      <td class="res muted">0 钱 · 2 电 · 0 宣 · 0 手</td>
+    </tr><tr class="round-head"><td colspan="7">第 4 轮</td></tr><tr>
+      <td class="num">R4·T1</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">② 打牌 金星号探测器（主行动）</div><div class="quick-list">① 抽牌 信使号探测器 · ③ 移动探测器 9 向外 · ④ 移动探测器 9 逆时针</div></td>
+      <td class="num">7 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">45</td>
+      <td class="res muted">2 钱 · 7 电 · 4 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R4·T2</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 接受可选效果 结算 金星号探测器（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">52</td>
+      <td class="res muted">2 钱 · 7 电 · 5 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R4·T2</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放置数据 · ③ 收入 阿波罗1号任务（获得 能量+1） · ④ 终局标记 c（第1槽/70分 · c1：完成任务）</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">71</td>
+      <td class="res muted">5 钱 · 1 电 · 4 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R4·T3</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 选择目标 标记 D（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">52</td>
+      <td class="res muted">2 钱 · 7 电 · 5 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R4·T3</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">② 扫描 扫描（主行动）</div><div class="quick-list">① 2张牌 → 1能量 · ③ 放置数据 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 2信用点 → 1能量 · ⑦ 2信用点 → 1能量</div></td>
+      <td class="num">16 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">54</td>
+      <td class="res muted">2 钱 · 2 电 · 3 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R4·T4</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">② 分析 分析（主行动）</div><div class="quick-list">① 放置数据 · ③ 放痕迹 外星人1·蓝（5分+外星人牌） · ④ 抽牌 蜂巢样本</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">48</td>
+      <td class="res muted">4 钱 · 2 电 · 2 宣 · 3 手</td>
+    </tr><tr>
+      <td class="num">R4·T5</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div></td>
+      <td class="num">3 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">54</td>
+      <td class="res muted">1 钱 · 5 电 · 5 宣 · 5 手</td>
+    </tr><tr>
+      <td class="num">R4·T6</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">② 扫描 扫描（主行动）</div><div class="quick-list">① 2张牌 → 1能量 · ③ 放痕迹 外星人2·粉（1分） · ④ 深空探测 1x 行动 · ⑤ 抽牌 三叉戟号探测器 · ⑥ 放置数据 · ⑦ 放置数据</div></td>
+      <td class="num">19 步</td>
+      <td class="num"><span class="dp">+11</span></td>
+      <td class="num">82</td>
+      <td class="res muted">4 钱 · 0 电 · 5 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R4·T7</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① 发射 发射（主行动）</div><div class="quick-list">② 移动探测器 10 向外 · ③ 移动探测器 10 逆时针 · ④ 3宣传 → 精选1张牌 · ⑤ 抽牌 甚大阵 · ⑥ 2张牌 → 1能量</div></td>
+      <td class="num">11 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">54</td>
+      <td class="res muted">0 钱 · 1 电 · 3 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R4·T8</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">③ 扫描 扫描（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 收入 国际合作（获得 1 张随机牌） · ⑦ 放置数据 · ⑧ 2张牌 → 1能量</div></td>
+      <td class="num">20 步</td>
+      <td class="num"><span class="dp">+4</span></td>
+      <td class="num">52</td>
+      <td class="res muted">3 钱 · 2 电 · 3 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R4·T9</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 选择目标 标记 B（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">52</td>
+      <td class="res muted">3 钱 · 2 电 · 3 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R4·T9</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">③ 分析 分析（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据 · ④ 放痕迹 外星人2·蓝（1分+外星人牌） · ⑤ 抽牌 生物特征筛选</div></td>
+      <td class="num">10 步</td>
+      <td class="num"><span class="dp">+13</span></td>
+      <td class="num">67</td>
+      <td class="res muted">1 钱 · 4 电 · 7 宣 · 6 手</td>
+    </tr><tr>
+      <td class="num">R4·T10</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div><div class="quick-list">② 放置数据 · ③ 放置数据 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 收入 三叉戟号探测器（获得 1 张随机牌）</div></td>
+      <td class="num">11 步</td>
+      <td class="num"><span class="dp">+6</span></td>
+      <td class="num">88</td>
+      <td class="res muted">4 钱 · 0 电 · 7 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R4·T11</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① land 登陆（主行动）</div><div class="quick-list">② 放置数据 · ③ 放置数据</div></td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+9</span></td>
+      <td class="num">63</td>
+      <td class="res muted">0 钱 · 0 电 · 3 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R4·T12</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放置数据 · ③ 放置数据 · ④ 2信用点 → 1能量</div></td>
+      <td class="num">9 步</td>
+      <td class="num"><span class="dp">+2</span></td>
+      <td class="num">54</td>
+      <td class="res muted">0 钱 · 1 电 · 2 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R4·T13</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">13. 环绕 环绕水星 - 奖励：首次环绕：额外获得 3 分；盲抽 1 张卡牌；水星扇区扫描 1/2；水星扇区扫描 2/2；获得 1 次收入（主行动）</div><div class="quick-list">① 移动探测器 9 逆时针 · ② 移动探测器 9 逆时针 · ③ 移动探测器 9 逆时针 · ④ 2张牌 → 1能量 · ⑤ 移动探测器 9 向内 · ⑥ 2张牌 → 1能量 · ⑦ 2张牌 → 1能量 · ⑧ 3宣传 → 精选1张牌 · ⑨ 抽牌 望远锐时间分配 · ⑩ 3宣传 → 精选1张牌 · 11. 抽牌 飞掠土星 · 12. 2张牌 → 1能量 · 14. 收入 平方公里阵（获得 信用点+1）</div></td>
+      <td class="num">33 步</td>
+      <td class="num"><span class="dp">+5</span></td>
+      <td class="num">72</td>
+      <td class="res muted">1 钱 · 2 电 · 4 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R4·T14</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 选择目标 标记 C（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">72</td>
+      <td class="res muted">1 钱 · 2 电 · 4 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R4·T14</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① 发射 发射（主行动）</div><div class="quick-list">② 移动探测器 11 向外 · ③ 2信用点 → 1能量 · ④ 移动探测器 11 逆时针 · ⑤ 3宣传 → 精选1张牌 · ⑥ 抽牌 穿越小行星带 · ⑦ 3宣传 → 精选1张牌 · ⑧ 抽牌 观测室女座 · ⑨ 2张牌 → 1能量</div></td>
+      <td class="num">14 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">88</td>
+      <td class="res muted">0 钱 · 1 电 · 3 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R4·T16</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">63</td>
+      <td class="res muted">0 钱 · 0 电 · 4 宣 · 0 手</td>
+    </tr><tr>
+      <td class="num">R4·T16</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① 分析 分析（主行动）</div><div class="quick-list">② 放痕迹 外星人1·蓝（3分+外星人牌） · ③ 抽牌 虫 · ④ 放置数据</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+10</span></td>
+      <td class="num">64</td>
+      <td class="res muted">0 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R4·T17</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 扫描 扫描（主行动）</div><div class="quick-list">② 放痕迹 外星人2·粉（外星人牌） · ③ 抽牌 基因组表征 · ④ 放置数据 · ⑤ 放置数据 · ⑥ 抽牌 隼鸟号 · ⑦ 放置数据 · ⑧ 放置数据</div></td>
+      <td class="num">17 步</td>
+      <td class="num"><span class="dp">+10</span></td>
+      <td class="num">82</td>
+      <td class="res muted">0 钱 · 0 电 · 6 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R4·T18</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① land 登陆（主行动）</div><div class="quick-list">② 放痕迹 外星人2·黄（1分+外星人牌） · ③ 抽牌 突破性理论 · ④ 抽牌 夏洛克光谱仪</div></td>
+      <td class="num">5 步</td>
+      <td class="num"><span class="dp">+7</span></td>
+      <td class="num">95</td>
+      <td class="res muted">0 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R4·T20</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">64</td>
+      <td class="res muted">0 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R4·T20</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① 研究 blue4，背面 bonus：1 能量（主行动）</div><div class="quick-list">② 放置数据 · ③ 收入 隼鸟号（获得 1 张随机牌） · ④ 基因组表征：弃牌角标 · ⑤ 放置数据</div></td>
+      <td class="num">8 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">85</td>
+      <td class="res muted">0 钱 · 1 电 · 2 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R4·T21</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">③ 分析 分析（主行动）</div><div class="quick-list">① 放置数据 · ② 放置数据</div></td>
+      <td class="num">6 步</td>
+      <td class="num"><span class="dp">+3</span></td>
+      <td class="num">98</td>
+      <td class="res muted">0 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr><tr>
+      <td class="num">R4·T23</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">85</td>
+      <td class="res muted">0 钱 · 1 电 · 2 宣 · 1 手</td>
+    </tr><tr>
+      <td class="num">R4·T23</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">① PASS PASS（主行动）</div></td>
+      <td class="num">1 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">98</td>
+      <td class="res muted">0 钱 · 0 电 · 3 宣 · 2 手</td>
+    </tr><tr class="round-head"><td colspan="7">终局结算（完整终局口径）</td></tr><tr><td colspan="7" class="final-detail">蓝：base 64（外星痕迹·蓝 8 + 外星痕迹·粉 5 + 外星痕迹·黄 3 + 蓝科技 4 + 卡牌·效果 3 + 初始 7 + 登陆 5 + 环绕 9 + 扫描 11 + 科技bonus 9） + 板块 30（每套收入 11×2=22 + 每套痕迹 8×1=8） + 卡牌 2（建造欧几里得望远锐 2）</td></tr><tr><td colspan="7" class="final-detail">绿：base 63（外星卡·效果 10 + 外星痕迹·蓝 4 + 外星痕迹·粉 3 + 外星痕迹·黄 11 + 初始 7 + 登陆 16 + 环绕 3 + 扫描 9） + 板块 18（每套收入 8×1=8 + 每两个科技 5×2=10） + 卡牌 3（观测巴纳德星 3）</td></tr><tr><td colspan="7" class="final-detail">棕：base 85（外星卡·效果 18 + 外星痕迹·蓝 7 + 外星痕迹·粉 5 + 蓝科技 8 + 卡牌·快速 1 + 初始 8 + 环绕 15 + 扫描 7 + 任务卡 7 + 科技bonus 9） + 板块 45（每套收入 5×6=30 + 完成任务 3×2=6 + 每两个科技 3×3=9）</td></tr><tr><td colspan="7" class="final-detail" style="font-weight:700">白：base 98（外星卡·效果 16 + 外星痕迹·蓝 17 + 外星痕迹·粉 2 + 外星痕迹·黄 6 + 初始 6 + 登陆 18 + 扫描 23 + 科技bonus 10） + 板块 26（每套收入 5×3=15 + 完成任务 4×1=4 + 每两个科技 7×1=7）</td></tr></tbody>
+    </table>
+  </section>
+  <section class="panel">
+    <h2>行动族统计</h2>
+    <table><thead><tr><th>行动族</th><th>次数</th></tr></thead><tbody><tr><td>选择目标</td><td class="num">198</td></tr><tr><td>选牌</td><td class="num">100</td></tr><tr><td>放置数据</td><td class="num">86</td></tr><tr><td>结束回合</td><td class="num">73</td></tr><tr><td>支付选择</td><td class="num">72</td></tr><tr><td>快速转换</td><td class="num">35</td></tr><tr><td>移动</td><td class="num">24</td></tr><tr><td>扫描</td><td class="num">18</td></tr><tr><td>PASS</td><td class="num">16</td></tr><tr><td>弃牌角标</td><td class="num">14</td></tr><tr><td>研究科技</td><td class="num">13</td></tr><tr><td>打牌</td><td class="num">12</td></tr><tr><td>分析</td><td class="num">12</td></tr><tr><td>发射</td><td class="num">7</td></tr><tr><td>公司能力</td><td class="num">6</td></tr><tr><td>land</td><td class="num">6</td></tr><tr><td>环绕</td><td class="num">5</td></tr><tr><td>接受可选效果</td><td class="num">5</td></tr></tbody></table>
+  </section>
+</main></body></html>

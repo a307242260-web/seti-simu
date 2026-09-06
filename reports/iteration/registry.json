@@ -1,13 +1,13 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-05T23:50:02.436Z",
+  "builtAt": "2026-09-06T00:14:55.837Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "6d67a974",
-  "currentBaseline": "round-data-income-r4-20260906",
+  "headCommit": "213f34db",
+  "currentBaseline": "observe-decision-r4-20260906",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -22,15 +22,15 @@
       "scoreSourceNote": "543步正式终局76/90/70/141，均94.25，较前候选105.5低11.25，较已通过R2e基线106.75低12.5，第三轮未通过。真实反例改为两牌换电后1号火星登陆，六步计划复用与正式完成验证通过；棕方慢样本9.84秒过门槛，Node74/76及唯一full-flow通过，两项指定既有失败保留。首处分歧在索引23：白方b_117改为直接发射；尚未证明整局下降原因，不以局部反例通过替代整局验收。"
     },
     "bestAvg": {
-      "value": 106.75,
-      "versionId": "blue-future-r2e-20260905",
-      "name": "第二轮蓝科技未来收益纠重（通过）",
-      "runKey": "baea50cc.20feca27.full",
+      "value": 108.5,
+      "versionId": "observe-decision-r4-20260906",
+      "name": "单次观察枚举复用（终局均108.5，待综合验收）",
+      "runKey": "2848eba2.213f34db.full",
       "provenance": "save-final",
-      "steps": 667,
-      "wallMs": 181396,
-      "msPerStep": 272,
-      "scoreSourceNote": "同提交从200步续跑至667步，正式终局79/134/117/97、均106.75；比修正前S1均98.5提高8.25，比最近通过R1均99.75提高7。蓝科技重复估值修正符合公式，第二轮按固定盘面验收通过；47次搜索触顶及两项既有测试失败仍显式保留，不外推整体搜索完备性。"
+      "steps": 702,
+      "wallMs": 389609,
+      "msPerStep": 555,
+      "scoreSourceNote": "702步，正式终局96/84/130/124、均108.5，较已通过基线106.75提高1.75；总模拟527450ms。终局与前缀校验通过，待第三/第四轮综合实现验收，不把均分提升单独作为收口依据。"
     },
     "bestPlayer": {
       "value": 152,
@@ -66,6 +66,22 @@
     },
     "topByAvg": [
       {
+        "value": 108.5,
+        "white": 124,
+        "bestPlayer": {
+          "color": "棕",
+          "score": 130
+        },
+        "versionId": "observe-decision-r4-20260906",
+        "name": "单次观察枚举复用（终局均108.5，待综合验收）",
+        "runKey": "2848eba2.213f34db.full",
+        "provenance": "save-final",
+        "steps": 702,
+        "wallMs": 389609,
+        "msPerStep": 555,
+        "scoreSourceNote": "702步，正式终局96/84/130/124、均108.5，较已通过基线106.75提高1.75；总模拟527450ms。终局与前缀校验通过，待第三/第四轮综合实现验收，不把均分提升单独作为收口依据。"
+      },
+      {
         "value": 106.75,
         "white": 97,
         "bestPlayer": {
@@ -96,26 +112,643 @@
         "wallMs": 128787,
         "msPerStep": 221,
         "scoreSourceNote": "583步正式终局79/104/101/138，均105.5，仍低于已通过R2e基线106.75达1.25分，第三轮未通过。卡牌收入身份与owner/恢复/后继效果验证通过；前200步动作摘要及第201至235步已有失败前动作一致，第236步正确通过原报错点。相对上一完成候选89.25的提升包含收入准备与接口修复，不单独归因于本接口提交；收入准备原候选没有终局可比较。两个指定既有测试失败保留。"
-      },
-      {
-        "value": 104,
-        "white": 108,
-        "bestPlayer": {
-          "color": "绿",
-          "score": 118
-        },
-        "versionId": "score-corner-r4-20260906",
-        "name": "得分角标准入（终局未达标）",
-        "runKey": "7a4c63fd.0d21aebf.full",
-        "provenance": "save-final",
-        "steps": 579,
-        "wallMs": 350913,
-        "msPerStep": 606,
-        "scoreSourceNote": "579步，正式终局74/118/116/108、均104，较上一候选+2.5，低于R2e基线2.75；总模拟495050ms。第三/第四轮未通过。"
       }
     ]
   },
   "versions": [
+    {
+      "id": "observe-decision-r4-20260906",
+      "name": "单次观察枚举复用（终局均108.5，待综合验收）",
+      "date": "2026-09-06",
+      "baseline": "blue-future-r2e-20260905",
+      "head": "213f34db",
+      "commits": [
+        {
+          "hash": "213f34db",
+          "date": "2026-09-06",
+          "subject": "会话观察复用单次合法项枚举并保持消费者副本隔离"
+        }
+      ],
+      "summary": "会话观察复用单次合法项枚举，投影与返回决策保持独立副本，不跨观察缓存",
+      "diffStat": "264 files changed, 186389 insertions(+), 1448 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "AGENTS.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "adhoc/audit-completion-state-r4-20260906.js",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-income-card-reserve-witness-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-mercury-scan-directory-20260906.js",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-plan-boundaries-r3-20260905.js",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-probe-completion-boundary-20260906.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-probe-execution-events-20260906.js",
+          "insertions": 74,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-probe-source-consumers-20260906.js",
+          "insertions": 53,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-probe-source-opening-20260906.js",
+          "insertions": 57,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r2e-expectation-20260905.js",
+          "insertions": 100,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-actual-opening-plan-20260906.js",
+          "insertions": 77,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-alien-dependency-input-20260905.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-plan-realization-20260906.js",
+          "insertions": 79,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-route-selection-20260906.js",
+          "insertions": 82,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-brown-second-round-20260906.js",
+          "insertions": 63,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-first-divergence-choice-20260906.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-green-pass-20260906.js",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-green-pass-choice-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-legacy-payment-boundary-20260906.js",
+          "insertions": 73,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-scan-access-dependency-20260906.js",
+          "insertions": 72,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3-scan-source-order-20260906.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-green-boundary-20260906.js",
+          "insertions": 69,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-green-plan-origin-20260906.js",
+          "insertions": 76,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-replan-realization-20260906.js",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r3s1-stale-scan-execution-20260906.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r4-blue-final-pass-20260906.js",
+          "insertions": 28,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r4-green-pass-20260906.js",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r4-white-research-plan-20260906.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-r4-white-swap-20260906.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-search-contract-r4-20260906.js",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-search-equivalence-r4-20260906.js",
+          "insertions": 73,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-sector-directory-cache-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-observe-decision-20260906.js",
+          "insertions": 36,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-policy-copy-r4-20260906.js",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-income-reserve-failure-20260906.js",
+          "insertions": 45,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-card-income-identity-20260906.js",
+          "insertions": 30,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-probe-source-full-20260906.js",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-r3-current-rounds-20260906.js",
+          "insertions": 51,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-r3-first-divergence-20260906.js",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-r3-scan-earth-20260906.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-sector-directory-full-20260906.js",
+          "insertions": 29,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/complete-r4-green-corner-20260906.js",
+          "insertions": 35,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/diagnose-r4-green-pass-search-20260906.js",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/execute-r4-green-corner-20260906.js",
+          "insertions": 36,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-r3-brown-decision-20260906.js",
+          "insertions": 68,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-round-income-green-20260906.js",
+          "insertions": 80,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-r4-cpu-20260906.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-r4-data-count-20260906.js",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-r4-white-saved-plan-20260906.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-r4-white-swap-plan-20260906.js",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-card-income-identity-20260906.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-income-reserve-search-20260906.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-plan-steps-r3-20260905.js",
+          "insertions": 109,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-probe-source-plan-20260906.js",
+          "insertions": 55,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-probe-source-search-20260906.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-copy-cost-20260906.js",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-green-land-witness-20260906.js",
+          "insertions": 52,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-r3-scan-earth-20260906.js",
+          "insertions": 91,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-round-data-income-r4-20260906.js",
+          "insertions": 51,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-score-corner-full-20260906.js",
+          "insertions": 42,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "2848eba2.213f34db.quick-200.json",
+          "recordPath": "reports/research/2848eba2.213f34db.quick-200.json",
+          "mode": "quick-200",
+          "steps": 200,
+          "stepsLimit": 200,
+          "terminal": false,
+          "wallMs": 137841,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "213f34db",
+          "createdAt": "2026-09-06T00:06:41.877Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "200步，阶段均25.25，137841ms；与6d67a974前200步完整轨迹一致。",
+          "scores": {
+            "player-blue": 43,
+            "player-green": 20,
+            "player-brown": 18,
+            "player-white": 20
+          },
+          "avgScore": 25.25,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-observe-decision-r4-20260906-213f34db-quick-200-v93.json",
+          "reportPath": "reports/iteration/observe-decision-r4-20260906/2848eba2.213f34db.quick-200.action-log.html",
+          "reportExists": true
+        },
+        {
+          "recordFile": "2848eba2.213f34db.full.json",
+          "recordPath": "reports/research/2848eba2.213f34db.full.json",
+          "mode": "full",
+          "steps": 702,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 389609,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "213f34db",
+          "createdAt": "2026-09-06T00:13:21.013Z",
+          "resumeStep": 200,
+          "seed": "seti-free-analyze-v1",
+          "note": "702步，正式终局96/84/130/124、均108.5，较已通过基线106.75提高1.75；总模拟527450ms。终局与前缀校验通过，待第三/第四轮综合实现验收，不把均分提升单独作为收口依据。",
+          "scores": {
+            "player-blue": 96,
+            "player-green": 84,
+            "player-brown": 130,
+            "player-white": 124
+          },
+          "avgScore": 108.5,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 96,
+              "base": 64,
+              "tile": 30,
+              "card": 2,
+              "tileScoresById": {
+                "a": 22,
+                "b": 8,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 4,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 5,
+                "orbitScore": 9,
+                "scanScore": 11,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 84,
+              "base": 63,
+              "tile": 18,
+              "card": 3,
+              "tileScoresById": {
+                "a": 8,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_14.webp",
+                  "rule": {
+                    "color": "red",
+                    "kind": "sectorWinsByColor",
+                    "scorePer": 3
+                  },
+                  "score": 3
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 11,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 16,
+                "orbitScore": 3,
+                "scanScore": 9,
+                "taskCardScore": 0,
+                "techBonusScore": 0
+              }
+            },
+            "player-brown": {
+              "total": 130,
+              "base": 85,
+              "tile": 45,
+              "card": 0,
+              "tileScoresById": {
+                "a": 30,
+                "b": 0,
+                "c": 6,
+                "d": 9
+              },
+              "tiles": [
+                {
+                  "baseValue": 6,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 30,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "c1",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 9,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 18,
+                "alienTraceBlueScore": 7,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 8,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 0,
+                "orbitScore": 15,
+                "scanScore": 7,
+                "taskCardScore": 7,
+                "techBonusScore": 9
+              }
+            },
+            "player-white": {
+              "total": 124,
+              "base": 98,
+              "tile": 26,
+              "card": 0,
+              "tileScoresById": {
+                "a": 15,
+                "b": 0,
+                "c": 4,
+                "d": 7
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 4,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 7,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 16,
+                "alienTraceBlueScore": 17,
+                "alienTracePinkScore": 2,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 18,
+                "orbitScore": 0,
+                "scanScore": 23,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-observe-decision-r4-20260906-213f34db-full-v329.json",
+          "reportPath": "reports/iteration/observe-decision-r4-20260906/2848eba2.213f34db.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "2848eba2.213f34db.quick-200",
+            "path": "reports/iteration/observe-decision-r4-20260906/2848eba2.213f34db.quick-200.action-log.html",
+            "mode": "quick-200"
+          },
+          {
+            "runKey": "2848eba2.213f34db.full",
+            "path": "reports/iteration/observe-decision-r4-20260906/2848eba2.213f34db.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "round-data-income-r4-20260906",
       "name": "轮初数据收入实体修复（终局超时）",
@@ -463,7 +1096,7 @@
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

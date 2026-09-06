@@ -1,0 +1,53 @@
+{
+  "scope": "只读完整存档校验；不以终局数据一致外推全程一致或全部实现正确",
+  "quickRecord": "reports/research/2848eba2.213f34db.quick-200.json",
+  "fullRecord": "reports/research/2848eba2.213f34db.full.json",
+  "gitCommit": "213f34db",
+  "steps": 702,
+  "scores": {
+    "player-blue": 96,
+    "player-green": 84,
+    "player-brown": 130,
+    "player-white": 124
+  },
+  "mean": 108.5,
+  "acceptedBaseline": 106.75,
+  "quickMs": 137841,
+  "resumeMs": 389609,
+  "totalSimulationMs": 527450,
+  "quickTraceIdenticalToPreviousVersion": true,
+  "resumedPrefixIdentical": true,
+  "finalDataCounts": [
+    {
+      "playerId": "player-blue",
+      "count": 0,
+      "pool": 0
+    },
+    {
+      "playerId": "player-green",
+      "count": 0,
+      "pool": 0
+    },
+    {
+      "playerId": "player-brown",
+      "count": 0,
+      "pool": 0
+    },
+    {
+      "playerId": "player-white",
+      "count": 0,
+      "pool": 0
+    }
+  ],
+  "saves": [
+    {
+      "path": "seti-saves/seti-save-research-observe-decision-r4-20260906-213f34db-quick-200-v93.json",
+      "sha256": "36ee4ae3c23b468660df772d2896ceb5f9f03421a7ef545e54f9eee9c2bcb130"
+    },
+    {
+      "path": "seti-saves/seti-save-research-observe-decision-r4-20260906-213f34db-full-v329.json",
+      "sha256": "a2e0070f235d997a5f6dfeb8bdb6eae7ab62575e6f3ac2be975b530a98751272"
+    }
+  ],
+  "passed": true
+}
