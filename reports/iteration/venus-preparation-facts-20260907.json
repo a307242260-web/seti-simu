@@ -1,0 +1,299 @@
+{
+  "source": "reports/iteration/venus-preparation-433-20260907-v2.json",
+  "scope": "仅比较已完成的受控路径，排除历史、元数据和手牌排序；保留资源、收入和真实手牌身份；不是完整历史搜索重放或支配证明",
+  "paths": [
+    {
+      "index": 0,
+      "hand": [
+        "card-76-0",
+        "card-77-0",
+        "card-78-0",
+        "card-89-0"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 4,
+        "handSize": 4,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 1,
+        "energy": 2,
+        "handSize": 4,
+        "publicity": 5,
+        "score": 34
+      }
+    },
+    {
+      "index": 1,
+      "hand": [
+        "card-34-pass-3-5",
+        "card-77-0",
+        "card-78-0"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 5,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 2,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 5,
+        "score": 34
+      }
+    },
+    {
+      "index": 2,
+      "hand": [
+        "card-34-pass-3-5",
+        "card-76-0",
+        "card-78-0"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 5,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 2,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 5,
+        "score": 34
+      }
+    },
+    {
+      "index": 3,
+      "hand": [
+        "card-34-pass-3-5",
+        "card-76-0",
+        "card-77-0"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 5,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 1,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 5,
+        "score": 34
+      }
+    },
+    {
+      "index": 4,
+      "hand": [
+        "card-76-0",
+        "card-78-0",
+        "card-89-0"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 4,
+        "handSize": 4,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 0,
+        "energy": 3,
+        "handSize": 3,
+        "publicity": 5,
+        "score": 36
+      }
+    },
+    {
+      "index": 5,
+      "hand": [
+        "card-34-pass-3-5",
+        "card-78-0"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 5,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 1,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 5,
+        "score": 36
+      }
+    },
+    {
+      "index": 6,
+      "hand": [
+        "card-34-pass-3-5",
+        "card-76-0"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 5,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 0,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 5,
+        "score": 36
+      }
+    },
+    {
+      "index": 8,
+      "hand": [
+        "card-76-0",
+        "card-77-0",
+        "card-89-0"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 4,
+        "handSize": 4,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 0,
+        "energy": 1,
+        "handSize": 3,
+        "publicity": 5,
+        "score": 34
+      }
+    },
+    {
+      "index": 9,
+      "hand": [
+        "card-34-pass-3-5",
+        "card-77-0"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 5,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 1,
+        "energy": 1,
+        "handSize": 2,
+        "publicity": 5,
+        "score": 34
+      }
+    },
+    {
+      "index": 10,
+      "hand": [
+        "card-34-pass-3-5",
+        "card-76-0"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 5,
+        "energy": 4,
+        "handSize": 3,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 6,
+        "credits": 1,
+        "energy": 1,
+        "handSize": 2,
+        "publicity": 5,
+        "score": 34
+      }
+    }
+  ],
+  "groups": [
+    [
+      0
+    ],
+    [
+      1
+    ],
+    [
+      2
+    ],
+    [
+      3
+    ],
+    [
+      4
+    ],
+    [
+      5
+    ],
+    [
+      6
+    ],
+    [
+      8
+    ],
+    [
+      9
+    ],
+    [
+      10
+    ]
+  ],
+  "missingPathIndices": [
+    7
+  ],
+  "passed": true
+}

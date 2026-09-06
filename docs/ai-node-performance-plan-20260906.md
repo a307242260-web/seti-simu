@@ -180,3 +180,8 @@ reports/iteration/policy-plan-full-review-20260906.md；不扩大到公司策略
 正式两来源的卡牌/展示区/RNG语义不同，不按“拿一张牌”合并；现有资源交易与科技
 需求过滤也已核对，不重复实现。下一项复用404/433已有准备状态检查重复与共同成本，
 不重跑同类反例。详见reports/iteration/card-choice-review-20260907.md；本次仅取证。
+
+433金星准备路径已受控重建10/11条：排除历史/版本号和手牌顺序，只按资源、收入、
+手牌身份也为10种不同状态。另1条缺交易支付身份，明确未完成；摘要省略end_turn
+与宏输入，不能冒充完整搜索回放。没有按同目标合并的证据，后续需完整chain/plan
+输入而非继续猜摘要。见reports/iteration/venus-preparation-review-20260907.md。
