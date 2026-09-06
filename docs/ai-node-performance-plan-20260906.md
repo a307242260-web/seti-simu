@@ -45,6 +45,10 @@ quick加续跑527450ms。上一轮四轮实现已收口，不重开或改写其�
 第一Goal追加零异常门禁：规则执行失败、异常fail、必需数据/结果的none或undefined
 归零，不得吞错、过滤日志或填默认值。合法可选空值及不适用字段须与异常明确区分。
 
+剩余失败定位：471三个候选从同一正式边界逐个执行，展示/盲抽成功，取消返回漏
+nextState而失败；拟按原result封装修正executor契约，不删除取消或放宽runtime。
+详见reports/iteration/choice-failure-471-review-20260907.md。433两次失败仍待定位。
+
 ## 初始取证
 
 已有绿方210步：4096节点，choose_target3070、place_data209；三种阿米巴符号奖励

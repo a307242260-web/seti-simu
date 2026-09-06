@@ -1,0 +1,693 @@
+{
+  "scope": "恢复既有433检查点，正式重放到471，逐个执行真实选择；不运行AI搜索",
+  "cases": [
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:b10e56e6",
+        "actorId": "player-blue",
+        "stateVersion": 235,
+        "decisionVersion": 13,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "chong:display:5",
+          "source": "display",
+          "cardIndex": 5
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "获得展示的火星隔离实验室",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "5",
+          "imageSrc": "../assets/aliens/虫/cards/5.webp",
+          "imageAlt": "火星隔离实验室"
+        }
+      },
+      "result": {
+        "ok": true,
+        "phase": "completed",
+        "family": "analyze",
+        "stateVersion": 236,
+        "failure": null,
+        "journal": {
+          "actions": [
+            {
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "analyze",
+                "phase": "main",
+                "actionId": "analyze:50f30055",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "kind": "computer",
+                  "requiredSlot": 6
+                },
+                "payload": {
+                  "skipCost": false
+                },
+                "decision": null,
+                "summary": "分析"
+              },
+              "groupId": "effect-session-18:group:1",
+              "groupKind": "action",
+              "quick": false,
+              "revision": 0
+            }
+          ],
+          "decisions": [
+            {
+              "decisionId": "effect-session-18:effect:3",
+              "decisionVersion": 2,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:2194151f",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "choiceId": "trace:2:blue:chong:9",
+                  "kind": "planet-reward-alien-trace",
+                  "alienSlotId": 2,
+                  "traceType": "blue",
+                  "speciesId": "chong",
+                  "position": 9
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "外星人 2 蓝9号位（5分+外星人牌）"
+              }
+            },
+            {
+              "decisionId": "effect-session-18:effect:4",
+              "decisionVersion": 3,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_card",
+                "phase": "conditional",
+                "actionId": "choose_card:b10e56e6",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "chong:display:5",
+                  "source": "display",
+                  "cardIndex": 5
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "获得展示的火星隔离实验室",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "5",
+                  "imageSrc": "../assets/aliens/虫/cards/5.webp",
+                  "imageAlt": "火星隔离实验室"
+                }
+              }
+            }
+          ],
+          "effects": [
+            {
+              "effectId": "effect-session-18:effect:1",
+              "groupId": "effect-session-18:group:1",
+              "groupKind": "action",
+              "type": "science_domain_execute",
+              "revision": 1
+            },
+            {
+              "effectId": "effect-session-18:effect:2",
+              "groupId": "effect-session-18:group:2",
+              "groupKind": "spawned",
+              "type": "science_domain_analyze",
+              "revision": 2
+            },
+            {
+              "effectId": "effect-session-18:effect:3",
+              "groupId": "effect-session-18:group:3",
+              "groupKind": "spawned",
+              "type": "science_domain_alien_trace",
+              "revision": 3
+            },
+            {
+              "effectId": "effect-session-18:effect:4",
+              "groupId": "effect-session-18:group:4",
+              "groupKind": "spawned",
+              "type": "residual_alien_card_decision",
+              "revision": 4
+            }
+          ],
+          "events": [
+            {
+              "type": "analyze",
+              "playerId": "player-blue"
+            },
+            {
+              "type": "alienTrace",
+              "playerId": "player-blue",
+              "traceType": "blue",
+              "alienSlotId": 2,
+              "region": null
+            },
+            {
+              "type": "alien_card_gain",
+              "playerId": "player-blue",
+              "alienId": "虫",
+              "cardInstanceId": "alien-chong-5-16",
+              "source": "display"
+            }
+          ],
+          "rng": [],
+          "history": [],
+          "logs": [],
+          "replay": [
+            {
+              "cursor": 0,
+              "kind": "action",
+              "confirmed": true,
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "analyze",
+                "phase": "main",
+                "actionId": "analyze:50f30055",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "kind": "computer",
+                  "requiredSlot": 6
+                },
+                "payload": {
+                  "skipCost": false
+                },
+                "decision": null,
+                "summary": "分析"
+              },
+              "groupId": "effect-session-18:group:1",
+              "groupKind": "action"
+            },
+            {
+              "cursor": 1,
+              "kind": "decision",
+              "confirmed": true,
+              "decisionId": "effect-session-18:effect:3",
+              "decisionVersion": 2,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:2194151f",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "choiceId": "trace:2:blue:chong:9",
+                  "kind": "planet-reward-alien-trace",
+                  "alienSlotId": 2,
+                  "traceType": "blue",
+                  "speciesId": "chong",
+                  "position": 9
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "外星人 2 蓝9号位（5分+外星人牌）"
+              }
+            },
+            {
+              "cursor": 2,
+              "kind": "decision",
+              "confirmed": true,
+              "decisionId": "effect-session-18:effect:4",
+              "decisionVersion": 3,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_card",
+                "phase": "conditional",
+                "actionId": "choose_card:b10e56e6",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "chong:display:5",
+                  "source": "display",
+                  "cardIndex": 5
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "获得展示的火星隔离实验室",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "5",
+                  "imageSrc": "../assets/aliens/虫/cards/5.webp",
+                  "imageAlt": "火星隔离实验室"
+                }
+              }
+            }
+          ]
+        },
+        "irreversibleBarrier": {
+          "effectId": "effect-session-18:effect:4",
+          "revision": 4,
+          "code": "hidden_alien_card",
+          "reason": "外星人牌堆已翻开"
+        }
+      }
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:db101618",
+        "actorId": "player-blue",
+        "stateVersion": 235,
+        "decisionVersion": 13,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "chong:blind",
+          "source": "blind"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "盲抽虫牌"
+      },
+      "result": {
+        "ok": true,
+        "phase": "completed",
+        "family": "analyze",
+        "stateVersion": 236,
+        "failure": null,
+        "journal": {
+          "actions": [
+            {
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "analyze",
+                "phase": "main",
+                "actionId": "analyze:50f30055",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "kind": "computer",
+                  "requiredSlot": 6
+                },
+                "payload": {
+                  "skipCost": false
+                },
+                "decision": null,
+                "summary": "分析"
+              },
+              "groupId": "effect-session-18:group:1",
+              "groupKind": "action",
+              "quick": false,
+              "revision": 0
+            }
+          ],
+          "decisions": [
+            {
+              "decisionId": "effect-session-18:effect:3",
+              "decisionVersion": 2,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:2194151f",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "choiceId": "trace:2:blue:chong:9",
+                  "kind": "planet-reward-alien-trace",
+                  "alienSlotId": 2,
+                  "traceType": "blue",
+                  "speciesId": "chong",
+                  "position": 9
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "外星人 2 蓝9号位（5分+外星人牌）"
+              }
+            },
+            {
+              "decisionId": "effect-session-18:effect:4",
+              "decisionVersion": 3,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_card",
+                "phase": "conditional",
+                "actionId": "choose_card:db101618",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "chong:blind",
+                  "source": "blind"
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "盲抽虫牌"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "effectId": "effect-session-18:effect:1",
+              "groupId": "effect-session-18:group:1",
+              "groupKind": "action",
+              "type": "science_domain_execute",
+              "revision": 1
+            },
+            {
+              "effectId": "effect-session-18:effect:2",
+              "groupId": "effect-session-18:group:2",
+              "groupKind": "spawned",
+              "type": "science_domain_analyze",
+              "revision": 2
+            },
+            {
+              "effectId": "effect-session-18:effect:3",
+              "groupId": "effect-session-18:group:3",
+              "groupKind": "spawned",
+              "type": "science_domain_alien_trace",
+              "revision": 3
+            },
+            {
+              "effectId": "effect-session-18:effect:4",
+              "groupId": "effect-session-18:group:4",
+              "groupKind": "spawned",
+              "type": "residual_alien_card_decision",
+              "revision": 4
+            }
+          ],
+          "events": [
+            {
+              "type": "analyze",
+              "playerId": "player-blue"
+            },
+            {
+              "type": "alienTrace",
+              "playerId": "player-blue",
+              "traceType": "blue",
+              "alienSlotId": 2,
+              "region": null
+            },
+            {
+              "type": "alien_card_gain",
+              "playerId": "player-blue",
+              "alienId": "虫",
+              "cardInstanceId": "alien-chong-8-16",
+              "source": "blind"
+            }
+          ],
+          "rng": [],
+          "history": [],
+          "logs": [],
+          "replay": [
+            {
+              "cursor": 0,
+              "kind": "action",
+              "confirmed": true,
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "analyze",
+                "phase": "main",
+                "actionId": "analyze:50f30055",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "kind": "computer",
+                  "requiredSlot": 6
+                },
+                "payload": {
+                  "skipCost": false
+                },
+                "decision": null,
+                "summary": "分析"
+              },
+              "groupId": "effect-session-18:group:1",
+              "groupKind": "action"
+            },
+            {
+              "cursor": 1,
+              "kind": "decision",
+              "confirmed": true,
+              "decisionId": "effect-session-18:effect:3",
+              "decisionVersion": 2,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:2194151f",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "choiceId": "trace:2:blue:chong:9",
+                  "kind": "planet-reward-alien-trace",
+                  "alienSlotId": 2,
+                  "traceType": "blue",
+                  "speciesId": "chong",
+                  "position": 9
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "外星人 2 蓝9号位（5分+外星人牌）"
+              }
+            },
+            {
+              "cursor": 2,
+              "kind": "decision",
+              "confirmed": true,
+              "decisionId": "effect-session-18:effect:4",
+              "decisionVersion": 3,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_card",
+                "phase": "conditional",
+                "actionId": "choose_card:db101618",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "chong:blind",
+                  "source": "blind"
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "盲抽虫牌"
+              }
+            }
+          ]
+        },
+        "irreversibleBarrier": {
+          "effectId": "effect-session-18:effect:4",
+          "revision": 4,
+          "code": "hidden_alien_card",
+          "reason": "外星人牌堆已翻开"
+        }
+      }
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:657d4336",
+        "actorId": "player-blue",
+        "stateVersion": 235,
+        "decisionVersion": 13,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "chong:cancel",
+          "source": "cancel"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "取消"
+      },
+      "result": {
+        "ok": false,
+        "phase": "aborted",
+        "family": "analyze",
+        "stateVersion": 235,
+        "failure": {
+          "code": "EFFECT_EXECUTION_FAILED",
+          "message": "residual_alien_card_decision 未返回 { ok: true, nextState }",
+          "effectId": "effect-session-18:effect:4",
+          "type": "residual_alien_card_decision"
+        },
+        "journal": {
+          "actions": [
+            {
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "analyze",
+                "phase": "main",
+                "actionId": "analyze:50f30055",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "kind": "computer",
+                  "requiredSlot": 6
+                },
+                "payload": {
+                  "skipCost": false
+                },
+                "decision": null,
+                "summary": "分析"
+              },
+              "groupId": "effect-session-18:group:1",
+              "groupKind": "action",
+              "quick": false,
+              "revision": 0
+            }
+          ],
+          "decisions": [
+            {
+              "decisionId": "effect-session-18:effect:3",
+              "decisionVersion": 2,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:2194151f",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "choiceId": "trace:2:blue:chong:9",
+                  "kind": "planet-reward-alien-trace",
+                  "alienSlotId": 2,
+                  "traceType": "blue",
+                  "speciesId": "chong",
+                  "position": 9
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "外星人 2 蓝9号位（5分+外星人牌）"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "effectId": "effect-session-18:effect:1",
+              "groupId": "effect-session-18:group:1",
+              "groupKind": "action",
+              "type": "science_domain_execute",
+              "revision": 1
+            },
+            {
+              "effectId": "effect-session-18:effect:2",
+              "groupId": "effect-session-18:group:2",
+              "groupKind": "spawned",
+              "type": "science_domain_analyze",
+              "revision": 2
+            },
+            {
+              "effectId": "effect-session-18:effect:3",
+              "groupId": "effect-session-18:group:3",
+              "groupKind": "spawned",
+              "type": "science_domain_alien_trace",
+              "revision": 3
+            }
+          ],
+          "events": [
+            {
+              "type": "analyze",
+              "playerId": "player-blue"
+            },
+            {
+              "type": "alienTrace",
+              "playerId": "player-blue",
+              "traceType": "blue",
+              "alienSlotId": 2,
+              "region": null
+            }
+          ],
+          "rng": [],
+          "history": [],
+          "logs": [],
+          "replay": [
+            {
+              "cursor": 0,
+              "kind": "action",
+              "confirmed": true,
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "analyze",
+                "phase": "main",
+                "actionId": "analyze:50f30055",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "kind": "computer",
+                  "requiredSlot": 6
+                },
+                "payload": {
+                  "skipCost": false
+                },
+                "decision": null,
+                "summary": "分析"
+              },
+              "groupId": "effect-session-18:group:1",
+              "groupKind": "action"
+            },
+            {
+              "cursor": 1,
+              "kind": "decision",
+              "confirmed": true,
+              "decisionId": "effect-session-18:effect:3",
+              "decisionVersion": 2,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:2194151f",
+                "actorId": "player-blue",
+                "stateVersion": 235,
+                "decisionVersion": 13,
+                "target": {
+                  "choiceId": "trace:2:blue:chong:9",
+                  "kind": "planet-reward-alien-trace",
+                  "alienSlotId": 2,
+                  "traceType": "blue",
+                  "speciesId": "chong",
+                  "position": 9
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "外星人 2 蓝9号位（5分+外星人牌）"
+              }
+            }
+          ]
+        },
+        "irreversibleBarrier": null
+      }
+    }
+  ],
+  "checkpointPath": "reports/iteration/before-choice-471-20260907.json",
+  "inspectionComplete": true
+}
