@@ -1,0 +1,2984 @@
+{
+  "scope": "242个正式模型的移动/访问消费者目录，以及正式匹配器/奖励增补owner的隔离事件序列验证；不模拟路线、不执行整局、不外推外星人非卡牌机制覆盖",
+  "input": "reports/iteration/company-hot-prefix-20260907.json",
+  "inputSha256": "be5244d32a414e3dcd2b0159406e97d7f4a13821d604d698e2f6ed25e8ff4ec0",
+  "modelCount": 242,
+  "referenceCount": 182,
+  "entries": [
+    {
+      "cardId": "aomomo_5.webp",
+      "path": "model.playEffects.1",
+      "kind": "bonus",
+      "value": {
+        "id": "aomomo5-visit-fossil",
+        "type": "card_register_event_bonus",
+        "label": "奥陌陌5：本回合访问奥陌陌得1化石",
+        "icon": "aomomoFossil",
+        "options": {
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "aomomo"
+            ],
+            "icon": "aomomoFossil",
+            "rewards": [
+              {
+                "id": "aomomo5-visit-fossil-gain",
+                "type": "gain_resources",
+                "label": "访问奥陌陌：1化石",
+                "icon": "publicity",
+                "options": {
+                  "gain": {
+                    "aomomoFossils": 1
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "steps": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "aomomo",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {
+            "aomomoFossils": 1
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "aomomo"
+            ],
+            "icon": "aomomoFossil",
+            "rewards": [
+              {
+                "id": "aomomo5-visit-fossil-gain",
+                "type": "gain_resources",
+                "label": "访问奥陌陌：1化石",
+                "icon": "publicity",
+                "options": {
+                  "gain": {
+                    "aomomoFossils": 1
+                  }
+                }
+              }
+            ],
+            "id": "aomomo5-visit-fossil",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "aomomo",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {
+            "aomomoFossils": 1
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "aomomo"
+            ],
+            "icon": "aomomoFossil",
+            "rewards": [
+              {
+                "id": "aomomo5-visit-fossil-gain",
+                "type": "gain_resources",
+                "label": "访问奥陌陌：1化石",
+                "icon": "publicity",
+                "options": {
+                  "gain": {
+                    "aomomoFossils": 1
+                  }
+                }
+              }
+            ],
+            "id": "aomomo5-visit-fossil",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "aomomo",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {
+            "aomomoFossils": 1
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "aomomo"
+            ],
+            "icon": "aomomoFossil",
+            "rewards": [
+              {
+                "id": "aomomo5-visit-fossil-gain",
+                "type": "gain_resources",
+                "label": "访问奥陌陌：1化石",
+                "icon": "publicity",
+                "options": {
+                  "gain": {
+                    "aomomoFossils": 1
+                  }
+                }
+              }
+            ],
+            "id": "aomomo5-visit-fossil",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "aomomo",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {
+            "aomomoFossils": 1
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "aomomo"
+            ],
+            "icon": "aomomoFossil",
+            "rewards": [
+              {
+                "id": "aomomo5-visit-fossil-gain",
+                "type": "gain_resources",
+                "label": "访问奥陌陌：1化石",
+                "icon": "publicity",
+                "options": {
+                  "gain": {
+                    "aomomoFossils": 1
+                  }
+                }
+              }
+            ],
+            "id": "aomomo5-visit-fossil",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        }
+      ],
+      "wrongBonusOwnerUnchanged": true
+    },
+    {
+      "cardId": "b_2.webp",
+      "path": "model.triggers.0",
+      "kind": "trigger",
+      "value": {
+        "id": "b2-visit-planet-energy",
+        "event": {
+          "type": "visitPlanet",
+          "excludePlanetIds": [
+            "earth"
+          ]
+        },
+        "effect": {
+          "id": "b2-energy",
+          "type": "gain_resources",
+          "label": "高级导航系统：1能量",
+          "icon": "energy",
+          "options": {
+            "gain": {
+              "energy": 1
+            }
+          }
+        }
+      },
+      "matchedBefore": [
+        "b2-visit-planet-energy",
+        "b2-visit-planet-data",
+        "b2-visit-planet-move"
+      ],
+      "matchedAfter": [
+        "b2-visit-planet-data",
+        "b2-visit-planet-move"
+      ]
+    },
+    {
+      "cardId": "b_2.webp",
+      "path": "model.triggers.1",
+      "kind": "trigger",
+      "value": {
+        "id": "b2-visit-planet-data",
+        "event": {
+          "type": "visitPlanet",
+          "excludePlanetIds": [
+            "earth"
+          ]
+        },
+        "effect": {
+          "id": "b2-data",
+          "type": "gain_data",
+          "label": "高级导航系统：1数据",
+          "icon": "data",
+          "options": {
+            "count": 1
+          }
+        }
+      },
+      "matchedBefore": [
+        "b2-visit-planet-energy",
+        "b2-visit-planet-data",
+        "b2-visit-planet-move"
+      ],
+      "matchedAfter": [
+        "b2-visit-planet-energy",
+        "b2-visit-planet-move"
+      ]
+    },
+    {
+      "cardId": "b_2.webp",
+      "path": "model.triggers.2",
+      "kind": "trigger",
+      "value": {
+        "id": "b2-visit-planet-move",
+        "event": {
+          "type": "visitPlanet",
+          "excludePlanetIds": [
+            "earth"
+          ]
+        },
+        "effect": {
+          "id": "b2-free-move",
+          "type": "card_free_move",
+          "label": "高级导航系统：1免费移动",
+          "icon": "movement",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      },
+      "matchedBefore": [
+        "b2-visit-planet-energy",
+        "b2-visit-planet-data",
+        "b2-visit-planet-move"
+      ],
+      "matchedAfter": [
+        "b2-visit-planet-energy",
+        "b2-visit-planet-data"
+      ]
+    },
+    {
+      "cardId": "b_10.webp",
+      "path": "model.triggers.0",
+      "kind": "trigger",
+      "value": {
+        "id": "b10-visit-asteroid-data-1",
+        "event": {
+          "type": "visitAsteroid"
+        },
+        "effect": {
+          "id": "b10-data-1",
+          "type": "gain_data",
+          "label": "小行星研究：1数据 1/3",
+          "icon": "data",
+          "options": {
+            "count": 1
+          }
+        }
+      },
+      "matchedBefore": [
+        "b10-visit-asteroid-data-1",
+        "b10-visit-asteroid-data-2",
+        "b10-visit-asteroid-data-3"
+      ],
+      "matchedAfter": [
+        "b10-visit-asteroid-data-2",
+        "b10-visit-asteroid-data-3"
+      ]
+    },
+    {
+      "cardId": "b_10.webp",
+      "path": "model.triggers.1",
+      "kind": "trigger",
+      "value": {
+        "id": "b10-visit-asteroid-data-2",
+        "event": {
+          "type": "visitAsteroid"
+        },
+        "effect": {
+          "id": "b10-data-2",
+          "type": "gain_data",
+          "label": "小行星研究：1数据 2/3",
+          "icon": "data",
+          "options": {
+            "count": 1
+          }
+        }
+      },
+      "matchedBefore": [
+        "b10-visit-asteroid-data-1",
+        "b10-visit-asteroid-data-2",
+        "b10-visit-asteroid-data-3"
+      ],
+      "matchedAfter": [
+        "b10-visit-asteroid-data-1",
+        "b10-visit-asteroid-data-3"
+      ]
+    },
+    {
+      "cardId": "b_10.webp",
+      "path": "model.triggers.2",
+      "kind": "trigger",
+      "value": {
+        "id": "b10-visit-asteroid-data-3",
+        "event": {
+          "type": "visitAsteroid"
+        },
+        "effect": {
+          "id": "b10-data-3",
+          "type": "gain_data",
+          "label": "小行星研究：1数据 3/3",
+          "icon": "data",
+          "options": {
+            "count": 1
+          }
+        }
+      },
+      "matchedBefore": [
+        "b10-visit-asteroid-data-1",
+        "b10-visit-asteroid-data-2",
+        "b10-visit-asteroid-data-3"
+      ],
+      "matchedAfter": [
+        "b10-visit-asteroid-data-1",
+        "b10-visit-asteroid-data-2"
+      ]
+    },
+    {
+      "cardId": "b_11.webp",
+      "path": "model.playEffects.0",
+      "kind": "bonus",
+      "value": {
+        "id": "b11-turn-asteroid-data",
+        "type": "card_register_event_bonus",
+        "label": "本回合访问小行星获得1数据",
+        "icon": "data",
+        "options": {
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitAsteroid",
+            "onceKey": "b11-asteroid-data",
+            "icon": "data",
+            "rewards": [
+              {
+                "id": "b11-asteroid-data",
+                "type": "gain_data",
+                "label": "小行星飞掠：访问小行星获得1数据",
+                "icon": "data",
+                "options": {
+                  "count": 1
+                }
+              }
+            ]
+          }
+        }
+      },
+      "steps": [
+        {
+          "event": {
+            "type": "visitAsteroid",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract"
+          },
+          "gain": {
+            "availableData": 1
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitAsteroid",
+            "onceKey": "b11-asteroid-data",
+            "icon": "data",
+            "rewards": [
+              {
+                "id": "b11-asteroid-data",
+                "type": "gain_data",
+                "label": "小行星飞掠：访问小行星获得1数据",
+                "icon": "data",
+                "options": {
+                  "count": 1
+                }
+              }
+            ],
+            "id": "b11-turn-asteroid-data",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b11-asteroid-data"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitAsteroid",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract"
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitAsteroid",
+            "onceKey": "b11-asteroid-data",
+            "icon": "data",
+            "rewards": [
+              {
+                "id": "b11-asteroid-data",
+                "type": "gain_data",
+                "label": "小行星飞掠：访问小行星获得1数据",
+                "icon": "data",
+                "options": {
+                  "count": 1
+                }
+              }
+            ],
+            "id": "b11-turn-asteroid-data",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b11-asteroid-data"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitAsteroid",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract"
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitAsteroid",
+            "onceKey": "b11-asteroid-data",
+            "icon": "data",
+            "rewards": [
+              {
+                "id": "b11-asteroid-data",
+                "type": "gain_data",
+                "label": "小行星飞掠：访问小行星获得1数据",
+                "icon": "data",
+                "options": {
+                  "count": 1
+                }
+              }
+            ],
+            "id": "b11-turn-asteroid-data",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b11-asteroid-data"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitAsteroid",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract"
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitAsteroid",
+            "onceKey": "b11-asteroid-data",
+            "icon": "data",
+            "rewards": [
+              {
+                "id": "b11-asteroid-data",
+                "type": "gain_data",
+                "label": "小行星飞掠：访问小行星获得1数据",
+                "icon": "data",
+                "options": {
+                  "count": 1
+                }
+              }
+            ],
+            "id": "b11-turn-asteroid-data",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b11-asteroid-data"
+            ]
+          },
+          "spawnedEffects": []
+        }
+      ],
+      "wrongBonusOwnerUnchanged": true
+    },
+    {
+      "cardId": "b_24.webp",
+      "path": "model.playEffects.0",
+      "kind": "bonus",
+      "value": {
+        "id": "b24-turn-comet-score",
+        "type": "card_register_event_bonus",
+        "label": "本回合访问彗星获得4分",
+        "icon": "score",
+        "options": {
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "steps": [
+        {
+          "event": {
+            "type": "visitComet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract"
+          },
+          "gain": {
+            "score": 4
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b24-comet-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitComet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract"
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b24-comet-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitComet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract"
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b24-comet-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitComet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract"
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b24-comet-score"
+            ]
+          },
+          "spawnedEffects": []
+        }
+      ],
+      "wrongBonusOwnerUnchanged": true
+    },
+    {
+      "cardId": "b_44.webp",
+      "path": "model.triggers.0",
+      "kind": "trigger",
+      "value": {
+        "id": "b44-venus-publicity",
+        "event": {
+          "type": "visitPlanet",
+          "includePlanetIds": [
+            "venus"
+          ]
+        },
+        "effect": {
+          "id": "b44-venus-publicity-effect",
+          "type": "gain_resources",
+          "label": "访问金星：1宣传",
+          "icon": "publicity",
+          "options": {
+            "gain": {
+              "publicity": 1
+            }
+          }
+        }
+      },
+      "matchedBefore": [
+        "b44-venus-publicity"
+      ],
+      "matchedAfter": []
+    },
+    {
+      "cardId": "b_44.webp",
+      "path": "model.triggers.1",
+      "kind": "trigger",
+      "value": {
+        "id": "b44-jupiter-data",
+        "event": {
+          "type": "visitPlanet",
+          "includePlanetIds": [
+            "jupiter"
+          ]
+        },
+        "effect": {
+          "id": "b44-jupiter-data-effect",
+          "type": "gain_data",
+          "label": "访问木星：1数据",
+          "icon": "data",
+          "options": {
+            "count": 1
+          }
+        }
+      },
+      "matchedBefore": [
+        "b44-jupiter-data"
+      ],
+      "matchedAfter": []
+    },
+    {
+      "cardId": "b_49.webp",
+      "path": "model.playEffects.0",
+      "kind": "bonus",
+      "value": {
+        "id": "b49-visit-publicity-move-followup",
+        "type": "card_register_event_bonus",
+        "label": "本回合访问非地球行星可支付1宣传获得1移动",
+        "icon": "movement",
+        "options": {
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "excludePlanetIds": [
+              "earth"
+            ],
+            "publicityToMoveFollowup": true,
+            "icon": "movement",
+            "rewards": []
+          }
+        }
+      },
+      "steps": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mars",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "excludePlanetIds": [
+              "earth"
+            ],
+            "publicityToMoveFollowup": true,
+            "icon": "movement",
+            "rewards": [],
+            "id": "b49-visit-publicity-move-followup",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "spawnedEffects": [
+            {
+              "priority": "trigger",
+              "effect": {
+                "type": "card_play_domain_effect:effect:card_move",
+                "ownerId": "player-green",
+                "payload": {
+                  "cardEffect": {
+                    "id": "b49-visit-publicity-move-followup:publicity-move",
+                    "type": "card_move",
+                    "label": "支付 1 宣传：移动 1",
+                    "options": {
+                      "cost": {
+                        "publicity": 1
+                      },
+                      "movementPoints": 1,
+                      "source": "card_event_bonus"
+                    }
+                  },
+                  "cardInstanceId": null
+                }
+              }
+            }
+          ]
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mars",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "excludePlanetIds": [
+              "earth"
+            ],
+            "publicityToMoveFollowup": true,
+            "icon": "movement",
+            "rewards": [],
+            "id": "b49-visit-publicity-move-followup",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "spawnedEffects": [
+            {
+              "priority": "trigger",
+              "effect": {
+                "type": "card_play_domain_effect:effect:card_move",
+                "ownerId": "player-green",
+                "payload": {
+                  "cardEffect": {
+                    "id": "b49-visit-publicity-move-followup:publicity-move",
+                    "type": "card_move",
+                    "label": "支付 1 宣传：移动 1",
+                    "options": {
+                      "cost": {
+                        "publicity": 1
+                      },
+                      "movementPoints": 1,
+                      "source": "card_event_bonus"
+                    }
+                  },
+                  "cardInstanceId": null
+                }
+              }
+            }
+          ]
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mars",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "excludePlanetIds": [
+              "earth"
+            ],
+            "publicityToMoveFollowup": true,
+            "icon": "movement",
+            "rewards": [],
+            "id": "b49-visit-publicity-move-followup",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "spawnedEffects": [
+            {
+              "priority": "trigger",
+              "effect": {
+                "type": "card_play_domain_effect:effect:card_move",
+                "ownerId": "player-green",
+                "payload": {
+                  "cardEffect": {
+                    "id": "b49-visit-publicity-move-followup:publicity-move",
+                    "type": "card_move",
+                    "label": "支付 1 宣传：移动 1",
+                    "options": {
+                      "cost": {
+                        "publicity": 1
+                      },
+                      "movementPoints": 1,
+                      "source": "card_event_bonus"
+                    }
+                  },
+                  "cardInstanceId": null
+                }
+              }
+            }
+          ]
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mars",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "excludePlanetIds": [
+              "earth"
+            ],
+            "publicityToMoveFollowup": true,
+            "icon": "movement",
+            "rewards": [],
+            "id": "b49-visit-publicity-move-followup",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "spawnedEffects": [
+            {
+              "priority": "trigger",
+              "effect": {
+                "type": "card_play_domain_effect:effect:card_move",
+                "ownerId": "player-green",
+                "payload": {
+                  "cardEffect": {
+                    "id": "b49-visit-publicity-move-followup:publicity-move",
+                    "type": "card_move",
+                    "label": "支付 1 宣传：移动 1",
+                    "options": {
+                      "cost": {
+                        "publicity": 1
+                      },
+                      "movementPoints": 1,
+                      "source": "card_event_bonus"
+                    }
+                  },
+                  "cardInstanceId": null
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "wrongBonusOwnerUnchanged": true
+    },
+    {
+      "cardId": "b_62.webp",
+      "path": "model.playEffects.0",
+      "kind": "bonus",
+      "value": {
+        "id": "b62-turn-jupiter-score",
+        "type": "card_register_event_bonus",
+        "label": "本回合访问木星获得4分",
+        "icon": "score",
+        "options": {
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "jupiter"
+            ],
+            "onceKey": "b62-jupiter-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b62-jupiter-score",
+                "type": "gain_resources",
+                "label": "访问木星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "steps": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "jupiter",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {
+            "score": 4
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "jupiter"
+            ],
+            "onceKey": "b62-jupiter-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b62-jupiter-score",
+                "type": "gain_resources",
+                "label": "访问木星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b62-turn-jupiter-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b62-jupiter-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "jupiter",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "jupiter"
+            ],
+            "onceKey": "b62-jupiter-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b62-jupiter-score",
+                "type": "gain_resources",
+                "label": "访问木星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b62-turn-jupiter-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b62-jupiter-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "jupiter",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "jupiter"
+            ],
+            "onceKey": "b62-jupiter-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b62-jupiter-score",
+                "type": "gain_resources",
+                "label": "访问木星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b62-turn-jupiter-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b62-jupiter-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "jupiter",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "jupiter"
+            ],
+            "onceKey": "b62-jupiter-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b62-jupiter-score",
+                "type": "gain_resources",
+                "label": "访问木星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b62-turn-jupiter-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b62-jupiter-score"
+            ]
+          },
+          "spawnedEffects": []
+        }
+      ],
+      "wrongBonusOwnerUnchanged": true
+    },
+    {
+      "cardId": "b_66.webp",
+      "path": "model.playEffects.0",
+      "kind": "bonus",
+      "value": {
+        "id": "b66-distinct-planet-score",
+        "type": "card_register_event_bonus",
+        "label": "本回合每个不同星球访问：1分",
+        "icon": "score",
+        "options": {
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "distinctBy": "planetId",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b66-planet-score",
+                "type": "gain_resources",
+                "label": "访问不同星球：1分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 1
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "steps": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mars",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {
+            "score": 1
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "distinctBy": "planetId",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b66-planet-score",
+                "type": "gain_resources",
+                "label": "访问不同星球：1分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 1
+                  }
+                }
+              }
+            ],
+            "id": "b66-distinct-planet-score",
+            "ownerId": "player-green",
+            "usedKeys": [
+              "mars"
+            ],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mars",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "distinctBy": "planetId",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b66-planet-score",
+                "type": "gain_resources",
+                "label": "访问不同星球：1分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 1
+                  }
+                }
+              }
+            ],
+            "id": "b66-distinct-planet-score",
+            "ownerId": "player-green",
+            "usedKeys": [
+              "mars"
+            ],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "venus",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {
+            "score": 1
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "distinctBy": "planetId",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b66-planet-score",
+                "type": "gain_resources",
+                "label": "访问不同星球：1分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 1
+                  }
+                }
+              }
+            ],
+            "id": "b66-distinct-planet-score",
+            "ownerId": "player-green",
+            "usedKeys": [
+              "mars",
+              "venus"
+            ],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "venus",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "distinctBy": "planetId",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b66-planet-score",
+                "type": "gain_resources",
+                "label": "访问不同星球：1分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 1
+                  }
+                }
+              }
+            ],
+            "id": "b66-distinct-planet-score",
+            "ownerId": "player-green",
+            "usedKeys": [
+              "mars",
+              "venus"
+            ],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        }
+      ],
+      "wrongBonusOwnerUnchanged": true
+    },
+    {
+      "cardId": "b_71.webp",
+      "path": "model.triggers.0",
+      "kind": "trigger",
+      "value": {
+        "id": "b71-mercury-draw",
+        "event": {
+          "type": "visitPlanet",
+          "planetIds": [
+            "mercury"
+          ]
+        },
+        "effect": {
+          "id": "b71-mercury-draw-effect",
+          "type": "draw_cards",
+          "label": "访问水星：1盲抽",
+          "icon": "blind_card",
+          "options": {
+            "count": 1
+          }
+        }
+      },
+      "matchedBefore": [
+        "b71-mercury-draw"
+      ],
+      "matchedAfter": []
+    },
+    {
+      "cardId": "b_71.webp",
+      "path": "model.triggers.1",
+      "kind": "trigger",
+      "value": {
+        "id": "b71-venus-publicity",
+        "event": {
+          "type": "visitPlanet",
+          "planetIds": [
+            "venus"
+          ]
+        },
+        "effect": {
+          "id": "b71-venus-publicity-effect",
+          "type": "gain_resources",
+          "label": "访问金星：1宣传",
+          "icon": "publicity",
+          "options": {
+            "gain": {
+              "publicity": 1
+            }
+          }
+        }
+      },
+      "matchedBefore": [
+        "b71-venus-publicity"
+      ],
+      "matchedAfter": []
+    },
+    {
+      "cardId": "b_73.webp",
+      "path": "model.playEffects.0",
+      "kind": "bonus",
+      "value": {
+        "id": "b73-turn-mars-score",
+        "type": "card_register_event_bonus",
+        "label": "本回合访问火星获得4分",
+        "icon": "score",
+        "options": {
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "mars"
+            ],
+            "onceKey": "b73-mars-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b73-mars-score",
+                "type": "gain_resources",
+                "label": "访问火星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "steps": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mars",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {
+            "score": 4
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "mars"
+            ],
+            "onceKey": "b73-mars-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b73-mars-score",
+                "type": "gain_resources",
+                "label": "访问火星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b73-turn-mars-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b73-mars-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mars",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "mars"
+            ],
+            "onceKey": "b73-mars-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b73-mars-score",
+                "type": "gain_resources",
+                "label": "访问火星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b73-turn-mars-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b73-mars-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mars",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "mars"
+            ],
+            "onceKey": "b73-mars-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b73-mars-score",
+                "type": "gain_resources",
+                "label": "访问火星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b73-turn-mars-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b73-mars-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mars",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "mars"
+            ],
+            "onceKey": "b73-mars-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b73-mars-score",
+                "type": "gain_resources",
+                "label": "访问火星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b73-turn-mars-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b73-mars-score"
+            ]
+          },
+          "spawnedEffects": []
+        }
+      ],
+      "wrongBonusOwnerUnchanged": true
+    },
+    {
+      "cardId": "b_76.webp",
+      "path": "model.playEffects.0",
+      "kind": "bonus",
+      "value": {
+        "id": "b76-turn-mercury-score",
+        "type": "card_register_event_bonus",
+        "label": "本回合访问水星获得4分",
+        "icon": "score",
+        "options": {
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "mercury"
+            ],
+            "onceKey": "b76-mercury-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b76-mercury-score",
+                "type": "gain_resources",
+                "label": "访问水星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "steps": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mercury",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {
+            "score": 4
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "mercury"
+            ],
+            "onceKey": "b76-mercury-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b76-mercury-score",
+                "type": "gain_resources",
+                "label": "访问水星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b76-turn-mercury-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b76-mercury-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mercury",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "mercury"
+            ],
+            "onceKey": "b76-mercury-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b76-mercury-score",
+                "type": "gain_resources",
+                "label": "访问水星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b76-turn-mercury-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b76-mercury-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mercury",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "mercury"
+            ],
+            "onceKey": "b76-mercury-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b76-mercury-score",
+                "type": "gain_resources",
+                "label": "访问水星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b76-turn-mercury-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b76-mercury-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mercury",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "mercury"
+            ],
+            "onceKey": "b76-mercury-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b76-mercury-score",
+                "type": "gain_resources",
+                "label": "访问水星：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b76-turn-mercury-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b76-mercury-score"
+            ]
+          },
+          "spawnedEffects": []
+        }
+      ],
+      "wrongBonusOwnerUnchanged": true
+    },
+    {
+      "cardId": "b_92.webp",
+      "path": "model.triggers.0",
+      "kind": "trigger",
+      "value": {
+        "id": "b92-jupiter-data",
+        "event": {
+          "type": "visitPlanet",
+          "planetIds": [
+            "jupiter"
+          ]
+        },
+        "effect": {
+          "id": "b92-jupiter-data-effect",
+          "type": "gain_data",
+          "label": "访问木星：1数据",
+          "icon": "data",
+          "options": {
+            "count": 1
+          }
+        }
+      },
+      "matchedBefore": [
+        "b92-jupiter-data"
+      ],
+      "matchedAfter": []
+    },
+    {
+      "cardId": "b_92.webp",
+      "path": "model.triggers.1",
+      "kind": "trigger",
+      "value": {
+        "id": "b92-saturn-energy",
+        "event": {
+          "type": "visitPlanet",
+          "planetIds": [
+            "saturn"
+          ]
+        },
+        "effect": {
+          "id": "b92-saturn-energy-effect",
+          "type": "gain_resources",
+          "label": "访问土星：1能量",
+          "icon": "energy",
+          "options": {
+            "gain": {
+              "energy": 1
+            }
+          }
+        }
+      },
+      "matchedBefore": [
+        "b92-saturn-energy"
+      ],
+      "matchedAfter": []
+    },
+    {
+      "cardId": "b_108.webp",
+      "path": "model.playEffects.0",
+      "kind": "bonus",
+      "value": {
+        "id": "b108-turn-saturn-score",
+        "type": "card_register_event_bonus",
+        "label": "本回合访问土星获得6分",
+        "icon": "score",
+        "options": {
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "saturn"
+            ],
+            "onceKey": "b108-saturn-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b108-score",
+                "type": "gain_resources",
+                "label": "访问土星：6分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 6
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "steps": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "saturn",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {
+            "score": 6
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "saturn"
+            ],
+            "onceKey": "b108-saturn-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b108-score",
+                "type": "gain_resources",
+                "label": "访问土星：6分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 6
+                  }
+                }
+              }
+            ],
+            "id": "b108-turn-saturn-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b108-saturn-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "saturn",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "saturn"
+            ],
+            "onceKey": "b108-saturn-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b108-score",
+                "type": "gain_resources",
+                "label": "访问土星：6分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 6
+                  }
+                }
+              }
+            ],
+            "id": "b108-turn-saturn-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b108-saturn-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "saturn",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "saturn"
+            ],
+            "onceKey": "b108-saturn-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b108-score",
+                "type": "gain_resources",
+                "label": "访问土星：6分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 6
+                  }
+                }
+              }
+            ],
+            "id": "b108-turn-saturn-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b108-saturn-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "saturn",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "saturn"
+            ],
+            "onceKey": "b108-saturn-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b108-score",
+                "type": "gain_resources",
+                "label": "访问土星：6分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 6
+                  }
+                }
+              }
+            ],
+            "id": "b108-turn-saturn-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b108-saturn-score"
+            ]
+          },
+          "spawnedEffects": []
+        }
+      ],
+      "wrongBonusOwnerUnchanged": true
+    },
+    {
+      "cardId": "b_124.webp",
+      "path": "model.playEffects.0",
+      "kind": "bonus",
+      "value": {
+        "id": "b124-turn-ignore-asteroid",
+        "type": "card_register_event_bonus",
+        "label": "本回合移动无视小行星移动力惩罚",
+        "icon": "movement",
+        "options": {
+          "bonus": {
+            "duration": "turn",
+            "eventType": "move",
+            "icon": "movement",
+            "movementModifiers": {
+              "ignoreAsteroidRestriction": true
+            },
+            "rewards": []
+          }
+        }
+      },
+      "steps": [
+        {
+          "event": {
+            "type": "move",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "sameRing": true
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "move",
+            "icon": "movement",
+            "movementModifiers": {
+              "ignoreAsteroidRestriction": true
+            },
+            "rewards": [],
+            "id": "b124-turn-ignore-asteroid",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "move",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "sameRing": true
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "move",
+            "icon": "movement",
+            "movementModifiers": {
+              "ignoreAsteroidRestriction": true
+            },
+            "rewards": [],
+            "id": "b124-turn-ignore-asteroid",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "move",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "sameRing": true
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "move",
+            "icon": "movement",
+            "movementModifiers": {
+              "ignoreAsteroidRestriction": true
+            },
+            "rewards": [],
+            "id": "b124-turn-ignore-asteroid",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "move",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "sameRing": true
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "move",
+            "icon": "movement",
+            "movementModifiers": {
+              "ignoreAsteroidRestriction": true
+            },
+            "rewards": [],
+            "id": "b124-turn-ignore-asteroid",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        }
+      ],
+      "wrongBonusOwnerUnchanged": true
+    },
+    {
+      "cardId": "b_125.webp",
+      "path": "model.playEffects.0",
+      "kind": "bonus",
+      "value": {
+        "id": "b125-turn-same-ring-reward",
+        "type": "card_register_event_bonus",
+        "label": "本回合同环移动获得3分和1宣传",
+        "icon": "score",
+        "options": {
+          "bonus": {
+            "duration": "turn",
+            "eventType": "move",
+            "sameRingOnly": true,
+            "onceKey": "b125-same-ring-reward",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b125-same-ring-reward",
+                "type": "gain_resources",
+                "label": "同环移动：3分+1宣传",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3,
+                    "publicity": 1
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "steps": [
+        {
+          "event": {
+            "type": "move",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "sameRing": true
+          },
+          "gain": {
+            "publicity": 1,
+            "score": 3
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "move",
+            "sameRingOnly": true,
+            "onceKey": "b125-same-ring-reward",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b125-same-ring-reward",
+                "type": "gain_resources",
+                "label": "同环移动：3分+1宣传",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3,
+                    "publicity": 1
+                  }
+                }
+              }
+            ],
+            "id": "b125-turn-same-ring-reward",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b125-same-ring-reward"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "move",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "sameRing": true
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "move",
+            "sameRingOnly": true,
+            "onceKey": "b125-same-ring-reward",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b125-same-ring-reward",
+                "type": "gain_resources",
+                "label": "同环移动：3分+1宣传",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3,
+                    "publicity": 1
+                  }
+                }
+              }
+            ],
+            "id": "b125-turn-same-ring-reward",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b125-same-ring-reward"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "move",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "sameRing": true
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "move",
+            "sameRingOnly": true,
+            "onceKey": "b125-same-ring-reward",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b125-same-ring-reward",
+                "type": "gain_resources",
+                "label": "同环移动：3分+1宣传",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3,
+                    "publicity": 1
+                  }
+                }
+              }
+            ],
+            "id": "b125-turn-same-ring-reward",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b125-same-ring-reward"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "move",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "sameRing": true
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "move",
+            "sameRingOnly": true,
+            "onceKey": "b125-same-ring-reward",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b125-same-ring-reward",
+                "type": "gain_resources",
+                "label": "同环移动：3分+1宣传",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3,
+                    "publicity": 1
+                  }
+                }
+              }
+            ],
+            "id": "b125-turn-same-ring-reward",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b125-same-ring-reward"
+            ]
+          },
+          "spawnedEffects": []
+        }
+      ],
+      "wrongBonusOwnerUnchanged": true
+    },
+    {
+      "cardId": "b_131.webp",
+      "path": "model.playEffects.0",
+      "kind": "bonus",
+      "value": {
+        "id": "b131-turn-venus-score",
+        "type": "card_register_event_bonus",
+        "label": "本回合访问金星获得3分",
+        "icon": "score",
+        "options": {
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "venus"
+            ],
+            "onceKey": "b131-venus-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b131-score",
+                "type": "gain_resources",
+                "label": "访问金星：3分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "steps": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "venus",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {
+            "score": 3
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "venus"
+            ],
+            "onceKey": "b131-venus-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b131-score",
+                "type": "gain_resources",
+                "label": "访问金星：3分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3
+                  }
+                }
+              }
+            ],
+            "id": "b131-turn-venus-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b131-venus-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "venus",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "venus"
+            ],
+            "onceKey": "b131-venus-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b131-score",
+                "type": "gain_resources",
+                "label": "访问金星：3分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3
+                  }
+                }
+              }
+            ],
+            "id": "b131-turn-venus-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b131-venus-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "venus",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "venus"
+            ],
+            "onceKey": "b131-venus-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b131-score",
+                "type": "gain_resources",
+                "label": "访问金星：3分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3
+                  }
+                }
+              }
+            ],
+            "id": "b131-turn-venus-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b131-venus-score"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "venus",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "includePlanetIds": [
+              "venus"
+            ],
+            "onceKey": "b131-venus-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b131-score",
+                "type": "gain_resources",
+                "label": "访问金星：3分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3
+                  }
+                }
+              }
+            ],
+            "id": "b131-turn-venus-score",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b131-venus-score"
+            ]
+          },
+          "spawnedEffects": []
+        }
+      ],
+      "wrongBonusOwnerUnchanged": true
+    },
+    {
+      "cardId": "b_134.webp",
+      "path": "model.triggers.0",
+      "kind": "trigger",
+      "value": {
+        "id": "b134-uranus-energy",
+        "event": {
+          "type": "visitPlanet",
+          "planetIds": [
+            "uranus"
+          ]
+        },
+        "effect": {
+          "id": "b134-energy",
+          "type": "gain_resources",
+          "label": "访问天王星：1能量",
+          "icon": "energy",
+          "options": {
+            "gain": {
+              "energy": 1
+            }
+          }
+        }
+      },
+      "matchedBefore": [
+        "b134-uranus-energy"
+      ],
+      "matchedAfter": []
+    },
+    {
+      "cardId": "b_134.webp",
+      "path": "model.triggers.1",
+      "kind": "trigger",
+      "value": {
+        "id": "b134-neptune-credit",
+        "event": {
+          "type": "visitPlanet",
+          "planetIds": [
+            "neptune"
+          ]
+        },
+        "effect": {
+          "id": "b134-credit",
+          "type": "gain_resources",
+          "label": "访问海王星：1信用",
+          "icon": "publicity",
+          "options": {
+            "gain": {
+              "credits": 1
+            }
+          }
+        }
+      },
+      "matchedBefore": [
+        "b134-neptune-credit"
+      ],
+      "matchedAfter": []
+    },
+    {
+      "cardId": "dlc_12.png",
+      "path": "model.playEffects.0",
+      "kind": "bonus",
+      "value": {
+        "id": "dlc12-turn-distinct-planets",
+        "type": "card_register_event_bonus",
+        "label": "本回合访问至少2个不同行星：3分",
+        "icon": "score",
+        "options": {
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "distinctBy": "planetId",
+            "minCount": 2,
+            "onceKey": "dlc12-two-planets",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "dlc12-score",
+                "type": "gain_resources",
+                "label": "访问2个不同行星：3分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "steps": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mars",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "distinctBy": "planetId",
+            "minCount": 2,
+            "onceKey": "dlc12-two-planets",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "dlc12-score",
+                "type": "gain_resources",
+                "label": "访问2个不同行星：3分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3
+                  }
+                }
+              }
+            ],
+            "id": "dlc12-turn-distinct-planets",
+            "ownerId": "player-green",
+            "usedKeys": [
+              "mars"
+            ],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "mars",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "distinctBy": "planetId",
+            "minCount": 2,
+            "onceKey": "dlc12-two-planets",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "dlc12-score",
+                "type": "gain_resources",
+                "label": "访问2个不同行星：3分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3
+                  }
+                }
+              }
+            ],
+            "id": "dlc12-turn-distinct-planets",
+            "ownerId": "player-green",
+            "usedKeys": [
+              "mars"
+            ],
+            "claimedKeys": []
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "venus",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {
+            "score": 3
+          },
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "distinctBy": "planetId",
+            "minCount": 2,
+            "onceKey": "dlc12-two-planets",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "dlc12-score",
+                "type": "gain_resources",
+                "label": "访问2个不同行星：3分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3
+                  }
+                }
+              }
+            ],
+            "id": "dlc12-turn-distinct-planets",
+            "ownerId": "player-green",
+            "usedKeys": [
+              "mars",
+              "venus"
+            ],
+            "claimedKeys": [
+              "dlc12-two-planets"
+            ]
+          },
+          "spawnedEffects": []
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "playerId": "player-green",
+            "rocketId": 3,
+            "source": "visit-demand-contract",
+            "planetId": "venus",
+            "hasOwnOrbit": true,
+            "publicityReward": 1
+          },
+          "gain": {},
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "distinctBy": "planetId",
+            "minCount": 2,
+            "onceKey": "dlc12-two-planets",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "dlc12-score",
+                "type": "gain_resources",
+                "label": "访问2个不同行星：3分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3
+                  }
+                }
+              }
+            ],
+            "id": "dlc12-turn-distinct-planets",
+            "ownerId": "player-green",
+            "usedKeys": [
+              "mars",
+              "venus"
+            ],
+            "claimedKeys": [
+              "dlc12-two-planets"
+            ]
+          },
+          "spawnedEffects": []
+        }
+      ],
+      "wrongBonusOwnerUnchanged": true
+    },
+    {
+      "cardId": "dlc_21.png",
+      "path": "model.triggers.0",
+      "kind": "trigger",
+      "value": {
+        "id": "dlc21-orbit-visit-energy-1",
+        "event": {
+          "type": "visitPlanet",
+          "requiresOwnOrbit": true
+        },
+        "effect": {
+          "id": "dlc21-energy-1",
+          "type": "gain_resources",
+          "label": "访问有自己环绕的星球：1能量",
+          "icon": "energy",
+          "options": {
+            "gain": {
+              "energy": 1
+            }
+          }
+        }
+      },
+      "matchedBefore": [
+        "dlc21-orbit-visit-energy-1",
+        "dlc21-orbit-visit-energy-2"
+      ],
+      "matchedAfter": [
+        "dlc21-orbit-visit-energy-2"
+      ]
+    },
+    {
+      "cardId": "dlc_21.png",
+      "path": "model.triggers.1",
+      "kind": "trigger",
+      "value": {
+        "id": "dlc21-orbit-visit-energy-2",
+        "event": {
+          "type": "visitPlanet",
+          "requiresOwnOrbit": true
+        },
+        "effect": {
+          "id": "dlc21-energy-2",
+          "type": "gain_resources",
+          "label": "访问有自己环绕的星球：1能量",
+          "icon": "energy",
+          "options": {
+            "gain": {
+              "energy": 1
+            }
+          }
+        }
+      },
+      "matchedBefore": [
+        "dlc21-orbit-visit-energy-1",
+        "dlc21-orbit-visit-energy-2"
+      ],
+      "matchedAfter": [
+        "dlc21-orbit-visit-energy-1"
+      ]
+    }
+  ],
+  "verified": true,
+  "counts": {
+    "triggers": 16,
+    "bonuses": 13,
+    "alienCardEntries": 1
+  }
+}
