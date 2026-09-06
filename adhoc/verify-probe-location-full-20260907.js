@@ -1,13 +1,15 @@
 "use strict";
 const fs = require("node:fs"), assert = require("node:assert/strict"), crypto = require("node:crypto");
-const output = "reports/iteration/probe-location-full-verification-20260907.json";
+const commit = process.argv[2] || "b8be61a5";
+const output = process.argv[3] || "reports/iteration/probe-location-full-verification-20260907.json";
+const baseline = process.argv[4] || "reports/research/39fc344f.b10ae543.full.json";
 if (fs.existsSync(output)) console.log(`已有验证：${output}`);
 else {
-  const report = { scope: "只读位置任务修复完整记录/存档，对照b10ae543，分开核对终局、动作差异、失败和截断；不运行AI" };
+  const report = { scope: "只读指定位置读取修复版本的完整记录/存档，分开核对终局、动作差异、失败和截断；不运行AI" };
   try {
-    const files = fs.readdirSync("reports/research").filter(p => p.endsWith(".b8be61a5.full.json"));
+    const files = fs.readdirSync("reports/research").filter(p => p.endsWith(`.${commit}.full.json`));
     assert.equal(files.length, 1, "该生产版本必须只有一份完整记录");
-    const sources = ["reports/research/39fc344f.b10ae543.full.json", `reports/research/${files[0]}`];
+    const sources = [baseline, `reports/research/${files[0]}`];
     const read = p => JSON.parse(fs.readFileSync(p));
     const records = sources.map(read), saves = records.map(r => read(r.savePath));
     records.forEach(r => assert.equal(r.terminal, true));
