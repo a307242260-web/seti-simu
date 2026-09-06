@@ -1,0 +1,330 @@
+{
+  "scope": "真实42根状态正式执行公司两艘不同探测器移动的正反顺序；非整棵搜索状态等价证明",
+  "pairs": [
+    {
+      "moves": [
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:1:out",
+          "rocketId": 1,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:2:out",
+          "rocketId": 2,
+          "deltaX": 0,
+          "deltaY": 1
+        }
+      ],
+      "differences": [
+        {
+          "path": "state.pieces.activeRocketId",
+          "first": 2,
+          "second": 1
+        },
+        {
+          "path": "state.pieces.rockets.0.angleDegrees",
+          "first": 157.5,
+          "second": 144.9
+        },
+        {
+          "path": "state.pieces.rockets.0.radius",
+          "first": 156.26,
+          "second": 140.02
+        },
+        {
+          "path": "state.pieces.rockets.0.slotIndex",
+          "first": 4,
+          "second": 0
+        },
+        {
+          "path": "state.pieces.rockets.1.angleDegrees",
+          "first": 144.9,
+          "second": 157.5
+        },
+        {
+          "path": "state.pieces.rockets.1.radius",
+          "first": 140.02,
+          "second": 156.26
+        },
+        {
+          "path": "state.pieces.rockets.1.slotIndex",
+          "first": 0,
+          "second": 4
+        }
+      ],
+      "sameLegalActions": false
+    },
+    {
+      "moves": [
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:1:out",
+          "rocketId": 1,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:2:cw",
+          "rocketId": 2,
+          "deltaX": 1,
+          "deltaY": 0
+        }
+      ],
+      "differences": [
+        {
+          "path": "state.pieces.activeRocketId",
+          "first": 2,
+          "second": 1
+        }
+      ],
+      "sameLegalActions": true
+    },
+    {
+      "moves": [
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:1:out",
+          "rocketId": 1,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:2:ccw",
+          "rocketId": 2,
+          "deltaX": -1,
+          "deltaY": 0
+        }
+      ],
+      "differences": [
+        {
+          "path": "state.pieces.activeRocketId",
+          "first": 2,
+          "second": 1
+        }
+      ],
+      "sameLegalActions": true
+    },
+    {
+      "moves": [
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:1:cw",
+          "rocketId": 1,
+          "deltaX": 1,
+          "deltaY": 0
+        },
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:2:out",
+          "rocketId": 2,
+          "deltaX": 0,
+          "deltaY": 1
+        }
+      ],
+      "differences": [
+        {
+          "path": "state.pieces.activeRocketId",
+          "first": 2,
+          "second": 1
+        }
+      ],
+      "sameLegalActions": true
+    },
+    {
+      "moves": [
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:1:cw",
+          "rocketId": 1,
+          "deltaX": 1,
+          "deltaY": 0
+        },
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:2:cw",
+          "rocketId": 2,
+          "deltaX": 1,
+          "deltaY": 0
+        }
+      ],
+      "differences": [
+        {
+          "path": "state.pieces.activeRocketId",
+          "first": 2,
+          "second": 1
+        },
+        {
+          "path": "state.pieces.rockets.0.angleDegrees",
+          "first": 202.5,
+          "second": 189.9
+        },
+        {
+          "path": "state.pieces.rockets.0.radius",
+          "first": 84.68,
+          "second": 69.42
+        },
+        {
+          "path": "state.pieces.rockets.0.slotIndex",
+          "first": 4,
+          "second": 0
+        },
+        {
+          "path": "state.pieces.rockets.1.angleDegrees",
+          "first": 189.9,
+          "second": 202.5
+        },
+        {
+          "path": "state.pieces.rockets.1.radius",
+          "first": 69.42,
+          "second": 84.68
+        },
+        {
+          "path": "state.pieces.rockets.1.slotIndex",
+          "first": 0,
+          "second": 4
+        }
+      ],
+      "sameLegalActions": true
+    },
+    {
+      "moves": [
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:1:cw",
+          "rocketId": 1,
+          "deltaX": 1,
+          "deltaY": 0
+        },
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:2:ccw",
+          "rocketId": 2,
+          "deltaX": -1,
+          "deltaY": 0
+        }
+      ],
+      "differences": [
+        {
+          "path": "state.pieces.activeRocketId",
+          "first": 2,
+          "second": 1
+        }
+      ],
+      "sameLegalActions": true
+    },
+    {
+      "moves": [
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:1:ccw",
+          "rocketId": 1,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:2:out",
+          "rocketId": 2,
+          "deltaX": 0,
+          "deltaY": 1
+        }
+      ],
+      "differences": [
+        {
+          "path": "state.pieces.activeRocketId",
+          "first": 2,
+          "second": 1
+        }
+      ],
+      "sameLegalActions": true
+    },
+    {
+      "moves": [
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:1:ccw",
+          "rocketId": 1,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:2:cw",
+          "rocketId": 2,
+          "deltaX": 1,
+          "deltaY": 0
+        }
+      ],
+      "differences": [
+        {
+          "path": "state.pieces.activeRocketId",
+          "first": 2,
+          "second": 1
+        }
+      ],
+      "sameLegalActions": true
+    },
+    {
+      "moves": [
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:1:ccw",
+          "rocketId": 1,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        {
+          "kind": "residual-domain",
+          "choiceId": "move:2:ccw",
+          "rocketId": 2,
+          "deltaX": -1,
+          "deltaY": 0
+        }
+      ],
+      "differences": [
+        {
+          "path": "state.pieces.activeRocketId",
+          "first": 2,
+          "second": 1
+        },
+        {
+          "path": "state.pieces.rockets.0.angleDegrees",
+          "first": 112.5,
+          "second": 99.9
+        },
+        {
+          "path": "state.pieces.rockets.0.radius",
+          "first": 84.68,
+          "second": 69.42
+        },
+        {
+          "path": "state.pieces.rockets.0.slotIndex",
+          "first": 4,
+          "second": 0
+        },
+        {
+          "path": "state.pieces.rockets.1.angleDegrees",
+          "first": 99.9,
+          "second": 112.5
+        },
+        {
+          "path": "state.pieces.rockets.1.radius",
+          "first": 69.42,
+          "second": 84.68
+        },
+        {
+          "path": "state.pieces.rockets.1.slotIndex",
+          "first": 0,
+          "second": 4
+        }
+      ],
+      "sameLegalActions": true
+    }
+  ],
+  "passed": true
+}
