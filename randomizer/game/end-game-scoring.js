@@ -475,14 +475,19 @@
   }
 
   function playerHasProbeLocation(player, context, locationType) {
-    const playerKeys = getPlayerKeys(player);
-    const locations = context?.probeLocations || {};
-    for (const key of playerKeys) {
-      if ((locations[key] || []).includes(locationType)) return true;
+    if (!Array.isArray(context?.pieces?.rockets) || !context?.solarSystem) {
+      throw new TypeError("位置计分缺少正式探测器或太阳系盘面");
     }
-    for (const detail of context?.probeLocationDetails || []) {
-      if (!playerKeys.has(detail.playerId) && !playerKeys.has(detail.color)) continue;
-      if (detail.locationType === locationType) return true;
+    // 浏览器按既有脚本顺序在本模块之后装入 rockets，计分执行时读取正式模块。
+    // Node 使用同一模块；缺依赖显式失败，不把无法读取位置当作不满足条件。
+    const rocketActions = typeof globalThis !== "undefined" && globalThis.SetiRocketActions
+      ? globalThis.SetiRocketActions
+      : typeof require === "function" ? require("./rockets") : null;
+    if (!rocketActions) throw new TypeError("位置计分缺少 SetiRocketActions");
+    const probeData = rocketActions.buildProbeLocationData(context);
+    const playerKeys = getPlayerKeys(player);
+    for (const key of playerKeys) {
+      if ((probeData.index[key] || []).includes(locationType)) return true;
     }
     return false;
   }

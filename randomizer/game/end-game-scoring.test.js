@@ -8,6 +8,8 @@ const banrenma = require("./aliens/banrenma");
 const chong = require("./aliens/chong");
 const aomomo = require("./aliens/aomomo");
 const runezu = require("./aliens/runezu");
+const solar = require("../solar-system/core");
+const rockets = require("./rockets");
 
 const root = { meta: { sequences: { alienEntity: 1, finalMark: 1 } } };
 const nextAlienIdentity = () => ({ sequence: root.meta.sequences.alienEntity++ });
@@ -590,11 +592,42 @@ assert.equal(endGameScoring.computePlayerCardScore(marsCardPlayer, {
 const asteroidFinalPlayer = player({
   reservedCards: [{ cardId: "b_82.webp", cardTypeCode: 3 }],
 });
+const asteroidBoard = solar.createBaselineState();
+const asteroidCoordinate = solar.collectVisibleCoordinateContents(asteroidBoard).find(c => c.content.kind === "asteroid");
 assert.equal(endGameScoring.computePlayerCardScore(asteroidFinalPlayer, {
   ...tileContext,
   currentPlayer: asteroidFinalPlayer,
-  probeLocations: { "player-white": ["asteroid"] },
-}).total, 13);
+  solarSystem: asteroidBoard,
+  pieces: { rockets: [{ id: "asteroid-probe", playerId: "player-white", color: "white",
+    sectorX: asteroidCoordinate.x, sectorY: asteroidCoordinate.y }] },
+}).total, 13, "正式位置计分不得依赖调用方手工注入位置索引");
+
+for (const rotation of [asteroidBoard.rotation, solar.applySolarOrbitRotation(asteroidBoard.rotation)]) {
+  const board = { ...asteroidBoard, rotation };
+  for (const cell of solar.collectVisibleCoordinateContents(board).filter(c => c.y >= 1 && c.y <= 4)) {
+    const probe = { id: "position-score", playerId: "player-white", color: "white", sectorX: cell.x, sectorY: cell.y };
+    const context = { solarSystem: board, pieces: { rockets: [probe] },
+      probeLocations: { "player-white": ["asteroid"] } };
+    const score = () => endGameScoring.computePlayerCardScore(asteroidFinalPlayer, context).total;
+    assert.equal(score(), cell.content.kind === "asteroid" ? 13 : 0, "伪造旧索引不能覆盖当前旋转盘面");
+    probe.playerId = "player-blue"; probe.color = "blue";
+    assert.equal(score(), 0, "不能借用对手探测器计分");
+    probe.playerId = "player-white"; probe.color = "white"; probe.kind = rockets.ROCKET_KIND.CHONG_FOSSIL;
+    assert.equal(score(), 0, "化石不属于普通探测器位置计分");
+    probe.kind = rockets.ROCKET_KIND.STANDARD; probe.surface = "planet-reference";
+    assert.equal(score(), 0, "参考图标记不属于太阳系探测器");
+  }
+}
+assert.throws(() => endGameScoring.computePlayerCardScore(asteroidFinalPlayer, {}), /位置计分缺少/, "缺少必需盘面不能静默计0分");
+
+// 执行真正的UMD计分模块，验证无require且rockets稍后装入的浏览器加载语义。
+const browserScoringScope = {};
+require("node:vm").runInNewContext(require("node:fs").readFileSync(require.resolve("./end-game-scoring"), "utf8"), browserScoringScope);
+const browserPositionContext = { solarSystem: asteroidBoard,
+  pieces: { rockets: [{ playerId: "player-white", sectorX: asteroidCoordinate.x, sectorY: asteroidCoordinate.y }] } };
+assert.throws(() => browserScoringScope.SetiEndGameScoring.computePlayerCardScore(asteroidFinalPlayer, browserPositionContext), /缺少 SetiRocketActions/);
+browserScoringScope.SetiRocketActions = rockets;
+assert.equal(browserScoringScope.SetiEndGameScoring.computePlayerCardScore(asteroidFinalPlayer, browserPositionContext).total, 13);
 
 const blueBlackPlayer = player({
   reservedCards: [

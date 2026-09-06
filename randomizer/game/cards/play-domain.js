@@ -197,45 +197,6 @@
     throw new TypeError("Card Play 缺少 Probe Turn production domain");
   }
 
-  // 构建探测器位置索引（供卡牌条件/任务判定）：
-  // 只读太阳系普通探测器的当前可见内容；距地球为环向折返+径向格数，不是移动费用。
-  // 非行星的 planetId 为 null；index 按玩家 id/color 汇总 locationType。
-  function buildProbeLocationData(root) {
-    const solarSystemState = getWorkingSlice(root, "solarSystem");
-    const earth = solar.createSolarSnapshot(solarSystemState)
-      .planetLocations.find((planet) => planet.planetId === "earth");
-    if (!earth) throw new TypeError("探测器位置读取缺少地球位置");
-    const details = [];
-    const index = {};
-    for (const rocket of (root?.pieces?.rockets || [])) {
-      if (!rockets.isControllablePlayerRocket(rocket)) continue;
-      const coordinate = rockets.getRocketSectorCoordinate(rocket);
-      if (!coordinate) throw new TypeError(`探测器 ${rocket.id} 缺少太阳系位置`);
-      const content = solar.resolveVisibleContent(coordinate.x, coordinate.y, solarSystemState).content;
-      const distanceFromEarth = Math.min(
-        solar.mod8(coordinate.x - earth.x),
-        solar.mod8(earth.x - coordinate.x),
-      ) + Math.abs(coordinate.y - earth.y);
-      const locationType = content.kind;
-      const detail = {
-        playerId: rocket.playerId,
-        color: rocket.color || null,
-        sectorX: coordinate.x,
-        sectorY: coordinate.y,
-        locationType,
-        adjacentToEarth: distanceFromEarth === 1,
-        distanceFromEarth,
-        planetId: locationType === "planet" ? content.planetId : null,
-      };
-      details.push(detail);
-      for (const key of [rocket.playerId, rocket.color].filter(Boolean).map(String)) {
-        if (!index[key]) index[key] = [];
-        if (!index[key].includes(locationType)) index[key].push(locationType);
-      }
-    }
-    return { details, index };
-  }
-
   function getWorkingSlice(root, key) {
     return root?.[key] || {};
   }
@@ -1530,7 +1491,7 @@
     }
 
     function conditionMet(root, actor, condition) {
-      const probeData = buildProbeLocationData(root);
+      const probeData = rockets.buildProbeLocationData(root);
       return cardEffects.taskConditionMet(
         { condition },
         actor,
@@ -2674,6 +2635,5 @@
     OWNED_PLAY_EFFECT_TYPES,
     createPlayCardProvider,
     createExperimentalCardPlayDomain,
-    buildProbeLocationData,
   });
 });

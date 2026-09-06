@@ -42,6 +42,43 @@
     };
   }
 
+  // 卡牌条件与终局计分共用的位置事实；只读，不缓存跨状态位置或分配实体。
+  function buildProbeLocationData(root) {
+    const solarSystemState = root?.solarSystem || {};
+    const earth = solar.createSolarSnapshot(solarSystemState)
+      .planetLocations.find((planet) => planet.planetId === "earth");
+    if (!earth) throw new TypeError("探测器位置读取缺少地球位置");
+    const details = [];
+    const index = {};
+    for (const rocket of (root?.pieces?.rockets || [])) {
+      if (!isControllablePlayerRocket(rocket)) continue;
+      const coordinate = getRocketSectorCoordinate(rocket);
+      if (!coordinate) throw new TypeError(`探测器 ${rocket.id} 缺少太阳系位置`);
+      const content = solar.resolveVisibleContent(coordinate.x, coordinate.y, solarSystemState).content;
+      const distanceFromEarth = Math.min(
+        solar.mod8(coordinate.x - earth.x),
+        solar.mod8(earth.x - coordinate.x),
+      ) + Math.abs(coordinate.y - earth.y);
+      const locationType = content.kind;
+      const detail = {
+        playerId: rocket.playerId,
+        color: rocket.color || null,
+        sectorX: coordinate.x,
+        sectorY: coordinate.y,
+        locationType,
+        adjacentToEarth: distanceFromEarth === 1,
+        distanceFromEarth,
+        planetId: locationType === "planet" ? content.planetId : null,
+      };
+      details.push(detail);
+      for (const key of [rocket.playerId, rocket.color].filter(Boolean).map(String)) {
+        if (!index[key]) index[key] = [];
+        if (!index[key].includes(locationType)) index[key].push(locationType);
+      }
+    }
+    return { details, index };
+  }
+
   function getPlayerRocketSequences(piecesState, playerId) {
     if (!playerId) return null;
     const current = piecesState.playerRocketSequences[playerId];
@@ -466,6 +503,7 @@
     ROCKET_SURFACE,
     ROCKET_KIND,
     createRocketState,
+    buildProbeLocationData,
     normalizeBoardPoint,
     normalizePolarPoint,
     getRocketSurface,

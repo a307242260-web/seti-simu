@@ -40,10 +40,6 @@
   function createRuleContext(state, context) {
     const players = { ...(state?.players || {}), players: listPlayers(state) };
     const pieces = state?.pieces || {};
-    const probeLocationData = context.buildProbeLocationIndex?.(
-      pieces,
-      state?.solarSystem || {},
-    ) || { index: {}, details: [] };
     return {
       solarSystem: state?.solarSystem || {},
       players: players,
@@ -59,8 +55,6 @@
       roundNumber: state?.turn?.roundNumber ?? state?.turn?.round ?? 1,
       turnNumber: state?.turn?.turnNumber ?? state?.turn?.turn ?? 1,
       plutoMarkers: context.collectPlutoMarkers?.(players) || [],
-      probeLocations: probeLocationData.index || {},
-      probeLocationDetails: probeLocationData.details || [],
       cardEffects: context.cardEffects,
       getCardTypeCode: context.getCardTypeCode,
       getPlayerCompanyBaseIncome: context.getPlayerCompanyBaseIncome,

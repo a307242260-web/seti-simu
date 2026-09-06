@@ -151,7 +151,7 @@ movement-demand-catalog-20260907.json遍历当前182个正式卡牌模型的全�
 | otherProbeAtPlanet | dlc14打牌条件，对手在地球 | 是他人状态条件，不可当作己方移动可达需求 |
 
 正式条件判定已有cardEffects.taskConditionMet导出；位置数据由
-cardPlayDomain.buildProbeLocationData生成，residual.buildCardTaskContext消费其index/details。
+rockets.buildProbeLocationData生成，residual.buildCardTaskContext消费其index/details。
 这些位置分支只读取probeLocations/probeLocationDetails，下一阶段可复用同一正式
 位置读模型和条件判定，不能手写第二套“到小行星/距离地球/不同星球”的判断。
 

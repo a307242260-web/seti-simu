@@ -792,7 +792,7 @@
   }
 
   function buildCardTaskContext(root) {
-    const probeData = cardPlayDomain.buildProbeLocationData(root);
+    const probeData = rockets.buildProbeLocationData(root);
     return {
       data: root.data,
       aliens: root.aliens,

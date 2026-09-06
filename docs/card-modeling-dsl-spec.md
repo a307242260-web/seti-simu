@@ -272,12 +272,14 @@ agent 最终应把人工描述转换成以下规范对象。当前实现可以�
 | `launch` | 无 | 当前玩家完成发射后的事件。 |
 | `orbit` / `land` | `planetId` | 当前玩家完成环绕或登陆后的事件。 |
 
-位置条件由 `cards/play-domain.buildProbeLocationData` 统一为卡牌效果与状态任务构建
+位置条件由 `rockets.buildProbeLocationData` 统一为卡牌效果、状态任务与终局计分构建
 只读输入：复用普通可控探测器判定及正式坐标读取，排除虫族化石、无所属玩家和非
 太阳系实体；按当前旋转后的可见内容提供 `locationType`、`planetId`、
 `distanceFromEarth`、`adjacentToEarth`。非行星的 `planetId: null` 表示不适用，
 不是位置读取失败。普通探测器缺位置或盘面缺地球显式抛错，不返回空条件掩盖异常。
-不缓存跨状态位置；移动或旋转后的下一次判定读取新位置。此入口不替代终局读模型的装配。
+不缓存跨状态位置；移动或旋转后的下一次判定读取新位置。终局 `probeLocation`
+计分分支直接从正式 `pieces/solarSystem` 读取同一事实，不依赖调用方注入位置索引；
+缺少必需盘面显式抛错。正式终局、AI观察与页面因此共用同一计分输入。
 
 语言学分析（`b_67.webp`，牌面编号 102）使用 `singleAlienTraceSet`：同一物种上
 本人粉、黄、蓝痕迹各至少一个；三个同色痕迹或分布在两个物种的三色不满足条件。

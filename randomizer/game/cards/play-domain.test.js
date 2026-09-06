@@ -582,7 +582,7 @@ function runProbeLocationConditions() {
   const root = createCanonicalState("dlc_11.png");
   const player = root.players.players[0];
   const contextFor = (state) => {
-    const observed = playDomain.buildProbeLocationData(state);
+    const observed = rockets.buildProbeLocationData(state);
     return { probeLocations: observed.index, probeLocationDetails: observed.details };
   };
   const meets = (condition, context, owner = player) => cardEffects.taskConditionMet({ condition }, owner, context);
@@ -645,7 +645,7 @@ function runProbeLocationConditions() {
   assert.throws(() => contextFor(missing), /缺少太阳系位置/, "必需位置缺失不得静默返回无任务");
   root.pieces.rockets[0].kind = rockets.ROCKET_KIND.CHONG_FOSSIL;
   root.pieces.rockets[1].surface = "planet-reference";
-  assert.deepEqual(playDomain.buildProbeLocationData(root), { details: [], index: {} }, "化石与参考图标记不属于这些探测器条件");
+  assert.deepEqual(rockets.buildProbeLocationData(root), { details: [], index: {} }, "化石与参考图标记不属于这些探测器条件");
 }
 
 function runAsteroidTaskSettlement() {

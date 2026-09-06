@@ -7,6 +7,10 @@ const finalScoring = require("../final-scoring");
 const cardEffects = require("../cards/effects");
 const aliens = require("../aliens");
 const data = require("../data");
+const solar = require("../../solar-system/core");
+const finalReadModel = require("../final-read-model");
+const endGameScoring = require("../end-game-scoring");
+const { buildRuleObservation } = require("../../app/rule-observation");
 
 function createRoot() {
   const taskCard = { id: "task-b1", cardId: "b_1.webp" };
@@ -375,6 +379,10 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
 
 (function proofGameEndWritesEveryPlayerFinalContract() {
   const root = createRoot();
+  root.solarSystem = solar.createBaselineState();
+  const asteroid = solar.collectVisibleCoordinateContents(root.solarSystem).find(c => c.content.kind === "asteroid");
+  root.pieces.rockets.push({ id: "final-probe", playerId: "p1", color: "white", sectorX: asteroid.x, sectorY: asteroid.y });
+  root.players.players[0].reservedCards.push({ id: "final-b82", cardId: "b_82.webp", cardTypeCode: 3 });
   root.turn.gameEnded = true;
   const owner = createHarness(residual, "createResidualDomain");
   const result = execute(owner.executors.get(residual.HANDOFF_TYPE), root, {
@@ -390,6 +398,14 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   });
   assert.equal(result.ok, true);
   settleFinalMarkEffects(owner, root, result.spawnedEffects);
+  assert.equal(root.match.finalScores.find(s => s.playerId === "p1").cardScore, 13, "正式终局事务必须记录位置卡分数");
+  const observed = buildRuleObservation(structuredClone(root), root.meta.seed, "p1");
+  const ui = finalReadModel.createFinalReadModelOwner({ finalScoring, endGameScoring, cardEffects })
+    .project(structuredClone(root));
+  for (const score of root.match.finalScores) {
+    assert.equal(observed.publicState.players.find(p => p.playerId === score.playerId).finalScore, score.totalScore, "AI观察与正式终局分数一致");
+    assert.equal(ui.players.find(p => p.id === score.playerId).breakdown.totalScore, score.totalScore, "页面读模型与正式终局分数一致");
+  }
   for (const player of root.players.players) {
     assert.equal(Number.isFinite(player.finalScore), true);
     assert.equal(player.finalScore, player.finalScoreBreakdown.totalScore);

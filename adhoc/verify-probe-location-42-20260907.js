@@ -1,11 +1,11 @@
 "use strict";
 const fs = require("node:fs"), assert = require("node:assert/strict");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
-const output = "reports/iteration/probe-location-decision-42-20260907.json";
+const output = process.argv[2] || "reports/iteration/probe-location-decision-42-20260907.json";
 if (fs.existsSync(output)) console.log(`已有验证：${output}`);
 else {
   const env = createSimulationEnv();
-  const report = { scope: "位置条件修复后真实42单次冷决策及完整计划正式fork重放；不声称移动需求剪枝完成", steps: [] };
+  const report = { scope: "位置读取修复后真实42单次冷决策及完整计划正式fork重放；不声称移动需求剪枝完成", steps: [] };
   let fork, pendingAdvance = false;
   try {
     const cp = JSON.parse(fs.readFileSync("reports/iteration/company-movement-input-42-20260906.json")).checkpoint;
