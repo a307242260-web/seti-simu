@@ -1,0 +1,1413 @@
+{
+  "scope": "从既有42正式检查点只读重放7613a096存档到516，逐个提交真实选择；不运行AI，不修改盘面",
+  "cases": [
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:83be3171",
+        "actorId": "player-blue",
+        "stateVersion": 258,
+        "decisionVersion": 14,
+        "target": {
+          "kind": "discard-hand-card",
+          "cardInstanceId": "card-33-pass-3-4",
+          "select": true
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_55.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-33-pass-3-4",
+          "imageSrc": "../assets/cards/basic/split/b_55.webp",
+          "imageAlt": "b_55.webp",
+          "selected": false
+        }
+      },
+      "result": {
+        "ok": true,
+        "journal": {
+          "actions": [
+            {
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "quick_trade",
+                "phase": "quick",
+                "actionId": "quick_trade:c6858538",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 13,
+                "target": {
+                  "tradeId": "cards-for-energy"
+                },
+                "payload": {
+                  "cost": {
+                    "handSize": 2
+                  },
+                  "gain": {
+                    "energy": 1
+                  }
+                },
+                "decision": null,
+                "summary": "2张牌 → 1能量"
+              },
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action",
+              "quick": false,
+              "revision": 0
+            }
+          ],
+          "decisions": [
+            {
+              "decisionId": "effect-session-248:effect:2",
+              "decisionVersion": 1,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_payment",
+                "phase": "conditional",
+                "actionId": "choose_payment:83be3171",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 14,
+                "target": {
+                  "kind": "discard-hand-card",
+                  "cardInstanceId": "card-33-pass-3-4",
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "b_55.webp",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "card-33-pass-3-4",
+                  "imageSrc": "../assets/cards/basic/split/b_55.webp",
+                  "imageAlt": "b_55.webp",
+                  "selected": false
+                }
+              }
+            }
+          ],
+          "effects": [
+            {
+              "effectId": "effect-session-248:effect:1",
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action",
+              "type": "standard_action_session_execute",
+              "revision": 1
+            },
+            {
+              "effectId": "effect-session-248:effect:2",
+              "groupId": "effect-session-248:group:2",
+              "groupKind": "spawned",
+              "type": "standard_action_session_decision",
+              "revision": 2
+            }
+          ],
+          "events": [
+            {
+              "type": "quick_trade",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+            },
+            {
+              "type": "quick_trade_discard_selection",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "cardInstanceId": "card-33-pass-3-4",
+              "selected": [
+                "card-33-pass-3-4"
+              ]
+            }
+          ],
+          "rng": [],
+          "history": [
+            {
+              "type": "quick_trade",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+            }
+          ],
+          "logs": [
+            {
+              "type": "standardAction",
+              "message": "请选择 2 张牌作为快速交易费用"
+            }
+          ],
+          "replay": [
+            {
+              "cursor": 0,
+              "kind": "action",
+              "confirmed": true,
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "quick_trade",
+                "phase": "quick",
+                "actionId": "quick_trade:c6858538",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 13,
+                "target": {
+                  "tradeId": "cards-for-energy"
+                },
+                "payload": {
+                  "cost": {
+                    "handSize": 2
+                  },
+                  "gain": {
+                    "energy": 1
+                  }
+                },
+                "decision": null,
+                "summary": "2张牌 → 1能量"
+              },
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action"
+            },
+            {
+              "cursor": 1,
+              "kind": "decision",
+              "confirmed": true,
+              "decisionId": "effect-session-248:effect:2",
+              "decisionVersion": 1,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_payment",
+                "phase": "conditional",
+                "actionId": "choose_payment:83be3171",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 14,
+                "target": {
+                  "kind": "discard-hand-card",
+                  "cardInstanceId": "card-33-pass-3-4",
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "b_55.webp",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "card-33-pass-3-4",
+                  "imageSrc": "../assets/cards/basic/split/b_55.webp",
+                  "imageAlt": "b_55.webp",
+                  "selected": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:2064c5da",
+        "actorId": "player-blue",
+        "stateVersion": 258,
+        "decisionVersion": 14,
+        "target": {
+          "kind": "discard-hand-card",
+          "cardInstanceId": "card-83-0",
+          "select": true
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_60.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-83-0",
+          "imageSrc": "../assets/cards/basic/split/b_60.webp",
+          "imageAlt": "b_60.webp",
+          "selected": false
+        }
+      },
+      "result": {
+        "ok": true,
+        "journal": {
+          "actions": [
+            {
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "quick_trade",
+                "phase": "quick",
+                "actionId": "quick_trade:c6858538",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 13,
+                "target": {
+                  "tradeId": "cards-for-energy"
+                },
+                "payload": {
+                  "cost": {
+                    "handSize": 2
+                  },
+                  "gain": {
+                    "energy": 1
+                  }
+                },
+                "decision": null,
+                "summary": "2张牌 → 1能量"
+              },
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action",
+              "quick": false,
+              "revision": 0
+            }
+          ],
+          "decisions": [
+            {
+              "decisionId": "effect-session-248:effect:2",
+              "decisionVersion": 1,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_payment",
+                "phase": "conditional",
+                "actionId": "choose_payment:2064c5da",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 14,
+                "target": {
+                  "kind": "discard-hand-card",
+                  "cardInstanceId": "card-83-0",
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "b_60.webp",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "card-83-0",
+                  "imageSrc": "../assets/cards/basic/split/b_60.webp",
+                  "imageAlt": "b_60.webp",
+                  "selected": false
+                }
+              }
+            }
+          ],
+          "effects": [
+            {
+              "effectId": "effect-session-248:effect:1",
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action",
+              "type": "standard_action_session_execute",
+              "revision": 1
+            },
+            {
+              "effectId": "effect-session-248:effect:2",
+              "groupId": "effect-session-248:group:2",
+              "groupKind": "spawned",
+              "type": "standard_action_session_decision",
+              "revision": 2
+            }
+          ],
+          "events": [
+            {
+              "type": "quick_trade",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+            },
+            {
+              "type": "quick_trade_discard_selection",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "cardInstanceId": "card-83-0",
+              "selected": [
+                "card-83-0"
+              ]
+            }
+          ],
+          "rng": [],
+          "history": [
+            {
+              "type": "quick_trade",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+            }
+          ],
+          "logs": [
+            {
+              "type": "standardAction",
+              "message": "请选择 2 张牌作为快速交易费用"
+            }
+          ],
+          "replay": [
+            {
+              "cursor": 0,
+              "kind": "action",
+              "confirmed": true,
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "quick_trade",
+                "phase": "quick",
+                "actionId": "quick_trade:c6858538",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 13,
+                "target": {
+                  "tradeId": "cards-for-energy"
+                },
+                "payload": {
+                  "cost": {
+                    "handSize": 2
+                  },
+                  "gain": {
+                    "energy": 1
+                  }
+                },
+                "decision": null,
+                "summary": "2张牌 → 1能量"
+              },
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action"
+            },
+            {
+              "cursor": 1,
+              "kind": "decision",
+              "confirmed": true,
+              "decisionId": "effect-session-248:effect:2",
+              "decisionVersion": 1,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_payment",
+                "phase": "conditional",
+                "actionId": "choose_payment:2064c5da",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 14,
+                "target": {
+                  "kind": "discard-hand-card",
+                  "cardInstanceId": "card-83-0",
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "b_60.webp",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "card-83-0",
+                  "imageSrc": "../assets/cards/basic/split/b_60.webp",
+                  "imageAlt": "b_60.webp",
+                  "selected": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:55476f72",
+        "actorId": "player-blue",
+        "stateVersion": 258,
+        "decisionVersion": 14,
+        "target": {
+          "kind": "discard-hand-card",
+          "cardInstanceId": "alien-chong-9-16",
+          "select": true
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "chong_9.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "alien-chong-9-16",
+          "imageSrc": "../assets/aliens/虫/cards/9.webp",
+          "imageAlt": "chong_9.webp",
+          "selected": false
+        }
+      },
+      "result": {
+        "ok": true,
+        "journal": {
+          "actions": [
+            {
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "quick_trade",
+                "phase": "quick",
+                "actionId": "quick_trade:c6858538",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 13,
+                "target": {
+                  "tradeId": "cards-for-energy"
+                },
+                "payload": {
+                  "cost": {
+                    "handSize": 2
+                  },
+                  "gain": {
+                    "energy": 1
+                  }
+                },
+                "decision": null,
+                "summary": "2张牌 → 1能量"
+              },
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action",
+              "quick": false,
+              "revision": 0
+            }
+          ],
+          "decisions": [
+            {
+              "decisionId": "effect-session-248:effect:2",
+              "decisionVersion": 1,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_payment",
+                "phase": "conditional",
+                "actionId": "choose_payment:55476f72",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 14,
+                "target": {
+                  "kind": "discard-hand-card",
+                  "cardInstanceId": "alien-chong-9-16",
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "chong_9.webp",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "alien-chong-9-16",
+                  "imageSrc": "../assets/aliens/虫/cards/9.webp",
+                  "imageAlt": "chong_9.webp",
+                  "selected": false
+                }
+              }
+            }
+          ],
+          "effects": [
+            {
+              "effectId": "effect-session-248:effect:1",
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action",
+              "type": "standard_action_session_execute",
+              "revision": 1
+            },
+            {
+              "effectId": "effect-session-248:effect:2",
+              "groupId": "effect-session-248:group:2",
+              "groupKind": "spawned",
+              "type": "standard_action_session_decision",
+              "revision": 2
+            }
+          ],
+          "events": [
+            {
+              "type": "quick_trade",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+            },
+            {
+              "type": "quick_trade_discard_selection",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "cardInstanceId": "alien-chong-9-16",
+              "selected": [
+                "alien-chong-9-16"
+              ]
+            }
+          ],
+          "rng": [],
+          "history": [
+            {
+              "type": "quick_trade",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+            }
+          ],
+          "logs": [
+            {
+              "type": "standardAction",
+              "message": "请选择 2 张牌作为快速交易费用"
+            }
+          ],
+          "replay": [
+            {
+              "cursor": 0,
+              "kind": "action",
+              "confirmed": true,
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "quick_trade",
+                "phase": "quick",
+                "actionId": "quick_trade:c6858538",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 13,
+                "target": {
+                  "tradeId": "cards-for-energy"
+                },
+                "payload": {
+                  "cost": {
+                    "handSize": 2
+                  },
+                  "gain": {
+                    "energy": 1
+                  }
+                },
+                "decision": null,
+                "summary": "2张牌 → 1能量"
+              },
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action"
+            },
+            {
+              "cursor": 1,
+              "kind": "decision",
+              "confirmed": true,
+              "decisionId": "effect-session-248:effect:2",
+              "decisionVersion": 1,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_payment",
+                "phase": "conditional",
+                "actionId": "choose_payment:55476f72",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 14,
+                "target": {
+                  "kind": "discard-hand-card",
+                  "cardInstanceId": "alien-chong-9-16",
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "chong_9.webp",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "alien-chong-9-16",
+                  "imageSrc": "../assets/aliens/虫/cards/9.webp",
+                  "imageAlt": "chong_9.webp",
+                  "selected": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:56cf97db",
+        "actorId": "player-blue",
+        "stateVersion": 258,
+        "decisionVersion": 14,
+        "target": {
+          "kind": "discard-hand-card",
+          "cardInstanceId": "card-93-0",
+          "select": true
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_8.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-93-0",
+          "imageSrc": "../assets/cards/basic/split/b_8.webp",
+          "imageAlt": "b_8.webp",
+          "selected": false
+        }
+      },
+      "result": {
+        "ok": true,
+        "journal": {
+          "actions": [
+            {
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "quick_trade",
+                "phase": "quick",
+                "actionId": "quick_trade:c6858538",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 13,
+                "target": {
+                  "tradeId": "cards-for-energy"
+                },
+                "payload": {
+                  "cost": {
+                    "handSize": 2
+                  },
+                  "gain": {
+                    "energy": 1
+                  }
+                },
+                "decision": null,
+                "summary": "2张牌 → 1能量"
+              },
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action",
+              "quick": false,
+              "revision": 0
+            }
+          ],
+          "decisions": [
+            {
+              "decisionId": "effect-session-248:effect:2",
+              "decisionVersion": 1,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_payment",
+                "phase": "conditional",
+                "actionId": "choose_payment:56cf97db",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 14,
+                "target": {
+                  "kind": "discard-hand-card",
+                  "cardInstanceId": "card-93-0",
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "b_8.webp",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "card-93-0",
+                  "imageSrc": "../assets/cards/basic/split/b_8.webp",
+                  "imageAlt": "b_8.webp",
+                  "selected": false
+                }
+              }
+            }
+          ],
+          "effects": [
+            {
+              "effectId": "effect-session-248:effect:1",
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action",
+              "type": "standard_action_session_execute",
+              "revision": 1
+            },
+            {
+              "effectId": "effect-session-248:effect:2",
+              "groupId": "effect-session-248:group:2",
+              "groupKind": "spawned",
+              "type": "standard_action_session_decision",
+              "revision": 2
+            }
+          ],
+          "events": [
+            {
+              "type": "quick_trade",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+            },
+            {
+              "type": "quick_trade_discard_selection",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "cardInstanceId": "card-93-0",
+              "selected": [
+                "card-93-0"
+              ]
+            }
+          ],
+          "rng": [],
+          "history": [
+            {
+              "type": "quick_trade",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+            }
+          ],
+          "logs": [
+            {
+              "type": "standardAction",
+              "message": "请选择 2 张牌作为快速交易费用"
+            }
+          ],
+          "replay": [
+            {
+              "cursor": 0,
+              "kind": "action",
+              "confirmed": true,
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "quick_trade",
+                "phase": "quick",
+                "actionId": "quick_trade:c6858538",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 13,
+                "target": {
+                  "tradeId": "cards-for-energy"
+                },
+                "payload": {
+                  "cost": {
+                    "handSize": 2
+                  },
+                  "gain": {
+                    "energy": 1
+                  }
+                },
+                "decision": null,
+                "summary": "2张牌 → 1能量"
+              },
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action"
+            },
+            {
+              "cursor": 1,
+              "kind": "decision",
+              "confirmed": true,
+              "decisionId": "effect-session-248:effect:2",
+              "decisionVersion": 1,
+              "ownerId": "player-blue",
+              "choice": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_payment",
+                "phase": "conditional",
+                "actionId": "choose_payment:56cf97db",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 14,
+                "target": {
+                  "kind": "discard-hand-card",
+                  "cardInstanceId": "card-93-0",
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "b_8.webp",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "card-93-0",
+                  "imageSrc": "../assets/cards/basic/split/b_8.webp",
+                  "imageAlt": "b_8.webp",
+                  "selected": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:f1f2b012",
+        "actorId": "player-blue",
+        "stateVersion": 258,
+        "decisionVersion": 14,
+        "target": {
+          "kind": "confirm",
+          "confirm": true
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "确认弃牌（0/2）",
+        "disabledReason": "还需选择 2 张牌"
+      },
+      "result": {
+        "ok": false,
+        "progressed": true,
+        "events": [
+          {
+            "type": "quick_trade_discard_selection",
+            "tradeId": "cards-for-energy",
+            "playerId": "player-blue",
+            "cardInstanceId": "card-93-0",
+            "selected": [
+              "card-93-0"
+            ]
+          }
+        ],
+        "decisionEffect": {
+          "type": "standard_action_session_decision",
+          "kind": "decision",
+          "ownerId": "player-blue",
+          "decisionKind": "choose_payment",
+          "payload": {
+            "choices": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_payment",
+                "phase": "conditional",
+                "actionId": "choose_payment:83be3171",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 14,
+                "target": {
+                  "kind": "discard-hand-card",
+                  "cardInstanceId": "card-33-pass-3-4",
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "b_55.webp",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "card-33-pass-3-4",
+                  "imageSrc": "../assets/cards/basic/split/b_55.webp",
+                  "imageAlt": "b_55.webp",
+                  "selected": false
+                }
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_payment",
+                "phase": "conditional",
+                "actionId": "choose_payment:2064c5da",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 14,
+                "target": {
+                  "kind": "discard-hand-card",
+                  "cardInstanceId": "card-83-0",
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "b_60.webp",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "card-83-0",
+                  "imageSrc": "../assets/cards/basic/split/b_60.webp",
+                  "imageAlt": "b_60.webp",
+                  "selected": false
+                }
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_payment",
+                "phase": "conditional",
+                "actionId": "choose_payment:55476f72",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 14,
+                "target": {
+                  "kind": "discard-hand-card",
+                  "cardInstanceId": "alien-chong-9-16",
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "chong_9.webp",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "alien-chong-9-16",
+                  "imageSrc": "../assets/aliens/虫/cards/9.webp",
+                  "imageAlt": "chong_9.webp",
+                  "selected": false
+                }
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_payment",
+                "phase": "conditional",
+                "actionId": "choose_payment:56cf97db",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 14,
+                "target": {
+                  "kind": "discard-hand-card",
+                  "cardInstanceId": "card-93-0",
+                  "select": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "b_8.webp",
+                "presentation": {
+                  "cardKind": "pick",
+                  "cardId": "card-93-0",
+                  "imageSrc": "../assets/cards/basic/split/b_8.webp",
+                  "imageAlt": "b_8.webp",
+                  "selected": true
+                }
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_payment",
+                "phase": "conditional",
+                "actionId": "choose_payment:f1f2b012",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 14,
+                "target": {
+                  "kind": "confirm",
+                  "confirm": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "确认弃牌（1/2）",
+                "disabledReason": "还需选择 1 张牌"
+              }
+            ],
+            "decisionContext": {
+              "kind": "discard",
+              "type": "trade",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "count": 2,
+              "required": true,
+              "selected": [
+                "card-93-0"
+              ]
+            }
+          }
+        },
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:56cf97db",
+          "actorId": "player-blue",
+          "stateVersion": 258,
+          "decisionVersion": 14,
+          "target": {
+            "kind": "discard-hand-card",
+            "cardInstanceId": "card-93-0",
+            "select": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "b_8.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-93-0",
+            "imageSrc": "../assets/cards/basic/split/b_8.webp",
+            "imageAlt": "b_8.webp",
+            "selected": false
+          }
+        },
+        "phase": "aborted",
+        "family": "quick_trade",
+        "stateVersion": 258,
+        "failure": {
+          "code": "QUICK_TRADE_DISCARD_INCOMPLETE",
+          "message": "还需选择 2 张牌",
+          "effectId": "effect-session-248:effect:2",
+          "type": "standard_action_session_decision"
+        },
+        "journal": {
+          "actions": [
+            {
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "quick_trade",
+                "phase": "quick",
+                "actionId": "quick_trade:c6858538",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 13,
+                "target": {
+                  "tradeId": "cards-for-energy"
+                },
+                "payload": {
+                  "cost": {
+                    "handSize": 2
+                  },
+                  "gain": {
+                    "energy": 1
+                  }
+                },
+                "decision": null,
+                "summary": "2张牌 → 1能量"
+              },
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action",
+              "quick": false,
+              "revision": 0
+            }
+          ],
+          "decisions": [],
+          "effects": [
+            {
+              "effectId": "effect-session-248:effect:1",
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action",
+              "type": "standard_action_session_execute",
+              "revision": 1
+            }
+          ],
+          "events": [
+            {
+              "type": "quick_trade",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+            }
+          ],
+          "rng": [],
+          "history": [
+            {
+              "type": "quick_trade",
+              "tradeId": "cards-for-energy",
+              "playerId": "player-blue",
+              "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+            }
+          ],
+          "logs": [
+            {
+              "type": "standardAction",
+              "message": "请选择 2 张牌作为快速交易费用"
+            }
+          ],
+          "replay": [
+            {
+              "cursor": 0,
+              "kind": "action",
+              "confirmed": true,
+              "action": {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "quick_trade",
+                "phase": "quick",
+                "actionId": "quick_trade:c6858538",
+                "actorId": "player-blue",
+                "stateVersion": 258,
+                "decisionVersion": 13,
+                "target": {
+                  "tradeId": "cards-for-energy"
+                },
+                "payload": {
+                  "cost": {
+                    "handSize": 2
+                  },
+                  "gain": {
+                    "energy": 1
+                  }
+                },
+                "decision": null,
+                "summary": "2张牌 → 1能量"
+              },
+              "groupId": "effect-session-248:group:1",
+              "groupKind": "action"
+            }
+          ]
+        },
+        "irreversibleBarrier": null
+      }
+    }
+  ],
+  "checkpointPath": "reports/iteration/before-trade-516-20260907.json",
+  "before": {
+    "phase": "awaiting_input",
+    "family": "quick_trade",
+    "session": {
+      "ok": true,
+      "schemaVersion": "seti-effect-session-v1",
+      "sessionId": "effect-session-248",
+      "phase": "awaiting_input",
+      "baseVersion": 258,
+      "revision": 1,
+      "queueLength": 1,
+      "currentEffect": {
+        "schemaVersion": "seti-effect-session-v1",
+        "effectId": "effect-session-248:effect:2",
+        "groupId": "effect-session-248:group:2",
+        "groupKind": "spawned",
+        "type": "standard_action_session_decision",
+        "kind": "decision",
+        "ownerId": "player-blue",
+        "decisionKind": "choose_payment",
+        "allowQuickActions": false,
+        "payload": {
+          "choices": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_payment",
+              "phase": "conditional",
+              "actionId": "choose_payment:83be3171",
+              "actorId": "player-blue",
+              "stateVersion": 258,
+              "decisionVersion": 14,
+              "target": {
+                "kind": "discard-hand-card",
+                "cardInstanceId": "card-33-pass-3-4",
+                "select": true
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "b_55.webp",
+              "presentation": {
+                "cardKind": "pick",
+                "cardId": "card-33-pass-3-4",
+                "imageSrc": "../assets/cards/basic/split/b_55.webp",
+                "imageAlt": "b_55.webp",
+                "selected": false
+              }
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_payment",
+              "phase": "conditional",
+              "actionId": "choose_payment:2064c5da",
+              "actorId": "player-blue",
+              "stateVersion": 258,
+              "decisionVersion": 14,
+              "target": {
+                "kind": "discard-hand-card",
+                "cardInstanceId": "card-83-0",
+                "select": true
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "b_60.webp",
+              "presentation": {
+                "cardKind": "pick",
+                "cardId": "card-83-0",
+                "imageSrc": "../assets/cards/basic/split/b_60.webp",
+                "imageAlt": "b_60.webp",
+                "selected": false
+              }
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_payment",
+              "phase": "conditional",
+              "actionId": "choose_payment:55476f72",
+              "actorId": "player-blue",
+              "stateVersion": 258,
+              "decisionVersion": 14,
+              "target": {
+                "kind": "discard-hand-card",
+                "cardInstanceId": "alien-chong-9-16",
+                "select": true
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "chong_9.webp",
+              "presentation": {
+                "cardKind": "pick",
+                "cardId": "alien-chong-9-16",
+                "imageSrc": "../assets/aliens/虫/cards/9.webp",
+                "imageAlt": "chong_9.webp",
+                "selected": false
+              }
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_payment",
+              "phase": "conditional",
+              "actionId": "choose_payment:56cf97db",
+              "actorId": "player-blue",
+              "stateVersion": 258,
+              "decisionVersion": 14,
+              "target": {
+                "kind": "discard-hand-card",
+                "cardInstanceId": "card-93-0",
+                "select": true
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "b_8.webp",
+              "presentation": {
+                "cardKind": "pick",
+                "cardId": "card-93-0",
+                "imageSrc": "../assets/cards/basic/split/b_8.webp",
+                "imageAlt": "b_8.webp",
+                "selected": false
+              }
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_payment",
+              "phase": "conditional",
+              "actionId": "choose_payment:f1f2b012",
+              "actorId": "player-blue",
+              "stateVersion": 258,
+              "decisionVersion": 14,
+              "target": {
+                "kind": "confirm",
+                "confirm": true
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "确认弃牌（0/2）",
+              "disabledReason": "还需选择 2 张牌"
+            }
+          ],
+          "decisionContext": {
+            "kind": "discard",
+            "type": "trade",
+            "tradeId": "cards-for-energy",
+            "playerId": "player-blue",
+            "count": 2,
+            "required": true,
+            "selected": []
+          }
+        },
+        "source": {
+          "parentEffectId": "effect-session-248:effect:1",
+          "priority": "direct"
+        },
+        "groupIndex": 0
+      },
+      "decision": {
+        "ok": true,
+        "decisionId": "effect-session-248:effect:2",
+        "decisionVersion": 1,
+        "ownerId": "player-blue",
+        "decisionKind": "choose_payment",
+        "allowQuickActions": false,
+        "choices": [
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:83be3171",
+            "actorId": "player-blue",
+            "stateVersion": 258,
+            "decisionVersion": 14,
+            "target": {
+              "kind": "discard-hand-card",
+              "cardInstanceId": "card-33-pass-3-4",
+              "select": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "b_55.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-33-pass-3-4",
+              "imageSrc": "../assets/cards/basic/split/b_55.webp",
+              "imageAlt": "b_55.webp",
+              "selected": false
+            }
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:2064c5da",
+            "actorId": "player-blue",
+            "stateVersion": 258,
+            "decisionVersion": 14,
+            "target": {
+              "kind": "discard-hand-card",
+              "cardInstanceId": "card-83-0",
+              "select": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "b_60.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-83-0",
+              "imageSrc": "../assets/cards/basic/split/b_60.webp",
+              "imageAlt": "b_60.webp",
+              "selected": false
+            }
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:55476f72",
+            "actorId": "player-blue",
+            "stateVersion": 258,
+            "decisionVersion": 14,
+            "target": {
+              "kind": "discard-hand-card",
+              "cardInstanceId": "alien-chong-9-16",
+              "select": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "chong_9.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "alien-chong-9-16",
+              "imageSrc": "../assets/aliens/虫/cards/9.webp",
+              "imageAlt": "chong_9.webp",
+              "selected": false
+            }
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:56cf97db",
+            "actorId": "player-blue",
+            "stateVersion": 258,
+            "decisionVersion": 14,
+            "target": {
+              "kind": "discard-hand-card",
+              "cardInstanceId": "card-93-0",
+              "select": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "b_8.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-93-0",
+              "imageSrc": "../assets/cards/basic/split/b_8.webp",
+              "imageAlt": "b_8.webp",
+              "selected": false
+            }
+          },
+          {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:f1f2b012",
+            "actorId": "player-blue",
+            "stateVersion": 258,
+            "decisionVersion": 14,
+            "target": {
+              "kind": "confirm",
+              "confirm": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "确认弃牌（0/2）",
+            "disabledReason": "还需选择 2 张牌"
+          }
+        ]
+      },
+      "controls": {
+        "canUndo": true,
+        "undoDisabledReason": null,
+        "allowQuickActions": false
+      },
+      "progress": {
+        "completedEffects": 1,
+        "remainingEffects": 1,
+        "totalEffects": 2,
+        "currentEffectId": "effect-session-248:effect:2",
+        "currentEffectType": "standard_action_session_decision"
+      },
+      "irreversibleBarrier": null,
+      "failure": null
+    }
+  },
+  "inspectionComplete": false,
+  "error": {
+    "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- 'QUICK_TRADE_DISCARD_INCOMPLETE'\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ undefined\n- 'QUICK_TRADE_DISCARD_INCOMPLETE'\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/inspect-trade-failure-516-20260907.js:41:12)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

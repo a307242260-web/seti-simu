@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-06T19:29:33.108Z",
+  "builtAt": "2026-09-06T20:21:47.969Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "a41ae85a",
-  "currentBaseline": "probe-location-data-20260907",
+  "headCommit": "7613a096",
+  "currentBaseline": "orbit-visit-trigger-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,491 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "orbit-visit-trigger-20260907",
+      "name": "轨道加注访问事实修复（零异常门槛未通过）",
+      "date": "2026-09-07",
+      "baseline": "probe-location-data-20260907",
+      "head": "7613a096",
+      "commits": [
+        {
+          "hash": "7613a096",
+          "date": "2026-09-07",
+          "subject": "修复轨道加注访问事件缺少己方环绕事实"
+        }
+      ],
+      "summary": "补全行星访问事件的己方环绕事实，统一按标记种类读取正式星球标记，恢复轨道加注奖励触发。",
+      "diffStat": "35 files changed, 24462 insertions(+), 17 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/audit-company-plan-scopes-20260907.js",
+          "insertions": 60,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/classify-movement-catalog-20260907.js",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/prototype-purpose-routes-42-20260907.js",
+          "insertions": 106,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/reproduce-orbit-visit-trigger-20260907.js",
+          "insertions": 82,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-saturn-purpose-routes-42-20260907.js",
+          "insertions": 100,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 43,
+          "deletions": 1
+        },
+        {
+          "file": "docs/card-modeling-dsl-spec.md",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/effects/residual-domain-session.js",
+          "insertions": 14,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/effects/residual-domain-session.test.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/end-game-scoring.js",
+          "insertions": 11,
+          "deletions": 4
+        },
+        {
+          "file": "randomizer/game/end-game-scoring.test.js",
+          "insertions": 24,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-demand-design-20260906.md",
+          "insertions": 139,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-plan-scopes-20260907.json",
+          "insertions": 11,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-plan-scopes-v2-20260907.json",
+          "insertions": 206,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-purpose-classification-20260907.json",
+          "insertions": 478,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/orbit-visit-trigger-decision-42-20260907.json",
+          "insertions": 6240,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/orbit-visit-trigger-design-20260907.md",
+          "insertions": 50,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/orbit-visit-trigger-reproduction-20260907.json",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/orbit-visit-trigger-reproduction-v2-20260907.json",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/orbit-visit-trigger-reproduction-v3-20260907.json",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/orbit-visit-trigger-verification-20260907.json",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-location-data-20260907/ac62e0db.a41ae85a.full.action-log.html",
+          "insertions": 2035,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-location-data-decision-42-20260907.json",
+          "insertions": 6240,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-location-data-design-20260907.md",
+          "insertions": 8,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-location-data-full-verification-20260907.json",
+          "insertions": 963,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/purpose-routes-42-20260907.json",
+          "insertions": 11,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/purpose-routes-42-v2-20260907.json",
+          "insertions": 1121,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 390,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/saturn-purpose-routes-42-20260907.json",
+          "insertions": 894,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/saturn-purpose-routes-42-state-20260907.json",
+          "insertions": 4545,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 390,
+          "deletions": 4
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "64334dc7.7613a096.full.json",
+          "recordPath": "reports/research/64334dc7.7613a096.full.json",
+          "mode": "full",
+          "steps": 572,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 427207,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "7613a096",
+          "createdAt": "2026-09-06T20:17:57.458Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "正式环绕访问触发、逐次选槽、取消及保存恢复验证通过。固定572步终局112/96/118/102、均107，较前版105.5增加1.5，仍低于108.5；178次搜索、116452节点、142797成功输入，22策略+9控制截断，共31次，较前版29次增加；427207ms对376209ms，无提速。第516步1次QUICK_TRADE_DISCARD_INCOMPLETE，正式复现为带禁用标记的确认进入候选；独立待修。首个实际动作差异410（能量支付改为弃移动牌），因果尚未闭合，不能用涨分代替正确性审查。移动需求式、none分类与第一Goal均未完成。",
+          "scores": {
+            "player-blue": 112,
+            "player-green": 96,
+            "player-brown": 118,
+            "player-white": 102
+          },
+          "avgScore": 107,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 112,
+              "base": 67,
+              "tile": 41,
+              "card": 4,
+              "tileScoresById": {
+                "a": 33,
+                "b": 8,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 12,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 17,
+                "orbitScore": 12,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 96,
+              "base": 76,
+              "tile": 20,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 0,
+                  "formulaId": "b1",
+                  "multiplier": 4,
+                  "score": 0,
+                  "slotIndex": 3,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 9,
+                "blueTechScore": 0,
+                "cardEffectScore": 11,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 19,
+                "orbitScore": 18,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 118,
+              "base": 72,
+              "tile": 42,
+              "card": 4,
+              "tileScoresById": {
+                "a": 15,
+                "b": 6,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "chong_2.webp",
+                  "rule": {
+                    "kind": "chongTraceCount",
+                    "scorePer": 1
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 9,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 12,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 7,
+                "orbitScore": 3,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 11
+              }
+            },
+            "player-white": {
+              "total": 102,
+              "base": 55,
+              "tile": 38,
+              "card": 9,
+              "tileScoresById": {
+                "a": 32,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 32,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 9
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 11,
+                "orbitScore": 6,
+                "scanScore": 9,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-orbit-visit-trigger-20260907-7613a096-full-v289.json",
+          "reportPath": "reports/iteration/orbit-visit-trigger-20260907/64334dc7.7613a096.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "64334dc7.7613a096.full",
+            "path": "reports/iteration/orbit-visit-trigger-20260907/64334dc7.7613a096.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "probe-location-data-20260907",
       "name": "位置数据奖励修复（搜索目标未通过）",
@@ -566,7 +1051,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
