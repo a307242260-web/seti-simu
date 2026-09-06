@@ -117,10 +117,10 @@ function createHeuristicDecisionFunction(options = {}) {
   // raw descriptor，evaluate 端按 actionId 对齐当前合法集）。估值入口统一走
   // 本决策函数——simulation-env 旧 evaluateActionOutcomes 已删除，不存在第二套
   // 搜索参数（旧默认非 secondary-agent 分支会与真实决策估值不一致）。
-  function evaluateActions(actions, evaluateOptions = {}) {
+  function evaluateActions(actions, evaluateOptions, searches) {
     const seatId = actions[0]?.actorId || null;
     let rootStrategicFacts = null;
-    return composition.counterfactualPort.evaluate(actions, {
+    const outcomes = composition.counterfactualPort.evaluate(actions, {
       viewer: { playerId: seatId, role: "player" },
       maxDepth: evaluateOptions.maxDepth || 15,
       maxLeaves: evaluateOptions.maxLeaves || 8,
@@ -175,9 +175,19 @@ function createHeuristicDecisionFunction(options = {}) {
       },
       confidence: "low",
     });
+    const diagnostics = composition.counterfactualPort.getDiagnostics?.();
+    const fields = ["executedNodeCount", "maxExecutionNodes", "executionLimitReached",
+      "successfulInputSubmissionCount", "attemptedNodeCountByFamily", "failedNodeCountByFamily",
+      "failedNodeCountByCode", "executedNodeCountByFamily", "executedNodeCountByDecisionKind",
+      "executedNodeCountByActionSummary", "executedOriginCountByTarget",
+      "executedOriginCountByTargetAndDecisionKind", "frontierOriginCountByFamily", "totalMilliseconds"];
+    searches.push({ kind: evaluateOptions.secondaryAgentSearch ? "strategic" : "control",
+      diagnostics: diagnostics ? structuredClone(Object.fromEntries(fields.map(key => [key, diagnostics[key]]))) : null });
+    return outcomes;
   }
 
   function run(boundary) {
+    const searches = [];
     const { seatId, legalActions, observation } = boundary;
     const initialSetupBoundary = isInitialSetupBoundary(legalActions);
     const outcomeOptions = {
@@ -198,7 +208,7 @@ function createHeuristicDecisionFunction(options = {}) {
         maxNodes: controlActions.length,
         secondaryAgentSearch: false,
         stopAtPassDecisionBoundary: true,
-      })
+      }, searches)
       : [];
     // 初始选择不跑反事实（审查清理项 1，2026-08-21 实证为**行为变化**而非行为不变）：
     // setup 反事实的 settled 叶经 hasEvaluatedSelection 信号被消费，且其 winning leaf
@@ -215,7 +225,7 @@ function createHeuristicDecisionFunction(options = {}) {
         secondaryAgentSearch: true,
         traceGoalClusters: config.traceCounterfactualGoalClusters,
         maxProxyDepth: 15,
-      })
+      }, searches)
       : [];
     const evaluatedOutcomes = outcomeModel.projectOutcomeObservations(
       [...strategicOutcomes, ...controlOutcomes],
@@ -259,6 +269,7 @@ function createHeuristicDecisionFunction(options = {}) {
       plan,
       decision: policyDecision,
       actionOutcomes,
+      searches,
     };
   }
 

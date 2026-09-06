@@ -61,6 +61,12 @@ seti-saves/*.json（存档，可选）    │      └→ reports/iteration/regi
 初始分类与优化顺序见`reports/iteration/node-types-review-20260906.md`。从当前通过
 版本213f34db/均108.5继续；取证不冒充新策略版本，生产改动仍按下述标准登记。
 
+逐次统计版本起，研究记录`metrics.searches`逐项保存step/searchIndex/kind及诊断；
+计划复用不追加。全部占比按尝试节点数加权，满额子集为strategic且执行数达到其
+maxExecutionNodes（当前4096），不等同于旧budgetHits的“满额且尚有队列”。旧记录
+没有该数组不能推算独立搜索次数，也不能用于新统计版本续跑冒充完整覆盖；历史记录
+仍可只读查看。统计方案见`reports/iteration/search-statistics-design-20260906.md`。
+
 ### 2.2 执行与登记
 
 每次迭代只做两件事：**改核心策略 + 分析历史版本**。迭代闭环：

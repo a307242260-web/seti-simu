@@ -19,7 +19,7 @@ function createComposition(metadataKind = null) {
     projectState: (state) => ({ ...state.match }),
     // metadata归提交上下文；不能在registry的普通副本里写后假设它会覆盖外层meta。
     transformEffectResult(state, result, effect) {
-      if (metadataKind && state.match.stage === 1) {
+      if (["rng", "sequence"].includes(metadataKind) && state.match.stage === 1) {
         const value = effect.payload.action.family === "launch" ? 1 : 2;
         if (metadataKind === "rng") state.meta.rngState.state = value;
         else state.meta.sequences.rocket = value;
@@ -40,6 +40,9 @@ function createComposition(metadataKind = null) {
       return { enumerate,
         validate: (state, action) => ({ ok: enumerate(state).some((item) => item.actionId === action.actionId) }),
         execute(state, action) {
+          if (metadataKind === "failure" && action.family === "move") {
+            return { ok: false, code: "TEST_MOVE_REJECTED", message: "movement rejected" };
+          }
           state.match.stage += 1;
           const metadataValue = !metadataKind ? 0 : metadataKind === "rng"
             ? state.meta.rngState.state : state.meta.sequences.rocket;
@@ -71,6 +74,10 @@ const options = {
 };
 const outcomes = composition.counterfactualPort.evaluate(actions, options);
 const diagnostics = composition.counterfactualPort.getDiagnostics();
+assert.equal(Object.values(diagnostics.attemptedNodeCountByFamily).reduce((a, b) => a + b, 0), diagnostics.executedNodeCount);
+assert.deepEqual(diagnostics.failedNodeCountByCode, {});
+assert.equal(diagnostics.successfulInputSubmissionCount, diagnostics.executedNodeCount,
+  "本夹具每成功宏节点恰好一次正式提交");
 assert.equal(diagnostics.maxMilliseconds, 30000);
 assert.deepEqual(composition.counterfactualPort.evaluate(actions, { ...options, maxMilliseconds: 10000 }), outcomes,
   "未超时的同一搜索不因期限放宽改变结果");
@@ -105,5 +112,19 @@ for (const metadataKind of ["rng", "sequence"]) {
       `${metadataKind}影响后继时不能共享另一个根的物理状态`);
   }
   distinct.dispose();
+}
+{
+  const failing = createComposition("failure");
+  const root = failing.lifecycle.save().envelope;
+  failing.counterfactualPort.evaluate(failing.inputPort.enumerateActions(), { ...options, maxFrontierNodes: 8 });
+  const d = failing.counterfactualPort.getDiagnostics();
+  const sum = map => Object.values(map).reduce((a, b) => a + b, 0);
+  assert.ok(d.failedNodeCountByFamily.move > 0);
+  assert.equal(d.failedNodeCountByCode.TEST_MOVE_REJECTED, d.failedNodeCountByFamily.move);
+  assert.equal(sum(d.attemptedNodeCountByFamily), d.executedNodeCount);
+  assert.equal(sum(d.executedNodeCountByFamily) + sum(d.failedNodeCountByFamily), d.executedNodeCount);
+  assert.equal(d.successfulInputSubmissionCount, sum(d.executedNodeCountByFamily));
+  assert.deepEqual(failing.lifecycle.save().envelope, root);
+  failing.dispose();
 }
 console.log("search budget tests passed");

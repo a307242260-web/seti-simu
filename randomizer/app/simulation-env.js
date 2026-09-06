@@ -641,6 +641,7 @@ function createSimulationEnv() {
           teacherResult: { decision: scheme.decision, provenance },
           teacherLogs: [],
           teacherAdapter: provenance.version,
+          searches: scheme.searches,
           chosenAction: trainingAction,
           observation: executed.observation,
           legalActions: executed.legalActions,
@@ -679,6 +680,7 @@ function createSimulationEnv() {
           actionOutcomes: [],
           plan: result.plan,
           planContinuationFastPath: { hit: true },
+          searches: [],
         };
       }
       return {
@@ -686,6 +688,7 @@ function createSimulationEnv() {
         policyDecision: result.decision.decision,
         policyProvenance: provenance,
         actionOutcomes: result.decision.actionOutcomes,
+        searches: result.decision.searches,
         plan: result.plan,
       };
     },

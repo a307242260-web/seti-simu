@@ -181,6 +181,7 @@ function createCollector() {
     lastTraceOwner: new Map(),
     revealedKeys: new Set(),
     budgetHits: [],        // 反事实搜索触顶 maxExecutionNodes 的决策（用户裁定：触碰 4096 截断要记录并在终局输出）
+    searches: [],          // 仅本次真实evaluate；计划复用不重复记数。
   };
 }
 
@@ -203,22 +204,24 @@ function collectStep(collector, stepIndex, result) {
   if (seat === "player-white" && fam === "research_tech") collector.whiteResearchSteps.push(stepIndex);
 }
 
-// 采集反事实搜索触顶（executionLimitReached=true）的决策——用户裁定：4096 预算
-// 触顶必须可见，不能只看平均分/耗时。一次决策可能跑多次 evaluate（strategic 主搜
-// + control 浅搜），取最后一次主搜索诊断（决策函数先 control 后 strategic，故
-// env.getCounterfactualDiagnostics() 返回的是主搜索的触顶状态）。
-function collectBudgetHits(collector, stepIndex, result, env) {
-  const diag = env?.getCounterfactualDiagnostics?.();
-  if (!diag || diag.executionLimitReached !== true) return;
+// 按本次evaluate列表记录控制/策略搜索；计划复用为[]，不能读取上次缓存诊断。
+// budgetHits沿用“执行触顶且仍有frontier”；满额分布从searches按实际节点上限筛选。
+function collectBudgetHits(collector, stepIndex, result) {
+  if (!Array.isArray(result?.searches)) throw new Error("RESEARCH_SEARCH_STATISTICS_MISSING: 缺少本次搜索列表");
   const pd = result?.policyDecision || {};
-  collector.budgetHits.push({
-    step: stepIndex,
-    seat: String(pd.seatId || "?"),
-    action: String(pd.actionId || ""),
-    executedNodeCount: Number(diag.executedNodeCount) || 0,
-    maxExecutionNodes: Number(diag.maxExecutionNodes) || 0,
-    frontierOriginCountByFamily: diag.frontierOriginCountByFamily || null,
-  });
+  for (const [index, search] of result.searches.entries()) {
+    const diag = search.diagnostics;
+    if (!diag) throw new Error("RESEARCH_SEARCH_STATISTICS_MISSING: 本次evaluate没有诊断");
+    const identity = { step: stepIndex, searchIndex: index,
+      seat: String(pd.seatId || "?"), action: String(pd.actionId || "") };
+    collector.searches.push({ ...identity, ...structuredClone(search) });
+    if (diag.executionLimitReached === true) collector.budgetHits.push({
+      ...identity, kind: search.kind,
+      executedNodeCount: diag.executedNodeCount,
+      maxExecutionNodes: diag.maxExecutionNodes,
+      frontierOriginCountByFamily: structuredClone(diag.frontierOriginCountByFamily || null),
+    });
+  }
 }
 
 // 从观测更新外星人时间线（trace 首放事件 / 揭示事件）。
@@ -247,6 +250,8 @@ function collectAliens(collector, stepIndex, obs, seat) {
 
 // 把已有 collector 的状态（fams / 时间线）播种到新 collector（用于全盘续跑时合并）。
 function seedCollectorFrom(collector, source) {
+  if (!Array.isArray(source.searches)) throw new Error("RESEARCH_SEARCH_STATISTICS_MISSING: 旧快速记录无法补齐逐次统计，不允许冒充完整覆盖");
+  collector.searches.push(...structuredClone(source.searches));
   for (const [seat, fams] of Object.entries(source.famsBySeat || {})) {
     collector.famsBySeat[seat] = collector.famsBySeat[seat] || {};
     for (const [fam, count] of Object.entries(fams)) {
@@ -423,7 +428,7 @@ function runValidation(options) {
       const result = env.runHeuristicPolicyDecision();
       steps += 1;
       collectStep(collector, steps, result);
-      collectBudgetHits(collector, steps, result, env);
+      collectBudgetHits(collector, steps, result);
       const obsAfter = result?.observation || env.observe();
       collectAliens(collector, steps, obsAfter, seat);
       const ps = obsAfter?.publicState || {};
@@ -488,6 +493,7 @@ function runValidation(options) {
         traceEvents: collector.traceEvents,
         revealEvents: collector.revealEvents,
         budgetHits: collector.budgetHits,
+        searches: collector.searches,
       },
     };
     fs.mkdirSync(RECORDS_DIR, { recursive: true });
@@ -625,4 +631,5 @@ function main() {
   runValidation(options);
 }
 
-main();
+if (require.main === module) main();
+module.exports = { createCollector, collectBudgetHits, seedCollectorFrom };

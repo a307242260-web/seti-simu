@@ -947,6 +947,7 @@
     }
 
     function evaluateCounterfactualOutcomes(actions = [], evaluateOptions = {}) {
+      lastCounterfactualDiagnostics = null;
       const legalActions = clone(actions);
       const viewer = clone(evaluateOptions.viewer || null);
       const rootObservation = projection(viewer).state;
@@ -1157,6 +1158,10 @@
       const processedNodeKeys = new Set();
       const processedOriginKeys = new Set();
       let executedNodeCount = 0;
+      let successfulInputSubmissionCount = 0;
+      const attemptedNodeCountByFamily = new Map();
+      const failedNodeCountByFamily = new Map();
+      const failedNodeCountByCode = new Map();
       let expandedSearchNodeCount = 0;
       let transpositionHitCount = 0;
       let prunedNodeCount = 0;
@@ -1718,6 +1723,7 @@
             });
           }
           function retainStep(step, submitted, action) {
+            successfulInputSubmissionCount += 1;
             if (secondaryAgentSearch) {
               if (action.phase !== "conditional") eventCursor = 0;
               const events = submitted.journal?.events;
@@ -2286,11 +2292,18 @@
             for (const o of node.origins) processedOriginKeys.add(`${key}|${originKey(o)}`);
           }
           executedNodeCount += 1;
+          const attemptedFamily = node.action.family;
+          attemptedNodeCountByFamily.set(attemptedFamily,
+            (attemptedNodeCountByFamily.get(attemptedFamily) || 0) + 1);
           sharedPhysicalExecutionOriginCount += Math.max(0, node.origins.length - 1);
           if (budgetedNode) expandedSearchNodeCount += 1;
           const execution = executeNode(node);
           checkDeadline();
           if (execution.failed) {
+            failedNodeCountByFamily.set(attemptedFamily,
+              (failedNodeCountByFamily.get(attemptedFamily) || 0) + 1);
+            const failureCode = execution.code || "COUNTERFACTUAL_EXECUTION_FAILED";
+            failedNodeCountByCode.set(failureCode, (failedNodeCountByCode.get(failureCode) || 0) + 1);
             markFailure(node.origins, execution);
             continue;
           }
@@ -3088,6 +3101,10 @@
         + timing.checkpointMilliseconds
         + timing.frontierMilliseconds;
       lastCounterfactualDiagnostics = deepFreeze({
+        successfulInputSubmissionCount,
+        attemptedNodeCountByFamily: Object.fromEntries([...attemptedNodeCountByFamily].sort()),
+        failedNodeCountByFamily: Object.fromEntries([...failedNodeCountByFamily].sort()),
+        failedNodeCountByCode: Object.fromEntries([...failedNodeCountByCode].sort()),
         candidateCount: legalActions.length,
         executedNodeCount,
         expandedSearchNodeCount,

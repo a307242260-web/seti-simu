@@ -460,6 +460,12 @@ incomplete、not-evaluated及原因。已有真实叶且截断仍为settled，�
 整局实测耗时及慢决策，不扩大节点预算、不移除搜索超时保护，也不宣称性能已优化达标。
 后续快速验证触发原10秒搜索超时，期限独立放宽为30秒；若仍超时须定位，不自动加码。
 
+Heuristic每次决策的`searches`只含本次实际evaluate（control/strategic各自一项），
+不进入Policy输入或计划。诊断`attemptedNodeCountByFamily`包括失败宏节点；原
+`executedNodeCountByFamily`仍只计成功宏节点，二者差异按`failedNodeCountByFamily`
+与`failedNodeCountByCode`解释。`successfulInputSubmissionCount`计每次成功正式输入，
+包含折叠提交及其后宏步失败之前已成功的输入，不含单席位规划时钟推进。
+
 反事实执行复用一个 Composition 级可信隔离 fork。每个候选从同一 checkpoint 恢复
 StateStore、Effect Session 和分支 RNG，再调用生产 registry/executor；Simulation 的可信
 projection reader 可读取该隔离 state，Browser 与普通公共路径仍保留复制。可信 fork 省略重复
