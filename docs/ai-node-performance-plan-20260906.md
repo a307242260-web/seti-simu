@@ -137,6 +137,12 @@ QUICK_TRADE_DISCARD_INCOMPLETE，正式复现为禁用确认进入搜索候选�
 本图适用启用公司前；已进入公司Decision不能保留额度同时插入普通付费移动，
 生产必须区分额度阶段并纳入缓存/计划证据。未改生产候选或运行新全盘实验。
 
+阶段边界已正式验证（company-phase-boundary-v2-20260907.json）：热点7个首步
+均正确消耗该艘额度，禁快速中断，结束后不恢复公司，保存恢复一致。--phases原型
+复用D0无额度距离：结算中只比较当前免费一步后D0和结束公司后D0；已用该艘
+不能再用D1抵扣。16个目的来源组合首步都在正式公司选择中，仍使用64状态图。
+完整目的/origin/计划整合未完成，不宣称生产优化；见company-demand-design末节。
+
 剩余失败定位：471三个候选从同一正式边界逐个执行，展示/盲抽成功，取消返回漏
 nextState而失败；拟按原result封装修正executor契约，不删除取消或放宽runtime。
 详见reports/iteration/choice-failure-471-review-20260907.md。433两次失败已捕获为

@@ -1,0 +1,1528 @@
+{
+  "scope": "当前可达后段公司边界的带一次免费步路线费用原型；非生产搜索、不含终点费用/奖励/动态准备，最短路不证明收益支配",
+  "input": "reports/iteration/company-hot-prefix-20260907.json",
+  "rows": [
+    {
+      "rocketId": 3,
+      "goal": "mercury",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 5,
+      "steps": 5,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "4,2:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        },
+        {
+          "to": "5,1:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "in"
+        }
+      ]
+    },
+    {
+      "rocketId": 3,
+      "goal": "mercury",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 4,
+      "steps": 5,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "4,2:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        },
+        {
+          "to": "4,2:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "ccw"
+        },
+        {
+          "to": "5,1:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "in"
+        },
+        {
+          "to": "5,1:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "in"
+        }
+      ]
+    },
+    {
+      "rocketId": 3,
+      "goal": "venus",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 3,
+      "steps": 3,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "4,2:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        },
+        {
+          "to": "5,1:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "in"
+        }
+      ]
+    },
+    {
+      "rocketId": 3,
+      "goal": "venus",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 2,
+      "steps": 3,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "4,2:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        },
+        {
+          "to": "4,2:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "ccw"
+        },
+        {
+          "to": "5,1:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "in"
+        },
+        {
+          "to": "5,1:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "in"
+        }
+      ]
+    },
+    {
+      "rocketId": 3,
+      "goal": "mars",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 0,
+      "steps": 0,
+      "expanded": 64,
+      "next": []
+    },
+    {
+      "rocketId": 3,
+      "goal": "mars",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 0,
+      "steps": 0,
+      "expanded": 64,
+      "next": []
+    },
+    {
+      "rocketId": 3,
+      "goal": "jupiter",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 4,
+      "steps": 4,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "4,2:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        }
+      ]
+    },
+    {
+      "rocketId": 3,
+      "goal": "jupiter",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 3,
+      "steps": 4,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "4,2:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        },
+        {
+          "to": "4,2:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "ccw"
+        }
+      ]
+    },
+    {
+      "rocketId": 3,
+      "goal": "saturn",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 3,
+      "steps": 2,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,3:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "6,2:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "cw"
+        }
+      ]
+    },
+    {
+      "rocketId": 3,
+      "goal": "saturn",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 2,
+      "steps": 2,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,3:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "out"
+        },
+        {
+          "to": "6,2:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "cw"
+        }
+      ]
+    },
+    {
+      "rocketId": 3,
+      "goal": "neptune",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 6,
+      "steps": 6,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "4,2:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        }
+      ]
+    },
+    {
+      "rocketId": 3,
+      "goal": "neptune",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 5,
+      "steps": 6,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "4,2:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        },
+        {
+          "to": "4,2:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "ccw"
+        }
+      ]
+    },
+    {
+      "rocketId": 3,
+      "goal": "uranus",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 4,
+      "steps": 3,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,3:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "6,2:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "cw"
+        }
+      ]
+    },
+    {
+      "rocketId": 3,
+      "goal": "uranus",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 3,
+      "steps": 3,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,3:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "5,3:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "out"
+        },
+        {
+          "to": "6,2:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "cw"
+        },
+        {
+          "to": "6,2:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "cw"
+        }
+      ]
+    },
+    {
+      "rocketId": 3,
+      "goal": "asteroid-position",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 1,
+      "steps": 1,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,3:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "6,2:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "cw"
+        }
+      ]
+    },
+    {
+      "rocketId": 3,
+      "goal": "asteroid-position",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 2
+      },
+      "paid": 0,
+      "steps": 1,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,3:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "out"
+        },
+        {
+          "to": "6,2:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "cw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "mercury",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 4,
+      "steps": 4,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "4,1:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "mercury",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 3,
+      "steps": 4,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "4,1:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        },
+        {
+          "to": "4,1:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "ccw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "venus",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 2,
+      "steps": 2,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "4,1:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "venus",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 1,
+      "steps": 2,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "4,1:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        },
+        {
+          "to": "4,1:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "ccw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "mars",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 1,
+      "steps": 1,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,2:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "mars",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 0,
+      "steps": 1,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,2:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "out"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "jupiter",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 5,
+      "steps": 5,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,2:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "4,1:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "jupiter",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 4,
+      "steps": 5,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,2:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "5,2:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "out"
+        },
+        {
+          "to": "4,1:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        },
+        {
+          "to": "4,1:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "ccw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "saturn",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 4,
+      "steps": 3,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,2:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "6,1:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "cw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "saturn",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 3,
+      "steps": 3,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,2:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "5,2:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "out"
+        },
+        {
+          "to": "6,1:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "cw"
+        },
+        {
+          "to": "6,1:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "cw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "neptune",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 7,
+      "steps": 7,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,2:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "6,1:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "cw"
+        },
+        {
+          "to": "4,1:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "neptune",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 6,
+      "steps": 7,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,2:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "5,2:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "out"
+        },
+        {
+          "to": "6,1:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "cw"
+        },
+        {
+          "to": "6,1:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "cw"
+        },
+        {
+          "to": "4,1:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "ccw"
+        },
+        {
+          "to": "4,1:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "ccw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "uranus",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 5,
+      "steps": 4,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,2:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "6,1:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "cw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "uranus",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 4,
+      "steps": 4,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,2:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "5,2:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "out"
+        },
+        {
+          "to": "6,1:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "cw"
+        },
+        {
+          "to": "6,1:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "cw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "asteroid-position",
+      "free": 0,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 2,
+      "steps": 2,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,2:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "6,1:0",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "cw"
+        }
+      ]
+    },
+    {
+      "rocketId": 2,
+      "goal": "asteroid-position",
+      "free": 1,
+      "from": {
+        "x": 5,
+        "y": 1
+      },
+      "paid": 1,
+      "steps": 2,
+      "expanded": 64,
+      "next": [
+        {
+          "to": "5,2:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "out"
+        },
+        {
+          "to": "5,2:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "out"
+        },
+        {
+          "to": "6,1:1",
+          "paid": 1,
+          "points": 1,
+          "mode": "paid",
+          "direction": "cw"
+        },
+        {
+          "to": "6,1:0",
+          "paid": 0,
+          "points": 1,
+          "mode": "company",
+          "direction": "cw"
+        }
+      ]
+    }
+  ],
+  "phaseRows": [
+    {
+      "rocketId": 3,
+      "goal": "mercury",
+      "activeUnused": {
+        "paid": 4,
+        "steps": 5,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "ccw",
+            "paid": 4,
+            "steps": 5
+          },
+          {
+            "mode": "company",
+            "direction": "in",
+            "paid": 4,
+            "steps": 5
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 5,
+        "steps": 5,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 5,
+            "steps": 5
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 5,
+        "steps": 5
+      }
+    },
+    {
+      "rocketId": 3,
+      "goal": "venus",
+      "activeUnused": {
+        "paid": 2,
+        "steps": 3,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "ccw",
+            "paid": 2,
+            "steps": 3
+          },
+          {
+            "mode": "company",
+            "direction": "in",
+            "paid": 2,
+            "steps": 3
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 3,
+        "steps": 3,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 3,
+            "steps": 3
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 3,
+        "steps": 3
+      }
+    },
+    {
+      "rocketId": 3,
+      "goal": "mars",
+      "activeUnused": {
+        "paid": 0,
+        "steps": 0,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 0,
+            "steps": 0
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 0,
+        "steps": 0,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 0,
+            "steps": 0
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 0,
+        "steps": 0
+      }
+    },
+    {
+      "rocketId": 3,
+      "goal": "jupiter",
+      "activeUnused": {
+        "paid": 3,
+        "steps": 4,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "ccw",
+            "paid": 3,
+            "steps": 4
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 4,
+        "steps": 4,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 4,
+            "steps": 4
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 4,
+        "steps": 4
+      }
+    },
+    {
+      "rocketId": 3,
+      "goal": "saturn",
+      "activeUnused": {
+        "paid": 2,
+        "steps": 2,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "out",
+            "paid": 2,
+            "steps": 2
+          },
+          {
+            "mode": "company",
+            "direction": "cw",
+            "paid": 2,
+            "steps": 2
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 3,
+        "steps": 2,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 3,
+            "steps": 2
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 3,
+        "steps": 2
+      }
+    },
+    {
+      "rocketId": 3,
+      "goal": "neptune",
+      "activeUnused": {
+        "paid": 5,
+        "steps": 6,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "ccw",
+            "paid": 5,
+            "steps": 6
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 6,
+        "steps": 6,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 6,
+            "steps": 6
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 6,
+        "steps": 6
+      }
+    },
+    {
+      "rocketId": 3,
+      "goal": "uranus",
+      "activeUnused": {
+        "paid": 3,
+        "steps": 3,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "out",
+            "paid": 3,
+            "steps": 3
+          },
+          {
+            "mode": "company",
+            "direction": "cw",
+            "paid": 3,
+            "steps": 3
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 4,
+        "steps": 3,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 4,
+            "steps": 3
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 4,
+        "steps": 3
+      }
+    },
+    {
+      "rocketId": 3,
+      "goal": "asteroid-position",
+      "activeUnused": {
+        "paid": 0,
+        "steps": 1,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "out",
+            "paid": 0,
+            "steps": 1
+          },
+          {
+            "mode": "company",
+            "direction": "cw",
+            "paid": 0,
+            "steps": 1
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 1,
+        "steps": 1,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 1,
+            "steps": 1
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 1,
+        "steps": 1
+      }
+    },
+    {
+      "rocketId": 2,
+      "goal": "mercury",
+      "activeUnused": {
+        "paid": 3,
+        "steps": 4,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "ccw",
+            "paid": 3,
+            "steps": 4
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 4,
+        "steps": 4,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 4,
+            "steps": 4
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 4,
+        "steps": 4
+      }
+    },
+    {
+      "rocketId": 2,
+      "goal": "venus",
+      "activeUnused": {
+        "paid": 1,
+        "steps": 2,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "ccw",
+            "paid": 1,
+            "steps": 2
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 2,
+        "steps": 2,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 2,
+            "steps": 2
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 2,
+        "steps": 2
+      }
+    },
+    {
+      "rocketId": 2,
+      "goal": "mars",
+      "activeUnused": {
+        "paid": 0,
+        "steps": 1,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "out",
+            "paid": 0,
+            "steps": 1
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 1,
+        "steps": 1,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 1,
+            "steps": 1
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 1,
+        "steps": 1
+      }
+    },
+    {
+      "rocketId": 2,
+      "goal": "jupiter",
+      "activeUnused": {
+        "paid": 4,
+        "steps": 5,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "out",
+            "paid": 4,
+            "steps": 5
+          },
+          {
+            "mode": "company",
+            "direction": "ccw",
+            "paid": 4,
+            "steps": 5
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 5,
+        "steps": 5,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 5,
+            "steps": 5
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 5,
+        "steps": 5
+      }
+    },
+    {
+      "rocketId": 2,
+      "goal": "saturn",
+      "activeUnused": {
+        "paid": 3,
+        "steps": 3,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "out",
+            "paid": 3,
+            "steps": 3
+          },
+          {
+            "mode": "company",
+            "direction": "cw",
+            "paid": 3,
+            "steps": 3
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 4,
+        "steps": 3,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 4,
+            "steps": 3
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 4,
+        "steps": 3
+      }
+    },
+    {
+      "rocketId": 2,
+      "goal": "neptune",
+      "activeUnused": {
+        "paid": 6,
+        "steps": 7,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "out",
+            "paid": 6,
+            "steps": 7
+          },
+          {
+            "mode": "company",
+            "direction": "cw",
+            "paid": 6,
+            "steps": 7
+          },
+          {
+            "mode": "company",
+            "direction": "ccw",
+            "paid": 6,
+            "steps": 7
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 7,
+        "steps": 7,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 7,
+            "steps": 7
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 7,
+        "steps": 7
+      }
+    },
+    {
+      "rocketId": 2,
+      "goal": "uranus",
+      "activeUnused": {
+        "paid": 4,
+        "steps": 4,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "out",
+            "paid": 4,
+            "steps": 4
+          },
+          {
+            "mode": "company",
+            "direction": "cw",
+            "paid": 4,
+            "steps": 4
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 5,
+        "steps": 4,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 5,
+            "steps": 4
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 5,
+        "steps": 4
+      }
+    },
+    {
+      "rocketId": 2,
+      "goal": "asteroid-position",
+      "activeUnused": {
+        "paid": 1,
+        "steps": 2,
+        "next": [
+          {
+            "mode": "company",
+            "direction": "out",
+            "paid": 1,
+            "steps": 2
+          },
+          {
+            "mode": "company",
+            "direction": "cw",
+            "paid": 1,
+            "steps": 2
+          }
+        ]
+      },
+      "activeUsed": {
+        "paid": 2,
+        "steps": 2,
+        "next": [
+          {
+            "mode": "finish-company",
+            "paid": 2,
+            "steps": 2
+          }
+        ]
+      },
+      "unavailable": {
+        "paid": 2,
+        "steps": 2
+      }
+    }
+  ],
+  "wallMs": 9.252499999999998,
+  "verified": true
+}

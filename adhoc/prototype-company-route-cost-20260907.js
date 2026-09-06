@@ -3,7 +3,8 @@ const fs = require("node:fs"), assert = require("node:assert/strict");
 const rockets = require("../randomizer/game/rockets"), solar = require("../randomizer/solar-system/core");
 const ability = require("../randomizer/game/abilities/rocket");
 const input = "reports/iteration/company-hot-prefix-20260907.json";
-const output = "reports/iteration/company-route-cost-20260907.json";
+const verifyPhases = process.argv.includes("--phases");
+const output = verifyPhases ? "reports/iteration/company-route-phases-20260907.json" : "reports/iteration/company-route-cost-20260907.json";
 const key = (c, free) => `${c.x},${c.y}:${free}`;
 const better = (a,b) => !b || a.paid < b.paid || (a.paid === b.paid && a.steps < b.steps);
 const equal = (a,b) => a && b && a.paid === b.paid && a.steps === b.steps;
@@ -42,7 +43,7 @@ else {
   const goals = solar.createSolarSnapshot(root.solarSystem).planetLocations.filter(c=>c.planetId !== "earth")
     .map(c=>({id:c.planetId,coordinates:[c]}));
   goals.push({id:"asteroid-position",coordinates:locations.filter(c=>solar.resolveVisibleContent(c.x,c.y,root.solarSystem)?.content?.kind === solar.layout.CONTENT_KIND.ASTEROID)});
-  const report = {scope:"当前可达后段公司边界的带一次免费步路线费用原型；非生产搜索、不含终点费用/奖励/动态准备，最短路不证明收益支配",input,rows:[]};
+  const report = {scope:"当前可达后段公司边界的带一次免费步路线费用原型；非生产搜索、不含终点费用/奖励/动态准备，最短路不证明收益支配",input,rows:[],phaseRows:[]};
   const started = performance.now();
   for (const rocket of rockets.getRocketsForPlayer(root.pieces,player.id).filter(r=>r.surface === "solar-board")) {
     const graph = new Map();
@@ -62,6 +63,24 @@ else {
     for (const goal of goals) {
       assert.ok(goal.coordinates.length);
       const {distances,expanded} = solve(graph,goal.coordinates.flatMap(c=>[key(c,0),key(c,1)]));
+      if (verifyPhases) {
+        const without = distances.get(key(coordinate,0));
+        const finish = {mode:"finish-company",...without};
+        const now = [finish,...graph.get(key(coordinate,1)).filter(e=>e.mode === "company").map(e=>{
+          const tail = distances.get(e.to);
+          assert.ok(tail);
+          return {mode:e.mode,direction:e.direction,paid:tail.paid,steps:tail.steps+1};
+        })];
+        const best = now.reduce((a,b)=>better(b,a)?b:a);
+        const next = now.filter(c=>equal(c,best));
+        assert.ok(next.every(c=>c.mode === "company" || c.mode === "finish-company"));
+        for (const c of next) assert.ok(fixture.companyChoices.some(a=>c.mode === "finish-company"
+          ? a.target.skip : a.target.rocketId === rocket.id && a.payload.direction === c.direction));
+        report.phaseRows.push({rocketId:rocket.id,goal:goal.id,
+          activeUnused:{paid:best.paid,steps:best.steps,next},
+          activeUsed:{...without,next:[finish]},
+          unavailable:without});
+      }
       for (const free of [0,1]) {
         const from = key(coordinate,free), best = distances.get(from);
         assert.ok(best, `${rocket.id}/${goal.id}应几何可达`);
@@ -84,5 +103,6 @@ else {
   report.wallMs = performance.now()-started;
   report.verified = true;
   fs.writeFileSync(output,JSON.stringify(report,null,2)+"\n");
-  console.log(JSON.stringify({output,verified:true,wallMs:report.wallMs,rows:report.rows.map(r=>({rocket:r.rocketId,goal:r.goal,free:r.free,paid:r.paid,steps:r.steps,next:r.next.map(e=>`${e.mode}:${e.direction}`)}))},null,2));
+  console.log(JSON.stringify({output,verified:true,wallMs:report.wallMs,phaseRows:report.phaseRows,
+    rows:verifyPhases ? report.rows.length : report.rows.map(r=>({rocket:r.rocketId,goal:r.goal,free:r.free,paid:r.paid,steps:r.steps,next:r.next.map(e=>`${e.mode}:${e.direction}`)}))},null,2));
 }
