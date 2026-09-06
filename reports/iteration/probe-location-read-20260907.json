@@ -1,0 +1,141 @@
+{
+  "scope": "真实42检查点与已正式执行到火星的位置输入，比较卡牌正式位置读模型与盘面；不运行AI，不改变生产状态",
+  "cases": [
+    {
+      "label": "真实42根位置",
+      "observed": {
+        "details": [
+          {
+            "playerId": "player-green",
+            "color": "green",
+            "sectorX": 5,
+            "sectorY": 1,
+            "locationType": "solar",
+            "adjacentToEarth": false,
+            "planetId": null
+          },
+          {
+            "playerId": "player-green",
+            "color": "green",
+            "sectorX": 5,
+            "sectorY": 1,
+            "locationType": "solar",
+            "adjacentToEarth": false,
+            "planetId": null
+          }
+        ],
+        "index": {
+          "player-green": [
+            "solar"
+          ],
+          "green": [
+            "solar"
+          ]
+        }
+      },
+      "board": [
+        {
+          "rocketId": 1,
+          "playerId": "player-green",
+          "x": 5,
+          "y": 1,
+          "content": {
+            "x": 5,
+            "y": 1,
+            "kind": "planet",
+            "planetId": "earth",
+            "label": "地球",
+            "tags": [
+              "launch_origin"
+            ]
+          }
+        },
+        {
+          "rocketId": 2,
+          "playerId": "player-green",
+          "x": 5,
+          "y": 1,
+          "content": {
+            "x": 5,
+            "y": 1,
+            "kind": "planet",
+            "planetId": "earth",
+            "label": "地球",
+            "tags": [
+              "launch_origin"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "label": "已保存的正式火星到达位置",
+      "observed": {
+        "details": [
+          {
+            "playerId": "player-green",
+            "color": "green",
+            "sectorX": 5,
+            "sectorY": 2,
+            "locationType": "solar",
+            "adjacentToEarth": true,
+            "planetId": null
+          },
+          {
+            "playerId": "player-green",
+            "color": "green",
+            "sectorX": 5,
+            "sectorY": 1,
+            "locationType": "solar",
+            "adjacentToEarth": false,
+            "planetId": null
+          }
+        ],
+        "index": {
+          "player-green": [
+            "solar"
+          ],
+          "green": [
+            "solar"
+          ]
+        }
+      },
+      "board": [
+        {
+          "rocketId": 1,
+          "playerId": "player-green",
+          "x": 5,
+          "y": 2,
+          "content": {
+            "x": 2,
+            "y": 2,
+            "kind": "planet",
+            "planetId": "mars",
+            "label": "火星",
+            "tags": [
+              "orbit_target",
+              "landing_target"
+            ]
+          }
+        },
+        {
+          "rocketId": 2,
+          "playerId": "player-green",
+          "x": 5,
+          "y": 1,
+          "content": {
+            "x": 5,
+            "y": 1,
+            "kind": "planet",
+            "planetId": "earth",
+            "label": "地球",
+            "tags": [
+              "launch_origin"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "reproduced": true
+}
