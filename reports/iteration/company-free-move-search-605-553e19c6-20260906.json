@@ -1,0 +1,968 @@
+{
+  "commit": "553e19c6",
+  "step": 605,
+  "scope": "真实605单决策搜索；非全盘验收",
+  "wallMs": 26177.623291,
+  "policyDecision": {
+    "schemaVersion": "seti-policy-decision-v1",
+    "requestId": "heuristic-decision:player-green:300:18",
+    "seatId": "player-green",
+    "stateVersion": 300,
+    "decisionVersion": 18,
+    "actionId": "land:1cbade2c",
+    "policy": {
+      "type": "heuristic",
+      "version": "seti-heuristic-policy-v0",
+      "modelChecksum": null
+    },
+    "diagnostics": {
+      "reasonCode": "heuristic:land",
+      "traceId": "heuristic-decision:player-green:300:18:20282f5c"
+    }
+  },
+  "plan": {
+    "schemaVersion": "seti-action-plan-v2",
+    "nextActionId": "choose_target:c27f9d6e",
+    "steps": [
+      {
+        "actionId": "choose_target:c27f9d6e",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"alienSlotId\":2,\"choiceId\":\"trace:2:yellow:amiba:4\",\"kind\":\"planet-reward-alien-trace\",\"position\":4,\"speciesId\":\"amiba\",\"traceType\":\"yellow\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:yellow"
+            },
+            "fact": {
+              "extraCount": 1,
+              "extraMarkers": [
+                {
+                  "ownerPlayerColor": "brown"
+                }
+              ],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_card:30b94504",
+        "actionKey": "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardIndex\":9,\"choiceId\":\"amiba:display:9\",\"kind\":\"residual-domain\",\"source\":\"display\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": []
+      },
+      {
+        "actionId": "quick_trade:76cce73d",
+        "actionKey": "{\"family\":\"quick_trade\",\"payload\":{\"cost\":{\"publicity\":3},\"gain\":{\"handSize\":1}},\"target\":{\"tradeId\":\"publicity-for-card\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card",
+              "id": "card-104-0"
+            },
+            "fact": {
+              "id": "card-104-0",
+              "cardId": "b_124.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "card",
+              "id": "card-105-0"
+            },
+            "fact": {
+              "id": "card-105-0",
+              "cardId": "b_123.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_card:659cd869",
+        "actionKey": "{\"family\":\"choose_card\",\"payload\":{\"slotIndex\":0},\"target\":{\"cardInstanceId\":\"card-104-0\",\"choiceId\":\"public:0\",\"kind\":\"trade-card-selection\",\"slotIndex\":0,\"source\":\"public\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card",
+              "id": "card-104-0"
+            },
+            "fact": {
+              "id": "card-104-0",
+              "cardId": "b_124.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "card",
+              "id": "card-105-0"
+            },
+            "fact": {
+              "id": "card-105-0",
+              "cardId": "b_123.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "quick_trade:76cce73d",
+        "actionKey": "{\"family\":\"quick_trade\",\"payload\":{\"cost\":{\"publicity\":3},\"gain\":{\"handSize\":1}},\"target\":{\"tradeId\":\"publicity-for-card\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card",
+              "id": "card-105-0"
+            },
+            "fact": {
+              "id": "card-105-0",
+              "cardId": "b_123.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_card:751627db",
+        "actionKey": "{\"family\":\"choose_card\",\"payload\":{\"slotIndex\":1},\"target\":{\"cardInstanceId\":\"card-105-0\",\"choiceId\":\"public:1\",\"kind\":\"trade-card-selection\",\"slotIndex\":1,\"source\":\"public\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card",
+              "id": "card-105-0"
+            },
+            "fact": {
+              "id": "card-105-0",
+              "cardId": "b_123.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "quick_trade:0037d2c5",
+        "actionKey": "{\"family\":\"quick_trade\",\"payload\":{\"cost\":{\"handSize\":2},\"gain\":{\"energy\":1}},\"target\":{\"tradeId\":\"cards-for-energy\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_payment:6100767f",
+        "actionKey": "{\"family\":\"choose_payment\",\"payload\":{},\"target\":{\"cardInstanceId\":\"alien-amiba-9-19\",\"kind\":\"discard-hand-card\",\"select\":true}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_payment:3fdfef16",
+        "actionKey": "{\"family\":\"choose_payment\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-107-0\",\"kind\":\"discard-hand-card\",\"select\":true}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_payment:c54ec275",
+        "actionKey": "{\"family\":\"choose_payment\",\"payload\":{},\"target\":{\"confirm\":true,\"kind\":\"confirm\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "quick_trade:0037d2c5",
+        "actionKey": "{\"family\":\"quick_trade\",\"payload\":{\"cost\":{\"handSize\":2},\"gain\":{\"energy\":1}},\"target\":{\"tradeId\":\"cards-for-energy\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_payment:bd37e0bb",
+        "actionKey": "{\"family\":\"choose_payment\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-104-0\",\"kind\":\"discard-hand-card\",\"select\":true}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_payment:15db0870",
+        "actionKey": "{\"family\":\"choose_payment\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-105-0\",\"kind\":\"discard-hand-card\",\"select\":true}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_payment:c54ec275",
+        "actionKey": "{\"family\":\"choose_payment\",\"payload\":{},\"target\":{\"confirm\":true,\"kind\":\"confirm\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "end_turn:1f65daa3",
+        "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "launch:70d77c1b",
+        "actionKey": "{\"family\":\"launch\",\"payload\":{},\"target\":{}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "launch"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "launch:land:mars:planet:",
+                "sourceId": "launch",
+                "rocketId": null,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "move:7f043047",
+        "actionKey": "{\"family\":\"move\",\"payload\":{\"direction\":\"out\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":0,\"deltaY\":1,\"rocketId\":14}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "rocket:14"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "rocket:14:land:mars:planet:",
+                "sourceId": "rocket:14",
+                "rocketId": 14,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_payment:56560af3",
+        "actionKey": "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "rocket:14"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "rocket:14:land:mars:planet:",
+                "sourceId": "rocket:14",
+                "rocketId": 14,
+                "movementSteps": 1,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "end_turn:1f65daa3",
+        "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "rocket:14"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "rocket:14:land:mars:planet:",
+                "sourceId": "rocket:14",
+                "rocketId": 14,
+                "movementSteps": 0,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "land:1cbade2c",
+        "actionKey": "{\"family\":\"land\",\"payload\":{},\"target\":{\"select\":true}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "rocket:14"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "rocket:14:land:mars:planet:",
+                "sourceId": "rocket:14",
+                "rocketId": 14,
+                "movementSteps": 0,
+                "markers": 4
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:7158dcad",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"alienSlotId\":1,\"choiceId\":\"trace:1:yellow:state-extra\",\"kind\":\"planet-reward-alien-trace\",\"stateExtra\":true,\"traceType\":\"yellow\"}}",
+        "actorId": "player-green",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:yellow"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "green"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "searches": [
+    {
+      "kind": "control",
+      "diagnostics": {
+        "executedNodeCount": 1,
+        "maxExecutionNodes": 1,
+        "executionLimitReached": false,
+        "successfulInputSubmissionCount": 1,
+        "attemptedNodeCountByFamily": {
+          "pass": 1
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "pass": 1
+        },
+        "executedNodeCountByDecisionKind": {
+          "pass:pass": 1
+        },
+        "executedNodeCountByActionSummary": {
+          "pass:PASS": 1
+        },
+        "executedOriginCountByTarget": {
+          "<unbound>": 1
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "<unbound> -> pass:pass": 1
+        },
+        "frontierOriginCountByFamily": {},
+        "totalMilliseconds": 12.754541999999987
+      }
+    },
+    {
+      "kind": "strategic",
+      "diagnostics": {
+        "executedNodeCount": 4096,
+        "maxExecutionNodes": 4096,
+        "executionLimitReached": true,
+        "successfulInputSubmissionCount": 4280,
+        "attemptedNodeCountByFamily": {
+          "analyze": 20,
+          "choose_card": 183,
+          "choose_target": 3418,
+          "end_turn": 77,
+          "industry": 108,
+          "land": 12,
+          "launch": 20,
+          "move": 104,
+          "pass": 69,
+          "place_data": 17,
+          "quick_trade": 56,
+          "research_tech": 5,
+          "scan": 7
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "analyze": 20,
+          "choose_card": 183,
+          "choose_target": 3418,
+          "end_turn": 77,
+          "industry": 108,
+          "land": 12,
+          "launch": 20,
+          "move": 104,
+          "pass": 69,
+          "place_data": 17,
+          "quick_trade": 56,
+          "research_tech": 5,
+          "scan": 7
+        },
+        "executedNodeCountByDecisionKind": {
+          "analyze:computer": 20,
+          "choose_card:<none>": 7,
+          "choose_card:residual-domain": 160,
+          "choose_card:trade-card-selection": 16,
+          "choose_target:<none>": 27,
+          "choose_target:planet-reward-alien-trace": 186,
+          "choose_target:residual-domain": 3205,
+          "end_turn:end-turn": 77,
+          "industry:<none>": 108,
+          "land:<none>": 12,
+          "launch:<none>": 20,
+          "move:<none>": 104,
+          "pass:pass": 69,
+          "place_data:place-data": 17,
+          "quick_trade:<none>": 56,
+          "research_tech:research-tech": 5,
+          "scan:standard-scan": 7
+        },
+        "executedNodeCountByActionSummary": {
+          "choose_target:结束移动": 684,
+          "choose_target:移动 14 向外": 392,
+          "choose_target:移动 14 逆时针": 391,
+          "choose_target:移动 14 顺时针": 391,
+          "choose_target:移动 12 向外": 382,
+          "choose_target:移动 12 逆时针": 382,
+          "choose_target:移动 12 顺时针": 382,
+          "choose_target:移动 12 向内": 139,
+          "industry:寰宇动力 1x 行动": 108,
+          "end_turn:结束回合": 77,
+          "pass:PASS": 69,
+          "choose_target:移动 14 向内": 66,
+          "choose_card:盲抽阿米巴牌": 60,
+          "choose_card:获得展示的低重力研究": 42,
+          "move:移动探测器 12 逆时针": 21,
+          "quick_trade:2张牌 → 1能量": 21,
+          "analyze:分析": 20,
+          "choose_card:盲抽虫牌": 20,
+          "choose_card:获得展示的火星隔离实验室": 20,
+          "choose_target:外星人 1 蓝7号位（化石奖励）": 20,
+          "choose_target:外星人 1 蓝8号位（3分+外星人牌）": 20,
+          "choose_target:外星人 1 额外痕迹位（3分）": 20,
+          "choose_target:外星人 2 蓝3号位（外星人牌）": 20,
+          "choose_target:外星人 2 蓝4号位（1分+外星人牌）": 20,
+          "choose_target:外星人 2 额外痕迹位（3分）": 20,
+          "launch:发射": 20,
+          "move:移动探测器 12 向外": 20,
+          "quick_trade:2信用点 → 1能量": 19,
+          "choose_card:获得展示的生物特征筛选": 18,
+          "move:移动探测器 12 顺时针": 18,
+          "place_data:放置数据": 17,
+          "move:移动探测器 14 向外": 16,
+          "quick_trade:3宣传 → 精选1张牌": 16,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 额外痕迹位（3分）": 12,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 额外痕迹位（3分）": 12,
+          "land:登陆": 12,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄1号位": 11,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄2号位（1分）": 11,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄3号位（外星人牌）": 10,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄4号位（1分+外星人牌）": 10,
+          "move:移动探测器 14 逆时针": 10,
+          "move:移动探测器 14 顺时针": 10,
+          "move:移动探测器 12 向内": 9,
+          "choose_card:b_123.webp": 7,
+          "choose_card:b_124.webp": 7,
+          "choose_card:b_126.webp → 南河三": 7,
+          "choose_target:扫描 开普勒22": 7,
+          "scan:扫描": 7,
+          "choose_target:研究 blue1（蓝槽 1）": 5,
+          "choose_target:研究 blue2（蓝槽 1）": 5,
+          "choose_target:研究 purple2": 5,
+          "research_tech:研究科技": 5,
+          "choose_card:b_38.webp": 1,
+          "choose_card:b_96.webp": 1,
+          "choose_target:跳过": 1
+        },
+        "executedOriginCountByTarget": {
+          "decision:choose_target:1360e6f3": 481,
+          "decision:choose_target:b07c6d82": 476,
+          "decision:choose_target:db6191cb": 476,
+          "decision:choose_target:4667ceea": 472,
+          "decision:choose_target:552a0363": 472,
+          "decision:choose_target:57e19c07": 472,
+          "<unbound>": 331,
+          "data:analyze": 320,
+          "decision:choose_target:011654e8": 170,
+          "land:mars:planet:": 131,
+          "decision:choose_target:49d31bca": 105,
+          "decision:choose_target:85b59188": 81,
+          "sector:win:sector-1-a:4": 77,
+          "land:uranus:planet:": 42,
+          "land:saturn:planet:": 26,
+          "tech:gain:blue1": 10,
+          "tech:gain:blue2": 10,
+          "tech:gain:purple2": 10,
+          "land:mercury:planet:": 3
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "decision:choose_target:1360e6f3 -> choose_target:residual-domain": 481,
+          "decision:choose_target:b07c6d82 -> choose_target:residual-domain": 476,
+          "decision:choose_target:db6191cb -> choose_target:residual-domain": 476,
+          "decision:choose_target:4667ceea -> choose_target:residual-domain": 472,
+          "decision:choose_target:552a0363 -> choose_target:residual-domain": 472,
+          "decision:choose_target:57e19c07 -> choose_target:residual-domain": 472,
+          "decision:choose_target:011654e8 -> choose_target:residual-domain": 170,
+          "data:analyze -> choose_card:residual-domain": 120,
+          "data:analyze -> choose_target:planet-reward-alien-trace": 120,
+          "<unbound> -> industry:<none>": 108,
+          "decision:choose_target:49d31bca -> choose_target:residual-domain": 105,
+          "<unbound> -> move:<none>": 88,
+          "decision:choose_target:85b59188 -> choose_target:residual-domain": 81,
+          "<unbound> -> pass:pass": 69,
+          "<unbound> -> end_turn:end-turn": 52,
+          "land:mars:planet: -> choose_target:planet-reward-alien-trace": 36,
+          "sector:win:sector-1-a:4 -> quick_trade:<none>": 29,
+          "land:mars:planet: -> quick_trade:<none>": 28,
+          "data:analyze -> quick_trade:<none>": 23,
+          "data:analyze -> analyze:computer": 20,
+          "land:mars:planet: -> choose_card:residual-domain": 20,
+          "land:uranus:planet: -> choose_target:planet-reward-alien-trace": 18,
+          "data:analyze -> place_data:place-data": 17,
+          "sector:win:sector-1-a:4 -> choose_card:trade-card-selection": 16,
+          "<unbound> -> launch:<none>": 14,
+          "land:mars:planet: -> choose_card:trade-card-selection": 14,
+          "land:mars:planet: -> end_turn:end-turn": 12,
+          "land:saturn:planet: -> choose_target:planet-reward-alien-trace": 12,
+          "land:uranus:planet: -> choose_card:residual-domain": 12,
+          "sector:win:sector-1-a:4 -> choose_target:<none>": 12,
+          "data:analyze -> end_turn:end-turn": 10,
+          "land:mars:planet: -> move:<none>": 8,
+          "land:saturn:planet: -> choose_card:residual-domain": 8,
+          "land:mars:planet: -> land:<none>": 7,
+          "sector:win:sector-1-a:4 -> choose_card:<none>": 7,
+          "sector:win:sector-1-a:4 -> scan:standard-scan": 7,
+          "data:analyze -> choose_target:<none>": 6,
+          "land:mars:planet: -> launch:<none>": 6,
+          "sector:win:sector-1-a:4 -> end_turn:end-turn": 6,
+          "tech:gain:blue1 -> choose_target:<none>": 5,
+          "tech:gain:blue1 -> research_tech:research-tech": 5,
+          "tech:gain:blue2 -> choose_target:<none>": 5,
+          "tech:gain:blue2 -> research_tech:research-tech": 5,
+          "tech:gain:purple2 -> choose_target:<none>": 5,
+          "tech:gain:purple2 -> research_tech:research-tech": 5,
+          "land:mercury:planet: -> move:<none>": 3,
+          "land:uranus:planet: -> end_turn:end-turn": 3,
+          "land:uranus:planet: -> land:<none>": 3,
+          "land:uranus:planet: -> move:<none>": 3,
+          "land:uranus:planet: -> quick_trade:<none>": 3,
+          "data:analyze -> choose_card:trade-card-selection": 2,
+          "land:saturn:planet: -> land:<none>": 2,
+          "land:saturn:planet: -> move:<none>": 2,
+          "land:saturn:planet: -> quick_trade:<none>": 2,
+          "data:analyze -> choose_card:<none>": 1,
+          "data:analyze -> scan:standard-scan": 1
+        },
+        "frontierOriginCountByFamily": {
+          "pass": 78,
+          "move": 52,
+          "end_turn": 44,
+          "launch": 26,
+          "research_tech": 24,
+          "choose_target": 17,
+          "industry": 16,
+          "scan": 6,
+          "land": 5,
+          "quick_trade": 4,
+          "orbit": 3
+        },
+        "totalMilliseconds": 13358.146375
+      }
+    }
+  ],
+  "outcomes": [
+    {
+      "actionId": "launch:70d77c1b",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "orbit:0372d487",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "land:1cbade2c",
+      "status": "settled",
+      "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+      "message": null,
+      "leaves": 264
+    },
+    {
+      "actionId": "research_tech:f86fc96a",
+      "status": "settled",
+      "code": "COUNTERFACTUAL_SEARCH_PRUNED",
+      "message": null,
+      "leaves": 2746
+    },
+    {
+      "actionId": "pass:ff716055",
+      "status": "settled",
+      "code": null,
+      "message": null,
+      "leaves": 1
+    },
+    {
+      "actionId": "move:f7da222d",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "move:5212ef59",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "move:0c89471d",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "move:4c45c4af",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:ee5652be",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:90440450",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "quick_trade:76cce73d",
+      "status": "settled",
+      "code": null,
+      "message": null,
+      "leaves": 10
+    },
+    {
+      "actionId": "quick_trade:16a0f2d7",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    },
+    {
+      "actionId": "industry:5bda1856",
+      "status": "unresolved",
+      "code": "STRATEGIC_GOAL_NOT_EVALUATED",
+      "leaves": 0
+    }
+  ],
+  "passed": true
+}

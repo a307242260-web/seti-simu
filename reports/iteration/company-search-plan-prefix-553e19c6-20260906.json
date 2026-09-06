@@ -1,0 +1,102 @@
+{
+  "scope": "复用已完成搜索，正式提交当前回合计划前缀；不代替未来回合依赖复核",
+  "steps": [
+    {
+      "actionId": "land:1cbade2c",
+      "summary": "登陆",
+      "family": "land",
+      "ok": true
+    },
+    {
+      "actionId": "choose_target:c27f9d6e",
+      "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄4号位（1分+外星人牌）",
+      "family": "choose_target",
+      "ok": true
+    },
+    {
+      "actionId": "choose_card:30b94504",
+      "summary": "获得展示的低重力研究",
+      "family": "choose_card",
+      "ok": true
+    },
+    {
+      "actionId": "quick_trade:76cce73d",
+      "summary": "3宣传 → 精选1张牌",
+      "family": "quick_trade",
+      "ok": true
+    },
+    {
+      "actionId": "choose_card:659cd869",
+      "summary": "b_124.webp",
+      "family": "choose_card",
+      "ok": true
+    },
+    {
+      "actionId": "quick_trade:76cce73d",
+      "summary": "3宣传 → 精选1张牌",
+      "family": "quick_trade",
+      "ok": true
+    },
+    {
+      "actionId": "choose_card:751627db",
+      "summary": "b_123.webp",
+      "family": "choose_card",
+      "ok": true
+    },
+    {
+      "actionId": "quick_trade:0037d2c5",
+      "summary": "2张牌 → 1能量",
+      "family": "quick_trade",
+      "ok": true
+    },
+    {
+      "actionId": "choose_payment:6100767f",
+      "summary": "amiba_9.webp",
+      "family": "choose_payment",
+      "ok": true
+    },
+    {
+      "actionId": "choose_payment:3fdfef16",
+      "summary": "b_121.webp",
+      "family": "choose_payment",
+      "ok": true
+    },
+    {
+      "actionId": "choose_payment:c54ec275",
+      "summary": "确认弃牌（2/2）",
+      "family": "choose_payment",
+      "ok": true
+    },
+    {
+      "actionId": "quick_trade:0037d2c5",
+      "summary": "2张牌 → 1能量",
+      "family": "quick_trade",
+      "ok": true
+    },
+    {
+      "actionId": "choose_payment:bd37e0bb",
+      "summary": "b_124.webp",
+      "family": "choose_payment",
+      "ok": true
+    },
+    {
+      "actionId": "choose_payment:15db0870",
+      "summary": "b_123.webp",
+      "family": "choose_payment",
+      "ok": true
+    },
+    {
+      "actionId": "choose_payment:c54ec275",
+      "summary": "确认弃牌（2/2）",
+      "family": "choose_payment",
+      "ok": true
+    },
+    {
+      "actionId": "end_turn:1f65daa3",
+      "summary": "结束回合",
+      "family": "end_turn",
+      "ok": true
+    }
+  ],
+  "passed": true
+}
