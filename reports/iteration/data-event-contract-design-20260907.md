@@ -54,7 +54,10 @@ placementSlot/blueSlot的AI与projection消费者读取正式token或Action targ
 data.test、Science单元、语法及V输入审计通过。42冷决策15.374秒，4096节点、
 4804正式输入、0规则失败，30个计划输入正式重放成功，根place_data:dbe01b29不变。
 证据data-event-decision-42-20260907.json。不是搜索超额解决或稳定提速证明。
-408冷决策、唯一完整局及最终效果验收尚待执行；前版支付差异因果仍未关闭。
+408冷决策已通过：13.303秒、4096节点、4928正式输入、0规则失败，21个计划输入
+正式重放成功，根launch:70d77c1b；证据data-event-decision-408-20260907.json。
+只读工具支持显式检查点路径，默认42路径不变；直接检查点schema先核对为
+seti-rl-checkpoint-v1。唯一完整局及最终效果验收尚待执行；前版支付差异因果仍未关闭。
 
 文档核对覆盖RL接口、mechanics、AI设计、README/AGENTS与测试清单；只有RL事件
 契约、测试职责和本设计受影响，已同步。浏览器装配、部署入口及正式数据规则未变。

@@ -2,13 +2,15 @@
 const fs = require("node:fs"), assert = require("node:assert/strict");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const output = process.argv[2] || "reports/iteration/probe-location-decision-42-20260907.json";
+const checkpointPath = process.argv[3] || "reports/iteration/company-movement-input-42-20260906.json";
 if (fs.existsSync(output)) console.log(`已有验证：${output}`);
 else {
   const env = createSimulationEnv();
-  const report = { scope: "位置读取修复后真实42单次冷决策及完整计划正式fork重放；不声称移动需求剪枝完成", steps: [] };
+  const report = { scope: "指定真实检查点单次冷决策及完整计划正式fork重放；不声称移动需求剪枝完成", checkpointPath, steps: [] };
   let fork, pendingAdvance = false;
   try {
-    const cp = JSON.parse(fs.readFileSync("reports/iteration/company-movement-input-42-20260906.json")).checkpoint;
+    const source = JSON.parse(fs.readFileSync(checkpointPath));
+    const cp = source.schemaVersion === "seti-rl-checkpoint-v1" ? source : source.checkpoint;
     delete cp.replaySteps;
     env.loadCheckpoint(cp);
     fork = env.createCounterfactualFork().composition;
@@ -19,7 +21,7 @@ else {
     report.actionId = result.policyDecision.actionId;
     report.plan = result.plan;
     assert.equal(typeof report.actionId, "string");
-    assert.ok(report.plan && Array.isArray(report.plan.steps), "真实42应有完整优胜计划");
+    assert.ok(report.plan && Array.isArray(report.plan.steps), "该检查点应有完整优胜计划");
     assert.deepEqual(report.diagnostics.failedNodeCountByCode, {});
     assert.equal(report.diagnostics.maxExecutionNodes, 4096);
     assert.ok(report.wallMs < 30000, "真实单决策须在既有30秒期限内完成调用");
