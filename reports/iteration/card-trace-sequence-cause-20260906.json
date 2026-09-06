@@ -1,0 +1,33 @@
+{
+  "scope": "真实466状态克隆，分别验证当前卡牌空options与只补序号；不修改生产、不重跑AI",
+  "slotId": 2,
+  "traceType": "yellow",
+  "position": 1,
+  "missingSequenceError": "阿米巴痕迹需要 canonical alienEntity sequence",
+  "sequenceOnlyResult": {
+    "ok": true,
+    "entry": {
+      "traceType": "yellow",
+      "position": 1,
+      "sequence": 14,
+      "playerId": "player-brown",
+      "playerColor": "brown",
+      "rewardApplied": true
+    },
+    "reward": {
+      "gain": {},
+      "dataCount": 0,
+      "drawCards": 0,
+      "pickCard": false,
+      "pickAlienCard": false,
+      "region": "orange"
+    },
+    "traceType": "yellow",
+    "position": 1,
+    "message": "阿米巴：放置黄色痕迹 1 号位"
+  },
+  "resourcesUnchanged": true,
+  "symbolsUnchanged": true,
+  "conclusion": "只补序号会放置成功但未结算区域奖励，必须复用正式痕迹后续结算",
+  "passed": true
+}

@@ -1,0 +1,189 @@
+{
+  "scope": "当前卡牌模型递归痕迹效果目录；另需核对运行期生成及初始牌，不冒充全仓调用闭包",
+  "count": 11,
+  "cards": [
+    "b_106.webp",
+    "b_112.webp",
+    "b_121.webp",
+    "b_27.webp",
+    "b_32.webp",
+    "b_35.webp",
+    "b_36.webp",
+    "b_51.webp",
+    "b_52.webp",
+    "b_67.webp",
+    "yichangdian_7.webp"
+  ],
+  "optionKeys": [
+    "afterTraceReward",
+    "allowedTraceTypes",
+    "requiredTraceCount",
+    "targetRule"
+  ],
+  "entries": [
+    {
+      "cardId": "b_106.webp",
+      "path": "model.playEffects.1",
+      "effect": {
+        "id": "b106-yellow-trace",
+        "type": "alien_trace",
+        "label": "获得黄色外星人痕迹",
+        "icon": "alien_yellow",
+        "options": {
+          "allowedTraceTypes": [
+            "yellow"
+          ]
+        }
+      }
+    },
+    {
+      "cardId": "b_112.webp",
+      "path": "model.playEffects.0.options.rewards.0",
+      "effect": {
+        "id": "b112-pink-trace",
+        "type": "alien_trace",
+        "label": "获得粉色外星人痕迹",
+        "icon": "alien_pink",
+        "options": {
+          "allowedTraceTypes": [
+            "pink"
+          ]
+        }
+      }
+    },
+    {
+      "cardId": "b_121.webp",
+      "path": "model.tasks.0.rewards.0",
+      "effect": {
+        "id": "b121-yellow-trace",
+        "type": "alien_trace",
+        "label": "获得黄色外星人痕迹",
+        "icon": "alien_yellow",
+        "options": {
+          "allowedTraceTypes": [
+            "yellow"
+          ]
+        }
+      }
+    },
+    {
+      "cardId": "b_27.webp",
+      "path": "model.playEffects.0",
+      "effect": {
+        "id": "b27-pink-trace",
+        "type": "alien_trace",
+        "label": "在已有粉色痕迹的外星人上再放1个粉色痕迹",
+        "icon": "alien_pink",
+        "options": {
+          "targetRule": "playerHasSameTrace",
+          "allowedTraceTypes": [
+            "pink"
+          ]
+        }
+      }
+    },
+    {
+      "cardId": "b_32.webp",
+      "path": "model.playEffects.0",
+      "effect": {
+        "id": "b32-yellow-trace",
+        "type": "alien_trace",
+        "label": "在已有黄色痕迹的外星人上再放1个黄色痕迹",
+        "icon": "alien_yellow",
+        "options": {
+          "targetRule": "playerHasSameTrace",
+          "allowedTraceTypes": [
+            "yellow"
+          ]
+        }
+      }
+    },
+    {
+      "cardId": "b_35.webp",
+      "path": "model.playEffects.0",
+      "effect": {
+        "id": "b35-blue-trace",
+        "type": "alien_trace",
+        "label": "在已有蓝色痕迹的外星人上再放1个蓝色痕迹",
+        "icon": "alien_blue",
+        "options": {
+          "targetRule": "playerHasSameTrace",
+          "allowedTraceTypes": [
+            "blue"
+          ]
+        }
+      }
+    },
+    {
+      "cardId": "b_36.webp",
+      "path": "model.playEffects.0",
+      "effect": {
+        "id": "b36-any-trace",
+        "type": "alien_trace",
+        "label": "获得任意外星人痕迹，并按该颜色痕迹数得分",
+        "icon": "alien_trace",
+        "options": {
+          "afterTraceReward": {
+            "kind": "traceCountScore",
+            "scorePer": 1
+          }
+        }
+      }
+    },
+    {
+      "cardId": "b_51.webp",
+      "path": "model.tasks.0.rewards.0",
+      "effect": {
+        "id": "b51-pink-trace-reward",
+        "type": "alien_trace",
+        "label": "3个粉色痕迹：获得1粉色痕迹",
+        "icon": "alien_pink",
+        "options": {
+          "allowedTraceTypes": [
+            "pink"
+          ]
+        }
+      }
+    },
+    {
+      "cardId": "b_52.webp",
+      "path": "model.playEffects.0.options.rewards.0",
+      "effect": {
+        "id": "b52-yellow-trace",
+        "type": "alien_trace",
+        "label": "探测器在小行星：获得1黄色痕迹",
+        "icon": "alien_yellow",
+        "options": {
+          "allowedTraceTypes": [
+            "yellow"
+          ]
+        }
+      }
+    },
+    {
+      "cardId": "b_67.webp",
+      "path": "model.tasks.0.rewards.0",
+      "effect": {
+        "id": "b67-any-trace-reward",
+        "type": "alien_trace",
+        "label": "同一外星人3个痕迹：在该外星人获得任意痕迹",
+        "icon": "alien_trace",
+        "options": {
+          "targetRule": "singleAlienTraceCount",
+          "requiredTraceCount": 3
+        }
+      }
+    },
+    {
+      "cardId": "yichangdian_7.webp",
+      "path": "model.playEffects.0",
+      "effect": {
+        "id": "y7-alien-trace",
+        "type": "alien_trace",
+        "label": "获得任意外星人痕迹",
+        "icon": "alien_trace",
+        "options": {}
+      }
+    }
+  ]
+}

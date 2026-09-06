@@ -88,3 +88,9 @@ reports/iteration/amiba-region-rule-design-20260906.md。官方中英文说明�
 2614节点/11.48秒，无失败、根动作不变。466原rockets错误消失后仍有12次
 “阿米巴痕迹需要canonical alienEntity sequence”，已留档，下一项单独定位；
 暂不跑完整局，不降低108.5验收门槛。详见probe-scan-dependency-design-20260906.md。
+
+痕迹序号进一步取证已定位为play-domain第二份ALIEN_TRACE提交路径：不仅空options
+漏序号，还未消费物种返回的位置/区域奖励。真实466克隆证明只补序号会静默漏奖。
+完整模型目录11处，另含运行期异常奖励；拟收敛到science现有痕迹owner。特殊颜色/
+目标限制和b36后续计分义务须先闭合，不做单行补丁。见card-trace-owner-design-20260906.md；
+当前仅取证，尚未修改生产或重跑固定盘面。
