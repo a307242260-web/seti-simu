@@ -81,3 +81,10 @@ yichangdian_anomaly_signal_score归属。证据`any-scan-production-v2-20260907.
 任意扫描生产已独立提交858c756a；提交前私有索引快照验证effects、Science与
 Card Play测试通过，未借用工作树中的异常点修复。异常点缺陷另行提交后，以
 组合版本运行唯一完整局；本提交没有单独终局分，不将组合效果冒充独立贡献。
+# 2026-09-07 完整局补记
+
+本修复858c756a与异常点独立修复0caa713a仅运行一份组合固定局，记录
+0b8c855d.0caa713a.full.json：582步均112.75，较前版下降1分，0规则失败但仍32截断。
+局部正式扫描证据通过；效果待因果核对，不能从组合分数拆推本提交贡献。
+完整数据与未完成项见alien-card-ownership-design-20260907.md末节及
+any-alien-full-verification-20260907.json；未完成移动需求式优化。

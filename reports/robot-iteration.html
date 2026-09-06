@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-06T22:11:47.774Z",
+  "builtAt": "2026-09-06T22:54:13.749Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "1f0d82ec",
-  "currentBaseline": "probe-scan-scope-20260907",
+  "headCommit": "0caa713a",
+  "currentBaseline": "any-alien-contract-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -176,24 +176,539 @@ const REGISTRY = {
         "scoreSourceNote": "固定581步终局113/95/135/112、均113.75；167次搜索、124241节点、152820正式输入、0规则失败，32次截断，444391ms。较前版均分+6.75，但节点、截断与耗时均增加。首次动作分歧433：白方由b17改打b58，不据此推断全部涨分因果。8模型规则、9个正式composition场景及16次Decision恢复验证通过；42冷决策14.889秒、4096节点/4804输入、0规则失败、30计划输入重放成功。复查发现generic扫描Decision额外透传卡牌身份也覆盖非probe模式，超出本轮边界，须单独收紧并用新版本验收；当前候选不通过。none/undefined全面核验、目的式移动、place_data合并和第一Goal均未完成。"
       },
       {
-        "value": 109,
-        "white": 109,
+        "value": 112.75,
+        "white": 112,
         "bestPlayer": {
-          "color": "蓝",
-          "score": 121
+          "color": "棕",
+          "score": 135
         },
-        "versionId": "shared-leaf-observation-20260907",
-        "name": "冻结叶观察共享（整局提速未证实）",
-        "runKey": "dd9a1dab.a4453b64.full",
+        "versionId": "any-alien-contract-20260907",
+        "name": "任意扫描与异常点规则修复（效果待核对）",
+        "runKey": "0b8c855d.0caa713a.full",
         "provenance": "save-final",
-        "steps": 569,
-        "wallMs": 387053,
-        "msPerStep": 680,
-        "scoreSourceNote": "569步正式121/88/118/109、均109；全replay、完整终局状态与171次非时间诊断相同。107100节点/132190规则执行/21满额/3失败不变。单42耗时16.915→14.393秒，但整局375302→387053ms（+3.13%），不宣称整局提速；正确性与效果门槛通过，整体性能收益未证实。详见shared-leaf-full-review-20260907.md。"
+        "steps": 582,
+        "wallMs": 413614,
+        "msPerStep": 711,
+        "scoreSourceNote": "两项独立规则提交的组合验证，不拆推各自贡献。582步，终局113/91/135/112，均112.75，较前版113.75下降1分，效果待因果核对；160次搜索、116744节点、143127正式输入、413614ms、0规则失败，23次4096策略截断和9次1节点控制截断仍在。首次复盘差异410：绿方移动支付由弃card-79-0改为1能量，尚未证明下降原因。正式规则/恢复局部验证通过；移动需求式、place_data及none/undefined全覆盖未完成，整体Goal未通过。"
       }
     ]
   },
   "versions": [
+    {
+      "id": "any-alien-contract-20260907",
+      "name": "任意扫描与异常点规则修复（效果待核对）",
+      "date": "2026-09-07",
+      "baseline": "probe-scan-scope-20260907",
+      "head": "0caa713a",
+      "commits": [
+        {
+          "hash": "858c756a",
+          "date": "2026-09-07",
+          "subject": "恢复任意扇区扫描并保留同扇区重复标记义务"
+        },
+        {
+          "hash": "0caa713a",
+          "date": "2026-09-07",
+          "subject": "修复异常点卡牌准入、信号计分、两阶段弃牌与发射来源"
+        }
+      ],
+      "summary": "恢复任意扫描八扇区与同扇区重复；补齐异常点卡牌准入，修正信号计分、两阶段弃牌和发射来源",
+      "diffStat": "40 files changed, 19792 insertions(+), 103 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/verify-any-scan-production-20260907.js",
+          "insertions": 90,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-yichangdian-flow-20260907.js",
+          "insertions": 122,
+          "deletions": 0
+        },
+        {
+          "file": "assets/aliens/半人马/implementation.md",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "assets/aliens/异常点/implementation.md",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "docs/card-modeling-dsl-spec.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 12,
+          "deletions": 1
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 4,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/cards/effects.js",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.js",
+          "insertions": 91,
+          "deletions": 38
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.test.js",
+          "insertions": 68,
+          "deletions": 5
+        },
+        {
+          "file": "randomizer/game/effects/science-scan-flow.test.js",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/science-session.js",
+          "insertions": 11,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/alien-card-ownership-design-20260907.md",
+          "insertions": 175,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/any-alien-final-decision-42-20260907.json",
+          "insertions": 6240,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/any-scan-b9-production-20260907.json",
+          "insertions": 116,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/any-scan-banrenma-production-20260907.json",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/any-scan-banrenma-production-v2-20260907.json",
+          "insertions": 126,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/any-scan-catalog-20260907.json",
+          "insertions": 19,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/any-scan-decision-42-20260907.json",
+          "insertions": 6240,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/any-scan-design-20260907.md",
+          "insertions": 83,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/any-scan-dlc19-production-20260907.json",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/any-scan-dlc19-production-v2-20260907.json",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/any-scan-dlc19-production-v3-20260907.json",
+          "insertions": 89,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/any-scan-production-20260907.json",
+          "insertions": 50,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/any-scan-production-v2-20260907.json",
+          "insertions": 50,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/any-scan-yichangdian-production-20260907.json",
+          "insertions": 51,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-scan-contract-design-20260907.md",
+          "insertions": 9,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/probe-scan-scope-20260907/ddc98722.1f0d82ec.full.action-log.html",
+          "insertions": 2120,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-scan-scope-full-verification-20260907.json",
+          "insertions": 1044,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 401,
+          "deletions": 26
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/yichangdian-edges-20260907.json",
+          "insertions": 249,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/yichangdian-edges-v2-20260907.json",
+          "insertions": 249,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/yichangdian-edges-v3-20260907.json",
+          "insertions": 825,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/yichangdian-flow-20260907.json",
+          "insertions": 167,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/yichangdian-flow-v2-20260907.json",
+          "insertions": 167,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/yichangdian-flow-v3-20260907.json",
+          "insertions": 429,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 401,
+          "deletions": 26
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 1
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "0b8c855d.0caa713a.full.json",
+          "recordPath": "reports/research/0b8c855d.0caa713a.full.json",
+          "mode": "full",
+          "steps": 582,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 413614,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "0caa713a",
+          "createdAt": "2026-09-06T22:52:35.134Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "两项独立规则提交的组合验证，不拆推各自贡献。582步，终局113/91/135/112，均112.75，较前版113.75下降1分，效果待因果核对；160次搜索、116744节点、143127正式输入、413614ms、0规则失败，23次4096策略截断和9次1节点控制截断仍在。首次复盘差异410：绿方移动支付由弃card-79-0改为1能量，尚未证明下降原因。正式规则/恢复局部验证通过；移动需求式、place_data及none/undefined全覆盖未完成，整体Goal未通过。",
+          "scores": {
+            "player-blue": 113,
+            "player-green": 91,
+            "player-brown": 135,
+            "player-white": 112
+          },
+          "avgScore": 112.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 113,
+              "base": 68,
+              "tile": 41,
+              "card": 4,
+              "tileScoresById": {
+                "a": 33,
+                "b": 8,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 12,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 17,
+                "orbitScore": 12,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 91,
+              "base": 71,
+              "tile": 20,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 0,
+                  "formulaId": "b1",
+                  "multiplier": 4,
+                  "score": 0,
+                  "slotIndex": 3,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 0,
+                "cardEffectScore": 11,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 13,
+                "orbitScore": 24,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 135,
+              "base": 82,
+              "tile": 48,
+              "card": 5,
+              "tileScoresById": {
+                "a": 15,
+                "b": 12,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 12,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "chong_2.webp",
+                  "rule": {
+                    "kind": "chongTraceCount",
+                    "scorePer": 1
+                  },
+                  "score": 5
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 6,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 12,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 13,
+                "orbitScore": 3,
+                "scanScore": 2,
+                "taskCardScore": 4,
+                "techBonusScore": 11
+              }
+            },
+            "player-white": {
+              "total": 112,
+              "base": 56,
+              "tile": 38,
+              "card": 18,
+              "tileScoresById": {
+                "a": 32,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 32,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 18
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 11,
+                "orbitScore": 0,
+                "scanScore": 11,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-any-alien-contract-20260907-0caa713a-full-v291.json",
+          "reportPath": "reports/iteration/any-alien-contract-20260907/0b8c855d.0caa713a.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "0b8c855d.0caa713a.full",
+            "path": "reports/iteration/any-alien-contract-20260907/0b8c855d.0caa713a.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "probe-scan-scope-20260907",
       "name": "扫描证据透传范围收紧（整体目标未通过）",
@@ -555,7 +1070,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
