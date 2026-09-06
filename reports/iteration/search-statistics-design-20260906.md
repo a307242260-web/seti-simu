@@ -41,4 +41,15 @@ search-statistics-step-42-20260906.json。补证recovery记录确认正式游戏
 strategic 4096节点/4376成功提交，1398次失败均为EFFECT_EXECUTION_FAILED；
 该通用错误码不能证明1398次具体message均为撞边界。单次10.35秒，旧10.30秒。
 
-当前尚未提交观测版本或运行其quick/full，整局占比与性能优化仍待完成。
+观测版本已提交06738145，登记search-statistics-p1-20260906。quick-200记录为
+reports/research/4e84be21.06738145.quick-200.json，144.7秒、阶段均分25.25；
+存档200步replaySteps与213f34db基线逐项deepEqual（动作及状态摘要全部相同）。
+54次真实搜索、47727次节点尝试；10次满额搜索贡献40960节点，占85.82%。
+全部/满额节点中choose_target占39.93%/41.76%，place_data占5.79%/5.02%。
+完整统计见search-distribution-06738145-quick-200-20260906.json，不能外推终局。
+
+同一代码版本的full已从quick第200步续跑，未重跑前缀。正式run入口已完成quick
+登记；full使用其底层去重研究入口续跑，完成后归入同一版本并重建报告，不使用force。
+full已完成：702步、均108.5，完整动作与状态摘要、统计续接均通过；191次搜索、
+148749节点，32次4096策略满额。总耗时547927ms，未提速。完整结果见
+search-statistics-full-review-20260906.md；实际节点优化仍待完成。

@@ -1,0 +1,22 @@
+{
+  "scope": "只读核对完整逐步动作、状态摘要、正式终局和逐次搜索统计续接；不重跑AI",
+  "quickRecord": "reports/research/4e84be21.06738145.quick-200.json",
+  "fullRecord": "reports/research/4e84be21.06738145.full.json",
+  "steps": 702,
+  "scores": {
+    "player-blue": 96,
+    "player-green": 84,
+    "player-brown": 130,
+    "player-white": 124
+  },
+  "mean": 108.5,
+  "quickMs": 144699,
+  "resumeMs": 403228,
+  "totalSimulationMs": 547927,
+  "baselineTotalMs": 527450,
+  "fullTraceIdentical": true,
+  "statisticsPrefixIdentical": true,
+  "searchCount": 191,
+  "saveSha256": "f671a4106cfa7b6ad521a7c50c6639284a9f84732a5cd9974efe6a99bde70618",
+  "passed": true
+}
