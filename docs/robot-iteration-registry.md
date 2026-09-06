@@ -285,6 +285,15 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 ## 9. 与调研流程的关系
 
+2026-09-07按用户要求生成当前搜索分布专题报告：
+`reports/iteration/search-node-report-20260907.html`，生成器
+`adhoc/build-search-report-20260907.js`。只读取73e7b2ca完整局和既有42冷决策证据，
+含全部/满额占比、21次满额明细、实际根状态及2938条保留结果（2937条有planSteps，
+1条PASS仅有actionChain）。不是所有曾执行/被剪枝路径；旧记录缺失部分不补造。
+完整局与冷决策统计分开展示，不运行AI或登记新策略版本。
+嵌入诊断逐字段比对及脚本语法通过；本地file URL被浏览器工具安全策略阻止，
+交互未完成浏览器验证，不能声称UI smoke通过。
+
 `docs/ai-research-workflow.md` 定义调研实验流程（快速验证 → 全盘 → 记录落盘）；本体系
 在其之上增加**版本登记与复盘层**：`run_research_validation` 只管跑与记录，版本归属、
 报告生成、总览页全部由 `robot_iterate` 接管。默认盘面一致（免电分析盘面

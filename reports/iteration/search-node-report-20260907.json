@@ -1,0 +1,11 @@
+{
+  "output": "reports/iteration/search-node-report-20260907.html",
+  "allNodes": 107100,
+  "fullNodes": 86016,
+  "fullSearches": 21,
+  "retainedChains": 2938,
+  "rootActions": 25,
+  "formalActions": 343,
+  "bytes": 5025873,
+  "coverage": "全部保留链，非全部曾执行/剪枝路径"
+}
