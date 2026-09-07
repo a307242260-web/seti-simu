@@ -67,6 +67,7 @@ V输入审计通过。浏览器UMD晚加载语义通过，但本次未运行真�
 
 ## 产物与未完成项
 
+- [独立临时科技缓存修复进度](borrowed-probe-cache-validation-20260908.md)：已确认热缓存漏卫星路线与登陆折扣，addcef7f局部修复验证通过；新完整局运行中，未作整体通过结论。
 - [完整记录](../research/68307c5f.a7d65847.full.json)
 - [正式存档](../../seti-saves/seti-save-research-company-base-income-scoring-20260908-a7d65847-full-v321.json)
 - [逐步行动报告](company-base-income-scoring-20260908/68307c5f.a7d65847.full.action-log.html)
