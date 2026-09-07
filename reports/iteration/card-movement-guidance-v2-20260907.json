@@ -1,0 +1,1973 @@
+{
+  "scope": "目录自动选择目的→共享阶段路线→当前正式合法首步；真实42公司两阶段及148/497既有访问路线；不运行AI、不证明沿途完整收益支配或完整移动覆盖",
+  "sources": [
+    "reports/iteration/company-movement-input-42-20260906.json",
+    "reports/iteration/current-movement-hotspots-20260907.json",
+    "reports/iteration/turn-visit-routes-formal-20260907.json"
+  ],
+  "sha256": {
+    "reports/iteration/company-movement-input-42-20260906.json": "4225620b390098056682f64e81e859343d5a3d64afaf4e8f66a46becff786122",
+    "reports/iteration/current-movement-hotspots-20260907.json": "7253400424f65a80a7b0f10f5549860f314026bd952af489197189551fffc831",
+    "reports/iteration/turn-visit-routes-formal-20260907.json": "2b70069567adc4dd8d575bc374e0b3810338e225f6f2d481642039ac22c304fd"
+  },
+  "stages": [
+    {
+      "step": 42,
+      "label": "before-company",
+      "legalCount": 25,
+      "wallMs": 11.295290999999992,
+      "result": {
+        "stage": "idle",
+        "routes": [
+          {
+            "purposeId": "[\"card-7-0\",\"model.tasks.0.condition\"]",
+            "source": {
+              "kind": "card-instance",
+              "cardInstanceId": "card-7-0",
+              "cardId": "dlc_11.png",
+              "ownerId": "player-green",
+              "zone": "hand",
+              "modelPath": "model.tasks.0.condition"
+            },
+            "phase": "needs-position",
+            "rocketId": 1,
+            "result": {
+              "status": "reachable",
+              "expanded": 27,
+              "paid": 1,
+              "moves": 2,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "company",
+                    "direction": "out",
+                    "rocketId": 1,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ],
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "cw",
+                        "rocketId": 1,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "first": {
+                    "mode": "company",
+                    "direction": "cw",
+                    "rocketId": 1,
+                    "deltaX": 1,
+                    "deltaY": 0
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "cw",
+                        "rocketId": 1,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "first": {
+                    "mode": "paid",
+                    "direction": "out",
+                    "rocketId": 1,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ],
+                    [
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "company",
+                        "direction": "cw",
+                        "rocketId": 1,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "first": {
+                    "mode": "paid",
+                    "direction": "cw",
+                    "rocketId": 1,
+                    "deltaX": 1,
+                    "deltaY": 0
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "paid",
+                        "direction": "cw",
+                        "rocketId": 1,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      },
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "move",
+                "phase": "quick",
+                "actionId": "move:2729ba3d",
+                "actorId": "player-green",
+                "stateVersion": 11,
+                "decisionVersion": 0,
+                "target": {
+                  "rocketId": 1,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "payload": {
+                  "direction": "out",
+                  "requiredMovePoints": 1
+                },
+                "decision": null,
+                "summary": "移动探测器 1 向外"
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "move",
+                "phase": "quick",
+                "actionId": "move:00ca1be1",
+                "actorId": "player-green",
+                "stateVersion": 11,
+                "decisionVersion": 0,
+                "target": {
+                  "rocketId": 1,
+                  "deltaX": 1,
+                  "deltaY": 0
+                },
+                "payload": {
+                  "direction": "cw",
+                  "requiredMovePoints": 1
+                },
+                "decision": null,
+                "summary": "移动探测器 1 顺时针"
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "industry",
+                "phase": "quick",
+                "actionId": "industry:5bda1856",
+                "actorId": "player-green",
+                "stateVersion": 11,
+                "decisionVersion": 0,
+                "target": {
+                  "companyId": "寰宇动力",
+                  "abilityId": "huanyu_free_moves"
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "寰宇动力 1x 行动"
+              }
+            ]
+          },
+          {
+            "purposeId": "[\"card-7-0\",\"model.tasks.0.condition\"]",
+            "source": {
+              "kind": "card-instance",
+              "cardInstanceId": "card-7-0",
+              "cardId": "dlc_11.png",
+              "ownerId": "player-green",
+              "zone": "hand",
+              "modelPath": "model.tasks.0.condition"
+            },
+            "phase": "needs-position",
+            "rocketId": 2,
+            "result": {
+              "status": "reachable",
+              "expanded": 27,
+              "paid": 1,
+              "moves": 2,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "company",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ],
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "cw",
+                        "rocketId": 2,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "first": {
+                    "mode": "company",
+                    "direction": "cw",
+                    "rocketId": 2,
+                    "deltaX": 1,
+                    "deltaY": 0
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "cw",
+                        "rocketId": 2,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "first": {
+                    "mode": "paid",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ],
+                    [
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "company",
+                        "direction": "cw",
+                        "rocketId": 2,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "first": {
+                    "mode": "paid",
+                    "direction": "cw",
+                    "rocketId": 2,
+                    "deltaX": 1,
+                    "deltaY": 0
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "paid",
+                        "direction": "cw",
+                        "rocketId": 2,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      },
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "move",
+                "phase": "quick",
+                "actionId": "move:8fb1f33c",
+                "actorId": "player-green",
+                "stateVersion": 11,
+                "decisionVersion": 0,
+                "target": {
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "payload": {
+                  "direction": "out",
+                  "requiredMovePoints": 1
+                },
+                "decision": null,
+                "summary": "移动探测器 2 向外"
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "move",
+                "phase": "quick",
+                "actionId": "move:695254e0",
+                "actorId": "player-green",
+                "stateVersion": 11,
+                "decisionVersion": 0,
+                "target": {
+                  "rocketId": 2,
+                  "deltaX": 1,
+                  "deltaY": 0
+                },
+                "payload": {
+                  "direction": "cw",
+                  "requiredMovePoints": 1
+                },
+                "decision": null,
+                "summary": "移动探测器 2 顺时针"
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "industry",
+                "phase": "quick",
+                "actionId": "industry:5bda1856",
+                "actorId": "player-green",
+                "stateVersion": 11,
+                "decisionVersion": 0,
+                "target": {
+                  "companyId": "寰宇动力",
+                  "abilityId": "huanyu_free_moves"
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "寰宇动力 1x 行动"
+              }
+            ]
+          }
+        ],
+        "deferred": []
+      }
+    },
+    {
+      "step": 42,
+      "label": "company-first",
+      "legalCount": 7,
+      "wallMs": 5.186084000000022,
+      "result": {
+        "stage": "company",
+        "routes": [
+          {
+            "purposeId": "[\"card-7-0\",\"model.tasks.0.condition\"]",
+            "source": {
+              "kind": "card-instance",
+              "cardInstanceId": "card-7-0",
+              "cardId": "dlc_11.png",
+              "ownerId": "player-green",
+              "zone": "hand",
+              "modelPath": "model.tasks.0.condition"
+            },
+            "phase": "needs-position",
+            "rocketId": 1,
+            "result": {
+              "status": "reachable",
+              "expanded": 18,
+              "paid": 1,
+              "moves": 2,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "company",
+                    "direction": "out",
+                    "rocketId": 1,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ],
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "cw",
+                        "rocketId": 1,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "first": {
+                    "mode": "company",
+                    "direction": "cw",
+                    "rocketId": 1,
+                    "deltaX": 1,
+                    "deltaY": 0
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "cw",
+                        "rocketId": 1,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:b849344b",
+                "actorId": "player-green",
+                "stateVersion": 11,
+                "decisionVersion": 0,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "move:1:out",
+                  "rocketId": 1,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "payload": {
+                  "direction": "out"
+                },
+                "decision": null,
+                "summary": "移动 1 向外"
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:baf97e87",
+                "actorId": "player-green",
+                "stateVersion": 11,
+                "decisionVersion": 0,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "move:1:cw",
+                  "rocketId": 1,
+                  "deltaX": 1,
+                  "deltaY": 0
+                },
+                "payload": {
+                  "direction": "cw"
+                },
+                "decision": null,
+                "summary": "移动 1 顺时针"
+              }
+            ]
+          },
+          {
+            "purposeId": "[\"card-7-0\",\"model.tasks.0.condition\"]",
+            "source": {
+              "kind": "card-instance",
+              "cardInstanceId": "card-7-0",
+              "cardId": "dlc_11.png",
+              "ownerId": "player-green",
+              "zone": "hand",
+              "modelPath": "model.tasks.0.condition"
+            },
+            "phase": "needs-position",
+            "rocketId": 2,
+            "result": {
+              "status": "reachable",
+              "expanded": 18,
+              "paid": 1,
+              "moves": 2,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "company",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ],
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "cw",
+                        "rocketId": 2,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "first": {
+                    "mode": "company",
+                    "direction": "cw",
+                    "rocketId": 2,
+                    "deltaX": 1,
+                    "deltaY": 0
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "cw",
+                        "rocketId": 2,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:96f6cb01",
+                "actorId": "player-green",
+                "stateVersion": 11,
+                "decisionVersion": 0,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "move:2:out",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "payload": {
+                  "direction": "out"
+                },
+                "decision": null,
+                "summary": "移动 2 向外"
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:9d684f87",
+                "actorId": "player-green",
+                "stateVersion": 11,
+                "decisionVersion": 0,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "move:2:cw",
+                  "rocketId": 2,
+                  "deltaX": 1,
+                  "deltaY": 0
+                },
+                "payload": {
+                  "direction": "cw"
+                },
+                "decision": null,
+                "summary": "移动 2 顺时针"
+              }
+            ]
+          }
+        ],
+        "deferred": []
+      }
+    },
+    {
+      "step": 42,
+      "label": "company-second",
+      "legalCount": 4,
+      "wallMs": 4.619624999999985,
+      "result": {
+        "stage": "company",
+        "routes": [
+          {
+            "purposeId": "[\"card-7-0\",\"model.tasks.0.condition\"]",
+            "source": {
+              "kind": "card-instance",
+              "cardInstanceId": "card-7-0",
+              "cardId": "dlc_11.png",
+              "ownerId": "player-green",
+              "zone": "hand",
+              "modelPath": "model.tasks.0.condition"
+            },
+            "phase": "needs-position",
+            "rocketId": 1,
+            "result": {
+              "status": "reachable",
+              "expanded": 6,
+              "paid": 1,
+              "moves": 1,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "finish-company"
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "finish-company"
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ],
+                    [
+                      {
+                        "mode": "finish-company"
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "cw",
+                        "rocketId": 1,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:49d31bca",
+                "actorId": "player-green",
+                "stateVersion": 11,
+                "decisionVersion": 0,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "skip",
+                  "skip": true
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "结束移动"
+              }
+            ]
+          },
+          {
+            "purposeId": "[\"card-7-0\",\"model.tasks.0.condition\"]",
+            "source": {
+              "kind": "card-instance",
+              "cardInstanceId": "card-7-0",
+              "cardId": "dlc_11.png",
+              "ownerId": "player-green",
+              "zone": "hand",
+              "modelPath": "model.tasks.0.condition"
+            },
+            "phase": "needs-position",
+            "rocketId": 2,
+            "result": {
+              "status": "reachable",
+              "expanded": 18,
+              "paid": 1,
+              "moves": 2,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "company",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ],
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "cw",
+                        "rocketId": 2,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "first": {
+                    "mode": "company",
+                    "direction": "cw",
+                    "rocketId": 2,
+                    "deltaX": 1,
+                    "deltaY": 0
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "cw",
+                        "rocketId": 2,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:96f6cb01",
+                "actorId": "player-green",
+                "stateVersion": 11,
+                "decisionVersion": 0,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "move:2:out",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "payload": {
+                  "direction": "out"
+                },
+                "decision": null,
+                "summary": "移动 2 向外"
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:9d684f87",
+                "actorId": "player-green",
+                "stateVersion": 11,
+                "decisionVersion": 0,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "move:2:cw",
+                  "rocketId": 2,
+                  "deltaX": 1,
+                  "deltaY": 0
+                },
+                "payload": {
+                  "direction": "cw"
+                },
+                "decision": null,
+                "summary": "移动 2 顺时针"
+              }
+            ]
+          }
+        ],
+        "deferred": []
+      }
+    },
+    {
+      "step": 42,
+      "label": "company-settled",
+      "legalCount": 29,
+      "wallMs": 4.164874999999995,
+      "result": {
+        "stage": "idle",
+        "routes": [
+          {
+            "purposeId": "[\"card-7-0\",\"model.tasks.0.condition\"]",
+            "source": {
+              "kind": "card-instance",
+              "cardInstanceId": "card-7-0",
+              "cardId": "dlc_11.png",
+              "ownerId": "player-green",
+              "zone": "hand",
+              "modelPath": "model.tasks.0.condition"
+            },
+            "phase": "needs-position",
+            "rocketId": 1,
+            "result": {
+              "status": "reachable",
+              "expanded": 5,
+              "paid": 1,
+              "moves": 1,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "paid",
+                    "direction": "out",
+                    "rocketId": 1,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 1,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "first": {
+                    "mode": "paid",
+                    "direction": "cw",
+                    "rocketId": 1,
+                    "deltaX": 1,
+                    "deltaY": 0
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "paid",
+                        "direction": "cw",
+                        "rocketId": 1,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "move",
+                "phase": "quick",
+                "actionId": "move:2729ba3d",
+                "actorId": "player-green",
+                "stateVersion": 12,
+                "decisionVersion": 0,
+                "target": {
+                  "rocketId": 1,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "payload": {
+                  "direction": "out",
+                  "requiredMovePoints": 1
+                },
+                "decision": null,
+                "summary": "移动探测器 1 向外"
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "move",
+                "phase": "quick",
+                "actionId": "move:00ca1be1",
+                "actorId": "player-green",
+                "stateVersion": 12,
+                "decisionVersion": 0,
+                "target": {
+                  "rocketId": 1,
+                  "deltaX": 1,
+                  "deltaY": 0
+                },
+                "payload": {
+                  "direction": "cw",
+                  "requiredMovePoints": 1
+                },
+                "decision": null,
+                "summary": "移动探测器 1 顺时针"
+              }
+            ]
+          },
+          {
+            "purposeId": "[\"card-7-0\",\"model.tasks.0.condition\"]",
+            "source": {
+              "kind": "card-instance",
+              "cardInstanceId": "card-7-0",
+              "cardId": "dlc_11.png",
+              "ownerId": "player-green",
+              "zone": "hand",
+              "modelPath": "model.tasks.0.condition"
+            },
+            "phase": "needs-position",
+            "rocketId": 2,
+            "result": {
+              "status": "reachable",
+              "expanded": 5,
+              "paid": 1,
+              "moves": 1,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "paid",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "first": {
+                    "mode": "paid",
+                    "direction": "cw",
+                    "rocketId": 2,
+                    "deltaX": 1,
+                    "deltaY": 0
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "paid",
+                        "direction": "cw",
+                        "rocketId": 2,
+                        "deltaX": 1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "move",
+                "phase": "quick",
+                "actionId": "move:8fb1f33c",
+                "actorId": "player-green",
+                "stateVersion": 12,
+                "decisionVersion": 0,
+                "target": {
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "payload": {
+                  "direction": "out",
+                  "requiredMovePoints": 1
+                },
+                "decision": null,
+                "summary": "移动探测器 2 向外"
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "move",
+                "phase": "quick",
+                "actionId": "move:695254e0",
+                "actorId": "player-green",
+                "stateVersion": 12,
+                "decisionVersion": 0,
+                "target": {
+                  "rocketId": 2,
+                  "deltaX": 1,
+                  "deltaY": 0
+                },
+                "payload": {
+                  "direction": "cw",
+                  "requiredMovePoints": 1
+                },
+                "decision": null,
+                "summary": "移动探测器 2 顺时针"
+              }
+            ]
+          }
+        ],
+        "deferred": []
+      }
+    },
+    {
+      "step": 148,
+      "label": "before-input-0",
+      "legalCount": 22,
+      "wallMs": 0.23158300000000054,
+      "result": {
+        "stage": "idle",
+        "routes": [],
+        "deferred": [
+          {
+            "purposeId": "[\"card-21-pass-1-2\",\"model.playEffects.0\"]",
+            "reason": "registration-or-trigger-chain-not-integrated"
+          }
+        ]
+      }
+    },
+    {
+      "step": 148,
+      "label": "before-input-1",
+      "legalCount": 4,
+      "wallMs": 1.754333000000031,
+      "result": {
+        "stage": "card",
+        "routes": [
+          {
+            "purposeId": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "b24-turn-comet-score"
+            },
+            "phase": "registered",
+            "rocketId": 2,
+            "result": {
+              "status": "reachable",
+              "expanded": 91,
+              "paid": 1,
+              "moves": 4,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "card",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "card",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "card",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "ccw",
+                        "rocketId": 2,
+                        "deltaX": -1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:60d1e992",
+                "actorId": "player-green",
+                "stateVersion": 69,
+                "decisionVersion": 2,
+                "target": {
+                  "choiceId": "2:0:1",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "payload": {
+                  "requiredMovePoints": 1,
+                  "remaining": 2
+                },
+                "decision": null,
+                "summary": "R2 向外"
+              }
+            ]
+          }
+        ],
+        "deferred": []
+      }
+    },
+    {
+      "step": 148,
+      "label": "before-input-2",
+      "legalCount": 5,
+      "wallMs": 1.166499999999985,
+      "result": {
+        "stage": "card",
+        "routes": [
+          {
+            "purposeId": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "b24-turn-comet-score"
+            },
+            "phase": "registered",
+            "rocketId": 2,
+            "result": {
+              "status": "reachable",
+              "expanded": 63,
+              "paid": 1,
+              "moves": 3,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "card",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "card",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "ccw",
+                        "rocketId": 2,
+                        "deltaX": -1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:6f9b314b",
+                "actorId": "player-green",
+                "stateVersion": 69,
+                "decisionVersion": 2,
+                "target": {
+                  "choiceId": "2:0:1",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "payload": {
+                  "requiredMovePoints": 1,
+                  "remaining": 1
+                },
+                "decision": null,
+                "summary": "R2 向外"
+              }
+            ]
+          }
+        ],
+        "deferred": []
+      }
+    },
+    {
+      "step": 148,
+      "label": "before-input-3",
+      "legalCount": 17,
+      "wallMs": 0.7206659999999943,
+      "result": {
+        "stage": "idle",
+        "routes": [
+          {
+            "purposeId": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "b24-turn-comet-score"
+            },
+            "phase": "registered",
+            "rocketId": 2,
+            "result": {
+              "status": "reachable",
+              "expanded": 31,
+              "paid": 1,
+              "moves": 2,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "company",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "ccw",
+                        "rocketId": 2,
+                        "deltaX": -1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "first": {
+                    "mode": "paid",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "paid",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "company",
+                        "direction": "ccw",
+                        "rocketId": 2,
+                        "deltaX": -1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "move",
+                "phase": "quick",
+                "actionId": "move:8fb1f33c",
+                "actorId": "player-green",
+                "stateVersion": 70,
+                "decisionVersion": 2,
+                "target": {
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "payload": {
+                  "direction": "out",
+                  "requiredMovePoints": 1
+                },
+                "decision": null,
+                "summary": "移动探测器 2 向外"
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "industry",
+                "phase": "quick",
+                "actionId": "industry:5bda1856",
+                "actorId": "player-green",
+                "stateVersion": 70,
+                "decisionVersion": 2,
+                "target": {
+                  "companyId": "寰宇动力",
+                  "abilityId": "huanyu_free_moves"
+                },
+                "payload": {},
+                "decision": null,
+                "summary": "寰宇动力 1x 行动"
+              }
+            ]
+          }
+        ],
+        "deferred": []
+      }
+    },
+    {
+      "step": 148,
+      "label": "before-input-4",
+      "legalCount": 5,
+      "wallMs": 0.5774170000000254,
+      "result": {
+        "stage": "company",
+        "routes": [
+          {
+            "purposeId": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "b24-turn-comet-score"
+            },
+            "phase": "registered",
+            "rocketId": 2,
+            "result": {
+              "status": "reachable",
+              "expanded": 21,
+              "paid": 1,
+              "moves": 2,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "company",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "company",
+                        "direction": "out",
+                        "rocketId": 2,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "paid",
+                        "direction": "ccw",
+                        "rocketId": 2,
+                        "deltaX": -1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:96f6cb01",
+                "actorId": "player-green",
+                "stateVersion": 70,
+                "decisionVersion": 2,
+                "target": {
+                  "kind": "residual-domain",
+                  "choiceId": "move:2:out",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "payload": {
+                  "direction": "out"
+                },
+                "decision": null,
+                "summary": "移动 2 向外"
+              }
+            ]
+          }
+        ],
+        "deferred": []
+      }
+    },
+    {
+      "step": 148,
+      "label": "before-input-5",
+      "legalCount": 15,
+      "wallMs": 0.27529100000003837,
+      "result": {
+        "stage": "idle",
+        "routes": [
+          {
+            "purposeId": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "b24-turn-comet-score"
+            },
+            "phase": "registered",
+            "rocketId": 2,
+            "result": {
+              "status": "reachable",
+              "expanded": 4,
+              "paid": 1,
+              "moves": 1,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "paid",
+                    "direction": "ccw",
+                    "rocketId": 2,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "paid",
+                        "direction": "ccw",
+                        "rocketId": 2,
+                        "deltaX": -1,
+                        "deltaY": 0
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "move",
+                "phase": "quick",
+                "actionId": "move:cc916f6c",
+                "actorId": "player-green",
+                "stateVersion": 71,
+                "decisionVersion": 2,
+                "target": {
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0
+                },
+                "payload": {
+                  "direction": "ccw",
+                  "requiredMovePoints": 1
+                },
+                "decision": null,
+                "summary": "移动探测器 2 逆时针"
+              }
+            ]
+          }
+        ],
+        "deferred": []
+      }
+    },
+    {
+      "step": 148,
+      "label": "before-input-6",
+      "legalCount": 2,
+      "wallMs": 0.09691700000001902,
+      "result": {
+        "stage": "other-decision",
+        "routes": [],
+        "deferred": [
+          {
+            "purposeId": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "reason": "settle-current-owner-first"
+          }
+        ]
+      }
+    },
+    {
+      "step": 148,
+      "label": "before-input-7",
+      "legalCount": 13,
+      "wallMs": 0.21324999999995953,
+      "result": {
+        "stage": "idle",
+        "routes": [
+          {
+            "purposeId": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "b24-turn-comet-score"
+            },
+            "phase": "registered",
+            "rocketId": 2,
+            "result": {
+              "status": "unreachable",
+              "reason": "no-reward-progress",
+              "expanded": 0,
+              "statuses": [
+                "claimed",
+                "inapplicable"
+              ],
+              "choices": []
+            },
+            "nextActions": []
+          }
+        ],
+        "deferred": []
+      }
+    },
+    {
+      "step": 497,
+      "label": "before-input-0",
+      "legalCount": 23,
+      "wallMs": 0.14208299999995688,
+      "result": {
+        "stage": "idle",
+        "routes": [],
+        "deferred": [
+          {
+            "purposeId": "[\"card-31-pass-3-2\",\"model.playEffects.0\"]",
+            "reason": "registration-or-trigger-chain-not-integrated"
+          }
+        ]
+      }
+    },
+    {
+      "step": 497,
+      "label": "before-input-1",
+      "legalCount": 5,
+      "wallMs": 0.897041999999999,
+      "result": {
+        "stage": "card",
+        "routes": [
+          {
+            "purposeId": "[\"registered\",\"player-green\",0,\"dlc12-turn-distinct-planets\"]",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "dlc12-turn-distinct-planets"
+            },
+            "phase": "registered",
+            "rocketId": 12,
+            "result": {
+              "status": "reachable",
+              "expanded": 44,
+              "paid": 0,
+              "moves": 2,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "card",
+                    "direction": "out",
+                    "rocketId": 12,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "card",
+                        "direction": "out",
+                        "rocketId": 12,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "card",
+                        "direction": "in",
+                        "rocketId": 12,
+                        "deltaX": 0,
+                        "deltaY": -1
+                      }
+                    ],
+                    [
+                      {
+                        "mode": "card",
+                        "direction": "out",
+                        "rocketId": 12,
+                        "deltaX": 0,
+                        "deltaY": 1
+                      },
+                      {
+                        "mode": "finish-card"
+                      },
+                      {
+                        "mode": "company",
+                        "direction": "in",
+                        "rocketId": 12,
+                        "deltaX": 0,
+                        "deltaY": -1
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:d37b0828",
+                "actorId": "player-green",
+                "stateVersion": 252,
+                "decisionVersion": 13,
+                "target": {
+                  "choiceId": "12:0:1",
+                  "rocketId": 12,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "payload": {
+                  "requiredMovePoints": 1,
+                  "remaining": 2
+                },
+                "decision": null,
+                "summary": "R12 向外"
+              }
+            ]
+          }
+        ],
+        "deferred": []
+      }
+    },
+    {
+      "step": 497,
+      "label": "before-input-2",
+      "legalCount": 5,
+      "wallMs": 0.3568329999999946,
+      "result": {
+        "stage": "card",
+        "routes": [
+          {
+            "purposeId": "[\"registered\",\"player-green\",0,\"dlc12-turn-distinct-planets\"]",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "dlc12-turn-distinct-planets"
+            },
+            "phase": "registered",
+            "rocketId": 12,
+            "result": {
+              "status": "reachable",
+              "expanded": 10,
+              "paid": 0,
+              "moves": 1,
+              "choices": [
+                {
+                  "first": {
+                    "mode": "card",
+                    "direction": "in",
+                    "rocketId": 12,
+                    "deltaX": 0,
+                    "deltaY": -1
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "card",
+                        "direction": "in",
+                        "rocketId": 12,
+                        "deltaX": 0,
+                        "deltaY": -1
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "first": {
+                    "mode": "finish-card"
+                  },
+                  "paths": [
+                    [
+                      {
+                        "mode": "finish-card"
+                      },
+                      {
+                        "mode": "company",
+                        "direction": "in",
+                        "rocketId": 12,
+                        "deltaX": 0,
+                        "deltaY": -1
+                      }
+                    ]
+                  ]
+                }
+              ]
+            },
+            "nextActions": [
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:3c8f9031",
+                "actorId": "player-green",
+                "stateVersion": 252,
+                "decisionVersion": 13,
+                "target": {
+                  "choiceId": "12:0:-1",
+                  "rocketId": 12,
+                  "deltaX": 0,
+                  "deltaY": -1
+                },
+                "payload": {
+                  "requiredMovePoints": 1,
+                  "remaining": 1
+                },
+                "decision": null,
+                "summary": "R12 向内"
+              },
+              {
+                "schemaVersion": "seti-standard-action-v1",
+                "family": "choose_target",
+                "phase": "conditional",
+                "actionId": "choose_target:5b51e8f7",
+                "actorId": "player-green",
+                "stateVersion": 252,
+                "decisionVersion": 13,
+                "target": {
+                  "choiceId": "skip",
+                  "skip": true
+                },
+                "payload": {
+                  "remaining": 1
+                },
+                "decision": null,
+                "summary": "结束移动"
+              }
+            ]
+          }
+        ],
+        "deferred": []
+      }
+    },
+    {
+      "step": 497,
+      "label": "before-input-3",
+      "legalCount": 14,
+      "wallMs": 0.5083339999999907,
+      "result": {
+        "stage": "idle",
+        "routes": [
+          {
+            "purposeId": "[\"registered\",\"player-green\",0,\"dlc12-turn-distinct-planets\"]",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "dlc12-turn-distinct-planets"
+            },
+            "phase": "registered",
+            "rocketId": 12,
+            "result": {
+              "status": "unreachable",
+              "reason": "no-reward-progress",
+              "expanded": 0,
+              "statuses": [
+                "claimed",
+                "inapplicable",
+                "repeated"
+              ],
+              "choices": []
+            },
+            "nextActions": []
+          }
+        ],
+        "deferred": []
+      }
+    }
+  ],
+  "submitted": 13,
+  "verified": true
+}

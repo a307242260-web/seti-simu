@@ -2,7 +2,7 @@
 const fs = require("node:fs"), assert = require("node:assert/strict"), crypto = require("node:crypto");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const { cardMovementRouteGuidance } = require("./card-movement-route-guidance-20260907");
-const output = "reports/iteration/card-movement-guidance-20260907.json";
+const output = process.argv[2] || "reports/iteration/card-movement-guidance-20260907.json";
 const sources = ["reports/iteration/company-movement-input-42-20260906.json",
   "reports/iteration/current-movement-hotspots-20260907.json",
   "reports/iteration/turn-visit-routes-formal-20260907.json"];
@@ -40,7 +40,9 @@ else {
           const wallMs = performance.now() - start;
           assert.equal(JSON.stringify(root), before, "路线与正式能力枚举不能修改工作状态/RNG/序号");
           for (const route of result.routes) {
-            assert.ok(route.purposeId && route.source.kind && Number.isInteger(route.rocketId));
+            assert.ok(route.purposeId && route.source.kind);
+            if (route.sourceArity === "joint") assert.ok(Array.isArray(route.rocketIds) && route.rocketIds.every(Number.isInteger));
+            else assert.ok(Number.isInteger(route.rocketId));
             for (const action of route.nextActions) assert.deepEqual(actions.find(a => a.actionId === action.actionId), action);
             assert.equal(new Set(route.nextActions.map(a => a.actionId)).size, route.nextActions.length);
           }

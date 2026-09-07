@@ -6,8 +6,9 @@ const solar = require("../randomizer/solar-system/core");
 const residual = require("../randomizer/game/effects/residual-domain-session");
 const { cardMovementPurposes } = require("./card-movement-purpose-directory-20260907");
 const { routeToPurpose } = require("./visit-stage-route-20260907");
+const { jointPositionRoute } = require("./joint-position-route-20260907");
 
-// 单来源位置与已注册访问目的的接入原型；不是生产选择器。
+// 单/多来源位置与已注册访问目的的接入原型；不是生产选择器。
 // 未接入的目的显式列入deferred，禁止消费者据本结果删除全部移动合法集。
 function cardMovementRouteGuidance({ root, actorId, inspection, legalActions }) {
   const actor = root.players.players.find(p => p.id === actorId);
@@ -37,9 +38,27 @@ function cardMovementRouteGuidance({ root, actorId, inspection, legalActions }) 
   const routes = [], deferred = [];
   const coordinates = solar.collectVisibleCoordinateContents(root.solarSystem)
     .filter(c => c.y >= rockets.SECTOR_RING_MIN && c.y <= rockets.SECTOR_RING_MAX);
+  const matching = (first, action) => {
+    if (first.mode === "start-company" || (first.mode === "company" && !companyStage)) return action.family === "industry"
+      && action.target.abilityId === "huanyu_free_moves";
+    if (first.mode === "finish-card" || first.mode === "finish-company") {
+      return action.phase === "conditional" && action.target?.skip === true;
+    }
+    return action.family === (first.mode === "paid" ? "move" : "choose_target")
+      && action.target.rocketId === first.rocketId && action.target.deltaX === first.deltaX
+      && action.target.deltaY === first.deltaY;
+  };
   for (const purpose of directory.entries) {
     if (purpose.kind === "position" && purpose.sourceArity === "joint") {
-      deferred.push({ purposeId: purpose.id, reason: "joint-source-route-not-integrated" }); continue;
+      const result = jointPositionRoute({ root, actor, condition: purpose.condition,
+        stage: cardStage ? "card" : companyStage ? "company" : "paid", cardPoints,
+        // 寰宇正式规则：至多两艘各一步；进行中额度来自实际payload，不能重开。
+        companyRemaining: companyStage ? effect.payload.remaining : futureCompanyAvailable ? 2 : 0,
+        usedRocketIds: companyStage ? effect.payload.usedRocketIds : [] });
+      routes.push({ purposeId: purpose.id, source: purpose.source, phase: purpose.phase,
+        sourceArity: "joint", rocketIds: result.sourceIds, result,
+        nextActions: legalActions.filter(a => result.choices.some(c => matching(c.first, a))) });
+      continue;
     }
     if (!(purpose.kind === "position" || (purpose.kind === "bonus" && purpose.phase === "registered"))) {
       deferred.push({ purposeId: purpose.id, reason: "registration-or-trigger-chain-not-integrated" }); continue;
@@ -62,16 +81,6 @@ function cardMovementRouteGuidance({ root, actorId, inspection, legalActions }) 
       const result = routeToPurpose({ root, actor, rocket, purpose: goal, cardPoints,
         companyAvailable: companyStage ? !effect.payload.usedRocketIds.includes(rocket.id) : futureCompanyAvailable,
         companyPending: companyStage });
-      const matching = (first, action) => {
-        if (first.mode === "company" && !companyStage) return action.family === "industry"
-          && action.target.abilityId === "huanyu_free_moves";
-        if (first.mode === "finish-card" || first.mode === "finish-company") {
-          return action.phase === "conditional" && action.target?.skip === true;
-        }
-        return action.family === (first.mode === "paid" ? "move" : "choose_target")
-          && action.target.rocketId === first.rocketId && action.target.deltaX === first.deltaX
-          && action.target.deltaY === first.deltaY;
-      };
       routes.push({ purposeId: purpose.id, source: purpose.source, phase: purpose.phase,
         rocketId: rocket.id, result, nextActions: legalActions.filter(a => result.choices.some(c => matching(c.first, a))) });
     }
