@@ -1,0 +1,582 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "mode": "baseline",
+      "checks": [
+        {
+          "step": 537,
+          "nextActionId": "choose_target:e695bb51",
+          "hit": true,
+          "expected": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:e695bb51",
+            "actorId": "player-blue",
+            "stateVersion": 262,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 5"
+          }
+        },
+        {
+          "step": 538,
+          "nextActionId": "place_data:01c038e2",
+          "hit": true,
+          "expected": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:01c038e2",
+            "actorId": "player-blue",
+            "stateVersion": 262,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          }
+        },
+        {
+          "step": 539,
+          "nextActionId": "choose_target:e695bb51",
+          "hit": true,
+          "expected": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:e695bb51",
+            "actorId": "player-blue",
+            "stateVersion": 262,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 5"
+          }
+        },
+        {
+          "step": 540,
+          "nextActionId": "end_turn:320f2608",
+          "hit": true,
+          "expected": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "end_turn",
+            "phase": "turn_control",
+            "actionId": "end_turn:320f2608",
+            "actorId": "player-blue",
+            "stateVersion": 264,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结束回合"
+          }
+        },
+        {
+          "step": 559,
+          "nextActionId": "analyze:50f30055",
+          "hit": true,
+          "expected": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "analyze",
+            "phase": "main",
+            "actionId": "analyze:50f30055",
+            "actorId": "player-blue",
+            "stateVersion": 266,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "computer",
+              "requiredSlot": 6
+            },
+            "payload": {
+              "skipCost": false
+            },
+            "decision": null,
+            "summary": "分析"
+          }
+        },
+        {
+          "step": 560,
+          "nextActionId": "choose_target:c8e47c9f",
+          "hit": true,
+          "expected": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:c8e47c9f",
+            "actorId": "player-blue",
+            "stateVersion": 266,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "trace:2:blue:chong:7",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "blue",
+              "speciesId": "chong",
+              "position": 7
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 2 蓝7号位（化石奖励）"
+          },
+          "actualLegal": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:35a6d588",
+              "actorId": "player-blue",
+              "stateVersion": 275,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "trace:2:blue:state-extra",
+                "kind": "planet-reward-alien-trace",
+                "alienSlotId": 2,
+                "traceType": "blue",
+                "stateExtra": true
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "外星人 2 额外痕迹位（3分）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:4c9d48d3",
+              "actorId": "player-blue",
+              "stateVersion": 275,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "trace:1:blue:amiba:1",
+                "kind": "planet-reward-alien-trace",
+                "alienSlotId": 1,
+                "traceType": "blue",
+                "speciesId": "amiba",
+                "position": 1
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "外星人 1 蓝1号位"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:c8e47c9f",
+              "actorId": "player-blue",
+              "stateVersion": 275,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "trace:2:blue:chong:7",
+                "kind": "planet-reward-alien-trace",
+                "alienSlotId": 2,
+                "traceType": "blue",
+                "speciesId": "chong",
+                "position": 7
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "外星人 2 蓝7号位（化石奖励）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:f8c33308",
+              "actorId": "player-blue",
+              "stateVersion": 275,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "trace:1:blue:state-extra",
+                "kind": "planet-reward-alien-trace",
+                "alienSlotId": 1,
+                "traceType": "blue",
+                "stateExtra": true
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "外星人 1 额外痕迹位（3分）"
+            }
+          ]
+        }
+      ],
+      "intervening": [
+        {
+          "step": 544,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:e4f9fb21",
+            "actorId": "player-brown",
+            "stateVersion": 266,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "trace:2:yellow:chong:2",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "yellow",
+              "speciesId": "chong",
+              "position": 2
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄2号位（5分）"
+          }
+        },
+        {
+          "step": 552,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:411af34c",
+            "actorId": "player-white",
+            "stateVersion": 270,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "trace:1:blue:amiba:2",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "speciesId": "amiba",
+              "position": 2
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 蓝2号位（1分）"
+          }
+        },
+        {
+          "step": 555,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:2b2da94c",
+            "actorId": "player-green",
+            "stateVersion": 272,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "trace:1:yellow:amiba:1",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "yellow",
+              "speciesId": "amiba",
+              "position": 1
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄1号位"
+          }
+        }
+      ]
+    },
+    {
+      "mode": "candidate",
+      "checks": [
+        {
+          "step": 537,
+          "nextActionId": "choose_target:e695bb51",
+          "hit": true,
+          "expected": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:e695bb51",
+            "actorId": "player-blue",
+            "stateVersion": 262,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 5"
+          }
+        },
+        {
+          "step": 538,
+          "nextActionId": "place_data:01c038e2",
+          "hit": true,
+          "expected": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:01c038e2",
+            "actorId": "player-blue",
+            "stateVersion": 262,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          }
+        },
+        {
+          "step": 539,
+          "nextActionId": "choose_target:e695bb51",
+          "hit": true,
+          "expected": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:e695bb51",
+            "actorId": "player-blue",
+            "stateVersion": 262,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 5"
+          }
+        },
+        {
+          "step": 540,
+          "nextActionId": "end_turn:320f2608",
+          "hit": true,
+          "expected": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "end_turn",
+            "phase": "turn_control",
+            "actionId": "end_turn:320f2608",
+            "actorId": "player-blue",
+            "stateVersion": 264,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结束回合"
+          }
+        },
+        {
+          "step": 559,
+          "nextActionId": "analyze:50f30055",
+          "hit": true,
+          "expected": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "analyze",
+            "phase": "main",
+            "actionId": "analyze:50f30055",
+            "actorId": "player-blue",
+            "stateVersion": 266,
+            "decisionVersion": 13,
+            "target": {
+              "kind": "computer",
+              "requiredSlot": 6
+            },
+            "payload": {
+              "skipCost": false
+            },
+            "decision": null,
+            "summary": "分析"
+          }
+        },
+        {
+          "step": 560,
+          "nextActionId": "choose_target:4b064085",
+          "hit": false,
+          "reason": "step-not-legal",
+          "expected": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:4b064085",
+            "actorId": "player-blue",
+            "stateVersion": 266,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "trace:1:blue:amiba:2",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "speciesId": "amiba",
+              "position": 2
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 蓝2号位（1分）"
+          },
+          "actualLegal": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:35a6d588",
+              "actorId": "player-blue",
+              "stateVersion": 275,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "trace:2:blue:state-extra",
+                "kind": "planet-reward-alien-trace",
+                "alienSlotId": 2,
+                "traceType": "blue",
+                "stateExtra": true
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "外星人 2 额外痕迹位（3分）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:4c9d48d3",
+              "actorId": "player-blue",
+              "stateVersion": 275,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "trace:1:blue:amiba:1",
+                "kind": "planet-reward-alien-trace",
+                "alienSlotId": 1,
+                "traceType": "blue",
+                "speciesId": "amiba",
+                "position": 1
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "外星人 1 蓝1号位"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:c8e47c9f",
+              "actorId": "player-blue",
+              "stateVersion": 275,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "trace:2:blue:chong:7",
+                "kind": "planet-reward-alien-trace",
+                "alienSlotId": 2,
+                "traceType": "blue",
+                "speciesId": "chong",
+                "position": 7
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "外星人 2 蓝7号位（化石奖励）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:f8c33308",
+              "actorId": "player-blue",
+              "stateVersion": 275,
+              "decisionVersion": 13,
+              "target": {
+                "choiceId": "trace:1:blue:state-extra",
+                "kind": "planet-reward-alien-trace",
+                "alienSlotId": 1,
+                "traceType": "blue",
+                "stateExtra": true
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "外星人 1 额外痕迹位（3分）"
+            }
+          ]
+        }
+      ],
+      "intervening": [
+        {
+          "step": 544,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:e4f9fb21",
+            "actorId": "player-brown",
+            "stateVersion": 266,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "trace:2:yellow:chong:2",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "yellow",
+              "speciesId": "chong",
+              "position": 2
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄2号位（5分）"
+          }
+        },
+        {
+          "step": 552,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:411af34c",
+            "actorId": "player-white",
+            "stateVersion": 270,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "trace:1:blue:amiba:2",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "speciesId": "amiba",
+              "position": 2
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 蓝2号位（1分）"
+          }
+        },
+        {
+          "step": 555,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:2b2da94c",
+            "actorId": "player-green",
+            "stateVersion": 272,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "trace:1:yellow:amiba:1",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "yellow",
+              "speciesId": "amiba",
+              "position": 1
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄1号位"
+          }
+        }
+      ]
+    }
+  ]
+}
