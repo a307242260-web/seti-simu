@@ -1,0 +1,331 @@
+{
+  "scope": "原生正式重放162至193前态与计划复用判定，不运行AI",
+  "events": [
+    {
+      "afterStep": 162,
+      "previous": {
+        "solarSystem": {
+          "aomomoActive": false,
+          "rotation": {
+            "rotationCount": 8,
+            "wheel1Steps": -8,
+            "wheel2Steps": -26,
+            "wheel3Steps": -19,
+            "wheel4Steps": -10
+          },
+          "sectorBySlot": {
+            "1": 3,
+            "2": 1,
+            "3": 2,
+            "4": 4
+          }
+        },
+        "revealed": 1
+      },
+      "current": {
+        "solarSystem": {
+          "aomomoActive": false,
+          "rotation": {
+            "rotationCount": 8,
+            "wheel1Steps": -8,
+            "wheel2Steps": -26,
+            "wheel3Steps": -19,
+            "wheel4Steps": -10
+          },
+          "sectorBySlot": {
+            "1": 3,
+            "2": 1,
+            "3": 2,
+            "4": 4
+          }
+        },
+        "rocket": {
+          "angleDegrees": 157.5,
+          "color": "green",
+          "id": 4,
+          "launchGrid": {
+            "x": 5,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 5,
+            "y": 1
+          },
+          "playerId": "player-green",
+          "playerSequence": 1,
+          "radius": 84.68,
+          "sectorX": 5,
+          "sectorY": 1,
+          "slotIndex": 4,
+          "surface": "solar-board"
+        },
+        "revealed": 1
+      }
+    },
+    {
+      "afterStep": 164,
+      "previous": {
+        "solarSystem": {
+          "aomomoActive": false,
+          "rotation": {
+            "rotationCount": 8,
+            "wheel1Steps": -8,
+            "wheel2Steps": -26,
+            "wheel3Steps": -19,
+            "wheel4Steps": -10
+          },
+          "sectorBySlot": {
+            "1": 3,
+            "2": 1,
+            "3": 2,
+            "4": 4
+          }
+        },
+        "rocket": {
+          "angleDegrees": 157.5,
+          "color": "green",
+          "id": 4,
+          "launchGrid": {
+            "x": 5,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 5,
+            "y": 1
+          },
+          "playerId": "player-green",
+          "playerSequence": 1,
+          "radius": 84.68,
+          "sectorX": 5,
+          "sectorY": 1,
+          "slotIndex": 4,
+          "surface": "solar-board"
+        },
+        "revealed": 1
+      },
+      "current": {
+        "solarSystem": {
+          "aomomoActive": false,
+          "rotation": {
+            "rotationCount": 8,
+            "wheel1Steps": -8,
+            "wheel2Steps": -26,
+            "wheel3Steps": -19,
+            "wheel4Steps": -10
+          },
+          "sectorBySlot": {
+            "1": 3,
+            "2": 1,
+            "3": 2,
+            "4": 4
+          }
+        },
+        "rocket": {
+          "angleDegrees": 112.5,
+          "color": "green",
+          "id": 4,
+          "launchGrid": {
+            "x": 5,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 5,
+            "y": 1
+          },
+          "playerId": "player-green",
+          "playerSequence": 1,
+          "radius": 84.68,
+          "sectorX": 4,
+          "sectorY": 1,
+          "slotIndex": 4,
+          "surface": "solar-board"
+        },
+        "revealed": 1
+      }
+    },
+    {
+      "afterStep": 190,
+      "previous": {
+        "solarSystem": {
+          "aomomoActive": false,
+          "rotation": {
+            "rotationCount": 8,
+            "wheel1Steps": -8,
+            "wheel2Steps": -26,
+            "wheel3Steps": -19,
+            "wheel4Steps": -10
+          },
+          "sectorBySlot": {
+            "1": 3,
+            "2": 1,
+            "3": 2,
+            "4": 4
+          }
+        },
+        "rocket": {
+          "angleDegrees": 112.5,
+          "color": "green",
+          "id": 4,
+          "launchGrid": {
+            "x": 5,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 5,
+            "y": 1
+          },
+          "playerId": "player-green",
+          "playerSequence": 1,
+          "radius": 84.68,
+          "sectorX": 4,
+          "sectorY": 1,
+          "slotIndex": 4,
+          "surface": "solar-board"
+        },
+        "revealed": 1
+      },
+      "current": {
+        "solarSystem": {
+          "aomomoActive": false,
+          "rotation": {
+            "rotationCount": 8,
+            "wheel1Steps": -8,
+            "wheel2Steps": -26,
+            "wheel3Steps": -19,
+            "wheel4Steps": -10
+          },
+          "sectorBySlot": {
+            "1": 3,
+            "2": 1,
+            "3": 2,
+            "4": 4
+          }
+        },
+        "rocket": {
+          "angleDegrees": 112.5,
+          "color": "green",
+          "id": 4,
+          "launchGrid": {
+            "x": 5,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 5,
+            "y": 1
+          },
+          "playerId": "player-green",
+          "playerSequence": 1,
+          "radius": 84.68,
+          "sectorX": 4,
+          "sectorY": 1,
+          "slotIndex": 4,
+          "surface": "solar-board"
+        },
+        "revealed": 2
+      }
+    }
+  ],
+  "planNext": {
+    "actionId": "play_card:1c3418d9",
+    "actionKey": "{\"family\":\"play_card\",\"payload\":{\"cost\":{\"credits\":1},\"handIndex\":1},\"target\":{\"cardInstanceId\":\"card-20-pass-1-1\"}}",
+    "actorId": "player-green",
+    "revealedCount": 1,
+    "valid": true,
+    "reason": null,
+    "dependencies": [
+      {
+        "scope": {
+          "kind": "route",
+          "id": "orbit:venus:planet:",
+          "sourceId": "rocket:4"
+        },
+        "fact": [
+          {
+            "targetId": "orbit:venus:planet:",
+            "requirementId": "rocket:4:orbit:venus:planet:",
+            "sourceId": "rocket:4",
+            "rocketId": 4,
+            "movementSteps": 1,
+            "movementNextSteps": [
+              {
+                "family": "move",
+                "rocketId": 4,
+                "deltaX": -1,
+                "deltaY": 0
+              }
+            ],
+            "paidMovementPoints": 1,
+            "markers": 1
+          }
+        ]
+      }
+    ]
+  },
+  "reuse": {
+    "hit": false,
+    "reason": "alien-revealed",
+    "assumedRevealedCount": 1,
+    "currentRevealedCount": 2
+  },
+  "nextActionLegal": true,
+  "actualAction": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "move",
+    "phase": "quick",
+    "actionId": "move:ac11cff2",
+    "actorId": "player-green",
+    "stateVersion": 90,
+    "decisionVersion": 7,
+    "target": {
+      "rocketId": 4,
+      "deltaX": -1,
+      "deltaY": 0
+    },
+    "payload": {
+      "direction": "ccw",
+      "requiredMovePoints": 1
+    },
+    "decision": null,
+    "summary": "移动探测器 4 逆时针"
+  },
+  "finalSnapshot": {
+    "solarSystem": {
+      "aomomoActive": false,
+      "rotation": {
+        "rotationCount": 8,
+        "wheel1Steps": -8,
+        "wheel2Steps": -26,
+        "wheel3Steps": -19,
+        "wheel4Steps": -10
+      },
+      "sectorBySlot": {
+        "1": 3,
+        "2": 1,
+        "3": 2,
+        "4": 4
+      }
+    },
+    "rocket": {
+      "angleDegrees": 112.5,
+      "color": "green",
+      "id": 4,
+      "launchGrid": {
+        "x": 5,
+        "y": 1
+      },
+      "launchSectorCoordinate": {
+        "x": 5,
+        "y": 1
+      },
+      "playerId": "player-green",
+      "playerSequence": 1,
+      "radius": 84.68,
+      "sectorX": 4,
+      "sectorY": 1,
+      "slotIndex": 4,
+      "surface": "solar-board"
+    },
+    "revealed": 2
+  },
+  "passed": true
+}
