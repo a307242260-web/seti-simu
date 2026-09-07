@@ -2845,10 +2845,10 @@
           const primary = requirements.candidates.find((goal) => (
             `probe:${goal.requirementId}` === input.routePlanId
           ));
-          // 卡牌的结束阶段也必须满足目标路线；不能放弃可用免费点后再付费走同一路。
-          // 公司第二艘准备与缺失目标的退出语义不属于这一张卡牌路线的首步筛选。
+          // 已知卡牌/公司的结束阶段也必须满足目标路线；不能放弃免费点再付费走同一路。
+          // 公司主来源已用后，图保留结束阶段；第二艘的独立准备仍由下方分支生成。
           const finish = successors.filter((action) => action.target?.skip === true
-            && (!primary || requirements.movementContext.phase !== "card"
+            && (!primary || !["card", "company"].includes(requirements.movementContext.phase)
               || actionAdvancesProbeGoal(action, primary)));
           const primaryMoves = primary ? successors.filter((action) => (
             action.target?.skip !== true && actionAdvancesProbeGoal(action, primary)

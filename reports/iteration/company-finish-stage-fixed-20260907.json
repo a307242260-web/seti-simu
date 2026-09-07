@@ -1,0 +1,464 @@
+{
+  "scope": "真实42公司两来源的目标筛选、正式输入、阶段读取及计划依赖；148/497既有卡牌路线阶段读取；不运行AI或全盘",
+  "rows": [
+    {
+      "step": 42,
+      "rootCompanyTargets": [
+        {
+          "targetId": "land:mars:planet:",
+          "planId": "probe:rocket:1:land:mars:planet:",
+          "resultTargetIds": [
+            "land:mars:planet:"
+          ],
+          "compatibleActionIds": [
+            "industry:5bda1856"
+          ]
+        },
+        {
+          "targetId": "orbit:mars:planet:",
+          "planId": "probe:rocket:1:orbit:mars:planet:",
+          "resultTargetIds": [
+            "income:gain:5,1,0,0,1,0",
+            "orbit:mars:planet:"
+          ],
+          "compatibleActionIds": [
+            "industry:5bda1856"
+          ]
+        }
+      ],
+      "firstChoices": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:b849344b",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out"
+          },
+          "decision": null,
+          "summary": "移动 1 向外",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:1:land:mars:planet:",
+          "routeResultTargetIds": [
+            "land:mars:planet:"
+          ]
+        }
+      ],
+      "secondChoices": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:49d31bca",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束移动",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:1:land:mars:planet:",
+          "routeResultTargetIds": [
+            "land:mars:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:96f6cb01",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out"
+          },
+          "decision": null,
+          "summary": "移动 2 向外",
+          "movementPreparation": {
+            "targetId": "orbit:mars:planet:",
+            "planId": "probe:rocket:2:orbit:mars:planet:",
+            "sourceId": "rocket:2",
+            "rocketId": 2
+          },
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:1:land:mars:planet:",
+          "routeResultTargetIds": [
+            "land:mars:planet:"
+          ]
+        }
+      ],
+      "plan": {
+        "actionId": "choose_target:96f6cb01",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"direction\":\"out\"},\"target\":{\"choiceId\":\"move:2:out\",\"deltaX\":0,\"deltaY\":1,\"kind\":\"residual-domain\",\"rocketId\":2}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "movement-source",
+              "id": "2"
+            },
+            "fact": {
+              "id": 2,
+              "playerId": "player-green",
+              "surface": "solar-board",
+              "sectorX": 5,
+              "sectorY": 1,
+              "polar": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:mars:planet:",
+              "sourceId": "rocket:1"
+            },
+            "fact": [
+              {
+                "targetId": "land:mars:planet:",
+                "requirementId": "rocket:1:land:mars:planet:",
+                "sourceId": "rocket:1",
+                "rocketId": 1,
+                "movementSteps": 0,
+                "movementNextSteps": [
+                  {
+                    "family": "choose_target",
+                    "skip": true
+                  }
+                ],
+                "paidMovementPoints": 0,
+                "markers": 0
+              }
+            ]
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:mars:planet:",
+              "sourceId": "rocket:2"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:mars:planet:",
+                "requirementId": "rocket:2:orbit:mars:planet:",
+                "sourceId": "rocket:2",
+                "rocketId": 2,
+                "movementSteps": 1,
+                "movementNextSteps": [
+                  {
+                    "family": "choose_target",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  }
+                ],
+                "paidMovementPoints": 0,
+                "markers": 0
+              }
+            ]
+          },
+          {
+            "scope": {
+              "kind": "movement-context",
+              "id": "self"
+            },
+            "fact": {
+              "phase": "company",
+              "cardRemaining": 0,
+              "companyAvailable": false,
+              "companyRemaining": 1,
+              "usedRocketIds": [
+                1
+              ]
+            }
+          }
+        ]
+      },
+      "after": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": false,
+        "companyRemaining": 0,
+        "usedRocketIds": []
+      }
+    },
+    {
+      "step": 148,
+      "companyAllowance": 0,
+      "stages": [
+        {
+          "actionId": "play_card:269f8980",
+          "family": "play_card",
+          "movement": {
+            "phase": "ordinary",
+            "cardRemaining": 0,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": []
+          }
+        },
+        {
+          "actionId": "choose_target:60d1e992",
+          "family": "choose_target",
+          "movement": {
+            "phase": "card",
+            "cardRemaining": 2,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": [],
+            "cardInstanceId": "card-21-pass-1-2"
+          }
+        },
+        {
+          "actionId": "choose_target:6f9b314b",
+          "family": "choose_target",
+          "movement": {
+            "phase": "card",
+            "cardRemaining": 1,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": [],
+            "cardInstanceId": "card-21-pass-1-2"
+          }
+        },
+        {
+          "actionId": "move:8fb1f33c",
+          "family": "move",
+          "movement": {
+            "phase": "ordinary",
+            "cardRemaining": 0,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": []
+          }
+        },
+        {
+          "actionId": "choose_payment:56560af3",
+          "family": "choose_payment",
+          "movement": {
+            "phase": "ordinary",
+            "cardRemaining": 0,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": []
+          }
+        },
+        {
+          "actionId": "move:cc916f6c",
+          "family": "move",
+          "movement": {
+            "phase": "ordinary",
+            "cardRemaining": 0,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": []
+          }
+        },
+        {
+          "actionId": "choose_payment:56560af3",
+          "family": "choose_payment",
+          "movement": {
+            "phase": "ordinary",
+            "cardRemaining": 0,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": []
+          }
+        }
+      ]
+    },
+    {
+      "step": 148,
+      "companyAllowance": 1,
+      "stages": [
+        {
+          "actionId": "play_card:269f8980",
+          "family": "play_card",
+          "movement": {
+            "phase": "ordinary",
+            "cardRemaining": 0,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": []
+          }
+        },
+        {
+          "actionId": "choose_target:60d1e992",
+          "family": "choose_target",
+          "movement": {
+            "phase": "card",
+            "cardRemaining": 2,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": [],
+            "cardInstanceId": "card-21-pass-1-2"
+          }
+        },
+        {
+          "actionId": "choose_target:6f9b314b",
+          "family": "choose_target",
+          "movement": {
+            "phase": "card",
+            "cardRemaining": 1,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": [],
+            "cardInstanceId": "card-21-pass-1-2"
+          }
+        },
+        {
+          "actionId": "industry:5bda1856",
+          "family": "industry",
+          "movement": {
+            "phase": "ordinary",
+            "cardRemaining": 0,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": []
+          }
+        },
+        {
+          "actionId": "choose_target:96f6cb01",
+          "family": "choose_target",
+          "movement": {
+            "phase": "company",
+            "cardRemaining": 0,
+            "companyAvailable": false,
+            "companyRemaining": 2,
+            "usedRocketIds": []
+          }
+        },
+        {
+          "actionId": "move:cc916f6c",
+          "family": "move",
+          "movement": {
+            "phase": "ordinary",
+            "cardRemaining": 0,
+            "companyAvailable": false,
+            "companyRemaining": 0,
+            "usedRocketIds": []
+          }
+        },
+        {
+          "actionId": "choose_payment:56560af3",
+          "family": "choose_payment",
+          "movement": {
+            "phase": "ordinary",
+            "cardRemaining": 0,
+            "companyAvailable": false,
+            "companyRemaining": 0,
+            "usedRocketIds": []
+          }
+        }
+      ]
+    },
+    {
+      "step": 497,
+      "companyAllowance": 0,
+      "stages": [
+        {
+          "actionId": "play_card:57da1d07",
+          "family": "play_card",
+          "movement": {
+            "phase": "ordinary",
+            "cardRemaining": 0,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": []
+          }
+        },
+        {
+          "actionId": "choose_target:d37b0828",
+          "family": "choose_target",
+          "movement": {
+            "phase": "card",
+            "cardRemaining": 2,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": [],
+            "cardInstanceId": "card-31-pass-3-2"
+          }
+        },
+        {
+          "actionId": "choose_target:3c8f9031",
+          "family": "choose_target",
+          "movement": {
+            "phase": "card",
+            "cardRemaining": 1,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": [],
+            "cardInstanceId": "card-31-pass-3-2"
+          }
+        }
+      ]
+    },
+    {
+      "step": 497,
+      "companyAllowance": 1,
+      "stages": [
+        {
+          "actionId": "play_card:57da1d07",
+          "family": "play_card",
+          "movement": {
+            "phase": "ordinary",
+            "cardRemaining": 0,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": []
+          }
+        },
+        {
+          "actionId": "choose_target:d37b0828",
+          "family": "choose_target",
+          "movement": {
+            "phase": "card",
+            "cardRemaining": 2,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": [],
+            "cardInstanceId": "card-31-pass-3-2"
+          }
+        },
+        {
+          "actionId": "choose_target:3c8f9031",
+          "family": "choose_target",
+          "movement": {
+            "phase": "card",
+            "cardRemaining": 1,
+            "companyAvailable": true,
+            "companyRemaining": 2,
+            "usedRocketIds": [],
+            "cardInstanceId": "card-31-pass-3-2"
+          }
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

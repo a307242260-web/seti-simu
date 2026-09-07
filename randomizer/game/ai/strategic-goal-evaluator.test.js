@@ -28,7 +28,8 @@ const seatId = "strategic-seat";
     } } };
   const select = (legalSuccessors) => evaluator.selectSecondaryAgentSuccessors({ focalSeatId: seatId,
     branchObservation, legalSuccessors, routeTargetId: primary.targetId, routePlanId: `probe:${primary.requirementId}` });
-  assert.deepEqual(select([first, second, detour, finish]).map(a => a.actionId).sort(), ["finish", "first-out"]);
+  assert.deepEqual(select([first, second, detour, finish]).map(a => a.actionId).sort(), ["first-out"],
+    "公司主来源能按目标免费移动时，不额外放弃该额度");
   branchObservation.probeRouteRequirements.movementContext.usedRocketIds = [1];
   branchObservation.probeRouteRequirements.movementContext.companyRemaining = 1;
   primary.movementNextSteps = [{ family: "choose_target", skip: true }];

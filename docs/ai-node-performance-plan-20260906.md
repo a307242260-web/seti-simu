@@ -482,3 +482,8 @@ reports/iteration/ordinary-movement-demand-design-20260907.md。现已将普通m
 回升5.75但仍低于109.5；137837节点、178426正式输入、33截断、0规则失败，
 550378ms，节点和耗时未改善。局部修复不代表整轮通过；继续移动降分归因，
 不推进place_data。证据card-finish-full-verification-20260907.json。
+
+公司阶段同类finish回补已另列候选company-movement-finish-20260907：192正式
+反例可省一张移动牌；目标结束检查扩到company，第二艘独立目的与结束仍保留。
+162冷决策13.71秒、4096节点、4633输入、0失败，18步计划正式重放通过，完整局
+尚未验证；详见company-movement-finish-design-20260907.md，不视为性能已达标。
