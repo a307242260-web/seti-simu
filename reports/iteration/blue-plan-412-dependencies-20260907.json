@@ -1,0 +1,309 @@
+{
+  "source": "reports/iteration/blue-plan-412-proof-20260907.json",
+  "scope": "只读真实计划/观察；未来scan检查仅用于定位依赖，不宣称scan在410/412的完整合法集内",
+  "producerStep": 379,
+  "rows": [
+    {
+      "step": 410,
+      "actualAction": "图灵系统 1x 行动",
+      "expectedCard": {
+        "id": "card-73-0",
+        "cardId": "dlc_6.png"
+      },
+      "actualCard": {
+        "id": "card-76-0",
+        "cardId": "dlc_2.png"
+      },
+      "expectedEarth": {
+        "sectorX": 3
+      },
+      "actualEarth": {
+        "sectorX": 2
+      },
+      "futureScanDependencyCheck": {
+        "hit": false,
+        "reason": "next-step-affected",
+        "affected": {
+          "kind": "card-slot",
+          "id": "1"
+        }
+      }
+    },
+    {
+      "step": 412,
+      "actualAction": "dlc_28.png：弃牌角标",
+      "expectedCard": {
+        "id": "card-73-0",
+        "cardId": "dlc_6.png"
+      },
+      "actualCard": {
+        "id": "card-76-0",
+        "cardId": "dlc_2.png"
+      },
+      "expectedEarth": {
+        "sectorX": 3
+      },
+      "actualEarth": {
+        "sectorX": 2
+      },
+      "futureScanDependencyCheck": {
+        "hit": false,
+        "reason": "next-step-affected",
+        "affected": {
+          "kind": "card-slot",
+          "id": "1"
+        }
+      }
+    },
+    {
+      "step": 415,
+      "actualAction": "扫描",
+      "expectedCard": {
+        "id": "card-73-0",
+        "cardId": "dlc_6.png"
+      },
+      "actualCard": {
+        "id": "card-76-0",
+        "cardId": "dlc_2.png"
+      },
+      "expectedEarth": {
+        "sectorX": 3
+      },
+      "actualEarth": {
+        "sectorX": 2
+      },
+      "futureScanDependencyCheck": {
+        "hit": false,
+        "reason": "next-step-affected",
+        "affected": {
+          "kind": "card-slot",
+          "id": "1"
+        }
+      }
+    }
+  ],
+  "actionChain": [
+    {
+      "actionKey": "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-71-0\",\"choiceId\":\"income:card-71-0\"}}",
+      "dependencies": []
+    },
+    {
+      "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+      "dependencies": []
+    },
+    {
+      "actionKey": "{\"family\":\"industry\",\"payload\":{},\"target\":{\"abilityId\":\"turing_borrow_tech\",\"companyId\":\"图灵系统\"}}",
+      "dependencies": []
+    },
+    {
+      "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"choiceId\":\"tech:purple3\",\"kind\":\"residual-domain\",\"tileId\":\"purple3\"}}",
+      "dependencies": [
+        {
+          "kind": "tech",
+          "id": "purple3"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"card_corner\",\"payload\":{\"kind\":\"resource\",\"multiplier\":1},\"target\":{\"cardInstanceId\":\"card-52-0\"}}",
+      "dependencies": [
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+      "dependencies": [
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":2,\"choiceId\":\"data:blueBonus:2\",\"target\":\"blueBonus\"}}",
+      "dependencies": [
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"scan\",\"payload\":{},\"target\":{\"kind\":\"standard-scan\"}}",
+      "dependencies": [
+        {
+          "kind": "card-slot",
+          "id": "1"
+        },
+        {
+          "kind": "sector",
+          "id": "sector-1-a"
+        },
+        {
+          "kind": "sector",
+          "id": "sector-1-b"
+        },
+        {
+          "kind": "sector",
+          "id": "sector-4-a"
+        },
+        {
+          "kind": "data",
+          "id": "self"
+        },
+        {
+          "kind": "scan-earth",
+          "id": "standard"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"gainData\":true},\"target\":{\"choiceId\":\"nebula:sector-4-a\",\"nebulaId\":\"sector-4-a\",\"sectorX\":3}}",
+      "dependencies": [
+        {
+          "kind": "card-slot",
+          "id": "1"
+        },
+        {
+          "kind": "sector",
+          "id": "sector-1-a"
+        },
+        {
+          "kind": "sector",
+          "id": "sector-1-b"
+        },
+        {
+          "kind": "sector",
+          "id": "sector-4-a"
+        },
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"choose_card\",\"payload\":{\"gainData\":true},\"target\":{\"cardInstanceId\":\"card-73-0\",\"choiceId\":\"public:card-73-0:sector-1-a\",\"nebulaId\":\"sector-1-a\",\"publicSlotIndex\":1}}",
+      "dependencies": [
+        {
+          "kind": "card-slot",
+          "id": "1"
+        },
+        {
+          "kind": "sector",
+          "id": "sector-1-a"
+        },
+        {
+          "kind": "sector",
+          "id": "sector-1-b"
+        },
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"choose_card\",\"payload\":{\"gainData\":true},\"target\":{\"cardInstanceId\":\"card-27-pass-2-3\",\"choiceId\":\"hand:card-27-pass-2-3:sector-1-b\",\"nebulaId\":\"sector-1-b\"}}",
+      "dependencies": [
+        {
+          "kind": "sector",
+          "id": "sector-1-b"
+        },
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+      "dependencies": [
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":1,\"choiceId\":\"data:blueBonus:1\",\"target\":\"blueBonus\"}}",
+      "dependencies": [
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+      "dependencies": [
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+      "dependencies": [
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+      "dependencies": [
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+      "dependencies": [
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+      "dependencies": [
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"analyze\",\"payload\":{\"skipCost\":false},\"target\":{\"kind\":\"computer\",\"requiredSlot\":6}}",
+      "dependencies": [
+        {
+          "kind": "data",
+          "id": "self"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"alienSlotId\":1,\"choiceId\":\"trace:1:blue:amiba:3\",\"kind\":\"planet-reward-alien-trace\",\"position\":3,\"speciesId\":\"amiba\",\"traceType\":\"blue\"}}",
+      "dependencies": [
+        {
+          "kind": "alien",
+          "id": "1:blue"
+        }
+      ]
+    },
+    {
+      "actionKey": "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"choiceId\":\"amiba:blind\",\"kind\":\"residual-domain\",\"source\":\"blind\"}}",
+      "dependencies": []
+    }
+  ],
+  "conclusion": "扫描所依赖公共牌与地球位置在410已变化，准备动作仍复用至414，415才next-step-affected；尚未证明全部终局降分因果"
+}

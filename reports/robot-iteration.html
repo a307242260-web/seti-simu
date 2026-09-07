@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-07T14:38:30.696Z",
+  "builtAt": "2026-09-07T14:44:28.962Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "0c1e675c",
+  "headCommit": "a34942d8",
   "currentBaseline": "reorganization-resources-20260907",
   "worktreeDirty": true,
   "bestOf": {
@@ -336,7 +336,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T14:27:30.908Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": "625步完整终局79/128/116/108，均107.75，低于108.5门槛；较直接基线82/132/118/104下降1.25。物理节点163129→142907，成功输入217232→188957，耗时677229→577672ms；4096策略截断34→29，控制截断5→9，实际规则失败0。前411步Action/after相同，第412步蓝方旧版重搜换钱，新版继续计划使用卡牌角标。蓝方过程分+5、板块-6、计分牌-2，具体决策因果待核对。局部误失效修复及全盘提速成立，整体未通过，生产未合dev；生产同8f058cc7，本局只运行一次。",
+          "note": "625步完整终局79/128/116/108，均107.75，低于108.5门槛；较直接基线82/132/118/104下降1.25。物理节点163129→142907，成功输入217232→188957，耗时677229→577672ms；4096策略截断34→29，控制截断5→9，实际规则失败0。前411步Action/after相同，第412步蓝方旧版重搜换钱，新版继续计划使用卡牌角标。蓝方过程分+5、板块-6、计分牌-2。单点正式复现：379生成计划，410时后续扫描依赖的公共牌和地球已变化，仍先借科技/弃牌/填数据，415才发现依赖失效；见blue-plan-412-review-20260907.md，尚未证明全部降分因果。局部误失效修复及全盘提速成立，整体未通过，生产未合dev；生产同8f058cc7，本局只运行一次。",
           "scores": {
             "player-blue": 79,
             "player-green": 128,
