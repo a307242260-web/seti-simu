@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "ordinary-movement-demand-20260907",
+      "name": "ordinary-movement-demand-20260907",
+      "date": "2026-09-07",
+      "baseline": "company-delayed-allowance-20260907",
+      "head": "0b586daa",
+      "commits": [
+        "db2bc6a0",
+        "0b586daa"
+      ],
+      "summary": "普通移动只经目标目录进入搜索，不再从树内无目标后继补回方向",
+      "records": {
+        "1066a36f.0b586daa.full.json": {
+          "note": "592步，正式终局93/113/80/88，均93.5，较前版100.5下降7且低于109.5门槛。124085节点、156953正式输入、33截断、0规则失败；未绑定move归零，普通move4372→2598。首次行动分歧72；效果未通过，移动降分归因进行中，暂停放数据预研。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "company-delayed-allowance-20260907",
       "name": "company-delayed-allowance-20260907",
       "date": "2026-09-07",

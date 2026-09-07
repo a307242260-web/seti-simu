@@ -1,0 +1,100 @@
+{
+  "scope": "复用旧棕52完整正式输入，核对新建fork首次写回RNG；不运行AI、不恢复P2补丁",
+  "inputs": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:b9fb4b56",
+      "actorId": "player-brown",
+      "stateVersion": 16,
+      "decisionVersion": 0,
+      "target": {
+        "cardInstanceId": "card-11-0"
+      },
+      "payload": {
+        "cost": {
+          "credits": 3
+        },
+        "handIndex": 2
+      },
+      "decision": null,
+      "summary": "b_65.webp"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:b6404518",
+      "actorId": "player-brown",
+      "stateVersion": 16,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "tech:blue1:slot:1",
+        "tileId": "blue1",
+        "blueSlot": 1
+      },
+      "payload": {
+        "skipCost": true,
+        "skipRotate": false,
+        "skipBonus": false
+      },
+      "decision": null,
+      "summary": "研究 blue1（蓝槽 1）"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "place_data",
+      "phase": "quick",
+      "actionId": "place_data:50a9ac16",
+      "actorId": "player-brown",
+      "stateVersion": 17,
+      "decisionVersion": 0,
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "放置数据"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:9e798bfd",
+      "actorId": "player-brown",
+      "stateVersion": 17,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "第一排放置位 1"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "place_data",
+      "phase": "quick",
+      "actionId": "place_data:50a9ac16",
+      "actorId": "player-brown",
+      "stateVersion": 18,
+      "decisionVersion": 0,
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "放置数据"
+    }
+  ],
+  "rows": [],
+  "passed": false,
+  "expectedBranchSeed": 2923707983,
+  "error": {
+    "message": "首次提交只写回未消耗的fork种子，不是从主局RNG继续\n+ actual - expected\n\n+ 1428043238\n- 2923707983\n",
+    "stack": "AssertionError [ERR_ASSERTION]: 首次提交只写回未消耗的fork种子，不是从主局RNG继续\n+ actual - expected\n\n+ 1428043238\n- 2923707983\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/verify-data-fork-rng-boundary-20260907.js:44:18)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}
