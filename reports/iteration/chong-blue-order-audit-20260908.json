@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "scope": "只读已保存反例与单根；无AI重跑。正式输入/RNG不变不等于8/9状态等价。",
+  "sameRealRoot": true,
+  "formalRewardScoreDifference": 2,
+  "sameFormalExecutionBeforeAfter": true,
+  "unchangedFossils": true,
+  "sameWinningChain": true,
+  "verifiedPlanInputs": 24,
+  "baseline": {
+    "wallMs": 15428.074041,
+    "nodes": 4096,
+    "inputs": 4998,
+    "action": "play_card:6a42cfad",
+    "score": 38.22222222222222,
+    "actualScoreDelta": 22,
+    "traceNodes": [
+      [
+        "choose_target:外星人 2 蓝7号位（化石奖励）",
+        216
+      ],
+      [
+        "choose_target:外星人 2 蓝8号位（3分+外星人牌）",
+        216
+      ],
+      [
+        "choose_target:外星人 2 蓝9号位（5分+外星人牌）",
+        216
+      ]
+    ],
+    "failure": {}
+  },
+  "candidate": {
+    "wallMs": 16080.529334,
+    "nodes": 4096,
+    "inputs": 5480,
+    "action": "play_card:6a42cfad",
+    "score": 38.22222222222222,
+    "actualScoreDelta": 22,
+    "traceNodes": [
+      [
+        "choose_target:外星人 2 蓝7号位（化石奖励）",
+        226
+      ],
+      [
+        "choose_target:外星人 2 蓝9号位（5分+外星人牌）",
+        226
+      ]
+    ],
+    "failure": {}
+  }
+}
