@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-07T14:44:28.962Z",
+  "builtAt": "2026-09-07T15:11:21.739Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "a34942d8",
+  "headCommit": "26b28afa",
   "currentBaseline": "reorganization-resources-20260907",
   "worktreeDirty": true,
   "bestOf": {
@@ -116,6 +116,458 @@
     ]
   },
   "versions": [
+    {
+      "id": "analysis-plan-dependency-20260907",
+      "name": "分析准备依赖修复（本项通过，性能未完成）",
+      "date": "2026-09-07",
+      "baseline": "data-slot-order-20260907",
+      "head": "36994979",
+      "commits": [
+        {
+          "hash": "8451f44f",
+          "date": "2026-09-07",
+          "subject": "记录蓝槽顺序修复全盘提速与未通过终局及首差证据"
+        },
+        {
+          "hash": "902e6f08",
+          "date": "2026-09-07",
+          "subject": "记录蓝方准备动作未提前检查后续扫描依赖的真实反例"
+        },
+        {
+          "hash": "ff0bef9f",
+          "date": "2026-09-07",
+          "subject": "明确同分析目标切换取数据方式的依赖修复边界"
+        },
+        {
+          "hash": "36994979",
+          "date": "2026-09-07",
+          "subject": "同目标切换资源取得方式时保留准备步骤的公共依赖"
+        }
+      ],
+      "summary": "同一目标切换资源取得方式时保留后续公共依赖，具名路线仍按当前来源隔离",
+      "diffStat": "24 files changed, 144659 insertions(+), 12 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/capture-blue-plan-origin-379-20260907.js",
+          "insertions": 35,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/diagnose-blue-data-reuse-489-20260907.js",
+          "insertions": 4,
+          "deletions": 2
+        },
+        {
+          "file": "adhoc/diagnose-blue-plan-412-20260907.js",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-blue-plan-412-20260907.js",
+          "insertions": 28,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-data-fusion-full-20260907.js",
+          "insertions": 7,
+          "deletions": 4
+        },
+        {
+          "file": "adhoc/verify-analysis-plan-dependency-20260907.js",
+          "insertions": 25,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 5,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.js",
+          "insertions": 6,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.test.js",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/analysis-plan-data-reuse-489-20260907.json",
+          "insertions": 5723,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/analysis-plan-dependency-design-20260907.md",
+          "insertions": 99,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/analysis-plan-dependency-offline-20260907.json",
+          "insertions": 2463,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/analysis-plan-fixed-412-20260907.json",
+          "insertions": 23067,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-data-order-design-20260907.md",
+          "insertions": 12,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/blue-plan-412-dependencies-20260907.json",
+          "insertions": 309,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-plan-412-proof-20260907.json",
+          "insertions": 31949,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-plan-412-review-20260907.md",
+          "insertions": 45,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-plan-origin-379-20260907.json",
+          "insertions": 15288,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-slot-order-20260907/a5beda5c.3b4e1c3a.full.action-log.html",
+          "insertions": 2154,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-slot-order-full-review-20260907.json",
+          "insertions": 1278,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-slot-order-full-review-20260907.md",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/a5beda5c.3b4e1c3a.full.json",
+          "insertions": 17938,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-data-slot-order-20260907-3b4e1c3a-full-v310.json",
+          "insertions": 44044,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "f9209270.36994979.full.json",
+          "recordPath": "reports/research/f9209270.36994979.full.json",
+          "mode": "full",
+          "steps": 621,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 582602,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "36994979",
+          "createdAt": "2026-09-07T15:07:54.554Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "621步完整终局88/131/118/108，均111.25；较直接基线79/128/116/108全席不降、均分+3.5。前411步Action/after一致，412提前发现扫描依赖变化，改为两牌换钱，与单点验证一致。本项正确性与终局门槛通过；物理节点142907→145146，成功输入188957→191470，耗时577672→582602ms，不宣称提速。4096策略截断29不变，控制截断9→7，实际规则失败0。历史数据融合相对123.75的下降尚未解释，整体Goal未完成，候选生产未合dev。本局仅跑一次；运行期间仅编辑只读汇总脚本，生产代码始终为36994979。",
+          "scores": {
+            "player-blue": 88,
+            "player-green": 131,
+            "player-brown": 118,
+            "player-white": 108
+          },
+          "avgScore": 111.25,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 88,
+              "base": 63,
+              "tile": 21,
+              "card": 4,
+              "tileScoresById": {
+                "a": 15,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 1,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 2,
+                "cardEffectScore": 3,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 12,
+                "orbitScore": 21,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 6
+              }
+            },
+            "player-green": {
+              "total": 131,
+              "base": 72,
+              "tile": 59,
+              "card": 0,
+              "tileScoresById": {
+                "a": 33,
+                "b": 12,
+                "c": 0,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 12,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 0
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 1,
+                "alienTracePinkScore": 10,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 12,
+                "orbitScore": 15,
+                "scanScore": 9,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-brown": {
+              "total": 118,
+              "base": 71,
+              "tile": 43,
+              "card": 4,
+              "tileScoresById": {
+                "a": 20,
+                "b": 8,
+                "c": 0,
+                "d": 15
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 20,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "chong_2.webp",
+                  "rule": {
+                    "kind": "chongTraceCount",
+                    "scorePer": 1
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 6,
+                "cardEffectScore": 10,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 6,
+                "orbitScore": 12,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-white": {
+              "total": 108,
+              "base": 74,
+              "tile": 34,
+              "card": 0,
+              "tileScoresById": {
+                "a": 24,
+                "b": 0,
+                "c": 4,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 24,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 4,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 11,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 17,
+                "orbitScore": 12,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-analysis-plan-dependency-20260907-36994979-full-v309.json",
+          "reportPath": "reports/iteration/analysis-plan-dependency-20260907/f9209270.36994979.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "f9209270.36994979.full",
+            "path": "reports/iteration/analysis-plan-dependency-20260907/f9209270.36994979.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "data-slot-order-20260907",
       "name": "蓝槽顺序修复（提速、终局未通过）",
