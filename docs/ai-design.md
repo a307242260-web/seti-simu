@@ -507,6 +507,10 @@ Production的地球坐标、探测路线context及正式Action context直接读�
 `collectPlanetLocations`；它也是完整太阳系快照的行星字段来源。只需行星坐标时不生成
 未消费的可视格子与星云数组，不增加缓存或改变旋转、奥陌陌激活、排序与规则语义。
 
+移动费用统一由AbilityRocket读取该玩家有效的当回合movementModifiers（如b124
+忽略小行星限制），枚举、提交与路线预读共用`ignoresAsteroidRestriction`判定。
+探测拓扑缓存键包含该判定，开启或清除修正时结构缓存同步失效，不能沿用旧移动费用。
+
 扇区目录缓存按完整data、玩家id/color及每次正式计算的扫描来源/基础费用建立键，
 不再仅按data/tech/hand复用整个目录。旋转、公共牌、借用科技时点和公司费用变化
 都会反映到目录。水星来源从正式行星数组查找；accessSources表示潜在能力，不等于

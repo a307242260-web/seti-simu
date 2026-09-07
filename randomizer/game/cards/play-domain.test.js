@@ -1595,4 +1595,31 @@ runCompanyPassivesOnPlay();
     payload: { cardInstanceId: "current-card", cardEffect: { type: launchType } } }, { state: root });
   assert.equal(missing.ok, false, "没有本卡发射事实不能从地球位置推断奖励");
 }
+{
+  const state = createCanonicalState("b_124.webp");
+  const asteroid = Array.from({ length: 32 }, (_, i) => ({ x: i % 8, y: Math.floor(i / 8) + 1 }))
+    .find(at => solar.resolveVisibleContent(at.x, at.y, state.solarSystem).content.kind === "asteroid");
+  assert.ok(asteroid);
+  assert.equal(rockets.launchRocketAtSector(state.pieces, asteroid, {
+    playerId: "p1", color: "brown", root: state,
+  }).ok, true);
+  const { composition } = createIntegratedComposition("b_124.webp", { state });
+  try {
+    assert.equal(composition.inputPort.submitAction(getOnlyPlayAction(composition)).ok, true);
+    const first = composition.inspect().session.decision;
+    const move = first.choices.find(c => c.target.rocketId != null);
+    assert.ok(move);
+    assert.equal(move.payload.requiredMovePoints, 1, "穿越小行星带生效后首步只扣1点移动力");
+    const before = composition.lifecycle.save().envelope;
+    const input = { decisionId: first.decisionId, decisionVersion: first.decisionVersion,
+      ownerId: first.ownerId, choice: move };
+    assert.equal(composition.inputPort.submitDecision(input).ok, true);
+    assert.equal(composition.inspect().session.currentEffect.payload.remaining, 1,
+      "原2点移动力离开小行星后仍须剩余1点");
+    const after = composition.lifecycle.save().envelope;
+    assert.equal(composition.lifecycle.restore(before).ok, true);
+    assert.equal(composition.inputPort.submitDecision(input).ok, true);
+    assert.deepEqual(composition.lifecycle.save().envelope, after);
+  } finally { composition.dispose(); }
+}
 console.log("card play domain production composition tests passed");

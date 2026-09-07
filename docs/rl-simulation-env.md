@@ -37,6 +37,8 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
   返回的原始结果不做该合并，搜索链、节点数、规则输入和随机状态不变。
   **策略估值统一入口**：旧 `evaluateActionOutcomes()` 入口已删除——评估动作必须用 `runHeuristicPolicyDecision` 返回的 `actionOutcomes`（与决策函数同一搜索参数：secondary-agent 目标引导单一路径），不存在第二套搜索参数。反事实原语（任意候选评估）不是 env API：单动作结算链验证经规则层测试（`simulation-rule-composition.test.js` 或生产 composition 的 `counterfactualPort.evaluate`）。
 - `getDiagnostics()` / `getCounterfactualDiagnostics()`：只读性能诊断。
+  探测路线费用缓存与正式移动共用当回合小行星限制修正（b124），修正开始/清除及
+  玩家切换不能沿用另一费用状态；Action、Observation与checkpoint外层schema不变。
 - `dispose()`：释放单局环境。
 
 机器玩家计划使用 `seti-action-plan-v2`：`steps` 逐项携带动作身份、执行前揭示基线和

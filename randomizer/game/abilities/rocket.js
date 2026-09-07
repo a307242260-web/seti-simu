@@ -311,9 +311,17 @@
     return getRequiredMovePointsFromCoordinate(context, player, geometry.from, options);
   }
 
+  function ignoresAsteroidRestriction(context, player, options = {}) {
+    const turn = context.turn || context.state?.turn;
+    return Boolean(options.ignoreAsteroidRestriction || (turn?.cardTurnEventBonuses || []).some((bonus) => (
+      (bonus.ownerId || bonus.playerId) === player.id
+      && bonus.movementModifiers?.ignoreAsteroidRestriction === true
+    )));
+  }
+
   function getRequiredMovePointsFromCoordinate(context, player, coordinate, options = {}) {
     const exitsAsteroid = isAsteroidContent(getVisibleContent(context, coordinate));
-    if (!options.ignoreAsteroidRestriction && exitsAsteroid && !players.playerOwnsTech(player, "orange2", context)) {
+    if (!ignoresAsteroidRestriction(context, player, options) && exitsAsteroid && !players.playerOwnsTech(player, "orange2", context)) {
       return ASTEROID_EXIT_MOVE_POINTS;
     }
     return 1;
@@ -659,6 +667,7 @@
     getActiveRocketCountForPlayer,
     getRequiredMovePoints,
     getRequiredMovePointsFromCoordinate,
+    ignoresAsteroidRestriction,
     listMoveRequirements,
     listPlayerMoveChoices,
     launchProbe,

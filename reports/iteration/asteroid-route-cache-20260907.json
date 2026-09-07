@@ -1,0 +1,1154 @@
+{
+  "scope": "以真实42为基础的费用缓存unit场景：同一玩家/盘面、探测器置小行星，依次无修正/本人物效/他人物效/清除；不运行AI或声称这些状态构成正式行动链",
+  "rows": [
+    {
+      "mode": "absent",
+      "goals": [
+        {
+          "id": "rocket:1:orbit:mercury:planet:",
+          "points": 2,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:uranus:planet:",
+          "points": 6,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:mercury:planet:",
+          "points": 2,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:neptune:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:jupiter:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:uranus:planet:",
+          "points": 6,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:saturn:planet:",
+          "points": 6,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:venus:planet:",
+          "points": 4,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:mars:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:venus:planet:",
+          "points": 4,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:neptune:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:mars:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "own",
+      "goals": [
+        {
+          "id": "rocket:1:orbit:mercury:planet:",
+          "points": 1,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:uranus:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:neptune:planet:",
+          "points": 4,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:mercury:planet:",
+          "points": 1,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:uranus:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:jupiter:planet:",
+          "points": 4,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:saturn:planet:",
+          "points": 4,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:venus:planet:",
+          "points": 3,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:neptune:planet:",
+          "points": 4,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:mars:planet:",
+          "points": 4,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:venus:planet:",
+          "points": 3,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:mars:planet:",
+          "points": 4,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "other",
+      "goals": [
+        {
+          "id": "rocket:1:orbit:mercury:planet:",
+          "points": 2,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:uranus:planet:",
+          "points": 6,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:mercury:planet:",
+          "points": 2,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:neptune:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:jupiter:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:uranus:planet:",
+          "points": 6,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:saturn:planet:",
+          "points": 6,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:venus:planet:",
+          "points": 4,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:mars:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:venus:planet:",
+          "points": 4,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:neptune:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:mars:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "cleared",
+      "goals": [
+        {
+          "id": "rocket:1:orbit:mercury:planet:",
+          "points": 2,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:uranus:planet:",
+          "points": 6,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:mercury:planet:",
+          "points": 2,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:neptune:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:jupiter:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:uranus:planet:",
+          "points": 6,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:saturn:planet:",
+          "points": 6,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:venus:planet:",
+          "points": 4,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:land:mars:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:venus:planet:",
+          "points": 4,
+          "path": [
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:neptune:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            },
+            {
+              "directionId": "cw",
+              "deltaX": 1,
+              "deltaY": 0
+            }
+          ]
+        },
+        {
+          "id": "rocket:1:orbit:mars:planet:",
+          "points": 5,
+          "path": [
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "ccw",
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            {
+              "directionId": "out",
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "verified": true
+}

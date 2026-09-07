@@ -480,4 +480,27 @@ if (researchTake.bonusId === "bonus_1c") {
   assert.match(pureLabel, /奖励：/, "标准登陆奖励摘要仍保留");
 }
 
+{
+  const context = createContext();
+  const player = context.players.players[0];
+  const asteroid = Array.from({ length: 32 }, (_, i) => ({ x: i % 8, y: Math.floor(i / 8) + 1 }))
+    .find(at => solar.resolveVisibleContent(at.x, at.y, context.solarSystem).content.kind === "asteroid");
+  const points = options => abilities.rocket.getRequiredMovePointsFromCoordinate(context, player, asteroid, options);
+  assert.equal(points(), 2);
+  context.turn.cardTurnEventBonuses = [{ ownerId: "other", movementModifiers: { ignoreAsteroidRestriction: true } }];
+  assert.equal(points(), 2, "他人回合修正不影响本玩家");
+  context.turn.cardTurnEventBonuses[0].ownerId = player.id;
+  assert.equal(points({ ignoreAsteroidRestriction: false }), 1, "调用点默认false不能覆盖有效的本回合规则");
+  const launched = rockets.launchRocketAtSector(context.pieces, asteroid, { playerId: player.id, color: player.color, root: context });
+  assert.equal(launched.ok, true);
+  const [move] = abilities.rocket.listPlayerMoveChoices(context, player, { maxPoints: 1 });
+  assert.ok(move, "公司等1点移动来源必须能枚举离开小行星");
+  assert.equal(abilities.rocket.moveProbe(context, { rocketId: move.rocketId, deltaX: move.deltaX,
+    deltaY: move.deltaY, movementPoints: 1, skipCost: true }).ok, true);
+  context.turn.cardTurnEventBonuses = [];
+  assert.equal(points(), 2, "正式到期清除后不残留费用修正");
+  assert.equal(points({ ignoreAsteroidRestriction: true }), 1, "保留原显式忽略选项");
+  player.techState = players.normalizePlayerTechState({ ownedTiles: { orange2: true } });
+  assert.equal(points(), 1, "保留橙色科技的正式减费");
+}
 console.log("action ability tests passed");

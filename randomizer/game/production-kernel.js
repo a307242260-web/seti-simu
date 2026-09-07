@@ -375,11 +375,13 @@ function probeRouteTopologyKey(workingState, player, sources, context) {
     rotation.rotationCount ?? "",
   ].join(",");
   const orange2 = players.playerOwnsTech(player, "orange2") ? 1 : 0;
+  // b124等当回合修正开启/清除时，费用与路线结构必须一起重读。
+  const ignoreAsteroid = rocketAbility.ignoresAsteroidRestriction(context, player) ? 1 : 0;
   // sources 依赖火箭上限（orange1 + 行业被动）与活跃火箭数，必须入键，否则科技变化后
   // 缓存的发射源过期（行为漂移）。
   const rocketLimit = rocketAbility.getRocketLimitForPlayer(player, context);
   // player.id 必须入键：同盘面下不同玩家的 sources（谁的火箭/是否可发射）不同
-  return `${workingState.meta?.gameId || "?"}:${player.id}:${rotationKey}:${rocketSignatures}:${orange2}:${rocketLimit}`;
+  return `${workingState.meta?.gameId || "?"}:${player.id}:${rotationKey}:${rocketSignatures}:${orange2}:${ignoreAsteroid}:${rocketLimit}`;
 }
 
 function buildTopologyBody(workingState, player, context, sources) {
