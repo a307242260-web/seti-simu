@@ -1,0 +1,1687 @@
+{
+  "passed": true,
+  "scope": "直接调用正式奖励表与奥陌陌标记primitive；不改生产、不运行AI。次数0至6为有限分支代表值，非全盘验证",
+  "cases": [
+    {
+      "family": "orbit",
+      "planet": "aomomo",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "aomomo_card",
+              "label": "奥陌陌首次环绕：获得 1 张奥陌陌牌",
+              "icon": "aomomoCard",
+              "needsUserChoice": true,
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "奥陌陌环绕：10分+1化石",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 10,
+                  "aomomoFossils": 1
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "scan_planet_sector",
+              "label": "奥陌陌扇区扫描",
+              "icon": "scan",
+              "badge": "奥陌陌",
+              "options": {
+                "planetId": "aomomo"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "奥陌陌环绕：10分+1化石",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 10,
+                  "aomomoFossils": 1
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "scan_planet_sector",
+              "label": "奥陌陌扇区扫描",
+              "icon": "scan",
+              "badge": "奥陌陌",
+              "options": {
+                "planetId": "aomomo"
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "orbit",
+      "planet": "venus",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "首次环绕：额外获得 3 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "获得 6 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 6
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "income",
+              "label": "获得 1 次收入",
+              "icon": "income",
+              "needsUserChoice": true,
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "获得 6 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 6
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "income",
+              "label": "获得 1 次收入",
+              "icon": "income",
+              "needsUserChoice": true,
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "orbit",
+      "planet": "mercury",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "首次环绕：额外获得 3 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "draw_cards",
+              "label": "盲抽 1 张卡牌",
+              "icon": "blind_card",
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "scan_planet_sector",
+              "label": "水星扇区扫描 1/2",
+              "icon": "scan",
+              "badge": "水星",
+              "options": {
+                "planetId": "mercury"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            },
+            {
+              "type": "scan_planet_sector",
+              "label": "水星扇区扫描 2/2",
+              "icon": "scan",
+              "badge": "水星",
+              "options": {
+                "planetId": "mercury"
+              },
+              "id": "planet-reward-3",
+              "status": "pending"
+            },
+            {
+              "type": "income",
+              "label": "获得 1 次收入",
+              "icon": "income",
+              "needsUserChoice": true,
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-4",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "draw_cards",
+              "label": "盲抽 1 张卡牌",
+              "icon": "blind_card",
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "scan_planet_sector",
+              "label": "水星扇区扫描 1/2",
+              "icon": "scan",
+              "badge": "水星",
+              "options": {
+                "planetId": "mercury"
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "scan_planet_sector",
+              "label": "水星扇区扫描 2/2",
+              "icon": "scan",
+              "badge": "水星",
+              "options": {
+                "planetId": "mercury"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            },
+            {
+              "type": "income",
+              "label": "获得 1 次收入",
+              "icon": "income",
+              "needsUserChoice": true,
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-3",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "orbit",
+      "planet": "mars",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "首次环绕：额外获得 3 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "pick_card",
+              "label": "精选 1 张卡牌",
+              "icon": "pick_card",
+              "needsUserChoice": true,
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "scan_planet_sector",
+              "label": "火星扇区扫描",
+              "icon": "scan",
+              "badge": "火星",
+              "options": {
+                "planetId": "mars"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            },
+            {
+              "type": "income",
+              "label": "获得 1 次收入",
+              "icon": "income",
+              "needsUserChoice": true,
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-3",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "pick_card",
+              "label": "精选 1 张卡牌",
+              "icon": "pick_card",
+              "needsUserChoice": true,
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "scan_planet_sector",
+              "label": "火星扇区扫描",
+              "icon": "scan",
+              "badge": "火星",
+              "options": {
+                "planetId": "mars"
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "income",
+              "label": "获得 1 次收入",
+              "icon": "income",
+              "needsUserChoice": true,
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "orbit",
+      "planet": "jupiter",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "首次环绕：额外获得 3 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_data",
+              "label": "获得 1 个数据",
+              "icon": "data",
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "scan_planet_sector",
+              "label": "木星扇区扫描",
+              "icon": "scan",
+              "badge": "木星",
+              "options": {
+                "planetId": "jupiter"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            },
+            {
+              "type": "income",
+              "label": "获得 1 次收入",
+              "icon": "income",
+              "needsUserChoice": true,
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-3",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_data",
+              "label": "获得 1 个数据",
+              "icon": "data",
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "scan_planet_sector",
+              "label": "木星扇区扫描",
+              "icon": "scan",
+              "badge": "木星",
+              "options": {
+                "planetId": "jupiter"
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "income",
+              "label": "获得 1 次收入",
+              "icon": "income",
+              "needsUserChoice": true,
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "orbit",
+      "planet": "saturn",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "首次环绕：额外获得 3 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "获得 2 宣传",
+              "icon": "publicity",
+              "options": {
+                "gain": {
+                  "publicity": 2
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "scan_planet_sector",
+              "label": "土星扇区扫描",
+              "icon": "scan",
+              "badge": "土星",
+              "options": {
+                "planetId": "saturn"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            },
+            {
+              "type": "income",
+              "label": "获得 1 次收入",
+              "icon": "income",
+              "needsUserChoice": true,
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-3",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "获得 2 宣传",
+              "icon": "publicity",
+              "options": {
+                "gain": {
+                  "publicity": 2
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "scan_planet_sector",
+              "label": "土星扇区扫描",
+              "icon": "scan",
+              "badge": "土星",
+              "options": {
+                "planetId": "saturn"
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "income",
+              "label": "获得 1 次收入",
+              "icon": "income",
+              "needsUserChoice": true,
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "orbit",
+      "planet": "uranus",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "首次环绕：额外获得 3 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "获得 8 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 8
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "draw_cards",
+              "label": "盲抽 3 张卡牌",
+              "icon": "blind_card",
+              "options": {
+                "count": 3
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            },
+            {
+              "type": "choose_nebula_scan",
+              "label": "织女一/绘架座β扫描",
+              "icon": "black_scan",
+              "needsUserChoice": true,
+              "options": {
+                "nebulaIds": [
+                  "sector-1-b",
+                  "sector-4-b"
+                ]
+              },
+              "id": "planet-reward-3",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "获得 8 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 8
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "draw_cards",
+              "label": "盲抽 3 张卡牌",
+              "icon": "blind_card",
+              "options": {
+                "count": 3
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "choose_nebula_scan",
+              "label": "织女一/绘架座β扫描",
+              "icon": "black_scan",
+              "needsUserChoice": true,
+              "options": {
+                "nebulaIds": [
+                  "sector-1-b",
+                  "sector-4-b"
+                ]
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "orbit",
+      "planet": "neptune",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "首次环绕：额外获得 3 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "获得 7 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 7
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "gain_data",
+              "label": "获得 4 个数据",
+              "icon": "data",
+              "options": {
+                "count": 4
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            },
+            {
+              "type": "choose_nebula_scan",
+              "label": "织女一/绘架座β扫描",
+              "icon": "black_scan",
+              "needsUserChoice": true,
+              "options": {
+                "nebulaIds": [
+                  "sector-1-b",
+                  "sector-4-b"
+                ]
+              },
+              "id": "planet-reward-3",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "获得 7 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 7
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_data",
+              "label": "获得 4 个数据",
+              "icon": "data",
+              "options": {
+                "count": 4
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "choose_nebula_scan",
+              "label": "织女一/绘架座β扫描",
+              "icon": "black_scan",
+              "needsUserChoice": true,
+              "options": {
+                "nebulaIds": [
+                  "sector-1-b",
+                  "sector-4-b"
+                ]
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "land",
+      "planet": "aomomo",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "奥陌陌登陆：9分+2化石",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 9,
+                  "aomomoFossils": 2
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_data",
+              "label": "奥陌陌第1次登陆：额外获得 3 个数据",
+              "icon": "data",
+              "options": {
+                "count": 3
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "奥陌陌登陆：9分+2化石",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 9,
+                  "aomomoFossils": 2
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_data",
+              "label": "奥陌陌第2次登陆：额外获得 2 个数据",
+              "icon": "data",
+              "options": {
+                "count": 2
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            2
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "奥陌陌登陆：9分+2化石",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 9,
+                  "aomomoFossils": 2
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_data",
+              "label": "奥陌陌第3次登陆：额外获得 1 个数据",
+              "icon": "data",
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "奥陌陌登陆：9分+2化石",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 9,
+                  "aomomoFossils": 2
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "land",
+      "planet": "venus",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_data",
+              "label": "首次登陆：额外获得 2 个数据",
+              "icon": "data",
+              "options": {
+                "count": 2
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "获得 5 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 5
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "获得 5 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 5
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "land",
+      "planet": "mercury",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_data",
+              "label": "首次登陆：额外获得 3 个数据",
+              "icon": "data",
+              "options": {
+                "count": 3
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "获得 12 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 12
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "获得 12 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 12
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "land",
+      "planet": "mars",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_data",
+              "label": "首次登陆：额外获得 2 个数据",
+              "icon": "data",
+              "options": {
+                "count": 2
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "获得 6 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 6
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1
+          ],
+          "effects": [
+            {
+              "type": "gain_data",
+              "label": "第二次登陆：额外获得 1 个数据",
+              "icon": "data",
+              "options": {
+                "count": 1
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "获得 6 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 6
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "获得 6 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 6
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "land",
+      "planet": "jupiter",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_data",
+              "label": "首次登陆：额外获得 2 个数据",
+              "icon": "data",
+              "options": {
+                "count": 2
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "获得 7 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 7
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "获得 7 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 7
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "land",
+      "planet": "saturn",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_data",
+              "label": "首次登陆：额外获得 2 个数据",
+              "icon": "data",
+              "options": {
+                "count": 2
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "获得 8 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 8
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "获得 8 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 8
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "land",
+      "planet": "uranus",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_data",
+              "label": "首次登陆：额外获得 3 个数据",
+              "icon": "data",
+              "options": {
+                "count": 3
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "获得 9 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 9
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "获得 9 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 9
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "family": "land",
+      "planet": "neptune",
+      "rewardClasses": [
+        {
+          "priorCounts": [
+            0
+          ],
+          "effects": [
+            {
+              "type": "gain_data",
+              "label": "首次登陆：额外获得 3 个数据",
+              "icon": "data",
+              "options": {
+                "count": 3
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "获得 10 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 10
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "priorCounts": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "effects": [
+            {
+              "type": "gain_resources",
+              "label": "获得 10 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 10
+                }
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "satellites": [
+    "phobos-deimos",
+    "io",
+    "europa",
+    "ganymede",
+    "callisto",
+    "enceladus",
+    "titan",
+    "triton",
+    "titania"
+  ],
+  "discrepancies": [
+    {
+      "family": "orbit",
+      "marker": {
+        "id": "aomomo-orbit-17",
+        "kind": "orbit",
+        "sequence": 17,
+        "playerId": "player-brown",
+        "playerColor": "brown"
+      },
+      "count": 1,
+      "byCount": [
+        {
+          "type": "aomomo_card",
+          "label": "奥陌陌首次环绕：获得 1 张奥陌陌牌",
+          "icon": "aomomoCard",
+          "needsUserChoice": true,
+          "options": {
+            "count": 1
+          },
+          "id": "planet-reward-0",
+          "status": "pending"
+        },
+        {
+          "type": "gain_resources",
+          "label": "奥陌陌环绕：10分+1化石",
+          "icon": "score",
+          "options": {
+            "gain": {
+              "score": 10,
+              "aomomoFossils": 1
+            }
+          },
+          "id": "planet-reward-1",
+          "status": "pending"
+        },
+        {
+          "type": "scan_planet_sector",
+          "label": "奥陌陌扇区扫描",
+          "icon": "scan",
+          "badge": "奥陌陌",
+          "options": {
+            "planetId": "aomomo"
+          },
+          "id": "planet-reward-2",
+          "status": "pending"
+        }
+      ],
+      "byEntitySequence": [
+        {
+          "type": "gain_resources",
+          "label": "奥陌陌环绕：10分+1化石",
+          "icon": "score",
+          "options": {
+            "gain": {
+              "score": 10,
+              "aomomoFossils": 1
+            }
+          },
+          "id": "planet-reward-0",
+          "status": "pending"
+        },
+        {
+          "type": "scan_planet_sector",
+          "label": "奥陌陌扇区扫描",
+          "icon": "scan",
+          "badge": "奥陌陌",
+          "options": {
+            "planetId": "aomomo"
+          },
+          "id": "planet-reward-1",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "family": "land",
+      "marker": {
+        "id": "aomomo-landing-17",
+        "kind": "landing",
+        "sequence": 17,
+        "playerId": "player-brown",
+        "playerColor": "brown"
+      },
+      "count": 1,
+      "byCount": [
+        {
+          "type": "gain_resources",
+          "label": "奥陌陌登陆：9分+2化石",
+          "icon": "score",
+          "options": {
+            "gain": {
+              "score": 9,
+              "aomomoFossils": 2
+            }
+          },
+          "id": "planet-reward-0",
+          "status": "pending"
+        },
+        {
+          "type": "gain_data",
+          "label": "奥陌陌第1次登陆：额外获得 3 个数据",
+          "icon": "data",
+          "options": {
+            "count": 3
+          },
+          "id": "planet-reward-1",
+          "status": "pending"
+        }
+      ],
+      "byEntitySequence": [
+        {
+          "type": "gain_resources",
+          "label": "奥陌陌登陆：9分+2化石",
+          "icon": "score",
+          "options": {
+            "gain": {
+              "score": 9,
+              "aomomoFossils": 2
+            }
+          },
+          "id": "planet-reward-0",
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "unresolved": "奥陌陌能力执行结果使用实体sequence作为奖励顺序，须以正式能力链补充复现后独立修复；路线等价设计尚未冻结"
+}
