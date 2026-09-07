@@ -1,0 +1,635 @@
+{
+  "source": "reports/iteration/green-route-370-20260908.json",
+  "scope": "只读真实计划与实际观察；后续具名公共牌取环绕前事实而非未来事实，避免将计划内自身变化误报为外部变化",
+  "orbitDepth": 0,
+  "scanDepth": 1,
+  "currentScopes": [
+    {
+      "kind": "route",
+      "id": "orbit:venus:planet:",
+      "sourceId": "rocket:11"
+    }
+  ],
+  "publicCard": {
+    "slot": 2,
+    "plannedUse": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:d4b874c4",
+      "actorId": "player-green",
+      "stateVersion": 172,
+      "decisionVersion": 7,
+      "target": {
+        "choiceId": "public:card-59-0:sector-3-a",
+        "cardInstanceId": "card-59-0",
+        "publicSlotIndex": 2,
+        "nebulaId": "sector-3-a"
+      },
+      "payload": {
+        "gainData": true
+      },
+      "decision": null,
+      "summary": "dlc_19.png → 开普勒22",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-59-0",
+        "imageSrc": "../assets/cards/space-agency/split/dlc_19.png",
+        "imageAlt": "dlc_19.png"
+      }
+    },
+    "expectedAtOrbit": {
+      "id": "card-59-0",
+      "cardId": "dlc_19.png"
+    },
+    "expectedAtScan": {
+      "id": "card-59-0",
+      "cardId": "dlc_19.png"
+    },
+    "actualAt370": {
+      "id": "card-72-0",
+      "cardId": "b_61.webp"
+    }
+  },
+  "relevantSectors": [
+    {
+      "id": "sector-1-b",
+      "expectedAtOrbit": {
+        "sectorId": "sector-1-b",
+        "targetId": "sector:win:sector-1-b:1",
+        "ownCount": 0,
+        "maxOpponentCount": 0,
+        "openSlotCount": 4,
+        "nextSlotScore": 0,
+        "ranking": []
+      },
+      "actualAt370": {
+        "sectorId": "sector-1-b",
+        "targetId": "sector:win:sector-1-b:1",
+        "ownCount": 0,
+        "maxOpponentCount": 1,
+        "openSlotCount": 3,
+        "nextSlotScore": 2,
+        "ranking": [
+          {
+            "playerId": "player-white",
+            "playerColor": "white",
+            "count": 1,
+            "latestReplacementOrder": 24
+          }
+        ]
+      }
+    },
+    {
+      "id": "sector-3-a",
+      "expectedAtOrbit": {
+        "sectorId": "sector-3-a",
+        "targetId": "sector:win:sector-3-a:2",
+        "ownCount": 0,
+        "maxOpponentCount": 3,
+        "openSlotCount": 1,
+        "nextSlotScore": 0,
+        "ranking": [
+          {
+            "playerId": "player-brown",
+            "playerColor": "brown",
+            "count": 3,
+            "latestReplacementOrder": 20
+          },
+          {
+            "playerId": "player-white",
+            "playerColor": "white",
+            "count": 1,
+            "latestReplacementOrder": 10
+          }
+        ]
+      },
+      "actualAt370": {
+        "sectorId": "sector-3-a",
+        "targetId": "sector:win:sector-3-a:3",
+        "ownCount": 0,
+        "maxOpponentCount": 3,
+        "openSlotCount": 2,
+        "nextSlotScore": 0,
+        "ranking": [
+          {
+            "playerId": "player-white",
+            "playerColor": "white",
+            "count": 3,
+            "latestReplacementOrder": 27
+          }
+        ]
+      }
+    }
+  ],
+  "scoreEvents": {
+    "baseline": {
+      "file": "f6c9aabe.7a33ec07.full.json",
+      "events": [
+        {
+          "step": 373,
+          "round": 3,
+          "turn": 12,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:2dae6b0e",
+            "actorId": "player-green",
+            "stateVersion": 188,
+            "decisionVersion": 8,
+            "target": {
+              "choiceId": "nebula:sector-1-b",
+              "nebulaId": "sector-1-b",
+              "sectorX": 6
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 织女一"
+          },
+          "delta": 2,
+          "score": 46
+        },
+        {
+          "step": 391,
+          "round": 3,
+          "turn": 16,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "orbit",
+            "phase": "main",
+            "actionId": "orbit:90e248b6",
+            "actorId": "player-green",
+            "stateVersion": 196,
+            "decisionVersion": 8,
+            "target": {
+              "rocketId": 11,
+              "planetId": "venus"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R11，1信用点 + 1能量）"
+          },
+          "delta": 6,
+          "score": 52
+        },
+        {
+          "step": 459,
+          "round": 4,
+          "turn": 3,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:83e748dc",
+            "actorId": "player-green",
+            "stateVersion": 222,
+            "decisionVersion": 12,
+            "target": {
+              "choiceId": "symbol:blue_2",
+              "slotId": "blue_2",
+              "region": "blue",
+              "symbolId": "symbol_3"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "blue_2（4分）"
+          },
+          "delta": 4,
+          "score": 56
+        },
+        {
+          "step": 479,
+          "round": 4,
+          "turn": 7,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:a4e3e3d6",
+            "actorId": "player-green",
+            "stateVersion": 232,
+            "decisionVersion": 12,
+            "target": {
+              "choiceId": "scan4:skip",
+              "mode": "skip"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "跳过"
+          },
+          "delta": 3,
+          "score": 59
+        },
+        {
+          "step": 520,
+          "round": 4,
+          "turn": 11,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:64c1281e",
+            "actorId": "player-green",
+            "stateVersion": 251,
+            "decisionVersion": 14,
+            "target": {
+              "choiceId": "trace:2:blue:chong:8",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "blue",
+              "speciesId": "chong",
+              "position": 8
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 2 蓝8号位（3分+外星人牌）"
+          },
+          "delta": 3,
+          "score": 62
+        },
+        {
+          "step": 598,
+          "round": 4,
+          "turn": 25,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "land",
+            "phase": "main",
+            "actionId": "land:1cbade2c",
+            "actorId": "player-green",
+            "stateVersion": 293,
+            "decisionVersion": 17,
+            "target": {
+              "select": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "登陆"
+          },
+          "delta": 6,
+          "score": 68
+        },
+        {
+          "step": 609,
+          "round": 4,
+          "turn": 27,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "land",
+            "phase": "main",
+            "actionId": "land:1cbade2c",
+            "actorId": "player-green",
+            "stateVersion": 298,
+            "decisionVersion": 18,
+            "target": {
+              "select": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "登陆"
+          },
+          "delta": 6,
+          "score": 74
+        },
+        {
+          "step": 610,
+          "round": 4,
+          "turn": 27,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:8bd62a2a",
+            "actorId": "player-green",
+            "stateVersion": 298,
+            "decisionVersion": 18,
+            "target": {
+              "choiceId": "trace:1:yellow:amiba:2",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "yellow",
+              "speciesId": "amiba",
+              "position": 2
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄2号位（1分）"
+          },
+          "delta": 1,
+          "score": 75
+        },
+        {
+          "step": 611,
+          "round": 4,
+          "turn": 27,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:af88778b",
+            "actorId": "player-green",
+            "stateVersion": 299,
+            "decisionVersion": 18,
+            "target": {
+              "cardInstanceId": "alien-chong-1-26"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            },
+            "decision": null,
+            "summary": "chong_1.webp：弃牌角标"
+          },
+          "delta": 1,
+          "score": 76
+        },
+        {
+          "step": 612,
+          "round": 4,
+          "turn": 27,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:ecb20374",
+            "actorId": "player-green",
+            "stateVersion": 300,
+            "decisionVersion": 18,
+            "target": {
+              "cardInstanceId": "alien-amiba-4-31"
+            },
+            "payload": {
+              "kind": "move",
+              "multiplier": 1
+            },
+            "decision": null,
+            "summary": "amiba_4.webp：弃牌角标"
+          },
+          "delta": 1,
+          "score": 77
+        },
+        {
+          "step": 615,
+          "round": 4,
+          "turn": 27,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:52efd39a",
+            "actorId": "player-green",
+            "stateVersion": 301,
+            "decisionVersion": 18,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 1"
+          },
+          "delta": 2,
+          "score": 79
+        },
+        {
+          "step": 629,
+          "round": 4,
+          "turn": 29,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "accept_optional_effect",
+            "phase": "conditional",
+            "actionId": "accept_optional_effect:243069a6",
+            "actorId": "player-green",
+            "stateVersion": 307,
+            "decisionVersion": 20,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "confirm:task:card-62-0:dlc16-zero-publicity"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结算 dlc_16.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-62-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_16.png",
+              "imageAlt": "dlc_16.png",
+              "detail": "0宣传：2分+1宣传"
+            }
+          },
+          "delta": 2,
+          "score": 81
+        },
+        {
+          "step": 636,
+          "round": 4,
+          "turn": 29,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:52efd39a",
+            "actorId": "player-green",
+            "stateVersion": 310,
+            "decisionVersion": 20,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 3"
+          },
+          "delta": 2,
+          "score": 83
+        }
+      ],
+      "totalDelta": 39
+    },
+    "candidate": {
+      "file": "81eb1a1e.bb028006.full.json",
+      "events": [
+        {
+          "step": 370,
+          "round": 3,
+          "turn": 12,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "orbit",
+            "phase": "main",
+            "actionId": "orbit:90e248b6",
+            "actorId": "player-green",
+            "stateVersion": 187,
+            "decisionVersion": 8,
+            "target": {
+              "rocketId": 11,
+              "planetId": "venus"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R11，1信用点 + 1能量）"
+          },
+          "delta": 6,
+          "score": 50
+        },
+        {
+          "step": 433,
+          "round": 3,
+          "turn": 20,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:b90b0670",
+            "actorId": "player-green",
+            "stateVersion": 216,
+            "decisionVersion": 10,
+            "target": {
+              "choiceId": "public:card-74-0:sector-1-a",
+              "cardInstanceId": "card-74-0",
+              "publicSlotIndex": 2,
+              "nebulaId": "sector-1-a"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "dlc_6.png → 南河三",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-74-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_6.png",
+              "imageAlt": "dlc_6.png"
+            }
+          },
+          "delta": 3,
+          "score": 53
+        },
+        {
+          "step": 503,
+          "round": 4,
+          "turn": 7,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "orbit",
+            "phase": "main",
+            "actionId": "orbit:65fd4e5c",
+            "actorId": "player-green",
+            "stateVersion": 250,
+            "decisionVersion": 15,
+            "target": {
+              "rocketId": 13,
+              "planetId": "venus"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R13，1信用点 + 1能量）"
+          },
+          "delta": 6,
+          "score": 59
+        },
+        {
+          "step": 557,
+          "round": 4,
+          "turn": 15,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "orbit",
+            "phase": "main",
+            "actionId": "orbit:4304d8e2",
+            "actorId": "player-green",
+            "stateVersion": 277,
+            "decisionVersion": 20,
+            "target": {
+              "rocketId": 15,
+              "planetId": "venus"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R15，1信用点 + 1能量）"
+          },
+          "delta": 6,
+          "score": 65
+        },
+        {
+          "step": 585,
+          "round": 4,
+          "turn": 19,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:ccdcfd74",
+            "actorId": "player-green",
+            "stateVersion": 290,
+            "decisionVersion": 23,
+            "target": {
+              "choiceId": "trace:1:blue:amiba:1",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "blue",
+              "speciesId": "amiba",
+              "position": 1
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "外星人 1 蓝1号位"
+          },
+          "delta": 4,
+          "score": 69
+        },
+        {
+          "step": 601,
+          "round": 4,
+          "turn": 21,
+          "actor": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:52efd39a",
+            "actorId": "player-green",
+            "stateVersion": 297,
+            "decisionVersion": 23,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 1"
+          },
+          "delta": 2,
+          "score": 71
+        }
+      ],
+      "totalDelta": 27
+    }
+  },
+  "passed": true
+}
