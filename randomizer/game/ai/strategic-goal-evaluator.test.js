@@ -6,6 +6,61 @@ const evaluator = require("./expected-score-evaluator");
 
 const seatId = "strategic-seat";
 
+// 普通痕迹自下而上；特殊奖励仍搜索。根与绑定/未绑定后继使用同一候选契约。
+{
+  const trace = (speciesId, position, traceType = "yellow", alienSlotId = 1) => ({
+    actionId: `${speciesId}:${traceType}:${position}`, actorId: seatId,
+    family: "choose_target", phase: "conditional", payload: {}, summary: "不依赖奖励文案",
+    target: { kind: "planet-reward-alien-trace", speciesId, position, traceType, alienSlotId },
+  });
+  const obs = observation({ roundNumber: 4 });
+  const selectAllPaths = (choices, expected, current = obs) => {
+    const before = JSON.stringify({ choices, current });
+    const check = selected => assert.deepEqual(selected.map(a => a.actionId).sort(), expected.map(a => a.actionId).sort());
+    check(evaluator.selectSecondaryAgentRootActions({ focalSeatId: seatId, rootObservation: current, legalActions: choices }));
+    for (const routeTargetId of [null, "data:analyze"]) {
+      check(evaluator.selectSecondaryAgentSuccessors({ focalSeatId: seatId, branchObservation: current,
+        legalSuccessors: choices, routeTargetId, routePlanId: routeTargetId }));
+    }
+    assert.equal(JSON.stringify({ choices, current }), before, "筛选不改变输入和动作身份");
+  };
+  for (const speciesId of ["amiba", "chong", "jiuzhe", "yichangdian"]) {
+    const count = ["jiuzhe", "yichangdian"].includes(speciesId) ? 5 : 4;
+    for (let available = count; available > 0; available--) {
+      const choices = Array.from({ length: available }, (_, i) => trace(speciesId, i + 1));
+      selectAllPaths(choices, [choices.at(-1)]);
+      selectAllPaths([...choices].reverse(), [choices.at(-1)]);
+    }
+  }
+  for (const [speciesId, count, keep] of [
+    ["banrenma", 5, [1, 2, 5]], ["aomomo", 5, [1, 4, 5]],
+    ["runezu", 4, [1, 3, 4]], ["fangzhou", 4, [1, 2, 3, 4]],
+  ]) {
+    const choices = Array.from({ length: count }, (_, i) => trace(speciesId, i + 1));
+    selectAllPaths(choices, choices.filter(a => keep.includes(a.target.position)));
+  }
+  const blue = Array.from({ length: 9 }, (_, i) => trace("chong", i + 1, "blue"));
+  selectAllPaths(blue, blue);
+  const amiba = [trace("amiba", 2), trace("amiba", 3)];
+  selectAllPaths(amiba, [amiba[1]], obs); // 最后一轮不等于不能继续行动。
+  selectAllPaths(amiba, amiba, { ...obs, publicState: { ...obs.publicState, passedPlayerIds: [seatId] } });
+  const overflow = { ...trace("amiba", 0), actionId: "overflow", target: {
+    kind: "planet-reward-alien-trace", alienSlotId: 1, traceType: "yellow", stateExtra: true,
+  } };
+  const first = { ...overflow, actionId: "first", target: {
+    kind: "planet-reward-alien-trace", alienSlotId: 2, traceType: "yellow",
+  } };
+  selectAllPaths([...amiba, overflow, first], [amiba[1], first]);
+  selectAllPaths([overflow], [overflow]);
+  const unlock = { ...overflow, actionId: "unlock", target: { ...overflow.target, fangzhouUnlock: true } };
+  selectAllPaths([...amiba, unlock], [amiba[1], unlock]);
+  const arkObservation = { ...obs, publicState: { ...obs.publicState, board: { aliens: {
+    slots: [{ slotId: 1, revealed: true, alienId: "方舟", traces: { yellow: { firstPlaced: true } } }],
+  } } } };
+  selectAllPaths([...amiba, overflow], [amiba[1], overflow], arkObservation);
+  console.log("外星人普通槽位贪心：根/绑定/未绑定、末轮、特殊位置及方舟边界通过");
+}
+
 // 免费移动仍须推进主要目标；公司第二艘带独立准备目的，不改写第一艘的目标。
 {
   const choice = (id, rocketId, deltaX, deltaY) => ({ actionId: id, actorId: seatId,

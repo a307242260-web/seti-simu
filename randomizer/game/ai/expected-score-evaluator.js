@@ -30,7 +30,7 @@
   const EVALUATION_MODEL = "strategic-goal-search-v3";
   const PARAMETER_VERSION = "seti-strategic-goal-search-v3";
   const OUTCOME_SCHEMA_VERSION = outcomeModel.OUTCOME_SCHEMA_VERSION;
-  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v20";
+  const SECONDARY_AGENT_ROLLOUT_VERSION = "secondary-agent-rollout-v21";
   const DATA_ANALYZE_ROUTE_TARGET = "data:analyze";
   const CONTROL_FAMILIES = Object.freeze(new Set(["end_turn", "pass"]));
   // 统一搜索：未绑定分支每层最多展开的未绑定后继数（预算内优先级截断，见
@@ -1780,7 +1780,7 @@
   }
 
   function enumerateSecondaryAgentRootTargets(input = {}) {
-    const legalActions = [...(input.legalActions || [])]
+    const legalActions = selectGreedyAlienTracePositions(input.rootObservation, input.legalActions || [])
       .sort((left, right) => String(left.actionId).localeCompare(String(right.actionId)));
     const legalIds = new Set(legalActions.map((action) => action.actionId));
     const targets = new Map();
@@ -2602,8 +2602,57 @@
     }));
   }
 
+  // 用户授权的槽位贪心，不是规则状态等价。只消费正式合法集，不改变动作身份。
+  function selectGreedyAlienTracePositions(observation, actions) {
+    const isTrace = (action) => action.family === "choose_target"
+      && action.target?.kind === "planet-reward-alien-trace";
+    const isFace = (action) => isTrace(action)
+      && action.target?.speciesId != null && action.target?.position != null;
+    const faceActors = new Set(actions.filter(isFace).map(action => action.actorId));
+    const slots = observation?.publicState?.board?.aliens?.slots || [];
+    const withoutOverflow = actions.filter((action) => {
+      if (!isTrace(action) || !faceActors.has(action.actorId) || isFace(action)
+        || action.target?.fangzhouUnlock) return true;
+      const slot = slots.find(item => Number(item.slotId) === Number(action.target.alienSlotId));
+      // 方舟state额外位可能同时解锁牌，不是纯3分；未揭示首痕迹必须保留。
+      if (slot?.revealed && slot.alienId === "方舟") return true;
+      return !(action.target?.stateExtra
+        || slot?.traces?.[action.target.traceType]?.firstPlaced);
+    });
+    const finalRound = observation?.outcomeProjection?.progress?.finalRoundNumber || 4;
+    const lastRound = Number(observation?.publicState?.roundNumber) >= finalRound;
+    const passed = new Set(observation?.publicState?.passedPlayerIds || []);
+    const ordinaryKey = (action) => {
+      if (!isFace(action)) return null;
+      // 已正式PASS才足以证明没有后续行动；缺钱或本回合主行动已用都不够。
+      // 该终局边界让原搜索比较真实分数，不按牌的中途价值强制选位。
+      if (observation?.terminal || (lastRound && passed.has(action.actorId))) return null;
+      const { speciesId, position, traceType, alienSlotId } = action.target;
+      const p = Number(position);
+      const ordinary = ["amiba", "jiuzhe", "yichangdian"].includes(speciesId)
+        || (speciesId === "chong" && traceType !== "blue")
+        || (speciesId === "banrenma" && p >= 3 && p <= 5)
+        || (speciesId === "aomomo" && p >= 2 && p <= 4)
+        || (speciesId === "runezu" && (p === 2 || p === 3));
+      return ordinary ? JSON.stringify([action.actorId, alienSlotId, speciesId, traceType]) : null;
+    };
+    const best = new Map();
+    for (const action of withoutOverflow) {
+      const key = ordinaryKey(action);
+      if (key == null) continue;
+      const previous = best.get(key);
+      if (!previous || Number(action.target.position) > Number(previous.target.position)
+        || (Number(action.target.position) === Number(previous.target.position)
+          && String(action.actionId).localeCompare(String(previous.actionId)) < 0)) best.set(key, action);
+    }
+    return withoutOverflow.filter(action => {
+      const key = ordinaryKey(action);
+      return key == null || best.get(key) === action;
+    });
+  }
+
   function selectSecondaryAgentSuccessors(input = {}) {
-    const successors = [...(input.legalSuccessors || [])]
+    const successors = selectGreedyAlienTracePositions(input.branchObservation, input.legalSuccessors || [])
       .sort((left, right) => String(left.actionId).localeCompare(String(right.actionId)));
     if (!successors.length) return [];
     const bindRoute = (
@@ -2937,33 +2986,6 @@
         if (alienTraceChoices.length) {
           return bindRoute(
             alienTraceChoices,
-            input.routeTargetId,
-            input.routePlanId,
-          );
-        }
-        // 揭示后痕迹位置选择（用户规则：开了外星人优先覆盖"下两行高收益、有外星
-        // 人牌"的位置，如阿米巴 3/4 号位给精选外星牌）：选项 summary 带奖励描述
-        // （"阿米巴 黄3号位（外星人牌）"），按奖励价值排序——外星人牌/精选牌 >
-        // 有分数 > state-extra 冗余位（3 分/枚）> 无奖励。
-        const revealedTracePositions = successors.filter((action) => (
-          action.family === "choose_target"
-          && action.target?.kind === "planet-reward-alien-trace"
-          && action.target?.speciesId != null
-          && action.target?.position != null
-        ));
-        if (revealedTracePositions.length === successors.length) {
-          const tracePositionValue = (action) => {
-            const summary = String(action.summary || "");
-            if (summary.includes("外星人牌") || summary.includes("精选牌")) return 3;
-            if (/[0-9]分/.test(summary)) return 2;
-            if (action.target?.stateExtra) return 1;
-            return 0;
-          };
-          return bindRoute(
-            [...revealedTracePositions].sort((left, right) => (
-              tracePositionValue(right) - tracePositionValue(left)
-              || String(left.actionId).localeCompare(String(right.actionId))
-            )),
             input.routeTargetId,
             input.routePlanId,
           );
