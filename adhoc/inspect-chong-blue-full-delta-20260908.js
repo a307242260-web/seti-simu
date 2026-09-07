@@ -1,8 +1,11 @@
 "use strict";
 const fs = require("node:fs"), assert = require("node:assert/strict");
-const output = "reports/iteration/chong-blue-full-delta-20260908.json";
+const companyIncome = process.argv.includes("--company-income");
+const output = companyIncome ? "reports/iteration/company-income-full-delta-20260908.json" : "reports/iteration/chong-blue-full-delta-20260908.json";
 if (fs.existsSync(output)) { console.log(`已有checkpoint：${output}`); process.exit(0); }
-const review = JSON.parse(fs.readFileSync("reports/iteration/chong-blue-card-order-full-review-20260908.json"));
+const review = JSON.parse(fs.readFileSync(companyIncome ? "reports/iteration/company-base-income-full-review-20260908.json" : "reports/iteration/chong-blue-card-order-full-review-20260908.json"));
+const corrected = companyIncome ? JSON.parse(fs.readFileSync("reports/iteration/company-base-income-finals-20260908.json")) : null;
+if (corrected) assert.equal(corrected.passed, true);
 function inspect(summary) {
   const record = JSON.parse(fs.readFileSync(summary.file)),save = JSON.parse(fs.readFileSync(record.savePath));
   const state = JSON.parse(save.committedState);
@@ -14,7 +17,9 @@ function inspect(summary) {
   const players = {};
   for(const p of state.players.players) {
     const steps = save.replaySteps.filter(s=>s.actorPlayerId===p.id);
-    players[p.id] = {scoreSources:p.scoreSources,final:p.finalScoreBreakdown,orbitCount:p.orbitCount,
+    const diagnostic = corrected?.records.find(r=>r.file===summary.file)?.scores.find(s=>s.playerId===p.id);
+    if (companyIncome && summary.file === review.baseline.file) assert.ok(diagnostic, "前版必须使用已验证的正确规则诊断分");
+    players[p.id] = {scoreSources:p.scoreSources,final:diagnostic || p.finalScoreBreakdown,originalFinal:p.finalScoreBreakdown,orbitCount:p.orbitCount,
       income:p.income,tech:p.techState,marks:steps.filter(s=>s.action.summary.startsWith("标记 ")),
       roundActions:{}};
     for(const round of [1,2,3,4]) {
@@ -34,6 +39,6 @@ for(const id of Object.keys(baseline.players)) {
     sources:Object.fromEntries([...sourceKeys].map(k=>[k,(b.scoreSources[k]||0)-(a.scoreSources[k]||0)]))};
   assert.equal(deltas[id].base+deltas[id].tile+deltas[id].card,deltas[id].total);
 }
-const report={scope:"只读固定全盘，玩家/回合对齐，分数拆分不代替策略因果证明",baseline,candidate,deltas};
+const report={scope:companyIncome ? "只读既有两局；前版按已验证公司收入诊断分比较，保留原始分数；同终局重算不等于新实验，差值不代替因果证明" : "只读固定全盘，玩家/回合对齐，分数拆分不代替策略因果证明",baseline,candidate,deltas};
 fs.writeFileSync(output,JSON.stringify(report,null,2)+"\n");
 console.log(JSON.stringify({output,baselineBins:baseline.searchBins,candidateBins:candidate.searchBins,deltas},null,2));
