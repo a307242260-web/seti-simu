@@ -1,0 +1,314 @@
+{
+  "scope": "纯资源准备函数控制变量试验：真实棕方资源与真实两席交易descriptor；绿方descriptor仅用于改变动作编号排序，不代表绿方实际盘面或历史搜索复现",
+  "source": "brown-income-roots-20260907.json rows[0] / company-movement-input-42-20260906.json",
+  "cases": 405,
+  "brownTrades": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:11754f92",
+      "actorId": "player-brown",
+      "stateVersion": 79,
+      "decisionVersion": 5,
+      "target": {
+        "tradeId": "publicity-for-card"
+      },
+      "payload": {
+        "cost": {
+          "publicity": 3
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "3宣传 → 精选1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:5ad269c5",
+      "actorId": "player-brown",
+      "stateVersion": 79,
+      "decisionVersion": 5,
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "decision": null,
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:9256f5c4",
+      "actorId": "player-brown",
+      "stateVersion": 79,
+      "decisionVersion": 5,
+      "target": {
+        "tradeId": "cards-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "decision": null,
+      "summary": "2张牌 → 1能量"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:952695f9",
+      "actorId": "player-brown",
+      "stateVersion": 79,
+      "decisionVersion": 5,
+      "target": {
+        "tradeId": "cards-for-credit"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "credits": 1
+        }
+      },
+      "decision": null,
+      "summary": "2张牌 → 1信用点"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:aedbd0df",
+      "actorId": "player-brown",
+      "stateVersion": 79,
+      "decisionVersion": 5,
+      "target": {
+        "tradeId": "credits-for-card"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "2信用点 → 1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:c3f1770e",
+      "actorId": "player-brown",
+      "stateVersion": 79,
+      "decisionVersion": 5,
+      "target": {
+        "tradeId": "cards-for-pick-card"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "2张牌 → 精选1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:c49d725c",
+      "actorId": "player-brown",
+      "stateVersion": 79,
+      "decisionVersion": 5,
+      "target": {
+        "tradeId": "energy-for-move"
+      },
+      "payload": {
+        "cost": {
+          "energy": 1
+        },
+        "gain": {}
+      },
+      "decision": null,
+      "summary": "1能量 → 移动1步"
+    }
+  ],
+  "greenTrades": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:0037d2c5",
+      "actorId": "player-green",
+      "stateVersion": 11,
+      "decisionVersion": 0,
+      "target": {
+        "tradeId": "cards-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "decision": null,
+      "summary": "2张牌 → 1能量"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:16a0f2d7",
+      "actorId": "player-green",
+      "stateVersion": 11,
+      "decisionVersion": 0,
+      "target": {
+        "tradeId": "energy-for-move"
+      },
+      "payload": {
+        "cost": {
+          "energy": 1
+        },
+        "gain": {}
+      },
+      "decision": null,
+      "summary": "1能量 → 移动1步"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:38002215",
+      "actorId": "player-green",
+      "stateVersion": 11,
+      "decisionVersion": 0,
+      "target": {
+        "tradeId": "cards-for-pick-card"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "2张牌 → 精选1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:76cce73d",
+      "actorId": "player-green",
+      "stateVersion": 11,
+      "decisionVersion": 0,
+      "target": {
+        "tradeId": "publicity-for-card"
+      },
+      "payload": {
+        "cost": {
+          "publicity": 3
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "3宣传 → 精选1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:90440450",
+      "actorId": "player-green",
+      "stateVersion": 11,
+      "decisionVersion": 0,
+      "target": {
+        "tradeId": "credits-for-card"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "decision": null,
+      "summary": "2信用点 → 1张牌"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:dafd4f4a",
+      "actorId": "player-green",
+      "stateVersion": 11,
+      "decisionVersion": 0,
+      "target": {
+        "tradeId": "cards-for-credit"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "credits": 1
+        }
+      },
+      "decision": null,
+      "summary": "2张牌 → 1信用点"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:ee5652be",
+      "actorId": "player-green",
+      "stateVersion": 11,
+      "decisionVersion": 0,
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "decision": null,
+      "summary": "2信用点 → 1能量"
+    }
+  ],
+  "differences": []
+}

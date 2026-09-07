@@ -1405,7 +1405,8 @@
       target.energy,
       target.handSize,
       ...PLANNED_RESOURCE_KEYS.map((key) => initial[key]),
-      ...[...legalByTradeId.keys()].sort(),
+      // 同成本终态的代表按actionId排序；缓存必须隔离不同动作身份的映射。
+      ...[...legalByTradeId].map(([tradeId, action]) => JSON.stringify([tradeId, action.actionId])).sort(),
     ].join(":");
     if (resourcePreparationCache.has(preparationKey)) {
       return resourcePreparationCache.get(preparationKey)

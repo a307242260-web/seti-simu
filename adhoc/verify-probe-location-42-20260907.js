@@ -11,7 +11,7 @@ else {
   let fork, pendingAdvance = false;
   try {
     const source = JSON.parse(fs.readFileSync(checkpointPath));
-    const cp = checkpointStep != null ? source.entries.find(entry => entry.step === checkpointStep)?.checkpoint
+    const cp = checkpointStep != null ? (source.entries || source.rows).find(entry => entry.step === checkpointStep)?.checkpoint
       : source.schemaVersion === "seti-rl-checkpoint-v1" ? source : source.checkpoint;
     assert.ok(cp, "指定真实检查点必须存在");
     delete cp.replaySteps;
