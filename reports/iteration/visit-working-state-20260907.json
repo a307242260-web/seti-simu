@@ -1,0 +1,713 @@
+{
+  "scope": "真实148/497既有路线的当前工作投影与committedState对照、奖励来源读取和进度；不运行AI、不证明全部模型来源唯一",
+  "input": "reports/iteration/turn-visit-routes-formal-20260907.json",
+  "inputSha256": "2b70069567adc4dd8d575bc374e0b3810338e225f6f2d481642039ac22c304fd",
+  "rows": [
+    {
+      "step": 148,
+      "sourceCardInstanceId": "card-21-pass-1-2",
+      "stages": [
+        {
+          "label": "before-play",
+          "phase": "idle",
+          "currentEffectType": "idle",
+          "currentEffectCard": "not-card-effect",
+          "workingBonuses": [],
+          "committedBonuses": [],
+          "score": 15,
+          "progress": []
+        },
+        {
+          "label": "b_24.webp",
+          "phase": "awaiting_input",
+          "currentEffectType": "card_play_domain_effect:decision:card_move",
+          "currentEffectCard": "card-21-pass-1-2",
+          "workingBonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          ],
+          "committedBonuses": [],
+          "score": 15,
+          "progress": [
+            {
+              "bonusId": "b24-turn-comet-score",
+              "sourceMatches": [
+                "card-21-pass-1-2"
+              ],
+              "usedKeys": [],
+              "claimedKeys": [],
+              "mars": {
+                "status": "inapplicable"
+              }
+            }
+          ]
+        },
+        {
+          "label": "R2 向外",
+          "phase": "awaiting_input",
+          "currentEffectType": "card_play_domain_effect:decision:card_move",
+          "currentEffectCard": "card-21-pass-1-2",
+          "workingBonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          ],
+          "committedBonuses": [],
+          "score": 15,
+          "progress": [
+            {
+              "bonusId": "b24-turn-comet-score",
+              "sourceMatches": [
+                "card-21-pass-1-2"
+              ],
+              "usedKeys": [],
+              "claimedKeys": [],
+              "mars": {
+                "status": "inapplicable"
+              }
+            }
+          ]
+        },
+        {
+          "label": "R2 向外",
+          "phase": "idle",
+          "currentEffectType": "idle",
+          "currentEffectCard": "not-card-effect",
+          "workingBonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          ],
+          "committedBonuses": [
+            {
+              "claimedKeys": [],
+              "duration": "turn",
+              "effectId": "b24-turn-comet-score",
+              "eventType": "visitComet",
+              "icon": "score",
+              "id": "b24-turn-comet-score",
+              "onceKey": "b24-comet-score",
+              "ownerId": "player-green",
+              "playerId": "player-green",
+              "rewards": [
+                {
+                  "icon": "score",
+                  "id": "b24-comet-score",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  },
+                  "type": "gain_resources"
+                }
+              ],
+              "usedKeys": []
+            }
+          ],
+          "score": 15,
+          "progress": [
+            {
+              "bonusId": "b24-turn-comet-score",
+              "sourceMatches": [
+                "card-21-pass-1-2"
+              ],
+              "usedKeys": [],
+              "claimedKeys": [],
+              "mars": {
+                "status": "inapplicable"
+              }
+            }
+          ]
+        },
+        {
+          "label": "移动探测器 2 向外",
+          "phase": "awaiting_input",
+          "currentEffectType": "probe_turn_move_payment",
+          "currentEffectCard": "not-card-effect",
+          "workingBonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          ],
+          "committedBonuses": [
+            {
+              "claimedKeys": [],
+              "duration": "turn",
+              "effectId": "b24-turn-comet-score",
+              "eventType": "visitComet",
+              "icon": "score",
+              "id": "b24-turn-comet-score",
+              "onceKey": "b24-comet-score",
+              "ownerId": "player-green",
+              "playerId": "player-green",
+              "rewards": [
+                {
+                  "icon": "score",
+                  "id": "b24-comet-score",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  },
+                  "type": "gain_resources"
+                }
+              ],
+              "usedKeys": []
+            }
+          ],
+          "score": 15,
+          "progress": [
+            {
+              "bonusId": "b24-turn-comet-score",
+              "sourceMatches": [
+                "card-21-pass-1-2"
+              ],
+              "usedKeys": [],
+              "claimedKeys": [],
+              "mars": {
+                "status": "inapplicable"
+              }
+            }
+          ]
+        },
+        {
+          "label": "消耗 1 能量",
+          "phase": "idle",
+          "currentEffectType": "idle",
+          "currentEffectCard": "not-card-effect",
+          "workingBonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          ],
+          "committedBonuses": [
+            {
+              "claimedKeys": [],
+              "duration": "turn",
+              "effectId": "b24-turn-comet-score",
+              "eventType": "visitComet",
+              "icon": "score",
+              "id": "b24-turn-comet-score",
+              "onceKey": "b24-comet-score",
+              "ownerId": "player-green",
+              "playerId": "player-green",
+              "rewards": [
+                {
+                  "icon": "score",
+                  "id": "b24-comet-score",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  },
+                  "type": "gain_resources"
+                }
+              ],
+              "usedKeys": []
+            }
+          ],
+          "score": 15,
+          "progress": [
+            {
+              "bonusId": "b24-turn-comet-score",
+              "sourceMatches": [
+                "card-21-pass-1-2"
+              ],
+              "usedKeys": [],
+              "claimedKeys": [],
+              "mars": {
+                "status": "inapplicable"
+              }
+            }
+          ]
+        },
+        {
+          "label": "移动探测器 2 逆时针",
+          "phase": "awaiting_input",
+          "currentEffectType": "probe_turn_move_payment",
+          "currentEffectCard": "not-card-effect",
+          "workingBonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          ],
+          "committedBonuses": [
+            {
+              "claimedKeys": [],
+              "duration": "turn",
+              "effectId": "b24-turn-comet-score",
+              "eventType": "visitComet",
+              "icon": "score",
+              "id": "b24-turn-comet-score",
+              "onceKey": "b24-comet-score",
+              "ownerId": "player-green",
+              "playerId": "player-green",
+              "rewards": [
+                {
+                  "icon": "score",
+                  "id": "b24-comet-score",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  },
+                  "type": "gain_resources"
+                }
+              ],
+              "usedKeys": []
+            }
+          ],
+          "score": 15,
+          "progress": [
+            {
+              "bonusId": "b24-turn-comet-score",
+              "sourceMatches": [
+                "card-21-pass-1-2"
+              ],
+              "usedKeys": [],
+              "claimedKeys": [],
+              "mars": {
+                "status": "inapplicable"
+              }
+            }
+          ]
+        },
+        {
+          "label": "消耗 1 能量",
+          "phase": "idle",
+          "currentEffectType": "idle",
+          "currentEffectCard": "not-card-effect",
+          "workingBonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": [
+                "b24-comet-score"
+              ]
+            }
+          ],
+          "committedBonuses": [
+            {
+              "claimedKeys": [
+                "b24-comet-score"
+              ],
+              "duration": "turn",
+              "effectId": "b24-turn-comet-score",
+              "eventType": "visitComet",
+              "icon": "score",
+              "id": "b24-turn-comet-score",
+              "onceKey": "b24-comet-score",
+              "ownerId": "player-green",
+              "playerId": "player-green",
+              "rewards": [
+                {
+                  "icon": "score",
+                  "id": "b24-comet-score",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  },
+                  "type": "gain_resources"
+                }
+              ],
+              "usedKeys": []
+            }
+          ],
+          "score": 19,
+          "progress": [
+            {
+              "bonusId": "b24-turn-comet-score",
+              "sourceMatches": [
+                "card-21-pass-1-2"
+              ],
+              "usedKeys": [],
+              "claimedKeys": [
+                "b24-comet-score"
+              ],
+              "mars": {
+                "status": "inapplicable"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "step": 497,
+      "sourceCardInstanceId": "card-31-pass-3-2",
+      "stages": [
+        {
+          "label": "before-play",
+          "phase": "idle",
+          "currentEffectType": "idle",
+          "currentEffectCard": "not-card-effect",
+          "workingBonuses": [],
+          "committedBonuses": [],
+          "score": 51,
+          "progress": []
+        },
+        {
+          "label": "dlc_12.png",
+          "phase": "awaiting_input",
+          "currentEffectType": "card_play_domain_effect:decision:card_move",
+          "currentEffectCard": "card-31-pass-3-2",
+          "workingBonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitPlanet",
+              "distinctBy": "planetId",
+              "minCount": 2,
+              "onceKey": "dlc12-two-planets",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "dlc12-score",
+                  "type": "gain_resources",
+                  "label": "访问2个不同行星：3分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  }
+                }
+              ],
+              "id": "dlc12-turn-distinct-planets",
+              "effectId": "dlc12-turn-distinct-planets",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          ],
+          "committedBonuses": [],
+          "score": 51,
+          "progress": [
+            {
+              "bonusId": "dlc12-turn-distinct-planets",
+              "sourceMatches": [
+                "card-31-pass-3-2"
+              ],
+              "usedKeys": [],
+              "claimedKeys": [],
+              "mars": {
+                "status": "progress",
+                "usedKey": "mars",
+                "claimKey": "dlc12-two-planets"
+              }
+            }
+          ]
+        },
+        {
+          "label": "R12 向外",
+          "phase": "awaiting_input",
+          "currentEffectType": "card_play_domain_effect:decision:card_move",
+          "currentEffectCard": "card-31-pass-3-2",
+          "workingBonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitPlanet",
+              "distinctBy": "planetId",
+              "minCount": 2,
+              "onceKey": "dlc12-two-planets",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "dlc12-score",
+                  "type": "gain_resources",
+                  "label": "访问2个不同行星：3分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  }
+                }
+              ],
+              "id": "dlc12-turn-distinct-planets",
+              "effectId": "dlc12-turn-distinct-planets",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [
+                "saturn"
+              ],
+              "claimedKeys": []
+            }
+          ],
+          "committedBonuses": [],
+          "score": 51,
+          "progress": [
+            {
+              "bonusId": "dlc12-turn-distinct-planets",
+              "sourceMatches": [
+                "card-31-pass-3-2"
+              ],
+              "usedKeys": [
+                "saturn"
+              ],
+              "claimedKeys": [],
+              "mars": {
+                "status": "reward",
+                "usedKey": "mars",
+                "claimKey": "dlc12-two-planets"
+              }
+            }
+          ]
+        },
+        {
+          "label": "R12 向内",
+          "phase": "idle",
+          "currentEffectType": "idle",
+          "currentEffectCard": "not-card-effect",
+          "workingBonuses": [
+            {
+              "duration": "turn",
+              "eventType": "visitPlanet",
+              "distinctBy": "planetId",
+              "minCount": 2,
+              "onceKey": "dlc12-two-planets",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "dlc12-score",
+                  "type": "gain_resources",
+                  "label": "访问2个不同行星：3分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  }
+                }
+              ],
+              "id": "dlc12-turn-distinct-planets",
+              "effectId": "dlc12-turn-distinct-planets",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [
+                "saturn",
+                "mars"
+              ],
+              "claimedKeys": [
+                "dlc12-two-planets"
+              ]
+            }
+          ],
+          "committedBonuses": [
+            {
+              "claimedKeys": [
+                "dlc12-two-planets"
+              ],
+              "distinctBy": "planetId",
+              "duration": "turn",
+              "effectId": "dlc12-turn-distinct-planets",
+              "eventType": "visitPlanet",
+              "icon": "score",
+              "id": "dlc12-turn-distinct-planets",
+              "minCount": 2,
+              "onceKey": "dlc12-two-planets",
+              "ownerId": "player-green",
+              "playerId": "player-green",
+              "rewards": [
+                {
+                  "icon": "score",
+                  "id": "dlc12-score",
+                  "label": "访问2个不同行星：3分",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  },
+                  "type": "gain_resources"
+                }
+              ],
+              "usedKeys": [
+                "saturn",
+                "mars"
+              ]
+            }
+          ],
+          "score": 54,
+          "progress": [
+            {
+              "bonusId": "dlc12-turn-distinct-planets",
+              "sourceMatches": [
+                "card-31-pass-3-2"
+              ],
+              "usedKeys": [
+                "saturn",
+                "mars"
+              ],
+              "claimedKeys": [
+                "dlc12-two-planets"
+              ],
+              "mars": {
+                "status": "repeated"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "verified": true
+}

@@ -615,3 +615,41 @@ describeEventBonusProgress供正式增补和路线原型共用，详情见
 visit-progress-read-design-20260907.md。18模型432事件及完整局前后等价，596步均109.5、
 135649节点、0规则失败、36截断不变；原型也已补地球访问事件，四条样本路线不变。
 正式目标目录仍未接入访问需求，不能把本次共享读取通过当作移动候选优化完成。
+
+## 当前工作状态、来源与访问目标接入契约（2026-09-07）
+
+visit-working-state-20260907.json对148/497已验证路线按每个正式输入读取工作投影
+和持久committedState，不运行AI。打牌后两者不同：工作状态已有注册bonus，整张
+牌仍awaiting_input时committedState没有bonus。497向外到土星后工作usedKeys为
+[saturn]、claimedKeys为空，共享查询对下一次火星事件返回reward；此刻持久状态
+仍无bonus。向内到火星后正式得3分并写领取，idle时两种状态才一致。
+
+**旧诊断说明修正**：turn-visit-selection两个版本的bonusProgress字段取自
+lifecycle.save().envelope.committedState，是事务前的持久状态，不能称作当前
+奖励进度。其当前观察/合法集/选择器和编译结果不受此字段影响，根目标遗漏访问
+路线的结论仍成立；当前进度以本节工作投影证据为准，不覆盖历史产物。
+
+| 接入边界 | 已确定的实现契约 | 禁止行为 |
+|---|---|---|
+| 生产需求读取 | projectedRequirements消费projectState传入的当前工作state与session | 从lifecycle.save的committedState读未完成动作的进度 |
+| 打牌前 | 手牌来源+REGISTER_EVENT_BONUS在正式effect链的位置，属于待注册需求 | 手牌存在就把奖励当成已经生效 |
+| 注册后卡牌移动 | 读取工作bonus.usedKeys/claimedKeys与currentEffect卡牌移动点，来源为真实cardInstanceId | 继续以打牌前空进度判断下一站，或插入不允许的快速移动 |
+| 卡牌结算后普通移动 | 读取仍有效的turn bonus，允许按同一目的继续付费移动 | 把卡牌离手或card_move排空当成访问奖励已完成 |
+| 访问完成 | 读取共享正式领取/进度与对应source事件；附带Decision未排空仍保留pending完成 | 第一站零分即删路径，或返回原坐标当循环 |
+| 隐藏信息与来源 | 需求携带cardInstanceId，接既有containsUnknownCardReference遮蔽；同目标origin持续保留来源 | 只带模型名/bonus名字，使未知牌产生的需求绕过遮蔽 |
+
+两例在当前card_move payload中都有准确cardInstanceId；工作状态中的手牌/保留区/
+公开弃牌实例与正式模型effectId也各自唯一对应该bonus来源。Card Play正式入口把
+打出实例移入保留区或弃牌区，事件保存sourceCardInstanceId。当前证据不要求修改
+bonus持久schema或重新生成实体id，也不把这两例唯一性外推所有来源组合；生产
+绑定须消费真实来源证据，不凭模型名猜实例、无证据不静默退回generic目标。
+
+同一需求需从根目标进入selectSuccessors、origin和planStep；rule-composition现行
+条件分支只显式转移routeTargetId/routePlanId/routeResultTargetIds，新具名来源与
+访问进度的字段必须逐处传递。现有completesRouteTarget收到全局rootObservation，
+不能假定它是每个后续新目标开始时的进度基线，后续重复收益/不同目的的领取基线
+应归该origin。执行事件现在仅保留launch/orbit/land，新访问完成必须保留对应事件，
+不能在完成函数里凭资源上涨反推某次访问。
+
+本轮仅更新接入证据和契约，未修改生产或新跑完整局。已核对AI/RL接口、README、
+AGENTS和项目记忆：现有公开接口/规则没有变化，仅性能计划同步这项未实现义务。
