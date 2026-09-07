@@ -10,10 +10,14 @@ const evaluator = req("../randomizer/game/ai/expected-score-evaluator");
 const model = req("../randomizer/game/ai/outcome-model");
 const continuation = req("../randomizer/game/ai/plan-continuation");
 const base = "/Users/bilibili/code/seti-simu/reports/iteration/";
-const output = base + "blue536-global-prefix-root-selected-20260908.json";
+const queueTrace = process.argv.includes("--queue-trace");
+const output = base + (queueTrace ? "blue536-queue-trace-20260908.json"
+  : "blue536-global-prefix-root-selected-20260908.json");
 if (fs.existsSync(output)) { console.log(`已有checkpoint：${output}`); process.exit(0); }
 const report = { passed: false, prefixes: [], callbackCount: 0,
-  scope: "全局搜索旧路径回调观测，不修改筛选，不等于队列裁剪事件追踪" };
+  scope: queueTrace ? "指定旧路径队列事件；节点、输入与优胜计划须与历史一致"
+    : "全局搜索旧路径回调观测，不修改筛选，不等于队列裁剪事件追踪",
+  codeHead: require("node:child_process").execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim() };
 let composition;
 try {
   const old = JSON.parse(fs.readFileSync(base + "blue536-turing-baseline-20260908.json"));
@@ -45,6 +49,7 @@ try {
     maxNodes: 128, maxExecutionNodes: 4096, maxFrontierNodes: 256, maxMilliseconds: 30000,
     maxFrontierPerRoot: 1, allowUntargetedRootActions: true, confidence: "low",
     capturePlanStep: continuation.capturePlanStep,
+    ...(queueTrace ? { traceActionChain: chain } : {}),
     getBranchPriority(input) {
       return evaluator.evaluateSecondaryAgentSearchPriority({ ...input, focalSeatId: seatId });
     },
@@ -76,6 +81,7 @@ try {
   report.wallMs = performance.now() - started;
   report.diagnostics = composition.counterfactualPort.getDiagnostics();
   assert.ok(report.diagnostics);
+  if (queueTrace) assert.ok(Array.isArray(report.diagnostics.searchPathTrace));
   const stableFields = ["executedNodeCount", "successfulInputSubmissionCount", "attemptedNodeCountByFamily",
     "failedNodeCountByCode", "executionLimitReached", "remainingFrontierNodeCount", "beamPrunedOriginCount",
     "transpositionHitCount", "executedOriginCountByTargetAndDecisionKind"];
@@ -98,5 +104,6 @@ finally {
   composition?.dispose(); fs.writeFileSync(output, JSON.stringify(report, null, 2) + "\n");
   console.log(JSON.stringify({ output, passed: report.passed, error: report.error, wallMs: report.wallMs,
     longestObservedPrefix: report.longestObservedPrefix, nodes: report.diagnostics?.executedNodeCount,
+    queueEvents: report.diagnostics?.searchPathTrace?.filter(event => event.chain.length >= 13),
     prefixes: report.prefixes.map(({ selected, ...p }) => p) }, null, 2));
 }
