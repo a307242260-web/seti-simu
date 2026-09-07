@@ -282,6 +282,13 @@ try {
     // 发生在其他动作分支）。
 
     const policyDiagnostics = environment.getCounterfactualDiagnostics();
+    assert.equal(
+      policyDiagnostics.executedNodeCountByDecisionKind?.[
+        "choose_card:conditional/decision=choose_card/effect=probe_turn_pass_reserve"
+      ] || 0,
+      0,
+      "PASS 前规划不得选择或读取尚未向白色公开的 PASS 预留牌",
+    );
     assert.equal(policyDiagnostics.beamPrunedOriginCount, 0,
       "次级目标搜索不得恢复 beam");
     // 统一搜索（v0）：play_card 受限评估（每卡 depth6/128 节点）是最后执行的 evaluate，
@@ -341,11 +348,6 @@ try {
       Object.keys(policyDiagnostics.executedNodeCountByActor || {}),
       [actions[0].actorId],
       "固定盘面全部物理执行节点必须只属于当前白色席位",
-    );
-    assert.equal(
-      policyDiagnostics.executedNodeCountByDecisionKind?.["choose_card:pass-reserve-card"] || 0,
-      0,
-      "PASS 前规划不得选择或读取尚未向白色公开的 PASS 预留牌",
     );
     assert.equal(policyDiagnostics.targetSchedulerPrunedCount > 0, true,
       "后续目标必须由资源下界调度，而不是重新展开全部目标排列");
