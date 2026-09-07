@@ -1,0 +1,1381 @@
+{
+  "mode": "cold-orange3",
+  "passed": true,
+  "cases": [
+    {
+      "tile": "orange3",
+      "after": {
+        "schemaVersion": "seti-probe-route-requirements-v3",
+        "playerId": "player-blue",
+        "movementContext": {
+          "phase": "ordinary",
+          "cardRemaining": 0,
+          "companyAvailable": false,
+          "companyRemaining": 0,
+          "usedRocketIds": []
+        },
+        "candidates": [
+          {
+            "requirementId": "launch:orbit:uranus:planet:",
+            "targetId": "orbit:uranus:planet:",
+            "playerId": "player-blue",
+            "sourceId": "launch",
+            "rocketId": null,
+            "planetId": "uranus",
+            "endpointFamily": "orbit",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_resources",
+                  "label": "首次环绕：额外获得 3 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 8 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 8
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "draw_cards",
+                  "label": "盲抽 3 张卡牌",
+                  "icon": "blind_card",
+                  "options": {
+                    "count": 3
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                },
+                {
+                  "type": "choose_nebula_scan",
+                  "label": "织女一/绘架座β扫描",
+                  "icon": "black_scan",
+                  "needsUserChoice": true,
+                  "options": {
+                    "nebulaIds": [
+                      "sector-1-b",
+                      "sector-4-b"
+                    ]
+                  },
+                  "id": "planet-reward-3",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "credits": 1,
+                "energy": 1
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            },
+            "firstRewardSlotOpen": true,
+            "targetBenefit": {
+              "score": 11,
+              "incomeCount": 0,
+              "dataCount": 0,
+              "grossEquivalentValue": 21,
+              "rewardSummary": "首次环绕：额外获得 3 分；获得 8 分；盲抽 3 张卡牌；织女一/绘架座β扫描",
+              "source": "planetRewards.orbit:uranus"
+            },
+            "required": {
+              "credits": 3,
+              "energy": 5,
+              "movementSteps": 4,
+              "movementPoints": 4,
+              "paidMovementPoints": 4
+            },
+            "nextStep": {
+              "family": "launch"
+            },
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "path": [
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "cw",
+                "deltaX": 1,
+                "deltaY": 0
+              }
+            ],
+            "publicityStops": 1,
+            "fieldSources": {
+              "topology": "SetiRocketActions.canMoveFromCoordinate",
+              "movementCost": "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+              "launchCost": "SetiAbilityRocket.getLaunchCost",
+              "endpointCost": "SetiAbilityPlanet.DEFAULT_ORBIT_COST",
+              "rewards": "SetiPlanetRewards"
+            },
+            "gap": {
+              "credits": 0,
+              "energy": 3,
+              "movementSteps": 4
+            }
+          },
+          {
+            "requirementId": "launch:land:neptune:planet:",
+            "targetId": "land:neptune:planet:",
+            "playerId": "player-blue",
+            "sourceId": "launch",
+            "rocketId": null,
+            "planetId": "neptune",
+            "endpointFamily": "land",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "首次登陆：额外获得 3 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 3
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 10 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 10
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 2
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            },
+            "firstRewardSlotOpen": true,
+            "targetBenefit": {
+              "score": 10,
+              "incomeCount": 0,
+              "dataCount": 3,
+              "grossEquivalentValue": 17.5,
+              "rewardSummary": "首次登陆：额外获得 3 个数据；获得 10 分；获得 1 个黄色外星人标记",
+              "source": "planetRewards.land:neptune"
+            },
+            "required": {
+              "credits": 2,
+              "energy": 9,
+              "movementSteps": 7,
+              "movementPoints": 7,
+              "paidMovementPoints": 7
+            },
+            "nextStep": {
+              "family": "launch"
+            },
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "path": [
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              }
+            ],
+            "publicityStops": 3,
+            "fieldSources": {
+              "topology": "SetiRocketActions.canMoveFromCoordinate",
+              "movementCost": "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+              "launchCost": "SetiAbilityRocket.getLaunchCost",
+              "endpointCost": "SetiAbilityPlanet.getLandEnergyCost",
+              "rewards": "SetiPlanetRewards"
+            },
+            "gap": {
+              "credits": 0,
+              "energy": 7,
+              "movementSteps": 7
+            }
+          },
+          {
+            "requirementId": "launch:orbit:neptune:planet:",
+            "targetId": "orbit:neptune:planet:",
+            "playerId": "player-blue",
+            "sourceId": "launch",
+            "rocketId": null,
+            "planetId": "neptune",
+            "endpointFamily": "orbit",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_resources",
+                  "label": "首次环绕：额外获得 3 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 7 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 7
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_data",
+                  "label": "获得 4 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 4
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                },
+                {
+                  "type": "choose_nebula_scan",
+                  "label": "织女一/绘架座β扫描",
+                  "icon": "black_scan",
+                  "needsUserChoice": true,
+                  "options": {
+                    "nebulaIds": [
+                      "sector-1-b",
+                      "sector-4-b"
+                    ]
+                  },
+                  "id": "planet-reward-3",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "credits": 1,
+                "energy": 1
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            },
+            "firstRewardSlotOpen": true,
+            "targetBenefit": {
+              "score": 10,
+              "incomeCount": 0,
+              "dataCount": 4,
+              "grossEquivalentValue": 17.5,
+              "rewardSummary": "首次环绕：额外获得 3 分；获得 7 分；获得 4 个数据；织女一/绘架座β扫描",
+              "source": "planetRewards.orbit:neptune"
+            },
+            "required": {
+              "credits": 3,
+              "energy": 8,
+              "movementSteps": 7,
+              "movementPoints": 7,
+              "paidMovementPoints": 7
+            },
+            "nextStep": {
+              "family": "launch"
+            },
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "path": [
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              }
+            ],
+            "publicityStops": 3,
+            "fieldSources": {
+              "topology": "SetiRocketActions.canMoveFromCoordinate",
+              "movementCost": "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+              "launchCost": "SetiAbilityRocket.getLaunchCost",
+              "endpointCost": "SetiAbilityPlanet.DEFAULT_ORBIT_COST",
+              "rewards": "SetiPlanetRewards"
+            },
+            "gap": {
+              "credits": 0,
+              "energy": 6,
+              "movementSteps": 7
+            }
+          },
+          {
+            "requirementId": "launch:land:mercury:planet:",
+            "targetId": "land:mercury:planet:",
+            "playerId": "player-blue",
+            "sourceId": "launch",
+            "rocketId": null,
+            "planetId": "mercury",
+            "endpointFamily": "land",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "首次登陆：额外获得 3 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 3
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 12 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 12
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 2
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            },
+            "firstRewardSlotOpen": true,
+            "targetBenefit": {
+              "score": 12,
+              "incomeCount": 0,
+              "dataCount": 3,
+              "grossEquivalentValue": 17,
+              "rewardSummary": "首次登陆：额外获得 3 个数据；获得 12 分；获得 1 个黄色外星人标记",
+              "source": "planetRewards.land:mercury"
+            },
+            "required": {
+              "credits": 2,
+              "energy": 6,
+              "movementSteps": 4,
+              "movementPoints": 4,
+              "paidMovementPoints": 4
+            },
+            "nextStep": {
+              "family": "launch"
+            },
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "path": [
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              }
+            ],
+            "publicityStops": 2,
+            "fieldSources": {
+              "topology": "SetiRocketActions.canMoveFromCoordinate",
+              "movementCost": "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+              "launchCost": "SetiAbilityRocket.getLaunchCost",
+              "endpointCost": "SetiAbilityPlanet.getLandEnergyCost",
+              "rewards": "SetiPlanetRewards"
+            },
+            "gap": {
+              "credits": 0,
+              "energy": 4,
+              "movementSteps": 4
+            }
+          },
+          {
+            "requirementId": "launch:land:jupiter:planet:",
+            "targetId": "land:jupiter:planet:",
+            "playerId": "player-blue",
+            "sourceId": "launch",
+            "rocketId": null,
+            "planetId": "jupiter",
+            "endpointFamily": "land",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "首次登陆：额外获得 2 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 2
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 7 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 7
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 1
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            },
+            "firstRewardSlotOpen": true,
+            "targetBenefit": {
+              "score": 7,
+              "incomeCount": 0,
+              "dataCount": 2,
+              "grossEquivalentValue": 12,
+              "rewardSummary": "首次登陆：额外获得 2 个数据；获得 7 分；获得 1 个黄色外星人标记",
+              "source": "planetRewards.land:jupiter"
+            },
+            "required": {
+              "credits": 2,
+              "energy": 6,
+              "movementSteps": 5,
+              "movementPoints": 5,
+              "paidMovementPoints": 5
+            },
+            "nextStep": {
+              "family": "launch"
+            },
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "path": [
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "cw",
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "cw",
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "cw",
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              }
+            ],
+            "publicityStops": 2,
+            "fieldSources": {
+              "topology": "SetiRocketActions.canMoveFromCoordinate",
+              "movementCost": "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+              "launchCost": "SetiAbilityRocket.getLaunchCost",
+              "endpointCost": "SetiAbilityPlanet.getLandEnergyCost",
+              "rewards": "SetiPlanetRewards"
+            },
+            "gap": {
+              "credits": 0,
+              "energy": 4,
+              "movementSteps": 5
+            }
+          },
+          {
+            "requirementId": "launch:land:uranus:planet:",
+            "targetId": "land:uranus:planet:",
+            "playerId": "player-blue",
+            "sourceId": "launch",
+            "rocketId": null,
+            "planetId": "uranus",
+            "endpointFamily": "land",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "首次登陆：额外获得 3 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 3
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 9 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 9
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 2
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            },
+            "firstRewardSlotOpen": true,
+            "targetBenefit": {
+              "score": 9,
+              "incomeCount": 0,
+              "dataCount": 3,
+              "grossEquivalentValue": 11.5,
+              "rewardSummary": "首次登陆：额外获得 3 个数据；获得 9 分；获得 1 个黄色外星人标记",
+              "source": "planetRewards.land:uranus"
+            },
+            "required": {
+              "credits": 2,
+              "energy": 6,
+              "movementSteps": 4,
+              "movementPoints": 4,
+              "paidMovementPoints": 4
+            },
+            "nextStep": {
+              "family": "launch"
+            },
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "path": [
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "cw",
+                "deltaX": 1,
+                "deltaY": 0
+              }
+            ],
+            "publicityStops": 1,
+            "fieldSources": {
+              "topology": "SetiRocketActions.canMoveFromCoordinate",
+              "movementCost": "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+              "launchCost": "SetiAbilityRocket.getLaunchCost",
+              "endpointCost": "SetiAbilityPlanet.getLandEnergyCost",
+              "rewards": "SetiPlanetRewards"
+            },
+            "gap": {
+              "credits": 0,
+              "energy": 4,
+              "movementSteps": 4
+            }
+          },
+          {
+            "requirementId": "launch:orbit:mercury:planet:",
+            "targetId": "orbit:mercury:planet:",
+            "playerId": "player-blue",
+            "sourceId": "launch",
+            "rocketId": null,
+            "planetId": "mercury",
+            "endpointFamily": "orbit",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_resources",
+                  "label": "首次环绕：额外获得 3 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "draw_cards",
+                  "label": "盲抽 1 张卡牌",
+                  "icon": "blind_card",
+                  "options": {
+                    "count": 1
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "scan_planet_sector",
+                  "label": "水星扇区扫描 1/2",
+                  "icon": "scan",
+                  "badge": "水星",
+                  "options": {
+                    "planetId": "mercury"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                },
+                {
+                  "type": "scan_planet_sector",
+                  "label": "水星扇区扫描 2/2",
+                  "icon": "scan",
+                  "badge": "水星",
+                  "options": {
+                    "planetId": "mercury"
+                  },
+                  "id": "planet-reward-3",
+                  "status": "pending"
+                },
+                {
+                  "type": "income",
+                  "label": "获得 1 次收入",
+                  "icon": "income",
+                  "needsUserChoice": true,
+                  "options": {
+                    "count": 1
+                  },
+                  "id": "planet-reward-4",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "credits": 1,
+                "energy": 1
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            },
+            "firstRewardSlotOpen": true,
+            "targetBenefit": {
+              "score": 3,
+              "incomeCount": 1,
+              "dataCount": 0,
+              "grossEquivalentValue": 10.5,
+              "rewardSummary": "首次环绕：额外获得 3 分；盲抽 1 张卡牌；水星扇区扫描 1/2；水星扇区扫描 2/2；获得 1 次收入",
+              "source": "planetRewards.orbit:mercury"
+            },
+            "required": {
+              "credits": 3,
+              "energy": 5,
+              "movementSteps": 4,
+              "movementPoints": 4,
+              "paidMovementPoints": 4
+            },
+            "nextStep": {
+              "family": "launch"
+            },
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "path": [
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              }
+            ],
+            "publicityStops": 2,
+            "fieldSources": {
+              "topology": "SetiRocketActions.canMoveFromCoordinate",
+              "movementCost": "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+              "launchCost": "SetiAbilityRocket.getLaunchCost",
+              "endpointCost": "SetiAbilityPlanet.DEFAULT_ORBIT_COST",
+              "rewards": "SetiPlanetRewards"
+            },
+            "gap": {
+              "credits": 0,
+              "energy": 3,
+              "movementSteps": 4
+            }
+          },
+          {
+            "requirementId": "launch:land:saturn:planet:",
+            "targetId": "land:saturn:planet:",
+            "playerId": "player-blue",
+            "sourceId": "launch",
+            "rocketId": null,
+            "planetId": "saturn",
+            "endpointFamily": "land",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "首次登陆：额外获得 2 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 2
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 8 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 8
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 1
+              },
+              "ownMarkers": {
+                "orbitMarkers": [
+                  {
+                    "index": 0,
+                    "marker": {
+                      "color": "blue",
+                      "playerId": "player-blue"
+                    }
+                  }
+                ],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            },
+            "firstRewardSlotOpen": true,
+            "targetBenefit": {
+              "score": 8,
+              "incomeCount": 0,
+              "dataCount": 2,
+              "grossEquivalentValue": 10.5,
+              "rewardSummary": "首次登陆：额外获得 2 个数据；获得 8 分；获得 1 个黄色外星人标记",
+              "source": "planetRewards.land:saturn"
+            },
+            "required": {
+              "credits": 2,
+              "energy": 4,
+              "movementSteps": 3,
+              "movementPoints": 3,
+              "paidMovementPoints": 3
+            },
+            "nextStep": {
+              "family": "launch"
+            },
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "path": [
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              }
+            ],
+            "publicityStops": 1,
+            "fieldSources": {
+              "topology": "SetiRocketActions.canMoveFromCoordinate",
+              "movementCost": "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+              "launchCost": "SetiAbilityRocket.getLaunchCost",
+              "endpointCost": "SetiAbilityPlanet.getLandEnergyCost",
+              "rewards": "SetiPlanetRewards"
+            },
+            "gap": {
+              "credits": 0,
+              "energy": 2,
+              "movementSteps": 3
+            }
+          },
+          {
+            "requirementId": "launch:orbit:venus:planet:",
+            "targetId": "orbit:venus:planet:",
+            "playerId": "player-blue",
+            "sourceId": "launch",
+            "rocketId": null,
+            "planetId": "venus",
+            "endpointFamily": "orbit",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_resources",
+                  "label": "获得 6 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 6
+                    }
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "income",
+                  "label": "获得 1 次收入",
+                  "icon": "income",
+                  "needsUserChoice": true,
+                  "options": {
+                    "count": 1
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "credits": 1,
+                "energy": 1
+              },
+              "ownMarkers": {
+                "orbitMarkers": [
+                  {
+                    "index": 0,
+                    "marker": {
+                      "color": "blue",
+                      "playerId": "player-blue"
+                    }
+                  }
+                ],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            },
+            "firstRewardSlotOpen": false,
+            "targetBenefit": {
+              "score": 6,
+              "incomeCount": 1,
+              "dataCount": 0,
+              "grossEquivalentValue": 8.5,
+              "rewardSummary": "获得 6 分；获得 1 次收入",
+              "source": "planetRewards.orbit:venus"
+            },
+            "required": {
+              "credits": 3,
+              "energy": 3,
+              "movementSteps": 2,
+              "movementPoints": 2,
+              "paidMovementPoints": 2
+            },
+            "nextStep": {
+              "family": "launch"
+            },
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "path": [
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              }
+            ],
+            "publicityStops": 1,
+            "fieldSources": {
+              "topology": "SetiRocketActions.canMoveFromCoordinate",
+              "movementCost": "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+              "launchCost": "SetiAbilityRocket.getLaunchCost",
+              "endpointCost": "SetiAbilityPlanet.DEFAULT_ORBIT_COST",
+              "rewards": "SetiPlanetRewards"
+            },
+            "gap": {
+              "credits": 0,
+              "energy": 1,
+              "movementSteps": 2
+            }
+          },
+          {
+            "requirementId": "launch:land:mars:planet:",
+            "targetId": "land:mars:planet:",
+            "playerId": "player-blue",
+            "sourceId": "launch",
+            "rocketId": null,
+            "planetId": "mars",
+            "endpointFamily": "land",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "第二次登陆：额外获得 1 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 1
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 6 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 6
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 1
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            },
+            "firstRewardSlotOpen": false,
+            "targetBenefit": {
+              "score": 6,
+              "incomeCount": 0,
+              "dataCount": 1,
+              "grossEquivalentValue": 8.5,
+              "rewardSummary": "第二次登陆：额外获得 1 个数据；获得 6 分；获得 1 个黄色外星人标记",
+              "source": "planetRewards.land:mars"
+            },
+            "required": {
+              "credits": 2,
+              "energy": 5,
+              "movementSteps": 4,
+              "movementPoints": 4,
+              "paidMovementPoints": 4
+            },
+            "nextStep": {
+              "family": "launch"
+            },
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "path": [
+              {
+                "directionId": "out",
+                "deltaX": 0,
+                "deltaY": 1
+              },
+              {
+                "directionId": "cw",
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "cw",
+                "deltaX": 1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "cw",
+                "deltaX": 1,
+                "deltaY": 0
+              }
+            ],
+            "publicityStops": 1,
+            "fieldSources": {
+              "topology": "SetiRocketActions.canMoveFromCoordinate",
+              "movementCost": "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+              "launchCost": "SetiAbilityRocket.getLaunchCost",
+              "endpointCost": "SetiAbilityPlanet.getLandEnergyCost",
+              "rewards": "SetiPlanetRewards"
+            },
+            "gap": {
+              "credits": 0,
+              "energy": 3,
+              "movementSteps": 4
+            }
+          },
+          {
+            "requirementId": "launch:land:venus:planet:",
+            "targetId": "land:venus:planet:",
+            "playerId": "player-blue",
+            "sourceId": "launch",
+            "rocketId": null,
+            "planetId": "venus",
+            "endpointFamily": "land",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "首次登陆：额外获得 2 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 2
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 5 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 5
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 1
+              },
+              "ownMarkers": {
+                "orbitMarkers": [
+                  {
+                    "index": 0,
+                    "marker": {
+                      "color": "blue",
+                      "playerId": "player-blue"
+                    }
+                  }
+                ],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            },
+            "firstRewardSlotOpen": true,
+            "targetBenefit": {
+              "score": 5,
+              "incomeCount": 0,
+              "dataCount": 2,
+              "grossEquivalentValue": 7.5,
+              "rewardSummary": "首次登陆：额外获得 2 个数据；获得 5 分；获得 1 个黄色外星人标记",
+              "source": "planetRewards.land:venus"
+            },
+            "required": {
+              "credits": 2,
+              "energy": 3,
+              "movementSteps": 2,
+              "movementPoints": 2,
+              "paidMovementPoints": 2
+            },
+            "nextStep": {
+              "family": "launch"
+            },
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "path": [
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "directionId": "ccw",
+                "deltaX": -1,
+                "deltaY": 0
+              }
+            ],
+            "publicityStops": 1,
+            "fieldSources": {
+              "topology": "SetiRocketActions.canMoveFromCoordinate",
+              "movementCost": "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+              "launchCost": "SetiAbilityRocket.getLaunchCost",
+              "endpointCost": "SetiAbilityPlanet.getLandEnergyCost",
+              "rewards": "SetiPlanetRewards"
+            },
+            "gap": {
+              "credits": 0,
+              "energy": 1,
+              "movementSteps": 2
+            }
+          }
+        ]
+      },
+      "projectionMs": 0.5799170000000089,
+      "sameCommittedState": true,
+      "warmEqualsCold": true
+    }
+  ]
+}

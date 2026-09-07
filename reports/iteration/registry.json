@@ -1,25 +1,25 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-07T20:18:54.320Z",
+  "builtAt": "2026-09-07T21:16:25.927Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "0cc25d52",
+  "headCommit": "a2443ba7",
   "currentBaseline": "reorganization-resources-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
-      "value": 149,
-      "versionId": "company-base-income-scoring-20260908",
-      "name": "公司初始收入计分修复（规则验证通过，性能目标未完成）",
-      "runKey": "68307c5f.a7d65847.full",
+      "value": 152,
+      "versionId": "borrowed-probe-cache-20260908",
+      "name": "临时科技探测缓存修复（均111，仍33次截断）",
+      "runKey": "1969fccc.addcef7f.full",
       "provenance": "save-final",
-      "steps": 648,
-      "wallMs": 687322,
-      "msPerStep": 1061,
-      "scoreSourceNote": "648步，正式终局77/114/87/149，均106.75；逐席完整breakdown与修复后正式计分器一致。147031物理节点、198796输入、687322ms；28次战略4096截断、5次控制截断，实际规则执行失败0。真实公司身份规则unit、两局旧终局重算、32组观察/预览检查、193冷根24步正式计划和唯一full-flow通过。规则修复不维持虚增历史分；前版旧终局诊断重算均100.75不等于新策略实验。前61步Action/after一致，第62步棕方打b65改弃b109角标；不能直接据此归因整局各席变化。规则修复验证通过，性能及108.5总目标未完成；蓝棕相对旧终局诊断仍下降，后续不得用均分掩盖。完整局运行期间仅新增只读审计/汇总脚本，无生产改动。详见company-base-income-full-review-20260908.md。"
+      "steps": 666,
+      "wallMs": 672876,
+      "msPerStep": 1010,
+      "scoreSourceNote": "666步，正式终局82/120/90/152，均111；四席较父版+5/+6/+3/+3，正式重算与完整明细一致。140614物理节点、190403输入、672876ms；28次战略4096截断、5次控制截断，实际规则失败0。冷/热缓存、借用切换与到期unit、正式输入回归、唯一full-flow、V输入审计通过；161单点17.53秒，4096节点，优胜27步及正式终态不变。前559步动作/摘要一致，560蓝方痕迹改选；新版本复用536计划，未逐叶归因该首差。不改评分与预算。缓存修复验证通过，整体Goal未完成，需求式借科技尚未实施。运行期间仅新增只读汇总脚本。详见borrowed-probe-cache-full-review-20260908.md。"
     },
     "bestAvg": {
       "value": 123.75,
@@ -34,15 +34,15 @@
     },
     "bestPlayer": {
       "value": 152,
-      "playerColor": "棕",
-      "versionId": "place-chain",
-      "name": "place-chain",
-      "runKey": "1bafe69d.b355ccd6.full",
-      "provenance": "record",
-      "steps": 460,
-      "wallMs": 317539,
-      "msPerStep": 690,
-      "scoreSourceNote": null
+      "playerColor": "白",
+      "versionId": "borrowed-probe-cache-20260908",
+      "name": "临时科技探测缓存修复（均111，仍33次截断）",
+      "runKey": "1969fccc.addcef7f.full",
+      "provenance": "save-final",
+      "steps": 666,
+      "wallMs": 672876,
+      "msPerStep": 1010,
+      "scoreSourceNote": "666步，正式终局82/120/90/152，均111；四席较父版+5/+6/+3/+3，正式重算与完整明细一致。140614物理节点、190403输入、672876ms；28次战略4096截断、5次控制截断，实际规则失败0。冷/热缓存、借用切换与到期unit、正式输入回归、唯一full-flow、V输入审计通过；161单点17.53秒，4096节点，优胜27步及正式终态不变。前559步动作/摘要一致，560蓝方痕迹改选；新版本复用536计划，未逐叶归因该首差。不改评分与预算。缓存修复验证通过，整体Goal未完成，需求式借科技尚未实施。运行期间仅新增只读汇总脚本。详见borrowed-probe-cache-full-review-20260908.md。"
     },
     "fastestWall": {
       "versionId": "probe-source-r3p1-20260906",
@@ -116,6 +116,434 @@
     ]
   },
   "versions": [
+    {
+      "id": "borrowed-probe-cache-20260908",
+      "name": "临时科技探测缓存修复（均111，仍33次截断）",
+      "date": "2026-09-08",
+      "baseline": "company-base-income-scoring-20260908",
+      "head": "addcef7f",
+      "commits": [
+        {
+          "hash": "aed6ae16",
+          "date": "2026-09-08",
+          "subject": "归档公司初始收入修复完整局及计分一致性与截断统计"
+        },
+        {
+          "hash": "addcef7f",
+          "date": "2026-09-08",
+          "subject": "修复临时借用科技后探测目录沿用旧登陆费用与卫星权限"
+        }
+      ],
+      "summary": "探测目录缓存纳入有效橙3登陆折扣与橙4卫星权限，随临时借用变化更新",
+      "diffStat": "21 files changed, 98760 insertions(+), 7 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/audit-company-income-consumers-20260908.js",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-blue161-candidates-fixed-20260908.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-expired-sector-full-20260908.js",
+          "insertions": 7,
+          "deletions": 4
+        },
+        {
+          "file": "adhoc/verify-turing-directory-cache-fixed-20260908.js",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/probe-directory-cache.test.js",
+          "insertions": 98,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/production-kernel.js",
+          "insertions": 6,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/borrowed-probe-cache-design-20260908.md",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/borrowed-probe-cache-validation-20260908.md",
+          "insertions": 22,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-base-income-full-review-20260908.json",
+          "insertions": 22723,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-base-income-full-review-20260908.md",
+          "insertions": 74,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-base-income-scoring-20260908/68307c5f.a7d65847.full.action-log.html",
+          "insertions": 2205,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-base-income-validation-20260908.md",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/company-income-consumers-20260908.json",
+          "insertions": 527,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-directory-cache-fixed-cold-orange3-20260908.json",
+          "insertions": 1381,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-directory-cache-fixed-cold-orange4-20260908.json",
+          "insertions": 2431,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-directory-cache-fixed-warm-20260908.json",
+          "insertions": 6550,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/68307c5f.a7d65847.full.json",
+          "insertions": 16926,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-company-base-income-scoring-20260908-a7d65847-full-v321.json",
+          "insertions": 45604,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "1969fccc.addcef7f.full.json",
+          "recordPath": "reports/research/1969fccc.addcef7f.full.json",
+          "mode": "full",
+          "steps": 666,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 672876,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "addcef7f",
+          "createdAt": "2026-09-07T21:12:22.231Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "666步，正式终局82/120/90/152，均111；四席较父版+5/+6/+3/+3，正式重算与完整明细一致。140614物理节点、190403输入、672876ms；28次战略4096截断、5次控制截断，实际规则失败0。冷/热缓存、借用切换与到期unit、正式输入回归、唯一full-flow、V输入审计通过；161单点17.53秒，4096节点，优胜27步及正式终态不变。前559步动作/摘要一致，560蓝方痕迹改选；新版本复用536计划，未逐叶归因该首差。不改评分与预算。缓存修复验证通过，整体Goal未完成，需求式借科技尚未实施。运行期间仅新增只读汇总脚本。详见borrowed-probe-cache-full-review-20260908.md。",
+          "scores": {
+            "player-blue": 82,
+            "player-green": 120,
+            "player-brown": 90,
+            "player-white": 152
+          },
+          "avgScore": 111,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 82,
+              "base": 54,
+              "tile": 21,
+              "card": 7,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 0,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 0,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                },
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 3
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 0,
+                "cardEffectScore": 3,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 12,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-green": {
+              "total": 120,
+              "base": 84,
+              "tile": 26,
+              "card": 10,
+              "tileScoresById": {
+                "a": 0,
+                "b": 8,
+                "c": 8,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 10
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 12,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 11,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 24,
+                "orbitScore": 15,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 90,
+              "base": 58,
+              "tile": 22,
+              "card": 10,
+              "tileScoresById": {
+                "a": 16,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_10.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "publicity",
+                    "scorePer": 1
+                  },
+                  "score": 10
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 6,
+                "orbitScore": 18,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 5
+              }
+            },
+            "player-white": {
+              "total": 152,
+              "base": 103,
+              "tile": 49,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 18,
+                "c": 0,
+                "d": 9
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 18,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 9,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 15,
+                "alienTracePinkScore": 11,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 23,
+                "orbitScore": 0,
+                "scanScore": 12,
+                "taskCardScore": 0,
+                "techBonusScore": 17
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-borrowed-probe-cache-20260908-addcef7f-full-v328.json",
+          "reportPath": "reports/iteration/borrowed-probe-cache-20260908/1969fccc.addcef7f.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "1969fccc.addcef7f.full",
+            "path": "reports/iteration/borrowed-probe-cache-20260908/1969fccc.addcef7f.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "company-base-income-scoring-20260908",
       "name": "公司初始收入计分修复（规则验证通过，性能目标未完成）",

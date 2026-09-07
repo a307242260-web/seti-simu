@@ -12,16 +12,16 @@
 - `run_node_tests --match probe-directory-cache`、`--match simulation-standard-action-composition`、
   `--match standard-flow`全部通过；`audit_v_state_inputs.js`通过；production-kernel语法通过。
 
-## 单点与全盘进度
+## 单点与完整局
 
-生产提交addcef7f；第161步单点根状态完全相同，耗时17478.86→17525.10ms，
-物理节点4096不变，提交8128→8172。优胜27步动作及正式重放终态完全相同。
-没有该点提速结论；预算仍截断。原始新证据保存在临时工作树
-`/private/tmp/seti-borrowed-probe-cache-20260908/reports/iteration/blue161-borrowed-cache-fixed-20260908.json`。
+生产提交addcef7f。第161步根相同，17478.86→17525.10ms，4096节点不变，
+8128→8172输入；优胜27步与正式重放终态相同。原始证据见
+[单点161](blue161-borrowed-cache-fixed-20260908.json)。
 
-已查重并通过标准入口启动`borrowed-probe-cache-20260908`完整局（addcef7f），
-尚无终局结果；结束后登记新版本并同步完整原始产物到主目录。没有整局分数、
-性能提升或所有搜索完成结论。未运行全量Node回归或真实Chrome smoke。
+已按标准入口完成唯一完整局：666步、82/120/90/152、均111；正式重算明细一致。
+实际失败0，仍28次战略截断和5次控制截断，整体Goal未完成。
+详见[完整局报告](borrowed-probe-cache-full-review-20260908.md)。
+未运行全量Node回归或真实Chrome smoke。
 
 文档核对范围：AGENTS快速导航、README入口、docs/ai-design.md、rl-simulation-env契约、
 node-testing分类、robot-iteration-registry流程及本轮计划。仅ai-design缓存说明需要更新；
