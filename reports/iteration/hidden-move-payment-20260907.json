@@ -1,0 +1,72 @@
+{
+  "source": "alien-trace-318-4212b427-20260907.json",
+  "scope": "仅正式重放已录制计划，不运行AI",
+  "initialHand": [
+    {
+      "id": "card-27-pass-2-3",
+      "cardId": "b_7.webp"
+    },
+    {
+      "id": "card-66-0",
+      "cardId": "dlc_15.png"
+    }
+  ],
+  "draws": [
+    {
+      "planStep": 14,
+      "action": "盲抽阿米巴牌",
+      "gained": [
+        {
+          "id": "alien-amiba-7-13",
+          "cardId": "amiba_7.webp"
+        }
+      ]
+    },
+    {
+      "planStep": 21,
+      "action": "盲抽阿米巴牌",
+      "gained": [
+        {
+          "id": "alien-amiba-8-15",
+          "cardId": "amiba_8.webp"
+        }
+      ]
+    }
+  ],
+  "paymentPlanStep": 26,
+  "payment": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "choose_payment",
+    "phase": "conditional",
+    "actionId": "choose_payment:758532ad",
+    "actorId": "player-blue",
+    "stateVersion": 168,
+    "decisionVersion": 10,
+    "target": {
+      "kind": "move-payment",
+      "choiceId": "alien-amiba-8-15",
+      "cardIds": [
+        "alien-amiba-8-15"
+      ]
+    },
+    "payload": {
+      "energyCost": 0,
+      "requiredMovePoints": 1
+    },
+    "decision": null,
+    "summary": "弃 1 张移动牌"
+  },
+  "matchingDraw": {
+    "planStep": 21,
+    "action": "盲抽阿米巴牌",
+    "gained": [
+      {
+        "id": "alien-amiba-8-15",
+        "cardId": "amiba_8.webp"
+      }
+    ]
+  },
+  "confirmed": "已录制搜索计划使用本次反事实新盲抽牌的移动角能力，超出仅按未知牌数量支付的边界",
+  "rootCause": "sanitizeHiddenInformationActions将所有choose_payment视作identityIndependentCardUse，未区分移动角支付与通用弃牌",
+  "notProven": "未证明此缺陷由槽位贪心引入，也未证明其对整局分数或节点膨胀的贡献"
+}
