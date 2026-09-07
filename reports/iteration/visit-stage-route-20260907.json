@@ -1,0 +1,863 @@
+{
+  "scope": "真实148/497四条既有正式路线，逐阶段当前工作进度→单来源访问目的费用与全部同成本首步；公司额度沿用路线实验参数，不证明当前正式可启用，也不比较沿途其他奖励",
+  "sources": [
+    "reports/iteration/turn-visit-routes-formal-20260907.json",
+    "reports/iteration/current-movement-hotspots-20260907.json"
+  ],
+  "sha256": {
+    "reports/iteration/turn-visit-routes-formal-20260907.json": "2b70069567adc4dd8d575bc374e0b3810338e225f6f2d481642039ac22c304fd",
+    "reports/iteration/current-movement-hotspots-20260907.json": "7253400424f65a80a7b0f10f5549860f314026bd952af489197189551fffc831"
+  },
+  "rows": [
+    {
+      "step": 148,
+      "companyAllowance": 0,
+      "stages": [
+        {
+          "beforeInput": 1,
+          "phase": "awaiting_input",
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "effectId": "b24-turn-comet-score",
+            "playerId": "player-green",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "result": {
+            "status": "reachable",
+            "expanded": 61,
+            "paid": 2,
+            "moves": 4,
+            "choices": [
+              {
+                "first": {
+                  "mode": "card",
+                  "direction": "out",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "path": [
+                  {
+                    "mode": "card",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "card",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "paid",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "paid",
+                    "direction": "ccw",
+                    "rocketId": 2,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "wallMs": 1.6428750000000036
+        },
+        {
+          "beforeInput": 2,
+          "phase": "awaiting_input",
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "effectId": "b24-turn-comet-score",
+            "playerId": "player-green",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "result": {
+            "status": "reachable",
+            "expanded": 48,
+            "paid": 2,
+            "moves": 3,
+            "choices": [
+              {
+                "first": {
+                  "mode": "card",
+                  "direction": "out",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "path": [
+                  {
+                    "mode": "card",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "paid",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "paid",
+                    "direction": "ccw",
+                    "rocketId": 2,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "wallMs": 1.2075419999999895
+        },
+        {
+          "beforeInput": 3,
+          "phase": "idle",
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "effectId": "b24-turn-comet-score",
+            "playerId": "player-green",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "result": {
+            "status": "reachable",
+            "expanded": 16,
+            "paid": 2,
+            "moves": 2,
+            "choices": [
+              {
+                "first": {
+                  "mode": "paid",
+                  "direction": "out",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "path": [
+                  {
+                    "mode": "paid",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "paid",
+                    "direction": "ccw",
+                    "rocketId": 2,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "wallMs": 0.9011250000000075
+        },
+        {
+          "beforeInput": 5,
+          "phase": "idle",
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "effectId": "b24-turn-comet-score",
+            "playerId": "player-green",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "result": {
+            "status": "reachable",
+            "expanded": 4,
+            "paid": 1,
+            "moves": 1,
+            "choices": [
+              {
+                "first": {
+                  "mode": "paid",
+                  "direction": "ccw",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0
+                },
+                "path": [
+                  {
+                    "mode": "paid",
+                    "direction": "ccw",
+                    "rocketId": 2,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "wallMs": 0.15962499999997704
+        },
+        {
+          "beforeInput": 7,
+          "phase": "idle",
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "effectId": "b24-turn-comet-score",
+            "playerId": "player-green",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b24-comet-score"
+            ]
+          },
+          "result": {
+            "status": "unreachable",
+            "expanded": 97,
+            "statuses": [
+              "claimed",
+              "inapplicable"
+            ],
+            "choices": []
+          },
+          "wallMs": 1.6434580000000096
+        }
+      ]
+    },
+    {
+      "step": 148,
+      "companyAllowance": 1,
+      "stages": [
+        {
+          "beforeInput": 1,
+          "phase": "awaiting_input",
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "effectId": "b24-turn-comet-score",
+            "playerId": "player-green",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "result": {
+            "status": "reachable",
+            "expanded": 91,
+            "paid": 1,
+            "moves": 4,
+            "choices": [
+              {
+                "first": {
+                  "mode": "card",
+                  "direction": "out",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "path": [
+                  {
+                    "mode": "card",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "card",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "company",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "paid",
+                    "direction": "ccw",
+                    "rocketId": 2,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "wallMs": 1.4256249999999682
+        },
+        {
+          "beforeInput": 2,
+          "phase": "awaiting_input",
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "effectId": "b24-turn-comet-score",
+            "playerId": "player-green",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "result": {
+            "status": "reachable",
+            "expanded": 63,
+            "paid": 1,
+            "moves": 3,
+            "choices": [
+              {
+                "first": {
+                  "mode": "card",
+                  "direction": "out",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "path": [
+                  {
+                    "mode": "card",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "company",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "paid",
+                    "direction": "ccw",
+                    "rocketId": 2,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "wallMs": 1.4027079999999614
+        },
+        {
+          "beforeInput": 3,
+          "phase": "idle",
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "effectId": "b24-turn-comet-score",
+            "playerId": "player-green",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "result": {
+            "status": "reachable",
+            "expanded": 31,
+            "paid": 1,
+            "moves": 2,
+            "choices": [
+              {
+                "first": {
+                  "mode": "company",
+                  "direction": "out",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "path": [
+                  {
+                    "mode": "company",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "paid",
+                    "direction": "ccw",
+                    "rocketId": 2,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ]
+              },
+              {
+                "first": {
+                  "mode": "paid",
+                  "direction": "out",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "path": [
+                  {
+                    "mode": "paid",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "company",
+                    "direction": "ccw",
+                    "rocketId": 2,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "wallMs": 0.5326249999999959
+        },
+        {
+          "beforeInput": 4,
+          "phase": "awaiting_input",
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "effectId": "b24-turn-comet-score",
+            "playerId": "player-green",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "result": {
+            "status": "reachable",
+            "expanded": 21,
+            "paid": 1,
+            "moves": 2,
+            "choices": [
+              {
+                "first": {
+                  "mode": "company",
+                  "direction": "out",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "path": [
+                  {
+                    "mode": "company",
+                    "direction": "out",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "paid",
+                    "direction": "ccw",
+                    "rocketId": 2,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "wallMs": 0.38741700000002766
+        },
+        {
+          "beforeInput": 5,
+          "phase": "idle",
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "effectId": "b24-turn-comet-score",
+            "playerId": "player-green",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "result": {
+            "status": "reachable",
+            "expanded": 4,
+            "paid": 1,
+            "moves": 1,
+            "choices": [
+              {
+                "first": {
+                  "mode": "paid",
+                  "direction": "ccw",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0
+                },
+                "path": [
+                  {
+                    "mode": "paid",
+                    "direction": "ccw",
+                    "rocketId": 2,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "wallMs": 0.13558399999999438
+        },
+        {
+          "beforeInput": 7,
+          "phase": "idle",
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitComet",
+            "onceKey": "b24-comet-score",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "b24-comet-score",
+                "type": "gain_resources",
+                "label": "彗星遭遇：访问彗星获得4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            ],
+            "id": "b24-turn-comet-score",
+            "effectId": "b24-turn-comet-score",
+            "playerId": "player-green",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": [
+              "b24-comet-score"
+            ]
+          },
+          "result": {
+            "status": "unreachable",
+            "expanded": 97,
+            "statuses": [
+              "claimed",
+              "inapplicable"
+            ],
+            "choices": []
+          },
+          "wallMs": 1.5095420000000104
+        }
+      ]
+    },
+    {
+      "step": 497,
+      "companyAllowance": 0,
+      "stages": [
+        {
+          "beforeInput": 1,
+          "phase": "awaiting_input",
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "distinctBy": "planetId",
+            "minCount": 2,
+            "onceKey": "dlc12-two-planets",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "dlc12-score",
+                "type": "gain_resources",
+                "label": "访问2个不同行星：3分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3
+                  }
+                }
+              }
+            ],
+            "id": "dlc12-turn-distinct-planets",
+            "effectId": "dlc12-turn-distinct-planets",
+            "playerId": "player-green",
+            "ownerId": "player-green",
+            "usedKeys": [],
+            "claimedKeys": []
+          },
+          "result": {
+            "status": "reachable",
+            "expanded": 25,
+            "paid": 0,
+            "moves": 2,
+            "choices": [
+              {
+                "first": {
+                  "mode": "card",
+                  "direction": "out",
+                  "rocketId": 12,
+                  "deltaX": 0,
+                  "deltaY": 1
+                },
+                "path": [
+                  {
+                    "mode": "card",
+                    "direction": "out",
+                    "rocketId": 12,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "mode": "card",
+                    "direction": "in",
+                    "rocketId": 12,
+                    "deltaX": 0,
+                    "deltaY": -1
+                  }
+                ]
+              }
+            ]
+          },
+          "wallMs": 0.4577089999999657
+        },
+        {
+          "beforeInput": 2,
+          "phase": "awaiting_input",
+          "bonus": {
+            "duration": "turn",
+            "eventType": "visitPlanet",
+            "distinctBy": "planetId",
+            "minCount": 2,
+            "onceKey": "dlc12-two-planets",
+            "icon": "score",
+            "rewards": [
+              {
+                "id": "dlc12-score",
+                "type": "gain_resources",
+                "label": "访问2个不同行星：3分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 3
+                  }
+                }
+              }
+            ],
+            "id": "dlc12-turn-distinct-planets",
+            "effectId": "dlc12-turn-distinct-planets",
+            "playerId": "player-green",
+            "ownerId": "player-green",
+            "usedKeys": [
+              "saturn"
+            ],
+            "claimedKeys": []
+          },
+          "result": {
+            "status": "reachable",
+            "expanded": 6,
+            "paid": 0,
+            "moves": 1,
+            "choices": [
+              {
+                "first": {
+                  "mode": "card",
+                  "direction": "in",
+                  "rocketId": 12,
+                  "deltaX": 0,
+                  "deltaY": -1
+                },
+                "path": [
+                  {
+                    "mode": "card",
+                    "direction": "in",
+                    "rocketId": 12,
+                    "deltaX": 0,
+                    "deltaY": -1
+                  }
+                ]
+              }
+            ]
+          },
+          "wallMs": 0.19866700000000037
+        }
+      ]
+    }
+  ],
+  "verified": false,
+  "error": {
+    "message": "VISIT_ROUTE_BUDGET_EXCEEDED: 原型未完成，不能冒充无可达目标",
+    "stack": "AssertionError [ERR_ASSERTION]: VISIT_ROUTE_BUDGET_EXCEEDED: 原型未完成，不能冒充无可达目标\n    at visitRoute (/Users/bilibili/code/seti-simu/adhoc/visit-stage-route-20260907.js:29:12)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/verify-visit-stage-route-20260907.js:35:28)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}
