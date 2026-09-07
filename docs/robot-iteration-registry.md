@@ -85,6 +85,9 @@ none/undefined必须归零，不吞错、不过滤日志、不填默认值制造
 maxExecutionNodes（当前4096），不等同于旧budgetHits的“满额且尚有队列”。旧记录
 没有该数组不能推算独立搜索次数，也不能用于新统计版本续跑冒充完整覆盖；历史记录
 仍可只读查看。统计方案见`reports/iteration/search-statistics-design-20260906.md`。
+2026-09-07正式输入分类修复改为提交前 Action phase、Decision kind、Effect type 与
+具名流程维度，见`reports/iteration/search-input-classification-design-20260907.md`。
+新旧分类 key 不直接合并；物理节点、family、正式输入计数口径不变。
 
 ### 2.2 执行与登记
 

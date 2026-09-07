@@ -32,7 +32,7 @@ function createComposition() {
             payload: { choices: [[1, 1], [2, 3]].map(([energyCost, reward]) => ({
               schemaVersion: "seti-standard-action-v1", actionId: `choose_payment:${energyCost}`,
               family: "choose_payment", phase: "conditional", actorId: "p1",
-              target: { kind: "move-payment" }, payload: { energyCost, reward },
+              target: {}, payload: { energyCost, reward },
             })) },
           } };
         },
@@ -60,6 +60,10 @@ assert.equal(result.status, "settled");
 assert.deepEqual(result.leaves.map((leaf) => [leaf.observation.energy, leaf.observation.score]).sort(),
   [[1, 3], [2, 1]], "不同费用和结果的支付选择必须分别执行，不能固定取第一项");
 assert.deepEqual(composition.lifecycle.save().envelope, before);
+assert.deepEqual(composition.counterfactualPort.getDiagnostics().executedNodeCountByDecisionKind, {
+  "move:main": 1,
+  [`choose_payment:conditional/decision=choose_payment/effect=${domain.DECISION_EFFECT_TYPE}`]: 2,
+}, "无 target.kind 的支付仍按正式 Decision 分类，主行动不能误归入它启动的后继支付");
 const [pending] = composition.counterfactualPort.evaluate(composition.inputPort.enumerateActions(), {
   viewer: { playerId: "p1", role: "player" }, maxNodes: 1, maxExecutionNodes: 1,
   maxFrontierNodes: 1,

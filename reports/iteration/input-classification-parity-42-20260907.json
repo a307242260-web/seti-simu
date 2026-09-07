@@ -1,0 +1,38 @@
+{
+  "baselinePath": "reports/iteration/visit-progress-decision-42-20260907.json",
+  "currentPath": "reports/iteration/input-classification-decision-42-20260907.json",
+  "excluded": [
+    "totalMilliseconds",
+    "executedNodeCountByDecisionKind",
+    "executedOriginCountByTargetAndDecisionKind"
+  ],
+  "counts": {
+    "analyze:main": 20,
+    "card_corner:quick": 23,
+    "choose_card:conditional/decision=choose_card/effect=science_domain_income": 22,
+    "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 107,
+    "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 27,
+    "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 13,
+    "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 2950,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 45,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_research": 162,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 28,
+    "end_turn:turn_control": 105,
+    "industry:quick": 102,
+    "land:main": 7,
+    "launch:main": 4,
+    "move:quick": 67,
+    "orbit:main": 1,
+    "pass:main": 55,
+    "place_data:quick": 126,
+    "play_card:main": 26,
+    "quick_trade:quick": 127,
+    "research_tech:main": 54,
+    "scan:main": 25
+  },
+  "verified": false,
+  "error": {
+    "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    attemptedNodeCountByFamily: {\n      analyze: 20,\n      card_corner: 23,\n      choose_card: 169,\n...\n    candidateCount: 3,\n+   checkpointMilliseconds: 606.4635749999587,\n-   checkpointMilliseconds: 726.2980579999653,\n    completedGoalTransitionCount: 2686,\n    completedRouteGroupsByTarget: {\n      'data:analyze': [\n        {\n          completedTransitionCount: 10,\n...\n    executionLimitReached: true,\n+   executionMilliseconds: 1566.146735999972,\n-   executionMilliseconds: 1984.425503999934,\n    expandedSearchNodeCount: 0,\n    failedNodeCountByCode: {},\n    failedNodeCountByFamily: {},\n    focalPassBoundaryLeafCount: 55,\n    focalPlanningTurnAdvanceCount: 105,\n+   forkMilliseconds: 595.3037979999748,\n+   frontierMilliseconds: 675.7379599999621,\n-   forkMilliseconds: 713.4798809999952,\n-   frontierMilliseconds: 885.4805880000706,\n    frontierNodeBreakdown: [\n      {\n        action: 'choose_target:结束移动',\n        chainDepth: 12,\n        isConditional: true,\n...\n    hiddenInformationFilteredActionCount: 280,\n+   identityMilliseconds: 6.561121999935239,\n-   identityMilliseconds: 11.028440999994757,\n    maxCompletedGoalDepth: 3,\n    maxDepth: 15,\n    maxExecutionNodes: 4096,\n    maxFrontierNodes: 256,\n    maxFrontierOriginCount: 372,\n...\n    opponentExecutedNodeCount: 0,\n+   orchestrationMilliseconds: 6706.512968000203,\n+   projectionMilliseconds: 735.6309659999929,\n-   orchestrationMilliseconds: 8327.478485000054,\n-   projectionMilliseconds: 861.3682509999865,\n    prunedNodeCount: 9627,\n    remainingFrontierNodeCount: 256,\n    remainingFrontierOriginCountByGoalDepth: {\n      '1': 326,\n      '2': 17\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    attemptedNodeCountByFamily: {\n      analyze: 20,\n      card_corner: 23,\n      choose_card: 169,\n...\n    candidateCount: 3,\n+   checkpointMilliseconds: 606.4635749999587,\n-   checkpointMilliseconds: 726.2980579999653,\n    completedGoalTransitionCount: 2686,\n    completedRouteGroupsByTarget: {\n      'data:analyze': [\n        {\n          completedTransitionCount: 10,\n...\n    executionLimitReached: true,\n+   executionMilliseconds: 1566.146735999972,\n-   executionMilliseconds: 1984.425503999934,\n    expandedSearchNodeCount: 0,\n    failedNodeCountByCode: {},\n    failedNodeCountByFamily: {},\n    focalPassBoundaryLeafCount: 55,\n    focalPlanningTurnAdvanceCount: 105,\n+   forkMilliseconds: 595.3037979999748,\n+   frontierMilliseconds: 675.7379599999621,\n-   forkMilliseconds: 713.4798809999952,\n-   frontierMilliseconds: 885.4805880000706,\n    frontierNodeBreakdown: [\n      {\n        action: 'choose_target:结束移动',\n        chainDepth: 12,\n        isConditional: true,\n...\n    hiddenInformationFilteredActionCount: 280,\n+   identityMilliseconds: 6.561121999935239,\n-   identityMilliseconds: 11.028440999994757,\n    maxCompletedGoalDepth: 3,\n    maxDepth: 15,\n    maxExecutionNodes: 4096,\n    maxFrontierNodes: 256,\n    maxFrontierOriginCount: 372,\n...\n    opponentExecutedNodeCount: 0,\n+   orchestrationMilliseconds: 6706.512968000203,\n+   projectionMilliseconds: 735.6309659999929,\n-   orchestrationMilliseconds: 8327.478485000054,\n-   projectionMilliseconds: 861.3682509999865,\n    prunedNodeCount: 9627,\n    remainingFrontierNodeCount: 256,\n    remainingFrontierOriginCountByGoalDepth: {\n      '1': 326,\n      '2': 17\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/compare-input-classification-20260907.js:17:12)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  }
+}

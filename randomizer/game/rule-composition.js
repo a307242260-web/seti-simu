@@ -1705,6 +1705,27 @@
             : composition.inputPort.enumerateActions({ actorId: node.action.actorId });
           const current = candidates.find((candidate) => candidate.actionId === node.action.actionId);
           if (!current) return { failed: true, code: "COUNTERFACTUAL_ACTION_STALE" };
+          // 分类属于本节点首个正式输入，不是后继 Decision，也不依赖可选 target.kind。
+          let inputClassification = `${current.family}:${current.phase}`;
+          if (current.phase === "conditional") {
+            const decision = inspection.session?.decision;
+            const effect = inspection.session?.currentEffect;
+            if (typeof decision?.decisionKind !== "string" || !decision.decisionKind
+              || typeof effect?.type !== "string" || !effect.type) {
+              return { failed: true, code: "COUNTERFACTUAL_INPUT_CONTEXT_INVALID",
+                message: "条件输入缺少正式 Decision kind 或 Effect type" };
+            }
+            inputClassification += `/decision=${decision.decisionKind}/effect=${effect.type}`;
+            const payload = effect.payload;
+            for (const [key, value] of [
+              ["step", payload?.step], ["kind", payload?.kind],
+              ["ability", payload?.abilityId], ["cardEffect", payload?.cardEffect?.type],
+              ["context", payload?.decisionContext?.kind],
+            ]) {
+              // 流程维度按正式 payload 实际存在的值输出，不携带实例或隐藏牌信息。
+              if (typeof value === "string" && value) inputClassification += `/${key}=${value}`;
+            }
+          }
           // 计划证据与搜索宏节点分开：每次正式输入都有自己的执行前事实。
           // 只读投影来自当前可信 fork；屏障立即生效，不等折叠链结束才遮蔽。
           const planSteps = [];
@@ -2045,6 +2066,7 @@
           return {
             ok: true,
             current,
+            inputClassification,
             executionStepCount,
             representativeChoice,
             planSteps,
@@ -2325,7 +2347,7 @@
             current.family,
             (executedNodeCountByFamily.get(current.family) || 0) + 1,
           );
-          const decisionKind = `${current.family}:${current.target?.kind || "<none>"}`;
+          const decisionKind = execution.inputClassification;
           executedNodeCountByDecisionKind.set(
             decisionKind,
             (executedNodeCountByDecisionKind.get(decisionKind) || 0) + 1,

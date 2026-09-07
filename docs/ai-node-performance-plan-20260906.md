@@ -7,6 +7,12 @@ quick加续跑527450ms。上一轮四轮实现已收口，不重开或改写其�
 
 ## 顺序与门禁
 
+2026-09-07正式输入分类修复：不再以可选target.kind统计节点，改读提交前的
+Action phase、Decision kind、Effect type及具名流程来源。真实42确认寰宇免费移动
+2950/4096节点；原动作、计划、正式输入4804及非分类非耗时诊断不变，15.137秒，
+30输入重放、零失败通过。Node78/80 unit及1/1full-flow，原两个断言失败仍在。
+详见search-input-classification-design-20260907.md；完整局待验收，本项不算提速。
+
 当前移动验收样本（2026-09-07，c555bc33完整局）：42/148/497，并保留原后段
 公司2/3号检查点。三处覆盖满额free_move节点的82.27%；148/497已正式重放并保存
 于reports/iteration/current-movement-hotspots-20260907.json，统计见

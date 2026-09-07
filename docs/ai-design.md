@@ -489,6 +489,12 @@ Heuristic每次决策的`searches`只含本次实际evaluate（control/strategic
 `executedNodeCountByFamily`仍只计成功宏节点，二者差异按`failedNodeCountByFamily`
 与`failedNodeCountByCode`解释。`successfulInputSubmissionCount`计每次成功正式输入，
 包含折叠提交及其后宏步失败之前已成功的输入，不含单席位规划时钟推进。
+`executedNodeCountByDecisionKind` 从节点首个正式输入的提交前上下文分类：
+`family:phase`；conditional 追加 `/decision=…/effect=…`，以及 Effect payload
+实际存在的 step、kind、abilityId（key 为 ability）、cardEffect.type（cardEffect）、
+decisionContext.kind（context）。不再读取可选的 target.kind；缺少必需 Decision kind
+或 Effect type 显式失败。目标交叉统计使用同一 key，不把折叠输入计为额外节点。
+此分类不包含实例 ID 或完整 payload，不进入游戏状态、RNG、Policy 与计划。
 
 反事实执行复用一个 Composition 级可信隔离 fork。每个候选从同一 checkpoint 恢复
 StateStore、Effect Session 和分支 RNG，再调用生产 registry/executor；Simulation 的可信

@@ -1,0 +1,41 @@
+{
+  "baselinePath": "reports/iteration/visit-progress-decision-42-20260907.json",
+  "currentPath": "reports/iteration/input-classification-decision-42-20260907.json",
+  "excluded": [
+    "totalMilliseconds",
+    "identityMilliseconds",
+    "forkMilliseconds",
+    "executionMilliseconds",
+    "projectionMilliseconds",
+    "checkpointMilliseconds",
+    "frontierMilliseconds",
+    "orchestrationMilliseconds",
+    "executedNodeCountByDecisionKind",
+    "executedOriginCountByTargetAndDecisionKind"
+  ],
+  "counts": {
+    "analyze:main": 20,
+    "card_corner:quick": 23,
+    "choose_card:conditional/decision=choose_card/effect=science_domain_income": 22,
+    "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 107,
+    "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 27,
+    "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 13,
+    "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 2950,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 45,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_research": 162,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 28,
+    "end_turn:turn_control": 105,
+    "industry:quick": 102,
+    "land:main": 7,
+    "launch:main": 4,
+    "move:quick": 67,
+    "orbit:main": 1,
+    "pass:main": 55,
+    "place_data:quick": 126,
+    "play_card:main": 26,
+    "quick_trade:quick": 127,
+    "research_tech:main": 54,
+    "scan:main": 25
+  },
+  "verified": true
+}
