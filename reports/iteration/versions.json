@@ -7,6 +7,29 @@
   },
   "versions": [
     {
+      "id": "card-movement-finish-20260907",
+      "name": "card-movement-finish-20260907",
+      "date": "2026-09-07",
+      "baseline": "ordinary-movement-demand-20260907",
+      "head": "6b5381c1",
+      "commits": [
+        "8b05a844",
+        "ca54b7f8",
+        "a83859ff",
+        "b2acb233",
+        "a7e76b36",
+        "b206fd7f",
+        "6b5381c1"
+      ],
+      "summary": "已绑定卡牌移动的结束选项匹配目标最省成本首步，保留余点不足和已到达目标时的结束",
+      "records": {
+        "7d87ceb5.6b5381c1.full.json": {
+          "note": "592步，正式终局68/130/108/91，均99.25，较前版93.5回升5.75，仍低于109.5。137837节点、178426正式输入、26策略及7控制截断、0规则失败，耗时550378ms。局部卡牌结束候选修复验证通过，完整局效果和性能未通过；首次分歧162绿方弃牌角标改发射，继续移动归因，不转放数据。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "ordinary-movement-demand-20260907",
       "name": "ordinary-movement-demand-20260907",
       "date": "2026-09-07",

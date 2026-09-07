@@ -1,13 +1,13 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-07T05:54:08.706Z",
+  "builtAt": "2026-09-07T06:42:11.703Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "0b586daa",
-  "currentBaseline": "ordinary-movement-demand-20260907",
+  "headCommit": "6b5381c1",
+  "currentBaseline": "card-movement-finish-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -116,6 +116,563 @@
     ]
   },
   "versions": [
+    {
+      "id": "card-movement-finish-20260907",
+      "name": "card-movement-finish-20260907",
+      "date": "2026-09-07",
+      "baseline": "ordinary-movement-demand-20260907",
+      "head": "6b5381c1",
+      "commits": [
+        {
+          "hash": "8b05a844",
+          "date": "2026-09-07",
+          "subject": "登记普通移动降分结果并收敛到移动归因主线"
+        },
+        {
+          "hash": "ca54b7f8",
+          "date": "2026-09-07",
+          "subject": "明确迭代降分归因、独立修复分支与策略回滚标准"
+        },
+        {
+          "hash": "a83859ff",
+          "date": "2026-09-07",
+          "subject": "补齐移动候选排序证据并核对终局卡分兑现"
+        },
+        {
+          "hash": "b2acb233",
+          "date": "2026-09-07",
+          "subject": "补齐基线候选并定位公司动作根目标准入差异"
+        },
+        {
+          "hash": "a7e76b36",
+          "date": "2026-09-07",
+          "subject": "复现白方放弃免费移动后额外消耗能量的问题"
+        },
+        {
+          "hash": "b206fd7f",
+          "date": "2026-09-07",
+          "subject": "定位白方省能量路线与优胜路线后续展开不对等"
+        },
+        {
+          "hash": "6b5381c1",
+          "date": "2026-09-07",
+          "subject": "卡牌结束移动选项遵守已绑定目标的最省成本路线"
+        }
+      ],
+      "summary": "已绑定卡牌移动的结束选项匹配目标最省成本首步，保留余点不足和已到达目标时的结束",
+      "diffStat": "42 files changed, 91159 insertions(+), 19 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/analyze-white-ranking-184-20260907.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-baseline-ranking-42-20260907.js",
+          "insertions": 55,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-movement-ranking-42-20260907.js",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-white-movement-205-20260907.js",
+          "insertions": 30,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-white-ranking-184-20260907.js",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/replay-movement-divergence-42-20260907.js",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-card-finish-contract-20260907.js",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-data-fork-rng-boundary-20260907.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-movement-card-value-20260907.js",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-movement-root-admission-42-20260907.js",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-white-free-movement-20260907.js",
+          "insertions": 43,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 4,
+          "deletions": 1
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 17,
+          "deletions": 7
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 5,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/strategic-goal-evaluator.test.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/baseline-ranking-42-20260907.capture.jsonl.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/baseline-ranking-42-20260907.json",
+          "insertions": 3689,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/baseline-ranking-42-export-failure-20260907.json",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-finish-contract-before-20260907.json",
+          "insertions": 545,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-finish-contract-fixed-20260907.json",
+          "insertions": 522,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-finish-decision-184-20260907.json",
+          "insertions": 7755,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-movement-finish-design-20260907.md",
+          "insertions": 61,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-fork-rng-boundary-20260907.json",
+          "insertions": 100,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-card-value-20260907.json",
+          "insertions": 255,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-divergence-42-formal-20260907.json",
+          "insertions": 452,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-ranking-42-20260907.capture.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/movement-ranking-42-20260907.json",
+          "insertions": 3696,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-ranking-42-comparison-20260907.json",
+          "insertions": 396,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-root-admission-42-20260907.json",
+          "insertions": 1122,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-score-causality-20260907.md",
+          "insertions": 172,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/ordinary-movement-demand-20260907/1066a36f.0b586daa.full.action-log.html",
+          "insertions": 2069,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/ordinary-movement-demand-design-20260907.md",
+          "insertions": 6,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/ordinary-movement-demand-full-verification-20260907.json",
+          "insertions": 581,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 393,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/white-free-movement-20260907.json",
+          "insertions": 5669,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/white-movement-205-20260907.json",
+          "insertions": 56232,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/white-ranking-184-20260907.analysis.json",
+          "insertions": 341,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/white-ranking-184-20260907.capture.jsonl.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/white-ranking-184-20260907.json",
+          "insertions": 6196,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 393,
+          "deletions": 4
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "7d87ceb5.6b5381c1.full.json",
+          "recordPath": "reports/research/7d87ceb5.6b5381c1.full.json",
+          "mode": "full",
+          "steps": 592,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 550378,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "6b5381c1",
+          "createdAt": "2026-09-07T06:40:32.200Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "592步，正式终局68/130/108/91，均99.25，较前版93.5回升5.75，仍低于109.5。137837节点、178426正式输入、26策略及7控制截断、0规则失败，耗时550378ms。局部卡牌结束候选修复验证通过，完整局效果和性能未通过；首次分歧162绿方弃牌角标改发射，继续移动归因，不转放数据。",
+          "scores": {
+            "player-blue": 68,
+            "player-green": 130,
+            "player-brown": 108,
+            "player-white": 91
+          },
+          "avgScore": 99.25,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 68,
+              "base": 52,
+              "tile": 14,
+              "card": 2,
+              "tileScoresById": {
+                "a": 8,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 1,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 2,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 10,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 6
+              }
+            },
+            "player-green": {
+              "total": 130,
+              "base": 81,
+              "tile": 49,
+              "card": 0,
+              "tileScoresById": {
+                "a": 33,
+                "b": 6,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 0
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 14,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 22,
+                "orbitScore": 15,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 6
+              }
+            },
+            "player-brown": {
+              "total": 108,
+              "base": 70,
+              "tile": 32,
+              "card": 6,
+              "tileScoresById": {
+                "a": 10,
+                "b": 8,
+                "c": 0,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "chong_2.webp",
+                  "rule": {
+                    "kind": "chongTraceCount",
+                    "scorePer": 1
+                  },
+                  "score": 6
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 14,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 21,
+                "orbitScore": 0,
+                "scanScore": 5,
+                "taskCardScore": 2,
+                "techBonusScore": 7
+              }
+            },
+            "player-white": {
+              "total": 91,
+              "base": 70,
+              "tile": 21,
+              "card": 0,
+              "tileScoresById": {
+                "a": 15,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 0,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 0,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 11,
+                "blueTechScore": 2,
+                "cardEffectScore": 3,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 20,
+                "orbitScore": 6,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-card-movement-finish-20260907-6b5381c1-full-v312.json",
+          "reportPath": "reports/iteration/card-movement-finish-20260907/7d87ceb5.6b5381c1.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "7d87ceb5.6b5381c1.full",
+            "path": "reports/iteration/card-movement-finish-20260907/7d87ceb5.6b5381c1.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "ordinary-movement-demand-20260907",
       "name": "ordinary-movement-demand-20260907",
@@ -491,7 +1048,7 @@
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

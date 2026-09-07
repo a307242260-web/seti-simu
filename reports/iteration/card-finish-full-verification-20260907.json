@@ -1,0 +1,1359 @@
+{
+  "scope": "只核验已有正式终局与搜索记录，不以均分替代实现正确性",
+  "sources": [
+    "reports/research/7feb57c3.96e60c14.full.json",
+    "reports/research/1066a36f.0b586daa.full.json",
+    "reports/research/7d87ceb5.6b5381c1.full.json"
+  ],
+  "measurements": [
+    {
+      "commit": "96e60c14",
+      "steps": 596,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "score": 100
+        },
+        {
+          "playerId": "player-green",
+          "score": 86
+        },
+        {
+          "playerId": "player-brown",
+          "score": 115
+        },
+        {
+          "playerId": "player-white",
+          "score": 137
+        }
+      ],
+      "mean": 109.5,
+      "wallMs": 501885,
+      "searches": 184,
+      "nodes": 135649,
+      "submissions": 171604,
+      "cutoffs": [
+        {
+          "step": 24,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 42,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 59,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 62,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 148,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 152,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 160,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 164,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 180,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 197,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 198,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 223,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 232,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 264,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 270,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 278,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 280,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 285,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 303,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 328,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 332,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 369,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 412,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 420,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 428,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 435,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 435,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 439,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 443,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 449,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 476,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 492,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 497,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 537,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 539,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 553,
+          "kind": "strategic",
+          "cap": 4096
+        }
+      ],
+      "failures": [],
+      "classes": [
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          20773
+        ],
+        [
+          "end_turn:turn_control",
+          12032
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          10228
+        ],
+        [
+          "place_data:quick",
+          10131
+        ],
+        [
+          "quick_trade:quick",
+          9479
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+          7672
+        ],
+        [
+          "move:quick",
+          5314
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+          4988
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          4846
+        ],
+        [
+          "pass:main",
+          3850
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          3559
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          3222
+        ],
+        [
+          "scan:main",
+          3058
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          3033
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          3026
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          2941
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          2676
+        ],
+        [
+          "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+          2587
+        ],
+        [
+          "card_corner:quick",
+          2503
+        ],
+        [
+          "analyze:main",
+          2251
+        ],
+        [
+          "industry:quick",
+          2234
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          2043
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          1933
+        ],
+        [
+          "land:main",
+          1746
+        ],
+        [
+          "play_card:main",
+          1548
+        ],
+        [
+          "orbit:main",
+          1498
+        ],
+        [
+          "research_tech:main",
+          990
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4",
+          865
+        ],
+        [
+          "launch:main",
+          803
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card",
+          788
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+          563
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income",
+          437
+        ],
+        [
+          "choose_reward:conditional/decision=choose_reward/effect=card_play_domain_effect:decision:card_pay_credits_for_reward/cardEffect=card_pay_credits_for_reward",
+          280
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech",
+          273
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income",
+          262
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards",
+          253
+        ],
+        [
+          "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger",
+          188
+        ],
+        [
+          "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+          188
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_hand_scan/cardEffect=card_hand_scan",
+          156
+        ],
+        [
+          "complete_task:quick",
+          90
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker",
+          71
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income",
+          66
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace",
+          56
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=probe_turn_pass_reserve",
+          42
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_free_move/cardEffect=card_free_move",
+          37
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_orbit/cardEffect=card_orbit",
+          22
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_return_unfinished_task_to_hand/cardEffect=card_return_unfinished_task_to_hand",
+          20
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward",
+          17
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_choose_symbol_reward/cardEffect=amiba_choose_symbol_reward",
+          4
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_card_corner_repeat/cardEffect=card_discard_card_corner_repeat",
+          4
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_income_decision/cardEffect=card_income",
+          3
+        ]
+      ]
+    },
+    {
+      "commit": "0b586daa",
+      "steps": 592,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "score": 93
+        },
+        {
+          "playerId": "player-green",
+          "score": 113
+        },
+        {
+          "playerId": "player-brown",
+          "score": 80
+        },
+        {
+          "playerId": "player-white",
+          "score": 88
+        }
+      ],
+      "mean": 93.5,
+      "wallMs": 526049,
+      "searches": 172,
+      "nodes": 124085,
+      "submissions": 156953,
+      "cutoffs": [
+        {
+          "step": 24,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 42,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 50,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 53,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 96,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 155,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 162,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 171,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 173,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 183,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 203,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 209,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 218,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 220,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 233,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 239,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 243,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 320,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 329,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 342,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 349,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 388,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 424,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 457,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 463,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 463,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 471,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 482,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 498,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 508,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 523,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 548,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 573,
+          "kind": "control",
+          "cap": 1
+        }
+      ],
+      "failures": [],
+      "classes": [
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          24329
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          11986
+        ],
+        [
+          "place_data:quick",
+          11037
+        ],
+        [
+          "end_turn:turn_control",
+          10714
+        ],
+        [
+          "quick_trade:quick",
+          7070
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          4712
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          4692
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          3911
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+          3702
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          3620
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          3385
+        ],
+        [
+          "scan:main",
+          3030
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          2990
+        ],
+        [
+          "pass:main",
+          2986
+        ],
+        [
+          "analyze:main",
+          2665
+        ],
+        [
+          "move:quick",
+          2598
+        ],
+        [
+          "card_corner:quick",
+          2587
+        ],
+        [
+          "industry:quick",
+          2548
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          1744
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+          1703
+        ],
+        [
+          "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+          1481
+        ],
+        [
+          "land:main",
+          1415
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          1300
+        ],
+        [
+          "orbit:main",
+          1174
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          1024
+        ],
+        [
+          "play_card:main",
+          910
+        ],
+        [
+          "launch:main",
+          840
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards",
+          725
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+          612
+        ],
+        [
+          "research_tech:main",
+          586
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4",
+          552
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income",
+          321
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income",
+          310
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech",
+          251
+        ],
+        [
+          "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger",
+          248
+        ],
+        [
+          "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+          123
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_draw_then_scan/cardEffect=card_draw_then_scan",
+          45
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=probe_turn_pass_reserve",
+          42
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker",
+          29
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace",
+          29
+        ],
+        [
+          "complete_task:quick",
+          28
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income",
+          9
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card",
+          8
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward",
+          7
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_choose_symbol_reward/cardEffect=amiba_choose_symbol_reward",
+          3
+        ],
+        [
+          "choose_payment:conditional/decision=choose_payment/effect=standard_action_session_decision/context=discard",
+          2
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+          1
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_card_corner_repeat/cardEffect=card_discard_card_corner_repeat",
+          1
+        ]
+      ]
+    },
+    {
+      "commit": "6b5381c1",
+      "steps": 592,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "score": 68
+        },
+        {
+          "playerId": "player-green",
+          "score": 130
+        },
+        {
+          "playerId": "player-brown",
+          "score": 108
+        },
+        {
+          "playerId": "player-white",
+          "score": 91
+        }
+      ],
+      "mean": 99.25,
+      "wallMs": 550378,
+      "searches": 167,
+      "nodes": 137837,
+      "submissions": 178426,
+      "cutoffs": [
+        {
+          "step": 24,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 42,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 50,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 53,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 96,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 155,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 162,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 164,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 171,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 189,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 191,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 205,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 209,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 216,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 257,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 266,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 334,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 342,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 344,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 348,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 361,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 375,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 417,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 442,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 451,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 453,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 455,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 485,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 488,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 500,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 537,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 565,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 590,
+          "kind": "control",
+          "cap": 1
+        }
+      ],
+      "failures": [],
+      "classes": [
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          23623
+        ],
+        [
+          "place_data:quick",
+          12563
+        ],
+        [
+          "end_turn:turn_control",
+          11706
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          11312
+        ],
+        [
+          "quick_trade:quick",
+          7833
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          5709
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          5704
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          5179
+        ],
+        [
+          "pass:main",
+          4340
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          4097
+        ],
+        [
+          "scan:main",
+          4058
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          3800
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          3614
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          3471
+        ],
+        [
+          "card_corner:quick",
+          3280
+        ],
+        [
+          "move:quick",
+          3044
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+          2798
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+          2680
+        ],
+        [
+          "analyze:main",
+          2464
+        ],
+        [
+          "industry:quick",
+          1856
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          1732
+        ],
+        [
+          "land:main",
+          1657
+        ],
+        [
+          "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+          1465
+        ],
+        [
+          "orbit:main",
+          1280
+        ],
+        [
+          "research_tech:main",
+          1226
+        ],
+        [
+          "play_card:main",
+          1215
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards",
+          1190
+        ],
+        [
+          "launch:main",
+          940
+        ],
+        [
+          "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger",
+          928
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          655
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income",
+          369
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card",
+          312
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech",
+          295
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4",
+          292
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income",
+          271
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+          179
+        ],
+        [
+          "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+          172
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_draw_then_scan/cardEffect=card_draw_then_scan",
+          140
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step/cardEffect=card_probe_sector_scan",
+          75
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_return_unfinished_task_to_hand/cardEffect=card_return_unfinished_task_to_hand",
+          74
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker",
+          73
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=probe_turn_pass_reserve",
+          42
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace",
+          29
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_choose_hand_corner_reward/cardEffect=card_choose_hand_corner_reward",
+          29
+        ],
+        [
+          "complete_task:quick",
+          27
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_orbit/cardEffect=card_orbit",
+          11
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_land/cardEffect=card_land",
+          8
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_hand_scan/cardEffect=card_hand_scan",
+          8
+        ],
+        [
+          "choose_reward:conditional/decision=choose_reward/effect=card_play_domain_effect:decision:card_pay_credits_for_reward/cardEffect=card_pay_credits_for_reward",
+          7
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income",
+          2
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward",
+          2
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+          1
+        ]
+      ]
+    }
+  ],
+  "firstDifference": {
+    "commonSteps": 161,
+    "before": {
+      "stepIndex": 161,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:12343210",
+        "actorId": "player-green",
+        "stateVersion": 73,
+        "decisionVersion": 4,
+        "target": {
+          "cardInstanceId": "card-20-pass-1-1"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "dlc_4.png：弃牌角标"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 2,
+        "t": 1,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            23,
+            4,
+            2,
+            2,
+            2,
+            1
+          ],
+          "player-green": [
+            28,
+            6,
+            1,
+            6,
+            3,
+            2
+          ],
+          "player-brown": [
+            20,
+            4,
+            1,
+            5,
+            4,
+            0
+          ],
+          "player-white": [
+            18,
+            5,
+            2,
+            2,
+            4,
+            1
+          ]
+        }
+      }
+    },
+    "after": {
+      "stepIndex": 161,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:70d77c1b",
+        "actorId": "player-green",
+        "stateVersion": 73,
+        "decisionVersion": 4,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "发射"
+      },
+      "phase": "main",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 2,
+        "t": 1,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            23,
+            4,
+            2,
+            2,
+            2,
+            1
+          ],
+          "player-green": [
+            28,
+            4,
+            1,
+            5,
+            4,
+            2
+          ],
+          "player-brown": [
+            20,
+            4,
+            1,
+            5,
+            4,
+            0
+          ],
+          "player-white": [
+            18,
+            5,
+            2,
+            2,
+            4,
+            1
+          ]
+        }
+      }
+    }
+  },
+  "effectGatePassed": false,
+  "noRuleFailures": true,
+  "zeroExecutionCutoffs": false,
+  "checksPassed": true,
+  "goalComplete": false,
+  "sha256": {
+    "reports/research/7feb57c3.96e60c14.full.json": "70999bdabd0d8ca9061af2b565ce6d3e7a17b0b2df5cc09a295941b3a60aa0b3",
+    "reports/research/1066a36f.0b586daa.full.json": "082a854354e27b201107741877e5cdf597d439c68b18d2bd9d8523485f271fcb",
+    "reports/research/7d87ceb5.6b5381c1.full.json": "ff4a9b13763243bea091e1a5b78bd002e95e9e9267d27710c97f1f1ac37481eb",
+    "seti-saves/seti-save-research-asteroid-movement-modifier-20260907-96e60c14-full-v299.json": "877dc7d38074a4148861863c84bf7d6d8f609dd9e732b8312ec2281002e72051",
+    "seti-saves/seti-save-research-ordinary-movement-demand-20260907-0b586daa-full-v298.json": "29177d55fdfdc6c6a850097ad8d1abe425e70338f894770048fef28ddb0f55b6",
+    "seti-saves/seti-save-research-card-movement-finish-20260907-6b5381c1-full-v312.json": "ddd7362effd6f602f4db77f0f48d84dc6fd9cd210cefbb332bd1ceb3d2129eab"
+  }
+}
