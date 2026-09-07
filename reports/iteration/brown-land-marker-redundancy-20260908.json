@@ -1,0 +1,110 @@
+{
+  "passed": true,
+  "step": 356,
+  "scope": "仅观察副本把计数恢复为2，不改正式状态；证明失效谓词与奖励等价，不是生产修复或全局语义等价证明",
+  "expected": {
+    "targetId": "land:venus:planet:",
+    "requirementId": "rocket:9:land:venus:planet:",
+    "sourceId": "rocket:9",
+    "rocketId": 9,
+    "movementSteps": 0,
+    "movementNextSteps": [
+      {
+        "family": "land",
+        "rocketId": 9,
+        "planetId": "venus",
+        "target": {
+          "type": "planet",
+          "rocketId": 9
+        }
+      }
+    ],
+    "paidMovementPoints": 0,
+    "markers": 2
+  },
+  "actual": {
+    "targetId": "land:venus:planet:",
+    "requirementId": "rocket:9:land:venus:planet:",
+    "sourceId": "rocket:9",
+    "rocketId": 9,
+    "movementSteps": 0,
+    "movementNextSteps": [
+      {
+        "family": "land",
+        "rocketId": 9,
+        "planetId": "venus",
+        "target": {
+          "type": "planet",
+          "rocketId": 9
+        }
+      }
+    ],
+    "paidMovementPoints": 0,
+    "markers": 3
+  },
+  "expectedRewards": [
+    {
+      "type": "gain_resources",
+      "label": "获得 5 分",
+      "icon": "score",
+      "options": {
+        "gain": {
+          "score": 5
+        }
+      },
+      "id": "planet-reward-0",
+      "status": "pending"
+    },
+    {
+      "type": "alien_trace",
+      "label": "获得 1 个黄色外星人标记",
+      "icon": "alien_yellow",
+      "needsUserChoice": true,
+      "options": {
+        "traceType": "yellow"
+      },
+      "id": "planet-reward-1",
+      "status": "pending"
+    }
+  ],
+  "actualRewards": [
+    {
+      "type": "gain_resources",
+      "label": "获得 5 分",
+      "icon": "score",
+      "options": {
+        "gain": {
+          "score": 5
+        }
+      },
+      "id": "planet-reward-0",
+      "status": "pending"
+    },
+    {
+      "type": "alien_trace",
+      "label": "获得 1 个黄色外星人标记",
+      "icon": "alien_yellow",
+      "needsUserChoice": true,
+      "options": {
+        "traceType": "yellow"
+      },
+      "id": "planet-reward-1",
+      "status": "pending"
+    }
+  ],
+  "lastMarker": {
+    "playerId": "player-white",
+    "color": "white"
+  },
+  "original": {
+    "hit": false,
+    "reason": "next-step-affected",
+    "affected": {
+      "kind": "route",
+      "id": "land:venus:planet:",
+      "sourceId": "rocket:9"
+    }
+  },
+  "diagnosticHit": true,
+  "obligations": "仍须审查标记数对卡牌/终局/外星人/触发和计划后续的影响，不能直接删除计数依赖"
+}
