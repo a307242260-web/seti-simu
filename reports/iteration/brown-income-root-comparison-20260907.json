@@ -1,0 +1,49 @@
+{
+  "scope": "既有正式记录离线比较，不运行搜索；相同统计不能证明叶集合与评分相同",
+  "source": "reports/iteration/brown-income-roots-20260907.json",
+  "stateDifferences": [
+    {
+      "path": ".meta.stateVersion",
+      "before": 79,
+      "after": 80
+    },
+    {
+      "path": ".pieces.rockets.0.angleDegrees",
+      "before": 157.5,
+      "after": 112.5
+    },
+    {
+      "path": ".pieces.rockets.0.sectorX",
+      "before": 5,
+      "after": 4
+    },
+    {
+      "path": ".players.players.1.industryRoundMarkRound",
+      "before": 0,
+      "after": 2
+    },
+    {
+      "path": ".players.players.1.industryRoundMarkTurn",
+      "before": 0,
+      "after": 1
+    }
+  ],
+  "changedDiagnosticKeys": [
+    "totalMilliseconds"
+  ],
+  "diagnosticsEqualExceptTiming": true,
+  "nodes": [
+    4096,
+    4096
+  ],
+  "submissions": [
+    5539,
+    5539
+  ],
+  "scoreDelta": {
+    "baseScore": -19,
+    "tileScore": -8,
+    "cardScore": -2,
+    "totalScore": -29
+  }
+}
