@@ -7,6 +7,26 @@
   },
   "versions": [
     {
+      "id": "trigger-scan-mapping-20260907",
+      "name": "trigger-scan-mapping-20260907",
+      "date": "2026-09-07",
+      "baseline": "hidden-reward-boundary-20260907",
+      "head": "aaaed8d0",
+      "commits": [
+        "334ec75a",
+        "a3f4289c",
+        "5d352797",
+        "aaaed8d0"
+      ],
+      "summary": "卡牌触发扫描复用正式扫描转换，整批扫描后统一结算扇区",
+      "records": {
+        "7dfcf27e.aaaed8d0.full.json": {
+          "note": "690步正式终局87/147/121/140，均123.75；全部动作、after摘要及终局完整状态与646858ac一致。规则执行失败1→0，142383节点不变、成功正式输入180947→180948；耗时572316ms，较前版增加15781ms，不宣称提速。27次4096策略截断及11次控制截断仍在。三色奖励、满扇区结算与恢复一致性通过；610冷搜索14.42秒、24输入计划重放正确。本项规则修复通过，整体性能Goal未通过，历史棕方降20不由此解释。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "hidden-reward-boundary-20260907",
       "name": "hidden-reward-boundary-20260907",
       "date": "2026-09-07",
