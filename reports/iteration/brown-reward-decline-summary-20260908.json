@@ -1,0 +1,502 @@
+{
+  "passed": true,
+  "scope": "只读已验证重放与两个112节点根，明确分数核算和同分选择；不推断全部下降因果",
+  "ties": [
+    {
+      "record": "f9209270.36994979.full.json",
+      "rootStep": 250,
+      "wallMs": 449.8055839999997,
+      "selected": "chong:blind",
+      "score": 18,
+      "groups": [
+        {
+          "choice": "chong:display:9",
+          "leaves": 16,
+          "score": 18,
+          "leafId": "leaf:2cf2db44"
+        },
+        {
+          "choice": "chong:blind",
+          "leaves": 16,
+          "score": 18,
+          "leafId": "leaf:1f08b615"
+        },
+        {
+          "choice": "chong:cancel",
+          "leaves": 0
+        }
+      ],
+      "searches": [
+        {
+          "kind": "control",
+          "nodes": 1,
+          "inputs": 1
+        },
+        {
+          "kind": "strategic",
+          "nodes": 112,
+          "inputs": 118
+        }
+      ]
+    },
+    {
+      "record": "5d9ead50.0b9837be.full.json",
+      "rootStep": 246,
+      "wallMs": 447.8385839999996,
+      "selected": "chong:display:9",
+      "score": 18,
+      "groups": [
+        {
+          "choice": "chong:display:9",
+          "leaves": 16,
+          "score": 18,
+          "leafId": "leaf:0892c7d1"
+        },
+        {
+          "choice": "chong:blind",
+          "leaves": 16,
+          "score": 18,
+          "leafId": "leaf:50b14340"
+        },
+        {
+          "choice": "chong:cancel",
+          "leaves": 0
+        }
+      ],
+      "searches": [
+        {
+          "kind": "control",
+          "nodes": 1,
+          "inputs": 1
+        },
+        {
+          "kind": "strategic",
+          "nodes": 112,
+          "inputs": 118
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "record": "f9209270.36994979.full.json",
+      "final": {
+        "baseScore": 71,
+        "cardScore": 4,
+        "cards": [
+          {
+            "cardId": "chong_2.webp",
+            "rule": {
+              "kind": "chongTraceCount",
+              "scorePer": 1
+            },
+            "score": 4
+          }
+        ],
+        "jiuzheCardScore": 0,
+        "jiuzheCards": [],
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "jiuzheThreat": 0,
+        "playerId": "player-brown",
+        "prePenaltyTotalScore": 118,
+        "runezuSymbolScore": 0,
+        "tileScore": 43,
+        "tileScoresById": {
+          "a": 20,
+          "b": 8,
+          "c": 0,
+          "d": 15
+        },
+        "tiles": [
+          {
+            "baseValue": 4,
+            "formulaId": "a2",
+            "multiplier": 5,
+            "score": 20,
+            "slotIndex": 3,
+            "tileId": "a",
+            "variant": 2
+          },
+          {
+            "baseValue": 1,
+            "formulaId": "b1",
+            "multiplier": 8,
+            "score": 8,
+            "slotIndex": 1,
+            "tileId": "b",
+            "variant": 1
+          },
+          {
+            "baseValue": 3,
+            "formulaId": "d2",
+            "multiplier": 5,
+            "score": 15,
+            "slotIndex": 2,
+            "tileId": "d",
+            "variant": 2
+          }
+        ],
+        "totalScore": 118
+      },
+      "rounds": [
+        {
+          "round": 2,
+          "score": 20,
+          "credits": 4,
+          "energy": 1,
+          "publicity": 5,
+          "income": {
+            "credits": 4,
+            "energy": 1,
+            "handSize": 2,
+            "publicity": 1,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "hand": [
+            "b_24.webp",
+            "dlc_27.png",
+            "b_10.webp"
+          ]
+        },
+        {
+          "round": 3,
+          "score": 33,
+          "credits": 5,
+          "energy": 2,
+          "publicity": 6,
+          "income": {
+            "credits": 5,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 1,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "hand": [
+            "b_53.webp",
+            "dlc_13.png",
+            "b_9.webp"
+          ]
+        },
+        {
+          "round": 4,
+          "score": 55,
+          "credits": 5,
+          "energy": 2,
+          "publicity": 3,
+          "income": {
+            "credits": 5,
+            "energy": 2,
+            "handSize": 4,
+            "publicity": 1,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "hand": [
+            "b_137.webp",
+            "b_32.webp",
+            "b_133.webp",
+            "b_21.webp",
+            "b_60.webp",
+            "b_126.webp"
+          ]
+        }
+      ],
+      "scoreGainsByRound": {
+        "1": 20,
+        "2": 13,
+        "3": 22,
+        "4": 16
+      },
+      "external": [
+        {
+          "step": 267,
+          "action": "扫描 织女一",
+          "delta": 3,
+          "publicityDelta": 1,
+          "winsBefore": [
+            {
+              "sectorId": "sector-1-a",
+              "settlementNumber": 1
+            }
+          ],
+          "winsAfter": [
+            {
+              "sectorId": "sector-1-a",
+              "settlementNumber": 1
+            },
+            {
+              "sectorId": "sector-3-a",
+              "settlementNumber": 2
+            }
+          ]
+        }
+      ],
+      "incomes": [
+        {
+          "step": 61,
+          "round": 1,
+          "card": "收入 b_12.webp",
+          "income": {
+            "credits": 4,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 1,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          }
+        },
+        {
+          "step": 179,
+          "round": 2,
+          "card": "收入 b_10.webp",
+          "income": {
+            "credits": 4,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 1,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          }
+        },
+        {
+          "step": 423,
+          "round": 3,
+          "card": "收入 dlc_6.png",
+          "income": {
+            "credits": 5,
+            "energy": 2,
+            "handSize": 4,
+            "publicity": 1,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          }
+        },
+        {
+          "step": 470,
+          "round": 4,
+          "card": "收入 b_133.webp",
+          "income": {
+            "credits": 5,
+            "energy": 3,
+            "handSize": 4,
+            "publicity": 1,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          }
+        }
+      ],
+      "marks": [
+        {
+          "step": 262,
+          "round": 2,
+          "score": 25,
+          "mark": "标记 A"
+        },
+        {
+          "step": 427,
+          "round": 3,
+          "score": 55,
+          "mark": "标记 D"
+        },
+        {
+          "step": 578,
+          "round": 4,
+          "score": 71,
+          "mark": "标记 B"
+        }
+      ]
+    },
+    {
+      "record": "5d9ead50.0b9837be.full.json",
+      "final": {
+        "baseScore": 59,
+        "cardScore": 5,
+        "cards": [
+          {
+            "cardId": "chong_2.webp",
+            "rule": {
+              "kind": "chongTraceCount",
+              "scorePer": 1
+            },
+            "score": 5
+          },
+          {
+            "cardId": "dlc_8.png",
+            "rule": {
+              "kind": "remainingResource",
+              "resource": "availableData",
+              "scorePer": 3
+            },
+            "score": 0
+          }
+        ],
+        "jiuzheCardScore": 0,
+        "jiuzheCards": [],
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "jiuzheThreat": 0,
+        "playerId": "player-brown",
+        "prePenaltyTotalScore": 82,
+        "runezuSymbolScore": 0,
+        "tileScore": 18,
+        "tileScoresById": {
+          "a": 10,
+          "b": 8,
+          "c": 0,
+          "d": 0
+        },
+        "tiles": [
+          {
+            "baseValue": 2,
+            "formulaId": "a2",
+            "multiplier": 5,
+            "score": 10,
+            "slotIndex": 3,
+            "tileId": "a",
+            "variant": 2
+          },
+          {
+            "baseValue": 1,
+            "formulaId": "b1",
+            "multiplier": 8,
+            "score": 8,
+            "slotIndex": 1,
+            "tileId": "b",
+            "variant": 1
+          }
+        ],
+        "totalScore": 82
+      },
+      "rounds": [
+        {
+          "round": 2,
+          "score": 20,
+          "credits": 4,
+          "energy": 1,
+          "publicity": 5,
+          "income": {
+            "credits": 4,
+            "energy": 1,
+            "handSize": 2,
+            "publicity": 1,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "hand": [
+            "b_24.webp",
+            "dlc_27.png",
+            "b_10.webp"
+          ]
+        },
+        {
+          "round": 3,
+          "score": 30,
+          "credits": 5,
+          "energy": 2,
+          "publicity": 3,
+          "income": {
+            "credits": 5,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 1,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "hand": [
+            "chong_9.webp",
+            "b_53.webp",
+            "dlc_14.png",
+            "b_18.webp"
+          ]
+        },
+        {
+          "round": 4,
+          "score": 45,
+          "credits": 6,
+          "energy": 2,
+          "publicity": 1,
+          "income": {
+            "credits": 6,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 1,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          },
+          "hand": [
+            "dlc_14.png",
+            "b_9.webp",
+            "b_32.webp",
+            "dlc_41.png",
+            "b_8.webp"
+          ]
+        }
+      ],
+      "scoreGainsByRound": {
+        "1": 20,
+        "2": 10,
+        "3": 15,
+        "4": 14
+      },
+      "external": [],
+      "incomes": [
+        {
+          "step": 61,
+          "round": 1,
+          "card": "收入 b_12.webp",
+          "income": {
+            "credits": 4,
+            "energy": 1,
+            "handSize": 1,
+            "publicity": 1,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          }
+        },
+        {
+          "step": 179,
+          "round": 2,
+          "card": "收入 b_10.webp",
+          "income": {
+            "credits": 4,
+            "energy": 2,
+            "handSize": 2,
+            "publicity": 1,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          }
+        },
+        {
+          "step": 498,
+          "round": 4,
+          "card": "收入 b_133.webp",
+          "income": {
+            "credits": 6,
+            "energy": 3,
+            "handSize": 2,
+            "publicity": 1,
+            "availableData": 0,
+            "additionalPublicScan": 0
+          }
+        }
+      ],
+      "marks": [
+        {
+          "step": 258,
+          "round": 2,
+          "score": 25,
+          "mark": "标记 A"
+        },
+        {
+          "step": 441,
+          "round": 4,
+          "score": 50,
+          "mark": "标记 B"
+        }
+      ]
+    }
+  ]
+}
