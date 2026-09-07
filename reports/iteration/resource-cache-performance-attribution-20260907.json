@@ -1,0 +1,56 @@
+{
+  "createdAt": "2026-09-07T17:10:00+08:00",
+  "scope": "只读历史记录与隔离诊断重跑；用于解释scan-earth-r3s1-20260906到resource-preparation-cache-20260907的耗时量级，不作为行为等价或稳定benchmark",
+  "scanEarth": {
+    "commit": "4fba7beb",
+    "recordedSteps": 529,
+    "recordedTailMs": 145621,
+    "resumeStep": 200,
+    "recordedPrefixMs": 48918,
+    "comparableRecordedTotalMs": 194539,
+    "historicalNodeTotal": null,
+    "historicalNodeTotalReason": "当时采集器会把计划复用重复记为最近一次搜索，无法从历史记录恢复精确逐次节点总数",
+    "isolatedContinuousRerun": {
+      "seed": "seti-free-analyze-v1",
+      "instrumentation": "仅给旧决策函数补充逐次evaluate诊断透传，不改搜索或规则逻辑",
+      "steps": 534,
+      "nodes": 34759,
+      "searchMs": 80382.083541,
+      "strategicSearches": 91,
+      "strategicNodes": 34675,
+      "controlSearches": 84,
+      "controlNodes": 84,
+      "caveat": "连续重跑保留第200步既有计划，而历史full从quick存档恢复时会清空计划；因此终局轨迹为534步而非529步，只用于旧版节点量级，不作为原历史轨迹精确总数"
+    }
+  },
+  "resourcePreparationCache": {
+    "commit": "1f55695a",
+    "steps": 604,
+    "wallMs": 527641,
+    "searches": 180,
+    "nodes": 124980,
+    "searchMs": 392142.780299,
+    "strategicSearches": 92,
+    "strategicNodes": 124892,
+    "strategicSearchMs": 391202.44317,
+    "strategic4096Searches": 24,
+    "strategic4096Nodes": 98304,
+    "strategic4096SearchMs": 302548.719544,
+    "strategicOver10sSearches": 27,
+    "strategicOver10sSearchMs": 345377.176961,
+    "controlSearches": 88,
+    "controlNodes": 88,
+    "controlSearchMs": 940.337129
+  },
+  "comparisons": {
+    "approximateNodeRatioAgainstContinuousOldRerun": 3.595,
+    "comparableRecordedWallRatio": 2.712,
+    "recordedStepRatio": 1.142,
+    "newSearchShareOfWall": 0.743,
+    "new4096StrategicSearchShareOfWall": 0.573,
+    "adjacentQuick200BeforeSearchExpansionMs": 41129,
+    "adjacentQuick200AfterSearchExpansionMs": 144806,
+    "adjacentQuick200WallRatio": 3.521
+  },
+  "conclusion": "主要耗时差异来自R4扩大次级搜索空间后物理搜索节点量显著增加；步数增加与单节点成本是次要因素。资源准备缓存修复本身未造成该回退。旧版精确节点倍数不可由历史记录直接证明，3.595仅表示隔离连续重跑的量级对照。"
+}
