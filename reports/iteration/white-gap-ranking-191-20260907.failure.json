@@ -1,0 +1,4 @@
+{
+  "message": "Cannot read properties of undefined (reading 'map')",
+  "stack": "TypeError: Cannot read properties of undefined (reading 'map')\n    at /private/tmp/seti-resource-cache-fix-20260907/adhoc/capture-white-gap-ranking-20260907.js:15:330\n    at Array.map (<anonymous>)\n    at main (/private/tmp/seti-resource-cache-fix-20260907/adhoc/capture-white-gap-ranking-20260907.js:15:35)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)"
+}

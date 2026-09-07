@@ -1,0 +1,367 @@
+{
+  "scope": "只读两份完整存档的逐轮过程分及终局分账；过程领先不等于未来资源相同，不据此排除早期策略影响",
+  "rows": [
+    {
+      "recordId": "7feb57c3.96e60c14",
+      "rounds": [
+        {
+          "round": 1,
+          "score": 18,
+          "resources": [
+            18,
+            1,
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "round": 2,
+          "score": 26,
+          "resources": [
+            26,
+            0,
+            0,
+            3,
+            2,
+            1
+          ]
+        },
+        {
+          "round": 3,
+          "score": 40,
+          "resources": [
+            40,
+            0,
+            1,
+            1,
+            1,
+            2
+          ]
+        },
+        {
+          "round": 4,
+          "score": 83,
+          "resources": [
+            83,
+            0,
+            0,
+            1,
+            1,
+            2
+          ]
+        }
+      ],
+      "final": {
+        "baseScore": 83,
+        "cardScore": 0,
+        "cards": [],
+        "jiuzheCardScore": 0,
+        "jiuzheCards": [],
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "jiuzheThreat": 0,
+        "playerId": "player-white",
+        "prePenaltyTotalScore": 137,
+        "runezuSymbolScore": 0,
+        "tileScore": 54,
+        "tileScoresById": {
+          "a": 40,
+          "b": 8,
+          "c": 0,
+          "d": 6
+        },
+        "tiles": [
+          {
+            "baseValue": 5,
+            "formulaId": "a2",
+            "multiplier": 8,
+            "score": 40,
+            "slotIndex": 2,
+            "tileId": "a",
+            "variant": 2
+          },
+          {
+            "baseValue": 1,
+            "formulaId": "b1",
+            "multiplier": 8,
+            "score": 8,
+            "slotIndex": 1,
+            "tileId": "b",
+            "variant": 1
+          },
+          {
+            "baseValue": 2,
+            "formulaId": "d2",
+            "multiplier": 3,
+            "score": 6,
+            "slotIndex": 3,
+            "tileId": "d",
+            "variant": 2
+          }
+        ],
+        "totalScore": 137
+      },
+      "actions": [
+        {
+          "step": 221,
+          "round": 2,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "land",
+            "phase": "main",
+            "actionId": "land:d5ee03a2",
+            "actorId": "player-white",
+            "stateVersion": 112,
+            "decisionVersion": 4,
+            "target": {
+              "select": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "登陆"
+          }
+        },
+        {
+          "step": 456,
+          "round": 4,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "land",
+            "phase": "main",
+            "actionId": "land:d5ee03a2",
+            "actorId": "player-white",
+            "stateVersion": 233,
+            "decisionVersion": 12,
+            "target": {
+              "select": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "登陆"
+          }
+        },
+        {
+          "step": 585,
+          "round": 4,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "land",
+            "phase": "main",
+            "actionId": "land:d5ee03a2",
+            "actorId": "player-white",
+            "stateVersion": 292,
+            "decisionVersion": 22,
+            "target": {
+              "select": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "登陆"
+          }
+        }
+      ],
+      "scoreSources": {
+        "alienCardQuickScore": 0,
+        "alienEffectScore": 10,
+        "alienTraceBlueScore": 16,
+        "alienTracePinkScore": 1,
+        "alienTraceYellowScore": 7,
+        "blueTechScore": 0,
+        "cardEffectScore": 0,
+        "cardQuickScore": 1,
+        "industryEffectScore": 0,
+        "initialScore": 6,
+        "landScore": 19,
+        "orbitScore": 0,
+        "scanScore": 11,
+        "taskCardScore": 0,
+        "techBonusScore": 12
+      }
+    },
+    {
+      "recordId": "aed4e5db.1f55695a",
+      "rounds": [
+        {
+          "round": 1,
+          "score": 18,
+          "resources": [
+            18,
+            1,
+            0,
+            2,
+            2,
+            1
+          ]
+        },
+        {
+          "round": 2,
+          "score": 33,
+          "resources": [
+            33,
+            1,
+            0,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "round": 3,
+          "score": 45,
+          "resources": [
+            45,
+            0,
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "round": 4,
+          "score": 68,
+          "resources": [
+            68,
+            1,
+            1,
+            2,
+            0,
+            1
+          ]
+        }
+      ],
+      "final": {
+        "baseScore": 68,
+        "cardScore": 0,
+        "cards": [],
+        "jiuzheCardScore": 0,
+        "jiuzheCards": [],
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "jiuzheThreat": 0,
+        "playerId": "player-white",
+        "prePenaltyTotalScore": 89,
+        "runezuSymbolScore": 0,
+        "tileScore": 21,
+        "tileScoresById": {
+          "a": 15,
+          "b": 6,
+          "c": 0,
+          "d": 0
+        },
+        "tiles": [
+          {
+            "baseValue": 3,
+            "formulaId": "a2",
+            "multiplier": 5,
+            "score": 15,
+            "slotIndex": 3,
+            "tileId": "a",
+            "variant": 2
+          },
+          {
+            "baseValue": 1,
+            "formulaId": "b1",
+            "multiplier": 6,
+            "score": 6,
+            "slotIndex": 2,
+            "tileId": "b",
+            "variant": 1
+          }
+        ],
+        "totalScore": 89
+      },
+      "actions": [
+        {
+          "step": 252,
+          "round": 2,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "land",
+            "phase": "main",
+            "actionId": "land:d5ee03a2",
+            "actorId": "player-white",
+            "stateVersion": 124,
+            "decisionVersion": 7,
+            "target": {
+              "select": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "登陆"
+          }
+        },
+        {
+          "step": 355,
+          "round": 3,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "orbit",
+            "phase": "main",
+            "actionId": "orbit:43ff81be",
+            "actorId": "player-white",
+            "stateVersion": 177,
+            "decisionVersion": 11,
+            "target": {
+              "rocketId": 8,
+              "planetId": "venus"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R8，1信用点 + 1能量）"
+          }
+        }
+      ],
+      "scoreSources": {
+        "alienCardQuickScore": 0,
+        "alienEffectScore": 6,
+        "alienTraceBlueScore": 14,
+        "alienTracePinkScore": 6,
+        "alienTraceYellowScore": 5,
+        "blueTechScore": 0,
+        "cardEffectScore": 0,
+        "cardQuickScore": 1,
+        "industryEffectScore": 0,
+        "initialScore": 6,
+        "landScore": 5,
+        "orbitScore": 6,
+        "scanScore": 12,
+        "taskCardScore": 0,
+        "techBonusScore": 7
+      }
+    }
+  ],
+  "roundDeltas": [
+    {
+      "round": 1,
+      "before": 18,
+      "after": 18,
+      "delta": 0
+    },
+    {
+      "round": 2,
+      "before": 26,
+      "after": 33,
+      "delta": 7
+    },
+    {
+      "round": 3,
+      "before": 40,
+      "after": 45,
+      "delta": 5
+    },
+    {
+      "round": 4,
+      "before": 83,
+      "after": 68,
+      "delta": -15
+    }
+  ],
+  "fourthRoundGains": [
+    43,
+    23
+  ],
+  "passed": true
+}
