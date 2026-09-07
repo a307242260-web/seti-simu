@@ -1,0 +1,292 @@
+{
+  "scope": "复用actions.test.js公开上下文模式，执行正式能力并把结果交给正式奖励构建器；不是完整composition结算",
+  "cases": [
+    {
+      "family": "orbit",
+      "choice": {
+        "actionType": "orbit",
+        "rocketId": 1,
+        "planetId": "aomomo",
+        "planet": {
+          "planetId": "aomomo",
+          "label": "奥陌陌",
+          "name": "奥陌陌",
+          "wheelId": 3,
+          "baseX": 5,
+          "x": 5,
+          "y": 3,
+          "fixedAfterSetup": false
+        },
+        "markerSequence": 1,
+        "rewardSummary": "奥陌陌首次环绕：获得 1 张奥陌陌牌；奥陌陌环绕：10分+1化石；奥陌陌扇区扫描",
+        "cost": {
+          "credits": 1,
+          "energy": 1
+        },
+        "label": "环绕奥陌陌 - 奖励：奥陌陌首次环绕：获得 1 张奥陌陌牌；奥陌陌环绕：10分+1化石；奥陌陌扇区扫描（R1，1信用点 + 1能量）"
+      },
+      "result": {
+        "ok": true,
+        "abilityId": "orbitProbe",
+        "message": "环绕 奥陌陌，消耗 1信用点 + 1能量，移除火箭，显示环绕标记#17",
+        "undoable": true,
+        "cost": {
+          "credits": 1,
+          "energy": 1
+        },
+        "payload": {
+          "removedRocketId": 1,
+          "planetId": "aomomo",
+          "markerKind": "aomomo-orbit",
+          "markerSequence": 17
+        },
+        "events": [
+          {
+            "type": "orbit",
+            "planetId": "aomomo",
+            "markerKind": "aomomo-orbit",
+            "playerId": "player-white",
+            "playerColor": "white",
+            "source": "sequence-audit"
+          }
+        ],
+        "removedRocketId": 1,
+        "planetId": "aomomo",
+        "markerKind": "aomomo-orbit",
+        "markerSequence": 17
+      },
+      "before": {
+        "credits": 10,
+        "energy": 10,
+        "publicity": 10,
+        "availableData": 0,
+        "aomomoFossils": 0,
+        "additionalPublicScan": 0,
+        "handSize": 0,
+        "score": 0
+      },
+      "after": {
+        "credits": 9,
+        "energy": 9,
+        "publicity": 10,
+        "availableData": 0,
+        "aomomoFossils": 0,
+        "additionalPublicScan": 0,
+        "handSize": 0,
+        "score": 0
+      },
+      "nextEntitySequence": 18,
+      "actual": [
+        {
+          "type": "gain_resources",
+          "label": "奥陌陌环绕：10分+1化石",
+          "icon": "score",
+          "options": {
+            "gain": {
+              "score": 10,
+              "aomomoFossils": 1
+            },
+            "targetPlayerId": "player-white",
+            "targetPlayerColor": "white"
+          },
+          "id": "planet-reward-0",
+          "status": "pending"
+        },
+        {
+          "type": "scan_planet_sector",
+          "label": "奥陌陌扇区扫描",
+          "icon": "scan",
+          "badge": "奥陌陌",
+          "options": {
+            "planetId": "aomomo",
+            "targetPlayerId": "player-white",
+            "targetPlayerColor": "white"
+          },
+          "id": "planet-reward-1",
+          "status": "pending"
+        }
+      ],
+      "expected": [
+        {
+          "type": "aomomo_card",
+          "label": "奥陌陌首次环绕：获得 1 张奥陌陌牌",
+          "icon": "aomomoCard",
+          "needsUserChoice": true,
+          "options": {
+            "count": 1,
+            "targetPlayerId": "player-white",
+            "targetPlayerColor": "white"
+          },
+          "id": "planet-reward-0",
+          "status": "pending"
+        },
+        {
+          "type": "gain_resources",
+          "label": "奥陌陌环绕：10分+1化石",
+          "icon": "score",
+          "options": {
+            "gain": {
+              "score": 10,
+              "aomomoFossils": 1
+            },
+            "targetPlayerId": "player-white",
+            "targetPlayerColor": "white"
+          },
+          "id": "planet-reward-1",
+          "status": "pending"
+        },
+        {
+          "type": "scan_planet_sector",
+          "label": "奥陌陌扇区扫描",
+          "icon": "scan",
+          "badge": "奥陌陌",
+          "options": {
+            "planetId": "aomomo",
+            "targetPlayerId": "player-white",
+            "targetPlayerColor": "white"
+          },
+          "id": "planet-reward-2",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "family": "land",
+      "choice": {
+        "actionType": "land",
+        "target": {
+          "type": "planet",
+          "rocketId": 1
+        },
+        "rocketId": 1,
+        "planetId": "aomomo",
+        "planet": {
+          "planetId": "aomomo",
+          "label": "奥陌陌",
+          "name": "奥陌陌",
+          "wheelId": 3,
+          "baseX": 5,
+          "x": 5,
+          "y": 3,
+          "fixedAfterSetup": false
+        },
+        "markerSequence": 1,
+        "rewardMarkerSequence": 1,
+        "rewardSummary": "奥陌陌登陆：9分+2化石；奥陌陌第1次登陆：额外获得 3 个数据",
+        "energyCost": 3,
+        "cost": {
+          "energy": 3
+        },
+        "label": "登陆奥陌陌 - 奖励：奥陌陌登陆：9分+2化石；奥陌陌第1次登陆：额外获得 3 个数据（R1，3能量）"
+      },
+      "result": {
+        "ok": true,
+        "abilityId": "landProbe",
+        "message": "登陆 奥陌陌，消耗 3能量，移除火箭，显示登陆标记#17",
+        "undoable": true,
+        "cost": {
+          "energy": 3
+        },
+        "payload": {
+          "removedRocketId": 1,
+          "planetId": "aomomo",
+          "landTarget": {
+            "type": "planet"
+          },
+          "markerKind": "aomomo-land",
+          "markerSequence": 17,
+          "rewardMarkerSequence": 17,
+          "satelliteId": null
+        },
+        "events": [
+          {
+            "type": "land",
+            "planetId": "aomomo",
+            "markerKind": "aomomo-land",
+            "satelliteId": null,
+            "playerId": "player-white",
+            "playerColor": "white",
+            "source": "sequence-audit"
+          }
+        ],
+        "removedRocketId": 1,
+        "planetId": "aomomo",
+        "landTarget": {
+          "type": "planet"
+        },
+        "markerKind": "aomomo-land",
+        "markerSequence": 17,
+        "rewardMarkerSequence": 17,
+        "satelliteId": null
+      },
+      "before": {
+        "credits": 10,
+        "energy": 10,
+        "publicity": 10,
+        "availableData": 0,
+        "aomomoFossils": 0,
+        "additionalPublicScan": 0,
+        "handSize": 0,
+        "score": 0
+      },
+      "after": {
+        "credits": 10,
+        "energy": 7,
+        "publicity": 10,
+        "availableData": 0,
+        "aomomoFossils": 0,
+        "additionalPublicScan": 0,
+        "handSize": 0,
+        "score": 0
+      },
+      "nextEntitySequence": 18,
+      "actual": [
+        {
+          "type": "gain_resources",
+          "label": "奥陌陌登陆：9分+2化石",
+          "icon": "score",
+          "options": {
+            "gain": {
+              "score": 9,
+              "aomomoFossils": 2
+            },
+            "targetPlayerId": "player-white",
+            "targetPlayerColor": "white"
+          },
+          "id": "planet-reward-0",
+          "status": "pending"
+        }
+      ],
+      "expected": [
+        {
+          "type": "gain_resources",
+          "label": "奥陌陌登陆：9分+2化石",
+          "icon": "score",
+          "options": {
+            "gain": {
+              "score": 9,
+              "aomomoFossils": 2
+            },
+            "targetPlayerId": "player-white",
+            "targetPlayerColor": "white"
+          },
+          "id": "planet-reward-0",
+          "status": "pending"
+        },
+        {
+          "type": "gain_data",
+          "label": "奥陌陌第1次登陆：额外获得 3 个数据",
+          "icon": "data",
+          "options": {
+            "count": 3,
+            "targetPlayerId": "player-white",
+            "targetPlayerColor": "white"
+          },
+          "id": "planet-reward-1",
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "passed": true
+}
