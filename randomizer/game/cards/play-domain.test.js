@@ -1622,4 +1622,69 @@ runCompanyPassivesOnPlay();
     assert.deepEqual(composition.lifecycle.save().envelope, after);
   } finally { composition.dispose(); }
 }
+for (const mode of ["all", "partial", "zero", "empty"]) {
+  const state = createCanonicalState("dlc_28.png");
+  const actor = state.players.players[0];
+  actor.income = { credits: 4, energy: 2, handSize: 2 };
+  const codes = mode === "empty" ? [] : [2, 0, 1, 3, 4, -1];
+  actor.hand.push(...codes.map(code => ({ id: `reorganization:${code}`, cardId: "b_2.webp", incomeCode: code })));
+  actor.resources.handSize = actor.hand.length;
+  const { composition, counters } = createIntegratedComposition("dlc_28.png", { state });
+  try {
+    const play = getOnlyPlayAction(composition);
+    assert.equal(composition.inputPort.submitAction(play).ok, true);
+    const choose = id => {
+      const decision = composition.inspect().session.decision;
+      const choice = decision.choices.find(entry => entry.target.choiceId === id);
+      assert.ok(choice, `重组缺少选择${id}`);
+      const result = composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+        decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice });
+      assert.equal(result.ok, true, JSON.stringify(result));
+      return result;
+    };
+    const selectsCards = mode === "all" || mode === "partial";
+    if (selectsCards) {
+      choose("reorganization:2");
+      assert.deepEqual(composition.inspect().session.decision.choices.map(entry => entry.target.choiceId),
+        [...codes.slice(1).map(code => `reorganization:${code}`), "done"],
+        "重组必须先完成弃牌，不能提前抽牌并把新牌加入同一次选择");
+      assert.equal(counters.compareAndCommit, 0, "弃牌选择未完成不得提前提交");
+    }
+    const pending = composition.lifecycle.save().envelope;
+    const decision = composition.inspect().session.decision;
+    for (const invalid of [{ ownerId: "p2" }, { decisionVersion: decision.decisionVersion + 1 }]) {
+      assert.equal(composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+        decisionVersion: decision.decisionVersion, ownerId: decision.ownerId,
+        choice: decision.choices[0], ...invalid }).ok, false);
+      assert.deepEqual(composition.lifecycle.save().envelope, pending);
+    }
+    const finish = () => {
+      let result;
+      if (mode === "all") for (const code of codes.slice(1)) result = choose(`reorganization:${code}`);
+      else {
+        if (mode === "partial") choose("reorganization:1");
+        result = choose("done");
+      }
+      assert.equal(result.phase, "completed");
+      return result;
+    };
+    const result = finish();
+    assert.equal(counters.compareAndCommit, 1, "弃牌及奖励整体只提交一次");
+    const final = composition.stateSourcePort.getSnapshot();
+    const player = final.players.players[0];
+    assert.deepEqual(player.income, actor.income, "重组只发一次性资源，不增加永久收入");
+    assert.equal(player.resources.credits, 10 - (play.payload.cost.credits || 0) + (mode === "all" ? 1 : 0));
+    assert.equal(player.resources.energy, 10 - (play.payload.cost.energy || 0) + (selectsCards ? 1 : 0));
+    assert.equal(player.resources.publicity, mode === "all" ? 1 : 0);
+    assert.equal(player.resources.availableData, mode === "all" ? 1 : 0);
+    const drawn = player.hand.filter(card => !card.id.startsWith("reorganization:"));
+    assert.equal(drawn.length, selectsCards ? 1 : 0);
+    assert.equal(result.journal.rng.length, selectsCards ? 1 : 0, "盲抽必须走正式RNG记账");
+    const after = composition.lifecycle.save().envelope;
+    assert.equal(composition.lifecycle.restore(pending, { silent: true }).ok, true);
+    finish();
+    assert.deepEqual(composition.lifecycle.save().envelope, after,
+      "重组中途恢复须保持累计资源、抽牌、实体、RNG与journal一致");
+  } finally { composition.dispose(); }
+}
 console.log("card play domain production composition tests passed");

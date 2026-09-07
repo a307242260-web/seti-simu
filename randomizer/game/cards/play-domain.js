@@ -2188,37 +2188,34 @@
         const card = actor.hand.find((entry) => entry.id === legal.target.cardInstanceId);
         spawnedEffects = spawnCardEffects(cornerEffects(card), sessionEffect);
       } else if (effect.type === cardEffects.EFFECT_TYPES.DISCARD_ANY_FOR_INCOME) {
+        const pendingIncomeGain = clone(sessionEffect.payload.pendingIncomeGain || {});
         if (!legal.target.done) {
           const index = actor.hand.findIndex((entry) => entry.id === legal.target.cardInstanceId);
           const removed = cards.discardFromHandAtIndex(actor, index);
           if (!removed.ok) return removed;
           cards.addToDiscardPile(cardsState, removed.card);
           const gain = cards.getIncomeGainForCard(removed.card);
-          if (gain) {
-            // 统一抽牌上下文：收入盲抽共用 cards.createCardDrawContext
-            const drawCtx = cards.createCardDrawContext(
-              cardsState,
-              getWorkingSlice(root, "players"),
-              () => nextCommittedRandom(root),
-              { root },
-            );
-            players.gainIncome(actor, gain, {
-              blindDraw: (target) => drawCtx.blindDraw(target),
-              gainData: (target) => data.gainData(target, { source: "card_income", root }),
-            });
+          // 没有收入角的牌仍可弃置，但不贡献奖励。先弃牌，后统一发一次性资源。
+          for (const [key, amount] of Object.entries(gain || {})) {
+            pendingIncomeGain[key] = (pendingIncomeGain[key] || 0) + amount;
           }
-          if (actor.hand.length) {
-            spawnedEffects.push({
-              priority: "direct",
-              effect: {
-                type: genericEffectRuntimeType(effect.type, true),
-                kind: "decision",
-                decisionKind: "choose_card",
-                ownerId: actor.id,
-                payload: clone(sessionEffect.payload),
-              },
-            });
-          }
+        }
+        if (!legal.target.done && actor.hand.length) {
+          spawnedEffects.push({
+            priority: "direct",
+            effect: {
+              type: genericEffectRuntimeType(effect.type, true),
+              kind: "decision",
+              decisionKind: "choose_card",
+              ownerId: actor.id,
+              payload: { ...clone(sessionEffect.payload), pendingIncomeGain },
+            },
+          });
+        } else {
+          const { handSize = 0, availableData = 0, ...resources } = pendingIncomeGain;
+          spawnedEffects = spawnCardEffects(cards.buildRewardEffects({ gain: resources,
+            drawCards: handSize, dataCount: availableData, label: "重组：获得收入角资源" },
+          `${effect.id}:resources`), sessionEffect);
         }
       } else if ([
         cardEffects.EFFECT_TYPES.DISCARD_CARD_CORNER_REPEAT,
