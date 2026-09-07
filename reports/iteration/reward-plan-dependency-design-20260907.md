@@ -1,7 +1,7 @@
 # 同目标奖励依赖提前检查：设计与验收
 
 2026-09-07，独立分支 fix/reward-plan-dependency-20260907，基于 be02892d（生产36994979）。
-状态：设计冻结，实施与验收中；不是已通过版本。
+状态：单点与回归通过；完整局均101.75，效果未通过，继续下降归因。
 
 ## 目的与预期
 
@@ -60,4 +60,6 @@ scopedFact、capturePlanStep与planReuseCheck，不新增规则执行入口。
 - plan-continuation unit、唯一standard full-flow、V输入审计、语法与diff检查通过。
   文档检查覆盖README、AGENTS、PROJECT_MEMORY、ai-design、rl-simulation-env及迭代规范；
   仅ai-design描述了本次改变的对称完成边界，已同步改为单向口径，其他入口/接口不变。
-- 待：提交生产版本后标准全盘一次、登记与报告中心同步。不得提前宣称通过。
+- 完整局仅一次：0b9837be，640步终局85/136/82/104，均101.75，低于108.5；
+  正式执行失败0，战略4096截断27。前232步一致，233改选b11符合单点。
+  效果未通过，棕方下降优先归因，详见reward-plan-full-review-20260907.md；不回调权重补分。
