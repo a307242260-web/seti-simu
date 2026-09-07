@@ -57,6 +57,27 @@
 回手/额外发射时的恢复；一个借用对应多个目标的origin携带。不得新建另一份卡牌DSL
 解释器来填补它们，也不得通过“所有疑似扫描都保留”冒充需求式生成完成。
 
+## 现有解析与来源合并的约束
+
+`cards.effects.buildPlayEffects`仅展开model.playEffects的repeat，不包含triggers/tasks。
+已对当前242个MODELS做静态相关效果位置清点，共73张出现探测/完整扫描等相关效果；
+其中b2、b20、b25、b26、DLC24、DLC33的相关效果只出现在触发奖励，buildPlayEffects
+中没有。故复用现有cardHasFreeLaunch的顶层some只能证明直接发射，不能据false
+判定该牌或已打出的任务没有借用消费者。目录包含动态/异常点类型作待审项，非全部
+效果都适用图灵，不据匹配数量推断可达性或收益。
+静态证据：[卡牌消费者位置清单](turing-card-consumer-inventory-20260908.json)。
+
+`rule-composition.exactNodeKey`用完整envelope、actionId、剩余深度、focalSeat；同一
+借用物理动作服务多目标可以共用执行，但`originKey`只含根/当前target+plan、
+movementPreparation、深度及pass/完成/隐藏标志。任意额外purpose字段不会参与身份。
+`mergeNode`会按现有originKey合并并保留较优路径，所以新增用途状态若不进入正式
+origin身份/传播/计划捕获链，会静默丢掉不同后续约束。不得借用movementPreparation
+字段放图灵内容，也不能仅在目标名里塞标签而不实现消费/完成语义。
+
+下一设计需明确两种选择之一：全部用途语义可由既有target/plan无歧义表达并证明
+跨借用Decision不丢失；否则显式新增独立用途状态并覆盖origin身份、传播、编译及
+恢复检查的完整契约。尚未选择或实施，不能声称多目标绑定已完成。
+
 检查位置：players.js借用读取，industry/state.js与passives.js，
 effects/residual-domain-session.js公司枚举/执行，abilities/rocket.js与planet.js，
 actions/scan-effects.js全文，effects/science-session.js scanQueue/SCAN_ACTION_4及研究奖励，

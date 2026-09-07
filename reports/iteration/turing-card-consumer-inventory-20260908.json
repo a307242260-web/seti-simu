@@ -1,0 +1,1982 @@
+{
+  "modelCount": 242,
+  "rows": [
+    {
+      "cardId": "aomomo_0.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "aomomo_5.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 4,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 4
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "aomomo_7.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "aomomo",
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "aomomo"
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "aomomo_9.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "yichangdian_2.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 5,
+            "historyLabel": "近距离观察：5移动",
+            "suppressArrivalRewards": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 5,
+            "historyLabel": "近距离观察：5移动",
+            "suppressArrivalRewards": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "yichangdian_5.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "yichangdian_9.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        },
+        {
+          "path": "play.1",
+          "type": "yichangdian_launch_anomaly_move",
+          "options": {
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        },
+        {
+          "path": "model.playEffects.1",
+          "type": "yichangdian_launch_anomaly_move",
+          "options": {}
+        }
+      ]
+    },
+    {
+      "cardId": "amiba_9.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "amiba",
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "amiba"
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "chong_3.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "runezu_9.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "runezu",
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "runezu"
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "banrenma_9.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "banrenma",
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "banrenma"
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_2.webp",
+      "built": [],
+      "model": [
+        {
+          "path": "model.triggers.2.effect",
+          "type": "card_free_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_9.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_11.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_16.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_17.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_18.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_20.webp",
+      "built": [],
+      "model": [
+        {
+          "path": "model.triggers.0.effect",
+          "type": "card_free_move",
+          "options": {
+            "movementPoints": 1
+          }
+        },
+        {
+          "path": "model.triggers.1.effect",
+          "type": "card_free_move",
+          "options": {
+            "movementPoints": 1
+          }
+        },
+        {
+          "path": "model.triggers.2.effect",
+          "type": "card_free_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_21.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_24.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_25.webp",
+      "built": [],
+      "model": [
+        {
+          "path": "model.triggers.0.effect",
+          "type": "card_free_move",
+          "options": {
+            "movementPoints": 1
+          }
+        },
+        {
+          "path": "model.triggers.1.effect",
+          "type": "card_free_move",
+          "options": {
+            "movementPoints": 1
+          }
+        },
+        {
+          "path": "model.triggers.2.effect",
+          "type": "card_free_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_26.webp",
+      "built": [],
+      "model": [
+        {
+          "path": "model.triggers.2.effect",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_28.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_29.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_land",
+          "options": {
+            "skipCost": true,
+            "allowDuplicateLanding": true,
+            "allowDuplicateSatelliteLanding": true,
+            "allowSatelliteWithoutTech": false,
+            "forceFirstLandingReward": true,
+            "displayLandingSlot": 1,
+            "referenceOffsetTokenWidths": 0.5,
+            "grantRewards": true,
+            "rememberPreLandingOwnMarker": false,
+            "rememberPreLandingMarker": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_land",
+          "options": {
+            "skipCost": true,
+            "allowDuplicateLanding": true,
+            "allowDuplicateSatelliteLanding": true,
+            "allowSatelliteWithoutTech": false,
+            "forceFirstLandingReward": true,
+            "displayLandingSlot": 1,
+            "referenceOffsetTokenWidths": 0.5,
+            "grantRewards": true,
+            "rememberPreLandingOwnMarker": false,
+            "rememberPreLandingMarker": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_34.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_land",
+          "options": {
+            "skipCost": true,
+            "allowDuplicateLanding": false,
+            "allowDuplicateSatelliteLanding": false,
+            "allowSatelliteWithoutTech": true,
+            "forceFirstLandingReward": false,
+            "grantRewards": true,
+            "rememberPreLandingOwnMarker": false,
+            "rememberPreLandingMarker": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_land",
+          "options": {
+            "skipCost": true,
+            "allowDuplicateLanding": false,
+            "allowDuplicateSatelliteLanding": false,
+            "allowSatelliteWithoutTech": true,
+            "forceFirstLandingReward": false,
+            "grantRewards": true,
+            "rememberPreLandingOwnMarker": false,
+            "rememberPreLandingMarker": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_37.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": true,
+            "repeat": 1
+          }
+        },
+        {
+          "path": "play.1",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": true
+          }
+        },
+        {
+          "path": "model.playEffects.1",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_49.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_51.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_54.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_58.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_60.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_62.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_64.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_66.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 4,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 4
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_68.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_69.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_73.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_76.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_77.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        },
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        },
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_84.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_87.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        },
+        {
+          "path": "play.1",
+          "type": "card_earth_sector_content_move",
+          "options": {
+            "contentKinds": [
+              "planet",
+              "comet"
+            ],
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        },
+        {
+          "path": "model.playEffects.1",
+          "type": "card_earth_sector_content_move",
+          "options": {
+            "contentKinds": [
+              "planet",
+              "comet"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_90.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_91.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_land",
+          "options": {
+            "skipCost": true,
+            "allowDuplicateLanding": false,
+            "allowDuplicateSatelliteLanding": false,
+            "allowSatelliteWithoutTech": false,
+            "forceFirstLandingReward": false,
+            "grantRewards": true,
+            "afterLandRewards": [
+              {
+                "planetIds": [
+                  "mars",
+                  "mercury"
+                ],
+                "includeSatellites": true,
+                "effect": {
+                  "id": "b91-land-score",
+                  "type": "gain_resources",
+                  "label": "指定目标登陆：4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              }
+            ],
+            "rememberPreLandingOwnMarker": false,
+            "rememberPreLandingMarker": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_land",
+          "options": {
+            "skipCost": true,
+            "allowDuplicateLanding": false,
+            "allowDuplicateSatelliteLanding": false,
+            "allowSatelliteWithoutTech": false,
+            "forceFirstLandingReward": false,
+            "grantRewards": true,
+            "afterLandRewards": [
+              {
+                "planetIds": [
+                  "mars",
+                  "mercury"
+                ],
+                "includeSatellites": true,
+                "effect": {
+                  "id": "b91-land-score",
+                  "type": "gain_resources",
+                  "label": "指定目标登陆：4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              }
+            ],
+            "rememberPreLandingOwnMarker": false,
+            "rememberPreLandingMarker": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_98.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        },
+        {
+          "path": "play.1",
+          "type": "card_count_hand_corner_move",
+          "options": {
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        },
+        {
+          "path": "model.playEffects.1",
+          "type": "card_count_hand_corner_move",
+          "options": {}
+        }
+      ]
+    },
+    {
+      "cardId": "b_105.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_108.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 3,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 3
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_116.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        },
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        },
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_117.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_119.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_124.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_125.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_126.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_127.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_129.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_131.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_132.webp",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "b_138.webp",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        },
+        {
+          "path": "model.triggers.0.effect",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_1.png",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_land",
+          "options": {
+            "skipCost": true,
+            "allowDuplicateLanding": false,
+            "allowDuplicateSatelliteLanding": false,
+            "allowSatelliteWithoutTech": false,
+            "forceFirstLandingReward": false,
+            "grantRewards": true,
+            "rememberPreLandingOwnMarker": false,
+            "rememberPreLandingMarker": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_land",
+          "options": {
+            "skipCost": true,
+            "allowDuplicateLanding": false,
+            "allowDuplicateSatelliteLanding": false,
+            "allowSatelliteWithoutTech": false,
+            "forceFirstLandingReward": false,
+            "grantRewards": true,
+            "rememberPreLandingOwnMarker": false,
+            "rememberPreLandingMarker": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_4.png",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_5.png",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_6.png",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        },
+        {
+          "path": "play.1",
+          "type": "card_land",
+          "options": {
+            "skipCost": true,
+            "allowDuplicateLanding": false,
+            "allowDuplicateSatelliteLanding": false,
+            "allowSatelliteWithoutTech": false,
+            "forceFirstLandingReward": false,
+            "grantRewards": true,
+            "rememberPreLandingOwnMarker": false,
+            "rememberPreLandingMarker": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        },
+        {
+          "path": "model.playEffects.1",
+          "type": "card_land",
+          "options": {
+            "skipCost": true,
+            "allowDuplicateLanding": false,
+            "allowDuplicateSatelliteLanding": false,
+            "allowSatelliteWithoutTech": false,
+            "forceFirstLandingReward": false,
+            "grantRewards": true,
+            "rememberPreLandingOwnMarker": false,
+            "rememberPreLandingMarker": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_11.png",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_12.png",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_13.png",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_14.png",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_24.png",
+      "built": [],
+      "model": [
+        {
+          "path": "model.triggers.0.effect",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        },
+        {
+          "path": "model.triggers.1.effect",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_30.png",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_orbit",
+          "options": {
+            "skipCost": true,
+            "grantRewards": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_orbit",
+          "options": {
+            "skipCost": true,
+            "grantRewards": true
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_31.png",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_land",
+          "options": {
+            "skipCost": true,
+            "allowDuplicateLanding": false,
+            "allowDuplicateSatelliteLanding": false,
+            "allowSatelliteWithoutTech": false,
+            "forceFirstLandingReward": false,
+            "grantRewards": true,
+            "rememberPreLandingOwnMarker": false,
+            "rememberPreLandingMarker": false,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_land",
+          "options": {
+            "skipCost": true,
+            "allowDuplicateLanding": false,
+            "allowDuplicateSatelliteLanding": false,
+            "allowSatelliteWithoutTech": false,
+            "forceFirstLandingReward": false,
+            "grantRewards": true,
+            "rememberPreLandingOwnMarker": false,
+            "rememberPreLandingMarker": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_33.png",
+      "built": [],
+      "model": [
+        {
+          "path": "model.triggers.0.effect",
+          "type": "launch",
+          "options": {
+            "skipCost": true,
+            "cost": {},
+            "source": "card",
+            "ignoreRocketLimit": false
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_38.png",
+      "built": [
+        {
+          "path": "play.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.1",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 1
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_39.png",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 2
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_40.png",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 5,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_move",
+          "options": {
+            "movementPoints": 5
+          }
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_42.png",
+      "built": [
+        {
+          "path": "play.0",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true,
+            "repeat": 1
+          }
+        }
+      ],
+      "model": [
+        {
+          "path": "model.playEffects.0",
+          "type": "card_scan_action",
+          "options": {
+            "skipCost": true
+          }
+        }
+      ]
+    }
+  ],
+  "scope": "静态候选位置目录，不证明条件满足、奖励可达或已经覆盖动态生成/全部物种；不作为生产剪枝谓词",
+  "codeHead": "954e51c0b76661ac149f18f53fb68fe5a7bd2a9e"
+}
