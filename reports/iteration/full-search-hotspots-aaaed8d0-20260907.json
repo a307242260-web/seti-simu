@@ -1,0 +1,6800 @@
+{
+  "source": "reports/research/7dfcf27e.aaaed8d0.full.json",
+  "scope": "完整局27次满额搜索的既有统计，无AI重跑",
+  "counting": "nodes/decisions/choices是物理执行；targetOrigins按来源计数，同一物理节点可服务多个目标，不能相加当作物理节点。重复summary不证明状态等价。",
+  "rows": [
+    {
+      "step": 24,
+      "seat": "player-white",
+      "nodes": 4096,
+      "inputs": 6446,
+      "milliseconds": 9865.288042,
+      "decisions": [
+        [
+          "quick_trade:quick",
+          585
+        ],
+        [
+          "end_turn:turn_control",
+          581
+        ],
+        [
+          "place_data:quick",
+          560
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          282
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          253
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          246
+        ],
+        [
+          "analyze:main",
+          234
+        ],
+        [
+          "scan:main",
+          219
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          218
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          181
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          153
+        ],
+        [
+          "industry:quick",
+          110
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          96
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+          91
+        ],
+        [
+          "card_corner:quick",
+          67
+        ]
+      ],
+      "choices": [
+        [
+          "end_turn:结束回合",
+          581
+        ],
+        [
+          "place_data:放置数据",
+          560
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          352
+        ],
+        [
+          "choose_target:扫描 南河三",
+          273
+        ],
+        [
+          "analyze:分析",
+          234
+        ],
+        [
+          "choose_target:外星人 1 蓝色痕迹",
+          234
+        ],
+        [
+          "scan:扫描",
+          219
+        ],
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          188
+        ],
+        [
+          "choose_card:b_2.webp",
+          149
+        ],
+        [
+          "industry:深空探测 1x 行动",
+          110
+        ],
+        [
+          "choose_card:dlc_21.png",
+          85
+        ],
+        [
+          "choose_card:b_48.webp → 开普勒22",
+          72
+        ],
+        [
+          "choose_card:dlc_21.png → 南河三",
+          69
+        ],
+        [
+          "choose_card:b_48.webp",
+          68
+        ],
+        [
+          "choose_card:收入 dlc_9.png",
+          57
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          3343
+        ],
+        [
+          "orbit:mars:planet:",
+          443
+        ],
+        [
+          "sector:win:sector-3-a:1",
+          412
+        ],
+        [
+          "tech:gain:blue2",
+          359
+        ],
+        [
+          "<unbound>",
+          354
+        ],
+        [
+          "income:gain:4,2,0,0,2,1",
+          282
+        ],
+        [
+          "land:mars:planet:",
+          243
+        ],
+        [
+          "tech:gain:orange3",
+          203
+        ],
+        [
+          "tech:gain:blue1",
+          187
+        ],
+        [
+          "tech:gain:orange2",
+          33
+        ],
+        [
+          "decision:choose_card:6c3308e4",
+          28
+        ],
+        [
+          "decision:choose_card:f88a4f80",
+          28
+        ],
+        [
+          "orbit:venus:planet:",
+          28
+        ],
+        [
+          "tech:gain:purple4",
+          20
+        ],
+        [
+          "decision:choose_target:8821e7b0",
+          12
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> place_data:quick",
+          670
+        ],
+        [
+          "data:analyze -> end_turn:turn_control",
+          485
+        ],
+        [
+          "data:analyze -> quick_trade:quick",
+          436
+        ],
+        [
+          "data:analyze -> analyze:main",
+          297
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          297
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          215
+        ],
+        [
+          "data:analyze -> scan:main",
+          215
+        ],
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          214
+        ],
+        [
+          "<unbound> -> end_turn:turn_control",
+          173
+        ],
+        [
+          "sector:win:sector-3-a:1 -> quick_trade:quick",
+          166
+        ],
+        [
+          "tech:gain:blue2 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          165
+        ],
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          163
+        ],
+        [
+          "<unbound> -> industry:quick",
+          160
+        ],
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          138
+        ],
+        [
+          "orbit:mars:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          95
+        ]
+      ]
+    },
+    {
+      "step": 42,
+      "seat": "player-green",
+      "nodes": 4096,
+      "inputs": 6182,
+      "milliseconds": 11548.930999999999,
+      "decisions": [
+        [
+          "quick_trade:quick",
+          515
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          422
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          378
+        ],
+        [
+          "move:quick",
+          372
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          319
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          296
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          287
+        ],
+        [
+          "end_turn:turn_control",
+          259
+        ],
+        [
+          "place_data:quick",
+          239
+        ],
+        [
+          "scan:main",
+          203
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          145
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          131
+        ],
+        [
+          "orbit:main",
+          115
+        ],
+        [
+          "research_tech:main",
+          96
+        ],
+        [
+          "play_card:main",
+          74
+        ]
+      ],
+      "choices": [
+        [
+          "choose_target:扫描 南河三",
+          296
+        ],
+        [
+          "end_turn:结束回合",
+          259
+        ],
+        [
+          "place_data:放置数据",
+          239
+        ],
+        [
+          "scan:扫描",
+          203
+        ],
+        [
+          "choose_card:b_2.webp → 南河三",
+          183
+        ],
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          177
+        ],
+        [
+          "quick_trade:2张牌 → 1信用点",
+          172
+        ],
+        [
+          "choose_card:dlc_38.png",
+          140
+        ],
+        [
+          "move:移动探测器 2 逆时针",
+          140
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          133
+        ],
+        [
+          "choose_card:dlc_39.png",
+          130
+        ],
+        [
+          "move:移动探测器 3 逆时针",
+          124
+        ],
+        [
+          "choose_card:b_2.webp",
+          122
+        ],
+        [
+          "move:移动探测器 2 向内",
+          108
+        ],
+        [
+          "choose_card:收入 dlc_35.png",
+          107
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "orbit:venus:planet:",
+          1065
+        ],
+        [
+          "income:gain:5,1,0,0,2,0",
+          650
+        ],
+        [
+          "tech:gain:blue2",
+          612
+        ],
+        [
+          "sector:win:sector-1-a:1",
+          531
+        ],
+        [
+          "tech:gain:blue1",
+          316
+        ],
+        [
+          "tech:gain:orange3",
+          316
+        ],
+        [
+          "data:analyze",
+          248
+        ],
+        [
+          "<unbound>",
+          212
+        ],
+        [
+          "income:gain:6,1,0,0,1,0",
+          195
+        ],
+        [
+          "decision:choose_card:6225123f",
+          148
+        ],
+        [
+          "land:mars:planet:",
+          134
+        ],
+        [
+          "decision:choose_card:a677d061",
+          84
+        ],
+        [
+          "decision:choose_card:7b0ed0bc",
+          68
+        ],
+        [
+          "decision:choose_card:cb33e16c",
+          64
+        ],
+        [
+          "decision:choose_card:128697bd",
+          51
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "orbit:venus:planet: -> move:quick",
+          372
+        ],
+        [
+          "orbit:venus:planet: -> quick_trade:quick",
+          304
+        ],
+        [
+          "tech:gain:blue2 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          297
+        ],
+        [
+          "income:gain:5,1,0,0,2,0 -> place_data:quick",
+          163
+        ],
+        [
+          "sector:win:sector-1-a:1 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          158
+        ],
+        [
+          "income:gain:5,1,0,0,2,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          120
+        ],
+        [
+          "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          100
+        ],
+        [
+          "tech:gain:blue1 -> choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          100
+        ],
+        [
+          "tech:gain:blue1 -> research_tech:main",
+          100
+        ],
+        [
+          "tech:gain:blue2 -> research_tech:main",
+          100
+        ],
+        [
+          "tech:gain:orange3 -> choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          100
+        ],
+        [
+          "tech:gain:orange3 -> research_tech:main",
+          100
+        ],
+        [
+          "tech:gain:blue2 -> choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          99
+        ],
+        [
+          "sector:win:sector-1-a:1 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          98
+        ],
+        [
+          "sector:win:sector-1-a:1 -> scan:main",
+          98
+        ]
+      ]
+    },
+    {
+      "step": 50,
+      "seat": "player-blue",
+      "nodes": 4096,
+      "inputs": 4968,
+      "milliseconds": 9371.414,
+      "decisions": [
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+          813
+        ],
+        [
+          "end_turn:turn_control",
+          607
+        ],
+        [
+          "move:quick",
+          434
+        ],
+        [
+          "quick_trade:quick",
+          327
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          198
+        ],
+        [
+          "industry:quick",
+          158
+        ],
+        [
+          "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+          132
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          126
+        ],
+        [
+          "card_corner:quick",
+          122
+        ],
+        [
+          "land:main",
+          122
+        ],
+        [
+          "launch:main",
+          114
+        ],
+        [
+          "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger",
+          108
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          102
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          102
+        ],
+        [
+          "scan:main",
+          102
+        ]
+      ],
+      "choices": [
+        [
+          "end_turn:结束回合",
+          607
+        ],
+        [
+          "choose_target:借用 orange3",
+          158
+        ],
+        [
+          "industry:图灵系统 1x 行动",
+          158
+        ],
+        [
+          "choose_target:借用 purple2",
+          157
+        ],
+        [
+          "move:移动探测器 3 向外",
+          157
+        ],
+        [
+          "move:移动探测器 3 顺时针",
+          153
+        ],
+        [
+          "quick_trade:2信用点 → 1能量",
+          135
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄色痕迹",
+          122
+        ],
+        [
+          "land:登陆",
+          122
+        ],
+        [
+          "launch:发射",
+          114
+        ],
+        [
+          "accept_optional_effect:结算 dlc_23.png",
+          108
+        ],
+        [
+          "scan:扫描",
+          102
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          101
+        ],
+        [
+          "move:移动探测器 3 逆时针",
+          100
+        ],
+        [
+          "pass:PASS",
+          97
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "land:mars:planet:",
+          952
+        ],
+        [
+          "<unbound>",
+          647
+        ],
+        [
+          "orbit:venus:planet:",
+          437
+        ],
+        [
+          "sector:win:sector-3-a:1",
+          420
+        ],
+        [
+          "tech:gain:orange2",
+          247
+        ],
+        [
+          "tech:gain:orange3",
+          227
+        ],
+        [
+          "income:gain:4,2,0,1,1,0",
+          209
+        ],
+        [
+          "tech:gain:purple4",
+          186
+        ],
+        [
+          "decision:choose_target:01c733aa",
+          158
+        ],
+        [
+          "decision:choose_target:1bbc6216",
+          157
+        ],
+        [
+          "tech:gain:purple2",
+          141
+        ],
+        [
+          "orbit:uranus:planet:",
+          127
+        ],
+        [
+          "decision:choose_target:505cd48a",
+          84
+        ],
+        [
+          "decision:choose_target:7176d5b6",
+          83
+        ],
+        [
+          "decision:choose_target:a16ac402",
+          83
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "<unbound> -> end_turn:turn_control",
+          307
+        ],
+        [
+          "land:mars:planet: -> move:quick",
+          199
+        ],
+        [
+          "<unbound> -> industry:quick",
+          158
+        ],
+        [
+          "decision:choose_target:01c733aa -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+          158
+        ],
+        [
+          "decision:choose_target:1bbc6216 -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+          157
+        ],
+        [
+          "land:mars:planet: -> end_turn:turn_control",
+          138
+        ],
+        [
+          "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          122
+        ],
+        [
+          "land:mars:planet: -> land:main",
+          122
+        ],
+        [
+          "sector:win:sector-3-a:1 -> quick_trade:quick",
+          119
+        ],
+        [
+          "orbit:uranus:planet: -> move:quick",
+          118
+        ],
+        [
+          "land:mars:planet: -> quick_trade:quick",
+          116
+        ],
+        [
+          "orbit:venus:planet: -> move:quick",
+          103
+        ],
+        [
+          "tech:gain:orange2 -> card_corner:quick",
+          100
+        ],
+        [
+          "<unbound> -> pass:main",
+          97
+        ],
+        [
+          "tech:gain:orange3 -> card_corner:quick",
+          95
+        ]
+      ]
+    },
+    {
+      "step": 53,
+      "seat": "player-brown",
+      "nodes": 4096,
+      "inputs": 4931,
+      "milliseconds": 9918.651666000005,
+      "decisions": [
+        [
+          "place_data:quick",
+          678
+        ],
+        [
+          "end_turn:turn_control",
+          551
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          492
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          402
+        ],
+        [
+          "analyze:main",
+          370
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          309
+        ],
+        [
+          "quick_trade:quick",
+          164
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech",
+          153
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          109
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          102
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          102
+        ],
+        [
+          "scan:main",
+          102
+        ],
+        [
+          "move:quick",
+          93
+        ],
+        [
+          "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+          83
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          81
+        ]
+      ],
+      "choices": [
+        [
+          "place_data:放置数据",
+          678
+        ],
+        [
+          "end_turn:结束回合",
+          551
+        ],
+        [
+          "analyze:分析",
+          370
+        ],
+        [
+          "choose_target:外星人 1 蓝色痕迹",
+          370
+        ],
+        [
+          "choose_target:第一排放置位 6",
+          250
+        ],
+        [
+          "choose_target:第一排放置位 5",
+          111
+        ],
+        [
+          "choose_card:dlc_21.png",
+          103
+        ],
+        [
+          "choose_card:dlc_38.png",
+          103
+        ],
+        [
+          "scan:扫描",
+          102
+        ],
+        [
+          "choose_card:b_2.webp",
+          100
+        ],
+        [
+          "choose_card:dlc_38.png → 开普勒22",
+          94
+        ],
+        [
+          "choose_target:扫描 室女座61",
+          79
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          60
+        ],
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          60
+        ],
+        [
+          "choose_target:blue1 下方",
+          54
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          5965
+        ],
+        [
+          "sector:win:sector-3-a:1",
+          497
+        ],
+        [
+          "income:gain:4,1,1,0,1,0",
+          408
+        ],
+        [
+          "land:mars:planet:",
+          297
+        ],
+        [
+          "tech:gain:purple4",
+          260
+        ],
+        [
+          "orbit:venus:planet:",
+          221
+        ],
+        [
+          "<unbound>",
+          180
+        ],
+        [
+          "income:gain:3,1,1,0,1,0",
+          155
+        ],
+        [
+          "tech:gain:orange3",
+          131
+        ],
+        [
+          "tech:gain:orange2",
+          127
+        ],
+        [
+          "income:gain:3,1,1,0,2,0",
+          78
+        ],
+        [
+          "tech:gain:blue2",
+          74
+        ],
+        [
+          "tech:gain:blue1",
+          50
+        ],
+        [
+          "orbit:uranus:planet:",
+          15
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> place_data:quick",
+          1270
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          950
+        ],
+        [
+          "data:analyze -> end_turn:turn_control",
+          852
+        ],
+        [
+          "data:analyze -> analyze:main",
+          747
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          747
+        ],
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          438
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech",
+          292
+        ],
+        [
+          "sector:win:sector-3-a:1 -> quick_trade:quick",
+          174
+        ],
+        [
+          "tech:gain:purple4 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          156
+        ],
+        [
+          "income:gain:4,1,1,0,1,0 -> quick_trade:quick",
+          153
+        ],
+        [
+          "data:analyze -> card_corner:quick",
+          142
+        ],
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          121
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          121
+        ],
+        [
+          "data:analyze -> scan:main",
+          121
+        ],
+        [
+          "land:mars:planet: -> move:quick",
+          77
+        ]
+      ]
+    },
+    {
+      "step": 96,
+      "seat": "player-green",
+      "nodes": 4096,
+      "inputs": 6097,
+      "milliseconds": 10605.396125,
+      "decisions": [
+        [
+          "place_data:quick",
+          826
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          502
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          399
+        ],
+        [
+          "end_turn:turn_control",
+          397
+        ],
+        [
+          "quick_trade:quick",
+          341
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          307
+        ],
+        [
+          "scan:main",
+          259
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          211
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          144
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          136
+        ],
+        [
+          "card_corner:quick",
+          122
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          119
+        ],
+        [
+          "move:quick",
+          89
+        ],
+        [
+          "analyze:main",
+          54
+        ],
+        [
+          "pass:main",
+          43
+        ]
+      ],
+      "choices": [
+        [
+          "place_data:放置数据",
+          826
+        ],
+        [
+          "end_turn:结束回合",
+          397
+        ],
+        [
+          "choose_target:扫描 织女一",
+          269
+        ],
+        [
+          "scan:扫描",
+          259
+        ],
+        [
+          "choose_target:blue2 下方",
+          166
+        ],
+        [
+          "choose_card:dlc_38.png → 开普勒22",
+          154
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          148
+        ],
+        [
+          "choose_card:dlc_21.png → 南河三",
+          130
+        ],
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          129
+        ],
+        [
+          "choose_card:dlc_37.png → 开普勒22",
+          121
+        ],
+        [
+          "choose_card:收入 dlc_11.png",
+          115
+        ],
+        [
+          "choose_card:结束公共牌扫描",
+          97
+        ],
+        [
+          "move:移动探测器 2 向外",
+          89
+        ],
+        [
+          "quick_trade:2张牌 → 1信用点",
+          64
+        ],
+        [
+          "choose_target:第一排放置位 2",
+          61
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          2937
+        ],
+        [
+          "sector:win:sector-3-a:1",
+          284
+        ],
+        [
+          "<unbound>",
+          257
+        ],
+        [
+          "income:gain:6,1,0,0,1,0",
+          247
+        ],
+        [
+          "income:gain:6,1,0,0,2,0",
+          221
+        ],
+        [
+          "tech:gain:orange2",
+          215
+        ],
+        [
+          "tech:gain:orange3",
+          210
+        ],
+        [
+          "tech:gain:blue1",
+          189
+        ],
+        [
+          "orbit:neptune:planet:",
+          162
+        ],
+        [
+          "land:mars:planet:",
+          153
+        ],
+        [
+          "tech:gain:blue2",
+          81
+        ],
+        [
+          "income:gain:6,2,0,0,1,0",
+          55
+        ],
+        [
+          "decision:choose_card:7b0ed0bc",
+          30
+        ],
+        [
+          "decision:choose_card:a677d061",
+          26
+        ],
+        [
+          "decision:choose_card:4d1ef24b",
+          22
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> place_data:quick",
+          715
+        ],
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          458
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          267
+        ],
+        [
+          "data:analyze -> quick_trade:quick",
+          261
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          237
+        ],
+        [
+          "data:analyze -> scan:main",
+          237
+        ],
+        [
+          "<unbound> -> end_turn:turn_control",
+          199
+        ],
+        [
+          "data:analyze -> end_turn:turn_control",
+          189
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          144
+        ],
+        [
+          "tech:gain:orange2 -> place_data:quick",
+          106
+        ],
+        [
+          "data:analyze -> card_corner:quick",
+          98
+        ],
+        [
+          "tech:gain:orange3 -> place_data:quick",
+          98
+        ],
+        [
+          "income:gain:6,1,0,0,2,0 -> place_data:quick",
+          91
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          90
+        ],
+        [
+          "orbit:neptune:planet: -> move:quick",
+          89
+        ]
+      ]
+    },
+    {
+      "step": 168,
+      "seat": "player-green",
+      "nodes": 4096,
+      "inputs": 4805,
+      "milliseconds": 11302.359832999995,
+      "decisions": [
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          1109
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          773
+        ],
+        [
+          "end_turn:turn_control",
+          464
+        ],
+        [
+          "quick_trade:quick",
+          399
+        ],
+        [
+          "analyze:main",
+          204
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          182
+        ],
+        [
+          "land:main",
+          138
+        ],
+        [
+          "orbit:main",
+          103
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          90
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          76
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          70
+        ],
+        [
+          "scan:main",
+          70
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          68
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+          67
+        ],
+        [
+          "industry:quick",
+          67
+        ]
+      ],
+      "choices": [
+        [
+          "end_turn:结束回合",
+          464
+        ],
+        [
+          "choose_card:盲抽阿米巴牌",
+          352
+        ],
+        [
+          "choose_card:获得展示的低重力研究",
+          352
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          223
+        ],
+        [
+          "analyze:分析",
+          204
+        ],
+        [
+          "choose_target:外星人 1 蓝4号位（1分+外星人牌）",
+          204
+        ],
+        [
+          "choose_card:盲抽虫牌",
+          194
+        ],
+        [
+          "choose_card:获得展示的虫",
+          194
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+          138
+        ],
+        [
+          "land:登陆",
+          138
+        ],
+        [
+          "choose_target:外星人 2 蓝7号位（化石奖励）",
+          97
+        ],
+        [
+          "choose_target:外星人 2 蓝8号位（3分+外星人牌）",
+          97
+        ],
+        [
+          "choose_target:外星人 2 蓝9号位（5分+外星人牌）",
+          97
+        ],
+        [
+          "orbit:环绕金星 - 奖励：获得 6 分；获得 1 次收入（R4，1信用点 + 1能量）",
+          91
+        ],
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          90
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          1748
+        ],
+        [
+          "land:venus:planet:",
+          1052
+        ],
+        [
+          "orbit:venus:planet:",
+          748
+        ],
+        [
+          "sector:win:sector-1-a:1",
+          718
+        ],
+        [
+          "<unbound>",
+          212
+        ],
+        [
+          "card:resolve:alien-amiba-1-2",
+          72
+        ],
+        [
+          "tech:gain:blue2",
+          9
+        ],
+        [
+          "sector:win:sector-1-a:2",
+          8
+        ],
+        [
+          "tech:gain:blue1",
+          8
+        ],
+        [
+          "tech:gain:orange2",
+          8
+        ],
+        [
+          "tech:gain:purple4",
+          5
+        ],
+        [
+          "sector:win:sector-2-b:1",
+          2
+        ],
+        [
+          "income:gain:6,1,0,0,2,0",
+          1
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          794
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          495
+        ],
+        [
+          "<unbound> -> end_turn:turn_control",
+          205
+        ],
+        [
+          "data:analyze -> analyze:main",
+          204
+        ],
+        [
+          "data:analyze -> quick_trade:quick",
+          189
+        ],
+        [
+          "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          182
+        ],
+        [
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          175
+        ],
+        [
+          "sector:win:sector-1-a:1 -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          140
+        ],
+        [
+          "sector:win:sector-1-a:1 -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          140
+        ],
+        [
+          "land:venus:planet: -> end_turn:turn_control",
+          139
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          138
+        ],
+        [
+          "land:venus:planet: -> land:main",
+          138
+        ],
+        [
+          "sector:win:sector-1-a:1 -> quick_trade:quick",
+          110
+        ],
+        [
+          "land:venus:planet: -> quick_trade:quick",
+          108
+        ],
+        [
+          "orbit:venus:planet: -> end_turn:turn_control",
+          104
+        ]
+      ]
+    },
+    {
+      "step": 183,
+      "seat": "player-brown",
+      "nodes": 4096,
+      "inputs": 5003,
+      "milliseconds": 11698.199166000006,
+      "decisions": [
+        [
+          "end_turn:turn_control",
+          397
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          371
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          347
+        ],
+        [
+          "place_data:quick",
+          302
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          268
+        ],
+        [
+          "card_corner:quick",
+          252
+        ],
+        [
+          "pass:main",
+          239
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          192
+        ],
+        [
+          "industry:quick",
+          192
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income",
+          179
+        ],
+        [
+          "quick_trade:quick",
+          168
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          160
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income",
+          115
+        ],
+        [
+          "play_card:main",
+          100
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          96
+        ]
+      ],
+      "choices": [
+        [
+          "end_turn:结束回合",
+          397
+        ],
+        [
+          "place_data:放置数据",
+          302
+        ],
+        [
+          "pass:PASS",
+          239
+        ],
+        [
+          "industry:赫利昂联合体 1x 行动",
+          192
+        ],
+        [
+          "choose_card:盲抽虫牌",
+          113
+        ],
+        [
+          "choose_card:获得展示的虫",
+          112
+        ],
+        [
+          "choose_target:无效 orange2",
+          99
+        ],
+        [
+          "choose_target:标记 D",
+          97
+        ],
+        [
+          "choose_card:收入 b_10.webp",
+          96
+        ],
+        [
+          "choose_card:b_11.webp",
+          94
+        ],
+        [
+          "choose_target:标记 B",
+          93
+        ],
+        [
+          "choose_target:标记 A",
+          91
+        ],
+        [
+          "choose_target:标记 C",
+          90
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+          86
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄4号位（5分+外星人牌）",
+          86
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          1134
+        ],
+        [
+          "land:venus:planet:",
+          881
+        ],
+        [
+          "income:gain:4,1,1,0,3,0",
+          589
+        ],
+        [
+          "<unbound>",
+          586
+        ],
+        [
+          "orbit:venus:planet:",
+          354
+        ],
+        [
+          "tech:gain:orange3",
+          309
+        ],
+        [
+          "tech:gain:orange2",
+          268
+        ],
+        [
+          "tech:gain:blue2",
+          260
+        ],
+        [
+          "tech:gain:purple2",
+          225
+        ],
+        [
+          "sector:win:sector-1-a:2",
+          212
+        ],
+        [
+          "income:gain:4,1,1,0,2,0",
+          92
+        ],
+        [
+          "card:resolve:alien-chong-2-6",
+          54
+        ],
+        [
+          "decision:choose_target:48a67af4",
+          53
+        ],
+        [
+          "decision:choose_target:50e87600",
+          49
+        ],
+        [
+          "decision:choose_target:77b85194",
+          47
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          282
+        ],
+        [
+          "<unbound> -> end_turn:turn_control",
+          267
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          248
+        ],
+        [
+          "<unbound> -> pass:main",
+          243
+        ],
+        [
+          "data:analyze -> place_data:quick",
+          230
+        ],
+        [
+          "tech:gain:purple2 -> card_corner:quick",
+          225
+        ],
+        [
+          "tech:gain:orange2 -> card_corner:quick",
+          203
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          192
+        ],
+        [
+          "income:gain:4,1,1,0,3,0 -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income",
+          179
+        ],
+        [
+          "income:gain:4,1,1,0,3,0 -> industry:quick",
+          179
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          172
+        ],
+        [
+          "tech:gain:orange3 -> card_corner:quick",
+          148
+        ],
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          130
+        ],
+        [
+          "income:gain:4,1,1,0,3,0 -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income",
+          115
+        ],
+        [
+          "tech:gain:blue2 -> card_corner:quick",
+          99
+        ]
+      ]
+    },
+    {
+      "step": 189,
+      "seat": "player-white",
+      "nodes": 4096,
+      "inputs": 4725,
+      "milliseconds": 13969.50383300001,
+      "decisions": [
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          524
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          351
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          351
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          333
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+          330
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          325
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          230
+        ],
+        [
+          "end_turn:turn_control",
+          223
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          174
+        ],
+        [
+          "place_data:quick",
+          168
+        ],
+        [
+          "scan:main",
+          167
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          166
+        ],
+        [
+          "quick_trade:quick",
+          140
+        ],
+        [
+          "research_tech:main",
+          117
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards",
+          110
+        ]
+      ],
+      "choices": [
+        [
+          "choose_card:b_11.webp",
+          231
+        ],
+        [
+          "choose_card:b_107.webp",
+          227
+        ],
+        [
+          "choose_card:dlc_26.png",
+          227
+        ],
+        [
+          "end_turn:结束回合",
+          223
+        ],
+        [
+          "place_data:放置数据",
+          168
+        ],
+        [
+          "choose_target:扫描 南河三",
+          167
+        ],
+        [
+          "scan:扫描",
+          167
+        ],
+        [
+          "choose_target:扫描 天狼星A",
+          166
+        ],
+        [
+          "choose_card:b_107.webp → 南河三",
+          158
+        ],
+        [
+          "choose_card:dlc_26.png → 南河三",
+          158
+        ],
+        [
+          "choose_target:标记 A",
+          131
+        ],
+        [
+          "choose_target:标记 B",
+          131
+        ],
+        [
+          "choose_target:标记 C",
+          131
+        ],
+        [
+          "choose_target:标记 D",
+          131
+        ],
+        [
+          "choose_target:研究 blue1（蓝槽 1）",
+          117
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "income:gain:4,2,0,0,2,1",
+          1033
+        ],
+        [
+          "tech:gain:blue2",
+          803
+        ],
+        [
+          "land:venus:planet:",
+          643
+        ],
+        [
+          "tech:gain:blue1",
+          455
+        ],
+        [
+          "tech:gain:orange2",
+          455
+        ],
+        [
+          "sector:win:sector-1-a:2",
+          386
+        ],
+        [
+          "orbit:venus:planet:",
+          377
+        ],
+        [
+          "data:analyze",
+          189
+        ],
+        [
+          "decision:choose_card:530e328c",
+          136
+        ],
+        [
+          "decision:choose_card:a7e46a74",
+          136
+        ],
+        [
+          "<unbound>",
+          100
+        ],
+        [
+          "decision:choose_card:b24e0810",
+          96
+        ],
+        [
+          "decision:choose_card:3118af90",
+          72
+        ],
+        [
+          "decision:choose_target:4b676cb1",
+          40
+        ],
+        [
+          "decision:choose_target:653b7ded",
+          40
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "tech:gain:blue2 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          351
+        ],
+        [
+          "income:gain:4,2,0,0,2,1 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          226
+        ],
+        [
+          "income:gain:4,2,0,0,2,1 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          225
+        ],
+        [
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          190
+        ],
+        [
+          "income:gain:4,2,0,0,2,1 -> place_data:quick",
+          154
+        ],
+        [
+          "income:gain:4,2,0,0,2,1 -> choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          152
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          134
+        ],
+        [
+          "tech:gain:blue1 -> choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          117
+        ],
+        [
+          "tech:gain:blue1 -> research_tech:main",
+          117
+        ],
+        [
+          "tech:gain:blue2 -> choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          117
+        ],
+        [
+          "tech:gain:blue2 -> research_tech:main",
+          117
+        ],
+        [
+          "tech:gain:orange2 -> choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          117
+        ],
+        [
+          "tech:gain:orange2 -> research_tech:main",
+          117
+        ],
+        [
+          "tech:gain:blue1 -> choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          116
+        ],
+        [
+          "tech:gain:blue2 -> choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          116
+        ]
+      ]
+    },
+    {
+      "step": 195,
+      "seat": "player-green",
+      "nodes": 4096,
+      "inputs": 4652,
+      "milliseconds": 13530.973958000017,
+      "decisions": [
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          1326
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          855
+        ],
+        [
+          "quick_trade:quick",
+          338
+        ],
+        [
+          "end_turn:turn_control",
+          298
+        ],
+        [
+          "card_corner:quick",
+          187
+        ],
+        [
+          "analyze:main",
+          184
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          180
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          156
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          101
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          71
+        ],
+        [
+          "scan:main",
+          71
+        ],
+        [
+          "land:main",
+          60
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          58
+        ],
+        [
+          "orbit:main",
+          56
+        ],
+        [
+          "move:quick",
+          36
+        ]
+      ],
+      "choices": [
+        [
+          "choose_card:盲抽虫牌",
+          426
+        ],
+        [
+          "choose_card:获得展示的虫",
+          426
+        ],
+        [
+          "end_turn:结束回合",
+          298
+        ],
+        [
+          "choose_card:盲抽阿米巴牌",
+          237
+        ],
+        [
+          "choose_card:获得展示的低重力研究",
+          237
+        ],
+        [
+          "analyze:分析",
+          184
+        ],
+        [
+          "choose_target:外星人 2 蓝7号位（化石奖励）",
+          184
+        ],
+        [
+          "choose_target:外星人 2 蓝8号位（3分+外星人牌）",
+          184
+        ],
+        [
+          "choose_target:外星人 2 蓝9号位（5分+外星人牌）",
+          184
+        ],
+        [
+          "choose_target:外星人 1 蓝4号位（1分+外星人牌）",
+          183
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          177
+        ],
+        [
+          "choose_target:结束移动",
+          144
+        ],
+        [
+          "card_corner:chong_7.webp：弃牌角标",
+          88
+        ],
+        [
+          "quick_trade:2信用点 → 1能量",
+          87
+        ],
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          74
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          2207
+        ],
+        [
+          "land:venus:planet:",
+          714
+        ],
+        [
+          "sector:win:sector-1-a:2",
+          506
+        ],
+        [
+          "orbit:venus:planet:",
+          502
+        ],
+        [
+          "card:resolve:alien-chong-7-5",
+          176
+        ],
+        [
+          "<unbound>",
+          113
+        ],
+        [
+          "card:resolve:alien-amiba-1-2",
+          100
+        ],
+        [
+          "tech:gain:blue2",
+          53
+        ],
+        [
+          "tech:gain:blue1",
+          52
+        ],
+        [
+          "tech:gain:purple4",
+          49
+        ],
+        [
+          "tech:gain:orange2",
+          8
+        ],
+        [
+          "sector:win:sector-2-b:1",
+          3
+        ],
+        [
+          "income:gain:6,1,0,0,2,0",
+          1
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          1094
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          735
+        ],
+        [
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          232
+        ],
+        [
+          "data:analyze -> analyze:main",
+          184
+        ],
+        [
+          "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          180
+        ],
+        [
+          "sector:win:sector-1-a:2 -> quick_trade:quick",
+          159
+        ],
+        [
+          "data:analyze -> quick_trade:quick",
+          128
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          120
+        ],
+        [
+          "<unbound> -> end_turn:turn_control",
+          101
+        ],
+        [
+          "sector:win:sector-1-a:2 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          101
+        ],
+        [
+          "card:resolve:alien-chong-7-5 -> card_corner:quick",
+          88
+        ],
+        [
+          "card:resolve:alien-chong-7-5 -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          88
+        ],
+        [
+          "land:venus:planet: -> quick_trade:quick",
+          71
+        ],
+        [
+          "sector:win:sector-1-a:2 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          71
+        ],
+        [
+          "sector:win:sector-1-a:2 -> scan:main",
+          71
+        ]
+      ]
+    },
+    {
+      "step": 211,
+      "seat": "player-white",
+      "nodes": 4096,
+      "inputs": 4782,
+      "milliseconds": 11890.80804199999,
+      "decisions": [
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          741
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          508
+        ],
+        [
+          "end_turn:turn_control",
+          348
+        ],
+        [
+          "card_corner:quick",
+          282
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          249
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+          235
+        ],
+        [
+          "quick_trade:quick",
+          200
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards",
+          153
+        ],
+        [
+          "industry:quick",
+          144
+        ],
+        [
+          "place_data:quick",
+          114
+        ],
+        [
+          "land:main",
+          106
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          104
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          104
+        ],
+        [
+          "play_card:main",
+          100
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          94
+        ]
+      ],
+      "choices": [
+        [
+          "end_turn:结束回合",
+          348
+        ],
+        [
+          "choose_card:获得展示的火星隔离实验室",
+          229
+        ],
+        [
+          "choose_card:盲抽虫牌",
+          213
+        ],
+        [
+          "choose_target:结束移动",
+          189
+        ],
+        [
+          "choose_card:dlc_25.png",
+          151
+        ],
+        [
+          "choose_card:获得展示的低重力研究",
+          150
+        ],
+        [
+          "choose_card:盲抽阿米巴牌",
+          149
+        ],
+        [
+          "industry:深空探测 1x 行动",
+          144
+        ],
+        [
+          "place_data:放置数据",
+          114
+        ],
+        [
+          "card_corner:b_49.webp：弃牌角标",
+          107
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+          106
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄3号位（3分+外星人牌）",
+          106
+        ],
+        [
+          "land:登陆",
+          106
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          102
+        ],
+        [
+          "choose_card:b_11.webp",
+          97
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "land:venus:planet:",
+          1302
+        ],
+        [
+          "data:analyze",
+          831
+        ],
+        [
+          "orbit:venus:planet:",
+          658
+        ],
+        [
+          "income:gain:4,2,0,0,2,1",
+          360
+        ],
+        [
+          "<unbound>",
+          337
+        ],
+        [
+          "sector:win:sector-3-a:2",
+          299
+        ],
+        [
+          "tech:gain:blue1",
+          258
+        ],
+        [
+          "tech:gain:blue2",
+          258
+        ],
+        [
+          "tech:gain:orange2",
+          182
+        ],
+        [
+          "decision:choose_card:b24e0810",
+          180
+        ],
+        [
+          "card:resolve:alien-chong-9-8",
+          174
+        ],
+        [
+          "tech:gain:purple4",
+          163
+        ],
+        [
+          "decision:choose_card:8112ce3c",
+          100
+        ],
+        [
+          "decision:choose_card:115513cc",
+          28
+        ],
+        [
+          "decision:choose_card:845fb9b0",
+          28
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          424
+        ],
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          317
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          296
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          212
+        ],
+        [
+          "tech:gain:blue1 -> card_corner:quick",
+          190
+        ],
+        [
+          "tech:gain:blue2 -> card_corner:quick",
+          190
+        ],
+        [
+          "tech:gain:purple4 -> card_corner:quick",
+          163
+        ],
+        [
+          "<unbound> -> industry:quick",
+          144
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          136
+        ],
+        [
+          "orbit:venus:planet: -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          136
+        ],
+        [
+          "decision:choose_card:b24e0810 -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+          114
+        ],
+        [
+          "<unbound> -> end_turn:turn_control",
+          113
+        ],
+        [
+          "orbit:venus:planet: -> quick_trade:quick",
+          112
+        ],
+        [
+          "land:venus:planet: -> quick_trade:quick",
+          108
+        ],
+        [
+          "land:venus:planet: -> land:main",
+          106
+        ]
+      ]
+    },
+    {
+      "step": 220,
+      "seat": "player-green",
+      "nodes": 4096,
+      "inputs": 5158,
+      "milliseconds": 13172.521084000007,
+      "decisions": [
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          1044
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          598
+        ],
+        [
+          "quick_trade:quick",
+          475
+        ],
+        [
+          "end_turn:turn_control",
+          288
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          277
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          162
+        ],
+        [
+          "land:main",
+          153
+        ],
+        [
+          "scan:main",
+          142
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          140
+        ],
+        [
+          "card_corner:quick",
+          115
+        ],
+        [
+          "orbit:main",
+          112
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+          93
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          93
+        ],
+        [
+          "analyze:main",
+          73
+        ],
+        [
+          "place_data:quick",
+          72
+        ]
+      ],
+      "choices": [
+        [
+          "choose_card:盲抽虫牌",
+          297
+        ],
+        [
+          "end_turn:结束回合",
+          288
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          280
+        ],
+        [
+          "choose_card:盲抽阿米巴牌",
+          225
+        ],
+        [
+          "choose_card:获得展示的火星隔离实验室",
+          225
+        ],
+        [
+          "choose_card:获得展示的低重力研究",
+          188
+        ],
+        [
+          "quick_trade:2信用点 → 1能量",
+          168
+        ],
+        [
+          "land:登陆",
+          153
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+          151
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄3号位（3分+外星人牌）",
+          151
+        ],
+        [
+          "scan:扫描",
+          142
+        ],
+        [
+          "choose_target:扫描 室女座61",
+          140
+        ],
+        [
+          "choose_card:dlc_26.png → 南河三",
+          136
+        ],
+        [
+          "choose_card:收入 chong_7.webp",
+          135
+        ],
+        [
+          "orbit:环绕金星 - 奖励：获得 6 分；获得 1 次收入（R4，1信用点 + 1能量）",
+          112
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "land:venus:planet:",
+          1452
+        ],
+        [
+          "data:analyze",
+          897
+        ],
+        [
+          "orbit:venus:planet:",
+          705
+        ],
+        [
+          "sector:win:sector-1-a:2",
+          575
+        ],
+        [
+          "income:gain:6,1,0,0,2,0",
+          372
+        ],
+        [
+          "tech:gain:purple4",
+          185
+        ],
+        [
+          "tech:gain:blue1",
+          176
+        ],
+        [
+          "tech:gain:blue2",
+          176
+        ],
+        [
+          "card:resolve:alien-chong-7-5",
+          88
+        ],
+        [
+          "land:saturn:planet:",
+          77
+        ],
+        [
+          "<unbound>",
+          68
+        ],
+        [
+          "sector:win:sector-2-b:1",
+          14
+        ],
+        [
+          "decision:choose_card:d03ad08d",
+          12
+        ],
+        [
+          "tech:gain:purple2",
+          8
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          592
+        ],
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          436
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          296
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          292
+        ],
+        [
+          "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          229
+        ],
+        [
+          "sector:win:sector-1-a:2 -> quick_trade:quick",
+          198
+        ],
+        [
+          "land:venus:planet: -> land:main",
+          148
+        ],
+        [
+          "land:venus:planet: -> quick_trade:quick",
+          144
+        ],
+        [
+          "sector:win:sector-1-a:2 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          114
+        ],
+        [
+          "orbit:venus:planet: -> orbit:main",
+          112
+        ],
+        [
+          "orbit:venus:planet: -> quick_trade:quick",
+          110
+        ],
+        [
+          "land:venus:planet: -> end_turn:turn_control",
+          99
+        ],
+        [
+          "sector:win:sector-1-a:2 -> scan:main",
+          94
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+          93
+        ],
+        [
+          "orbit:venus:planet: -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+          93
+        ]
+      ]
+    },
+    {
+      "step": 301,
+      "seat": "player-blue",
+      "nodes": 4096,
+      "inputs": 5512,
+      "milliseconds": 13595.518582999997,
+      "decisions": [
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          1076
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          825
+        ],
+        [
+          "end_turn:turn_control",
+          408
+        ],
+        [
+          "quick_trade:quick",
+          377
+        ],
+        [
+          "place_data:quick",
+          287
+        ],
+        [
+          "analyze:main",
+          263
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          180
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+          165
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          90
+        ],
+        [
+          "move:quick",
+          83
+        ],
+        [
+          "industry:quick",
+          76
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          40
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4",
+          36
+        ],
+        [
+          "card_corner:quick",
+          31
+        ],
+        [
+          "research_tech:main",
+          30
+        ]
+      ],
+      "choices": [
+        [
+          "end_turn:结束回合",
+          408
+        ],
+        [
+          "place_data:放置数据",
+          287
+        ],
+        [
+          "choose_card:盲抽虫牌",
+          281
+        ],
+        [
+          "choose_card:获得展示的火星隔离实验室",
+          269
+        ],
+        [
+          "analyze:分析",
+          263
+        ],
+        [
+          "choose_target:外星人 1 蓝4号位（1分+外星人牌）",
+          263
+        ],
+        [
+          "choose_target:外星人 2 蓝7号位（化石奖励）",
+          263
+        ],
+        [
+          "choose_target:外星人 2 蓝8号位（3分+外星人牌）",
+          263
+        ],
+        [
+          "choose_card:盲抽阿米巴牌",
+          257
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          201
+        ],
+        [
+          "choose_card:获得展示的低重力研究",
+          136
+        ],
+        [
+          "quick_trade:2信用点 → 1能量",
+          124
+        ],
+        [
+          "choose_card:获得展示的生物特征筛选",
+          121
+        ],
+        [
+          "industry:图灵系统 1x 行动",
+          76
+        ],
+        [
+          "choose_card:b_11.webp",
+          60
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          2985
+        ],
+        [
+          "<unbound>",
+          194
+        ],
+        [
+          "tech:gain:orange3",
+          191
+        ],
+        [
+          "tech:gain:blue1",
+          183
+        ],
+        [
+          "sector:win:sector-1-b:2",
+          148
+        ],
+        [
+          "land:venus:planet:",
+          129
+        ],
+        [
+          "orbit:venus:planet:",
+          106
+        ],
+        [
+          "tech:gain:purple2",
+          101
+        ],
+        [
+          "sector:win:sector-1-a:2",
+          94
+        ],
+        [
+          "income:gain:5,2,0,1,1,0",
+          80
+        ],
+        [
+          "land:jupiter:planet:",
+          66
+        ],
+        [
+          "orbit:uranus:planet:",
+          28
+        ],
+        [
+          "tech:gain:blue3",
+          8
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          1008
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          789
+        ],
+        [
+          "data:analyze -> analyze:main",
+          263
+        ],
+        [
+          "data:analyze -> quick_trade:quick",
+          262
+        ],
+        [
+          "data:analyze -> place_data:quick",
+          247
+        ],
+        [
+          "data:analyze -> end_turn:turn_control",
+          246
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+          165
+        ],
+        [
+          "<unbound> -> end_turn:turn_control",
+          97
+        ],
+        [
+          "tech:gain:blue1 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          90
+        ],
+        [
+          "tech:gain:orange3 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          90
+        ],
+        [
+          "sector:win:sector-1-b:2 -> quick_trade:quick",
+          78
+        ],
+        [
+          "<unbound> -> industry:quick",
+          76
+        ],
+        [
+          "land:jupiter:planet: -> move:quick",
+          46
+        ],
+        [
+          "income:gain:5,2,0,1,1,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          40
+        ],
+        [
+          "income:gain:5,2,0,1,1,0 -> place_data:quick",
+          40
+        ]
+      ]
+    },
+    {
+      "step": 308,
+      "seat": "player-brown",
+      "nodes": 4096,
+      "inputs": 6737,
+      "milliseconds": 16835.957125000015,
+      "decisions": [
+        [
+          "quick_trade:quick",
+          849
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          588
+        ],
+        [
+          "end_turn:turn_control",
+          410
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          306
+        ],
+        [
+          "move:quick",
+          225
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          214
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          198
+        ],
+        [
+          "scan:main",
+          187
+        ],
+        [
+          "place_data:quick",
+          149
+        ],
+        [
+          "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+          120
+        ],
+        [
+          "land:main",
+          120
+        ],
+        [
+          "orbit:main",
+          119
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          110
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          102
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          102
+        ]
+      ],
+      "choices": [
+        [
+          "quick_trade:2张牌 → 1能量",
+          600
+        ],
+        [
+          "end_turn:结束回合",
+          410
+        ],
+        [
+          "move:移动探测器 8 逆时针",
+          223
+        ],
+        [
+          "choose_target:扫描 织女一",
+          199
+        ],
+        [
+          "scan:扫描",
+          187
+        ],
+        [
+          "place_data:放置数据",
+          149
+        ],
+        [
+          "choose_card:盲抽虫牌",
+          147
+        ],
+        [
+          "choose_card:盲抽阿米巴牌",
+          147
+        ],
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          145
+        ],
+        [
+          "choose_card:dlc_6.png",
+          135
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+          120
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄3号位（3分+外星人牌）",
+          120
+        ],
+        [
+          "land:登陆",
+          120
+        ],
+        [
+          "orbit:环绕金星 - 奖励：获得 6 分；获得 1 次收入（R8，1信用点 + 1能量）",
+          119
+        ],
+        [
+          "choose_card:dlc_7.png → 比邻星",
+          99
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "land:venus:planet:",
+          2538
+        ],
+        [
+          "income:gain:4,3,1,0,3,0",
+          1840
+        ],
+        [
+          "sector:win:sector-1-b:2",
+          1448
+        ],
+        [
+          "orbit:venus:planet:",
+          1393
+        ],
+        [
+          "tech:gain:orange3",
+          278
+        ],
+        [
+          "sector:win:sector-4-a:1",
+          220
+        ],
+        [
+          "data:analyze",
+          211
+        ],
+        [
+          "<unbound>",
+          160
+        ],
+        [
+          "tech:gain:blue2",
+          160
+        ],
+        [
+          "tech:gain:purple2",
+          115
+        ],
+        [
+          "sector:win:sector-1-a:2",
+          22
+        ],
+        [
+          "land:jupiter:planet:",
+          13
+        ],
+        [
+          "decision:choose_target:a9de3240",
+          12
+        ],
+        [
+          "tech:gain:blue3",
+          3
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          736
+        ],
+        [
+          "income:gain:4,3,1,0,3,0 -> quick_trade:quick",
+          586
+        ],
+        [
+          "land:venus:planet: -> quick_trade:quick",
+          474
+        ],
+        [
+          "sector:win:sector-1-b:2 -> quick_trade:quick",
+          454
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          368
+        ],
+        [
+          "orbit:venus:planet: -> quick_trade:quick",
+          368
+        ],
+        [
+          "land:venus:planet: -> move:quick",
+          302
+        ],
+        [
+          "orbit:venus:planet: -> move:quick",
+          302
+        ],
+        [
+          "sector:win:sector-1-b:2 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          252
+        ],
+        [
+          "sector:win:sector-1-b:2 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          252
+        ],
+        [
+          "sector:win:sector-1-b:2 -> scan:main",
+          252
+        ],
+        [
+          "income:gain:4,3,1,0,3,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          236
+        ],
+        [
+          "income:gain:4,3,1,0,3,0 -> scan:main",
+          236
+        ],
+        [
+          "income:gain:4,3,1,0,3,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          234
+        ],
+        [
+          "income:gain:4,3,1,0,3,0 -> place_data:quick",
+          234
+        ]
+      ]
+    },
+    {
+      "step": 318,
+      "seat": "player-white",
+      "nodes": 4096,
+      "inputs": 4747,
+      "milliseconds": 12526.643416000006,
+      "decisions": [
+        [
+          "quick_trade:quick",
+          528
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+          480
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          303
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          264
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          260
+        ],
+        [
+          "end_turn:turn_control",
+          237
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          233
+        ],
+        [
+          "place_data:quick",
+          233
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          222
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          162
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards",
+          160
+        ],
+        [
+          "scan:main",
+          136
+        ],
+        [
+          "move:quick",
+          117
+        ],
+        [
+          "industry:quick",
+          102
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          99
+        ]
+      ],
+      "choices": [
+        [
+          "end_turn:结束回合",
+          237
+        ],
+        [
+          "place_data:放置数据",
+          233
+        ],
+        [
+          "choose_card:b_11.webp",
+          224
+        ],
+        [
+          "quick_trade:2信用点 → 1能量",
+          209
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          178
+        ],
+        [
+          "choose_card:dlc_6.png",
+          160
+        ],
+        [
+          "choose_card:dlc_7.png",
+          160
+        ],
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          141
+        ],
+        [
+          "choose_target:扫描 巴纳德",
+          136
+        ],
+        [
+          "choose_target:扫描 织女一",
+          136
+        ],
+        [
+          "scan:扫描",
+          136
+        ],
+        [
+          "choose_card:b_11.webp → 比邻星",
+          116
+        ],
+        [
+          "choose_card:dlc_6.png → 南河三",
+          105
+        ],
+        [
+          "industry:深空探测 1x 行动",
+          102
+        ],
+        [
+          "move:移动探测器 9 逆时针",
+          95
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "land:venus:planet:",
+          1126
+        ],
+        [
+          "sector:win:sector-1-a:3",
+          395
+        ],
+        [
+          "income:gain:5,2,0,0,3,1",
+          366
+        ],
+        [
+          "orbit:venus:planet:",
+          348
+        ],
+        [
+          "income:gain:5,3,0,0,2,1",
+          342
+        ],
+        [
+          "decision:choose_card:492d6ff4",
+          336
+        ],
+        [
+          "sector:win:sector-1-b:2",
+          279
+        ],
+        [
+          "<unbound>",
+          254
+        ],
+        [
+          "tech:gain:blue2",
+          225
+        ],
+        [
+          "tech:gain:orange2",
+          225
+        ],
+        [
+          "tech:gain:purple4",
+          225
+        ],
+        [
+          "income:gain:5,2,0,0,2,1",
+          188
+        ],
+        [
+          "income:gain:6,2,0,0,2,1",
+          168
+        ],
+        [
+          "data:analyze",
+          118
+        ],
+        [
+          "decision:choose_card:0a82a81c",
+          112
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "land:venus:planet: -> quick_trade:quick",
+          273
+        ],
+        [
+          "decision:choose_card:492d6ff4 -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+          252
+        ],
+        [
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          236
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          134
+        ],
+        [
+          "sector:win:sector-1-a:3 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          111
+        ],
+        [
+          "land:venus:planet: -> move:quick",
+          107
+        ],
+        [
+          "<unbound> -> industry:quick",
+          102
+        ],
+        [
+          "sector:win:sector-1-b:2 -> quick_trade:quick",
+          99
+        ],
+        [
+          "sector:win:sector-1-a:3 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          98
+        ],
+        [
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          87
+        ],
+        [
+          "decision:choose_card:0a82a81c -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+          84
+        ],
+        [
+          "decision:choose_card:492d6ff4 -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards",
+          84
+        ],
+        [
+          "income:gain:5,2,0,0,3,1 -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          84
+        ],
+        [
+          "income:gain:5,2,0,0,3,1 -> place_data:quick",
+          84
+        ],
+        [
+          "land:venus:planet: -> end_turn:turn_control",
+          75
+        ]
+      ]
+    },
+    {
+      "step": 320,
+      "seat": "player-green",
+      "nodes": 4096,
+      "inputs": 4626,
+      "milliseconds": 14301.939167000004,
+      "decisions": [
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          1156
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          742
+        ],
+        [
+          "move:quick",
+          334
+        ],
+        [
+          "end_turn:turn_control",
+          230
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          222
+        ],
+        [
+          "quick_trade:quick",
+          181
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          157
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+          124
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          123
+        ],
+        [
+          "analyze:main",
+          118
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+          115
+        ],
+        [
+          "play_card:main",
+          112
+        ],
+        [
+          "industry:quick",
+          88
+        ],
+        [
+          "land:main",
+          79
+        ],
+        [
+          "orbit:main",
+          79
+        ]
+      ],
+      "choices": [
+        [
+          "choose_card:盲抽阿米巴牌",
+          312
+        ],
+        [
+          "choose_card:盲抽虫牌",
+          266
+        ],
+        [
+          "choose_card:获得展示的火星隔离实验室",
+          266
+        ],
+        [
+          "end_turn:结束回合",
+          230
+        ],
+        [
+          "move:移动探测器 9 逆时针",
+          171
+        ],
+        [
+          "choose_card:获得展示的生物特征筛选",
+          159
+        ],
+        [
+          "choose_target:扫描 比邻星",
+          139
+        ],
+        [
+          "choose_card:获得展示的低重力研究",
+          130
+        ],
+        [
+          "move:移动探测器 9 向外",
+          128
+        ],
+        [
+          "analyze:分析",
+          118
+        ],
+        [
+          "choose_target:外星人 2 蓝7号位（化石奖励）",
+          118
+        ],
+        [
+          "choose_target:外星人 2 蓝8号位（3分+外星人牌）",
+          118
+        ],
+        [
+          "play_card:b_17.webp",
+          109
+        ],
+        [
+          "choose_target:外星人 1 蓝4号位（1分+外星人牌）",
+          107
+        ],
+        [
+          "industry:寰宇动力 1x 行动",
+          88
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          1281
+        ],
+        [
+          "land:saturn:satellite:enceladus",
+          865
+        ],
+        [
+          "land:saturn:satellite:titan",
+          865
+        ],
+        [
+          "land:jupiter:satellite:europa",
+          734
+        ],
+        [
+          "land:venus:planet:",
+          610
+        ],
+        [
+          "orbit:venus:planet:",
+          514
+        ],
+        [
+          "land:jupiter:planet:",
+          274
+        ],
+        [
+          "sector:win:sector-1-b:2",
+          224
+        ],
+        [
+          "land:jupiter:satellite:callisto",
+          136
+        ],
+        [
+          "land:jupiter:satellite:ganymede",
+          136
+        ],
+        [
+          "land:jupiter:satellite:io",
+          136
+        ],
+        [
+          "tech:gain:blue1",
+          63
+        ],
+        [
+          "tech:gain:blue2",
+          63
+        ],
+        [
+          "tech:gain:blue3",
+          63
+        ],
+        [
+          "<unbound>",
+          48
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          516
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          387
+        ],
+        [
+          "land:jupiter:satellite:europa -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          368
+        ],
+        [
+          "land:saturn:satellite:enceladus -> move:quick",
+          324
+        ],
+        [
+          "land:saturn:satellite:titan -> move:quick",
+          324
+        ],
+        [
+          "land:jupiter:satellite:europa -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          230
+        ],
+        [
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          224
+        ],
+        [
+          "data:analyze -> analyze:main",
+          129
+        ],
+        [
+          "land:saturn:satellite:enceladus -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          125
+        ],
+        [
+          "land:saturn:satellite:titan -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          125
+        ],
+        [
+          "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          120
+        ],
+        [
+          "data:analyze -> quick_trade:quick",
+          114
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          112
+        ],
+        [
+          "land:saturn:satellite:enceladus -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          107
+        ],
+        [
+          "land:saturn:satellite:titan -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          107
+        ]
+      ]
+    },
+    {
+      "step": 323,
+      "seat": "player-blue",
+      "nodes": 4096,
+      "inputs": 5328,
+      "milliseconds": 13217.954582999984,
+      "decisions": [
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          952
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          645
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+          354
+        ],
+        [
+          "end_turn:turn_control",
+          325
+        ],
+        [
+          "quick_trade:quick",
+          303
+        ],
+        [
+          "place_data:quick",
+          298
+        ],
+        [
+          "analyze:main",
+          165
+        ],
+        [
+          "move:quick",
+          125
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4",
+          108
+        ],
+        [
+          "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+          107
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          92
+        ],
+        [
+          "industry:quick",
+          85
+        ],
+        [
+          "land:main",
+          71
+        ],
+        [
+          "orbit:main",
+          66
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          60
+        ]
+      ],
+      "choices": [
+        [
+          "end_turn:结束回合",
+          325
+        ],
+        [
+          "place_data:放置数据",
+          298
+        ],
+        [
+          "choose_card:盲抽虫牌",
+          240
+        ],
+        [
+          "choose_card:盲抽阿米巴牌",
+          236
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          209
+        ],
+        [
+          "choose_card:获得展示的火星隔离实验室",
+          206
+        ],
+        [
+          "choose_card:获得展示的低重力研究",
+          200
+        ],
+        [
+          "analyze:分析",
+          165
+        ],
+        [
+          "choose_target:外星人 1 蓝4号位（1分+外星人牌）",
+          165
+        ],
+        [
+          "choose_target:外星人 2 蓝7号位（化石奖励）",
+          165
+        ],
+        [
+          "choose_target:外星人 2 蓝8号位（3分+外星人牌）",
+          165
+        ],
+        [
+          "move:移动探测器 7 逆时针",
+          98
+        ],
+        [
+          "industry:图灵系统 1x 行动",
+          85
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+          75
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄3号位（3分+外星人牌）",
+          75
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          1916
+        ],
+        [
+          "land:venus:planet:",
+          647
+        ],
+        [
+          "orbit:venus:planet:",
+          415
+        ],
+        [
+          "income:gain:5,2,0,1,1,0",
+          280
+        ],
+        [
+          "land:jupiter:planet:",
+          228
+        ],
+        [
+          "<unbound>",
+          204
+        ],
+        [
+          "sector:win:sector-3-b:1",
+          192
+        ],
+        [
+          "tech:gain:orange3",
+          89
+        ],
+        [
+          "tech:gain:blue1",
+          70
+        ],
+        [
+          "tech:gain:purple2",
+          61
+        ],
+        [
+          "decision:choose_target:01c733aa",
+          58
+        ],
+        [
+          "decision:choose_target:1bbc6216",
+          57
+        ],
+        [
+          "decision:choose_target:505cd48a",
+          37
+        ],
+        [
+          "tech:gain:blue3",
+          35
+        ],
+        [
+          "decision:choose_target:7176d5b6",
+          25
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          654
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          495
+        ],
+        [
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          222
+        ],
+        [
+          "data:analyze -> place_data:quick",
+          185
+        ],
+        [
+          "data:analyze -> analyze:main",
+          165
+        ],
+        [
+          "data:analyze -> quick_trade:quick",
+          154
+        ],
+        [
+          "data:analyze -> end_turn:turn_control",
+          134
+        ],
+        [
+          "income:gain:5,2,0,1,1,0 -> place_data:quick",
+          112
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          112
+        ],
+        [
+          "orbit:venus:planet: -> move:quick",
+          98
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+          96
+        ],
+        [
+          "<unbound> -> end_turn:turn_control",
+          90
+        ],
+        [
+          "<unbound> -> industry:quick",
+          85
+        ],
+        [
+          "orbit:venus:planet: -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+          83
+        ],
+        [
+          "income:gain:5,2,0,1,1,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          82
+        ]
+      ]
+    },
+    {
+      "step": 334,
+      "seat": "player-white",
+      "nodes": 4096,
+      "inputs": 4294,
+      "milliseconds": 12177.126458999992,
+      "decisions": [
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          1020
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          872
+        ],
+        [
+          "place_data:quick",
+          476
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          433
+        ],
+        [
+          "end_turn:turn_control",
+          302
+        ],
+        [
+          "analyze:main",
+          242
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          182
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          166
+        ],
+        [
+          "quick_trade:quick",
+          95
+        ],
+        [
+          "scan:main",
+          86
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          72
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          39
+        ],
+        [
+          "land:main",
+          20
+        ],
+        [
+          "move:quick",
+          20
+        ],
+        [
+          "orbit:main",
+          20
+        ]
+      ],
+      "choices": [
+        [
+          "place_data:放置数据",
+          476
+        ],
+        [
+          "end_turn:结束回合",
+          302
+        ],
+        [
+          "choose_card:盲抽虫牌",
+          273
+        ],
+        [
+          "analyze:分析",
+          242
+        ],
+        [
+          "choose_target:外星人 1 蓝3号位（外星人牌）",
+          242
+        ],
+        [
+          "choose_target:外星人 2 蓝7号位（化石奖励）",
+          242
+        ],
+        [
+          "choose_target:外星人 2 蓝8号位（3分+外星人牌）",
+          242
+        ],
+        [
+          "choose_card:盲抽阿米巴牌",
+          236
+        ],
+        [
+          "choose_card:获得展示的计算机模拟",
+          207
+        ],
+        [
+          "choose_card:获得展示的生物特征筛选",
+          205
+        ],
+        [
+          "choose_target:第一排放置位 6",
+          202
+        ],
+        [
+          "choose_target:第一排放置位 5",
+          163
+        ],
+        [
+          "choose_target:扫描 南河三",
+          95
+        ],
+        [
+          "choose_target:扫描 天狼星A",
+          87
+        ],
+        [
+          "scan:扫描",
+          86
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          3817
+        ],
+        [
+          "orbit:venus:planet:",
+          115
+        ],
+        [
+          "land:venus:planet:",
+          109
+        ],
+        [
+          "land:jupiter:planet:",
+          44
+        ],
+        [
+          "<unbound>",
+          20
+        ],
+        [
+          "sector:win:sector-3-b:1",
+          18
+        ],
+        [
+          "income:gain:5,2,0,0,2,1",
+          16
+        ],
+        [
+          "sector:win:sector-1-a:3",
+          8
+        ],
+        [
+          "tech:gain:blue2",
+          8
+        ],
+        [
+          "tech:gain:orange2",
+          8
+        ],
+        [
+          "tech:gain:purple4",
+          8
+        ],
+        [
+          "tech:gain:blue3",
+          3
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          998
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          832
+        ],
+        [
+          "data:analyze -> place_data:quick",
+          471
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          430
+        ],
+        [
+          "data:analyze -> end_turn:turn_control",
+          268
+        ],
+        [
+          "data:analyze -> analyze:main",
+          242
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          166
+        ],
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          160
+        ],
+        [
+          "data:analyze -> scan:main",
+          83
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          72
+        ],
+        [
+          "data:analyze -> quick_trade:quick",
+          63
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          32
+        ],
+        [
+          "orbit:venus:planet: -> quick_trade:quick",
+          23
+        ],
+        [
+          "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          20
+        ],
+        [
+          "orbit:venus:planet: -> orbit:main",
+          20
+        ]
+      ]
+    },
+    {
+      "step": 343,
+      "seat": "player-green",
+      "nodes": 4096,
+      "inputs": 4946,
+      "milliseconds": 15402.470334000012,
+      "decisions": [
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          1120
+        ],
+        [
+          "quick_trade:quick",
+          518
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+          359
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          334
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          332
+        ],
+        [
+          "move:quick",
+          252
+        ],
+        [
+          "end_turn:turn_control",
+          226
+        ],
+        [
+          "land:main",
+          175
+        ],
+        [
+          "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+          172
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          125
+        ],
+        [
+          "play_card:main",
+          111
+        ],
+        [
+          "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+          102
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          52
+        ],
+        [
+          "place_data:quick",
+          31
+        ],
+        [
+          "analyze:main",
+          30
+        ]
+      ],
+      "choices": [
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          335
+        ],
+        [
+          "choose_target:扫描 比邻星",
+          297
+        ],
+        [
+          "end_turn:结束回合",
+          226
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          177
+        ],
+        [
+          "land:登陆",
+          175
+        ],
+        [
+          "accept_optional_effect:结算 b_101.webp",
+          172
+        ],
+        [
+          "choose_card:盲抽 1 张牌",
+          172
+        ],
+        [
+          "choose_target:登陆土卫二（土星）｜奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描",
+          172
+        ],
+        [
+          "choose_target:登陆土卫六（土星）｜奖励：获得 7 分；获得任意外星人标记 1/2；获得任意外星人标记 2/2",
+          172
+        ],
+        [
+          "choose_target:获得任意外星人标记 1/2 → 外星人 1 粉3号位（外星人牌）",
+          172
+        ],
+        [
+          "choose_target:获得任意外星人标记 1/2 → 外星人 1 蓝3号位（外星人牌）",
+          172
+        ],
+        [
+          "choose_target:获得任意外星人标记 1/2 → 外星人 1 黄4号位（1分+外星人牌）",
+          172
+        ],
+        [
+          "choose_target:获得任意外星人标记 1/2 → 外星人 2 粉4号位（5分+外星人牌）",
+          172
+        ],
+        [
+          "choose_target:获得任意外星人标记 1/2 → 外星人 2 蓝7号位（化石奖励）",
+          172
+        ],
+        [
+          "choose_target:获得任意外星人标记 1/2 → 外星人 2 黄3号位（3分+外星人牌）",
+          172
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "land:saturn:satellite:titan",
+          3272
+        ],
+        [
+          "land:saturn:satellite:enceladus",
+          2412
+        ],
+        [
+          "data:analyze",
+          583
+        ],
+        [
+          "land:jupiter:satellite:europa",
+          85
+        ],
+        [
+          "sector:win:sector-1-a:3",
+          84
+        ],
+        [
+          "land:jupiter:planet:",
+          45
+        ],
+        [
+          "tech:gain:blue1",
+          43
+        ],
+        [
+          "tech:gain:blue3",
+          43
+        ],
+        [
+          "tech:gain:blue2",
+          41
+        ],
+        [
+          "<unbound>",
+          35
+        ],
+        [
+          "orbit:venus:planet:",
+          35
+        ],
+        [
+          "land:jupiter:satellite:callisto",
+          31
+        ],
+        [
+          "land:jupiter:satellite:ganymede",
+          31
+        ],
+        [
+          "land:jupiter:satellite:io",
+          29
+        ],
+        [
+          "income:gain:6,2,0,0,2,0",
+          16
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "land:saturn:satellite:titan -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          1032
+        ],
+        [
+          "land:saturn:satellite:enceladus -> quick_trade:quick",
+          480
+        ],
+        [
+          "land:saturn:satellite:titan -> quick_trade:quick",
+          480
+        ],
+        [
+          "land:saturn:satellite:enceladus -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          320
+        ],
+        [
+          "land:saturn:satellite:titan -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          320
+        ],
+        [
+          "land:saturn:satellite:enceladus -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          297
+        ],
+        [
+          "land:saturn:satellite:enceladus -> move:quick",
+          248
+        ],
+        [
+          "land:saturn:satellite:titan -> move:quick",
+          248
+        ],
+        [
+          "land:saturn:satellite:enceladus -> end_turn:turn_control",
+          174
+        ],
+        [
+          "land:saturn:satellite:titan -> end_turn:turn_control",
+          174
+        ],
+        [
+          "land:saturn:satellite:enceladus -> accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+          172
+        ],
+        [
+          "land:saturn:satellite:enceladus -> choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+          172
+        ],
+        [
+          "land:saturn:satellite:enceladus -> land:main",
+          172
+        ],
+        [
+          "land:saturn:satellite:titan -> accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+          172
+        ],
+        [
+          "land:saturn:satellite:titan -> choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+          172
+        ]
+      ]
+    },
+    {
+      "step": 360,
+      "seat": "player-brown",
+      "nodes": 4096,
+      "inputs": 5694,
+      "milliseconds": 13280.610167000035,
+      "decisions": [
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          527
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          435
+        ],
+        [
+          "quick_trade:quick",
+          408
+        ],
+        [
+          "end_turn:turn_control",
+          301
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          264
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          241
+        ],
+        [
+          "move:quick",
+          205
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          188
+        ],
+        [
+          "scan:main",
+          182
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          165
+        ],
+        [
+          "place_data:quick",
+          153
+        ],
+        [
+          "land:main",
+          116
+        ],
+        [
+          "orbit:main",
+          103
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income",
+          100
+        ],
+        [
+          "card_corner:quick",
+          95
+        ]
+      ],
+      "choices": [
+        [
+          "quick_trade:2张牌 → 1能量",
+          344
+        ],
+        [
+          "end_turn:结束回合",
+          301
+        ],
+        [
+          "move:移动探测器 9 逆时针",
+          205
+        ],
+        [
+          "scan:扫描",
+          182
+        ],
+        [
+          "choose_target:扫描 室女座61",
+          170
+        ],
+        [
+          "place_data:放置数据",
+          153
+        ],
+        [
+          "choose_card:盲抽虫牌",
+          132
+        ],
+        [
+          "choose_card:盲抽阿米巴牌",
+          132
+        ],
+        [
+          "choose_card:获得展示的生物特征筛选",
+          132
+        ],
+        [
+          "choose_card:获得展示的火星隔离实验室",
+          131
+        ],
+        [
+          "choose_card:收入 amiba_7.webp",
+          127
+        ],
+        [
+          "choose_card:收入 amiba_9.webp",
+          116
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+          116
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄3号位（3分+外星人牌）",
+          116
+        ],
+        [
+          "land:登陆",
+          116
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "land:venus:planet:",
+          1503
+        ],
+        [
+          "income:gain:4,3,1,0,3,0",
+          1087
+        ],
+        [
+          "orbit:venus:planet:",
+          1071
+        ],
+        [
+          "sector:win:sector-1-a:3",
+          533
+        ],
+        [
+          "tech:gain:blue2",
+          134
+        ],
+        [
+          "tech:gain:orange1",
+          131
+        ],
+        [
+          "tech:gain:purple2",
+          118
+        ],
+        [
+          "tech:gain:orange3",
+          85
+        ],
+        [
+          "sector:win:sector-4-a:1",
+          73
+        ],
+        [
+          "<unbound>",
+          61
+        ],
+        [
+          "card:resolve:alien-amiba-7-12",
+          25
+        ],
+        [
+          "decision:choose_card:9a30c59b",
+          16
+        ],
+        [
+          "decision:choose_target:48a67af4",
+          15
+        ],
+        [
+          "decision:choose_target:50e87600",
+          15
+        ],
+        [
+          "decision:choose_target:f0cfda88",
+          15
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          464
+        ],
+        [
+          "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          259
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          232
+        ],
+        [
+          "land:venus:planet: -> move:quick",
+          187
+        ],
+        [
+          "orbit:venus:planet: -> move:quick",
+          183
+        ],
+        [
+          "income:gain:4,3,1,0,3,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          176
+        ],
+        [
+          "income:gain:4,3,1,0,3,0 -> place_data:quick",
+          151
+        ],
+        [
+          "orbit:venus:planet: -> quick_trade:quick",
+          146
+        ],
+        [
+          "land:venus:planet: -> end_turn:turn_control",
+          133
+        ],
+        [
+          "land:venus:planet: -> quick_trade:quick",
+          130
+        ],
+        [
+          "orbit:venus:planet: -> end_turn:turn_control",
+          130
+        ],
+        [
+          "income:gain:4,3,1,0,3,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          120
+        ],
+        [
+          "land:venus:planet: -> land:main",
+          116
+        ],
+        [
+          "income:gain:4,3,1,0,3,0 -> quick_trade:quick",
+          110
+        ],
+        [
+          "sector:win:sector-1-a:3 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          108
+        ]
+      ]
+    },
+    {
+      "step": 376,
+      "seat": "player-white",
+      "nodes": 4096,
+      "inputs": 5794,
+      "milliseconds": 12439.180334000033,
+      "decisions": [
+        [
+          "quick_trade:quick",
+          591
+        ],
+        [
+          "place_data:quick",
+          546
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          470
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          440
+        ],
+        [
+          "end_turn:turn_control",
+          286
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+          264
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          252
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          244
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          222
+        ],
+        [
+          "scan:main",
+          217
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          152
+        ],
+        [
+          "analyze:main",
+          90
+        ],
+        [
+          "pass:main",
+          88
+        ],
+        [
+          "research_tech:main",
+          88
+        ],
+        [
+          "card_corner:quick",
+          48
+        ]
+      ],
+      "choices": [
+        [
+          "place_data:放置数据",
+          546
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          418
+        ],
+        [
+          "end_turn:结束回合",
+          286
+        ],
+        [
+          "choose_target:扫描 开普勒22",
+          223
+        ],
+        [
+          "choose_target:扫描 室女座61",
+          217
+        ],
+        [
+          "scan:扫描",
+          217
+        ],
+        [
+          "choose_card:dlc_7.png → 比邻星",
+          202
+        ],
+        [
+          "choose_target:第一排放置位 2",
+          162
+        ],
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          158
+        ],
+        [
+          "choose_target:第一排放置位 3",
+          114
+        ],
+        [
+          "choose_card:b_18.webp",
+          106
+        ],
+        [
+          "choose_card:盲抽阿米巴牌",
+          105
+        ],
+        [
+          "analyze:分析",
+          90
+        ],
+        [
+          "choose_card:获得展示的生物特征筛选",
+          90
+        ],
+        [
+          "choose_target:外星人 1 蓝3号位（外星人牌）",
+          90
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "income:gain:5,2,0,0,3,1",
+          1926
+        ],
+        [
+          "sector:win:sector-1-a:3",
+          1546
+        ],
+        [
+          "data:analyze",
+          1304
+        ],
+        [
+          "<unbound>",
+          293
+        ],
+        [
+          "tech:gain:blue2",
+          240
+        ],
+        [
+          "tech:gain:orange2",
+          240
+        ],
+        [
+          "tech:gain:purple4",
+          240
+        ],
+        [
+          "sector:win:sector-4-a:1",
+          78
+        ],
+        [
+          "land:venus:planet:",
+          77
+        ],
+        [
+          "orbit:venus:planet:",
+          77
+        ],
+        [
+          "card:resolve:alien-chong-5-18",
+          45
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "sector:win:sector-1-a:3 -> quick_trade:quick",
+          558
+        ],
+        [
+          "income:gain:5,2,0,0,3,1 -> place_data:quick",
+          534
+        ],
+        [
+          "income:gain:5,2,0,0,3,1 -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          518
+        ],
+        [
+          "sector:win:sector-1-a:3 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          368
+        ],
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          306
+        ],
+        [
+          "income:gain:5,2,0,0,3,1 -> quick_trade:quick",
+          296
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          276
+        ],
+        [
+          "income:gain:5,2,0,0,3,1 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          228
+        ],
+        [
+          "data:analyze -> place_data:quick",
+          210
+        ],
+        [
+          "sector:win:sector-1-a:3 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          184
+        ],
+        [
+          "sector:win:sector-1-a:3 -> scan:main",
+          184
+        ],
+        [
+          "sector:win:sector-1-a:3 -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          164
+        ],
+        [
+          "<unbound> -> end_turn:turn_control",
+          145
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          138
+        ],
+        [
+          "<unbound> -> pass:main",
+          120
+        ]
+      ]
+    },
+    {
+      "step": 386,
+      "seat": "player-green",
+      "nodes": 4096,
+      "inputs": 4547,
+      "milliseconds": 14112.869000000006,
+      "decisions": [
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          1382
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+          601
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          337
+        ],
+        [
+          "quick_trade:quick",
+          264
+        ],
+        [
+          "land:main",
+          259
+        ],
+        [
+          "end_turn:turn_control",
+          201
+        ],
+        [
+          "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+          168
+        ],
+        [
+          "move:quick",
+          161
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          144
+        ],
+        [
+          "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+          136
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+          123
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          121
+        ],
+        [
+          "industry:quick",
+          109
+        ],
+        [
+          "play_card:main",
+          87
+        ],
+        [
+          "card_corner:quick",
+          1
+        ]
+      ],
+      "choices": [
+        [
+          "choose_target:扫描 比邻星",
+          337
+        ],
+        [
+          "land:登陆",
+          259
+        ],
+        [
+          "choose_target:登陆土卫二（土星）｜奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描",
+          216
+        ],
+        [
+          "choose_target:登陆土卫六（土星）｜奖励：获得 7 分；获得任意外星人标记 1/2；获得任意外星人标记 2/2",
+          216
+        ],
+        [
+          "choose_target:获得任意外星人标记 1/2 → 外星人 1 粉3号位（外星人牌）",
+          216
+        ],
+        [
+          "choose_target:获得任意外星人标记 1/2 → 外星人 1 蓝3号位（外星人牌）",
+          216
+        ],
+        [
+          "choose_target:获得任意外星人标记 1/2 → 外星人 1 黄4号位（1分+外星人牌）",
+          216
+        ],
+        [
+          "choose_target:获得任意外星人标记 1/2 → 外星人 2 粉4号位（5分+外星人牌）",
+          216
+        ],
+        [
+          "choose_target:获得任意外星人标记 1/2 → 外星人 2 蓝7号位（化石奖励）",
+          216
+        ],
+        [
+          "choose_target:获得任意外星人标记 1/2 → 外星人 2 黄2号位（5分）",
+          216
+        ],
+        [
+          "end_turn:结束回合",
+          201
+        ],
+        [
+          "accept_optional_effect:结算 b_101.webp",
+          168
+        ],
+        [
+          "quick_trade:3宣传 → 精选1张牌",
+          144
+        ],
+        [
+          "choose_card:dlc_6.png",
+          120
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          120
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "land:saturn:satellite:titan",
+          3208
+        ],
+        [
+          "land:saturn:satellite:enceladus",
+          2128
+        ],
+        [
+          "land:jupiter:satellite:europa",
+          347
+        ],
+        [
+          "land:jupiter:satellite:callisto",
+          260
+        ],
+        [
+          "land:jupiter:satellite:ganymede",
+          260
+        ],
+        [
+          "land:jupiter:satellite:io",
+          260
+        ],
+        [
+          "land:venus:planet:",
+          4
+        ],
+        [
+          "orbit:venus:planet:",
+          4
+        ],
+        [
+          "data:analyze",
+          1
+        ],
+        [
+          "sector:win:sector-3-b:1",
+          1
+        ],
+        [
+          "sector:win:sector-4-a:1",
+          1
+        ],
+        [
+          "tech:gain:blue1",
+          1
+        ],
+        [
+          "tech:gain:blue2",
+          1
+        ],
+        [
+          "tech:gain:blue3",
+          1
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "land:saturn:satellite:titan -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          1296
+        ],
+        [
+          "land:saturn:satellite:enceladus -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          315
+        ],
+        [
+          "land:saturn:satellite:enceladus -> quick_trade:quick",
+          264
+        ],
+        [
+          "land:saturn:satellite:titan -> quick_trade:quick",
+          264
+        ],
+        [
+          "land:saturn:satellite:enceladus -> choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+          216
+        ],
+        [
+          "land:saturn:satellite:enceladus -> land:main",
+          216
+        ],
+        [
+          "land:saturn:satellite:titan -> choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+          216
+        ],
+        [
+          "land:saturn:satellite:titan -> land:main",
+          216
+        ],
+        [
+          "land:saturn:satellite:enceladus -> end_turn:turn_control",
+          170
+        ],
+        [
+          "land:saturn:satellite:titan -> end_turn:turn_control",
+          170
+        ],
+        [
+          "land:saturn:satellite:enceladus -> accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+          168
+        ],
+        [
+          "land:saturn:satellite:titan -> accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+          168
+        ],
+        [
+          "land:saturn:satellite:enceladus -> move:quick",
+          152
+        ],
+        [
+          "land:saturn:satellite:titan -> move:quick",
+          152
+        ],
+        [
+          "land:saturn:satellite:enceladus -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+          144
+        ]
+      ]
+    },
+    {
+      "step": 395,
+      "seat": "player-brown",
+      "nodes": 4096,
+      "inputs": 5432,
+      "milliseconds": 12578.168917000003,
+      "decisions": [
+        [
+          "end_turn:turn_control",
+          422
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          383
+        ],
+        [
+          "place_data:quick",
+          358
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          326
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          304
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          301
+        ],
+        [
+          "quick_trade:quick",
+          242
+        ],
+        [
+          "card_corner:quick",
+          200
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          192
+        ],
+        [
+          "scan:main",
+          186
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          166
+        ],
+        [
+          "analyze:main",
+          129
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          128
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income",
+          100
+        ],
+        [
+          "move:quick",
+          97
+        ]
+      ],
+      "choices": [
+        [
+          "end_turn:结束回合",
+          422
+        ],
+        [
+          "place_data:放置数据",
+          358
+        ],
+        [
+          "scan:扫描",
+          186
+        ],
+        [
+          "choose_target:扫描 室女座61",
+          166
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          160
+        ],
+        [
+          "analyze:分析",
+          129
+        ],
+        [
+          "choose_target:外星人 1 蓝2号位（1分）",
+          129
+        ],
+        [
+          "choose_target:外星人 2 蓝7号位（化石奖励）",
+          128
+        ],
+        [
+          "choose_target:标记 D",
+          112
+        ],
+        [
+          "choose_card:收入 amiba_9.webp",
+          107
+        ],
+        [
+          "choose_target:标记 B",
+          107
+        ],
+        [
+          "choose_target:标记 C",
+          107
+        ],
+        [
+          "move:移动探测器 10 逆时针",
+          97
+        ],
+        [
+          "choose_card:收入 amiba_7.webp",
+          89
+        ],
+        [
+          "choose_card:dlc_6.png → 南河三",
+          86
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          1690
+        ],
+        [
+          "land:venus:planet:",
+          573
+        ],
+        [
+          "income:gain:4,3,1,0,3,0",
+          555
+        ],
+        [
+          "orbit:venus:planet:",
+          521
+        ],
+        [
+          "income:gain:5,3,1,0,3,0",
+          360
+        ],
+        [
+          "income:gain:4,3,1,0,4,0",
+          281
+        ],
+        [
+          "sector:win:sector-1-a:3",
+          236
+        ],
+        [
+          "tech:gain:orange3",
+          192
+        ],
+        [
+          "tech:gain:blue3",
+          166
+        ],
+        [
+          "<unbound>",
+          160
+        ],
+        [
+          "tech:gain:blue2",
+          141
+        ],
+        [
+          "sector:win:sector-4-a:1",
+          139
+        ],
+        [
+          "income:gain:4,4,1,0,3,0",
+          75
+        ],
+        [
+          "card:resolve:alien-amiba-7-12",
+          62
+        ],
+        [
+          "tech:gain:orange1",
+          31
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          353
+        ],
+        [
+          "data:analyze -> place_data:quick",
+          253
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          190
+        ],
+        [
+          "data:analyze -> analyze:main",
+          177
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          176
+        ],
+        [
+          "data:analyze -> end_turn:turn_control",
+          157
+        ],
+        [
+          "<unbound> -> end_turn:turn_control",
+          138
+        ],
+        [
+          "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          124
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          120
+        ],
+        [
+          "income:gain:4,3,1,0,3,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          108
+        ],
+        [
+          "tech:gain:orange3 -> card_corner:quick",
+          98
+        ],
+        [
+          "orbit:venus:planet: -> move:quick",
+          97
+        ],
+        [
+          "land:venus:planet: -> move:quick",
+          92
+        ],
+        [
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          86
+        ],
+        [
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          86
+        ]
+      ]
+    },
+    {
+      "step": 509,
+      "seat": "player-brown",
+      "nodes": 4096,
+      "inputs": 4879,
+      "milliseconds": 12449.679207999958,
+      "decisions": [
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          535
+        ],
+        [
+          "end_turn:turn_control",
+          465
+        ],
+        [
+          "quick_trade:quick",
+          441
+        ],
+        [
+          "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger",
+          293
+        ],
+        [
+          "analyze:main",
+          286
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          264
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          218
+        ],
+        [
+          "place_data:quick",
+          210
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          177
+        ],
+        [
+          "move:quick",
+          141
+        ],
+        [
+          "card_corner:quick",
+          126
+        ],
+        [
+          "land:main",
+          125
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          117
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          117
+        ],
+        [
+          "scan:main",
+          117
+        ]
+      ],
+      "choices": [
+        [
+          "end_turn:结束回合",
+          465
+        ],
+        [
+          "analyze:分析",
+          286
+        ],
+        [
+          "accept_optional_effect:结算 amiba_9.webp",
+          285
+        ],
+        [
+          "choose_target:外星人 2 蓝7号位（化石奖励）",
+          285
+        ],
+        [
+          "quick_trade:2信用点 → 1能量",
+          222
+        ],
+        [
+          "place_data:放置数据",
+          210
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          201
+        ],
+        [
+          "choose_card:盲抽阿米巴牌",
+          132
+        ],
+        [
+          "choose_card:获得展示的起源地",
+          132
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄3号位（外星人牌）",
+          125
+        ],
+        [
+          "land:登陆",
+          125
+        ],
+        [
+          "choose_target:扫描 开普勒22",
+          117
+        ],
+        [
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄2号位（5分）",
+          117
+        ],
+        [
+          "scan:扫描",
+          117
+        ],
+        [
+          "choose_target:标记 B",
+          109
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          2024
+        ],
+        [
+          "land:mars:planet:",
+          1180
+        ],
+        [
+          "sector:win:sector-3-b:1",
+          397
+        ],
+        [
+          "orbit:venus:planet:",
+          365
+        ],
+        [
+          "tech:gain:orange1",
+          88
+        ],
+        [
+          "tech:gain:orange3",
+          88
+        ],
+        [
+          "income:gain:6,3,1,0,3,0",
+          54
+        ],
+        [
+          "<unbound>",
+          52
+        ],
+        [
+          "tech:gain:blue4",
+          48
+        ],
+        [
+          "decision:choose_target:aa997a97",
+          21
+        ],
+        [
+          "decision:choose_target:50e87600",
+          2
+        ],
+        [
+          "decision:choose_target:f0cfda88",
+          2
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> analyze:main",
+          286
+        ],
+        [
+          "data:analyze -> accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger",
+          285
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          285
+        ],
+        [
+          "land:mars:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          250
+        ],
+        [
+          "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          250
+        ],
+        [
+          "data:analyze -> end_turn:turn_control",
+          203
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          202
+        ],
+        [
+          "data:analyze -> place_data:quick",
+          186
+        ],
+        [
+          "land:mars:planet: -> quick_trade:quick",
+          169
+        ],
+        [
+          "data:analyze -> quick_trade:quick",
+          145
+        ],
+        [
+          "land:mars:planet: -> end_turn:turn_control",
+          145
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          129
+        ],
+        [
+          "data:analyze -> card_corner:quick",
+          126
+        ],
+        [
+          "land:mars:planet: -> land:main",
+          125
+        ],
+        [
+          "sector:win:sector-3-b:1 -> quick_trade:quick",
+          104
+        ]
+      ]
+    },
+    {
+      "step": 518,
+      "seat": "player-white",
+      "nodes": 4096,
+      "inputs": 4734,
+      "milliseconds": 12672.146874999977,
+      "decisions": [
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          404
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          387
+        ],
+        [
+          "end_turn:turn_control",
+          370
+        ],
+        [
+          "place_data:quick",
+          314
+        ],
+        [
+          "quick_trade:quick",
+          288
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          273
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+          261
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step/cardEffect=card_probe_sector_scan",
+          234
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          211
+        ],
+        [
+          "move:quick",
+          203
+        ],
+        [
+          "scan:main",
+          139
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          109
+        ],
+        [
+          "play_card:main",
+          106
+        ],
+        [
+          "analyze:main",
+          101
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards",
+          87
+        ]
+      ],
+      "choices": [
+        [
+          "end_turn:结束回合",
+          370
+        ],
+        [
+          "place_data:放置数据",
+          314
+        ],
+        [
+          "choose_target:扫描 室女座61",
+          219
+        ],
+        [
+          "choose_card:b_73.webp → 开普勒22",
+          183
+        ],
+        [
+          "quick_trade:2信用点 → 1能量",
+          161
+        ],
+        [
+          "choose_target:扫描 开普勒22",
+          147
+        ],
+        [
+          "scan:扫描",
+          139
+        ],
+        [
+          "choose_card:b_133.webp → 室女座61",
+          128
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          118
+        ],
+        [
+          "choose_target:blue2 下方",
+          102
+        ],
+        [
+          "analyze:分析",
+          101
+        ],
+        [
+          "choose_target:外星人 2 蓝7号位（化石奖励）",
+          101
+        ],
+        [
+          "choose_card:b_73.webp",
+          96
+        ],
+        [
+          "move:移动探测器 12 向外",
+          94
+        ],
+        [
+          "choose_card:b_137.webp → 南河三",
+          91
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          1517
+        ],
+        [
+          "sector:win:sector-1-a:3",
+          899
+        ],
+        [
+          "orbit:venus:planet:",
+          784
+        ],
+        [
+          "land:mars:planet:",
+          720
+        ],
+        [
+          "decision:choose_card:440d59d8",
+          160
+        ],
+        [
+          "<unbound>",
+          108
+        ],
+        [
+          "tech:gain:blue3",
+          102
+        ],
+        [
+          "tech:gain:orange2",
+          102
+        ],
+        [
+          "tech:gain:purple4",
+          102
+        ],
+        [
+          "decision:choose_card:96c65f7a",
+          80
+        ],
+        [
+          "decision:choose_card:9b23703c",
+          64
+        ],
+        [
+          "sector:win:sector-3-b:1",
+          42
+        ],
+        [
+          "decision:choose_card:caa74b9c",
+          32
+        ],
+        [
+          "decision:choose_target:9f6fd10f",
+          8
+        ],
+        [
+          "decision:choose_target:7af26739",
+          4
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> place_data:quick",
+          314
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          273
+        ],
+        [
+          "sector:win:sector-1-a:3 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          261
+        ],
+        [
+          "sector:win:sector-1-a:3 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          218
+        ],
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          186
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          186
+        ],
+        [
+          "sector:win:sector-1-a:3 -> quick_trade:quick",
+          186
+        ],
+        [
+          "orbit:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step/cardEffect=card_probe_sector_scan",
+          174
+        ],
+        [
+          "data:analyze -> end_turn:turn_control",
+          147
+        ],
+        [
+          "sector:win:sector-1-a:3 -> scan:main",
+          135
+        ],
+        [
+          "decision:choose_card:440d59d8 -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+          120
+        ],
+        [
+          "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          110
+        ],
+        [
+          "land:mars:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          109
+        ],
+        [
+          "orbit:venus:planet: -> move:quick",
+          105
+        ],
+        [
+          "data:analyze -> analyze:main",
+          101
+        ]
+      ]
+    },
+    {
+      "step": 520,
+      "seat": "player-green",
+      "nodes": 4096,
+      "inputs": 4879,
+      "milliseconds": 16882.14287500002,
+      "decisions": [
+        [
+          "choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+          1133
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          754
+        ],
+        [
+          "end_turn:turn_control",
+          387
+        ],
+        [
+          "land:main",
+          378
+        ],
+        [
+          "quick_trade:quick",
+          376
+        ],
+        [
+          "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+          366
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+          265
+        ],
+        [
+          "move:quick",
+          216
+        ],
+        [
+          "play_card:main",
+          79
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+          72
+        ],
+        [
+          "industry:quick",
+          57
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          6
+        ],
+        [
+          "card_corner:quick",
+          3
+        ],
+        [
+          "orbit:main",
+          2
+        ],
+        [
+          "launch:main",
+          1
+        ]
+      ],
+      "choices": [
+        [
+          "end_turn:结束回合",
+          387
+        ],
+        [
+          "choose_target:登陆木卫一（木星）｜奖励：获得 10 分；获得 4 能量",
+          378
+        ],
+        [
+          "choose_target:登陆木卫三（木星）｜奖励：获得 12 分；获得 5 宣传",
+          378
+        ],
+        [
+          "land:登陆",
+          378
+        ],
+        [
+          "choose_target:登陆木卫二（木星）｜奖励：获得 7 分；获得黄色外星人标记 1/2；获得黄色外星人标记 2/2",
+          377
+        ],
+        [
+          "choose_target:获得黄色外星人标记 1/2 → 外星人 1 黄3号位（外星人牌）",
+          377
+        ],
+        [
+          "choose_target:获得黄色外星人标记 1/2 → 外星人 2 黄2号位（5分）",
+          377
+        ],
+        [
+          "accept_optional_effect:结算 b_101.webp",
+          366
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          189
+        ],
+        [
+          "quick_trade:2信用点 → 1能量",
+          187
+        ],
+        [
+          "choose_target:R12 逆时针",
+          142
+        ],
+        [
+          "move:移动探测器 12 逆时针",
+          124
+        ],
+        [
+          "choose_target:R12 向外",
+          109
+        ],
+        [
+          "move:移动探测器 12 向外",
+          92
+        ],
+        [
+          "play_card:dlc_12.png",
+          79
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "land:jupiter:satellite:europa",
+          3326
+        ],
+        [
+          "land:jupiter:satellite:ganymede",
+          2573
+        ],
+        [
+          "land:jupiter:satellite:io",
+          2573
+        ],
+        [
+          "orbit:venus:planet:",
+          22
+        ],
+        [
+          "data:analyze",
+          3
+        ],
+        [
+          "land:mars:planet:",
+          3
+        ],
+        [
+          "land:saturn:satellite:enceladus",
+          3
+        ],
+        [
+          "land:saturn:satellite:titan",
+          3
+        ],
+        [
+          "sector:win:sector-1-a:3",
+          1
+        ],
+        [
+          "tech:gain:blue1",
+          1
+        ],
+        [
+          "tech:gain:blue2",
+          1
+        ],
+        [
+          "tech:gain:blue3",
+          1
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "land:jupiter:satellite:europa -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          754
+        ],
+        [
+          "land:jupiter:satellite:europa -> end_turn:turn_control",
+          387
+        ],
+        [
+          "land:jupiter:satellite:ganymede -> end_turn:turn_control",
+          387
+        ],
+        [
+          "land:jupiter:satellite:io -> end_turn:turn_control",
+          387
+        ],
+        [
+          "land:jupiter:satellite:europa -> land:main",
+          378
+        ],
+        [
+          "land:jupiter:satellite:ganymede -> choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+          378
+        ],
+        [
+          "land:jupiter:satellite:ganymede -> land:main",
+          378
+        ],
+        [
+          "land:jupiter:satellite:io -> choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+          378
+        ],
+        [
+          "land:jupiter:satellite:io -> land:main",
+          378
+        ],
+        [
+          "land:jupiter:satellite:europa -> choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+          377
+        ],
+        [
+          "land:jupiter:satellite:europa -> quick_trade:quick",
+          376
+        ],
+        [
+          "land:jupiter:satellite:ganymede -> quick_trade:quick",
+          376
+        ],
+        [
+          "land:jupiter:satellite:io -> quick_trade:quick",
+          376
+        ],
+        [
+          "land:jupiter:satellite:europa -> accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+          366
+        ],
+        [
+          "land:jupiter:satellite:ganymede -> accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+          366
+        ]
+      ]
+    },
+    {
+      "step": 524,
+      "seat": "player-blue",
+      "nodes": 4096,
+      "inputs": 4540,
+      "milliseconds": 13722.051582999993,
+      "decisions": [
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          603
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          553
+        ],
+        [
+          "analyze:main",
+          495
+        ],
+        [
+          "end_turn:turn_control",
+          391
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          372
+        ],
+        [
+          "place_data:quick",
+          327
+        ],
+        [
+          "quick_trade:quick",
+          292
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4",
+          158
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+          147
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+          135
+        ],
+        [
+          "scan:main",
+          135
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          116
+        ],
+        [
+          "industry:quick",
+          74
+        ],
+        [
+          "move:quick",
+          60
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          45
+        ]
+      ],
+      "choices": [
+        [
+          "analyze:分析",
+          495
+        ],
+        [
+          "choose_target:外星人 2 蓝7号位（化石奖励）",
+          495
+        ],
+        [
+          "end_turn:结束回合",
+          391
+        ],
+        [
+          "place_data:放置数据",
+          327
+        ],
+        [
+          "choose_target:扫描 室女座61",
+          237
+        ],
+        [
+          "choose_target:标记 B",
+          201
+        ],
+        [
+          "choose_target:标记 C",
+          201
+        ],
+        [
+          "choose_target:标记 D",
+          201
+        ],
+        [
+          "quick_trade:2信用点 → 1能量",
+          195
+        ],
+        [
+          "choose_target:扫描 开普勒22",
+          135
+        ],
+        [
+          "scan:扫描",
+          135
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          83
+        ],
+        [
+          "choose_card:b_137.webp → 南河三",
+          81
+        ],
+        [
+          "industry:图灵系统 1x 行动",
+          74
+        ],
+        [
+          "choose_card:b_133.webp → 开普勒22",
+          49
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          2530
+        ],
+        [
+          "sector:win:sector-1-a:3",
+          342
+        ],
+        [
+          "income:gain:5,3,0,1,1,0",
+          312
+        ],
+        [
+          "land:mars:planet:",
+          267
+        ],
+        [
+          "<unbound>",
+          182
+        ],
+        [
+          "orbit:venus:planet:",
+          124
+        ],
+        [
+          "income:gain:5,3,0,1,2,0",
+          108
+        ],
+        [
+          "sector:win:sector-3-a:3",
+          52
+        ],
+        [
+          "income:gain:5,4,0,1,1,0",
+          28
+        ],
+        [
+          "decision:choose_target:01c733aa",
+          17
+        ],
+        [
+          "decision:choose_target:505cd48a",
+          17
+        ],
+        [
+          "decision:choose_target:7176d5b6",
+          17
+        ],
+        [
+          "decision:choose_target:a16ac402",
+          17
+        ],
+        [
+          "decision:choose_target:b8fbeffa",
+          17
+        ],
+        [
+          "decision:choose_target:dd16a166",
+          17
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> analyze:main",
+          495
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          495
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          486
+        ],
+        [
+          "data:analyze -> place_data:quick",
+          229
+        ],
+        [
+          "data:analyze -> end_turn:turn_control",
+          207
+        ],
+        [
+          "data:analyze -> quick_trade:quick",
+          187
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          160
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4",
+          108
+        ],
+        [
+          "sector:win:sector-1-a:3 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          106
+        ],
+        [
+          "<unbound> -> end_turn:turn_control",
+          88
+        ],
+        [
+          "<unbound> -> industry:quick",
+          74
+        ],
+        [
+          "income:gain:5,3,0,1,1,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          63
+        ],
+        [
+          "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          58
+        ],
+        [
+          "income:gain:5,3,0,1,1,0 -> place_data:quick",
+          55
+        ],
+        [
+          "sector:win:sector-1-a:3 -> quick_trade:quick",
+          55
+        ]
+      ]
+    },
+    {
+      "step": 610,
+      "seat": "player-brown",
+      "nodes": 4096,
+      "inputs": 5021,
+      "milliseconds": 13246.633458000026,
+      "decisions": [
+        [
+          "end_turn:turn_control",
+          501
+        ],
+        [
+          "move:quick",
+          386
+        ],
+        [
+          "place_data:quick",
+          340
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          338
+        ],
+        [
+          "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+          330
+        ],
+        [
+          "quick_trade:quick",
+          258
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          204
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          184
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          180
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+          155
+        ],
+        [
+          "orbit:main",
+          139
+        ],
+        [
+          "pass:main",
+          124
+        ],
+        [
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+          121
+        ],
+        [
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+          94
+        ],
+        [
+          "scan:main",
+          85
+        ]
+      ],
+      "choices": [
+        [
+          "end_turn:结束回合",
+          501
+        ],
+        [
+          "place_data:放置数据",
+          340
+        ],
+        [
+          "choose_payment:消耗 1 能量",
+          222
+        ],
+        [
+          "quick_trade:2张牌 → 1能量",
+          191
+        ],
+        [
+          "move:移动探测器 15 逆时针",
+          162
+        ],
+        [
+          "choose_target:blue2 下方",
+          147
+        ],
+        [
+          "move:移动探测器 16 向外",
+          124
+        ],
+        [
+          "pass:PASS",
+          124
+        ],
+        [
+          "choose_payment:弃 1 张移动牌",
+          108
+        ],
+        [
+          "orbit:环绕金星 - 奖励：获得 6 分；获得 1 次收入（R15，1信用点 + 1能量）",
+          103
+        ],
+        [
+          "choose_card:盲抽阿米巴牌",
+          89
+        ],
+        [
+          "choose_card:获得展示的起源地",
+          89
+        ],
+        [
+          "choose_card:b_123.webp",
+          87
+        ],
+        [
+          "scan:扫描",
+          85
+        ],
+        [
+          "move:移动探测器 15 向外",
+          84
+        ]
+      ],
+      "targetOrigins": [
+        [
+          "data:analyze",
+          1095
+        ],
+        [
+          "land:mars:planet:",
+          747
+        ],
+        [
+          "orbit:venus:planet:",
+          677
+        ],
+        [
+          "income:gain:6,3,1,0,3,0",
+          486
+        ],
+        [
+          "orbit:uranus:planet:",
+          402
+        ],
+        [
+          "sector:win:sector-1-a:3",
+          359
+        ],
+        [
+          "<unbound>",
+          296
+        ],
+        [
+          "tech:gain:orange3",
+          274
+        ],
+        [
+          "tech:gain:orange1",
+          262
+        ],
+        [
+          "tech:gain:blue4",
+          260
+        ],
+        [
+          "decision:choose_target:50e87600",
+          48
+        ],
+        [
+          "decision:choose_target:f0cfda88",
+          43
+        ],
+        [
+          "decision:choose_target:aa997a97",
+          33
+        ],
+        [
+          "tech:gain:orange4",
+          26
+        ],
+        [
+          "income:gain:6,3,1,0,4,0",
+          22
+        ]
+      ],
+      "targetDecisionOrigins": [
+        [
+          "data:analyze -> end_turn:turn_control",
+          203
+        ],
+        [
+          "data:analyze -> place_data:quick",
+          197
+        ],
+        [
+          "orbit:venus:planet: -> move:quick",
+          178
+        ],
+        [
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+          159
+        ],
+        [
+          "land:mars:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+          156
+        ],
+        [
+          "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+          156
+        ],
+        [
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+          151
+        ],
+        [
+          "income:gain:6,3,1,0,3,0 -> place_data:quick",
+          145
+        ],
+        [
+          "orbit:venus:planet: -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+          142
+        ],
+        [
+          "<unbound> -> end_turn:turn_control",
+          132
+        ],
+        [
+          "<unbound> -> pass:main",
+          124
+        ],
+        [
+          "tech:gain:blue4 -> place_data:quick",
+          121
+        ],
+        [
+          "tech:gain:orange1 -> place_data:quick",
+          121
+        ],
+        [
+          "tech:gain:orange3 -> place_data:quick",
+          121
+        ],
+        [
+          "orbit:uranus:planet: -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+          120
+        ]
+      ]
+    }
+  ]
+}

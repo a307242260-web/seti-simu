@@ -380,6 +380,12 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 ## 9. 与调研流程的关系
 
+2026-09-07扫描修复后满额分布：`reports/iteration/full-search-hotspots-aaaed8d0-20260907.json`，
+由`adhoc/profile-full-searches-aaaed8d0-20260907.js`只读完整局记录生成，含27次满额的
+具体行为、选择摘要和目标来源；物理节点分类逐项求和校验通过。来源数允许一节点多目标，
+不得作为物理节点占比。第53步放数据678次、位置选择492次；第386步两种土星卫星登陆
+各216次，仅是后续状态等价/绑定核对入口，不把摘要相同直接判定为可剪掉的重复搜索。
+
 2026-09-07按用户要求生成当前搜索分布专题报告：
 `reports/iteration/search-node-report-20260907.html`，生成器
 `adhoc/build-search-report-20260907.js`。只读取73e7b2ca完整局和既有42冷决策证据，
