@@ -74,9 +74,41 @@ movementPreparation、深度及pass/完成/隐藏标志。任意额外purpose字
 origin身份/传播/计划捕获链，会静默丢掉不同后续约束。不得借用movementPreparation
 字段放图灵内容，也不能仅在目标名里塞标签而不实现消费/完成语义。
 
-下一设计需明确两种选择之一：全部用途语义可由既有target/plan无歧义表达并证明
-跨借用Decision不丢失；否则显式新增独立用途状态并覆盖origin身份、传播、编译及
-恢复检查的完整契约。尚未选择或实施，不能声称多目标绑定已完成。
+## 用途状态方案裁定（源码复核，未实现）
+
+选择独立的搜索侧`borrowDemand`，不复用或改写`routeTargetId/routePlanId`，不写入
+正式游戏envelope。理由不只是“缺少字段”：当前目标完成后，普通后继调用会主动
+传入空target/plan（rule-composition约2964行），而借用是否消费取决于正式能力读取。
+例如紫科技在完整扫描建队时读取，不等于最终扇区胜利目标完成。目标完成标志不能
+兼任借用消费标志；同一目标/来源也可能有不同借用用途。
+
+拟定最小身份：actorId、tileId、round、turn、consumerKind、sourceId、targetId、
+planId。sourceId必须取现有真实卡牌/探测器/扫描来源身份，不用卡牌类型替代实体。
+round/turn是借用有效期而非公司额度恢复期。无待消费需求用null；已消费后清空
+搜索约束，正式借用仍由规则状态保持到期，允许同回合继续使用，不强制只消费一次。
+消费者类型和sourceId取值目录仍需由完整提取方案定义，不能先写字符串特判。
+
+| 边界 | 必须实现的行为 | 现有源码依据 / 可证伪证据 |
+| --- | --- | --- |
+| 公司入口 | 先生成有具名消费者的需求，再绑定同一正式industry输入；不先扩八选再找理由 | expected-score-evaluator.selectSecondaryAgentSuccessors的bindRoute当前只有路线三字段；根入口也须同契约 |
+| 物理合并 | demand参与originKey，不参与exactNodeKey；相同正式状态和动作执行一次，不同需求分别继续 | 当前originKey只认movementPreparation等已列字段；必须测同节点两个需求都保留及真实执行数为1 |
+| 条件Decision | 传入当前demand；借用选位只接受对应tile；后继显式继承或清空，不靠缺字段默认null | conditionalRoutes当前只映射路线和movementPreparation，任意扩展字段被丢弃 |
+| 普通后继 | 目标完成清路线不自动清demand；消费者尚未发生时不能凭目标计数当成已消费 | 普通selectSuccessors在completedGoal时清路线；其selectedRoutes再次限定字段 |
+| 消费确认 | 只在正式对应能力确实改善权限、成本、奖励或扫描队列时完成；“执行过move/scan”不足以证明 | 橙2出发费用与进入奖励独立；紫能力建队读取与后续扫描选择分离 |
+| 期限 | 未消费需求不得作为跨回合目的继续携带；借用前的跨回合准备可延后使用本轮额度 | 图灵每轮一次、能力本回合有效；正式结束清理不由搜索替代 |
+| 计划捕获 | 逐次真实提交记录提交前需求及正式消费证据，不用整批执行后的状态回填前面的输入 | rule-composition约2500行按probeSteps编译，一物理节点可含多个正式输入；capturePlanStep本身只读observation/action |
+| 计划复用 | 核验有效期、公司额度/已借状态及具名消费者依赖；失效重搜，不在真实提交阶段偷偷换科技 | plan-continuation.stepScopes仅识别既有目标及movementPreparation，未知目标前缀会拒绝；须新增独立依赖而非伪装目标 |
+| 已开启公司/旧计划 | 正式已开启Decision继续按合法集结算；不要求旧计划凭空带上新需求，不制造空Decision | 现有selectNonredundantTuringActions保留此恢复边界；新候选生成与既有正式会话须区分 |
+
+风险与否决门槛：仅增加上述状态不会减少节点，反而可能增加来源数。若最终实现
+仍对每个用途重复展开公司/借用物理动作，或只到叶末才丢弃无用途路径，就不满足
+需求式生成目标。需要同时证明入口按需求收敛、物理合并和额外目录耗时；不能用
+更多origin掩盖相同的4096截断。第50步85分链保留是必要条件，不是整局验收替代。
+
+本次关闭的是“复用路线字段还是独立状态”的设计选择，不是完整开发设计。
+剩余生产门禁为：公开卡牌/已打出任务/待执行效果的统一需求提取闭包，以及各消费者
+可达性与真实改善证据的精确定义。若提取必须建立第二份规则解释器，该方案应否决，
+回到正式只读能力接口设计；不得以静态73张匹配清单直接实现剪枝。
 
 检查位置：players.js借用读取，industry/state.js与passives.js，
 effects/residual-domain-session.js公司枚举/执行，abilities/rocket.js与planet.js，
