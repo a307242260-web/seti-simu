@@ -15,10 +15,11 @@ executionLimitReached=false，remainingFrontierNodeCount=0；
 仍有beamPrunedOriginCount=2013，不能称穷尽全部合法状态。
 借橙4后只放数据仍在，需求式用途绑定未完成。
 
-已查重并通过标准入口启动turing-active-tech-20260908完整局；尚无终局结果，
-不提前登记为通过。原始单点证据在候选reports/iteration/blue161-turing-active-20260908.json，
-完整局结束后同步正式版本与原始记录。整体Goal保持原目标与108.5底线，
-与父版均111比较，下降须解释。
+完整局已完成并登记：644步，75/114/87/149，均106.25，低于108.5，本轮未通过。
+总节点145504，耗时690358ms，实际失败0，仍26次战略及4次控制截断。
+536父版价值18计划在本版可正式执行且终态相同，但新搜索只返回价值15计划；
+继续定位搜索保留及560计划复用问题，不进入下一项剪枝。原始单点/全盘已同步主目录，
+详见[完整结果与降分定位](turing-active-tech-full-review-20260908.md)。
 
 文档已随生产更新ai-design与rl-simulation-env；无入口、构建、规则执行或目录职责变化，
 README/AGENTS与node-testing不需更新，测试已登记inventory。未修改项目记忆。
