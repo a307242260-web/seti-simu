@@ -1,0 +1,3990 @@
+{
+  "passed": true,
+  "versions": [
+    {
+      "key": "b7968542.cbf7966f",
+      "tech": [
+        {
+          "step": 83,
+          "round": 1,
+          "turn": 9,
+          "actor": "player-white",
+          "action": "研究 purple2",
+          "delta": 2,
+          "total": 2,
+          "target": {
+            "choiceId": "tech:purple2",
+            "tileId": "purple2",
+            "blueSlot": null
+          }
+        },
+        {
+          "step": 97,
+          "round": 1,
+          "turn": 13,
+          "actor": "player-white",
+          "action": "研究 orange3",
+          "delta": 5,
+          "total": 7,
+          "target": {
+            "choiceId": "tech:orange3",
+            "tileId": "orange3",
+            "blueSlot": null
+          }
+        },
+        {
+          "step": 281,
+          "round": 2,
+          "turn": 19,
+          "actor": "player-white",
+          "action": "研究 orange2",
+          "delta": 0,
+          "total": 7,
+          "target": {
+            "choiceId": "tech:orange2",
+            "tileId": "orange2",
+            "blueSlot": null
+          }
+        },
+        {
+          "step": 322,
+          "round": 3,
+          "turn": 3,
+          "actor": "player-white",
+          "action": "研究 purple4",
+          "delta": 6,
+          "total": 13,
+          "target": {
+            "choiceId": "tech:purple4",
+            "tileId": "purple4",
+            "blueSlot": null
+          }
+        },
+        {
+          "step": 454,
+          "round": 3,
+          "turn": 24,
+          "actor": "player-white",
+          "action": "研究 blue3（蓝槽 1）",
+          "delta": 0,
+          "total": 13,
+          "target": {
+            "choiceId": "tech:blue3:slot:1",
+            "tileId": "blue3",
+            "blueSlot": 1
+          }
+        },
+        {
+          "step": 455,
+          "round": 3,
+          "turn": 24,
+          "actor": "player-white",
+          "action": "b_18.webp",
+          "delta": 2,
+          "total": 15,
+          "target": {
+            "choiceId": "pick:card-76-0",
+            "cardInstanceId": "card-76-0",
+            "publicSlotIndex": 2
+          }
+        },
+        {
+          "step": 627,
+          "round": 4,
+          "turn": 22,
+          "actor": "player-white",
+          "action": "研究 blue4（蓝槽 2）",
+          "delta": 2,
+          "total": 17,
+          "target": {
+            "choiceId": "tech:blue4:slot:2",
+            "tileId": "blue4",
+            "blueSlot": 2
+          }
+        }
+      ],
+      "marks": [
+        {
+          "step": 153,
+          "round": 1,
+          "turn": 22,
+          "actor": "player-green",
+          "action": "标记 B",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": []
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": []
+            }
+          }
+        },
+        {
+          "step": 170,
+          "round": 2,
+          "turn": 3,
+          "actor": "player-blue",
+          "action": "标记 D",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": []
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 245,
+          "round": 2,
+          "turn": 13,
+          "actor": "player-white",
+          "action": "标记 A",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 275,
+          "round": 2,
+          "turn": 19,
+          "actor": "player-brown",
+          "action": "标记 A",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 355,
+          "round": 3,
+          "turn": 9,
+          "actor": "player-green",
+          "action": "标记 D",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-5",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 399,
+          "round": 3,
+          "turn": 16,
+          "actor": "player-white",
+          "action": "标记 B",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "b"
+                },
+                {
+                  "id": "final-mark-6",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-5",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 522,
+          "round": 4,
+          "turn": 7,
+          "actor": "player-white",
+          "action": "标记 D",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "b"
+                },
+                {
+                  "id": "final-mark-6",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-5",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-7",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 70,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 532,
+          "round": 4,
+          "turn": 8,
+          "actor": "player-green",
+          "action": "标记 C",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "b"
+                },
+                {
+                  "id": "final-mark-6",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": [
+                {
+                  "id": "final-mark-8",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 70,
+                  "tileId": "c"
+                }
+              ]
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-5",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-7",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 70,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 546,
+          "round": 4,
+          "turn": 10,
+          "actor": "player-brown",
+          "action": "标记 D",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "b"
+                },
+                {
+                  "id": "final-mark-6",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": [
+                {
+                  "id": "final-mark-8",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 70,
+                  "tileId": "c"
+                }
+              ]
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-5",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-7",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 70,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-9",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": 2,
+                  "slotIndex": 3,
+                  "threshold": 50,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 637,
+          "round": 4,
+          "turn": 24,
+          "actor": "player-blue",
+          "action": "标记 A",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-10",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 50,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "b"
+                },
+                {
+                  "id": "final-mark-6",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": [
+                {
+                  "id": "final-mark-8",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 70,
+                  "tileId": "c"
+                }
+              ]
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-5",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-7",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 70,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-9",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": 2,
+                  "slotIndex": 3,
+                  "threshold": 50,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "thresholds": [
+        {
+          "step": 241,
+          "round": 2,
+          "turn": 12,
+          "actor": "player-white",
+          "action": "获得展示的低重力研究",
+          "threshold": 25,
+          "before": 21,
+          "after": 30
+        },
+        {
+          "step": 383,
+          "round": 3,
+          "turn": 15,
+          "actor": "player-white",
+          "action": "盲抽阿米巴牌",
+          "threshold": 50,
+          "before": 41,
+          "after": 52
+        },
+        {
+          "step": 516,
+          "round": 4,
+          "turn": 6,
+          "actor": "player-white",
+          "action": "扫描 天狼星A",
+          "threshold": 70,
+          "before": 69,
+          "after": 73
+        }
+      ],
+      "researchRoots": [
+        {
+          "step": 454,
+          "round": 3,
+          "turn": 24,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:ad894514",
+            "actorId": "player-white",
+            "stateVersion": 225,
+            "decisionVersion": 11,
+            "target": {
+              "choiceId": "tech:blue3:slot:1",
+              "tileId": "blue3",
+              "blueSlot": 1
+            },
+            "payload": {
+              "skipCost": false,
+              "skipRotate": false,
+              "skipBonus": false
+            },
+            "decision": null,
+            "summary": "研究 blue3（蓝槽 1）"
+          },
+          "white": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [],
+              "poolTokens": [
+                {
+                  "id": "data-token-48",
+                  "index": 1,
+                  "slotIndex": 1
+                }
+              ]
+            },
+            "hand": [
+              {
+                "alienCardId": 2,
+                "amibaCard": true,
+                "amibaTask": null,
+                "cardId": "amiba_2.webp",
+                "cardTypeCode": 1,
+                "discardActionCode": 4,
+                "faceUp": true,
+                "id": "alien-amiba-2-23",
+                "incomeCode": 0,
+                "price": 1,
+                "scanActionCode": 2,
+                "set": "alien:阿米巴"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 5,
+              "energy": 3,
+              "handSize": 3,
+              "publicity": 0
+            },
+            "industryAlienLabPanels": {
+              "blue": true,
+              "pink": true,
+              "yellow": true
+            },
+            "industryBorrowedTechRound": 0,
+            "industryBorrowedTechTileId": null,
+            "industryBorrowedTechTurn": 0,
+            "industryFutureSpan": {
+              "card": null,
+              "playing": false,
+              "targetScore": 0
+            },
+            "industryHuanyuFreeMoveRound": 0,
+            "industryHuanyuFreeMoveTurn": 0,
+            "industryHuanyuFreeMovesLeft": 0,
+            "industryHuanyuMovedRocketIds": [],
+            "industryLastPlayedCardThisRound": null,
+            "industryPlayedCardRound": 0,
+            "industryPlayedCardThisRound": false,
+            "industryPlayedCardTurn": 0,
+            "industryRoundMarkRound": 3,
+            "industryRoundMarkTurn": 15,
+            "industrySentinelArmedRound": 0,
+            "industrySentinelArmedTurn": 0,
+            "industryStrategyPassiveSlots": {
+              "blue": false,
+              "red": false,
+              "yellow": false
+            },
+            "industryStrategyPlayInteractionPending": false,
+            "industryStrategyPlayInteractionRound": 0,
+            "industryStrategyPlayScanCode": null,
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "mainActionCompleted": false,
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "passCompletionPending": false,
+            "reservedCards": [
+              {
+                "cardEffectState": {
+                  "completedTaskIds": [],
+                  "consumedTriggerIds": [],
+                  "modelCardId": "dlc_9.png"
+                },
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              },
+              {
+                "cardEffectState": {
+                  "completedTaskIds": [],
+                  "consumedTriggerIds": [
+                    "b78-yellow-signal-data"
+                  ],
+                  "modelCardId": "b_78.webp"
+                },
+                "cardId": "b_78.webp",
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "faceUp": true,
+                "id": "card-26-pass-2-2",
+                "incomeCode": 2,
+                "price": 1,
+                "scanActionCode": 0,
+                "set": "basic"
+              }
+            ],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 1,
+              "credits": 0,
+              "energy": 0,
+              "handSize": 1,
+              "publicity": 6,
+              "score": 59
+            },
+            "scoreSources": {
+              "alienEffectScore": 4,
+              "alienTraceBlueScore": 11,
+              "alienTracePinkScore": 8,
+              "alienTraceYellowScore": 1,
+              "cardQuickScore": 1,
+              "initialScore": 6,
+              "landScore": 15,
+              "techBonusScore": 13
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {
+                "orange2": true,
+                "orange3": true,
+                "purple2": true,
+                "purple4": true
+              }
+            }
+          },
+          "tech": {
+            "stacks": {
+              "blue1": {
+                "bonusId": "bonus_1c",
+                "bonusIndex": 2,
+                "bonusQueue": [
+                  "bonus_3f",
+                  "bonus_1p",
+                  "bonus_1c",
+                  "bonus_1m"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-brown",
+                "remaining": 2,
+                "stackIndex": 1,
+                "techType": "blue",
+                "tileId": "blue1"
+              },
+              "blue2": {
+                "bonusId": "bonus_1p",
+                "bonusIndex": 1,
+                "bonusQueue": [
+                  "bonus_1c",
+                  "bonus_1p",
+                  "bonus_3f",
+                  "bonus_1m"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-blue",
+                "remaining": 3,
+                "stackIndex": 2,
+                "techType": "blue",
+                "tileId": "blue2"
+              },
+              "blue3": {
+                "bonusId": "bonus_1c",
+                "bonusIndex": 0,
+                "bonusQueue": [
+                  "bonus_1c",
+                  "bonus_1m",
+                  "bonus_1p",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": null,
+                "remaining": 4,
+                "stackIndex": 3,
+                "techType": "blue",
+                "tileId": "blue3"
+              },
+              "blue4": {
+                "bonusId": "bonus_1p",
+                "bonusIndex": 0,
+                "bonusQueue": [
+                  "bonus_1p",
+                  "bonus_1c",
+                  "bonus_3f",
+                  "bonus_1m"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": null,
+                "remaining": 4,
+                "stackIndex": 4,
+                "techType": "blue",
+                "tileId": "blue4"
+              },
+              "orange1": {
+                "bonusId": "bonus_1c",
+                "bonusIndex": 0,
+                "bonusQueue": [
+                  "bonus_1c",
+                  "bonus_1m",
+                  "bonus_1p",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": null,
+                "remaining": 4,
+                "stackIndex": 1,
+                "techType": "orange",
+                "tileId": "orange1"
+              },
+              "orange2": {
+                "bonusId": "bonus_3f",
+                "bonusIndex": 3,
+                "bonusQueue": [
+                  "bonus_1p",
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-blue",
+                "remaining": 1,
+                "stackIndex": 2,
+                "techType": "orange",
+                "tileId": "orange2"
+              },
+              "orange3": {
+                "bonusId": "bonus_1p",
+                "bonusIndex": 3,
+                "bonusQueue": [
+                  "bonus_3f",
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_1p"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-white",
+                "remaining": 1,
+                "stackIndex": 3,
+                "techType": "orange",
+                "tileId": "orange3"
+              },
+              "orange4": {
+                "bonusId": "bonus_1p",
+                "bonusIndex": 0,
+                "bonusQueue": [
+                  "bonus_1p",
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": null,
+                "remaining": 4,
+                "stackIndex": 4,
+                "techType": "orange",
+                "tileId": "orange4"
+              },
+              "purple1": {
+                "bonusId": "bonus_1m",
+                "bonusIndex": 0,
+                "bonusQueue": [
+                  "bonus_1m",
+                  "bonus_1p",
+                  "bonus_1c",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": null,
+                "remaining": 4,
+                "stackIndex": 1,
+                "techType": "purple",
+                "tileId": "purple1"
+              },
+              "purple2": {
+                "bonusId": "bonus_1p",
+                "bonusIndex": 3,
+                "bonusQueue": [
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_3f",
+                  "bonus_1p"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-white",
+                "remaining": 1,
+                "stackIndex": 2,
+                "techType": "purple",
+                "tileId": "purple2"
+              },
+              "purple3": {
+                "bonusId": "bonus_1c",
+                "bonusIndex": 0,
+                "bonusQueue": [
+                  "bonus_1c",
+                  "bonus_1p",
+                  "bonus_1m",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": null,
+                "remaining": 4,
+                "stackIndex": 3,
+                "techType": "purple",
+                "tileId": "purple3"
+              },
+              "purple4": {
+                "bonusId": null,
+                "bonusIndex": 3,
+                "bonusQueue": [
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_1p",
+                  "bonus_3f"
+                ],
+                "depleted": true,
+                "firstTakeClaimedBy": "player-blue",
+                "remaining": 0,
+                "stackIndex": 4,
+                "techType": "purple",
+                "tileId": "purple4"
+              }
+            }
+          },
+          "legal": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:03fdb62d",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:orange1",
+                "tileId": "orange1",
+                "blueSlot": null
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 orange1"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:0cbf059c",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue1:slot:2",
+                "tileId": "blue1",
+                "blueSlot": 2
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue1（蓝槽 2）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:2b1149ac",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue2:slot:3",
+                "tileId": "blue2",
+                "blueSlot": 3
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue2（蓝槽 3）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:2fa94938",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue3:slot:4",
+                "tileId": "blue3",
+                "blueSlot": 4
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue3（蓝槽 4）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:36a6b668",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue1:slot:4",
+                "tileId": "blue1",
+                "blueSlot": 4
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue1（蓝槽 4）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:3fcecb14",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue2:slot:1",
+                "tileId": "blue2",
+                "blueSlot": 1
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue2（蓝槽 1）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:405d1e5d",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:purple1",
+                "tileId": "purple1",
+                "blueSlot": null
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 purple1"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:509236e8",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue1:slot:1",
+                "tileId": "blue1",
+                "blueSlot": 1
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue1（蓝槽 1）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:7b13c554",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue4:slot:4",
+                "tileId": "blue4",
+                "blueSlot": 4
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue4（蓝槽 4）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:89054c28",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue4:slot:3",
+                "tileId": "blue4",
+                "blueSlot": 3
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue4（蓝槽 3）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:9b661234",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue2:slot:2",
+                "tileId": "blue2",
+                "blueSlot": 2
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue2（蓝槽 2）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:a16882e3",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:orange4",
+                "tileId": "orange4",
+                "blueSlot": null
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 orange4"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:ad894514",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue3:slot:1",
+                "tileId": "blue3",
+                "blueSlot": 1
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue3（蓝槽 1）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:bdea2e94",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue1:slot:3",
+                "tileId": "blue1",
+                "blueSlot": 3
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue1（蓝槽 3）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:c737d1d0",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue3:slot:3",
+                "tileId": "blue3",
+                "blueSlot": 3
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue3（蓝槽 3）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:c86683cc",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue3:slot:2",
+                "tileId": "blue3",
+                "blueSlot": 2
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue3（蓝槽 2）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:d4a9f494",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue4:slot:2",
+                "tileId": "blue4",
+                "blueSlot": 2
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue4（蓝槽 2）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:d57e0409",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:purple3",
+                "tileId": "purple3",
+                "blueSlot": null
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 purple3"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:d9ba91f0",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue4:slot:1",
+                "tileId": "blue4",
+                "blueSlot": 1
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue4（蓝槽 1）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:e55cdd44",
+              "actorId": "player-white",
+              "stateVersion": 225,
+              "decisionVersion": 11,
+              "target": {
+                "choiceId": "tech:blue2:slot:4",
+                "tileId": "blue2",
+                "blueSlot": 4
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue2（蓝槽 4）"
+            }
+          ]
+        },
+        {
+          "step": 627,
+          "round": 4,
+          "turn": 22,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:d4a9f494",
+            "actorId": "player-white",
+            "stateVersion": 307,
+            "decisionVersion": 16,
+            "target": {
+              "choiceId": "tech:blue4:slot:2",
+              "tileId": "blue4",
+              "blueSlot": 2
+            },
+            "payload": {
+              "skipCost": false,
+              "skipRotate": false,
+              "skipBonus": false
+            },
+            "decision": null,
+            "summary": "研究 blue4（蓝槽 2）"
+          },
+          "white": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 1,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-61",
+                  "index": 10,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-56",
+                  "index": 6,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-57",
+                  "index": 7,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-67",
+                  "index": 11,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-68",
+                  "index": 12,
+                  "slotIndex": 2
+                },
+                {
+                  "id": "data-token-69",
+                  "index": 13,
+                  "slotIndex": 3
+                }
+              ]
+            },
+            "hand": [],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 6,
+              "energy": 4,
+              "handSize": 3,
+              "publicity": 0
+            },
+            "industryAlienLabPanels": {
+              "blue": true,
+              "pink": true,
+              "yellow": true
+            },
+            "industryBorrowedTechRound": 0,
+            "industryBorrowedTechTileId": null,
+            "industryBorrowedTechTurn": 0,
+            "industryFutureSpan": {
+              "card": null,
+              "playing": false,
+              "targetScore": 0
+            },
+            "industryHuanyuFreeMoveRound": 0,
+            "industryHuanyuFreeMoveTurn": 0,
+            "industryHuanyuFreeMovesLeft": 0,
+            "industryHuanyuMovedRocketIds": [],
+            "industryLastPlayedCardThisRound": null,
+            "industryPlayedCardRound": 0,
+            "industryPlayedCardThisRound": false,
+            "industryPlayedCardTurn": 0,
+            "industryRoundMarkRound": 0,
+            "industryRoundMarkTurn": 0,
+            "industrySentinelArmedRound": 0,
+            "industrySentinelArmedTurn": 0,
+            "industryStrategyPassiveSlots": {
+              "blue": false,
+              "red": false,
+              "yellow": false
+            },
+            "industryStrategyPlayInteractionPending": false,
+            "industryStrategyPlayInteractionRound": 0,
+            "industryStrategyPlayScanCode": null,
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "mainActionCompleted": false,
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "passCompletionPending": false,
+            "reservedCards": [
+              {
+                "cardEffectState": {
+                  "completedTaskIds": [],
+                  "consumedTriggerIds": [
+                    "b78-yellow-signal-data",
+                    "b78-blue-signal-data"
+                  ],
+                  "modelCardId": "b_78.webp"
+                },
+                "cardId": "b_78.webp",
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "faceUp": true,
+                "id": "card-26-pass-2-2",
+                "incomeCode": 2,
+                "price": 1,
+                "scanActionCode": 0,
+                "set": "basic"
+              }
+            ],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 2,
+              "credits": 0,
+              "energy": 0,
+              "handSize": 0,
+              "publicity": 8,
+              "score": 98
+            },
+            "scoreSources": {
+              "alienEffectScore": 8,
+              "alienTraceBlueScore": 12,
+              "alienTracePinkScore": 11,
+              "alienTraceYellowScore": 5,
+              "blueTechScore": 4,
+              "cardQuickScore": 2,
+              "initialScore": 6,
+              "landScore": 23,
+              "scanScore": 12,
+              "techBonusScore": 15
+            },
+            "techState": {
+              "blueBoardSlots": {
+                "blue3": 1
+              },
+              "disabledTiles": {},
+              "ownedTiles": {
+                "blue3": true,
+                "orange2": true,
+                "orange3": true,
+                "purple2": true,
+                "purple4": true
+              }
+            }
+          },
+          "tech": {
+            "stacks": {
+              "blue1": {
+                "bonusId": "bonus_1m",
+                "bonusIndex": 3,
+                "bonusQueue": [
+                  "bonus_3f",
+                  "bonus_1p",
+                  "bonus_1c",
+                  "bonus_1m"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-brown",
+                "remaining": 1,
+                "stackIndex": 1,
+                "techType": "blue",
+                "tileId": "blue1"
+              },
+              "blue2": {
+                "bonusId": "bonus_1p",
+                "bonusIndex": 1,
+                "bonusQueue": [
+                  "bonus_1c",
+                  "bonus_1p",
+                  "bonus_3f",
+                  "bonus_1m"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-blue",
+                "remaining": 3,
+                "stackIndex": 2,
+                "techType": "blue",
+                "tileId": "blue2"
+              },
+              "blue3": {
+                "bonusId": "bonus_1m",
+                "bonusIndex": 1,
+                "bonusQueue": [
+                  "bonus_1c",
+                  "bonus_1m",
+                  "bonus_1p",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-white",
+                "remaining": 3,
+                "stackIndex": 3,
+                "techType": "blue",
+                "tileId": "blue3"
+              },
+              "blue4": {
+                "bonusId": "bonus_1p",
+                "bonusIndex": 0,
+                "bonusQueue": [
+                  "bonus_1p",
+                  "bonus_1c",
+                  "bonus_3f",
+                  "bonus_1m"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": null,
+                "remaining": 4,
+                "stackIndex": 4,
+                "techType": "blue",
+                "tileId": "blue4"
+              },
+              "orange1": {
+                "bonusId": "bonus_1c",
+                "bonusIndex": 0,
+                "bonusQueue": [
+                  "bonus_1c",
+                  "bonus_1m",
+                  "bonus_1p",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": null,
+                "remaining": 4,
+                "stackIndex": 1,
+                "techType": "orange",
+                "tileId": "orange1"
+              },
+              "orange2": {
+                "bonusId": null,
+                "bonusIndex": 3,
+                "bonusQueue": [
+                  "bonus_1p",
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_3f"
+                ],
+                "depleted": true,
+                "firstTakeClaimedBy": "player-blue",
+                "remaining": 0,
+                "stackIndex": 2,
+                "techType": "orange",
+                "tileId": "orange2"
+              },
+              "orange3": {
+                "bonusId": null,
+                "bonusIndex": 3,
+                "bonusQueue": [
+                  "bonus_3f",
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_1p"
+                ],
+                "depleted": true,
+                "firstTakeClaimedBy": "player-white",
+                "remaining": 0,
+                "stackIndex": 3,
+                "techType": "orange",
+                "tileId": "orange3"
+              },
+              "orange4": {
+                "bonusId": "bonus_1m",
+                "bonusIndex": 1,
+                "bonusQueue": [
+                  "bonus_1p",
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-blue",
+                "remaining": 3,
+                "stackIndex": 4,
+                "techType": "orange",
+                "tileId": "orange4"
+              },
+              "purple1": {
+                "bonusId": "bonus_1m",
+                "bonusIndex": 0,
+                "bonusQueue": [
+                  "bonus_1m",
+                  "bonus_1p",
+                  "bonus_1c",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": null,
+                "remaining": 4,
+                "stackIndex": 1,
+                "techType": "purple",
+                "tileId": "purple1"
+              },
+              "purple2": {
+                "bonusId": "bonus_1p",
+                "bonusIndex": 3,
+                "bonusQueue": [
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_3f",
+                  "bonus_1p"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-white",
+                "remaining": 1,
+                "stackIndex": 2,
+                "techType": "purple",
+                "tileId": "purple2"
+              },
+              "purple3": {
+                "bonusId": "bonus_1c",
+                "bonusIndex": 0,
+                "bonusQueue": [
+                  "bonus_1c",
+                  "bonus_1p",
+                  "bonus_1m",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": null,
+                "remaining": 4,
+                "stackIndex": 3,
+                "techType": "purple",
+                "tileId": "purple3"
+              },
+              "purple4": {
+                "bonusId": null,
+                "bonusIndex": 3,
+                "bonusQueue": [
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_1p",
+                  "bonus_3f"
+                ],
+                "depleted": true,
+                "firstTakeClaimedBy": "player-blue",
+                "remaining": 0,
+                "stackIndex": 4,
+                "techType": "purple",
+                "tileId": "purple4"
+              }
+            }
+          },
+          "legal": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:03fdb62d",
+              "actorId": "player-white",
+              "stateVersion": 307,
+              "decisionVersion": 16,
+              "target": {
+                "choiceId": "tech:orange1",
+                "tileId": "orange1",
+                "blueSlot": null
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 orange1"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:0cbf059c",
+              "actorId": "player-white",
+              "stateVersion": 307,
+              "decisionVersion": 16,
+              "target": {
+                "choiceId": "tech:blue1:slot:2",
+                "tileId": "blue1",
+                "blueSlot": 2
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue1（蓝槽 2）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:2b1149ac",
+              "actorId": "player-white",
+              "stateVersion": 307,
+              "decisionVersion": 16,
+              "target": {
+                "choiceId": "tech:blue2:slot:3",
+                "tileId": "blue2",
+                "blueSlot": 3
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue2（蓝槽 3）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:36a6b668",
+              "actorId": "player-white",
+              "stateVersion": 307,
+              "decisionVersion": 16,
+              "target": {
+                "choiceId": "tech:blue1:slot:4",
+                "tileId": "blue1",
+                "blueSlot": 4
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue1（蓝槽 4）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:405d1e5d",
+              "actorId": "player-white",
+              "stateVersion": 307,
+              "decisionVersion": 16,
+              "target": {
+                "choiceId": "tech:purple1",
+                "tileId": "purple1",
+                "blueSlot": null
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 purple1"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:7b13c554",
+              "actorId": "player-white",
+              "stateVersion": 307,
+              "decisionVersion": 16,
+              "target": {
+                "choiceId": "tech:blue4:slot:4",
+                "tileId": "blue4",
+                "blueSlot": 4
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue4（蓝槽 4）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:89054c28",
+              "actorId": "player-white",
+              "stateVersion": 307,
+              "decisionVersion": 16,
+              "target": {
+                "choiceId": "tech:blue4:slot:3",
+                "tileId": "blue4",
+                "blueSlot": 3
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue4（蓝槽 3）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:9b661234",
+              "actorId": "player-white",
+              "stateVersion": 307,
+              "decisionVersion": 16,
+              "target": {
+                "choiceId": "tech:blue2:slot:2",
+                "tileId": "blue2",
+                "blueSlot": 2
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue2（蓝槽 2）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:a16882e3",
+              "actorId": "player-white",
+              "stateVersion": 307,
+              "decisionVersion": 16,
+              "target": {
+                "choiceId": "tech:orange4",
+                "tileId": "orange4",
+                "blueSlot": null
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 orange4"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:bdea2e94",
+              "actorId": "player-white",
+              "stateVersion": 307,
+              "decisionVersion": 16,
+              "target": {
+                "choiceId": "tech:blue1:slot:3",
+                "tileId": "blue1",
+                "blueSlot": 3
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue1（蓝槽 3）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:d4a9f494",
+              "actorId": "player-white",
+              "stateVersion": 307,
+              "decisionVersion": 16,
+              "target": {
+                "choiceId": "tech:blue4:slot:2",
+                "tileId": "blue4",
+                "blueSlot": 2
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue4（蓝槽 2）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:d57e0409",
+              "actorId": "player-white",
+              "stateVersion": 307,
+              "decisionVersion": 16,
+              "target": {
+                "choiceId": "tech:purple3",
+                "tileId": "purple3",
+                "blueSlot": null
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 purple3"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:e55cdd44",
+              "actorId": "player-white",
+              "stateVersion": 307,
+              "decisionVersion": 16,
+              "target": {
+                "choiceId": "tech:blue2:slot:4",
+                "tileId": "blue2",
+                "blueSlot": 4
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue2（蓝槽 4）"
+            }
+          ]
+        }
+      ],
+      "finalMatch": true
+    },
+    {
+      "key": "cb456d23.04648dd1",
+      "tech": [
+        {
+          "step": 87,
+          "round": 1,
+          "turn": 9,
+          "actor": "player-white",
+          "action": "研究 purple2",
+          "delta": 2,
+          "total": 2,
+          "target": {
+            "choiceId": "tech:purple2",
+            "tileId": "purple2",
+            "blueSlot": null
+          }
+        },
+        {
+          "step": 98,
+          "round": 1,
+          "turn": 13,
+          "actor": "player-white",
+          "action": "研究 orange3",
+          "delta": 5,
+          "total": 7,
+          "target": {
+            "choiceId": "tech:orange3",
+            "tileId": "orange3",
+            "blueSlot": null
+          }
+        },
+        {
+          "step": 369,
+          "round": 3,
+          "turn": 11,
+          "actor": "player-white",
+          "action": "研究 orange2",
+          "delta": 0,
+          "total": 7,
+          "target": {
+            "choiceId": "tech:orange2",
+            "tileId": "orange2",
+            "blueSlot": null
+          }
+        },
+        {
+          "step": 574,
+          "round": 4,
+          "turn": 20,
+          "actor": "player-white",
+          "action": "研究 blue2（蓝槽 1）",
+          "delta": 0,
+          "total": 7,
+          "target": {
+            "choiceId": "tech:blue2:slot:1",
+            "tileId": "blue2",
+            "blueSlot": 1
+          }
+        }
+      ],
+      "marks": [
+        {
+          "step": 146,
+          "round": 1,
+          "turn": 21,
+          "actor": "player-brown",
+          "action": "标记 D",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": []
+            },
+            "b": {
+              "id": "b",
+              "marks": []
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 180,
+          "round": 1,
+          "turn": 24,
+          "actor": "player-green",
+          "action": "标记 A",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": []
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 260,
+          "round": 2,
+          "turn": 15,
+          "actor": "player-blue",
+          "action": "标记 A",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": []
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 277,
+          "round": 2,
+          "turn": 17,
+          "actor": "player-white",
+          "action": "标记 A",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": []
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 358,
+          "round": 3,
+          "turn": 11,
+          "actor": "player-brown",
+          "action": "标记 B",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-5",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 50,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 420,
+          "round": 3,
+          "turn": 17,
+          "actor": "player-green",
+          "action": "标记 D",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-5",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 50,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-6",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 503,
+          "round": 4,
+          "turn": 8,
+          "actor": "player-green",
+          "action": "标记 B",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-5",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 50,
+                  "tileId": "b"
+                },
+                {
+                  "id": "final-mark-7",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 70,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-6",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 525,
+          "round": 4,
+          "turn": 11,
+          "actor": "player-white",
+          "action": "标记 B",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-5",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 50,
+                  "tileId": "b"
+                },
+                {
+                  "id": "final-mark-7",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 70,
+                  "tileId": "b"
+                },
+                {
+                  "id": "final-mark-8",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 50,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": []
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-6",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "step": 609,
+          "round": 4,
+          "turn": 23,
+          "actor": "player-white",
+          "action": "标记 C",
+          "tiles": {
+            "a": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "b": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-5",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 50,
+                  "tileId": "b"
+                },
+                {
+                  "id": "final-mark-7",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 70,
+                  "tileId": "b"
+                },
+                {
+                  "id": "final-mark-8",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 50,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "c": {
+              "id": "c",
+              "marks": [
+                {
+                  "id": "final-mark-9",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 70,
+                  "tileId": "c"
+                }
+              ]
+            },
+            "d": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                },
+                {
+                  "id": "final-mark-6",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "d"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "thresholds": [
+        {
+          "step": 268,
+          "round": 2,
+          "turn": 16,
+          "actor": "player-white",
+          "action": "扫描 织女一",
+          "threshold": 25,
+          "before": 24,
+          "after": 28
+        },
+        {
+          "step": 519,
+          "round": 4,
+          "turn": 10,
+          "actor": "player-white",
+          "action": "结算 b_138.webp",
+          "threshold": 50,
+          "before": 43,
+          "after": 51
+        },
+        {
+          "step": 599,
+          "round": 4,
+          "turn": 22,
+          "actor": "player-white",
+          "action": "chong_1.webp：弃牌角标",
+          "threshold": 70,
+          "before": 69,
+          "after": 70
+        }
+      ],
+      "researchRoots": [
+        {
+          "step": 574,
+          "round": 4,
+          "turn": 20,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:3fcecb14",
+            "actorId": "player-white",
+            "stateVersion": 295,
+            "decisionVersion": 14,
+            "target": {
+              "choiceId": "tech:blue2:slot:1",
+              "tileId": "blue2",
+              "blueSlot": 1
+            },
+            "payload": {
+              "skipCost": false,
+              "skipRotate": false,
+              "skipBonus": false
+            },
+            "decision": null,
+            "summary": "研究 blue2（蓝槽 1）"
+          },
+          "white": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 1,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [],
+              "poolTokens": [
+                {
+                  "id": "data-token-55",
+                  "index": 19,
+                  "slotIndex": 3
+                },
+                {
+                  "id": "data-token-56",
+                  "index": 20,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "dlc_15.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-66-0",
+                "incomeCode": 0,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              },
+              {
+                "cardId": "b_137.webp",
+                "cardTypeCode": 0,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-78-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "basic"
+              },
+              {
+                "cardId": "b_140.webp",
+                "cardTypeCode": 1,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-77-0",
+                "incomeCode": 0,
+                "price": 1,
+                "scanActionCode": 2,
+                "set": "basic"
+              },
+              {
+                "alienCardId": 8,
+                "cardId": "chong_8.webp",
+                "cardTypeCode": 2,
+                "chongCard": true,
+                "chongTask": {
+                  "dataCount": 3,
+                  "destinationPlanetId": "earth",
+                  "fossilRewardRepeat": 1,
+                  "gain": {
+                    "score": 3
+                  },
+                  "kind": "transport"
+                },
+                "discardActionCode": 3,
+                "faceUp": true,
+                "id": "alien-chong-8-27",
+                "incomeCode": 1,
+                "price": 2,
+                "scanActionCode": 3,
+                "set": "alien:虫"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 5,
+              "energy": 4,
+              "handSize": 3,
+              "publicity": 0
+            },
+            "industryAlienLabPanels": {
+              "blue": true,
+              "pink": true,
+              "yellow": true
+            },
+            "industryBorrowedTechRound": 0,
+            "industryBorrowedTechTileId": null,
+            "industryBorrowedTechTurn": 0,
+            "industryFutureSpan": {
+              "card": null,
+              "playing": false,
+              "targetScore": 0
+            },
+            "industryHuanyuFreeMoveRound": 0,
+            "industryHuanyuFreeMoveTurn": 0,
+            "industryHuanyuFreeMovesLeft": 0,
+            "industryHuanyuMovedRocketIds": [],
+            "industryLastPlayedCardThisRound": null,
+            "industryPlayedCardRound": 0,
+            "industryPlayedCardThisRound": false,
+            "industryPlayedCardTurn": 0,
+            "industryRoundMarkRound": 4,
+            "industryRoundMarkTurn": 17,
+            "industrySentinelArmedRound": 0,
+            "industrySentinelArmedTurn": 0,
+            "industryStrategyPassiveSlots": {
+              "blue": false,
+              "red": false,
+              "yellow": false
+            },
+            "industryStrategyPlayInteractionPending": false,
+            "industryStrategyPlayInteractionRound": 0,
+            "industryStrategyPlayScanCode": null,
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "mainActionCompleted": false,
+            "name": "白色玩家",
+            "orbitCount": 3,
+            "passCompletionPending": false,
+            "reservedCards": [
+              {
+                "cardEffectState": {
+                  "completedTaskIds": [],
+                  "consumedTriggerIds": [],
+                  "modelCardId": "dlc_9.png"
+                },
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "resources": {
+              "additionalPublicScan": 1,
+              "aomomoFossils": 0,
+              "availableData": 2,
+              "credits": 0,
+              "energy": 1,
+              "handSize": 4,
+              "publicity": 8,
+              "score": 62
+            },
+            "scoreSources": {
+              "alienEffectScore": 6,
+              "alienTraceBlueScore": 5,
+              "alienTracePinkScore": 1,
+              "alienTraceYellowScore": 8,
+              "initialScore": 6,
+              "landScore": 11,
+              "orbitScore": 12,
+              "scanScore": 6,
+              "techBonusScore": 7
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {
+                "orange2": true,
+                "orange3": true,
+                "purple2": true
+              }
+            }
+          },
+          "tech": {
+            "stacks": {
+              "blue1": {
+                "bonusId": "bonus_1p",
+                "bonusIndex": 1,
+                "bonusQueue": [
+                  "bonus_3f",
+                  "bonus_1p",
+                  "bonus_1c",
+                  "bonus_1m"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-brown",
+                "remaining": 3,
+                "stackIndex": 1,
+                "techType": "blue",
+                "tileId": "blue1"
+              },
+              "blue2": {
+                "bonusId": "bonus_1p",
+                "bonusIndex": 1,
+                "bonusQueue": [
+                  "bonus_1c",
+                  "bonus_1p",
+                  "bonus_3f",
+                  "bonus_1m"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-blue",
+                "remaining": 3,
+                "stackIndex": 2,
+                "techType": "blue",
+                "tileId": "blue2"
+              },
+              "blue3": {
+                "bonusId": "bonus_1m",
+                "bonusIndex": 1,
+                "bonusQueue": [
+                  "bonus_1c",
+                  "bonus_1m",
+                  "bonus_1p",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-brown",
+                "remaining": 3,
+                "stackIndex": 3,
+                "techType": "blue",
+                "tileId": "blue3"
+              },
+              "blue4": {
+                "bonusId": "bonus_1p",
+                "bonusIndex": 0,
+                "bonusQueue": [
+                  "bonus_1p",
+                  "bonus_1c",
+                  "bonus_3f",
+                  "bonus_1m"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": null,
+                "remaining": 4,
+                "stackIndex": 4,
+                "techType": "blue",
+                "tileId": "blue4"
+              },
+              "orange1": {
+                "bonusId": "bonus_1m",
+                "bonusIndex": 1,
+                "bonusQueue": [
+                  "bonus_1c",
+                  "bonus_1m",
+                  "bonus_1p",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-brown",
+                "remaining": 3,
+                "stackIndex": 1,
+                "techType": "orange",
+                "tileId": "orange1"
+              },
+              "orange2": {
+                "bonusId": "bonus_3f",
+                "bonusIndex": 3,
+                "bonusQueue": [
+                  "bonus_1p",
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-brown",
+                "remaining": 1,
+                "stackIndex": 2,
+                "techType": "orange",
+                "tileId": "orange2"
+              },
+              "orange3": {
+                "bonusId": "bonus_1c",
+                "bonusIndex": 2,
+                "bonusQueue": [
+                  "bonus_3f",
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_1p"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-white",
+                "remaining": 2,
+                "stackIndex": 3,
+                "techType": "orange",
+                "tileId": "orange3"
+              },
+              "orange4": {
+                "bonusId": "bonus_1m",
+                "bonusIndex": 1,
+                "bonusQueue": [
+                  "bonus_1p",
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-green",
+                "remaining": 3,
+                "stackIndex": 4,
+                "techType": "orange",
+                "tileId": "orange4"
+              },
+              "purple1": {
+                "bonusId": "bonus_1m",
+                "bonusIndex": 0,
+                "bonusQueue": [
+                  "bonus_1m",
+                  "bonus_1p",
+                  "bonus_1c",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": null,
+                "remaining": 4,
+                "stackIndex": 1,
+                "techType": "purple",
+                "tileId": "purple1"
+              },
+              "purple2": {
+                "bonusId": null,
+                "bonusIndex": 3,
+                "bonusQueue": [
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_3f",
+                  "bonus_1p"
+                ],
+                "depleted": true,
+                "firstTakeClaimedBy": "player-white",
+                "remaining": 0,
+                "stackIndex": 2,
+                "techType": "purple",
+                "tileId": "purple2"
+              },
+              "purple3": {
+                "bonusId": "bonus_1c",
+                "bonusIndex": 0,
+                "bonusQueue": [
+                  "bonus_1c",
+                  "bonus_1p",
+                  "bonus_1m",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": null,
+                "remaining": 4,
+                "stackIndex": 3,
+                "techType": "purple",
+                "tileId": "purple3"
+              },
+              "purple4": {
+                "bonusId": "bonus_3f",
+                "bonusIndex": 3,
+                "bonusQueue": [
+                  "bonus_1m",
+                  "bonus_1c",
+                  "bonus_1p",
+                  "bonus_3f"
+                ],
+                "depleted": false,
+                "firstTakeClaimedBy": "player-blue",
+                "remaining": 1,
+                "stackIndex": 4,
+                "techType": "purple",
+                "tileId": "purple4"
+              }
+            }
+          },
+          "legal": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:03fdb62d",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:orange1",
+                "tileId": "orange1",
+                "blueSlot": null
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 orange1"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:0cbf059c",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue1:slot:2",
+                "tileId": "blue1",
+                "blueSlot": 2
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue1（蓝槽 2）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:2b1149ac",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue2:slot:3",
+                "tileId": "blue2",
+                "blueSlot": 3
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue2（蓝槽 3）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:2fa94938",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue3:slot:4",
+                "tileId": "blue3",
+                "blueSlot": 4
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue3（蓝槽 4）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:36a6b668",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue1:slot:4",
+                "tileId": "blue1",
+                "blueSlot": 4
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue1（蓝槽 4）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:3fcecb14",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue2:slot:1",
+                "tileId": "blue2",
+                "blueSlot": 1
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue2（蓝槽 1）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:405d1e5d",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:purple1",
+                "tileId": "purple1",
+                "blueSlot": null
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 purple1"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:509236e8",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue1:slot:1",
+                "tileId": "blue1",
+                "blueSlot": 1
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue1（蓝槽 1）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:7b13c554",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue4:slot:4",
+                "tileId": "blue4",
+                "blueSlot": 4
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue4（蓝槽 4）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:89054c28",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue4:slot:3",
+                "tileId": "blue4",
+                "blueSlot": 3
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue4（蓝槽 3）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:9b661234",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue2:slot:2",
+                "tileId": "blue2",
+                "blueSlot": 2
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue2（蓝槽 2）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:a16882e3",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:orange4",
+                "tileId": "orange4",
+                "blueSlot": null
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 orange4"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:ad894514",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue3:slot:1",
+                "tileId": "blue3",
+                "blueSlot": 1
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue3（蓝槽 1）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:bdea2e94",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue1:slot:3",
+                "tileId": "blue1",
+                "blueSlot": 3
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue1（蓝槽 3）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:c737d1d0",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue3:slot:3",
+                "tileId": "blue3",
+                "blueSlot": 3
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue3（蓝槽 3）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:c86683cc",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue3:slot:2",
+                "tileId": "blue3",
+                "blueSlot": 2
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue3（蓝槽 2）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:d0b75b83",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:purple4",
+                "tileId": "purple4",
+                "blueSlot": null
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 purple4"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:d4a9f494",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue4:slot:2",
+                "tileId": "blue4",
+                "blueSlot": 2
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue4（蓝槽 2）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:d57e0409",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:purple3",
+                "tileId": "purple3",
+                "blueSlot": null
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 purple3"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:d9ba91f0",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue4:slot:1",
+                "tileId": "blue4",
+                "blueSlot": 1
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue4（蓝槽 1）"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:e55cdd44",
+              "actorId": "player-white",
+              "stateVersion": 295,
+              "decisionVersion": 14,
+              "target": {
+                "choiceId": "tech:blue2:slot:4",
+                "tileId": "blue2",
+                "blueSlot": 4
+              },
+              "payload": {
+                "skipCost": false,
+                "skipRotate": false,
+                "skipBonus": false
+              },
+              "decision": null,
+              "summary": "研究 blue2（蓝槽 4）"
+            }
+          ]
+        }
+      ],
+      "finalMatch": true
+    }
+  ]
+}
