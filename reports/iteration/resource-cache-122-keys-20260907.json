@@ -1,0 +1,735 @@
+{
+  "scope": "实测122缓存写入键的纯函数控制变量对照；动作编号从正式重放前122步合法集采集，不代表其他席位实际写过这些键",
+  "bySeat": {
+    "player-white": {
+      "energy-for-card": "quick_trade:122c43fc",
+      "cards-for-credit": "quick_trade:12411a2c",
+      "cards-for-pick-card": "quick_trade:37140fcf",
+      "credits-for-card": "quick_trade:49c75492",
+      "publicity-for-card": "quick_trade:71814d67",
+      "cards-for-energy": "quick_trade:a39c1a77",
+      "energy-for-move": "quick_trade:be9dd0cd",
+      "energy-for-credit": "quick_trade:df811f99",
+      "credits-for-energy": "quick_trade:f385e2ac"
+    },
+    "player-green": {
+      "cards-for-energy": "quick_trade:0037d2c5",
+      "energy-for-move": "quick_trade:16a0f2d7",
+      "cards-for-pick-card": "quick_trade:38002215",
+      "energy-for-credit": "quick_trade:5efaa113",
+      "publicity-for-card": "quick_trade:76cce73d",
+      "credits-for-card": "quick_trade:90440450",
+      "cards-for-credit": "quick_trade:dafd4f4a",
+      "credits-for-energy": "quick_trade:ee5652be",
+      "energy-for-card": "quick_trade:fcb81f7a"
+    },
+    "player-blue": {
+      "credits-for-card": "quick_trade:0989fdbb",
+      "energy-for-credit": "quick_trade:7c6bb482",
+      "energy-for-move": "quick_trade:86448258",
+      "energy-for-card": "quick_trade:8dc6d95d",
+      "cards-for-energy": "quick_trade:c6858538",
+      "cards-for-credit": "quick_trade:cd9ee5f5",
+      "publicity-for-card": "quick_trade:d389daee",
+      "credits-for-energy": "quick_trade:e49b3d11",
+      "cards-for-pick-card": "quick_trade:e58a3c02"
+    },
+    "player-brown": {
+      "publicity-for-card": "quick_trade:11754f92",
+      "credits-for-energy": "quick_trade:5ad269c5",
+      "energy-for-card": "quick_trade:678cc831",
+      "cards-for-energy": "quick_trade:9256f5c4",
+      "cards-for-credit": "quick_trade:952695f9",
+      "energy-for-credit": "quick_trade:adfe3e7e",
+      "credits-for-card": "quick_trade:aedbd0df",
+      "cards-for-pick-card": "quick_trade:c3f1770e",
+      "energy-for-move": "quick_trade:c49d725c"
+    }
+  },
+  "rows": [
+    {
+      "key": "3:3:0:1:1:3:3:cards-for-credit:cards-for-energy:cards-for-pick-card:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 1,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 3
+      },
+      "target": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "2:5:0:1:1:3:3:cards-for-credit:cards-for-energy:cards-for-pick-card:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 1,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 3
+      },
+      "target": {
+        "credits": 2,
+        "energy": 5,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:0:1:1:3:3:cards-for-credit:cards-for-energy:cards-for-pick-card:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 1,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 3
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [
+          "cards-for-energy"
+        ],
+        "player-green": [
+          "cards-for-energy"
+        ],
+        "player-blue": [
+          "cards-for-energy"
+        ],
+        "player-brown": [
+          "cards-for-energy"
+        ]
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:1:1:1:3:3:cards-for-credit:cards-for-energy:cards-for-pick-card:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 1,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 3
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 1
+      },
+      "results": {
+        "player-white": [
+          "cards-for-energy"
+        ],
+        "player-green": [
+          "cards-for-energy"
+        ],
+        "player-blue": [
+          "cards-for-energy"
+        ],
+        "player-brown": [
+          "cards-for-energy"
+        ]
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "3:3:0:1:1:3:3:cards-for-energy",
+      "initial": {
+        "credits": 1,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 3
+      },
+      "target": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "2:5:0:1:1:3:3:cards-for-energy",
+      "initial": {
+        "credits": 1,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 3
+      },
+      "target": {
+        "credits": 2,
+        "energy": 5,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:0:1:1:3:3:cards-for-energy",
+      "initial": {
+        "credits": 1,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 3
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [
+          "cards-for-energy"
+        ],
+        "player-green": [
+          "cards-for-energy"
+        ],
+        "player-blue": [
+          "cards-for-energy"
+        ],
+        "player-brown": [
+          "cards-for-energy"
+        ]
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:1:1:1:3:3:cards-for-energy",
+      "initial": {
+        "credits": 1,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 3
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 1
+      },
+      "results": {
+        "player-white": [
+          "cards-for-energy"
+        ],
+        "player-green": [
+          "cards-for-energy"
+        ],
+        "player-blue": [
+          "cards-for-energy"
+        ],
+        "player-brown": [
+          "cards-for-energy"
+        ]
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "3:3:0:1:2:3:2:cards-for-credit:cards-for-energy:cards-for-pick-card:energy-for-card:energy-for-credit:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 1,
+        "energy": 2,
+        "publicity": 3,
+        "handSize": 2
+      },
+      "target": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "2:5:0:1:2:3:2:cards-for-credit:cards-for-energy:cards-for-pick-card:energy-for-card:energy-for-credit:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 1,
+        "energy": 2,
+        "publicity": 3,
+        "handSize": 2
+      },
+      "target": {
+        "credits": 2,
+        "energy": 5,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:0:0:0:3:1:publicity-for-card",
+      "initial": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 3,
+        "handSize": 1
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:1:0:0:4:1:publicity-for-card",
+      "initial": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 4,
+        "handSize": 1
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 1
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "3:3:0:1:1:3:2:cards-for-credit:cards-for-energy:cards-for-pick-card:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 1,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 2
+      },
+      "target": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:0:1:1:3:2:cards-for-credit:cards-for-energy:cards-for-pick-card:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 1,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 2
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [
+          "cards-for-energy"
+        ],
+        "player-green": [
+          "cards-for-energy"
+        ],
+        "player-blue": [
+          "cards-for-energy"
+        ],
+        "player-brown": [
+          "cards-for-energy"
+        ]
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:1:1:1:3:2:cards-for-credit:cards-for-energy:cards-for-pick-card:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 1,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 2
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 1
+      },
+      "results": {
+        "player-white": [
+          "cards-for-energy"
+        ],
+        "player-green": [
+          "publicity-for-card"
+        ],
+        "player-blue": [
+          "publicity-for-card"
+        ],
+        "player-brown": [
+          "cards-for-energy"
+        ]
+      },
+      "conflictingSeats": [
+        "player-green",
+        "player-blue"
+      ]
+    },
+    {
+      "key": "3:3:0:0:1:3:2:cards-for-credit:cards-for-energy:cards-for-pick-card:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 0,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 2
+      },
+      "target": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:0:0:1:3:2:cards-for-credit:cards-for-energy:cards-for-pick-card:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 0,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 2
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:1:0:1:3:2:cards-for-credit:cards-for-energy:cards-for-pick-card:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 0,
+        "energy": 1,
+        "publicity": 3,
+        "handSize": 2
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 1
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "3:3:0:1:2:3:1:energy-for-card:energy-for-credit:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 1,
+        "energy": 2,
+        "publicity": 3,
+        "handSize": 1
+      },
+      "target": {
+        "credits": 3,
+        "energy": 3,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:0:0:2:3:1:energy-for-card:energy-for-credit:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 0,
+        "energy": 2,
+        "publicity": 3,
+        "handSize": 1
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [
+          "publicity-for-card"
+        ],
+        "player-green": [
+          "publicity-for-card"
+        ],
+        "player-blue": [
+          "publicity-for-card"
+        ],
+        "player-brown": [
+          "publicity-for-card"
+        ]
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:1:0:2:3:1:energy-for-card:energy-for-credit:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 0,
+        "energy": 2,
+        "publicity": 3,
+        "handSize": 1
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 1
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:0:0:0:3:0:publicity-for-card",
+      "initial": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 3,
+        "handSize": 0
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:1:0:0:4:0:publicity-for-card",
+      "initial": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 4,
+        "handSize": 0
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 1
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:1:1:2:3:0:energy-for-card:energy-for-credit:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 1,
+        "energy": 2,
+        "publicity": 3,
+        "handSize": 0
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 1
+      },
+      "results": {
+        "player-white": [
+          "publicity-for-card"
+        ],
+        "player-green": [
+          "publicity-for-card"
+        ],
+        "player-blue": [
+          "publicity-for-card"
+        ],
+        "player-brown": [
+          "publicity-for-card"
+        ]
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:0:0:0:3:2:cards-for-credit:cards-for-energy:cards-for-pick-card:publicity-for-card",
+      "initial": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 3,
+        "handSize": 2
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:1:0:0:4:2:cards-for-credit:cards-for-energy:cards-for-pick-card:publicity-for-card",
+      "initial": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 4,
+        "handSize": 2
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 1
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:0:0:2:3:0:energy-for-card:energy-for-credit:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 0,
+        "energy": 2,
+        "publicity": 3,
+        "handSize": 0
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:1:0:2:3:0:energy-for-card:energy-for-credit:energy-for-move:publicity-for-card",
+      "initial": {
+        "credits": 0,
+        "energy": 2,
+        "publicity": 3,
+        "handSize": 0
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 1
+      },
+      "results": {
+        "player-white": [],
+        "player-green": [],
+        "player-blue": [],
+        "player-brown": []
+      },
+      "conflictingSeats": []
+    },
+    {
+      "key": "1:2:0:0:2:0:2:cards-for-credit:cards-for-energy:cards-for-pick-card:energy-for-card:energy-for-credit:energy-for-move",
+      "initial": {
+        "credits": 0,
+        "energy": 2,
+        "publicity": 0,
+        "handSize": 2
+      },
+      "target": {
+        "credits": 1,
+        "energy": 2,
+        "handSize": 0
+      },
+      "results": {
+        "player-white": [
+          "cards-for-credit"
+        ],
+        "player-green": [
+          "cards-for-credit"
+        ],
+        "player-blue": [
+          "cards-for-credit"
+        ],
+        "player-brown": [
+          "cards-for-credit"
+        ]
+      },
+      "conflictingSeats": []
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "scope": "只读核验真实蓝50写入→棕122命中→原收入计划重现；不外推全部终局降分",
+  "passed": true,
+  "previousWriter": {
+    "step": 50,
+    "seat": "player-blue",
+    "trades": [
+      "publicity-for-card"
+    ]
+  },
+  "previousConsumer": {
+    "step": 122,
+    "nodes": 96,
+    "inputs": 144,
+    "incomeAction": "choose_card:0b4d20ab"
+  },
+  "fixedConsumer": {
+    "step": 122,
+    "nodes": 90,
+    "inputs": 132,
+    "incomeAction": "choose_card:9fcccf93",
+    "trades": [
+      "cards-for-energy"
+    ]
+  },
+  "oldPlanMatchesHistoricalInputs": true,
+  "fixedWarmPlanMatchesColdAndFullCapture": true
+}
