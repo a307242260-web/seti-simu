@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-07T16:07:45.649Z",
+  "builtAt": "2026-09-07T17:11:49.770Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "89d8364b",
+  "headCommit": "3dc66281",
   "currentBaseline": "reorganization-resources-20260907",
   "worktreeDirty": true,
   "bestOf": {
@@ -116,6 +116,539 @@
     ]
   },
   "versions": [
+    {
+      "id": "aomomo-reward-ordinal-20260908",
+      "name": "奥陌陌奖励次数修复（规则通过，整体性能未通过）",
+      "date": "2026-09-08",
+      "baseline": "reward-plan-dependency-20260907",
+      "head": "7a33ec07",
+      "commits": [
+        {
+          "hash": "e91895cc",
+          "date": "2026-09-08",
+          "subject": "登记奖励依赖完整局未通过结果与棕方下降调查起点"
+        },
+        {
+          "hash": "51506571",
+          "date": "2026-09-08",
+          "subject": "核对棕方扫描连带收益、虫牌同分改选与终局标记差异"
+        },
+        {
+          "hash": "b38186cc",
+          "date": "2026-09-08",
+          "subject": "定位棕方第三轮路线变化及等额登陆奖励引发的满额重搜"
+        },
+        {
+          "hash": "4861eb18",
+          "date": "2026-09-08",
+          "subject": "审计路线奖励分段及标记依赖，复现奥陌陌序号口径不一致"
+        },
+        {
+          "hash": "3da3ccdd",
+          "date": "2026-09-08",
+          "subject": "通过正式能力复现奥陌陌首次奖励被实体序号遗漏"
+        },
+        {
+          "hash": "5a61fe32",
+          "date": "2026-09-08",
+          "subject": "修复奥陌陌环绕登陆奖励误用全局实体编号"
+        },
+        {
+          "hash": "7a33ec07",
+          "date": "2026-09-08",
+          "subject": "核验奥陌陌修复后固定盘面单决策计划和节点不变"
+        }
+      ],
+      "summary": "奥陌陌环绕和登陆按对应面板标记次数发奖，保留全局实体编号及强制首次登陆奖励规则",
+      "diffStat": "39 files changed, 280872 insertions(+), 11 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/audit-route-marker-semantics-20260908.js",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/check-brown-land-reuse-20260908.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/diagnose-brown-round3-root-20260908.js",
+          "insertions": 58,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/diagnose-brown-scan-plan-20260908.js",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/prove-aomomo-ability-sequence-20260908.js",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/prove-brown-land-marker-redundancy-20260908.js",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-brown-reward-decline-20260908.js",
+          "insertions": 43,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-data-fusion-full-20260907.js",
+          "insertions": 10,
+          "deletions": 5
+        },
+        {
+          "file": "adhoc/trace-brown-reward-decline-20260908.js",
+          "insertions": 58,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-aomomo-reward-ordinal-20260908.js",
+          "insertions": 101,
+          "deletions": 0
+        },
+        {
+          "file": "assets/aliens/奥陌陌/implementation.md",
+          "insertions": 7,
+          "deletions": 1
+        },
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/abilities/planet.js",
+          "insertions": 8,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/actions/actions.test.js",
+          "insertions": 66,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/aomomo-ability-sequence-proof-20260908.json",
+          "insertions": 292,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/aomomo-ability-sequence-review-20260908.md",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/aomomo-reward-ordinal-design-20260908.md",
+          "insertions": 55,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/aomomo-reward-ordinal-verification-20260908.json",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/aomomo-reward-ordinal-verification-v2-20260908.json",
+          "insertions": 274,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-land-marker-redundancy-20260908.json",
+          "insertions": 110,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-land-reuse-20260908.json",
+          "insertions": 4092,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-reward-decline-review-20260908.md",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-reward-decline-summary-20260908.json",
+          "insertions": 502,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-reward-decline-trace-20260908.json",
+          "insertions": 17451,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-round3-root-aomomo-ordinal-20260908.json",
+          "insertions": 61685,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-round3-root-baseline-20260908.json",
+          "insertions": 35924,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-round3-root-current-20260908.json",
+          "insertions": 61685,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-round3-route-review-20260908.md",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-scan-plan-baseline-20260908.json",
+          "insertions": 16025,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-scan-plan-current-20260908.json",
+          "insertions": 14816,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/reward-plan-dependency-20260907/5d9ead50.0b9837be.full.action-log.html",
+          "insertions": 2171,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/reward-plan-dependency-design-20260907.md",
+          "insertions": 4,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/reward-plan-full-review-20260907.json",
+          "insertions": 1237,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/reward-plan-full-review-20260907.md",
+          "insertions": 76,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/route-marker-semantics-audit-20260908.json",
+          "insertions": 1687,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/route-marker-semantics-review-20260908.md",
+          "insertions": 65,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/5d9ead50.0b9837be.full.json",
+          "insertions": 16984,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-reward-plan-dependency-20260907-0b9837be-full-v314.json",
+          "insertions": 45005,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "f6c9aabe.7a33ec07.full.json",
+          "recordPath": "reports/research/f6c9aabe.7a33ec07.full.json",
+          "mode": "full",
+          "steps": 640,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 567380,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "7a33ec07",
+          "createdAt": "2026-09-07T17:08:56.733Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "640步，终局85/136/82/104，均101.75；与0b9837be逐步动作、after、完整终局状态及非耗时搜索统计一致。567380ms，142337节点/188152输入，实际规则失败0，27次4096战略截断及6次1节点控制截断。本项规则修复通过；整体低于108.5，性能Goal未通过，候选生产未合dev。详见aomomo-reward-ordinal-full-review-20260908.md。运行中仅修改只读汇总脚本。",
+          "scores": {
+            "player-blue": 85,
+            "player-green": 136,
+            "player-brown": 82,
+            "player-white": 104
+          },
+          "avgScore": 101.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 85,
+              "base": 60,
+              "tile": 23,
+              "card": 2,
+              "tileScoresById": {
+                "a": 15,
+                "b": 0,
+                "c": 8,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 2,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 6,
+                "orbitScore": 21,
+                "scanScore": 2,
+                "taskCardScore": 6,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 136,
+              "base": 83,
+              "tile": 49,
+              "card": 4,
+              "tileScoresById": {
+                "a": 33,
+                "b": 6,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 18,
+                "orbitScore": 15,
+                "scanScore": 9,
+                "taskCardScore": 2,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 82,
+              "base": 59,
+              "tile": 18,
+              "card": 5,
+              "tileScoresById": {
+                "a": 10,
+                "b": 8,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "chong_2.webp",
+                  "rule": {
+                    "kind": "chongTraceCount",
+                    "scorePer": 1
+                  },
+                  "score": 5
+                },
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 0
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 2,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 4,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 8,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 5,
+                "orbitScore": 0,
+                "scanScore": 12,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            },
+            "player-white": {
+              "total": 104,
+              "base": 66,
+              "tile": 38,
+              "card": 0,
+              "tileScoresById": {
+                "a": 24,
+                "b": 0,
+                "c": 0,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 24,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 9,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 15,
+                "orbitScore": 0,
+                "scanScore": 7,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-aomomo-reward-ordinal-20260908-7a33ec07-full-v314.json",
+          "reportPath": "reports/iteration/aomomo-reward-ordinal-20260908/f6c9aabe.7a33ec07.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "f6c9aabe.7a33ec07.full",
+            "path": "reports/iteration/aomomo-reward-ordinal-20260908/f6c9aabe.7a33ec07.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "reward-plan-dependency-20260907",
       "name": "奖励依赖提前检查（效果未通过，下降待归因）",

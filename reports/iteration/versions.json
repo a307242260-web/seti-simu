@@ -7,6 +7,29 @@
   },
   "versions": [
     {
+      "id": "aomomo-reward-ordinal-20260908",
+      "name": "奥陌陌奖励次数修复（规则通过，整体性能未通过）",
+      "date": "2026-09-08",
+      "baseline": "reward-plan-dependency-20260907",
+      "head": "7a33ec07",
+      "commits": [
+        "e91895cc",
+        "51506571",
+        "b38186cc",
+        "4861eb18",
+        "3da3ccdd",
+        "5a61fe32",
+        "7a33ec07"
+      ],
+      "summary": "奥陌陌环绕和登陆按对应面板标记次数发奖，保留全局实体编号及强制首次登陆奖励规则",
+      "records": {
+        "f6c9aabe.7a33ec07.full.json": {
+          "note": "640步，终局85/136/82/104，均101.75；与0b9837be逐步动作、after、完整终局状态及非耗时搜索统计一致。567380ms，142337节点/188152输入，实际规则失败0，27次4096战略截断及6次1节点控制截断。本项规则修复通过；整体低于108.5，性能Goal未通过，候选生产未合dev。详见aomomo-reward-ordinal-full-review-20260908.md。运行中仅修改只读汇总脚本。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "reward-plan-dependency-20260907",
       "name": "奖励依赖提前检查（效果未通过，下降待归因）",
       "date": "2026-09-07",
