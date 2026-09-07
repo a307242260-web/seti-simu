@@ -81,6 +81,22 @@
 
   const DOMAIN_ID = "card_play";
   const ACTION_FAMILIES = Object.freeze(["play_card"]);
+  const MOVEMENT_EFFECT_TYPES = Object.freeze([
+    cardEffects.EFFECT_TYPES.CARD_MOVE,
+    cardEffects.EFFECT_TYPES.FREE_MOVE,
+    cardEffects.EFFECT_TYPES.COUNT_HAND_CORNER_MOVE,
+    cardEffects.EFFECT_TYPES.EARTH_SECTOR_CONTENT_MOVE,
+  ]);
+
+  // 正式移动枚举与主要路线读取共用；null表示本effect不是卡牌移动阶段。
+  function getMovementAllowance(sessionEffect) {
+    if (!MOVEMENT_EFFECT_TYPES.includes(sessionEffect?.payload?.cardEffect?.type)) return null;
+    return Math.max(1, Math.round(Number(
+      sessionEffect.payload.remaining
+      ?? sessionEffect.payload.cardEffect.options?.movementPoints
+      ?? 1
+    ) || 1));
+  }
   const EFFECT_TYPES = Object.freeze({
     PLAY: "card_play_domain_play",
     DIRECT: "card_play_domain_direct",
@@ -1187,14 +1203,7 @@
       const actor = getActor(root, sessionEffect.ownerId);
       if (!actor) return [];
       const context = createActionContext(root, actor.id);
-      const remaining = Math.max(
-        1,
-        Math.round(Number(
-          sessionEffect.payload?.remaining
-          ?? sessionEffect.payload?.cardEffect?.options?.movementPoints
-          ?? 1
-        ) || 1),
-      );
+      const remaining = getMovementAllowance(sessionEffect);
       // 统一移动入口：所有移动来源（卡牌/紫4/快速交易/probe turn/残余域）共用
       const choices = abilities.rocket.listPlayerMoveChoices(context, actor, {
         maxPoints: remaining,
@@ -1883,12 +1892,7 @@
         }
         return choices;
       }
-      if ([
-        cardEffects.EFFECT_TYPES.CARD_MOVE,
-        cardEffects.EFFECT_TYPES.FREE_MOVE,
-        cardEffects.EFFECT_TYPES.COUNT_HAND_CORNER_MOVE,
-        cardEffects.EFFECT_TYPES.EARTH_SECTOR_CONTENT_MOVE,
-      ].includes(effect.type)) return listMoveChoices(root, sessionEffect);
+      if (MOVEMENT_EFFECT_TYPES.includes(effect.type)) return listMoveChoices(root, sessionEffect);
       if (effect.type === cardEffects.EFFECT_TYPES.CARD_ORBIT) {
         return listPlanetChoices(root, sessionEffect, "orbit");
       }
@@ -2169,12 +2173,7 @@
           history: { choiceId: legal.target.choiceId, region },
         });
       }
-      if ([
-        cardEffects.EFFECT_TYPES.CARD_MOVE,
-        cardEffects.EFFECT_TYPES.FREE_MOVE,
-        cardEffects.EFFECT_TYPES.COUNT_HAND_CORNER_MOVE,
-        cardEffects.EFFECT_TYPES.EARTH_SECTOR_CONTENT_MOVE,
-      ].includes(effect.type)) return resolveMove(state, sessionEffect, choice, workingContext);
+      if (MOVEMENT_EFFECT_TYPES.includes(effect.type)) return resolveMove(state, sessionEffect, choice, workingContext);
       if (effect.type === cardEffects.EFFECT_TYPES.CARD_ORBIT) {
         return resolvePlanet(state, sessionEffect, choice, workingContext, "orbit");
       }
@@ -2721,5 +2720,6 @@
     createPlayCardProvider,
     createExperimentalCardPlayDomain,
     getProbeLocationReward,
+    getMovementAllowance,
   });
 });

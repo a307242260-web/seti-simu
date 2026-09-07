@@ -730,6 +730,12 @@ function capturePlanStep({ observation, action }) {
   const sectorRequirements = observation.sectorWinRequirements
     || observation.outcomeProjection?.progress?.sectorWinRequirements;
   const facts = {
+    movementContext: structuredClone(probe?.movementContext ?? null),
+    movementSources: (board.rockets || []).map((rocket) => ({
+      id: rocket.id, playerId: rocket.playerId, surface: rocket.surface,
+      sectorX: rocket.sectorX ?? null, sectorY: rocket.sectorY ?? null,
+      polar: structuredClone(rocket.polar ?? null),
+    })),
     probeScanSectorLayout: structuredClone(board.solarSystem?.sectorBySlot ?? null),
     probeScanSources: (board.rockets || []).filter(rocket => rocket.playerId != null
       && rocket.surface === "solar-board" && (rocket.kind || "standard") === "standard")
@@ -741,6 +747,8 @@ function capturePlanStep({ observation, action }) {
       targetId: candidate.targetId, requirementId: candidate.requirementId,
       sourceId: candidate.sourceId, rocketId: candidate.rocketId,
       movementSteps: candidate.gap?.movementSteps ?? candidate.required?.movementSteps ?? null,
+      movementNextSteps: structuredClone(candidate.movementNextSteps || [candidate.nextStep]),
+      paidMovementPoints: candidate.required?.paidMovementPoints ?? null,
       markers: endpointMarkerCount(observation, candidate.targetId),
     })),
     tech: structuredClone(board.techSupply.stacks || {}),
@@ -802,6 +810,29 @@ function stepScopes(step, segment) {
   } else if (targetId && !targetId.startsWith("card:resolve:") && !targetId.startsWith("decision:")) {
     return { valid: false, reason: "plan-target-scope-unknown" };
   }
+  if (step.movementPreparation) {
+    const preparation = step.movementPreparation;
+    const route = step.facts.routes.find((candidate) => candidate.sourceId === preparation.sourceId
+      && candidate.targetId === preparation.targetId
+      && `probe:${candidate.requirementId}` === preparation.planId
+      && candidate.rocketId === preparation.rocketId);
+    if (!route || step.action.target?.rocketId !== preparation.rocketId) {
+      return { valid: false, reason: "plan-movement-preparation-source-missing" };
+    }
+    const scope = { kind: "route", id: route.targetId, sourceId: route.sourceId };
+    scopes.set(stableSerialize(scope), scope);
+    add("movement-source", preparation.rocketId);
+  }
+  const movementChoice = step.action.family === "choose_target"
+    && ["card", "company", "hidden"].includes(step.facts.movementContext?.phase)
+    && (step.action.target?.skip === true || (Number.isInteger(step.action.target?.deltaX)
+      && Number.isInteger(step.action.target?.deltaY)));
+  const companyStart = step.action.family === "industry"
+    && step.action.target?.abilityId === "huanyu_free_moves";
+  if (movementChoice || companyStart) {
+    add("movement-context", "self");
+    if (step.action.target?.rocketId != null) add("movement-source", step.action.target.rocketId);
+  }
   // decision:<actionId> 是正式目标目录为 conditional choice 建立的结构目标。
   // 它没有独立战略资源事实，仍从该段具体选择提取全部外部依赖。
   for (const item of segment) {
@@ -833,6 +864,10 @@ function stepScopes(step, segment) {
 }
 
 function scopedFact(facts, scope) {
+  if (scope.kind === "movement-context") return facts.movementContext ?? undefined;
+  if (scope.kind === "movement-source") {
+    return facts.movementSources?.find((rocket) => String(rocket.id) === scope.id);
+  }
   if (scope.kind === "probe-scan-source") {
     const rocket = facts.probeScanSources?.find(item => String(item.id) === scope.id);
     return rocket && facts.probeScanSectorLayout != null ? { rocket, sectorBySlot: facts.probeScanSectorLayout } : undefined;

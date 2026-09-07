@@ -6,6 +6,52 @@ const evaluator = require("./expected-score-evaluator");
 
 const seatId = "strategic-seat";
 
+// 免费移动仍须推进主要目标；公司第二艘带独立准备目的，不改写第一艘的目标。
+{
+  const choice = (id, rocketId, deltaX, deltaY) => ({ actionId: id, actorId: seatId,
+    phase: "conditional", family: "choose_target", target: { rocketId, deltaX, deltaY }, payload: {} });
+  const first = choice("first-out", 1, 0, 1), second = choice("second-out", 2, 0, 1);
+  const detour = choice("second-detour", 2, 1, 0);
+  const finish = { ...choice("finish", null, null, null), target: { skip: true } };
+  const goal = (rocketId, planetId, step) => ({
+    requirementId: `rocket:${rocketId}:land:${planetId}`, sourceId: `rocket:${rocketId}`, rocketId,
+    targetId: `land:${planetId}:planet:`, planetId, endpointFamily: "land", endpointTarget: { type: "planet" },
+    required: { credits: 0, energy: 2, movementPoints: 1, movementSteps: 1 },
+    gap: { credits: 0, energy: 0, movementSteps: 1 }, targetBenefit: { score: 6, grossEquivalentValue: 6 },
+    nextStep: { family: "move", rocketId, deltaX: 0, deltaY: 1 }, movementNextSteps: [step],
+  });
+  const primary = goal(1, "mars", { family: "choose_target", ...first.target });
+  const secondary = goal(2, "venus", { family: "choose_target", ...second.target });
+  const branchObservation = { ...observation({ resources: { energy: 5, credits: 5 } }),
+    probeRouteRequirements: { candidates: [primary, secondary], movementContext: {
+      phase: "company", companyRemaining: 2, companyAvailable: false, cardRemaining: 0, usedRocketIds: [],
+    } } };
+  const select = (legalSuccessors) => evaluator.selectSecondaryAgentSuccessors({ focalSeatId: seatId,
+    branchObservation, legalSuccessors, routeTargetId: primary.targetId, routePlanId: `probe:${primary.requirementId}` });
+  assert.deepEqual(select([first, second, detour, finish]).map(a => a.actionId).sort(), ["finish", "first-out"]);
+  branchObservation.probeRouteRequirements.movementContext.usedRocketIds = [1];
+  branchObservation.probeRouteRequirements.movementContext.companyRemaining = 1;
+  primary.movementNextSteps = [{ family: "choose_target", skip: true }];
+  const selected = select([second, detour, finish]);
+  assert.deepEqual(selected.map(a => a.actionId).sort(), ["finish", "second-out"]);
+  const preparation = selected.find(a => a.actionId === second.actionId);
+  assert.equal(preparation.routePlanId, `probe:${primary.requirementId}`);
+  assert.deepEqual(preparation.movementPreparation, { targetId: secondary.targetId,
+    planId: `probe:${secondary.requirementId}`, sourceId: secondary.sourceId, rocketId: 2 });
+  assert.equal(Object.hasOwn(second, "movementPreparation"), false);
+  branchObservation.probeRouteRequirements.candidates = [primary];
+  assert.deepEqual(select([second, detour, finish]).map(a => a.actionId), ["finish"], "没有第二目标就结束");
+  const alternate = choice("first-alternate", 1, -1, 0);
+  branchObservation.probeRouteRequirements.movementContext.phase = "card";
+  primary.movementNextSteps = [first, alternate].map(a => ({ family: a.family, ...a.target }));
+  assert.deepEqual(select([first, alternate, second, finish]).map(a => a.actionId).sort(),
+    ["finish", "first-alternate", "first-out"], "同成本首步不能被任意一条路径抹掉");
+  const roots = evaluator.selectSecondaryAgentRootActions({ focalSeatId: seatId,
+    rootObservation: branchObservation, legalActions: [first, alternate, second, finish] });
+  assert.deepEqual(roots.map(a => a.actionId).sort(), ["finish", "first-alternate", "first-out"],
+    "根条件选择同样按主要目的，不回退全部方向");
+}
+
 function observation({
   score = 0,
   resources = {},

@@ -27,6 +27,9 @@ const rocketAbility = loadProductionDependency("./abilities/rocket", "SetiAbilit
 const planetAbility = loadProductionDependency("./abilities/planet", "SetiAbilityPlanet");
 const industryPassives = loadProductionDependency("./industry/passives", "SetiIndustryPassives");
 const industryCatalog = loadProductionDependency("./industry/catalog", "SetiIndustryCatalog");
+const industryApi = loadProductionDependency("./industry", "SetiIndustry");
+const residualSession = loadProductionDependency("./effects/residual-domain-session", "SetiResidualDomainSession");
+const cardPlayDomain = loadProductionDependency("./cards/play-domain", "SetiCardPlayDomain");
 const { createRuleComposition } = loadProductionDependency("./rule-composition", "SetiRuleComposition");
 const productionCompositionApi = loadProductionDependency("./production-composition", "SetiProductionComposition");
 const turnFlowApi = loadProductionDependency("./turn-flow", "SetiTurnFlow");
@@ -339,7 +342,7 @@ function routeRequirementKey(sourceId, choice) {
   ].join(":");
 }
 
-// 探测路线拓扑缓存：BFS 可达性只依赖（gameId + 太阳系旋转 + 全火箭占位 + 玩家 orange2），
+// 探测路线拓扑缓存：多阶段可达性依赖盘面/来源/地形修正及当前卡牌和公司额度，
 // quick_trade/place_data 等链上火箭未移动时路线完全相同，只重算资源缺口与候选收益。
 // 见 checkpoint/seti-clone-audit-and-remaining-optimizations-20260814.md 方向 B。
 const PROBE_ROUTE_TOPOLOGY_CACHE = new Map();
@@ -351,6 +354,33 @@ const PROBE_ROUTE_TOPOLOGY_CACHE_MAX = 2048;
 const PROBE_STRUCTURE_CACHE = new Map();
 const SECTOR_REQUIREMENTS_CACHE = new Map();
 const REQUIREMENTS_CACHE_MAX = 4096;
+const companyActionDefinition = residualSession.createActionDefinitions().find((entry) => entry.family === "industry");
+
+function readProbeMovementContext(workingState, player, session) {
+  const effect = session?.currentEffect;
+  const ownedEffect = effect?.ownerId === player.id ? effect : null;
+  const companyPending = ownedEffect?.payload?.abilityId === "huanyu_free_moves"
+    && ownedEffect.payload.step === "free_move";
+  const allowance = cardPlayDomain.getMovementAllowance(ownedEffect);
+  const companyAvailable = !companyPending
+    && industryApi.getPlayerIndustryLabel(player) === "寰宇动力"
+    && companyActionDefinition.enumerate({ state: workingState,
+      standardActionAuthority: { actorId: player.id } })
+      .some((entry) => entry.target.abilityId === "huanyu_free_moves");
+  if (companyPending && (!Number.isInteger(ownedEffect.payload.remaining)
+    || ownedEffect.payload.remaining <= 0 || !Array.isArray(ownedEffect.payload.usedRocketIds))) {
+    throw new TypeError("PROBE_COMPANY_ALLOWANCE_MISSING: 公司移动缺少剩余额度或已用来源");
+  }
+  return {
+    phase: companyPending ? "company" : allowance != null ? "card" : "ordinary",
+    cardRemaining: allowance ?? 0,
+    companyAvailable,
+    companyRemaining: companyPending ? ownedEffect.payload.remaining : companyAvailable ? 2 : 0,
+    usedRocketIds: companyPending ? [...ownedEffect.payload.usedRocketIds] : [],
+    ...(allowance != null && ownedEffect.payload.cardInstanceId != null
+      ? { cardInstanceId: ownedEffect.payload.cardInstanceId } : {}),
+  };
+}
 
 function cachePut(cache, key, value) {
   if (cache.size >= REQUIREMENTS_CACHE_MAX) cache.clear();
@@ -381,50 +411,70 @@ function probeRouteTopologyKey(workingState, player, sources, context) {
   // 缓存的发射源过期（行为漂移）。
   const rocketLimit = rocketAbility.getRocketLimitForPlayer(player, context);
   // player.id 必须入键：同盘面下不同玩家的 sources（谁的火箭/是否可发射）不同
-  return `${workingState.meta?.gameId || "?"}:${player.id}:${rotationKey}:${rocketSignatures}:${orange2}:${ignoreAsteroid}:${rocketLimit}`;
+  return `${workingState.meta?.gameId || "?"}:${player.id}:${rotationKey}:${rocketSignatures}:${orange2}:${ignoreAsteroid}:${rocketLimit}:${JSON.stringify(context.probeMovement)}`;
 }
 
 function buildTopologyBody(workingState, player, context, sources) {
   const reachableBySource = new Map();
+  const movement = context.probeMovement;
+  const contents = new Map();
+  const contentAt = (coordinate) => {
+    const key = `${coordinate.x},${coordinate.y}`;
+    if (!contents.has(key)) contents.set(key, solar.resolveVisibleContent(
+      coordinate.x, coordinate.y, workingState.solarSystem,
+    )?.content);
+    return contents.get(key);
+  };
+  const pointsByCoordinate = new Map();
+  const pointsAt = (coordinate) => {
+    const key = `${coordinate.x},${coordinate.y}`;
+    if (!pointsByCoordinate.has(key)) pointsByCoordinate.set(key,
+      rocketAbility.getRequiredMovePointsFromCoordinate(context, player, coordinate));
+    return pointsByCoordinate.get(key);
+  };
+  const compare = (left, right) => left.paidPoints - right.paidPoints
+    || left.path.length - right.path.length || right.publicityStops - left.publicityStops;
+  const routeKey = (route) => JSON.stringify([
+    route.coordinate.x, route.coordinate.y, route.cardRemaining, route.companyAvailable,
+    route.companyPending, route.firstStep,
+  ]);
   for (const source of sources) {
     if (!source.coordinate) continue;
     const initialRoute = {
       coordinate: source.coordinate,
       path: [],
       movePoints: 0,
+      paidPoints: 0,
       publicityStops: 0,
+      cardRemaining: source.launchRequired ? 0 : movement.cardRemaining,
+      companyAvailable: !source.launchRequired && movement.companyRemaining > 0
+        && !movement.usedRocketIds.includes(source.rocketId),
+      companyPending: !source.launchRequired && movement.phase === "company",
+      firstStep: null,
     };
     const queue = [initialRoute];
-    const bestRouteByCoordinate = new Map([
-      [`${source.coordinate.x},${source.coordinate.y}`, initialRoute],
-    ]);
-    const reachable = [];
+    const bestRouteByState = new Map([[routeKey(initialRoute), initialRoute]]);
+    const append = (route, previous, firstStep) => {
+      route.firstStep = previous.firstStep || firstStep;
+      const key = routeKey(route);
+      const existing = bestRouteByState.get(key);
+      if (existing && compare(existing, route) <= 0) return;
+      bestRouteByState.set(key, route);
+      queue.push(route);
+    };
     while (queue.length) {
+      queue.sort(compare);
       const route = queue.shift();
-      const routeKey = `${route.coordinate.x},${route.coordinate.y}`;
-      if (bestRouteByCoordinate.get(routeKey) !== route) continue;
-      const visible = solar.resolveVisibleContent(
-        route.coordinate.x,
-        route.coordinate.y,
-        workingState.solarSystem,
-      )?.content;
-      if (visible?.kind === solar.layout.CONTENT_KIND.PLANET && visible.planetId !== "earth") {
-        const planet = solar.layout.PLANETS[visible.planetId] || {};
-        reachable.push({
-          planetId: visible.planetId,
-          planet: {
-            planetId: visible.planetId,
-            name: planet.name || visible.label,
-            label: visible.label,
-            x: route.coordinate.x,
-            y: route.coordinate.y,
-          },
-          coordinate: { ...route.coordinate },
-          path: route.path,
-          movePoints: route.movePoints,
-          publicityStops: route.publicityStops,
-        });
+      if (bestRouteByState.get(routeKey(route)) !== route) continue;
+      // 结束阶段不移动也不执行奖励，只消耗当前不能带出该阶段的额度；无零费用循环。
+      if (route.cardRemaining > 0) {
+        append({ ...route, cardRemaining: 0 }, route, { family: "choose_target", skip: true });
       }
+      if (route.companyPending) {
+        append({ ...route, companyAvailable: false, companyPending: false }, route,
+          { family: "choose_target", skip: true });
+      }
+      const points = pointsAt(route.coordinate);
       for (const direction of rocketAbility.MOVE_DIRECTIONS) {
         const move = rockets.canMoveFromCoordinate(
           workingState.pieces,
@@ -434,49 +484,51 @@ function buildTopologyBody(workingState, player, context, sources) {
           source.rocketId,
         );
         if (!move.ok) continue;
-        const key2 = `${move.to.x},${move.to.y}`;
-        const destination = solar.resolveVisibleContent(
-          move.to.x,
-          move.to.y,
-          workingState.solarSystem,
-        )?.content;
+        const destination = contentAt(move.to);
         const candidateRoute = {
+          ...route,
           coordinate: move.to,
           path: [...route.path, {
             directionId: direction.id,
             deltaX: direction.deltaX,
             deltaY: direction.deltaY,
           }],
-          movePoints: route.movePoints + rocketAbility.getRequiredMovePointsFromCoordinate(
-            context,
-            player,
-            route.coordinate,
-          ),
+          movePoints: route.movePoints + points,
           publicityStops: route.publicityStops + (
             destination?.kind === solar.layout.CONTENT_KIND.PLANET
             && destination.planetId !== "earth" ? 1 : 0
           ),
         };
-        const existing = bestRouteByCoordinate.get(key2);
-        const better = !existing
-          || candidateRoute.movePoints < existing.movePoints
-          || (
-            candidateRoute.movePoints === existing.movePoints
-            && candidateRoute.path.length < existing.path.length
-          )
-          || (
-            candidateRoute.movePoints === existing.movePoints
-            && candidateRoute.path.length === existing.path.length
-            && candidateRoute.publicityStops > existing.publicityStops
-          );
-        if (!better) continue;
-        bestRouteByCoordinate.set(key2, candidateRoute);
-        queue.push(candidateRoute);
+        const step = { rocketId: source.rocketId, deltaX: direction.deltaX, deltaY: direction.deltaY };
+        if (route.cardRemaining > 0) {
+          if (points <= route.cardRemaining) append({ ...candidateRoute,
+            cardRemaining: route.cardRemaining - points }, route, { family: "choose_target", ...step });
+          continue;
+        }
+        if (route.companyAvailable && points === 1) {
+          append({ ...candidateRoute, companyAvailable: false, companyPending: false }, route,
+            route.companyPending ? { family: "choose_target", ...step }
+              : { family: "industry", abilityId: "huanyu_free_moves" });
+        }
+        if (!route.companyPending) append({ ...candidateRoute, paidPoints: route.paidPoints + points },
+          route, { family: "move", ...step });
       }
     }
-    reachableBySource.set(source.sourceId, reachable);
+    const reachableByFirst = new Map();
+    for (const route of bestRouteByState.values()) {
+      const visible = contentAt(route.coordinate);
+      if (visible?.kind !== solar.layout.CONTENT_KIND.PLANET || visible.planetId === "earth") continue;
+      const planet = solar.layout.PLANETS[visible.planetId] || {};
+      const key = JSON.stringify([route.coordinate.x, route.coordinate.y, route.firstStep]);
+      const previous = reachableByFirst.get(key);
+      if (previous && compare(previous, route) <= 0) continue;
+      reachableByFirst.set(key, { ...route, planetId: visible.planetId,
+        planet: { planetId: visible.planetId, name: planet.name || visible.label,
+          label: visible.label, x: route.coordinate.x, y: route.coordinate.y } });
+    }
+    reachableBySource.set(source.sourceId, [...reachableByFirst.values()]);
   }
-  return { sources, reachableBySource };
+  return { sources, reachableBySource, movement };
 }
 
 function probeRouteTopology(workingState, player, context, sources) {
@@ -493,7 +545,7 @@ function probeRouteTopology(workingState, player, context, sources) {
   return topology;
 }
 
-function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
+function buildProbeRouteRequirements(workingState, requestedPlayerId = null, session = null) {
   const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
   const player = workingState.players.players.find((candidate) => candidate.id === playerId);
   if (!player || workingState.turn.gameEnded) return null;
@@ -505,6 +557,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
     planets: workingState.planets,
     aliens: workingState.aliens,
     turn: workingState.turn,
+    probeMovement: readProbeMovementContext(workingState, player, session),
     getPlanetLocations: () => solar.collectPlanetLocations(workingState.solarSystem),
   };
   const earth = getEarthCoordinate(workingState);
@@ -547,7 +600,7 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null) {
       Object.freeze(buildProbeCandidateStructures(workingState, player, context, topology, sources)),
     );
   }
-  return finalizeProbeRequirements(player, structure);
+  return finalizeProbeRequirements(player, structure, context.probeMovement);
 }
 
 // 探测候选结构缓存键：拓扑键（火箭/旋转/orange2/火箭上限）+ 行星标记 + 玩家科技 +
@@ -599,7 +652,7 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
         const endpointCost = choice.cost || {};
         const totalCost = {
           credits: Number(launchCost.credits || 0) + Number(endpointCost.credits || 0),
-          energy: reach.movePoints + Number(endpointCost.energy || 0),
+          energy: reach.paidPoints + Number(endpointCost.energy || 0),
         };
         const publicityValue = reach.publicityStops * PROBE_VALUE_POINTS.publicity;
         const grossEquivalentValue = rewardEquivalentValue(effects, workingState) + publicityValue;
@@ -610,6 +663,13 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
           choice.target?.type || "planet",
           choice.target?.satelliteId || "",
         ].join(":");
+        const nextStep = source.launchRequired ? { family: "launch" }
+          : firstMove ? { family: "move", rocketId: source.rocketId, ...firstMove }
+            : { family: choice.actionType, rocketId: source.rocketId,
+              planetId: choice.planetId, target: choice.target || {} };
+        const movementNextStep = source.launchRequired ? nextStep
+          : reach.firstStep || (topology.movement.phase !== "ordinary"
+            ? { family: "choose_target", skip: true } : nextStep);
         candidates.push({
           requirementId: routeRequirementKey(source.sourceId, choice),
           targetId,
@@ -634,17 +694,12 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
             energy: totalCost.energy,
             movementSteps: reach.path.length,
             movementPoints: reach.movePoints,
+            paidMovementPoints: reach.paidPoints,
           },
-          nextStep: source.launchRequired
-            ? { family: "launch" }
-            : firstMove
-              ? { family: "move", rocketId: source.rocketId, ...firstMove }
-              : {
-                family: choice.actionType,
-                rocketId: source.rocketId,
-                planetId: choice.planetId,
-                target: choice.target || {},
-              },
+          nextStep,
+          movementNextSteps: [movementNextStep],
+          ...(topology.movement.cardInstanceId != null
+            ? { movementSource: { cardInstanceId: topology.movement.cardInstanceId } } : {}),
           path: reach.path.map((step) => ({ ...step })),
           publicityStops: reach.publicityStops,
           fieldSources: {
@@ -663,7 +718,7 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
   return candidates;
 }
 
-function finalizeProbeRequirements(player, structureCandidates) {
+function finalizeProbeRequirements(player, structureCandidates, movementContext) {
   // 每节点便宜部分：从缓存结构补 resourceGap（资源差）+ 最短路径去重 + 排序。
   // 与未缓存路径的候选字段/排序完全一致（gap 由 required 与当前资源重算）。
   const candidates = structureCandidates.map((candidate) => ({
@@ -683,19 +738,16 @@ function finalizeProbeRequirements(player, structureCandidates) {
   const shortestByRequirement = new Map();
   for (const candidate of candidates) {
     const current = shortestByRequirement.get(candidate.requirementId);
-    if (
-      !current
-      || candidate.required.movementPoints < current.required.movementPoints
-      || (
-        candidate.required.movementPoints === current.required.movementPoints
-        && candidate.required.movementSteps < current.required.movementSteps
-      )
-      || (
-        candidate.required.movementPoints === current.required.movementPoints
-        && candidate.required.movementSteps === current.required.movementSteps
-        && candidate.publicityStops > current.publicityStops
-      )
-    ) shortestByRequirement.set(candidate.requirementId, candidate);
+    const cost = current ? candidate.required.energy - current.required.energy
+      || candidate.required.movementSteps - current.required.movementSteps : -1;
+    if (cost < 0) shortestByRequirement.set(candidate.requirementId, candidate);
+    else if (cost === 0) {
+      const preferred = candidate.publicityStops > current.publicityStops ? candidate : current;
+      const steps = new Map([...current.movementNextSteps, ...candidate.movementNextSteps]
+        .map((step) => [JSON.stringify(step), step]));
+      shortestByRequirement.set(candidate.requirementId, { ...preferred,
+        movementNextSteps: [...steps.values()] });
+    }
   }
   const ranked = [...shortestByRequirement.values()].sort((left, right) => (
     Number(right.gap.credits === 0 && right.gap.energy === 0)
@@ -710,6 +762,7 @@ function finalizeProbeRequirements(player, structureCandidates) {
   return {
     schemaVersion: "seti-probe-route-requirements-v2",
     playerId: player.id,
+    movementContext,
     candidates: ranked,
   };
 }
@@ -774,6 +827,7 @@ function buildDataAnalyzeRequirements(
         probeRequirementId: candidate.requirementId,
         probeTargetId: candidate.targetId,
         nextStep: clone(candidate.nextStep),
+        ...(candidate.movementSource ? { movementSource: clone(candidate.movementSource) } : {}),
         resultTargetIds: ["data:analyze", candidate.targetId],
       });
     }
@@ -1054,6 +1108,7 @@ function buildIncomeGainRequirements(
       kind: "probe",
       probeRequirementId: candidate.requirementId,
       nextStep: candidate.nextStep,
+      ...(candidate.movementSource ? { movementSource: clone(candidate.movementSource) } : {}),
     });
   }
   const computerSlots = data.listComputerPlacedTokens(player)
@@ -1251,7 +1306,7 @@ function createProductionHostComposition(options = {}) {
   }
   let composition;
   function projectedRequirements(state, viewer, session) {
-    const probeRouteRequirements = buildProbeRouteRequirements(state, viewer?.playerId);
+    const probeRouteRequirements = buildProbeRouteRequirements(state, viewer?.playerId, session);
     return {
       probeRouteRequirements,
       dataAnalyzeRequirements: buildDataAnalyzeRequirements(

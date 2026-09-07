@@ -90,6 +90,8 @@
         if (card?.id != null) ids.add(String(card.id));
       }
     }
+    const activeMovementCard = observation?.probeRouteRequirements?.movementContext?.cardInstanceId;
+    if (activeMovementCard != null) ids.add(String(activeMovementCard));
     return ids;
   }
 
@@ -193,6 +195,11 @@
       knownCardIds,
       "candidates",
     );
+    if (containsUnknownCardReference(sanitized.probeRouteRequirements?.movementContext, knownCardIds)) {
+      // 隐藏新牌的额度不能作为可见路线事实；仅标明当前移动阶段不可规划。
+      sanitized.probeRouteRequirements = { ...sanitized.probeRouteRequirements,
+        movementContext: { phase: "hidden" } };
+    }
     sanitized.dataAnalyzeRequirements = sanitizeRequirementPlans(
       leafObservation.dataAnalyzeRequirements,
       knownCardIds,
@@ -1359,6 +1366,7 @@
           origin.rootRoutePlanId || "",
           origin.routeTargetId || "",
           origin.routePlanId || "",
+          stableSerialize(origin.movementPreparation || null),
           origin.proxyDepth || 0,
           Number(Boolean(origin.focalPassStarted)),
           Number(Boolean(origin.goalCompletionPending)),
@@ -2152,6 +2160,7 @@
               routeTargetId,
               routePlanId,
               routeResultTargetIds,
+              movementPreparation: null,
               goalTracePaths: traceGoalClusters ? [[]] : null,
               goalTraceActions: [],
               goalTraceSelections: [],
@@ -2395,6 +2404,8 @@
                   goalDepth: origin.proxyDepth || 0,
                   routeTargetId: origin.routeTargetId || null,
                   routePlanId,
+                  movementPreparation: submitted.action.actionId === current.actionId
+                    ? clone(origin.movementPreparation || null) : null,
                   probeAction: nextProbeAction || (sameGoal ? previousStep.probeAction : null),
                   goalCompletionPending: stepCompletionPending,
                 });
@@ -2661,9 +2672,11 @@
                 continue;
               }
               let conditionalSuccessors = execution.successors;
-              let routeTargetByActionId = new Map();
-              let routePlanByActionId = new Map();
-              let routeResultsByActionId = new Map();
+              let conditionalRoutes = conditionalSuccessors.map((action) => ({
+                action, routeTargetId, routePlanId,
+                routeResultTargetIds: clone(origin.routeResultTargetIds || []),
+                movementPreparation: null,
+              }));
               if (
                 secondaryAgentSearch
               ) {
@@ -2701,33 +2714,24 @@
                   successor.actionId,
                   successor,
                 ]));
-                routeTargetByActionId = new Map(conditionalSuccessors.map((successor) => [
-                  successor?.actionId,
-                  Object.hasOwn(successor || {}, "routeTargetId")
-                    ? successor.routeTargetId
-                    : routeTargetId,
-                ]));
-                routePlanByActionId = new Map(conditionalSuccessors.map((successor) => [
-                  successor?.actionId,
-                  Object.hasOwn(successor || {}, "routePlanId")
-                    ? successor.routePlanId
-                    : routePlanId,
-                ]));
-                routeResultsByActionId = new Map(conditionalSuccessors.map((successor) => [
-                  successor?.actionId,
-                  Object.hasOwn(successor || {}, "routeResultTargetIds")
-                    ? successor.routeResultTargetIds
-                    : (origin.routeResultTargetIds || []),
-                ]));
-                conditionalSuccessors = conditionalSuccessors
-                  .map((successor) => legalById.get(successor?.actionId))
-                  .filter(Boolean);
-                if (!conditionalSuccessors.length) {
+                // 同一正式输入可以推进多个来源的目标；动作共享不覆盖逐origin目的。
+                conditionalRoutes = conditionalSuccessors.map((successor) => ({
+                  action: legalById.get(successor?.actionId),
+                  routeTargetId: Object.hasOwn(successor || {}, "routeTargetId")
+                    ? successor.routeTargetId : routeTargetId,
+                  routePlanId: Object.hasOwn(successor || {}, "routePlanId")
+                    ? successor.routePlanId : routePlanId,
+                  routeResultTargetIds: Object.hasOwn(successor || {}, "routeResultTargetIds")
+                    ? successor.routeResultTargetIds : (origin.routeResultTargetIds || []),
+                  movementPreparation: clone(successor.movementPreparation || null),
+                })).filter((route) => Boolean(route.action));
+                if (!conditionalRoutes.length) {
                   unreachableRouteOriginCount += 1;
                   continue;
                 }
               }
-              for (const successor of conditionalSuccessors) {
+              for (const selectedRoute of conditionalRoutes) {
+                const successor = selectedRoute.action;
                 mergeNode(nextFrontierByKey, {
                   envelope: execution.childEnvelope,
                   action: successor,
@@ -2747,15 +2751,10 @@
                     goalTraceSelections: nextGoalTraceSelections,
                     focalPassStarted,
                     goalCompletionPending,
-                    routeTargetId: secondaryAgentSearch
-                      ? routeTargetByActionId.get(successor.actionId)
-                      : routeTargetId,
-                    routePlanId: secondaryAgentSearch
-                      ? routePlanByActionId.get(successor.actionId)
-                      : routePlanId,
-                    routeResultTargetIds: secondaryAgentSearch
-                      ? routeResultsByActionId.get(successor.actionId)
-                      : clone(origin.routeResultTargetIds || []),
+                    routeTargetId: selectedRoute.routeTargetId,
+                    routePlanId: selectedRoute.routePlanId,
+                    routeResultTargetIds: selectedRoute.routeResultTargetIds,
+                    movementPreparation: selectedRoute.movementPreparation,
                   }],
                 });
               }
@@ -2873,6 +2872,7 @@
                 const selectedRoutes = selectedSuccessors
                   .map((selected) => ({
                     action: legalById.get(selected?.actionId),
+                    movementPreparation: clone(selected?.movementPreparation || null),
                     routeTargetId: Object.hasOwn(selected || {}, "routeTargetId")
                       ? selected.routeTargetId
                       : (completedGoal ? null : routeTargetId),
@@ -2992,6 +2992,7 @@
                       routePlanId: nextActorIsFocal
                         ? selectedRoute.routePlanId
                         : routePlanId,
+                      movementPreparation: selectedRoute.movementPreparation,
                       routeResultTargetIds: nextActorIsFocal
                         ? selectedRoute.routeResultTargetIds
                         : (origin.routeResultTargetIds || []),

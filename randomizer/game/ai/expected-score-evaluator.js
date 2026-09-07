@@ -1167,6 +1167,16 @@
         && finite(action.target?.deltaX) === finite(step.deltaX)
         && finite(action.target?.deltaY) === finite(step.deltaY);
     }
+    if (step.family === "industry") {
+      return action.target?.abilityId === step.abilityId;
+    }
+    if (step.family === "choose_target") {
+      if (step.skip === true) return action.target?.skip === true;
+      return action.target?.skip !== true
+        && String(action.target?.rocketId) === String(step.rocketId)
+        && action.target?.deltaX === step.deltaX
+        && action.target?.deltaY === step.deltaY;
+    }
     if (["orbit", "land"].includes(step.family)) {
       if (step.family === "land" && action.target?.select === true) return true;
       return String(action.target?.rocketId) === String(step.rocketId)
@@ -1175,6 +1185,23 @@
         && String(action.target?.satelliteId || "") === String(step.target?.satelliteId || "");
     }
     return true;
+  }
+
+  function actionAdvancesProbeGoal(action, goal) {
+    return (goal.movementNextSteps || [goal.nextStep])
+      .some((step) => actionMatchesProbeStep(action, step));
+  }
+
+  function isHuanyuMovementAction(action) {
+    return action.family === "industry" && action.target?.abilityId === "huanyu_free_moves";
+  }
+
+  function isProbeMovementDecision(observation, actions) {
+    const phase = rawProbeRequirements(observation)?.movementContext?.phase;
+    return ["card", "company", "hidden"].includes(phase) && actions.length > 0
+      && actions.every((action) => action.family === "choose_target"
+        && (action.target?.skip === true || (action.target?.rocketId != null
+          && Number.isInteger(action.target?.deltaX) && Number.isInteger(action.target?.deltaY))));
   }
 
   function movementPointsFromCard(card) {
@@ -1798,7 +1825,7 @@
     const probeGoals = selectHeuristicProbeGoals(input.rootObservation, paretoProbeGoals);
     function probePlanActions(goal) {
       const exact = legalActions.filter((action) => (
-        actionMatchesProbeStep(action, goal.nextStep)
+        actionAdvancesProbeGoal(action, goal)
       ));
       // 打牌 spawn 的免费发射可作为探测的发射步骤：用户 405 档打 b_117
       // （LAUNCH skipCost 免费发射 +2 宣传）→ 免费探测 + 攒宣传研究科技。
@@ -1826,7 +1853,7 @@
           legalActions,
           input.focalSeatId,
         );
-      return [...exact.slice(0, 1), ...launchCards, ...movementCards, ...resourcePreparation];
+      return [...exact, ...launchCards, ...movementCards, ...resourcePreparation];
     }
     for (const goal of probeGoals) {
       const contributesToAnalyze = dataAnalyzeEligible(
@@ -2042,6 +2069,9 @@
         }
       }
       if (action.phase === "conditional" || CONDITIONAL_FAMILIES.has(action.family)) {
+        // 移动方向只从主要目标的等成本首步进入；结束仍是合法的独立选择。
+        if (isProbeMovementDecision(input.rootObservation, legalActions)
+          && action.target?.skip !== true) continue;
         add(`decision:${action.actionId}`, `decision:${action.actionId}`, [action]);
         continue;
       }
@@ -2789,6 +2819,8 @@
               // 时占满队列），主行动反而 PRUNED 评估失真（步53 research_tech 只
               // 分到 8 节点 → 全盘 55.75 分）。
               && !UNTARGETED_MEANS_ONLY_FAMILIES.has(action.family)
+              && !isHuanyuMovementAction(action)
+              && !isProbeMovementDecision(input.branchObservation, successors)
             ))
             .map((action) => ({
               ...action,
@@ -2807,6 +2839,42 @@
         successors[0]?.phase === "conditional"
         || CONDITIONAL_FAMILIES.has(successors[0]?.family)
       ) {
+        if (isProbeMovementDecision(input.branchObservation, successors)) {
+          const requirements = rawProbeRequirements(input.branchObservation);
+          const primary = requirements.candidates.find((goal) => (
+            `probe:${goal.requirementId}` === input.routePlanId
+          ));
+          const finish = successors.filter((action) => action.target?.skip === true);
+          const primaryMoves = primary ? successors.filter((action) => (
+            action.target?.skip !== true && actionAdvancesProbeGoal(action, primary)
+          )) : [];
+          const selected = bindRoute([...primaryMoves, ...finish], input.routeTargetId, input.routePlanId);
+          // 公司每艘仅一点：首艘用过后，剩余额度只能推进另一主要目标。
+          // 次要目的属于本次准备动作，不能覆盖仍待完成的主目的。
+          const movement = requirements.movementContext;
+          if (primary && movement.phase === "company"
+            && movement.usedRocketIds.includes(primary.rocketId)) {
+            const secondaryGoals = selectHeuristicProbeGoals(input.branchObservation,
+              requirements.candidates.filter((goal) => goal.rocketId !== primary.rocketId
+                && !movement.usedRocketIds.includes(goal.rocketId)
+                && probeGoalResourceReachable(input.branchObservation, goal, focalSeatId)));
+            for (const action of successors) {
+              if (action.target?.skip === true) continue;
+              const goal = secondaryGoals.find((candidate) => actionAdvancesProbeGoal(action, candidate));
+              if (!goal) continue;
+              selected.push(...bindRoute([{
+                ...action,
+                movementPreparation: {
+                  targetId: goal.targetId,
+                  planId: `probe:${goal.requirementId}`,
+                  sourceId: goal.sourceId,
+                  rocketId: goal.rocketId,
+                },
+              }], input.routeTargetId, input.routePlanId));
+            }
+          }
+          return selected;
+        }
         const landChoices = successors.every((action) => (
           action.family === "choose_target" && action.target?.landTarget
           && String(action.target?.choiceId || "").startsWith("land:")
@@ -3336,7 +3404,7 @@
         .filter((goal) => `probe:${goal.requirementId}` === input.routePlanId);
       if (input.routeTargetId && goals.length) {
         const exact = successors.filter((action) => (
-          goals.some((goal) => actionMatchesProbeStep(action, goal.nextStep))
+          goals.some((goal) => actionAdvancesProbeGoal(action, goal))
         ));
         const movementCards = goals.flatMap((goal) => selectProbeMovementCards(
           input.branchObservation,

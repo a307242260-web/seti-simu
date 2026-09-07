@@ -640,4 +640,35 @@ for (const tileId of ["a", "b", "c", "d"]) {
   assert.equal(empty.hitRate, null);
 }
 
+// 公司第二艘是为独立目的做准备；主来源、第二来源及公司额度均须参与复用检查。
+{
+  const before = planObservation();
+  before.publicState.board.rockets[1].playerId = "player-white";
+  const requirements = before.outcomeProjection.progress.probeGoalRequirements;
+  requirements.movementContext = { phase: "company", cardRemaining: 0,
+    companyAvailable: false, companyRemaining: 1, usedRocketIds: ["r1"] };
+  requirements.candidates.push({ ...structuredClone(requirements.candidates[0]),
+    requirementId: "c2", sourceId: "rocket:r2", rocketId: "r2" });
+  const move = planAction("company-second", "choose_target", { rocketId: "r2", deltaX: 1, deltaY: 0 });
+  move.phase = "conditional";
+  const evidence = { ...stepEvidence(move, before, "orbit:mars", 0, "probe:c1"),
+    movementPreparation: { targetId: "orbit:mars", planId: "probe:c2", sourceId: "rocket:r2", rocketId: "r2" } };
+  const plan = storedSteps([evidence]);
+  assert.equal(planContinuation.planReuseCheck(plan, before, [move]).hit, true);
+  assert.deepEqual(plan.steps[0].dependencies.filter(d => d.scope.kind === "route")
+    .map(d => d.scope.sourceId).sort(), ["rocket:r1", "rocket:r2"]);
+  for (const mutation of ["position", "allowance", "primary", "secondary"]) {
+    const changed = structuredClone(before);
+    const probe = changed.outcomeProjection.progress.probeGoalRequirements;
+    if (mutation === "position") changed.publicState.board.rockets[1].sectorX += 1;
+    if (mutation === "allowance") probe.movementContext.usedRocketIds.push("r2");
+    if (mutation === "primary") probe.candidates[0].gap.movementSteps += 1;
+    if (mutation === "secondary") probe.candidates[1].gap.movementSteps += 1;
+    assert.equal(planContinuation.planReuseCheck(plan, changed, [move]).hit, false, mutation);
+  }
+  const wrongSource = storedSteps([{ ...evidence,
+    movementPreparation: { ...evidence.movementPreparation, rocketId: "r1" } }]);
+  assert.equal(wrongSource.steps[0].reason, "plan-movement-preparation-source-missing");
+}
+
 process.stdout.write("plan-continuation.test.js ok\n");

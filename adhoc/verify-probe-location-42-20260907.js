@@ -3,14 +3,17 @@ const fs = require("node:fs"), assert = require("node:assert/strict");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const output = process.argv[2] || "reports/iteration/probe-location-decision-42-20260907.json";
 const checkpointPath = process.argv[3] || "reports/iteration/company-movement-input-42-20260906.json";
+const checkpointStep = process.argv[4] == null ? null : Number(process.argv[4]);
 if (fs.existsSync(output)) console.log(`已有验证：${output}`);
 else {
   const env = createSimulationEnv();
-  const report = { scope: "指定真实检查点单次冷决策及完整计划正式fork重放；不声称移动需求剪枝完成", checkpointPath, steps: [] };
+  const report = { scope: "指定真实检查点单次冷决策及完整计划正式fork重放；不声称移动需求剪枝完成", checkpointPath, checkpointStep, steps: [] };
   let fork, pendingAdvance = false;
   try {
     const source = JSON.parse(fs.readFileSync(checkpointPath));
-    const cp = source.schemaVersion === "seti-rl-checkpoint-v1" ? source : source.checkpoint;
+    const cp = checkpointStep != null ? source.entries.find(entry => entry.step === checkpointStep)?.checkpoint
+      : source.schemaVersion === "seti-rl-checkpoint-v1" ? source : source.checkpoint;
+    assert.ok(cp, "指定真实检查点必须存在");
     delete cp.replaySteps;
     env.loadCheckpoint(cp);
     fork = env.createCounterfactualFork().composition;

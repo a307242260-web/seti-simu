@@ -91,6 +91,19 @@ snapshot；cheap仅供内部即时只读，不作为可跨执行持有的完整�
 卡牌效果的插收入选择与精选选择均在play-domain经共享`formalizeChoices`输出完整
 Standard Action身份；恢复存档时重新枚举，AI与浏览器不补写actionId/actorId。
 
+`probeRouteRequirements.movementContext`描述当前普通/公司/卡牌移动阶段：
+`phase`、`cardRemaining`、`companyAvailable`、`companyRemaining`、`usedRocketIds`，
+卡牌阶段另有`cardInstanceId`。四种Card Play移动effect复用正式枚举的
+`getMovementAllowance`读取剩余点。候选`movementNextSteps`是最低付费点与移动
+次数下全部可用的原生首步，原`nextStep/path`仍描述主要空间路线；
+`required.movementPoints`为地形总点，`paidMovementPoints`为扣除可用免费点后的
+付费点，`required.energy`为付费移动与终点能量总需求。没有改变正式移动费用。
+这些均为派生观察，不写入游戏存档。根已公开的移动卡来源属于已知信息；隐藏新牌
+产生的路线候选被遮蔽，阶段仅为`{phase:"hidden"}`，不暴露其额度或实例。
+从probe派生的数据获取与收入路线同步携带`movementSource`，按同一隐藏引用门禁过滤。
+搜索元数据`movementPreparation`为公司第二艘记录独立目标/来源，归origin和逐步
+计划依赖，不属于正式Action或规则状态。
+
 `incomeGainRequirements`中计算机第4格路线的`nextCost.handSize=1`表示完成收入所需
 持有的牌数，供资源准备使用，不是正式扫描费用；钱/能量仍表示当前下一行动需要量。
 该字段不改变正式Action、Decision或checkpoint状态结构。
