@@ -1,0 +1,3411 @@
+{
+  "scope": "正式重放两份既有完整局，不运行AI；核对收入选择和轮初资源，分数事件读取并校验原after",
+  "cases": [
+    {
+      "record": "7dfcf27e.aaaed8d0.full.json",
+      "incomes": [
+        {
+          "step": 32,
+          "round": 1,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:0871dfa8",
+            "actorId": "player-white",
+            "stateVersion": 5,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "income:card-13-0",
+              "cardInstanceId": "card-13-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 b_117.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-13-0",
+              "imageSrc": "../assets/cards/basic/split/b_117.webp",
+              "imageAlt": "b_117.webp"
+            }
+          },
+          "before": {
+            "round": 1,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 6,
+              "finalScore": 6,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 5,
+              "energy": 2,
+              "publicity": 5,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "handCount": 2,
+              "reservedCount": 0,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {},
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 4,
+                "energy": 2,
+                "handSize": 1,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 0
+            },
+            "hand": [
+              {
+                "id": "card-13-0",
+                "cardId": "b_117.webp",
+                "set": "basic",
+                "price": 3,
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "scanActionCode": 3,
+                "incomeCode": 2,
+                "faceUp": true
+              },
+              {
+                "id": "card-15-0",
+                "cardId": "dlc_9.png",
+                "set": "space-agency",
+                "price": 3,
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "scanActionCode": 2,
+                "incomeCode": 2,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 1,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 6,
+              "finalScore": 6,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 5,
+              "energy": 2,
+              "publicity": 5,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "handCount": 2,
+              "reservedCount": 0,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {},
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 4,
+                "energy": 2,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 0
+            },
+            "hand": [
+              {
+                "id": "card-15-0",
+                "cardId": "dlc_9.png",
+                "set": "space-agency",
+                "price": 3,
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "scanActionCode": 2,
+                "incomeCode": 2,
+                "faceUp": true
+              },
+              {
+                "id": "card-37-0",
+                "cardId": "dlc_40.png",
+                "set": "space-agency",
+                "price": 2,
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "scanActionCode": 2,
+                "incomeCode": 0,
+                "faceUp": true
+              }
+            ]
+          }
+        },
+        {
+          "step": 269,
+          "round": 2,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:e9d605f0",
+            "actorId": "player-white",
+            "stateVersion": 129,
+            "decisionVersion": 4,
+            "target": {
+              "choiceId": "income:alien-chong-9-8",
+              "cardInstanceId": "alien-chong-9-8"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 chong_9.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "alien-chong-9-8",
+              "imageSrc": "../assets/aliens/虫/cards/9.webp",
+              "imageAlt": "chong_9.webp"
+            }
+          },
+          "before": {
+            "round": 2,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 31,
+              "finalScore": 41,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 2,
+              "energy": 0,
+              "publicity": 1,
+              "availableData": 3,
+              "additionalPublicScan": 0,
+              "handCount": 2,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [
+                  {
+                    "tileId": "blue1",
+                    "slot": 1,
+                    "occupied": false,
+                    "unlocked": true
+                  }
+                ],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "blue1": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {
+                  "blue1": 1
+                }
+              },
+              "income": {
+                "credits": 4,
+                "energy": 2,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 10
+            },
+            "hand": [
+              {
+                "id": "card-22-pass-1-3",
+                "cardId": "b_49.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 0,
+                "faceUp": true
+              },
+              {
+                "id": "alien-chong-9-8",
+                "cardId": "chong_9.webp",
+                "set": "alien:虫",
+                "price": 2,
+                "cardTypeCode": 2,
+                "discardActionCode": 5,
+                "scanActionCode": 1,
+                "incomeCode": 0,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 2,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 31,
+              "finalScore": 41,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 3,
+              "energy": 0,
+              "publicity": 1,
+              "availableData": 3,
+              "additionalPublicScan": 0,
+              "handCount": 1,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [
+                  {
+                    "tileId": "blue1",
+                    "slot": 1,
+                    "occupied": false,
+                    "unlocked": true
+                  }
+                ],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "blue1": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {
+                  "blue1": 1
+                }
+              },
+              "income": {
+                "credits": 5,
+                "energy": 2,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 10
+            },
+            "hand": [
+              {
+                "id": "card-22-pass-1-3",
+                "cardId": "b_49.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 0,
+                "faceUp": true
+              }
+            ]
+          }
+        },
+        {
+          "step": 375,
+          "round": 3,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:a5868f64",
+            "actorId": "player-white",
+            "stateVersion": 183,
+            "decisionVersion": 7,
+            "target": {
+              "choiceId": "income:card-42-0",
+              "cardInstanceId": "card-42-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 b_11.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-42-0",
+              "imageSrc": "../assets/cards/basic/split/b_11.webp",
+              "imageAlt": "b_11.webp"
+            }
+          },
+          "before": {
+            "round": 3,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 50,
+              "finalScore": 60,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 5,
+              "energy": 0,
+              "publicity": 7,
+              "availableData": 0,
+              "additionalPublicScan": 1,
+              "handCount": 3,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [
+                  {
+                    "tileId": "blue1",
+                    "slot": 1,
+                    "occupied": false,
+                    "unlocked": true
+                  }
+                ],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "blue1": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {
+                  "blue1": 1
+                }
+              },
+              "income": {
+                "credits": 5,
+                "energy": 2,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 17
+            },
+            "hand": [
+              {
+                "id": "card-42-0",
+                "cardId": "b_11.webp",
+                "set": "basic",
+                "price": 0,
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "scanActionCode": 1,
+                "incomeCode": 2,
+                "faceUp": true
+              },
+              {
+                "id": "card-64-0",
+                "cardId": "dlc_14.png",
+                "set": "space-agency",
+                "price": 2,
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "scanActionCode": 2,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "alien-chong-5-18",
+                "cardId": "chong_5.webp",
+                "set": "alien:虫",
+                "price": 1,
+                "cardTypeCode": 2,
+                "discardActionCode": 4,
+                "scanActionCode": 1,
+                "incomeCode": 0,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 3,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 50,
+              "finalScore": 60,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 5,
+              "energy": 0,
+              "publicity": 7,
+              "availableData": 0,
+              "additionalPublicScan": 1,
+              "handCount": 3,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [
+                  {
+                    "tileId": "blue1",
+                    "slot": 1,
+                    "occupied": false,
+                    "unlocked": true
+                  }
+                ],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "blue1": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {
+                  "blue1": 1
+                }
+              },
+              "income": {
+                "credits": 5,
+                "energy": 2,
+                "handSize": 3,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 17
+            },
+            "hand": [
+              {
+                "id": "card-64-0",
+                "cardId": "dlc_14.png",
+                "set": "space-agency",
+                "price": 2,
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "scanActionCode": 2,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "alien-chong-5-18",
+                "cardId": "chong_5.webp",
+                "set": "alien:虫",
+                "price": 1,
+                "cardTypeCode": 2,
+                "discardActionCode": 4,
+                "scanActionCode": 1,
+                "incomeCode": 0,
+                "faceUp": true
+              },
+              {
+                "id": "card-74-0",
+                "cardId": "dlc_3.png",
+                "set": "space-agency",
+                "price": 2,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 3,
+                "incomeCode": 1,
+                "faceUp": true
+              }
+            ]
+          }
+        },
+        {
+          "step": 469,
+          "round": 3,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:963b17bc",
+            "actorId": "player-white",
+            "stateVersion": 228,
+            "decisionVersion": 11,
+            "target": {
+              "choiceId": "income:card-78-0",
+              "cardInstanceId": "card-78-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 b_140.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-78-0",
+              "imageSrc": "../assets/cards/basic/split/b_140.webp",
+              "imageAlt": "b_140.webp"
+            }
+          },
+          "before": {
+            "round": 3,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 72,
+              "finalScore": 96,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 2,
+              "energy": 0,
+              "publicity": 2,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "handCount": 1,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [
+                  {
+                    "tileId": "blue1",
+                    "slot": 1,
+                    "occupied": false,
+                    "unlocked": true
+                  },
+                  {
+                    "tileId": "blue2",
+                    "slot": 2,
+                    "occupied": false,
+                    "unlocked": true
+                  }
+                ],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "blue1": true,
+                  "blue2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {
+                  "blue1": 1,
+                  "blue2": 2
+                }
+              },
+              "income": {
+                "credits": 5,
+                "energy": 2,
+                "handSize": 3,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 32
+            },
+            "hand": [
+              {
+                "id": "card-78-0",
+                "cardId": "b_140.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 1,
+                "discardActionCode": 1,
+                "scanActionCode": 2,
+                "incomeCode": 0,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 3,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 72,
+              "finalScore": 96,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 3,
+              "energy": 0,
+              "publicity": 2,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "handCount": 0,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [
+                  {
+                    "tileId": "blue1",
+                    "slot": 1,
+                    "occupied": false,
+                    "unlocked": true
+                  },
+                  {
+                    "tileId": "blue2",
+                    "slot": 2,
+                    "occupied": false,
+                    "unlocked": true
+                  }
+                ],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "blue1": true,
+                  "blue2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {
+                  "blue1": 1,
+                  "blue2": 2
+                }
+              },
+              "income": {
+                "credits": 6,
+                "energy": 2,
+                "handSize": 3,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 32
+            },
+            "hand": []
+          }
+        },
+        {
+          "step": 563,
+          "round": 4,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:5c3f5c58",
+            "actorId": "player-white",
+            "stateVersion": 279,
+            "decisionVersion": 16,
+            "target": {
+              "choiceId": "income:card-81-0",
+              "cardInstanceId": "card-81-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 b_136.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-81-0",
+              "imageSrc": "../assets/cards/basic/split/b_136.webp",
+              "imageAlt": "b_136.webp"
+            }
+          },
+          "before": {
+            "round": 4,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 78,
+              "finalScore": 102,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 1,
+              "energy": 0,
+              "publicity": 3,
+              "availableData": 3,
+              "additionalPublicScan": 1,
+              "handCount": 2,
+              "reservedCount": 2,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [
+                  {
+                    "tileId": "blue1",
+                    "slot": 1,
+                    "occupied": false,
+                    "unlocked": true
+                  },
+                  {
+                    "tileId": "blue2",
+                    "slot": 2,
+                    "occupied": false,
+                    "unlocked": true
+                  }
+                ],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "blue1": true,
+                  "blue2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {
+                  "blue1": 1,
+                  "blue2": 2
+                }
+              },
+              "income": {
+                "credits": 6,
+                "energy": 2,
+                "handSize": 3,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 24
+            },
+            "hand": [
+              {
+                "id": "card-81-0",
+                "cardId": "b_136.webp",
+                "set": "basic",
+                "price": 2,
+                "cardTypeCode": 0,
+                "discardActionCode": 2,
+                "scanActionCode": 2,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "card-82-0",
+                "cardId": "b_19.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 2,
+                "discardActionCode": 0,
+                "scanActionCode": 1,
+                "incomeCode": 2,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 4,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 78,
+              "finalScore": 107,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 1,
+              "energy": 1,
+              "publicity": 3,
+              "availableData": 3,
+              "additionalPublicScan": 1,
+              "handCount": 1,
+              "reservedCount": 2,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [
+                  {
+                    "tileId": "blue1",
+                    "slot": 1,
+                    "occupied": false,
+                    "unlocked": true
+                  },
+                  {
+                    "tileId": "blue2",
+                    "slot": 2,
+                    "occupied": false,
+                    "unlocked": true
+                  }
+                ],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "blue1": true,
+                  "blue2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {
+                  "blue1": 1,
+                  "blue2": 2
+                }
+              },
+              "income": {
+                "credits": 6,
+                "energy": 3,
+                "handSize": 3,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 29
+            },
+            "hand": [
+              {
+                "id": "card-82-0",
+                "cardId": "b_19.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 2,
+                "discardActionCode": 0,
+                "scanActionCode": 1,
+                "incomeCode": 2,
+                "faceUp": true
+              }
+            ]
+          }
+        }
+      ],
+      "rounds": [
+        {
+          "step": 167,
+          "before": {
+            "round": 1,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 18,
+              "finalScore": 18,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 1,
+              "energy": 0,
+              "publicity": 2,
+              "availableData": 1,
+              "additionalPublicScan": 0,
+              "handCount": 2,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 4,
+                "energy": 2,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 0
+            },
+            "hand": [
+              {
+                "id": "card-22-pass-1-3",
+                "cardId": "b_49.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 0,
+                "faceUp": true
+              },
+              {
+                "id": "alien-amiba-3-3",
+                "cardId": "amiba_3.webp",
+                "set": "alien:阿米巴",
+                "price": 0,
+                "cardTypeCode": 0,
+                "discardActionCode": 3,
+                "scanActionCode": 3,
+                "incomeCode": 1,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 2,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 18,
+              "finalScore": 18,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 5,
+              "energy": 2,
+              "publicity": 2,
+              "availableData": 1,
+              "additionalPublicScan": 1,
+              "handCount": 4,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 4,
+                "energy": 2,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 0
+            },
+            "hand": [
+              {
+                "id": "card-22-pass-1-3",
+                "cardId": "b_49.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 0,
+                "faceUp": true
+              },
+              {
+                "id": "alien-amiba-3-3",
+                "cardId": "amiba_3.webp",
+                "set": "alien:阿米巴",
+                "price": 0,
+                "cardTypeCode": 0,
+                "discardActionCode": 3,
+                "scanActionCode": 3,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "card-48-0",
+                "cardId": "dlc_30.png",
+                "set": "space-agency",
+                "price": 2,
+                "cardTypeCode": 0,
+                "discardActionCode": 2,
+                "scanActionCode": 2,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "card-49-0",
+                "cardId": "b_13.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 2,
+                "scanActionCode": 2,
+                "incomeCode": 0,
+                "faceUp": true
+              }
+            ]
+          }
+        },
+        {
+          "step": 300,
+          "before": {
+            "round": 2,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 38,
+              "finalScore": 48,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 3,
+              "energy": 0,
+              "publicity": 4,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "handCount": 1,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [
+                  {
+                    "tileId": "blue1",
+                    "slot": 1,
+                    "occupied": false,
+                    "unlocked": true
+                  }
+                ],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "blue1": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {
+                  "blue1": 1
+                }
+              },
+              "income": {
+                "credits": 5,
+                "energy": 2,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 10
+            },
+            "hand": [
+              {
+                "id": "card-26-pass-2-2",
+                "cardId": "b_78.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 2,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 3,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 38,
+              "finalScore": 48,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 8,
+              "energy": 2,
+              "publicity": 4,
+              "availableData": 0,
+              "additionalPublicScan": 1,
+              "handCount": 3,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [
+                  {
+                    "tileId": "blue1",
+                    "slot": 1,
+                    "occupied": false,
+                    "unlocked": true
+                  }
+                ],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "blue1": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {
+                  "blue1": 1
+                }
+              },
+              "income": {
+                "credits": 5,
+                "energy": 2,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 10
+            },
+            "hand": [
+              {
+                "id": "card-26-pass-2-2",
+                "cardId": "b_78.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 2,
+                "faceUp": true
+              },
+              {
+                "id": "card-64-0",
+                "cardId": "dlc_14.png",
+                "set": "space-agency",
+                "price": 2,
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "scanActionCode": 2,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "card-65-0",
+                "cardId": "b_16.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 0,
+                "faceUp": true
+              }
+            ]
+          }
+        },
+        {
+          "step": 508,
+          "before": {
+            "round": 3,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 72,
+              "finalScore": 96,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 3,
+              "energy": 0,
+              "publicity": 2,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "handCount": 1,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [
+                  {
+                    "tileId": "blue1",
+                    "slot": 1,
+                    "occupied": false,
+                    "unlocked": true
+                  },
+                  {
+                    "tileId": "blue2",
+                    "slot": 2,
+                    "occupied": false,
+                    "unlocked": true
+                  }
+                ],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "blue1": true,
+                  "blue2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {
+                  "blue1": 1,
+                  "blue2": 2
+                }
+              },
+              "income": {
+                "credits": 6,
+                "energy": 2,
+                "handSize": 3,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 24
+            },
+            "hand": [
+              {
+                "id": "card-34-pass-3-5",
+                "cardId": "b_138.webp",
+                "set": "basic",
+                "price": 3,
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "scanActionCode": 1,
+                "incomeCode": 2,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 4,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 72,
+              "finalScore": 96,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 9,
+              "energy": 2,
+              "publicity": 2,
+              "availableData": 0,
+              "additionalPublicScan": 1,
+              "handCount": 4,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [
+                  {
+                    "tileId": "blue1",
+                    "slot": 1,
+                    "occupied": false,
+                    "unlocked": true
+                  },
+                  {
+                    "tileId": "blue2",
+                    "slot": 2,
+                    "occupied": false,
+                    "unlocked": true
+                  }
+                ],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "blue1": true,
+                  "blue2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {
+                  "blue1": 1,
+                  "blue2": 2
+                }
+              },
+              "income": {
+                "credits": 6,
+                "energy": 2,
+                "handSize": 3,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 24
+            },
+            "hand": [
+              {
+                "id": "card-34-pass-3-5",
+                "cardId": "b_138.webp",
+                "set": "basic",
+                "price": 3,
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "scanActionCode": 1,
+                "incomeCode": 2,
+                "faceUp": true
+              },
+              {
+                "id": "card-81-0",
+                "cardId": "b_136.webp",
+                "set": "basic",
+                "price": 2,
+                "cardTypeCode": 0,
+                "discardActionCode": 2,
+                "scanActionCode": 2,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "card-82-0",
+                "cardId": "b_19.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 2,
+                "discardActionCode": 0,
+                "scanActionCode": 1,
+                "incomeCode": 2,
+                "faceUp": true
+              },
+              {
+                "id": "card-83-0",
+                "cardId": "b_58.webp",
+                "set": "basic",
+                "price": 2,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 1,
+                "faceUp": true
+              }
+            ]
+          }
+        }
+      ],
+      "scoreEvents": [
+        {
+          "step": 17,
+          "round": 1,
+          "actor": "player-brown",
+          "action": "确认初始选择",
+          "delta": 6,
+          "score": 6
+        },
+        {
+          "step": 70,
+          "round": 1,
+          "actor": "player-white",
+          "action": "外星人 1 蓝色痕迹",
+          "delta": 5,
+          "score": 11
+        },
+        {
+          "step": 80,
+          "round": 1,
+          "actor": "player-white",
+          "action": "研究 purple2",
+          "delta": 2,
+          "score": 13
+        },
+        {
+          "step": 94,
+          "round": 1,
+          "actor": "player-white",
+          "action": "研究 orange3",
+          "delta": 5,
+          "score": 18
+        },
+        {
+          "step": 208,
+          "round": 2,
+          "actor": "player-white",
+          "action": "登陆",
+          "delta": 5,
+          "score": 23
+        },
+        {
+          "step": 209,
+          "round": 2,
+          "actor": "player-white",
+          "action": "获得 1 个黄色外星人标记 → 外星人 2 黄4号位（5分+外星人牌）",
+          "delta": 5,
+          "score": 28
+        },
+        {
+          "step": 266,
+          "round": 2,
+          "actor": "player-white",
+          "action": "扫描 室女座61",
+          "delta": 3,
+          "score": 31
+        },
+        {
+          "step": 286,
+          "round": 2,
+          "actor": "player-white",
+          "action": "外星人 2 蓝9号位（5分+外星人牌）",
+          "delta": 5,
+          "score": 36
+        },
+        {
+          "step": 291,
+          "round": 2,
+          "actor": "player-white",
+          "action": "第一排放置位 1",
+          "delta": 2,
+          "score": 38
+        },
+        {
+          "step": 338,
+          "round": 3,
+          "actor": "player-white",
+          "action": "扫描 南河三",
+          "delta": 2,
+          "score": 40
+        },
+        {
+          "step": 363,
+          "round": 3,
+          "actor": "player-white",
+          "action": "登陆",
+          "delta": 7,
+          "score": 47
+        },
+        {
+          "step": 364,
+          "round": 3,
+          "actor": "player-white",
+          "action": "获得 1 个黄色外星人标记 → 外星人 2 黄3号位（3分+外星人牌）",
+          "delta": 3,
+          "score": 50
+        },
+        {
+          "step": 376,
+          "round": 3,
+          "actor": "player-white",
+          "action": "chong_5.webp：弃牌角标",
+          "delta": 1,
+          "score": 51
+        },
+        {
+          "step": 407,
+          "round": 3,
+          "actor": "player-white",
+          "action": "dlc_7.png → 巴纳德",
+          "delta": 2,
+          "score": 53
+        },
+        {
+          "step": 408,
+          "round": 3,
+          "actor": "player-white",
+          "action": "扫描 织女一",
+          "delta": 2,
+          "score": 55
+        },
+        {
+          "step": 410,
+          "round": 3,
+          "actor": "player-white",
+          "action": "获得展示的科学论文",
+          "delta": 6,
+          "score": 61
+        },
+        {
+          "step": 443,
+          "round": 3,
+          "actor": "player-white",
+          "action": "外星人 1 蓝2号位（1分）",
+          "delta": 3,
+          "score": 64
+        },
+        {
+          "step": 459,
+          "round": 3,
+          "actor": "player-white",
+          "action": "研究 blue2（蓝槽 2）",
+          "delta": 3,
+          "score": 67
+        },
+        {
+          "step": 461,
+          "round": 3,
+          "actor": "player-white",
+          "action": "第一排放置位 1",
+          "delta": 2,
+          "score": 69
+        },
+        {
+          "step": 465,
+          "round": 3,
+          "actor": "player-white",
+          "action": "第一排放置位 3",
+          "delta": 2,
+          "score": 71
+        },
+        {
+          "step": 466,
+          "round": 3,
+          "actor": "player-white",
+          "action": "amiba_2.webp：弃牌角标",
+          "delta": 1,
+          "score": 72
+        },
+        {
+          "step": 562,
+          "round": 4,
+          "actor": "player-white",
+          "action": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R11，1信用点 + 1能量）",
+          "delta": 6,
+          "score": 78
+        },
+        {
+          "step": 625,
+          "round": 4,
+          "actor": "player-white",
+          "action": "登陆",
+          "delta": 6,
+          "score": 84
+        },
+        {
+          "step": 626,
+          "round": 4,
+          "actor": "player-white",
+          "action": "获得 1 个黄色外星人标记 → 外星人 2 黄1号位（4分）",
+          "delta": 4,
+          "score": 88
+        },
+        {
+          "step": 659,
+          "round": 4,
+          "actor": "player-white",
+          "action": "b_128.webp → 比邻星",
+          "delta": 2,
+          "score": 90
+        },
+        {
+          "step": 660,
+          "round": 4,
+          "actor": "player-white",
+          "action": "扫描 天狼星A",
+          "delta": 3,
+          "score": 93
+        },
+        {
+          "step": 677,
+          "round": 4,
+          "actor": "player-white",
+          "action": "外星人 1 额外痕迹位（3分）",
+          "delta": 3,
+          "score": 96
+        },
+        {
+          "step": 682,
+          "round": 4,
+          "actor": "player-white",
+          "action": "研究 orange2",
+          "delta": 3,
+          "score": 99
+        },
+        {
+          "step": 684,
+          "round": 4,
+          "actor": "player-white",
+          "action": "第一排放置位 1",
+          "delta": 2,
+          "score": 101
+        },
+        {
+          "step": 688,
+          "round": 4,
+          "actor": "player-white",
+          "action": "第一排放置位 3",
+          "delta": 2,
+          "score": 103
+        }
+      ],
+      "finalWhite": {
+        "baseScore": 103,
+        "cardScore": 0,
+        "cards": [],
+        "jiuzheCardScore": 0,
+        "jiuzheCards": [],
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "jiuzheThreat": 0,
+        "playerId": "player-white",
+        "prePenaltyTotalScore": 140,
+        "runezuSymbolScore": 0,
+        "tileScore": 37,
+        "tileScoresById": {
+          "a": 15,
+          "b": 0,
+          "c": 8,
+          "d": 14
+        },
+        "tiles": [
+          {
+            "baseValue": 3,
+            "formulaId": "a2",
+            "multiplier": 5,
+            "score": 15,
+            "slotIndex": 3,
+            "tileId": "a",
+            "variant": 2
+          },
+          {
+            "baseValue": 2,
+            "formulaId": "c1",
+            "multiplier": 4,
+            "score": 8,
+            "slotIndex": 1,
+            "tileId": "c",
+            "variant": 1
+          },
+          {
+            "baseValue": 2,
+            "formulaId": "d2",
+            "multiplier": 7,
+            "score": 14,
+            "slotIndex": 1,
+            "tileId": "d",
+            "variant": 2
+          }
+        ],
+        "totalScore": 140
+      }
+    },
+    {
+      "record": "f9209270.36994979.full.json",
+      "incomes": [
+        {
+          "step": 32,
+          "round": 1,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:0871dfa8",
+            "actorId": "player-white",
+            "stateVersion": 5,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "income:card-13-0",
+              "cardInstanceId": "card-13-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 b_117.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-13-0",
+              "imageSrc": "../assets/cards/basic/split/b_117.webp",
+              "imageAlt": "b_117.webp"
+            }
+          },
+          "before": {
+            "round": 1,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 6,
+              "finalScore": 6,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 5,
+              "energy": 2,
+              "publicity": 5,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "handCount": 2,
+              "reservedCount": 0,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {},
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 4,
+                "energy": 2,
+                "handSize": 1,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 0
+            },
+            "hand": [
+              {
+                "id": "card-13-0",
+                "cardId": "b_117.webp",
+                "set": "basic",
+                "price": 3,
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "scanActionCode": 3,
+                "incomeCode": 2,
+                "faceUp": true
+              },
+              {
+                "id": "card-15-0",
+                "cardId": "dlc_9.png",
+                "set": "space-agency",
+                "price": 3,
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "scanActionCode": 2,
+                "incomeCode": 2,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 1,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 6,
+              "finalScore": 6,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 5,
+              "energy": 2,
+              "publicity": 5,
+              "availableData": 0,
+              "additionalPublicScan": 0,
+              "handCount": 2,
+              "reservedCount": 0,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {},
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 4,
+                "energy": 2,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 0
+            },
+            "hand": [
+              {
+                "id": "card-15-0",
+                "cardId": "dlc_9.png",
+                "set": "space-agency",
+                "price": 3,
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "scanActionCode": 2,
+                "incomeCode": 2,
+                "faceUp": true
+              },
+              {
+                "id": "card-37-0",
+                "cardId": "dlc_40.png",
+                "set": "space-agency",
+                "price": 2,
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "scanActionCode": 2,
+                "incomeCode": 0,
+                "faceUp": true
+              }
+            ]
+          }
+        },
+        {
+          "step": 270,
+          "round": 2,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:27228044",
+            "actorId": "player-white",
+            "stateVersion": 130,
+            "decisionVersion": 8,
+            "target": {
+              "choiceId": "income:card-56-0",
+              "cardInstanceId": "card-56-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 dlc_25.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-56-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_25.png",
+              "imageAlt": "dlc_25.png"
+            }
+          },
+          "before": {
+            "round": 2,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 32,
+              "finalScore": 48,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 2,
+              "energy": 0,
+              "publicity": 1,
+              "availableData": 3,
+              "additionalPublicScan": 0,
+              "handCount": 1,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "orange2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 4,
+                "energy": 2,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 16
+            },
+            "hand": [
+              {
+                "id": "card-56-0",
+                "cardId": "dlc_25.png",
+                "set": "space-agency",
+                "price": 1,
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "scanActionCode": 1,
+                "incomeCode": 1,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 2,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 32,
+              "finalScore": 48,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 2,
+              "energy": 1,
+              "publicity": 1,
+              "availableData": 3,
+              "additionalPublicScan": 0,
+              "handCount": 0,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "orange2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 4,
+                "energy": 3,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 16
+            },
+            "hand": []
+          }
+        },
+        {
+          "step": 363,
+          "round": 3,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:449fa86c",
+            "actorId": "player-white",
+            "stateVersion": 180,
+            "decisionVersion": 8,
+            "target": {
+              "choiceId": "income:alien-chong-9-14",
+              "cardInstanceId": "alien-chong-9-14"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 chong_9.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "alien-chong-9-14",
+              "imageSrc": "../assets/aliens/虫/cards/9.webp",
+              "imageAlt": "chong_9.webp"
+            }
+          },
+          "before": {
+            "round": 3,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 41,
+              "finalScore": 57,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 2,
+              "energy": 2,
+              "publicity": 4,
+              "availableData": 0,
+              "additionalPublicScan": 1,
+              "handCount": 3,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "orange2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 4,
+                "energy": 3,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 16
+            },
+            "hand": [
+              {
+                "id": "alien-chong-9-14",
+                "cardId": "chong_9.webp",
+                "set": "alien:虫",
+                "price": 2,
+                "cardTypeCode": 2,
+                "discardActionCode": 5,
+                "scanActionCode": 1,
+                "incomeCode": 0,
+                "faceUp": true
+              },
+              {
+                "id": "card-26-pass-2-2",
+                "cardId": "b_78.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 2,
+                "faceUp": true
+              },
+              {
+                "id": "card-62-0",
+                "cardId": "dlc_16.png",
+                "set": "space-agency",
+                "price": 2,
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "scanActionCode": 2,
+                "incomeCode": 0,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 3,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 41,
+              "finalScore": 57,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 3,
+              "energy": 2,
+              "publicity": 4,
+              "availableData": 0,
+              "additionalPublicScan": 1,
+              "handCount": 2,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "orange2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 5,
+                "energy": 3,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 16
+            },
+            "hand": [
+              {
+                "id": "card-26-pass-2-2",
+                "cardId": "b_78.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 2,
+                "faceUp": true
+              },
+              {
+                "id": "card-62-0",
+                "cardId": "dlc_16.png",
+                "set": "space-agency",
+                "price": 2,
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "scanActionCode": 2,
+                "incomeCode": 0,
+                "faceUp": true
+              }
+            ]
+          }
+        },
+        {
+          "step": 429,
+          "round": 3,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:4ef053f4",
+            "actorId": "player-white",
+            "stateVersion": 210,
+            "decisionVersion": 12,
+            "target": {
+              "choiceId": "income:card-26-pass-2-2",
+              "cardInstanceId": "card-26-pass-2-2"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 b_78.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-26-pass-2-2",
+              "imageSrc": "../assets/cards/basic/split/b_78.webp",
+              "imageAlt": "b_78.webp"
+            }
+          },
+          "before": {
+            "round": 3,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 47,
+              "finalScore": 63,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 0,
+              "energy": 0,
+              "publicity": 6,
+              "availableData": 0,
+              "additionalPublicScan": 1,
+              "handCount": 1,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "orange2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 5,
+                "energy": 3,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 16
+            },
+            "hand": [
+              {
+                "id": "card-26-pass-2-2",
+                "cardId": "b_78.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 2,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 3,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 47,
+              "finalScore": 71,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 0,
+              "energy": 0,
+              "publicity": 6,
+              "availableData": 0,
+              "additionalPublicScan": 1,
+              "handCount": 1,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "orange2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 5,
+                "energy": 3,
+                "handSize": 3,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 24
+            },
+            "hand": [
+              {
+                "id": "card-80-0",
+                "cardId": "b_136.webp",
+                "set": "basic",
+                "price": 2,
+                "cardTypeCode": 0,
+                "discardActionCode": 2,
+                "scanActionCode": 2,
+                "incomeCode": 1,
+                "faceUp": true
+              }
+            ]
+          }
+        },
+        {
+          "step": 507,
+          "round": 4,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:db86483c",
+            "actorId": "player-white",
+            "stateVersion": 252,
+            "decisionVersion": 13,
+            "target": {
+              "choiceId": "income:card-82-0",
+              "cardInstanceId": "card-82-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 b_19.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-82-0",
+              "imageSrc": "../assets/cards/basic/split/b_19.webp",
+              "imageAlt": "b_19.webp"
+            }
+          },
+          "before": {
+            "round": 4,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 50,
+              "finalScore": 80,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 0,
+              "energy": 2,
+              "publicity": 3,
+              "availableData": 1,
+              "additionalPublicScan": 2,
+              "handCount": 2,
+              "reservedCount": 2,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "orange2": true,
+                  "purple4": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 5,
+                "energy": 3,
+                "handSize": 3,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 30
+            },
+            "hand": [
+              {
+                "id": "card-81-0",
+                "cardId": "b_135.webp",
+                "set": "basic",
+                "price": 3,
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "scanActionCode": 0,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "card-82-0",
+                "cardId": "b_19.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 2,
+                "discardActionCode": 0,
+                "scanActionCode": 1,
+                "incomeCode": 2,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 4,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 50,
+              "finalScore": 80,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 0,
+              "energy": 2,
+              "publicity": 3,
+              "availableData": 1,
+              "additionalPublicScan": 2,
+              "handCount": 2,
+              "reservedCount": 2,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2,
+                  3,
+                  4
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "orange2": true,
+                  "purple4": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 5,
+                "energy": 3,
+                "handSize": 4,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 30
+            },
+            "hand": [
+              {
+                "id": "card-81-0",
+                "cardId": "b_135.webp",
+                "set": "basic",
+                "price": 3,
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "scanActionCode": 0,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "card-95-0",
+                "cardId": "b_131.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 0,
+                "faceUp": true
+              }
+            ]
+          }
+        }
+      ],
+      "rounds": [
+        {
+          "step": 163,
+          "before": {
+            "round": 1,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 18,
+              "finalScore": 18,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 1,
+              "energy": 0,
+              "publicity": 2,
+              "availableData": 1,
+              "additionalPublicScan": 0,
+              "handCount": 2,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 4,
+                "energy": 2,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 0
+            },
+            "hand": [
+              {
+                "id": "card-22-pass-1-3",
+                "cardId": "b_49.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 0,
+                "faceUp": true
+              },
+              {
+                "id": "alien-amiba-3-3",
+                "cardId": "amiba_3.webp",
+                "set": "alien:阿米巴",
+                "price": 0,
+                "cardTypeCode": 0,
+                "discardActionCode": 3,
+                "scanActionCode": 3,
+                "incomeCode": 1,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 2,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 18,
+              "finalScore": 18,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 5,
+              "energy": 2,
+              "publicity": 2,
+              "availableData": 1,
+              "additionalPublicScan": 1,
+              "handCount": 4,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 4,
+                "energy": 2,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 0
+            },
+            "hand": [
+              {
+                "id": "card-22-pass-1-3",
+                "cardId": "b_49.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 0,
+                "faceUp": true
+              },
+              {
+                "id": "alien-amiba-3-3",
+                "cardId": "amiba_3.webp",
+                "set": "alien:阿米巴",
+                "price": 0,
+                "cardTypeCode": 0,
+                "discardActionCode": 3,
+                "scanActionCode": 3,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "card-48-0",
+                "cardId": "dlc_30.png",
+                "set": "space-agency",
+                "price": 2,
+                "cardTypeCode": 0,
+                "discardActionCode": 2,
+                "scanActionCode": 2,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "card-49-0",
+                "cardId": "b_13.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 2,
+                "scanActionCode": 2,
+                "incomeCode": 0,
+                "faceUp": true
+              }
+            ]
+          }
+        },
+        {
+          "step": 308,
+          "before": {
+            "round": 2,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 35,
+              "finalScore": 51,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 2,
+              "energy": 1,
+              "publicity": 1,
+              "availableData": 1,
+              "additionalPublicScan": 0,
+              "handCount": 2,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "orange2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 4,
+                "energy": 3,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 16
+            },
+            "hand": [
+              {
+                "id": "alien-chong-9-14",
+                "cardId": "chong_9.webp",
+                "set": "alien:虫",
+                "price": 2,
+                "cardTypeCode": 2,
+                "discardActionCode": 5,
+                "scanActionCode": 1,
+                "incomeCode": 0,
+                "faceUp": true
+              },
+              {
+                "id": "card-26-pass-2-2",
+                "cardId": "b_78.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 2,
+                "faceUp": true
+              }
+            ]
+          },
+          "after": {
+            "round": 3,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 35,
+              "finalScore": 51,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 6,
+              "energy": 4,
+              "publicity": 1,
+              "availableData": 1,
+              "additionalPublicScan": 1,
+              "handCount": 4,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "orange2": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 4,
+                "energy": 3,
+                "handSize": 2,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 16
+            },
+            "hand": [
+              {
+                "id": "alien-chong-9-14",
+                "cardId": "chong_9.webp",
+                "set": "alien:虫",
+                "price": 2,
+                "cardTypeCode": 2,
+                "discardActionCode": 5,
+                "scanActionCode": 1,
+                "incomeCode": 0,
+                "faceUp": true
+              },
+              {
+                "id": "card-26-pass-2-2",
+                "cardId": "b_78.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 2,
+                "faceUp": true
+              },
+              {
+                "id": "card-62-0",
+                "cardId": "dlc_16.png",
+                "set": "space-agency",
+                "price": 2,
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "scanActionCode": 2,
+                "incomeCode": 0,
+                "faceUp": true
+              },
+              {
+                "id": "card-63-0",
+                "cardId": "b_16.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 0,
+                "faceUp": true
+              }
+            ]
+          }
+        },
+        {
+          "step": 446,
+          "before": {
+            "round": 3,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 50,
+              "finalScore": 80,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 0,
+              "energy": 0,
+              "publicity": 1,
+              "availableData": 0,
+              "additionalPublicScan": 1,
+              "handCount": 0,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "orange2": true,
+                  "purple4": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 5,
+                "energy": 3,
+                "handSize": 3,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 30
+            },
+            "hand": []
+          },
+          "after": {
+            "round": 4,
+            "player": {
+              "playerId": "player-white",
+              "color": "white",
+              "playerLabel": "白色玩家",
+              "score": 50,
+              "finalScore": 80,
+              "scoreBreakdown": null,
+              "scoreSources": null,
+              "credits": 5,
+              "energy": 3,
+              "publicity": 1,
+              "availableData": 0,
+              "additionalPublicScan": 2,
+              "handCount": 4,
+              "reservedCount": 1,
+              "completedTaskCount": 0,
+              "dataProgress": {
+                "computerSlots": [
+                  1,
+                  2
+                ],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              },
+              "techState": {
+                "ownedTiles": {
+                  "purple2": true,
+                  "orange3": true,
+                  "orange2": true,
+                  "purple4": true
+                },
+                "disabledTiles": {},
+                "blueBoardSlots": {}
+              },
+              "income": {
+                "credits": 5,
+                "energy": 3,
+                "handSize": 3,
+                "publicity": 0,
+                "availableData": 0,
+                "additionalPublicScan": 1
+              },
+              "blueBonusAssets": {
+                "credits": 0,
+                "energy": 0,
+                "ordinaryCards": 0
+              },
+              "passed": false,
+              "securedEndGameBonus": 30
+            },
+            "hand": [
+              {
+                "id": "card-34-pass-3-5",
+                "cardId": "b_138.webp",
+                "set": "basic",
+                "price": 3,
+                "cardTypeCode": 1,
+                "discardActionCode": 0,
+                "scanActionCode": 1,
+                "incomeCode": 2,
+                "faceUp": true
+              },
+              {
+                "id": "card-81-0",
+                "cardId": "b_135.webp",
+                "set": "basic",
+                "price": 3,
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "scanActionCode": 0,
+                "incomeCode": 1,
+                "faceUp": true
+              },
+              {
+                "id": "card-82-0",
+                "cardId": "b_19.webp",
+                "set": "basic",
+                "price": 1,
+                "cardTypeCode": 2,
+                "discardActionCode": 0,
+                "scanActionCode": 1,
+                "incomeCode": 2,
+                "faceUp": true
+              },
+              {
+                "id": "card-83-0",
+                "cardId": "b_58.webp",
+                "set": "basic",
+                "price": 2,
+                "cardTypeCode": 0,
+                "discardActionCode": 0,
+                "scanActionCode": 0,
+                "incomeCode": 1,
+                "faceUp": true
+              }
+            ]
+          }
+        }
+      ],
+      "scoreEvents": [
+        {
+          "step": 17,
+          "round": 1,
+          "actor": "player-brown",
+          "action": "确认初始选择",
+          "delta": 6,
+          "score": 6
+        },
+        {
+          "step": 70,
+          "round": 1,
+          "actor": "player-white",
+          "action": "外星人 1 蓝色痕迹",
+          "delta": 5,
+          "score": 11
+        },
+        {
+          "step": 80,
+          "round": 1,
+          "actor": "player-white",
+          "action": "研究 purple2",
+          "delta": 2,
+          "score": 13
+        },
+        {
+          "step": 94,
+          "round": 1,
+          "actor": "player-white",
+          "action": "研究 orange3",
+          "delta": 5,
+          "score": 18
+        },
+        {
+          "step": 199,
+          "round": 2,
+          "actor": "player-white",
+          "action": "登陆",
+          "delta": 5,
+          "score": 23
+        },
+        {
+          "step": 200,
+          "round": 2,
+          "actor": "player-white",
+          "action": "获得 1 个黄色外星人标记 → 外星人 2 黄4号位（5分+外星人牌）",
+          "delta": 5,
+          "score": 28
+        },
+        {
+          "step": 264,
+          "round": 2,
+          "actor": "player-white",
+          "action": "扫描 巴纳德",
+          "delta": 2,
+          "score": 30
+        },
+        {
+          "step": 266,
+          "round": 2,
+          "actor": "player-white",
+          "action": "dlc_26.png → 南河三",
+          "delta": 2,
+          "score": 32
+        },
+        {
+          "step": 293,
+          "round": 2,
+          "actor": "player-white",
+          "action": "外星人 2 蓝8号位（3分+外星人牌）",
+          "delta": 3,
+          "score": 35
+        },
+        {
+          "step": 362,
+          "round": 3,
+          "actor": "player-white",
+          "action": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R8，1信用点 + 1能量）",
+          "delta": 6,
+          "score": 41
+        },
+        {
+          "step": 428,
+          "round": 3,
+          "actor": "player-white",
+          "action": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R11，1信用点 + 1能量）",
+          "delta": 6,
+          "score": 47
+        },
+        {
+          "step": 441,
+          "round": 3,
+          "actor": "player-white",
+          "action": "研究 purple4",
+          "delta": 3,
+          "score": 50
+        },
+        {
+          "step": 515,
+          "round": 4,
+          "actor": "player-white",
+          "action": "获得展示的生物特征筛选",
+          "delta": 4,
+          "score": 54
+        },
+        {
+          "step": 546,
+          "round": 4,
+          "actor": "player-white",
+          "action": "登陆",
+          "delta": 6,
+          "score": 60
+        },
+        {
+          "step": 547,
+          "round": 4,
+          "actor": "player-white",
+          "action": "获得 1 个黄色外星人标记 → 外星人 2 黄2号位（5分）",
+          "delta": 5,
+          "score": 65
+        },
+        {
+          "step": 549,
+          "round": 4,
+          "actor": "player-white",
+          "action": "amiba_5.webp：弃牌角标",
+          "delta": 1,
+          "score": 66
+        },
+        {
+          "step": 579,
+          "round": 4,
+          "actor": "player-white",
+          "action": "登陆",
+          "delta": 6,
+          "score": 72
+        },
+        {
+          "step": 580,
+          "round": 4,
+          "actor": "player-white",
+          "action": "获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+          "delta": 1,
+          "score": 73
+        },
+        {
+          "step": 587,
+          "round": 4,
+          "actor": "player-white",
+          "action": "amiba_2.webp：弃牌角标",
+          "delta": 1,
+          "score": 74
+        }
+      ],
+      "finalWhite": {
+        "baseScore": 74,
+        "cardScore": 0,
+        "cards": [],
+        "jiuzheCardScore": 0,
+        "jiuzheCards": [],
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "jiuzheThreat": 0,
+        "playerId": "player-white",
+        "prePenaltyTotalScore": 108,
+        "runezuSymbolScore": 0,
+        "tileScore": 34,
+        "tileScoresById": {
+          "a": 24,
+          "b": 0,
+          "c": 4,
+          "d": 6
+        },
+        "tiles": [
+          {
+            "baseValue": 3,
+            "formulaId": "a2",
+            "multiplier": 8,
+            "score": 24,
+            "slotIndex": 2,
+            "tileId": "a",
+            "variant": 2
+          },
+          {
+            "baseValue": 1,
+            "formulaId": "c1",
+            "multiplier": 4,
+            "score": 4,
+            "slotIndex": 1,
+            "tileId": "c",
+            "variant": 1
+          },
+          {
+            "baseValue": 2,
+            "formulaId": "d2",
+            "multiplier": 3,
+            "score": 6,
+            "slotIndex": 3,
+            "tileId": "d",
+            "variant": 2
+          }
+        ],
+        "totalScore": 108
+      }
+    }
+  ],
+  "passed": true
+}
