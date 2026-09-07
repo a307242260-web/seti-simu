@@ -1,0 +1,428 @@
+{
+  "passed": true,
+  "playerStateEqual": true,
+  "cases": [
+    {
+      "name": "baseline",
+      "scanRequirements": {
+        "schemaVersion": "seti-sector-win-requirements-v1",
+        "playerId": "player-white",
+        "candidates": [
+          {
+            "targetId": "sector:win:sector-1-a:1",
+            "sectorId": "sector-1-a",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 1,
+            "nextSlotScore": 0,
+            "ownCount": 1,
+            "maxOpponentCount": 2,
+            "minimumOwnMarks": 1,
+            "ranking": [
+              {
+                "playerId": "player-green",
+                "playerColor": "green",
+                "count": 2,
+                "latestReplacementOrder": 14
+              },
+              {
+                "playerId": "player-blue",
+                "playerColor": "blue",
+                "count": 1,
+                "latestReplacementOrder": 15
+              },
+              {
+                "playerId": "player-white",
+                "playerColor": "white",
+                "count": 1,
+                "latestReplacementOrder": 9
+              }
+            ]
+          },
+          {
+            "targetId": "sector:win:sector-3-a:2",
+            "sectorId": "sector-3-a",
+            "nextSettlementNumber": 2,
+            "openSlotCount": 3,
+            "nextSlotScore": 0,
+            "ownCount": 1,
+            "maxOpponentCount": 1,
+            "minimumOwnMarks": 3,
+            "ranking": [
+              {
+                "playerId": "player-blue",
+                "playerColor": "blue",
+                "count": 1,
+                "latestReplacementOrder": 16
+              },
+              {
+                "playerId": "player-white",
+                "playerColor": "white",
+                "count": 1,
+                "latestReplacementOrder": 10
+              }
+            ]
+          },
+          {
+            "targetId": "sector:win:sector-1-b:1",
+            "sectorId": "sector-1-b",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 4,
+            "nextSlotScore": 0,
+            "ownCount": 0,
+            "maxOpponentCount": 0,
+            "minimumOwnMarks": 4,
+            "ranking": []
+          },
+          {
+            "targetId": "sector:win:sector-2-a:1",
+            "sectorId": "sector-2-a",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 4,
+            "nextSlotScore": 0,
+            "ownCount": 2,
+            "maxOpponentCount": 0,
+            "minimumOwnMarks": 4,
+            "ranking": [
+              {
+                "playerId": "player-white",
+                "playerColor": "white",
+                "count": 2,
+                "latestReplacementOrder": 2
+              }
+            ]
+          },
+          {
+            "targetId": "sector:win:sector-3-b:1",
+            "sectorId": "sector-3-b",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 4,
+            "nextSlotScore": 0,
+            "ownCount": 0,
+            "maxOpponentCount": 2,
+            "minimumOwnMarks": 4,
+            "ranking": [
+              {
+                "playerId": "player-brown",
+                "playerColor": "brown",
+                "count": 2,
+                "latestReplacementOrder": 8
+              }
+            ]
+          },
+          {
+            "targetId": "sector:win:sector-4-a:1",
+            "sectorId": "sector-4-a",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 4,
+            "nextSlotScore": 0,
+            "ownCount": 0,
+            "maxOpponentCount": 2,
+            "minimumOwnMarks": 4,
+            "ranking": [
+              {
+                "playerId": "player-brown",
+                "playerColor": "brown",
+                "count": 2,
+                "latestReplacementOrder": 6
+              }
+            ]
+          },
+          {
+            "targetId": "sector:win:sector-2-b:1",
+            "sectorId": "sector-2-b",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 5,
+            "nextSlotScore": 0,
+            "ownCount": 0,
+            "maxOpponentCount": 0,
+            "minimumOwnMarks": 5,
+            "ranking": []
+          },
+          {
+            "targetId": "sector:win:sector-4-b:1",
+            "sectorId": "sector-4-b",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 5,
+            "nextSlotScore": 0,
+            "ownCount": 0,
+            "maxOpponentCount": 0,
+            "minimumOwnMarks": 5,
+            "ranking": []
+          }
+        ],
+        "standardScanCost": {
+          "credits": 1,
+          "energy": 2
+        },
+        "standardScanEarthSource": {
+          "sectorX": 5
+        },
+        "accessSources": [
+          {
+            "sourceId": "standard-scan",
+            "family": "scan",
+            "sectorIds": [
+              "sector-1-a",
+              "sector-2-a",
+              "sector-2-b",
+              "sector-3-b"
+            ]
+          }
+        ],
+        "wins": [],
+        "fieldSources": {
+          "competition": "data.{nebulae,sectorExtraMarks}",
+          "tieBreak": "data.*.replacementOrder",
+          "completion": "data.sectorSettlements.winsByPlayerId"
+        }
+      },
+      "expected": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:756e7901",
+        "actorId": "player-white",
+        "stateVersion": 83,
+        "decisionVersion": 5,
+        "target": {
+          "choiceId": "nebula:sector-1-a",
+          "nebulaId": "sector-1-a",
+          "sectorX": 5
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 南河三"
+      },
+      "expectedAvailable": true,
+      "choices": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:756e7901",
+          "actorId": "player-white",
+          "stateVersion": 83,
+          "decisionVersion": 5,
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "扫描 南河三"
+        }
+      ]
+    },
+    {
+      "name": "candidate",
+      "scanRequirements": {
+        "schemaVersion": "seti-sector-win-requirements-v1",
+        "playerId": "player-white",
+        "candidates": [
+          {
+            "targetId": "sector:win:sector-1-a:1",
+            "sectorId": "sector-1-a",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 2,
+            "nextSlotScore": 0,
+            "ownCount": 1,
+            "maxOpponentCount": 2,
+            "minimumOwnMarks": 2,
+            "ranking": [
+              {
+                "playerId": "player-green",
+                "playerColor": "green",
+                "count": 2,
+                "latestReplacementOrder": 12
+              },
+              {
+                "playerId": "player-white",
+                "playerColor": "white",
+                "count": 1,
+                "latestReplacementOrder": 9
+              }
+            ]
+          },
+          {
+            "targetId": "sector:win:sector-1-b:1",
+            "sectorId": "sector-1-b",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 4,
+            "nextSlotScore": 0,
+            "ownCount": 0,
+            "maxOpponentCount": 0,
+            "minimumOwnMarks": 4,
+            "ranking": []
+          },
+          {
+            "targetId": "sector:win:sector-2-a:1",
+            "sectorId": "sector-2-a",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 4,
+            "nextSlotScore": 0,
+            "ownCount": 2,
+            "maxOpponentCount": 0,
+            "minimumOwnMarks": 4,
+            "ranking": [
+              {
+                "playerId": "player-white",
+                "playerColor": "white",
+                "count": 2,
+                "latestReplacementOrder": 2
+              }
+            ]
+          },
+          {
+            "targetId": "sector:win:sector-3-a:2",
+            "sectorId": "sector-3-a",
+            "nextSettlementNumber": 2,
+            "openSlotCount": 4,
+            "nextSlotScore": 2,
+            "ownCount": 1,
+            "maxOpponentCount": 0,
+            "minimumOwnMarks": 4,
+            "ranking": [
+              {
+                "playerId": "player-white",
+                "playerColor": "white",
+                "count": 1,
+                "latestReplacementOrder": 10
+              }
+            ]
+          },
+          {
+            "targetId": "sector:win:sector-3-b:1",
+            "sectorId": "sector-3-b",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 4,
+            "nextSlotScore": 0,
+            "ownCount": 0,
+            "maxOpponentCount": 2,
+            "minimumOwnMarks": 4,
+            "ranking": [
+              {
+                "playerId": "player-brown",
+                "playerColor": "brown",
+                "count": 2,
+                "latestReplacementOrder": 8
+              }
+            ]
+          },
+          {
+            "targetId": "sector:win:sector-4-a:1",
+            "sectorId": "sector-4-a",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 4,
+            "nextSlotScore": 0,
+            "ownCount": 0,
+            "maxOpponentCount": 2,
+            "minimumOwnMarks": 4,
+            "ranking": [
+              {
+                "playerId": "player-brown",
+                "playerColor": "brown",
+                "count": 2,
+                "latestReplacementOrder": 6
+              }
+            ]
+          },
+          {
+            "targetId": "sector:win:sector-2-b:1",
+            "sectorId": "sector-2-b",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 5,
+            "nextSlotScore": 0,
+            "ownCount": 0,
+            "maxOpponentCount": 0,
+            "minimumOwnMarks": 5,
+            "ranking": []
+          },
+          {
+            "targetId": "sector:win:sector-4-b:1",
+            "sectorId": "sector-4-b",
+            "nextSettlementNumber": 1,
+            "openSlotCount": 5,
+            "nextSlotScore": 0,
+            "ownCount": 0,
+            "maxOpponentCount": 0,
+            "minimumOwnMarks": 5,
+            "ranking": []
+          }
+        ],
+        "standardScanCost": {
+          "credits": 1,
+          "energy": 2
+        },
+        "standardScanEarthSource": {
+          "sectorX": 3
+        },
+        "accessSources": [
+          {
+            "sourceId": "standard-scan",
+            "family": "scan",
+            "sectorIds": [
+              "sector-1-b",
+              "sector-2-b",
+              "sector-3-a",
+              "sector-3-b",
+              "sector-4-a",
+              "sector-4-b"
+            ]
+          }
+        ],
+        "wins": [],
+        "fieldSources": {
+          "competition": "data.{nebulae,sectorExtraMarks}",
+          "tieBreak": "data.*.replacementOrder",
+          "completion": "data.sectorSettlements.winsByPlayerId"
+        }
+      },
+      "expected": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:756e7901",
+        "actorId": "player-white",
+        "stateVersion": 83,
+        "decisionVersion": 5,
+        "target": {
+          "choiceId": "nebula:sector-1-a",
+          "nebulaId": "sector-1-a",
+          "sectorX": 5
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 南河三"
+      },
+      "expectedAvailable": false,
+      "choices": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:2ad5607b",
+          "actorId": "player-white",
+          "stateVersion": 95,
+          "decisionVersion": 3,
+          "target": {
+            "choiceId": "nebula:sector-4-a",
+            "nebulaId": "sector-4-a",
+            "sectorX": 3
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "扫描 室女座61"
+        }
+      ]
+    }
+  ]
+}

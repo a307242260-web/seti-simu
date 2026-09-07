@@ -24,6 +24,7 @@
 详见[完整局复核](turing-immediate-expiry-full-review-20260908.md)。
 
 - [冻结设计](turing-immediate-expiry-design-20260908.md)
+- [白方第二轮首差](white-r2-expiry-review-20260908.md)：完整白方状态一致，公共盘面变化使旧南河三扫描不再合法；不将其误归为同根丢叶。
 - [正式无用途对照](turing-immediate-expiry-20260908.json)
 - [536单点原始结果](blue536-turing-expiry-20260908.json)
 - [第50步排序与去借用正式对照](blue50-expiry-review-20260908.md)：发射80.75不变，b33叶85→73；去借用后全部16处后继两版均准入且完整叶仍85。后续发射在累计2468节点时排257，被256容量beam删除。白方下降仍待查，首个主行动差异为第二轮第4回合扫描→发射。
