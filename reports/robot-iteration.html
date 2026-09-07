@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-07T22:32:16.189Z",
+  "builtAt": "2026-09-07T23:03:45.381Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "dd2d111e",
+  "headCommit": "c5c1db2e",
   "currentBaseline": "reorganization-resources-20260907",
   "worktreeDirty": true,
   "bestOf": {
@@ -194,6 +194,436 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "turing-immediate-expiry-20260908",
+      "name": "图灵立即失效剪枝（均95.5，未通过）",
+      "date": "2026-09-08",
+      "baseline": "turing-active-tech-20260908",
+      "head": "04648dd1",
+      "commits": [
+        {
+          "hash": "cd54abc2",
+          "date": "2026-09-08",
+          "subject": "归档图灵剪枝降分完整局及第536步旧高价值计划可执行证据"
+        },
+        {
+          "hash": "84ead13f",
+          "date": "2026-09-08",
+          "subject": "增加指定搜索路径的只读队列去向诊断"
+        },
+        {
+          "hash": "dff0e287",
+          "date": "2026-09-08",
+          "subject": "归档第536步旧高分路径被beam排第257删除的证据"
+        },
+        {
+          "hash": "04648dd1",
+          "date": "2026-09-08",
+          "subject": "剪除图灵借科技后立即结束回合的无用途搜索"
+        }
+      ],
+      "summary": "图灵借科技后不再搜索立即结束回合的无用途分支，保留其他后继与正式合法集",
+      "diffStat": "25 files changed, 706370 insertions(+), 3 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/inspect-blue536-turing-20260908.js",
+          "insertions": 60,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-turing-active-tech-full-20260908.js",
+          "insertions": 101,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-blue536-global-prefix-20260908.js",
+          "insertions": 109,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-blue536-old-plan-20260908.js",
+          "insertions": 36,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-turing-immediate-expiry-20260908.js",
+          "insertions": 65,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 7,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 6,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/turing-immediate-expiry.test.js",
+          "insertions": 28,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 46,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/training/simulation-rule-composition.test.js",
+          "insertions": 22,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue161-turing-active-20260908.json",
+          "insertions": 217457,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue536-old-plan-on-turing-20260908.json",
+          "insertions": 30,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue536-queue-trace-20260908.json",
+          "insertions": 37888,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue536-turing-baseline-20260908.json",
+          "insertions": 173303,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue536-turing-candidate-20260908.json",
+          "insertions": 184489,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/search-path-trace-design-20260908.md",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-active-tech-20260908/b7968542.cbf7966f.full.action-log.html",
+          "insertions": 2205,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-active-tech-full-review-20260908.json",
+          "insertions": 28019,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-active-tech-full-review-20260908.md",
+          "insertions": 98,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-immediate-expiry-20260908.json",
+          "insertions": 136,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-immediate-expiry-design-20260908.md",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 19,
+          "deletions": 1
+        },
+        {
+          "file": "reports/research/b7968542.cbf7966f.full.json",
+          "insertions": 16840,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-turing-active-tech-20260908-cbf7966f-full-v318.json",
+          "insertions": 45340,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "cb456d23.04648dd1.full.json",
+          "recordPath": "reports/research/cb456d23.04648dd1.full.json",
+          "mode": "full",
+          "steps": 622,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 545396,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "04648dd1",
+          "createdAt": "2026-09-07T22:53:51.425Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "622步正式终局56/134/88/104，均95.5，较父版106.25下降10.75；蓝-19、绿+20、棕+1、白-45，未过108.5。115070物理节点、156142输入、545396ms；22战略截断、7控制截断，实际规则失败0。正式终局重算与完整明细一致。536同根4071→3632节点、18.47→16.55秒、优胜价值15→22并正式执行通过，仍1872个beam裁剪来源。完整局前49步一致，第50步蓝方从打b33改为发射，两版均4096节点，降分待归因；不把单点提高或整局约21%提速当作通过。两个图灵unit、唯一full-flow、V审计通过；不合dev生产、不追加剪枝，先查第50步。详见turing-immediate-expiry-full-review-20260908.md。",
+          "scores": {
+            "player-blue": 56,
+            "player-green": 134,
+            "player-brown": 88,
+            "player-white": 104
+          },
+          "avgScore": 95.5,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 56,
+              "base": 46,
+              "tile": 8,
+              "card": 2,
+              "tileScoresById": {
+                "a": 8,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 13,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 4
+              }
+            },
+            "player-green": {
+              "total": 134,
+              "base": 88,
+              "tile": 44,
+              "card": 2,
+              "tileScoresById": {
+                "a": 22,
+                "b": 12,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 12,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 7,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 34,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 3,
+                "techBonusScore": 2
+              }
+            },
+            "player-brown": {
+              "total": 88,
+              "base": 67,
+              "tile": 21,
+              "card": 0,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 0,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 0,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 4,
+                "cardEffectScore": 4,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 18,
+                "orbitScore": 6,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 14
+              }
+            },
+            "player-white": {
+              "total": 104,
+              "base": 78,
+              "tile": 26,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 8,
+                "c": 8,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 4,
+                  "score": 8,
+                  "slotIndex": 3,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 6,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 11,
+                "orbitScore": 12,
+                "scanScore": 9,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-turing-immediate-expiry-20260908-04648dd1-full-v317.json",
+          "reportPath": "reports/iteration/turing-immediate-expiry-20260908/cb456d23.04648dd1.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "cb456d23.04648dd1.full",
+            "path": "reports/iteration/turing-immediate-expiry-20260908/cb456d23.04648dd1.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "turing-active-tech-20260908",
       "name": "图灵重复科技剪枝（均106.25，降分待归因）",

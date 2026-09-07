@@ -3,7 +3,7 @@ const fs=require("node:fs"),assert=require("node:assert/strict");
 const req=require("node:module").createRequire(process.cwd()+"/adhoc/check161.js");
 const {createSimulationEnv}=req("../randomizer/app/simulation-env");
 const evaluator=req("../randomizer/game/ai/expected-score-evaluator");
-const mode=process.argv[2]; assert.ok(["baseline","candidate"].includes(mode));
+const mode=process.argv[2]; assert.ok(["baseline","candidate","expiry"].includes(mode));
 const output="/Users/bilibili/code/seti-simu/reports/iteration/blue536-turing-"+mode+"-20260908.json";
 if(fs.existsSync(output)){console.log(`已有checkpoint：${output}`);process.exit(0);}
 const report={passed:false,rootStep:536,codeHead:require("node:child_process").execFileSync("git",["rev-parse","HEAD"],{encoding:"utf8"}).trim()};
