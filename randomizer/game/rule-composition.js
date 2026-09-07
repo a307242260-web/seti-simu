@@ -250,9 +250,11 @@
       const unknownCard = containsUnknownCardReference(target, knownCardIds);
       const unknownAlien = target.alienId != null
         && !knownAlienIds.has(String(target.alienId));
-      const identityIndependentCardUse = action?.family === "choose_payment"
-        || target.kind === "trade-card-selection"
-        || target.kind === "discard-hand-cards";
+      // 支付族也包含依赖移动角的支付；开局 discard-hand-cards 实为插收入牌。
+      // 只有正式通用弃牌可以只按未知牌数量继续规划。
+      const identityIndependentCardUse = (
+        action?.family === "choose_payment" && target.kind === "discard-hand-card"
+      ) || target.kind === "trade-card-selection";
       if (
         (unknownCard && !identityIndependentCardUse)
         || unknownAlien
@@ -1902,6 +1904,14 @@
             } else {
               settleChoice = drainChoices[0];
             }
+            // 唯一合法支付不代表搜索根知道支付牌的能力；自动结算与后继共用信息边界。
+            // 停止排空后由下方统一过滤/缺后继处理，不伪造支付成功。
+            const drainInformationMasked = node.origins.some((origin) => origin.informationMasked)
+              || isHiddenInformationBarrier(result.irreversibleBarrier)
+              || isHiddenInformationBarrier(drainInspection.session.irreversibleBarrier)
+              || Boolean(drainHiddenBarrier);
+            if (drainInformationMasked
+              && !sanitizeHiddenInformationActions(rootObservation, [settleChoice]).actions.length) break;
             const settlePlanStep = captureStep(settleChoice);
             const settleResult = composition.inputPort.submitDecision({
               decisionId: drainInspection.session.decision.decisionId,
