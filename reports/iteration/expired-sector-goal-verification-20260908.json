@@ -1,0 +1,37 @@
+{
+  "source": "reports/iteration/expired-sector-goal-proof-20260908.json",
+  "passed": true,
+  "returned": [],
+  "completed": false,
+  "previousReturned": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "quick_trade",
+      "phase": "quick",
+      "actionId": "quick_trade:ee5652be",
+      "actorId": "player-green",
+      "stateVersion": 237,
+      "decisionVersion": 13,
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "decision": null,
+      "summary": "2信用点 → 1能量",
+      "routeTargetId": "sector:win:sector-3-a:3",
+      "routePlanId": "sector:standard-scan:sector-3-a",
+      "routeResultTargetIds": [
+        "sector:win:sector-3-a:3"
+      ]
+    }
+  ],
+  "observationUnchanged": true,
+  "note": "旧反例的完成检查参数不完整，旧completed字段不作为证据；此处使用正式契约重新验证，不重跑搜索"
+}

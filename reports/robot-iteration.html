@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-07T17:45:59.352Z",
+  "builtAt": "2026-09-07T19:04:43.225Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "293c4b3f",
+  "headCommit": "39eca99e",
   "currentBaseline": "reorganization-resources-20260907",
   "worktreeDirty": true,
   "bestOf": {
@@ -194,6 +194,574 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "expired-sector-goal-20260908",
+      "name": "过期扇区目标停止搜索（局部修复有效，整体未通过）",
+      "date": "2026-09-08",
+      "baseline": "route-reward-dependency-20260908",
+      "head": "2b44f883",
+      "commits": [
+        {
+          "hash": "0e9f7e9a",
+          "date": "2026-09-08",
+          "subject": "记录路线等额奖励复用全盘结果与绿方分歧"
+        },
+        {
+          "hash": "0275e00a",
+          "date": "2026-09-08",
+          "subject": "取证绿方环绕计划复用与先扫描顺序分歧"
+        },
+        {
+          "hash": "2b40e53e",
+          "date": "2026-09-08",
+          "subject": "核对绿方后续扫描依赖变化与第四轮分差"
+        },
+        {
+          "hash": "f3127655",
+          "date": "2026-09-08",
+          "subject": "取证绿方第四轮科技与环绕方案的展开差异"
+        },
+        {
+          "hash": "d09044d1",
+          "date": "2026-09-08",
+          "subject": "核对科技与环绕保留叶均完成两目标并纠正结束原因判断"
+        },
+        {
+          "hash": "afee21cf",
+          "date": "2026-09-08",
+          "subject": "定位科技后续收入目标已生成但未执行的搜索覆盖缺口"
+        },
+        {
+          "hash": "8ec1aef5",
+          "date": "2026-09-08",
+          "subject": "证明科技后续四条收入入口全部被队列裁剪"
+        },
+        {
+          "hash": "587371bb",
+          "date": "2026-09-08",
+          "subject": "复现过期扇区结算目标仍继续换资源并冻结修复边界"
+        },
+        {
+          "hash": "2b44f883",
+          "date": "2026-09-08",
+          "subject": "停止为过期扇区结算目标继续扫描和准备资源"
+        }
+      ],
+      "summary": "标准扫描按完整扇区结算目标检查可达性，停止过期目标的扫描、资源准备和跨回合等待，保留当前条件奖励结算",
+      "diffStat": "44 files changed, 1155575 insertions(+), 7 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/audit-green-suffix-facts-20260908.js",
+          "insertions": 46,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/diagnose-green-round4-20260908.js",
+          "insertions": 81,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/diagnose-green-route-370-20260908.js",
+          "insertions": 69,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-expired-sector-goal-20260908.js",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-green-final-frontier-20260908.js",
+          "insertions": 53,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-data-fusion-full-20260907.js",
+          "insertions": 30,
+          "deletions": 5
+        },
+        {
+          "file": "adhoc/verify-expired-sector-goal-20260908.js",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-expired-sector-root-469-20260908.js",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-green-termination-report-20260908.js",
+          "insertions": 27,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 6,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-evaluator.test.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/expired-sector-goal-design-20260908.md",
+          "insertions": 82,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/expired-sector-goal-proof-20260908.json",
+          "insertions": 3005,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/expired-sector-goal-verification-20260908.json",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/expired-sector-root-469-20260908.json",
+          "insertions": 39089,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/expired-sector-root-469-v2-20260908.json",
+          "insertions": 41004,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-beam-cut-review-20260908.md",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-beam-cuts-20260908.json",
+          "insertions": 17015,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-beam-cuts-v2-20260908.json",
+          "insertions": 17247,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-final-frontier-20260908.json",
+          "insertions": 17015,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-queue-coverage-review-20260908.md",
+          "insertions": 50,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-round4-baseline-20260908.json",
+          "insertions": 4067,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-round4-candidate-20260908.json",
+          "insertions": 6233,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-round4-candidate-beam-inspection-20260908.json",
+          "insertions": 43378,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-round4-candidate-beam-v2-20260908.json",
+          "insertions": 43378,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-round4-candidate-clusters-20260908.json",
+          "insertions": 43378,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-round4-candidate-expired-scan-20260908.json",
+          "insertions": 43378,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-round4-candidate-queue-inspection-20260908.json",
+          "insertions": 43378,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-round4-candidate-termination-20260908.json",
+          "insertions": 7292,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-round4-review-20260908.md",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-route-370-20260908.json",
+          "insertions": 721519,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-route-370-review-20260908.md",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-suffix-facts-20260908.json",
+          "insertions": 635,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-suffix-facts-review-20260908.md",
+          "insertions": 55,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-termination-audit-20260908.json",
+          "insertions": 342,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-termination-review-20260908.md",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/route-reward-dependency-20260908/81eb1a1e.bb028006.full.action-log.html",
+          "insertions": 2120,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/route-reward-dependency-design-20260908.md",
+          "insertions": 4,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/route-reward-dependency-full-review-20260908.json",
+          "insertions": 2876,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/route-reward-dependency-full-review-20260908.md",
+          "insertions": 65,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 16,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/81eb1a1e.bb028006.full.json",
+          "insertions": 15506,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-route-reward-dependency-20260908-bb028006-full-v301.json",
+          "insertions": 42760,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "d5ef5962.2b44f883.full.json",
+          "recordPath": "reports/research/d5ef5962.2b44f883.full.json",
+          "mode": "full",
+          "steps": 605,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 570199,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "2b44f883",
+          "createdAt": "2026-09-07T19:00:07.921Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "605步，正式终局86/131/87/117、均105.25，与bb028006全部Action/after及完整终局状态一致。124171物理节点不变，正式输入164055→163973，耗时566738→570199ms；25次战略4096截断及4次控制截断不变，实际规则失败0。469旧目标来源225→53但仍满额；局部失效目标修复有效，未达108.5且无整局提速，不判性能通过。候选生产未合dev，运行期间仅新增只读汇总脚本。详见expired-sector-goal-full-review-20260908.md。",
+          "scores": {
+            "player-blue": 86,
+            "player-green": 131,
+            "player-brown": 87,
+            "player-white": 117
+          },
+          "avgScore": 105.25,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 86,
+              "base": 61,
+              "tile": 21,
+              "card": 4,
+              "tileScoresById": {
+                "a": 15,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 1,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 1,
+                "blueTechScore": 4,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 6,
+                "orbitScore": 21,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 6
+              }
+            },
+            "player-green": {
+              "total": 131,
+              "base": 71,
+              "tile": 58,
+              "card": 2,
+              "tileScoresById": {
+                "a": 44,
+                "b": 8,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 4,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 44,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 1,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 6,
+                "orbitScore": 27,
+                "scanScore": 7,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 87,
+              "base": 56,
+              "tile": 25,
+              "card": 6,
+              "tileScoresById": {
+                "a": 15,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "chong_2.webp",
+                  "rule": {
+                    "kind": "chongTraceCount",
+                    "scorePer": 1
+                  },
+                  "score": 6
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 11,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 6,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 5,
+                "orbitScore": 0,
+                "scanScore": 7,
+                "taskCardScore": 0,
+                "techBonusScore": 5
+              }
+            },
+            "player-white": {
+              "total": 117,
+              "base": 75,
+              "tile": 42,
+              "card": 0,
+              "tileScoresById": {
+                "a": 24,
+                "b": 0,
+                "c": 4,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 24,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 4,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 13,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 25,
+                "orbitScore": 0,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 12
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-expired-sector-goal-20260908-2b44f883-full-v301.json",
+          "reportPath": "reports/iteration/expired-sector-goal-20260908/d5ef5962.2b44f883.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "d5ef5962.2b44f883.full",
+            "path": "reports/iteration/expired-sector-goal-20260908/d5ef5962.2b44f883.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "route-reward-dependency-20260908",
       "name": "路线等额奖励复用（整体未通过）",
