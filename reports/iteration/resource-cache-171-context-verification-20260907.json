@@ -1,0 +1,45 @@
+{
+  "scope": "第二轮单个绿方前序搜索与两份真实棕方前态的控制变量排除；不是完整历史缓存复现",
+  "passed": true,
+  "sources": [
+    "resource-cache-171-green162-6b5381c1-20260907.json",
+    "resource-cache-171-green162-20260907.json",
+    "resource-cache-173-green162-20260907.json"
+  ],
+  "keys": 199,
+  "crossSeatSensitiveKeys": 17,
+  "greenWritesPerRun": 10,
+  "plansExactlyEqual": true,
+  "incomeCardInstanceIds": [
+    "card-21-pass-1-2"
+  ],
+  "cases": [
+    {
+      "codeCommit": "6b5381c1",
+      "rootStep": 171,
+      "nodes": 4096,
+      "inputs": 5512,
+      "wallMs": 20019.131417
+    },
+    {
+      "codeCommit": "4b246dca",
+      "rootStep": 171,
+      "nodes": 4096,
+      "inputs": 5512,
+      "wallMs": 21110.221208000003
+    },
+    {
+      "codeCommit": "4b246dca",
+      "rootStep": 173,
+      "nodes": 4096,
+      "inputs": 5512,
+      "wallMs": 18925.082499999997
+    }
+  ],
+  "historicalInputs": [
+    5539,
+    5539
+  ],
+  "historicalContextReproduced": false,
+  "conclusion": "只预热绿162时，两版代码及171/173真实前态都得到同一完整计划；不能据此解释历史b10/b24分歧。历史白164/166等其余搜索上下文未包含。"
+}

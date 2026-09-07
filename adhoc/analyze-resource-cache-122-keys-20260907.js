@@ -1,7 +1,8 @@
 "use strict";
 const fs=require("node:fs"),path=require("node:path"),vm=require("node:vm"),assert=require("node:assert/strict");
 const {createRequire}=require("node:module");
-const output="reports/iteration/resource-cache-122-keys-20260907.json",tree=process.argv[2];assert.ok(path.isAbsolute(tree));
+const tree=process.argv[2],rootStep=Number(process.argv[3]||122);assert.ok(path.isAbsolute(tree));assert.ok([122,171].includes(rootStep));
+const output=`reports/iteration/resource-cache-${rootStep}-keys-20260907.json`;
 function selector(){
   const filename=path.join(tree,"randomizer/game/ai/expected-score-evaluator.js"),source=fs.readFileSync(filename,"utf8"),marker="    EVALUATION_MODEL,\n    PARAMETER_VERSION,";
   assert.equal(source.split(marker).length,2);const box={module:{exports:{}},require:createRequire(filename)};
@@ -17,7 +18,7 @@ if(fs.existsSync(output))console.log("已有具体键对照");else{
       if(i===121)break;const action=legal.find(a=>a.actionId===save.replaySteps[i].action.actionId);assert.deepEqual(action,save.replaySteps[i].action);assert.equal(env.step(action).ok,true);
     }
   }finally{env.dispose();}
-  const writes=JSON.parse(fs.readFileSync("reports/iteration/resource-cache-122-trace-20260907.json")).events.filter(e=>e.kind==="write");
+  const writes=JSON.parse(fs.readFileSync(`reports/iteration/resource-cache-${rootStep}-trace-20260907.json`)).events.filter(e=>e.kind==="write");
   const selectors=Object.fromEntries(Object.keys(bySeat).map(s=>[s,selector()])),rows=[];
   for(const event of writes){
     const observation={outcomeProjection:{assets:{...event.initial,ordinaryCards:event.initial.handSize}},selfState:{hand:Array(event.initial.handSize).fill({})}};
@@ -29,6 +30,6 @@ if(fs.existsSync(output))console.log("已有具体键对照");else{
     assert.deepEqual(results["player-brown"],event.plannedTradeIds,"重建纯函数输入必须复现实测写入");
     rows.push({key:event.key,initial:event.initial,target:event.target,results,conflictingSeats:Object.keys(results).filter(s=>JSON.stringify(results[s])!==JSON.stringify(event.plannedTradeIds))});
   }
-  fs.writeFileSync(output,JSON.stringify({scope:"实测122缓存写入键的纯函数控制变量对照；动作编号从正式重放前122步合法集采集，不代表其他席位实际写过这些键",bySeat,rows},null,2)+"\n");
+  fs.writeFileSync(output,JSON.stringify({scope:"指定实测根缓存写入键的纯函数控制变量对照；动作编号从正式重放前122步合法集采集，不代表其他席位实际写过这些键",rootStep,bySeat,rows},null,2)+"\n");
   console.log(JSON.stringify({keys:rows.length,conflicts:rows.filter(r=>r.conflictingSeats.length)}));
 }
