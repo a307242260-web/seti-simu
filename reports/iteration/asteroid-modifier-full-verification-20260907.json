@@ -1,0 +1,450 @@
+{
+  "scope": "b124共享费用修复的唯一固定局核验：正式终局、动作/状态、逐搜索统计；仅排除实测总耗时，不重跑AI",
+  "sources": [
+    "reports/research/6eb79d83.18839186.full.json",
+    "reports/research/7feb57c3.96e60c14.full.json"
+  ],
+  "measurements": [
+    {
+      "commit": "18839186",
+      "steps": 596,
+      "wallMs": 502852,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "total": 100
+        },
+        {
+          "playerId": "player-green",
+          "total": 86
+        },
+        {
+          "playerId": "player-brown",
+          "total": 115
+        },
+        {
+          "playerId": "player-white",
+          "total": 137
+        }
+      ],
+      "mean": 109.5,
+      "searches": 184,
+      "nodes": 135649,
+      "submissions": 171604,
+      "cutoffs": [
+        {
+          "step": 24,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 42,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 59,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 62,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 148,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 152,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 160,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 164,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 180,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 197,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 198,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 223,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 232,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 264,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 270,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 278,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 280,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 285,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 303,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 328,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 332,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 369,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 412,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 420,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 428,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 435,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 435,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 439,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 443,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 449,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 476,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 492,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 497,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 537,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 539,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 553,
+          "kind": "strategic",
+          "cap": 4096
+        }
+      ],
+      "failures": []
+    },
+    {
+      "commit": "96e60c14",
+      "steps": 596,
+      "wallMs": 501885,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "total": 100
+        },
+        {
+          "playerId": "player-green",
+          "total": 86
+        },
+        {
+          "playerId": "player-brown",
+          "total": 115
+        },
+        {
+          "playerId": "player-white",
+          "total": 137
+        }
+      ],
+      "mean": 109.5,
+      "searches": 184,
+      "nodes": 135649,
+      "submissions": 171604,
+      "cutoffs": [
+        {
+          "step": 24,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 42,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 59,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 62,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 148,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 152,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 160,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 164,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 180,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 197,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 198,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 223,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 232,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 264,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 270,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 278,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 280,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 285,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 303,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 328,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 332,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 369,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 412,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 420,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 428,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 435,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 435,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 439,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 443,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 449,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 476,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 492,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 497,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 537,
+          "kind": "control",
+          "cap": 1
+        },
+        {
+          "step": 539,
+          "kind": "strategic",
+          "cap": 4096
+        },
+        {
+          "step": 553,
+          "kind": "strategic",
+          "cap": 4096
+        }
+      ],
+      "failures": []
+    }
+  ],
+  "sameReplay": true,
+  "sameFinalState": true,
+  "sameNonTimeSearches": true,
+  "firstReplayDifference": {
+    "status": "equal"
+  },
+  "firstSearchDifference": {
+    "status": "equal"
+  },
+  "meanFloorPassed": true,
+  "noScoreRegression": true,
+  "noRuleFailures": true,
+  "zeroCutoffs": false,
+  "verified": true,
+  "goalComplete": false,
+  "sha256": {
+    "reports/research/6eb79d83.18839186.full.json": "c42476dab733113783548477dc8174fd07b009322176b617fb6be082bb05cbda",
+    "reports/research/7feb57c3.96e60c14.full.json": "70999bdabd0d8ca9061af2b565ce6d3e7a17b0b2df5cc09a295941b3a60aa0b3",
+    "seti-saves/seti-save-research-input-classification-20260907-18839186-full-v299.json": "88694f1d95126ebee01d7b032479a8d0c9993741da37a3827a5e6512f93c044a",
+    "seti-saves/seti-save-research-asteroid-movement-modifier-20260907-96e60c14-full-v299.json": "877dc7d38074a4148861863c84bf7d6d8f609dd9e732b8312ec2281002e72051"
+  }
+}
