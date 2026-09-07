@@ -1,0 +1,5 @@
+{
+  "passed": false,
+  "versions": [],
+  "error": "Error: ENOENT: no such file or directory, open '/Users/bilibili/code/seti-simu/reports/iteration/data-root-53-aaaed8d0-20260907.json'\n    at Object.openSync (node:fs:560:18)\n    at Object.readFileSync (node:fs:444:35)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/trace-white-expiry-board-score-20260908.js:23:53)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)"
+}
