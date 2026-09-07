@@ -1,0 +1,608 @@
+{
+  "scope": "历史基线正式重放；不运行AI，不更改规则，不将收入差直接换算为终局因果分",
+  "sourceRecord": "7feb57c3.96e60c14",
+  "cardImage": "assets/cards/space-agency/split/dlc_28.png",
+  "printedEffect": "从手牌中弃掉任意数量的卡牌。然后根据它们的收入角获得资源。",
+  "defect": "DISCARD_ANY_FOR_INCOME调用players.gainIncome，同时增加永久收入与即时资源；牌面仅要求即时资源",
+  "rows": [
+    {
+      "step": 285,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:875a80ee",
+        "actorId": "player-white",
+        "stateVersion": 143,
+        "decisionVersion": 6,
+        "target": {
+          "cardInstanceId": "card-50-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "dlc_28.png"
+      },
+      "before": {
+        "resources": {
+          "additionalPublicScan": 2,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 4,
+          "score": 26
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-50-0",
+            "cardId": "dlc_28.png",
+            "gain": {
+              "credits": 1
+            }
+          },
+          {
+            "id": "card-26-pass-2-2",
+            "cardId": "b_78.webp",
+            "gain": {
+              "handSize": 1
+            }
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_19.png",
+            "gain": {
+              "energy": 1
+            }
+          },
+          {
+            "id": "card-59-0",
+            "cardId": "b_10.webp",
+            "gain": {
+              "energy": 1
+            }
+          }
+        ]
+      },
+      "after": {
+        "resources": {
+          "additionalPublicScan": 2,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 4,
+          "score": 26
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-50-0",
+            "cardId": "dlc_28.png",
+            "gain": {
+              "credits": 1
+            }
+          },
+          {
+            "id": "card-26-pass-2-2",
+            "cardId": "b_78.webp",
+            "gain": {
+              "handSize": 1
+            }
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_19.png",
+            "gain": {
+              "energy": 1
+            }
+          },
+          {
+            "id": "card-59-0",
+            "cardId": "b_10.webp",
+            "gain": {
+              "energy": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step": 286,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:bc5e4a69",
+        "actorId": "player-white",
+        "stateVersion": 143,
+        "decisionVersion": 6,
+        "target": {
+          "choiceId": "card-59-0",
+          "cardInstanceId": "card-59-0",
+          "index": 2
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_10.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-59-0",
+          "imageSrc": "../assets/cards/basic/split/b_10.webp",
+          "imageAlt": "b_10.webp"
+        }
+      },
+      "before": {
+        "resources": {
+          "additionalPublicScan": 2,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 4,
+          "score": 26
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-50-0",
+            "cardId": "dlc_28.png",
+            "gain": {
+              "credits": 1
+            }
+          },
+          {
+            "id": "card-26-pass-2-2",
+            "cardId": "b_78.webp",
+            "gain": {
+              "handSize": 1
+            }
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_19.png",
+            "gain": {
+              "energy": 1
+            }
+          },
+          {
+            "id": "card-59-0",
+            "cardId": "b_10.webp",
+            "gain": {
+              "energy": 1
+            }
+          }
+        ]
+      },
+      "after": {
+        "resources": {
+          "additionalPublicScan": 2,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 4,
+          "score": 26
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-50-0",
+            "cardId": "dlc_28.png",
+            "gain": {
+              "credits": 1
+            }
+          },
+          {
+            "id": "card-26-pass-2-2",
+            "cardId": "b_78.webp",
+            "gain": {
+              "handSize": 1
+            }
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_19.png",
+            "gain": {
+              "energy": 1
+            }
+          },
+          {
+            "id": "card-59-0",
+            "cardId": "b_10.webp",
+            "gain": {
+              "energy": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step": 287,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:da946832",
+        "actorId": "player-white",
+        "stateVersion": 143,
+        "decisionVersion": 6,
+        "target": {
+          "choiceId": "card-58-0",
+          "cardInstanceId": "card-58-0",
+          "index": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "dlc_19.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-58-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_19.png",
+          "imageAlt": "dlc_19.png"
+        }
+      },
+      "before": {
+        "resources": {
+          "additionalPublicScan": 2,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 4,
+          "score": 26
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-50-0",
+            "cardId": "dlc_28.png",
+            "gain": {
+              "credits": 1
+            }
+          },
+          {
+            "id": "card-26-pass-2-2",
+            "cardId": "b_78.webp",
+            "gain": {
+              "handSize": 1
+            }
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_19.png",
+            "gain": {
+              "energy": 1
+            }
+          },
+          {
+            "id": "card-59-0",
+            "cardId": "b_10.webp",
+            "gain": {
+              "energy": 1
+            }
+          }
+        ]
+      },
+      "after": {
+        "resources": {
+          "additionalPublicScan": 2,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 4,
+          "score": 26
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-50-0",
+            "cardId": "dlc_28.png",
+            "gain": {
+              "credits": 1
+            }
+          },
+          {
+            "id": "card-26-pass-2-2",
+            "cardId": "b_78.webp",
+            "gain": {
+              "handSize": 1
+            }
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_19.png",
+            "gain": {
+              "energy": 1
+            }
+          },
+          {
+            "id": "card-59-0",
+            "cardId": "b_10.webp",
+            "gain": {
+              "energy": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step": 288,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:0223dfd3",
+        "actorId": "player-white",
+        "stateVersion": 143,
+        "decisionVersion": 6,
+        "target": {
+          "choiceId": "card-26-pass-2-2",
+          "cardInstanceId": "card-26-pass-2-2",
+          "index": 0
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_78.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-26-pass-2-2",
+          "imageSrc": "../assets/cards/basic/split/b_78.webp",
+          "imageAlt": "b_78.webp"
+        }
+      },
+      "before": {
+        "resources": {
+          "additionalPublicScan": 2,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 4,
+          "score": 26
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-50-0",
+            "cardId": "dlc_28.png",
+            "gain": {
+              "credits": 1
+            }
+          },
+          {
+            "id": "card-26-pass-2-2",
+            "cardId": "b_78.webp",
+            "gain": {
+              "handSize": 1
+            }
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_19.png",
+            "gain": {
+              "energy": 1
+            }
+          },
+          {
+            "id": "card-59-0",
+            "cardId": "b_10.webp",
+            "gain": {
+              "energy": 1
+            }
+          }
+        ]
+      },
+      "after": {
+        "resources": {
+          "additionalPublicScan": 2,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 4,
+          "score": 26
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-50-0",
+            "cardId": "dlc_28.png",
+            "gain": {
+              "credits": 1
+            }
+          },
+          {
+            "id": "card-26-pass-2-2",
+            "cardId": "b_78.webp",
+            "gain": {
+              "handSize": 1
+            }
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_19.png",
+            "gain": {
+              "energy": 1
+            }
+          },
+          {
+            "id": "card-59-0",
+            "cardId": "b_10.webp",
+            "gain": {
+              "energy": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "step": 289,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:a80f2301",
+        "actorId": "player-white",
+        "stateVersion": 143,
+        "decisionVersion": 6,
+        "target": {
+          "choiceId": "card-67-0",
+          "cardInstanceId": "card-67-0",
+          "index": 0
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "dlc_10.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-67-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_10.png",
+          "imageAlt": "dlc_10.png"
+        }
+      },
+      "before": {
+        "resources": {
+          "additionalPublicScan": 2,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 4,
+          "score": 26
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-50-0",
+            "cardId": "dlc_28.png",
+            "gain": {
+              "credits": 1
+            }
+          },
+          {
+            "id": "card-26-pass-2-2",
+            "cardId": "b_78.webp",
+            "gain": {
+              "handSize": 1
+            }
+          },
+          {
+            "id": "card-58-0",
+            "cardId": "dlc_19.png",
+            "gain": {
+              "energy": 1
+            }
+          },
+          {
+            "id": "card-59-0",
+            "cardId": "b_10.webp",
+            "gain": {
+              "energy": 1
+            }
+          }
+        ]
+      },
+      "after": {
+        "resources": {
+          "additionalPublicScan": 2,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 3,
+          "energy": 5,
+          "handSize": 0,
+          "publicity": 4,
+          "score": 26
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 5,
+          "handSize": 3,
+          "publicity": 0
+        },
+        "hand": []
+      }
+    }
+  ],
+  "reproduced": true
+}
