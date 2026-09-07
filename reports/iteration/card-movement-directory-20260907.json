@@ -1,0 +1,822 @@
+{
+  "scope": "卡牌移动目的接入原型：全部242模型有限分类，真实42及后段/148/497实例和正式卡牌阶段读取；不是完整移动目录、AI搜索或性能验收",
+  "sources": [
+    "reports/iteration/company-movement-input-42-20260906.json",
+    "reports/iteration/company-hot-prefix-20260907.json",
+    "reports/iteration/current-movement-hotspots-20260907.json",
+    "reports/iteration/turn-visit-routes-formal-20260907.json"
+  ],
+  "sha256": {
+    "reports/iteration/company-movement-input-42-20260906.json": "4225620b390098056682f64e81e859343d5a3d64afaf4e8f66a46becff786122",
+    "reports/iteration/company-hot-prefix-20260907.json": "be5244d32a414e3dcd2b0159406e97d7f4a13821d604d698e2f6ed25e8ff4ec0",
+    "reports/iteration/current-movement-hotspots-20260907.json": "7253400424f65a80a7b0f10f5549860f314026bd952af489197189551fffc831",
+    "reports/iteration/turn-visit-routes-formal-20260907.json": "2b70069567adc4dd8d575bc374e0b3810338e225f6f2d481642039ac22c304fd"
+  },
+  "catalog": [
+    {
+      "cardId": "aomomo_5.webp",
+      "kind": "bonus",
+      "path": "model.playEffects.1"
+    },
+    {
+      "cardId": "b_2.webp",
+      "kind": "trigger",
+      "path": "model.triggers.0"
+    },
+    {
+      "cardId": "b_2.webp",
+      "kind": "trigger",
+      "path": "model.triggers.1"
+    },
+    {
+      "cardId": "b_2.webp",
+      "kind": "trigger",
+      "path": "model.triggers.2"
+    },
+    {
+      "cardId": "b_10.webp",
+      "kind": "trigger",
+      "path": "model.triggers.0"
+    },
+    {
+      "cardId": "b_10.webp",
+      "kind": "trigger",
+      "path": "model.triggers.1"
+    },
+    {
+      "cardId": "b_10.webp",
+      "kind": "trigger",
+      "path": "model.triggers.2"
+    },
+    {
+      "cardId": "b_11.webp",
+      "kind": "bonus",
+      "path": "model.playEffects.0"
+    },
+    {
+      "cardId": "b_24.webp",
+      "kind": "bonus",
+      "path": "model.playEffects.0"
+    },
+    {
+      "cardId": "b_44.webp",
+      "kind": "trigger",
+      "path": "model.triggers.0"
+    },
+    {
+      "cardId": "b_44.webp",
+      "kind": "trigger",
+      "path": "model.triggers.1"
+    },
+    {
+      "cardId": "b_49.webp",
+      "kind": "movement-means",
+      "path": "model.playEffects.0"
+    },
+    {
+      "cardId": "b_52.webp",
+      "kind": "position",
+      "path": "model.playEffects.0.options.condition"
+    },
+    {
+      "cardId": "b_62.webp",
+      "kind": "bonus",
+      "path": "model.playEffects.0"
+    },
+    {
+      "cardId": "b_66.webp",
+      "kind": "bonus",
+      "path": "model.playEffects.0"
+    },
+    {
+      "cardId": "b_71.webp",
+      "kind": "trigger",
+      "path": "model.triggers.0"
+    },
+    {
+      "cardId": "b_71.webp",
+      "kind": "trigger",
+      "path": "model.triggers.1"
+    },
+    {
+      "cardId": "b_73.webp",
+      "kind": "bonus",
+      "path": "model.playEffects.0"
+    },
+    {
+      "cardId": "b_76.webp",
+      "kind": "bonus",
+      "path": "model.playEffects.0"
+    },
+    {
+      "cardId": "b_81.webp",
+      "kind": "position",
+      "path": "model.tasks.0.condition"
+    },
+    {
+      "cardId": "b_92.webp",
+      "kind": "trigger",
+      "path": "model.triggers.0"
+    },
+    {
+      "cardId": "b_92.webp",
+      "kind": "trigger",
+      "path": "model.triggers.1"
+    },
+    {
+      "cardId": "b_101.webp",
+      "kind": "position",
+      "path": "model.tasks.0.condition"
+    },
+    {
+      "cardId": "b_105.webp",
+      "kind": "position",
+      "path": "model.tasks.0.condition"
+    },
+    {
+      "cardId": "b_108.webp",
+      "kind": "bonus",
+      "path": "model.playEffects.0"
+    },
+    {
+      "cardId": "b_124.webp",
+      "kind": "movement-means",
+      "path": "model.playEffects.0"
+    },
+    {
+      "cardId": "b_125.webp",
+      "kind": "bonus",
+      "path": "model.playEffects.0"
+    },
+    {
+      "cardId": "b_131.webp",
+      "kind": "bonus",
+      "path": "model.playEffects.0"
+    },
+    {
+      "cardId": "b_134.webp",
+      "kind": "trigger",
+      "path": "model.triggers.0"
+    },
+    {
+      "cardId": "b_134.webp",
+      "kind": "trigger",
+      "path": "model.triggers.1"
+    },
+    {
+      "cardId": "dlc_5.png",
+      "kind": "position",
+      "path": "model.playEffects.2.options.condition"
+    },
+    {
+      "cardId": "dlc_7.png",
+      "kind": "position",
+      "path": "model.tasks.0.condition"
+    },
+    {
+      "cardId": "dlc_11.png",
+      "kind": "position",
+      "path": "model.tasks.0.condition"
+    },
+    {
+      "cardId": "dlc_12.png",
+      "kind": "bonus",
+      "path": "model.playEffects.0"
+    },
+    {
+      "cardId": "dlc_14.png",
+      "kind": "position",
+      "path": "model.playEffects.2.options.condition"
+    },
+    {
+      "cardId": "dlc_21.png",
+      "kind": "trigger",
+      "path": "model.triggers.0"
+    },
+    {
+      "cardId": "dlc_21.png",
+      "kind": "trigger",
+      "path": "model.triggers.1"
+    }
+  ],
+  "states": [
+    {
+      "name": "root42",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"card-7-0\",\"model.tasks.0.condition\"]",
+            "kind": "position",
+            "source": {
+              "kind": "card-instance",
+              "cardInstanceId": "card-7-0",
+              "cardId": "dlc_11.png",
+              "ownerId": "player-green",
+              "zone": "hand",
+              "modelPath": "model.tasks.0.condition"
+            },
+            "phase": "needs-position",
+            "requiresPlay": true,
+            "condition": {
+              "type": "probeLocation",
+              "locationType": "asteroid"
+            },
+            "completion": "formal-task-claim",
+            "sourceArity": "single"
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 1.0431250000000034
+    },
+    {
+      "name": "hot-prefix",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"card-7-0\",\"model.tasks.0.condition\"]",
+            "kind": "position",
+            "source": {
+              "kind": "card-instance",
+              "cardInstanceId": "card-7-0",
+              "cardId": "dlc_11.png",
+              "ownerId": "player-green",
+              "zone": "hand",
+              "modelPath": "model.tasks.0.condition"
+            },
+            "phase": "needs-position",
+            "requiresPlay": true,
+            "condition": {
+              "type": "probeLocation",
+              "locationType": "asteroid"
+            },
+            "completion": "formal-task-claim",
+            "sourceArity": "single"
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 0.2745830000000069
+    },
+    {
+      "name": "148:before-play",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"card-21-pass-1-2\",\"model.playEffects.0\"]",
+            "kind": "bonus",
+            "source": {
+              "kind": "card-instance",
+              "cardInstanceId": "card-21-pass-1-2",
+              "cardId": "b_24.webp",
+              "ownerId": "player-green",
+              "zone": "hand",
+              "modelPath": "model.playEffects.0"
+            },
+            "phase": "requires-play",
+            "registrationEffectId": "b24-turn-comet-score",
+            "effectPath": "model.playEffects.0",
+            "bonus": {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 0.2576249999999902
+    },
+    {
+      "name": "148:after-1",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "kind": "bonus",
+            "phase": "registered",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "b24-turn-comet-score"
+            },
+            "bonus": {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 0.12745799999999008
+    },
+    {
+      "name": "148:after-2",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "kind": "bonus",
+            "phase": "registered",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "b24-turn-comet-score"
+            },
+            "bonus": {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 0.12041700000000333
+    },
+    {
+      "name": "148:after-3",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "kind": "bonus",
+            "phase": "registered",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "b24-turn-comet-score"
+            },
+            "bonus": {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 0.09420800000000895
+    },
+    {
+      "name": "148:after-4",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "kind": "bonus",
+            "phase": "registered",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "b24-turn-comet-score"
+            },
+            "bonus": {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 0.08562499999999318
+    },
+    {
+      "name": "148:after-5",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "kind": "bonus",
+            "phase": "registered",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "b24-turn-comet-score"
+            },
+            "bonus": {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 0.08150000000000546
+    },
+    {
+      "name": "148:after-6",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "kind": "bonus",
+            "phase": "registered",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "b24-turn-comet-score"
+            },
+            "bonus": {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 0.07737499999998931
+    },
+    {
+      "name": "148:after-7",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"registered\",\"player-green\",0,\"b24-turn-comet-score\"]",
+            "kind": "bonus",
+            "phase": "registered",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "b24-turn-comet-score"
+            },
+            "bonus": {
+              "duration": "turn",
+              "eventType": "visitComet",
+              "onceKey": "b24-comet-score",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "b24-comet-score",
+                  "type": "gain_resources",
+                  "label": "彗星遭遇：访问彗星获得4分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 4
+                    }
+                  }
+                }
+              ],
+              "id": "b24-turn-comet-score",
+              "effectId": "b24-turn-comet-score",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": [
+                "b24-comet-score"
+              ]
+            }
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 0.071124999999995
+    },
+    {
+      "name": "497:before-play",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"card-31-pass-3-2\",\"model.playEffects.0\"]",
+            "kind": "bonus",
+            "source": {
+              "kind": "card-instance",
+              "cardInstanceId": "card-31-pass-3-2",
+              "cardId": "dlc_12.png",
+              "ownerId": "player-green",
+              "zone": "hand",
+              "modelPath": "model.playEffects.0"
+            },
+            "phase": "requires-play",
+            "registrationEffectId": "dlc12-turn-distinct-planets",
+            "effectPath": "model.playEffects.0",
+            "bonus": {
+              "duration": "turn",
+              "eventType": "visitPlanet",
+              "distinctBy": "planetId",
+              "minCount": 2,
+              "onceKey": "dlc12-two-planets",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "dlc12-score",
+                  "type": "gain_resources",
+                  "label": "访问2个不同行星：3分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 0.09387499999996862
+    },
+    {
+      "name": "497:after-1",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"registered\",\"player-green\",0,\"dlc12-turn-distinct-planets\"]",
+            "kind": "bonus",
+            "phase": "registered",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "dlc12-turn-distinct-planets"
+            },
+            "bonus": {
+              "duration": "turn",
+              "eventType": "visitPlanet",
+              "distinctBy": "planetId",
+              "minCount": 2,
+              "onceKey": "dlc12-two-planets",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "dlc12-score",
+                  "type": "gain_resources",
+                  "label": "访问2个不同行星：3分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  }
+                }
+              ],
+              "id": "dlc12-turn-distinct-planets",
+              "effectId": "dlc12-turn-distinct-planets",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [],
+              "claimedKeys": []
+            }
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 0.07020799999997962
+    },
+    {
+      "name": "497:after-2",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"registered\",\"player-green\",0,\"dlc12-turn-distinct-planets\"]",
+            "kind": "bonus",
+            "phase": "registered",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "dlc12-turn-distinct-planets"
+            },
+            "bonus": {
+              "duration": "turn",
+              "eventType": "visitPlanet",
+              "distinctBy": "planetId",
+              "minCount": 2,
+              "onceKey": "dlc12-two-planets",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "dlc12-score",
+                  "type": "gain_resources",
+                  "label": "访问2个不同行星：3分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  }
+                }
+              ],
+              "id": "dlc12-turn-distinct-planets",
+              "effectId": "dlc12-turn-distinct-planets",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [
+                "saturn"
+              ],
+              "claimedKeys": []
+            }
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 0.06587500000000546
+    },
+    {
+      "name": "497:after-3",
+      "result": {
+        "entries": [
+          {
+            "id": "[\"registered\",\"player-green\",0,\"dlc12-turn-distinct-planets\"]",
+            "kind": "bonus",
+            "phase": "registered",
+            "source": {
+              "kind": "registered-public-bonus",
+              "ownerId": "player-green",
+              "rootRecordOrdinal": 0,
+              "effectId": "dlc12-turn-distinct-planets"
+            },
+            "bonus": {
+              "duration": "turn",
+              "eventType": "visitPlanet",
+              "distinctBy": "planetId",
+              "minCount": 2,
+              "onceKey": "dlc12-two-planets",
+              "icon": "score",
+              "rewards": [
+                {
+                  "id": "dlc12-score",
+                  "type": "gain_resources",
+                  "label": "访问2个不同行星：3分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  }
+                }
+              ],
+              "id": "dlc12-turn-distinct-planets",
+              "effectId": "dlc12-turn-distinct-planets",
+              "playerId": "player-green",
+              "ownerId": "player-green",
+              "usedKeys": [
+                "saturn",
+                "mars"
+              ],
+              "claimedKeys": [
+                "dlc12-two-planets"
+              ]
+            }
+          }
+        ],
+        "excluded": []
+      },
+      "wallMs": 0.07266700000002402
+    }
+  ],
+  "verified": true,
+  "counts": {
+    "position": 8,
+    "trigger": 16,
+    "bonus": 11,
+    "movement-means": 2
+  }
+}
