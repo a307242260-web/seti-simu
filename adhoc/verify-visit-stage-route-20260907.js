@@ -2,7 +2,7 @@
 const fs = require("node:fs"), assert = require("node:assert/strict"), crypto = require("node:crypto");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const { visitRoute } = require("./visit-stage-route-20260907");
-const output = "reports/iteration/visit-stage-route-v4-20260907.json";
+const output = process.argv[2] || "reports/iteration/visit-stage-route-v4-20260907.json";
 const sources = ["reports/iteration/turn-visit-routes-formal-20260907.json", "reports/iteration/current-movement-hotspots-20260907.json"];
 if (fs.existsSync(output)) console.log(`已有阶段路线证据：${output}`);
 else {

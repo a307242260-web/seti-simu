@@ -4,6 +4,9 @@
 状态建立具名目的，不再要求诊断调用方手选b24/dlc12的bonus。仅实现于adhoc，
 不是新生产版本，不修改4096上限，不运行AI或新的固定局。
 
+后续接入已到当前合法首步：card-movement-guidance-design-20260907.md。单来源位置
+与已注册访问共用阶段路线；联合/未注册/触发目的和生产计划链仍未接入。
+
 ## 输入与输出边界
 
 `adhoc/card-movement-purpose-directory-20260907.js`：

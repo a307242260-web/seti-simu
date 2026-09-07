@@ -8,9 +8,18 @@ const residual = require("../randomizer/game/effects/residual-domain-session");
 // 设计原型，不接生产选择器。给定一个真实有效的bonus目的，返回当前阶段所有
 // 最低付费点、再最少移动次数的首步。只证明该目的的费用，不证明沿途其他收益支配。
 // 两个等费用首步必须保留；位置相同但访问进度不同不是同一状态。
-function visitRoute({ root, actor, rocket, bonus, cardPoints, companyAvailable, companyPending = false }) {
+function routeToPurpose({ root, actor, rocket, purpose, cardPoints, companyAvailable, companyPending = false }) {
   assert.ok(Number.isInteger(cardPoints) && cardPoints >= 0);
   assert.equal(typeof companyAvailable, "boolean");
+  assert.ok(["bonus", "position"].includes(purpose.kind), "路线目的类型必须明确");
+  const bonus = purpose.kind === "bonus" ? purpose.bonus : { usedKeys: [], claimedKeys: [] };
+  const destinations = purpose.kind === "position"
+    ? new Set(purpose.destinations.map(p => `${p.x},${p.y}`)) : new Set();
+  const coordinate = rockets.getRocketSectorCoordinate(rocket);
+  assert.ok(coordinate, "移动来源必须有实际坐标");
+  if (purpose.kind === "position" && destinations.has(`${coordinate.x},${coordinate.y}`)) {
+    return { status: "satisfied", expanded: 0, choices: [] };
+  }
   const possibleEvents = [{ type: "move", sameRing: true }, { type: "move", sameRing: false }];
   function arrivalEvents(at) {
     const content = solar.resolveVisibleContent(at.x, at.y, root.solarSystem).content;
@@ -22,13 +31,13 @@ function visitRoute({ root, actor, rocket, bonus, cardPoints, companyAvailable, 
   for (let x = 0; x < 8; x++) for (let y = rockets.SECTOR_RING_MIN; y <= rockets.SECTOR_RING_MAX; y++) {
     possibleEvents.push(...arrivalEvents({ x, y }));
   }
-  const availability = new Set(possibleEvents.map(event => residual.describeEventBonusProgress({
+  const availability = new Set(purpose.kind === "position" ? (destinations.size ? ["progress"] : []) : possibleEvents.map(event => residual.describeEventBonusProgress({
     bonus, event: { ...event, playerId: actor.id }, ownerId: actor.id,
   }).status));
   // 先证明存在进度；已领取的一次性bonus仍可能记录新usedKeys，但不再是领奖需求。
   // 此处枚举事件的超集只做不可达判定，不把尚未可达的事件当成已取得奖励。
   if (![...availability].some(status => status === "reward" || status === "progress")) {
-    return { status: "unreachable", reason: "no-reward-progress", expanded: 0,
+    return { status: "unreachable", reason: purpose.kind === "position" ? "no-position-witness" : "no-reward-progress", expanded: 0,
       statuses: [...availability].sort(), choices: [] };
   }
   const compare = (a, b) => a.paid - b.paid || a.moves - b.moves;
@@ -60,12 +69,11 @@ function visitRoute({ root, actor, rocket, bonus, cardPoints, companyAvailable, 
     for (const d of ability.MOVE_DIRECTIONS) {
       const moved = rockets.canMoveFromCoordinate(root.pieces, n.at, d.deltaX, d.deltaY, rocket.id);
       if (!moved.ok) continue;
-      const events = arrivalEvents(moved.to);
+      const events = [{ type: "move", sameRing: moved.to.y === n.at.y }, ...arrivalEvents(moved.to)];
       // 正式移动同时产生到达事件和move事件；到达行星不抹掉b125的同环移动条件。
-      events.push({ type: "move", sameRing: moved.to.y === n.at.y });
       const progress = { usedKeys: [...n.usedKeys], claimedKeys: [...n.claimedKeys] };
-      let complete = false;
-      for (const event of events) {
+      let complete = purpose.kind === "position" && destinations.has(`${moved.to.x},${moved.to.y}`);
+      for (const event of purpose.kind === "bonus" ? events : []) {
         const result = residual.describeEventBonusProgress({ bonus: { ...bonus, ...progress },
           event: { ...event, playerId: actor.id }, ownerId: actor.id });
         assert.ok(["inapplicable", "repeated", "claimed", "progress", "reward"].includes(result.status));
@@ -100,4 +108,7 @@ function visitRoute({ root, actor, rocket, bonus, cardPoints, companyAvailable, 
   return { status: "reachable", expanded, paid: optimum.paid, moves: optimum.moves,
     choices: [...choices.values()] };
 }
-module.exports = { visitRoute };
+function visitRoute(options) {
+  return routeToPurpose({ ...options, purpose: { kind: "bonus", bonus: options.bonus } });
+}
+module.exports = { visitRoute, routeToPurpose };
