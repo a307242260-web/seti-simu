@@ -1,0 +1,148 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "afterPlanStep": 1,
+      "nextAction": "第一排放置位 5",
+      "nextActionId": "choose_target:e695bb51",
+      "target": "data:analyze",
+      "plan": "data:place_data",
+      "parentAdmitted": true,
+      "candidateAdmitted": true,
+      "parentCount": 1,
+      "candidateCount": 1,
+      "removed": []
+    },
+    {
+      "afterPlanStep": 2,
+      "nextAction": "放置数据",
+      "nextActionId": "place_data:01c038e2",
+      "target": "data:analyze",
+      "plan": "data:place_data",
+      "parentAdmitted": true,
+      "candidateAdmitted": true,
+      "parentCount": 1,
+      "candidateCount": 1,
+      "removed": []
+    },
+    {
+      "afterPlanStep": 3,
+      "nextAction": "第一排放置位 6",
+      "nextActionId": "choose_target:e695bb51",
+      "target": "data:analyze",
+      "plan": "data:place_data",
+      "parentAdmitted": true,
+      "candidateAdmitted": true,
+      "parentCount": 1,
+      "candidateCount": 1,
+      "removed": []
+    },
+    {
+      "afterPlanStep": 4,
+      "nextAction": "结束回合",
+      "nextActionId": "end_turn:320f2608",
+      "target": "data:analyze",
+      "plan": "data:place_data",
+      "parentAdmitted": true,
+      "candidateAdmitted": true,
+      "parentCount": 1,
+      "candidateCount": 1,
+      "removed": []
+    },
+    {
+      "afterPlanStep": 5,
+      "nextAction": "分析",
+      "nextActionId": "analyze:50f30055",
+      "target": "data:analyze",
+      "plan": "data:place_data",
+      "parentAdmitted": true,
+      "candidateAdmitted": true,
+      "parentCount": 1,
+      "candidateCount": 1,
+      "removed": []
+    },
+    {
+      "afterPlanStep": 6,
+      "nextAction": "外星人 2 蓝7号位（化石奖励）",
+      "nextActionId": "choose_target:c8e47c9f",
+      "target": "data:analyze",
+      "plan": "data:place_data",
+      "parentAdmitted": true,
+      "candidateAdmitted": true,
+      "parentCount": 2,
+      "candidateCount": 2,
+      "removed": []
+    },
+    {
+      "afterPlanStep": 7,
+      "nextAction": "结束回合",
+      "nextActionId": "end_turn:320f2608",
+      "target": null,
+      "plan": null,
+      "parentAdmitted": true,
+      "candidateAdmitted": true,
+      "parentCount": 5,
+      "candidateCount": 5,
+      "removed": []
+    },
+    {
+      "afterPlanStep": 8,
+      "nextAction": "chong_4.webp：弃牌角标",
+      "nextActionId": "card_corner:0423a945",
+      "target": "card:resolve:alien-chong-4-29",
+      "plan": "card:resolve:alien-chong-4-29",
+      "parentAdmitted": true,
+      "candidateAdmitted": true,
+      "parentCount": 12,
+      "candidateCount": 12,
+      "removed": []
+    },
+    {
+      "afterPlanStep": 9,
+      "nextAction": "结束移动",
+      "nextActionId": "choose_target:b8c6e764",
+      "target": "card:resolve:alien-chong-4-29",
+      "plan": "card:resolve:alien-chong-4-29",
+      "parentAdmitted": true,
+      "candidateAdmitted": true,
+      "parentCount": 1,
+      "candidateCount": 1,
+      "removed": []
+    },
+    {
+      "afterPlanStep": 10,
+      "nextAction": "研究科技",
+      "nextActionId": "research_tech:b5bf67f7",
+      "target": "tech:gain:orange3",
+      "plan": "tech:orange3:",
+      "parentAdmitted": true,
+      "candidateAdmitted": true,
+      "parentCount": 10,
+      "candidateCount": 10,
+      "removed": []
+    },
+    {
+      "afterPlanStep": 11,
+      "nextAction": "研究 orange3",
+      "nextActionId": "choose_target:228a8f72",
+      "target": "tech:gain:orange3",
+      "plan": "tech:orange3:",
+      "parentAdmitted": true,
+      "candidateAdmitted": true,
+      "parentCount": 1,
+      "candidateCount": 1,
+      "removed": []
+    }
+  ],
+  "scope": "旧路径的隐藏屏障前逐步准入；不证明beam与调度保留",
+  "stop": {
+    "planStep": 12,
+    "action": "研究 orange3",
+    "barrier": {
+      "effectId": "effect-session-7:effect:2",
+      "revision": 2,
+      "code": "tech_bonus_reveal",
+      "reason": "拿取科技后露出下一张 bonus"
+    }
+  }
+}
