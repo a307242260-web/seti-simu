@@ -7,6 +7,31 @@
   },
   "versions": [
     {
+      "id": "reorganization-resources-20260907",
+      "name": "重组一次性资源规则修复",
+      "date": "2026-09-07",
+      "baseline": "resource-preparation-cache-20260907",
+      "head": "e6923ed1",
+      "commits": [
+        "69f1fe8e",
+        "07569d16",
+        "35062f44",
+        "6dd6ed77",
+        "d70f653c",
+        "ee8e561b",
+        "369ce630",
+        "19ca3038",
+        "e6923ed1"
+      ],
+      "summary": "重组先完成弃牌再按收入角发放一次性资源，永久收入不变，奖励新牌不参与本次弃牌",
+      "records": {
+        "13a491f3.e6923ed1.full.json": {
+          "note": "611步，正式终局90/146/112/81、均107.25；563481ms，136483节点、169320输入、182次搜索，27次4096策略及8次控制截断，规则失败0。旧代码反例、五种收入码、先弃后奖、pending恢复与真实285输入验证通过；真实冷搜索13.94秒，13输入优胜计划正式重放一致。本局未实际打出重组，搜索含105个该效果选择节点；卡牌规则正确性主要由局部正式输入证据覆盖。按用户明确的规则bug例外，本项通过，不要求维持含错误收益的历史分数；不是性能或整体Goal通过。满额搜索节点占81.03%，外星痕迹选择占全部23.11%/满额25.37%。详见reorganization-resource-design-20260907.md及reorganization-full-review-20260907.json。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "resource-preparation-cache-20260907",
       "name": "resource-preparation-cache-20260907",
       "date": "2026-09-07",
