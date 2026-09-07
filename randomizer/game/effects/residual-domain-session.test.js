@@ -643,6 +643,28 @@ function industryDefinition() {
 }
 
 {
+  // 公司尚有额度但没有当前可移动来源：规划可读额度，正式启用仍不可选。
+  const root = huanyuRoot(), player = root.players.players[0];
+  const before = structuredClone(root);
+  assert.equal(residual.getCompanyMovementAllowance(root, player), 2);
+  assert.equal(industryDefinition().enumerate({ state: root,
+    standardActionAuthority: { actorId: player.id } }).length, 0);
+  assert.deepEqual(root, before, "额度读取不写公司标记、RNG、序列或玩家状态");
+  for (const state of ["marked", "passed", "pass-pending", "other-company", "missing-company"]) {
+    const changed = structuredClone(root), owner = changed.players.players[0];
+    if (state === "marked") owner.industryRoundMarkRound = changed.turn.roundNumber;
+    if (state === "passed") changed.turn.passedPlayerIds = [owner.id];
+    if (state === "pass-pending") owner.passCompletionPending = true;
+    if (state === "other-company") owner.initialSelection.industry.label = "图灵系统";
+    if (state === "missing-company") owner.initialSelection = {};
+    const original = structuredClone(changed);
+    assert.equal(residual.getCompanyMovementAllowance(changed, owner), 0, state);
+    assert.deepEqual(changed, original, state);
+  }
+  assert.equal(residual.getCompanyMovementAllowance(root, null), 0);
+}
+
+{
   // 崩溃回归：无任何探测器时，industry 动作不得枚举（此前被枚举为合法，
   // 执行后 free_move 会话 0 选项，下一决策 BOUNDARY_EMPTY）
   const root = huanyuRoot();

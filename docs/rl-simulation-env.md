@@ -103,9 +103,10 @@ Standard Action身份；恢复存档时重新枚举，AI与浏览器不补写act
 从probe派生的数据获取与收入路线同步携带`movementSource`，按同一隐藏引用门禁过滤。
 搜索元数据`movementPreparation`为公司第二艘记录独立目标/来源，归origin和逐步
 计划依赖，不属于正式Action或规则状态。
-当前77d36854的未开启公司额度仍由即时Action可用性推导；已复现“先付费移出小行星
-再使用公司”被漏算的边界。修复计划见company-delayed-availability-design-20260907.md，
-该版本派生付费下界尚不能视为完整正确，正式规则费用未受影响。
+未开启时`companyAvailable`表示尚有额度，不表示当前位置一定可以立即启用公司。
+额度由Residual的`getCompanyMovementAllowance`读取共享owner/PASS/公司active与
+1x标记规则；没有当前1点方向时仍可规划付费移出后再用额度，根动作必须与正式
+合法集相交。当前公司Session继续读取remaining/usedRocketIds，未发射来源不预支。
 
 `incomeGainRequirements`中计算机第4格路线的`nextCost.handSize=1`表示完成收入所需
 持有的牌数，供资源准备使用，不是正式扫描费用；钱/能量仍表示当前下一行动需要量。

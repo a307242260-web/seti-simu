@@ -158,7 +158,7 @@
       .filter((move) => !used.has(move.rocketId));
   }
 
-  function canStartCompany(root, player) {
+  function readCompanyActiveAbility(root, player) {
     if (!player) return fail("COMPANY_OWNER_MISSING", "没有当前玩家");
     if ((root.turn?.passedPlayerIds || []).includes(player.id) || player.passCompletionPending) {
       return fail("COMPANY_AFTER_PASS", "PASS 后不能执行公司行动");
@@ -167,6 +167,20 @@
     if (!label) return fail("COMPANY_MISSING", "玩家没有正式公司");
     const active = industryAbilities.canStartActiveAbility(player, label);
     if (!active.ok) return active;
+    return { ...active, companyLabel: label };
+  }
+
+  // 尚未启用的额度：当前没有1点方向不代表付费移出后也没有；不执行标记或移动。
+  function getCompanyMovementAllowance(root, player) {
+    const active = readCompanyActiveAbility(root, player);
+    if (!active.ok || active.abilityId !== "huanyu_free_moves") return 0;
+    return industry.canMarkIndustryAction(player, roundOf(root), { turnNumber: turnOf(root) }).ok ? 2 : 0;
+  }
+
+  function canStartCompany(root, player) {
+    const active = readCompanyActiveAbility(root, player);
+    if (!active.ok) return active;
+    const label = active.companyLabel;
     // 合法性 == 会话可枚举性（用户口径"枚举为合法的动作执行后必能继续"）：
     // 各 1x 能力在启用前校验其后续会话的前置，否则会话 0 选项会让机器席位
     // 在下一决策 MACHINE_PLAYER_BOUNDARY_EMPTY 死局。谓词与会话枚举同源。
@@ -2356,6 +2370,7 @@
     EFFECT_TYPES,
     SPECIES_IDS,
     describeEventBonusProgress,
+    getCompanyMovementAllowance,
     augmentEffectResult,
     createActionDefinitions,
     createResidualDomain,

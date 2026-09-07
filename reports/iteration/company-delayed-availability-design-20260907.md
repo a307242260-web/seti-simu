@@ -1,4 +1,6 @@
-# 公司未来额度：独立修复设计（2026-09-07，尚未实施）
+# 公司未来额度：独立修复设计（2026-09-07）
+
+当前状态：已按下列完整矩阵实现，正式反例、阶段与单决策验证通过；尚未通过完整局效果门禁。
 
 ## 目的与反例
 
@@ -35,3 +37,22 @@ mark primitive，不复制槽规则、不调用执行器。移除本轮引入的
 3. 实际单决策≤30秒，物理节点、正式提交、真实计划链与失败分类落记录后才跑全盘。
 4. 中文独立提交，research --list后robot_iterate唯一固定局；仍以已通过基线109.5
    为效果门槛，不能把失败版本100.5作为新合格线。先纠正实现，再分析剩余降分因果。
+
+## 已有验证证据
+
+- `company-delayed-availability-before-fix-20260907.json`：修复前同一正式7输入路线
+  实付2点，目录3点，固定模式断言失败；不是凭理论改断言。
+- `company-delayed-availability-fixed-cache-20260907.json`：目录修正为2，正式行动
+  与费用不变，7次输入逐项恢复重执行含RNG一致。同坐标额度/已标记/恢复额度/PASS/
+  恢复额度5种缓存用例费用为2/3/2/3/2；后者是明确构造的缓存unit场景，不冒充实战动作。
+- `company-delayed-allowance-stage-regression-20260907.json`：42公司双来源主/次
+  计划依赖及148/497既有4条卡牌路线，共5例通过。
+- `company-delayed-allowance-decision-42-20260907.json`：真实冷决策16481.642292ms、
+  4096物理节点、6546正式输入、26步优胜计划真实重放通过、0规则失败。仍满额，
+  节点与上一版相同，不宣称本修复降低搜索节点。
+- 文档核对范围：AI设计、Simulation接口、迭代中心、性能计划已同步；README、
+  AGENTS与PROJECT_MEMORY的入口/职责未变化，无需修改。没有修改公司正式规则说明。
+- 本次提交前全量Node：unit 78/80（22.29秒）、唯一fullFlow 1/1（0.62秒）；
+  两个既有失败保持为simulation-counterfactual-outcome.test.js:292的12001≠0，
+  strategic-goal-evaluator.test.js:432的data:analyze≠null。未改测试规避失败，
+  不据此宣称零异常总门禁通过。V输入审计、修改脚本语法与diff空白检查通过。

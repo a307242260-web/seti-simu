@@ -27,7 +27,6 @@ const rocketAbility = loadProductionDependency("./abilities/rocket", "SetiAbilit
 const planetAbility = loadProductionDependency("./abilities/planet", "SetiAbilityPlanet");
 const industryPassives = loadProductionDependency("./industry/passives", "SetiIndustryPassives");
 const industryCatalog = loadProductionDependency("./industry/catalog", "SetiIndustryCatalog");
-const industryApi = loadProductionDependency("./industry", "SetiIndustry");
 const residualSession = loadProductionDependency("./effects/residual-domain-session", "SetiResidualDomainSession");
 const cardPlayDomain = loadProductionDependency("./cards/play-domain", "SetiCardPlayDomain");
 const { createRuleComposition } = loadProductionDependency("./rule-composition", "SetiRuleComposition");
@@ -354,7 +353,6 @@ const PROBE_ROUTE_TOPOLOGY_CACHE_MAX = 2048;
 const PROBE_STRUCTURE_CACHE = new Map();
 const SECTOR_REQUIREMENTS_CACHE = new Map();
 const REQUIREMENTS_CACHE_MAX = 4096;
-const companyActionDefinition = residualSession.createActionDefinitions().find((entry) => entry.family === "industry");
 
 function readProbeMovementContext(workingState, player, session) {
   const effect = session?.currentEffect;
@@ -362,11 +360,8 @@ function readProbeMovementContext(workingState, player, session) {
   const companyPending = ownedEffect?.payload?.abilityId === "huanyu_free_moves"
     && ownedEffect.payload.step === "free_move";
   const allowance = cardPlayDomain.getMovementAllowance(ownedEffect);
-  const companyAvailable = !companyPending
-    && industryApi.getPlayerIndustryLabel(player) === "寰宇动力"
-    && companyActionDefinition.enumerate({ state: workingState,
-      standardActionAuthority: { actorId: player.id } })
-      .some((entry) => entry.target.abilityId === "huanyu_free_moves");
+  const companyAllowance = companyPending ? 0 : residualSession.getCompanyMovementAllowance(workingState, player);
+  const companyAvailable = companyAllowance > 0;
   if (companyPending && (!Number.isInteger(ownedEffect.payload.remaining)
     || ownedEffect.payload.remaining <= 0 || !Array.isArray(ownedEffect.payload.usedRocketIds))) {
     throw new TypeError("PROBE_COMPANY_ALLOWANCE_MISSING: 公司移动缺少剩余额度或已用来源");
@@ -375,7 +370,7 @@ function readProbeMovementContext(workingState, player, session) {
     phase: companyPending ? "company" : allowance != null ? "card" : "ordinary",
     cardRemaining: allowance ?? 0,
     companyAvailable,
-    companyRemaining: companyPending ? ownedEffect.payload.remaining : companyAvailable ? 2 : 0,
+    companyRemaining: companyPending ? ownedEffect.payload.remaining : companyAllowance,
     usedRocketIds: companyPending ? [...ownedEffect.payload.usedRocketIds] : [],
     ...(allowance != null && ownedEffect.payload.cardInstanceId != null
       ? { cardInstanceId: ownedEffect.payload.cardInstanceId } : {}),

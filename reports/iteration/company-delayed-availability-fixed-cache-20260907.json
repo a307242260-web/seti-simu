@@ -1,0 +1,398 @@
+{
+  "scope": "真实148检查点，经正式b24移动进入小行星，再付费移出并启用公司到达金星；验证未来额度而非追求绕路奖励，不运行AI",
+  "steps": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:269f8980",
+      "actorId": "player-green",
+      "stateVersion": 69,
+      "decisionVersion": 2,
+      "target": {
+        "cardInstanceId": "card-21-pass-1-2"
+      },
+      "payload": {
+        "cost": {
+          "credits": 1
+        },
+        "handIndex": 0
+      },
+      "decision": null,
+      "summary": "b_24.webp"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:a18cb710",
+      "actorId": "player-green",
+      "stateVersion": 69,
+      "decisionVersion": 2,
+      "target": {
+        "choiceId": "2:-1:0",
+        "rocketId": 2,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payload": {
+        "requiredMovePoints": 1,
+        "remaining": 2
+      },
+      "decision": null,
+      "summary": "R2 逆时针"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:6f9b314b",
+      "actorId": "player-green",
+      "stateVersion": 69,
+      "decisionVersion": 2,
+      "target": {
+        "choiceId": "2:0:1",
+        "rocketId": 2,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payload": {
+        "requiredMovePoints": 1,
+        "remaining": 1
+      },
+      "decision": null,
+      "summary": "R2 向外"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "move",
+      "phase": "quick",
+      "actionId": "move:87babb99",
+      "actorId": "player-green",
+      "stateVersion": 70,
+      "decisionVersion": 2,
+      "target": {
+        "rocketId": 2,
+        "deltaX": 0,
+        "deltaY": -1
+      },
+      "payload": {
+        "direction": "in",
+        "requiredMovePoints": 2
+      },
+      "decision": null,
+      "summary": "移动探测器 2 向内"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "actionId": "choose_payment:da1423b5",
+      "actorId": "player-green",
+      "stateVersion": 70,
+      "decisionVersion": 2,
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "payload": {
+        "energyCost": 2,
+        "requiredMovePoints": 2
+      },
+      "decision": null,
+      "summary": "消耗 2 能量"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "industry",
+      "phase": "quick",
+      "actionId": "industry:5bda1856",
+      "actorId": "player-green",
+      "stateVersion": 71,
+      "decisionVersion": 2,
+      "target": {
+        "companyId": "寰宇动力",
+        "abilityId": "huanyu_free_moves"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "寰宇动力 1x 行动"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:abf3937a",
+      "actorId": "player-green",
+      "stateVersion": 71,
+      "decisionVersion": 2,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "move:2:ccw",
+        "rocketId": 2,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payload": {
+        "direction": "ccw"
+      },
+      "decision": null,
+      "summary": "移动 2 逆时针"
+    }
+  ],
+  "asteroid": {
+    "movement": {
+      "phase": "ordinary",
+      "cardRemaining": 0,
+      "companyAvailable": true,
+      "companyRemaining": 2,
+      "usedRocketIds": []
+    },
+    "route": {
+      "requirementId": "rocket:2:orbit:venus:planet:",
+      "targetId": "orbit:venus:planet:",
+      "playerId": "player-green",
+      "sourceId": "rocket:2",
+      "rocketId": 2,
+      "planetId": "venus",
+      "endpointFamily": "orbit",
+      "endpointTarget": {
+        "type": "planet"
+      },
+      "firstRewardSlotOpen": true,
+      "targetBenefit": {
+        "score": 9,
+        "incomeCount": 1,
+        "dataCount": 0,
+        "grossEquivalentValue": 11.5,
+        "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+        "source": "planetRewards.orbit:venus"
+      },
+      "required": {
+        "credits": 1,
+        "energy": 3,
+        "movementSteps": 2,
+        "movementPoints": 3,
+        "paidMovementPoints": 2
+      },
+      "nextStep": {
+        "family": "move",
+        "rocketId": 2,
+        "directionId": "ccw",
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "movementNextSteps": [
+        {
+          "family": "move",
+          "rocketId": 2,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        {
+          "family": "move",
+          "rocketId": 2,
+          "deltaX": 0,
+          "deltaY": -1
+        }
+      ],
+      "path": [
+        {
+          "directionId": "ccw",
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        {
+          "directionId": "in",
+          "deltaX": 0,
+          "deltaY": -1
+        }
+      ],
+      "publicityStops": 1,
+      "fieldSources": {
+        "topology": "SetiRocketActions.canMoveFromCoordinate",
+        "movementCost": "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+        "launchCost": "SetiAbilityRocket.getLaunchCost",
+        "endpointCost": "SetiAbilityPlanet.DEFAULT_ORBIT_COST",
+        "rewards": "SetiPlanetRewards"
+      },
+      "gap": {
+        "credits": 0,
+        "energy": 1,
+        "movementSteps": 2
+      }
+    },
+    "companyLegal": false
+  },
+  "paymentChoices": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "actionId": "choose_payment:da1423b5",
+      "actorId": "player-green",
+      "stateVersion": 70,
+      "decisionVersion": 2,
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "payload": {
+        "energyCost": 2,
+        "requiredMovePoints": 2
+      },
+      "decision": null,
+      "summary": "消耗 2 能量"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_payment",
+      "phase": "conditional",
+      "actionId": "choose_payment:c9206e10",
+      "actorId": "player-green",
+      "stateVersion": 70,
+      "decisionVersion": 2,
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "card-46-0",
+        "cardIds": [
+          "card-46-0"
+        ]
+      },
+      "payload": {
+        "energyCost": 1,
+        "requiredMovePoints": 2
+      },
+      "decision": null,
+      "summary": "弃 1 张移动牌 + 1 能量"
+    }
+  ],
+  "outside": {
+    "movement": {
+      "phase": "ordinary",
+      "cardRemaining": 0,
+      "companyAvailable": true,
+      "companyRemaining": 2,
+      "usedRocketIds": []
+    },
+    "companyLegal": true
+  },
+  "endRoute": {
+    "requirementId": "rocket:2:orbit:venus:planet:",
+    "targetId": "orbit:venus:planet:",
+    "playerId": "player-green",
+    "sourceId": "rocket:2",
+    "rocketId": 2,
+    "planetId": "venus",
+    "endpointFamily": "orbit",
+    "endpointTarget": {
+      "type": "planet"
+    },
+    "firstRewardSlotOpen": true,
+    "targetBenefit": {
+      "score": 9,
+      "incomeCount": 1,
+      "dataCount": 0,
+      "grossEquivalentValue": 9,
+      "rewardSummary": "首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入",
+      "source": "planetRewards.orbit:venus"
+    },
+    "required": {
+      "credits": 1,
+      "energy": 1,
+      "movementSteps": 0,
+      "movementPoints": 0,
+      "paidMovementPoints": 0
+    },
+    "nextStep": {
+      "family": "orbit",
+      "rocketId": 2,
+      "planetId": "venus",
+      "target": {}
+    },
+    "movementNextSteps": [
+      {
+        "family": "orbit",
+        "rocketId": 2,
+        "planetId": "venus",
+        "target": {}
+      }
+    ],
+    "path": [],
+    "publicityStops": 0,
+    "fieldSources": {
+      "topology": "SetiRocketActions.canMoveFromCoordinate",
+      "movementCost": "SetiAbilityRocket.getRequiredMovePointsFromCoordinate",
+      "launchCost": "SetiAbilityRocket.getLaunchCost",
+      "endpointCost": "SetiAbilityPlanet.DEFAULT_ORBIT_COST",
+      "rewards": "SetiPlanetRewards"
+    },
+    "gap": {
+      "credits": 0,
+      "energy": 1,
+      "movementSteps": 0
+    }
+  },
+  "formalPaidMovementPoints": 2,
+  "bugReproduced": false,
+  "cacheCases": [
+    {
+      "variant": "available",
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      },
+      "paidPoints": 2
+    },
+    {
+      "variant": "marked",
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": false,
+        "companyRemaining": 0,
+        "usedRocketIds": []
+      },
+      "paidPoints": 3
+    },
+    {
+      "variant": "available-again",
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      },
+      "paidPoints": 2
+    },
+    {
+      "variant": "passed",
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": false,
+        "companyRemaining": 0,
+        "usedRocketIds": []
+      },
+      "paidPoints": 3
+    },
+    {
+      "variant": "available-last",
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      },
+      "paidPoints": 2
+    }
+  ],
+  "fixedVerified": true
+}
