@@ -281,6 +281,7 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 | 版本 | head | 说明 |
 |---|---|---|
+| `company-movement-finish-20260907` | `4b246dca` | 绑定公司结束选项匹配首步、保留第二艘；571步均91.75，134155节点、35截断、0规则失败；局部反例通过，整局下降7.5未通过 |
 | `card-movement-finish-20260907` | `6b5381c1` | 绑定卡牌结束选项匹配目标首步；592步均99.25，137837节点、33截断、0规则失败；局部修复通过，完整局效果与性能未通过 |
 | `ordinary-movement-demand-20260907` | `0b586daa` | 普通move不再无目标回补；592步均93.5，124085节点、33截断、0规则失败；未绑定move归零但效果下降7，归因未完成 |
 | `company-delayed-allowance-20260907` | `9968644b` | 公司未来额度独立修复；584步均100.5、行动及终局状态同77d36854，136381节点、0规则失败、34截断；局部反例修复通过，完整局仍未达109.5 |
@@ -336,7 +337,7 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 - 记录 `summary.scores` 为运行当时口径；有存档的终局运行由 build 从存档 finalScores
   读取完整终局分（save-final），total = base + 板块 + 卡牌。
 - `registry.currentBaseline` 按代码祖先解析，不代表验收通过；最近已登记候选为
-  `card-movement-finish-20260907`，完整终局均99.25，实际搜索规则失败0，仍33截断，
+  `company-movement-finish-20260907`，完整终局均91.75，实际搜索规则失败0，仍35截断，
   未通过整体验收，移动降分归因完成前不转入放数据。
   前版公司未来额度反例已修复，完整局均100.5，行动与终局状态同77d36854。
   已通过对照`asteroid-movement-modifier-20260907`完整终局均109.5，实际搜索规则失败0，仍36截断；

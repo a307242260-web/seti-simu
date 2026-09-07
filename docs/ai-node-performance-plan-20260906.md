@@ -485,5 +485,7 @@ reports/iteration/ordinary-movement-demand-design-20260907.md。现已将普通m
 
 公司阶段同类finish回补已另列候选company-movement-finish-20260907：192正式
 反例可省一张移动牌；目标结束检查扩到company，第二艘独立目的与结束仍保留。
-162冷决策13.71秒、4096节点、4633输入、0失败，18步计划正式重放通过，完整局
-尚未验证；详见company-movement-finish-design-20260907.md，不视为性能已达标。
+162冷决策13.71秒、4096节点、4633输入、0失败，18步计划正式重放通过。4b246dca
+完整局571步均91.75，较前版下降7.5；134155节点、168976正式输入、35截断、
+0规则失败，530019ms。首差163改为立即启用公司，效果未通过；详见
+company-movement-finish-design-20260907.md及company-finish-full-verification-20260907.json。

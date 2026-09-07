@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "company-movement-finish-20260907",
+      "name": "company-movement-finish-20260907",
+      "date": "2026-09-07",
+      "baseline": "card-movement-finish-20260907",
+      "head": "4b246dca",
+      "commits": [
+        "99eae841",
+        "4b246dca"
+      ],
+      "summary": "已绑定公司移动的结束选项匹配主要目标首步，保留第二艘独立准备及必要结束",
+      "records": {
+        "f237707b.4b246dca.full.json": {
+          "note": "571步，正式终局59/129/79/100，均91.75，较前版99.25下降7.5，低于109.5。134155节点、168976正式输入、30策略及5控制截断、0规则失败，530019ms。首次分歧163绿方结束回合改立即启用公司；局部省牌反例及第二艘验证通过，但整局效果未通过，继续归因，不推进其他优化。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "card-movement-finish-20260907",
       "name": "card-movement-finish-20260907",
       "date": "2026-09-07",

@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-07T06:42:11.703Z",
+  "builtAt": "2026-09-07T07:02:14.240Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "6b5381c1",
-  "currentBaseline": "card-movement-finish-20260907",
+  "headCommit": "4b246dca",
+  "currentBaseline": "company-movement-finish-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,430 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "company-movement-finish-20260907",
+      "name": "company-movement-finish-20260907",
+      "date": "2026-09-07",
+      "baseline": "card-movement-finish-20260907",
+      "head": "4b246dca",
+      "commits": [
+        {
+          "hash": "99eae841",
+          "date": "2026-09-07",
+          "subject": "登记卡牌结束移动修复的完整局结果与未通过项"
+        },
+        {
+          "hash": "4b246dca",
+          "date": "2026-09-07",
+          "subject": "公司结束移动选项遵守主要目标首步并保留第二艘准备"
+        }
+      ],
+      "summary": "已绑定公司移动的结束选项匹配主要目标首步，保留第二艘独立准备及必要结束",
+      "diffStat": "24 files changed, 120160 insertions(+), 15 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/capture-green-company-finish-20260907.js",
+          "insertions": 43,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-card-finish-full-20260907.js",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-company-finish-contract-20260907.js",
+          "insertions": 43,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 3,
+          "deletions": 2
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 11,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 3,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/ai/strategic-goal-evaluator.test.js",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/card-finish-full-verification-20260907.json",
+          "insertions": 1359,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-movement-finish-20260907/7d87ceb5.6b5381c1.full.action-log.html",
+          "insertions": 2205,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-movement-finish-design-20260907.md",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-finish-contract-before-20260907.json",
+          "insertions": 1761,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-finish-contract-fixed-20260907.json",
+          "insertions": 1739,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-finish-decision-162-20260907.json",
+          "insertions": 4419,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-finish-stage-before-20260907.json",
+          "insertions": 486,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-finish-stage-fixed-20260907.json",
+          "insertions": 464,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-movement-finish-design-20260907.md",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-company-finish-20260907.json",
+          "insertions": 48921,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-score-causality-20260907.md",
+          "insertions": 14,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 561,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 23,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/7d87ceb5.6b5381c1.full.json",
+          "insertions": 15737,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 561,
+          "deletions": 4
+        },
+        {
+          "file": "seti-saves/seti-save-research-card-movement-finish-20260907-6b5381c1-full-v312.json",
+          "insertions": 41691,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "f237707b.4b246dca.full.json",
+          "recordPath": "reports/research/f237707b.4b246dca.full.json",
+          "mode": "full",
+          "steps": 571,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 530019,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "4b246dca",
+          "createdAt": "2026-09-07T07:00:06.836Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "571步，正式终局59/129/79/100，均91.75，较前版99.25下降7.5，低于109.5。134155节点、168976正式输入、30策略及5控制截断、0规则失败，530019ms。首次分歧163绿方结束回合改立即启用公司；局部省牌反例及第二艘验证通过，但整局效果未通过，继续归因，不推进其他优化。",
+          "scores": {
+            "player-blue": 59,
+            "player-green": 129,
+            "player-brown": 79,
+            "player-white": 100
+          },
+          "avgScore": 91.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 59,
+              "base": 45,
+              "tile": 8,
+              "card": 6,
+              "tileScoresById": {
+                "a": 8,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 6
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 0,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 10,
+                "orbitScore": 9,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-green": {
+              "total": 129,
+              "base": 83,
+              "tile": 44,
+              "card": 2,
+              "tileScoresById": {
+                "a": 22,
+                "b": 8,
+                "c": 0,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 20,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 32,
+                "orbitScore": 9,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 79,
+              "base": 51,
+              "tile": 24,
+              "card": 4,
+              "tileScoresById": {
+                "a": 15,
+                "b": 0,
+                "c": 0,
+                "d": 9
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 9,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "chong_2.webp",
+                  "rule": {
+                    "kind": "chongTraceCount",
+                    "scorePer": 1
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 5,
+                "orbitScore": 6,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            },
+            "player-white": {
+              "total": 100,
+              "base": 75,
+              "tile": 25,
+              "card": 0,
+              "tileScoresById": {
+                "a": 15,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 0,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 0,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 12,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 14,
+                "blueTechScore": 2,
+                "cardEffectScore": 3,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 20,
+                "orbitScore": 0,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 12
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-company-movement-finish-20260907-4b246dca-full-v301.json",
+          "reportPath": "reports/iteration/company-movement-finish-20260907/f237707b.4b246dca.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "f237707b.4b246dca.full",
+            "path": "reports/iteration/company-movement-finish-20260907/f237707b.4b246dca.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "card-movement-finish-20260907",
       "name": "card-movement-finish-20260907",
@@ -737,7 +1161,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
