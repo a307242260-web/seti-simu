@@ -1,0 +1,1304 @@
+{
+  "baseline": {
+    "file": "reports/research/7dfcf27e.aaaed8d0.full.json",
+    "commit": "aaaed8d0",
+    "steps": 690,
+    "scores": {
+      "player-blue": 87,
+      "player-green": 147,
+      "player-brown": 121,
+      "player-white": 140
+    },
+    "average": 123.75,
+    "wallMs": 572316,
+    "nodes": 142383,
+    "inputs": 180948,
+    "failures": {},
+    "decisions": {
+      "pass:main": 3575,
+      "analyze:main": 3615,
+      "card_corner:quick": 3721,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 749,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 1775,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_income": 3836,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 2775,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 5078,
+      "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 2004,
+      "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 1905,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 2155,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 14673,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 6563,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research": 2480,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech": 231,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 6466,
+      "end_turn:turn_control": 13344,
+      "industry:quick": 2551,
+      "land:main": 2623,
+      "launch:main": 1076,
+      "move:quick": 4780,
+      "orbit:main": 1560,
+      "place_data:quick": 11927,
+      "play_card:main": 2115,
+      "quick_trade:quick": 10795,
+      "research_tech:main": 834,
+      "scan:main": 3820,
+      "choose_target:conditional/decision=choose_target/effect=probe_land_choice": 2214,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 535,
+      "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger": 604,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker": 29,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 2437,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace": 74,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income": 674,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income": 441,
+      "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 12925,
+      "choose_target:conditional/decision=choose_target/effect=residual_final_mark": 3398,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4": 323,
+      "choose_card:conditional/decision=choose_card/effect=probe_turn_pass_reserve": 42,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income": 170,
+      "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task": 805,
+      "complete_task:quick": 52,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward": 4,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_return_unfinished_task_to_hand/cardEffect=card_return_unfinished_task_to_hand": 12,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_card_corner_repeat/cardEffect=card_discard_card_corner_repeat": 7,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step/cardEffect=card_probe_sector_scan": 246,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_draw_then_scan/cardEffect=card_draw_then_scan": 36,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_land/cardEffect=card_land": 4,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card": 188,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_choose_symbol_reward/cardEffect=amiba_choose_symbol_reward": 100,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_hand_scan/cardEffect=card_hand_scan": 5,
+      "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=chong_task": 32
+    },
+    "full": [
+      {
+        "step": 24,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 42,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 50,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 53,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 96,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 168,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 183,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 189,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 195,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 211,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 220,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 301,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 308,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 318,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 320,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 323,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 334,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 343,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 360,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 376,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 386,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 395,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 509,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 518,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 520,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 524,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 610,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      }
+    ],
+    "controlTruncations": [
+      {
+        "step": 174,
+        "seat": "player-blue",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 181,
+        "seat": "player-blue",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 211,
+        "seat": "player-white",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 260,
+        "seat": "player-brown",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 376,
+        "seat": "player-white",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 447,
+        "seat": "player-green",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 452,
+        "seat": "player-brown",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 466,
+        "seat": "player-white",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 470,
+        "seat": "player-white",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 555,
+        "seat": "player-blue",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 576,
+        "seat": "player-green",
+        "nodes": 1,
+        "limit": 1
+      }
+    ]
+  },
+  "candidate": {
+    "file": "reports/research/a29f82db.75320ae3.full.json",
+    "commit": "75320ae3",
+    "steps": 622,
+    "scores": {
+      "player-blue": 82,
+      "player-green": 132,
+      "player-brown": 118,
+      "player-white": 104
+    },
+    "average": 109,
+    "wallMs": 677229,
+    "nodes": 163129,
+    "inputs": 217232,
+    "failures": {},
+    "decisions": {
+      "pass:main": 4516,
+      "analyze:main": 4471,
+      "card_corner:quick": 5849,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 1219,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 2298,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_income": 4654,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 5864,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 5876,
+      "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 2850,
+      "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 1685,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 1816,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 15582,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research": 4035,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech": 223,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 6354,
+      "end_turn:turn_control": 15410,
+      "industry:quick": 3029,
+      "land:main": 2228,
+      "launch:main": 872,
+      "move:quick": 3240,
+      "orbit:main": 1702,
+      "place_data:quick": 15944,
+      "play_card:main": 1659,
+      "quick_trade:quick": 11304,
+      "research_tech:main": 1374,
+      "scan:main": 4746,
+      "choose_target:conditional/decision=choose_target/effect=probe_land_choice": 1,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 583,
+      "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger": 894,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker": 29,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 3692,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace": 29,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 1640,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income": 505,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income": 218,
+      "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 17492,
+      "choose_target:conditional/decision=choose_target/effect=residual_final_mark": 6936,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4": 1105,
+      "choose_card:conditional/decision=choose_card/effect=probe_turn_pass_reserve": 42,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_return_unfinished_task_to_hand/cardEffect=card_return_unfinished_task_to_hand": 104,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_choose_symbol_reward/cardEffect=amiba_choose_symbol_reward": 532,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income": 160,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward": 4,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:chong_land_for_pickup/cardEffect=chong_land_for_pickup": 21,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:chong_pickup_fossil/cardEffect=chong_pickup_fossil": 108,
+      "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task": 39,
+      "choose_reward:conditional/decision=choose_reward/effect=card_play_domain_effect:decision:card_pay_credits_for_reward/cardEffect=card_pay_credits_for_reward": 36,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_card_corner_repeat/cardEffect=card_discard_card_corner_repeat": 10,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_draw_then_scan/cardEffect=card_draw_then_scan": 81,
+      "complete_task:quick": 2,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_choose_hand_corner_reward/cardEffect=card_choose_hand_corner_reward": 2,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card": 16,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step/cardEffect=card_probe_sector_scan": 48
+    },
+    "full": [
+      {
+        "step": 24,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 42,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 50,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 53,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 96,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 164,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 170,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 181,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 187,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 193,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 196,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 202,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 213,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 309,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 313,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 317,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 321,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 327,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 339,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 346,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 362,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 365,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 394,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 447,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 457,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 459,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 463,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 489,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 491,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 493,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 495,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 497,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 512,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 526,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      }
+    ],
+    "controlTruncations": [
+      {
+        "step": 202,
+        "seat": "player-white",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 426,
+        "seat": "player-brown",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 443,
+        "seat": "player-white",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 569,
+        "seat": "player-blue",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 573,
+        "seat": "player-brown",
+        "nodes": 1,
+        "limit": 1
+      }
+    ]
+  },
+  "firstMismatches": [
+    {
+      "index": 130,
+      "before": {
+        "stepIndex": 130,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 59,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        "phase": "turn_control",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 1,
+          "t": 19,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              11,
+              1,
+              1,
+              2,
+              0,
+              2
+            ],
+            "player-green": [
+              17,
+              0,
+              0,
+              5,
+              1,
+              2
+            ],
+            "player-brown": [
+              18,
+              1,
+              1,
+              3,
+              2,
+              1
+            ],
+            "player-white": [
+              18,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      "after": {
+        "stepIndex": 130,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:76cce73d",
+          "actorId": "player-green",
+          "stateVersion": 59,
+          "decisionVersion": 1,
+          "target": {
+            "tradeId": "publicity-for-card"
+          },
+          "payload": {
+            "cost": {
+              "publicity": 3
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "3宣传 → 精选1张牌"
+        },
+        "phase": "quick",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 1,
+          "t": 18,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              11,
+              1,
+              1,
+              2,
+              0,
+              2
+            ],
+            "player-green": [
+              17,
+              0,
+              0,
+              2,
+              1,
+              2
+            ],
+            "player-brown": [
+              18,
+              1,
+              1,
+              3,
+              2,
+              1
+            ],
+            "player-white": [
+              18,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 131,
+      "before": {
+        "stepIndex": 131,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "orbit",
+          "phase": "main",
+          "actionId": "orbit:880b5658",
+          "actorId": "player-blue",
+          "stateVersion": 60,
+          "decisionVersion": 1,
+          "target": {
+            "rocketId": 3,
+            "planetId": "venus"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（R3，1信用点 + 1能量）"
+        },
+        "phase": "main",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 1,
+          "t": 19,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              20,
+              0,
+              0,
+              2,
+              0,
+              2
+            ],
+            "player-green": [
+              17,
+              0,
+              0,
+              5,
+              1,
+              2
+            ],
+            "player-brown": [
+              18,
+              1,
+              1,
+              3,
+              2,
+              1
+            ],
+            "player-white": [
+              18,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      "after": {
+        "stepIndex": 131,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:2d4e0ce4",
+          "actorId": "player-green",
+          "stateVersion": 59,
+          "decisionVersion": 2,
+          "target": {
+            "kind": "trade-card-selection",
+            "choiceId": "public:1",
+            "source": "public",
+            "slotIndex": 1,
+            "cardInstanceId": "card-41-0"
+          },
+          "payload": {
+            "slotIndex": 1
+          },
+          "decision": null,
+          "summary": "dlc_36.png",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-41-0",
+            "imageSrc": "../assets/cards/space-agency/split/dlc_36.png",
+            "imageAlt": "dlc_36.png"
+          }
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 1,
+          "t": 18,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              11,
+              1,
+              1,
+              2,
+              0,
+              2
+            ],
+            "player-green": [
+              17,
+              0,
+              0,
+              2,
+              2,
+              2
+            ],
+            "player-brown": [
+              18,
+              1,
+              1,
+              3,
+              2,
+              1
+            ],
+            "player-white": [
+              18,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 132,
+      "before": {
+        "stepIndex": 132,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "accept_optional_effect",
+          "phase": "conditional",
+          "actionId": "accept_optional_effect:51f32320",
+          "actorId": "player-blue",
+          "stateVersion": 60,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "confirm:trigger:card-3-0:dlc23-orbit-land-score",
+            "cardInstanceId": "card-3-0",
+            "ruleId": "dlc23-orbit-land-score"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结算 dlc_23.png",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-3-0",
+            "imageSrc": "../assets/cards/space-agency/split/dlc_23.png",
+            "imageAlt": "dlc_23.png",
+            "detail": "环绕或登陆：3分"
+          }
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 1,
+          "t": 19,
+          "c": "player-blue",
+          "p": {
+            "player-blue": [
+              23,
+              0,
+              0,
+              2,
+              0,
+              1
+            ],
+            "player-green": [
+              17,
+              0,
+              0,
+              5,
+              1,
+              2
+            ],
+            "player-brown": [
+              18,
+              1,
+              1,
+              3,
+              2,
+              1
+            ],
+            "player-white": [
+              18,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      "after": {
+        "stepIndex": 132,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:0037d2c5",
+          "actorId": "player-green",
+          "stateVersion": 60,
+          "decisionVersion": 2,
+          "target": {
+            "tradeId": "cards-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "handSize": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2张牌 → 1能量"
+        },
+        "phase": "quick",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 1,
+          "t": 18,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              11,
+              1,
+              1,
+              2,
+              0,
+              2
+            ],
+            "player-green": [
+              17,
+              0,
+              0,
+              2,
+              2,
+              2
+            ],
+            "player-brown": [
+              18,
+              1,
+              1,
+              3,
+              2,
+              1
+            ],
+            "player-white": [
+              18,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 133,
+      "before": {
+        "stepIndex": 133,
+        "actorPlayerId": "player-blue",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:320f2608",
+          "actorId": "player-blue",
+          "stateVersion": 61,
+          "decisionVersion": 1,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        "phase": "turn_control",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 1,
+          "t": 20,
+          "c": "player-brown",
+          "p": {
+            "player-blue": [
+              23,
+              0,
+              0,
+              2,
+              0,
+              1
+            ],
+            "player-green": [
+              17,
+              0,
+              0,
+              5,
+              1,
+              2
+            ],
+            "player-brown": [
+              18,
+              1,
+              1,
+              3,
+              2,
+              1
+            ],
+            "player-white": [
+              18,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      "after": {
+        "stepIndex": 133,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:ffb51039",
+          "actorId": "player-green",
+          "stateVersion": 60,
+          "decisionVersion": 3,
+          "target": {
+            "kind": "discard-hand-card",
+            "cardInstanceId": "card-43-0",
+            "select": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "dlc_34.png",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-43-0",
+            "imageSrc": "../assets/cards/space-agency/split/dlc_34.png",
+            "imageAlt": "dlc_34.png",
+            "selected": false
+          }
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 1,
+          "t": 18,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              11,
+              1,
+              1,
+              2,
+              0,
+              2
+            ],
+            "player-green": [
+              17,
+              0,
+              0,
+              2,
+              2,
+              2
+            ],
+            "player-brown": [
+              18,
+              1,
+              1,
+              3,
+              2,
+              1
+            ],
+            "player-white": [
+              18,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 134,
+      "before": {
+        "stepIndex": 134,
+        "actorPlayerId": "player-brown",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:9256f5c4",
+          "actorId": "player-brown",
+          "stateVersion": 62,
+          "decisionVersion": 1,
+          "target": {
+            "tradeId": "cards-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "handSize": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2张牌 → 1能量"
+        },
+        "phase": "quick",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 1,
+          "t": 20,
+          "c": "player-brown",
+          "p": {
+            "player-blue": [
+              23,
+              0,
+              0,
+              2,
+              0,
+              1
+            ],
+            "player-green": [
+              17,
+              0,
+              0,
+              5,
+              1,
+              2
+            ],
+            "player-brown": [
+              18,
+              1,
+              1,
+              3,
+              2,
+              1
+            ],
+            "player-white": [
+              18,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      "after": {
+        "stepIndex": 134,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:9a7247d3",
+          "actorId": "player-green",
+          "stateVersion": 60,
+          "decisionVersion": 3,
+          "target": {
+            "kind": "discard-hand-card",
+            "cardInstanceId": "card-41-0",
+            "select": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "dlc_36.png",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-41-0",
+            "imageSrc": "../assets/cards/space-agency/split/dlc_36.png",
+            "imageAlt": "dlc_36.png",
+            "selected": false
+          }
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 1,
+          "t": 18,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              11,
+              1,
+              1,
+              2,
+              0,
+              2
+            ],
+            "player-green": [
+              17,
+              0,
+              0,
+              2,
+              2,
+              2
+            ],
+            "player-brown": [
+              18,
+              1,
+              1,
+              3,
+              2,
+              1
+            ],
+            "player-white": [
+              18,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "completeFinalStateEqual": false,
+  "scope": "唯一固定完整局记录汇总，逐步比较动作与after；差异位置不自动等于降分原因"
+}
