@@ -1,0 +1,781 @@
+{
+  "scope": "从真实148正式打出b24后的工作状态，隔离调用正式牌库owner直至循环，核对奖励来源能否由当前牌区重建；连续抽牌不是完整合法机器人行动链，不声称该长链在固定局发生",
+  "sources": [
+    "reports/iteration/current-movement-hotspots-20260907.json",
+    "reports/iteration/turn-visit-routes-formal-20260907.json"
+  ],
+  "sha256": {
+    "reports/iteration/current-movement-hotspots-20260907.json": "7253400424f65a80a7b0f10f5549860f314026bd952af489197189551fffc831",
+    "reports/iteration/turn-visit-routes-formal-20260907.json": "2b70069567adc4dd8d575bc374e0b3810338e225f6f2d481642039ac22c304fd"
+  },
+  "draws": [
+    {
+      "id": "card-49-0",
+      "cardId": "b_1.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-50-0",
+      "cardId": "b_3.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-51-0",
+      "cardId": "b_4.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-52-0",
+      "cardId": "b_5.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-53-0",
+      "cardId": "b_6.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-54-0",
+      "cardId": "b_8.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-55-0",
+      "cardId": "b_9.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-56-0",
+      "cardId": "b_10.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-57-0",
+      "cardId": "b_14.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-58-0",
+      "cardId": "b_15.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-59-0",
+      "cardId": "b_16.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-60-0",
+      "cardId": "b_17.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-61-0",
+      "cardId": "b_18.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-62-0",
+      "cardId": "b_19.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-63-0",
+      "cardId": "b_20.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-64-0",
+      "cardId": "b_21.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-65-0",
+      "cardId": "b_22.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-66-0",
+      "cardId": "b_23.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-67-0",
+      "cardId": "b_25.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-68-0",
+      "cardId": "b_26.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-69-0",
+      "cardId": "b_27.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-70-0",
+      "cardId": "b_28.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-71-0",
+      "cardId": "b_29.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-72-0",
+      "cardId": "b_30.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-73-0",
+      "cardId": "b_31.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-74-0",
+      "cardId": "b_34.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-75-0",
+      "cardId": "b_35.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-76-0",
+      "cardId": "b_36.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-77-0",
+      "cardId": "b_37.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-78-0",
+      "cardId": "b_38.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-79-0",
+      "cardId": "b_39.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-80-0",
+      "cardId": "b_40.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-81-0",
+      "cardId": "b_41.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-82-0",
+      "cardId": "b_42.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-83-0",
+      "cardId": "b_43.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-84-0",
+      "cardId": "b_44.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-85-0",
+      "cardId": "b_45.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-86-0",
+      "cardId": "b_46.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-87-0",
+      "cardId": "b_47.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-88-0",
+      "cardId": "b_50.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-89-0",
+      "cardId": "b_51.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-90-0",
+      "cardId": "b_52.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-91-0",
+      "cardId": "b_54.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-92-0",
+      "cardId": "b_56.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-93-0",
+      "cardId": "b_57.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-94-0",
+      "cardId": "b_58.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-95-0",
+      "cardId": "b_59.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-96-0",
+      "cardId": "b_60.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-97-0",
+      "cardId": "b_61.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-98-0",
+      "cardId": "b_62.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-99-0",
+      "cardId": "b_63.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-100-0",
+      "cardId": "b_64.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-101-0",
+      "cardId": "b_67.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-102-0",
+      "cardId": "b_68.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-103-0",
+      "cardId": "b_69.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-104-0",
+      "cardId": "b_70.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-105-0",
+      "cardId": "b_72.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-106-0",
+      "cardId": "b_73.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-107-0",
+      "cardId": "b_74.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-108-0",
+      "cardId": "b_76.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-109-0",
+      "cardId": "b_77.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-110-0",
+      "cardId": "b_79.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-111-0",
+      "cardId": "b_81.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-112-0",
+      "cardId": "b_82.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-113-0",
+      "cardId": "b_83.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-114-0",
+      "cardId": "b_84.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-115-0",
+      "cardId": "b_85.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-116-0",
+      "cardId": "b_87.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-117-0",
+      "cardId": "b_88.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-118-0",
+      "cardId": "b_89.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-119-0",
+      "cardId": "b_90.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-120-0",
+      "cardId": "b_91.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-121-0",
+      "cardId": "b_92.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-122-0",
+      "cardId": "b_93.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-123-0",
+      "cardId": "b_94.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-124-0",
+      "cardId": "b_95.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-125-0",
+      "cardId": "b_96.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-126-0",
+      "cardId": "b_98.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-127-0",
+      "cardId": "b_99.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-128-0",
+      "cardId": "b_100.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-129-0",
+      "cardId": "b_102.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-130-0",
+      "cardId": "b_103.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-131-0",
+      "cardId": "b_104.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-132-0",
+      "cardId": "b_105.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-133-0",
+      "cardId": "b_107.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-134-0",
+      "cardId": "b_108.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-135-0",
+      "cardId": "b_110.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-136-0",
+      "cardId": "b_112.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-137-0",
+      "cardId": "b_113.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-138-0",
+      "cardId": "b_114.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-139-0",
+      "cardId": "b_116.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-140-0",
+      "cardId": "b_118.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-141-0",
+      "cardId": "b_119.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-142-0",
+      "cardId": "b_120.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-143-0",
+      "cardId": "b_121.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-144-0",
+      "cardId": "b_122.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-145-0",
+      "cardId": "b_123.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-146-0",
+      "cardId": "b_124.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-147-0",
+      "cardId": "b_125.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-148-0",
+      "cardId": "b_126.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-149-0",
+      "cardId": "b_127.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-150-0",
+      "cardId": "b_128.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-151-0",
+      "cardId": "b_129.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-152-0",
+      "cardId": "b_130.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-153-0",
+      "cardId": "b_131.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-154-0",
+      "cardId": "b_132.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-155-0",
+      "cardId": "b_133.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-156-0",
+      "cardId": "b_134.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-157-0",
+      "cardId": "b_135.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-158-0",
+      "cardId": "b_136.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-159-0",
+      "cardId": "b_137.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-160-0",
+      "cardId": "b_140.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-161-0",
+      "cardId": "dlc_1.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-162-0",
+      "cardId": "dlc_2.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-163-0",
+      "cardId": "dlc_3.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-164-0",
+      "cardId": "dlc_6.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-165-0",
+      "cardId": "dlc_7.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-166-0",
+      "cardId": "dlc_8.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-167-0",
+      "cardId": "dlc_10.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-168-0",
+      "cardId": "dlc_13.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-169-0",
+      "cardId": "dlc_14.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-170-0",
+      "cardId": "dlc_15.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-171-0",
+      "cardId": "dlc_16.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-172-0",
+      "cardId": "dlc_17.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-173-0",
+      "cardId": "dlc_19.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-174-0",
+      "cardId": "dlc_20.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-175-0",
+      "cardId": "dlc_24.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-176-0",
+      "cardId": "dlc_25.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-177-0",
+      "cardId": "dlc_26.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-178-0",
+      "cardId": "dlc_27.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-179-0",
+      "cardId": "dlc_28.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-180-0",
+      "cardId": "dlc_29.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-181-0",
+      "cardId": "dlc_41.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-182-0",
+      "cardId": "dlc_42.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-183-0",
+      "cardId": "dlc_40.png",
+      "reshuffled": true
+    },
+    {
+      "id": "card-184-0",
+      "cardId": "b_48.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-185-0",
+      "cardId": "b_2.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-186-0",
+      "cardId": "dlc_11.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-187-0",
+      "cardId": "b_65.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-188-0",
+      "cardId": "dlc_35.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-189-0",
+      "cardId": "dlc_37.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-190-0",
+      "cardId": "b_106.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-191-0",
+      "cardId": "dlc_23.png",
+      "reshuffled": false
+    },
+    {
+      "id": "card-192-0",
+      "cardId": "b_139.webp",
+      "reshuffled": false
+    },
+    {
+      "id": "card-193-0",
+      "cardId": "b_24.webp",
+      "reshuffled": false
+    }
+  ],
+  "verified": true,
+  "originalSource": "card-21-pass-1-2",
+  "matchesBefore": [
+    {
+      "id": "card-21-pass-1-2",
+      "cardId": "b_24.webp"
+    }
+  ],
+  "matchesAfter": [
+    {
+      "id": "card-193-0",
+      "cardId": "b_24.webp"
+    }
+  ],
+  "bonus": {
+    "duration": "turn",
+    "eventType": "visitComet",
+    "onceKey": "b24-comet-score",
+    "icon": "score",
+    "rewards": [
+      {
+        "id": "b24-comet-score",
+        "type": "gain_resources",
+        "label": "彗星遭遇：访问彗星获得4分",
+        "icon": "score",
+        "options": {
+          "gain": {
+            "score": 4
+          }
+        }
+      }
+    ],
+    "id": "b24-turn-comet-score",
+    "effectId": "b24-turn-comet-score",
+    "playerId": "player-green",
+    "ownerId": "player-green",
+    "usedKeys": [],
+    "claimedKeys": []
+  },
+  "rewardStillAvailable": {
+    "status": "reward",
+    "claimKey": "b24-comet-score"
+  }
+}
