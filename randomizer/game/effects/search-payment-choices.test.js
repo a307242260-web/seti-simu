@@ -4,6 +4,7 @@ const stateStoreApi = require("../state/state-store");
 const effectRuntimeApi = require("./session-runtime");
 const domain = require("./standard-action-session");
 const { createRuleComposition } = require("../rule-composition");
+const outcomeModel = require("../ai/outcome-model");
 
 function createComposition(hiddenCase = null) {
   return createRuleComposition({
@@ -125,6 +126,15 @@ for (const { choices, allowed, effectType } of [
       completesRouteTarget: ({ branchObservation }) => branchObservation.score > 0 },
   });
   // 自动排空不一定占独立actionChain项，必须检查正式执行写入的支付事实。
+  const standard = results.map(result => ({ ...result,
+    rootObservation: { ...result.rootObservation, schemaVersion: outcomeModel.OBSERVATION_SCHEMA_VERSION },
+    leaves: result.leaves.map(leaf => ({ ...leaf,
+      observation: { ...leaf.observation, schemaVersion: outcomeModel.OBSERVATION_SCHEMA_VERSION } })),
+  }));
+  assert.doesNotThrow(() => outcomeModel.assertOutcomeSet(standard, hidden.inputPort.enumerateActions()));
+  assert.throws(() => outcomeModel.assertOutcomeSet(standard.map(result => ({ ...result,
+    searchCompleteness: { status: "incomplete", reasons: ["unrecognized-reason"] },
+  })), hidden.inputPort.enumerateActions()), /searchCompleteness/);
   const payments = results.flatMap(result => result.leaves || []).map(leaf => leaf.observation.payments);
   assert.ok(results.flatMap(result => result.leaves || []).every(leaf => leaf.status !== "awaiting_input"),
     "普通主行动不能把无安全后继的未结算条件流程作为结果叶");

@@ -193,7 +193,8 @@ action outcome新增可选searchCompleteness元数据：`{status, reasons}`。�
 提供；旧外部v1输入缺失不推断为complete。status为complete/incomplete/not-evaluated，
 reasons为去重排序字符串数组，校验失败显式抛错。原因包括node-budget、beam-budget、
 leaf-budget（普通control）、conditional-depth、goal-depth、untargeted-depth、
-representative-choice、information-barrier、branch-failed、not-evaluated。
+representative-choice、information-barrier、branch-failed、not-evaluated、conditional-no-successor
+（非显式交接的条件流程无安全后继，不能把工作态作为已结算结果）。
 complete原因必须为空；incomplete原因非空且不含not-evaluated；not-evaluated须无叶、
 outcome.status=unresolved且只有同名原因。完整性表示声明的单席策略搜索范围。
 它不替代outcome.status：有真实完成叶但搜索不完整仍为settled并可选，未执行frontier
