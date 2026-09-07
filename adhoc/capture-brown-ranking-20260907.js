@@ -2,11 +2,15 @@
 const fs = require("node:fs"), assert = require("node:assert/strict"), zlib = require("node:zlib");
 const { Readable } = require("node:stream"), { pipeline } = require("node:stream/promises");
 const { execFileSync } = require("node:child_process");
-const { createSimulationEnv } = require("../randomizer/app/simulation-env");
-const evaluator = require("../randomizer/game/ai/expected-score-evaluator");
+const path = require("node:path");
+const tree = process.argv[3] || path.resolve(__dirname, "..");
+assert.ok(path.isAbsolute(tree));
+const codeCommit = process.argv[4] || execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+const { createSimulationEnv } = require(path.join(tree, "randomizer/app/simulation-env"));
+const evaluator = require(path.join(tree, "randomizer/game/ai/expected-score-evaluator"));
 const index = Number(process.argv[2]);
 assert.ok(index === 0 || index === 1, "指定根0或1");
-const base = `reports/iteration/brown-ranking-${index}-20260907`;
+const base = `reports/iteration/brown-ranking-${index}${process.argv[3] ? `-${codeCommit.slice(0, 8)}` : ""}-20260907`;
 async function main() {
   if (fs.existsSync(`${base}.json`) || fs.existsSync(`${base}.capture.jsonl.gz`)) return console.log("已有候选checkpoint，不重跑");
   const row = JSON.parse(fs.readFileSync("reports/iteration/brown-income-roots-20260907.json")).rows[index];
@@ -18,7 +22,7 @@ async function main() {
     const diagnostics = env.getCounterfactualDiagnostics();
     async function* lines() {
       const { actionOutcomes, ...decision } = result;
-      yield JSON.stringify({ type: "header", codeCommit: execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+      yield JSON.stringify({ type: "header", codeCommit,
         sourceRecord: row.recordId, sourceStep: row.step, wallMs, legalActions, result: decision, diagnostics }) + "\n";
       for (const outcome of actionOutcomes || []) {
         const { leaves, ...metadata } = outcome;
@@ -37,7 +41,7 @@ async function main() {
     const comparison = { actionEqual: result.policyDecision.actionId === previous.action,
       nodesEqual: diagnostics.executedNodeCount === previous.diagnostics.executedNodeCount,
       submissionsEqual: diagnostics.successfulInputSubmissionCount === previous.diagnostics.successfulInputSubmissionCount };
-    fs.writeFileSync(`${base}.json`, JSON.stringify({ scope: "当前同一生产实现对两个真实棕方根补取缺失候选；不是历史代码全盘重跑",
+    fs.writeFileSync(`${base}.json`, JSON.stringify({ scope: "指定代码对真实棕方根补取缺失候选；不是全盘重跑", codeCommit,
       wallMs, diagnostics, comparison, plan: result.plan, evaluations }, null, 2) + "\n");
     console.log(JSON.stringify({ index, wallMs, comparison, evaluations: evaluations.map(r => ({ action: r.action.actionId,
       score: r.evaluation.score, leaf: r.evaluation.selectedLeafId })) }));
