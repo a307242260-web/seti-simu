@@ -63,6 +63,7 @@ else {
       }
     }
     const player = JSON.parse(fork.lifecycle.save().envelope.committedState).players.players.find(p => p.id === "player-blue");
+    assert.ok(["idle", "completed"].includes(fork.inspect().phase), "318主行动优胜计划必须完成正式条件链");
     assert.equal(player.resources.score, evaluation.leafValue.realizedScore);
     assert.deepEqual(player.income, evaluation.leafValue.infrastructure.income);
     evidence.passed = true;

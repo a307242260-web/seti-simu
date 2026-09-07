@@ -32,7 +32,7 @@ function createComposition(hiddenCase = null) {
           return { ok: true,
             ...(hiddenCase ? { irreversible: { code: "hidden_card_draw", reason: "测试抽牌边界" } } : {}),
             decisionEffect: {
-            type: domain.DECISION_EFFECT_TYPE, kind: "decision", ownerId: "p1",
+            type: hiddenCase?.effectType || domain.DECISION_EFFECT_TYPE, kind: "decision", ownerId: "p1",
             decisionKind: hiddenCase?.choices[0]?.family || "choose_payment",
             payload: { choices: hiddenCase?.choices || [[1, 1], [2, 3]].map(([energyCost, reward]) => ({
               schemaVersion: "seti-standard-action-v1", actionId: `choose_payment:${energyCost}`,
@@ -43,7 +43,17 @@ function createComposition(hiddenCase = null) {
         },
       };
     },
-    effectDomains: [{ create: domain.createStandardActionDomain, families: ["move", "choose_payment", "choose_card"],
+    effectDomains: [{ create(options) {
+      const standard = domain.createStandardActionDomain(options);
+      options.runtime.registerExecutor("science_domain_pick_card", {
+        getLegalChoices: (_state, effect) => structuredClone(effect.payload.choices),
+        resolveDecision(state, _effect, choice) {
+          const result = options.executeRegisteredAction(state, choice);
+          return { ok: result.ok, nextState: result.nextState };
+        },
+      });
+      return standard;
+    }, families: ["move", "choose_payment", "choose_card"],
       options: { actionFamilies: ["move", "choose_payment", "choose_card"] } }],
     createCounterfactualFork(envelope) {
       const fork = createComposition(hiddenCase);
@@ -86,25 +96,38 @@ function payment(id, cardIds, kind = "move-payment") {
     family: "choose_payment", phase: "conditional", actorId: "p1",
     target: { kind, cardIds }, payload: { energyCost: 0, reward: 1 } };
 }
-for (const { choices, allowed } of [
+for (const { choices, allowed, effectType } of [
   { choices: [payment("hidden-move", ["future"])], allowed: [] },
   { choices: [payment("hidden-move", ["future"]), payment("known-move", ["known"]), payment("energy", [])],
     allowed: ["known-move", "energy"] },
   { choices: [payment("hidden-income", ["future"], "discard-hand-cards")], allowed: [] },
   { choices: [{ ...payment("generic-discard", ["future"], "trade-card-selection"), family: "choose_card" }],
     allowed: ["generic-discard"] },
+  { choices: [{ ...payment("unknown-reward", ["future"]), family: "choose_card",
+      target: { cardInstanceId: "future", publicSlotIndex: 0 }, summary: "未知牌的秘密牌名",
+      presentation: { imageSrc: "secret-card.png" } }], allowed: ["unknown-reward"],
+    effectType: "science_domain_pick_card" },
 ]) {
-  const hidden = createComposition({ choices });
+  const hidden = createComposition({ choices, effectType });
   const root = hidden.lifecycle.save().envelope;
   const results = hidden.counterfactualPort.evaluate(hidden.inputPort.enumerateActions(), {
     viewer: { playerId: "p1", role: "player" }, maxNodes: 16, maxExecutionNodes: 16,
     maxFrontierNodes: 16,
     secondaryAgentSearch: { focalSeatId: "p1", maxProxyDepth: 1,
-      selectRouteTarget: () => "move:reward", selectSuccessors: ({ legalSuccessors }) => legalSuccessors,
+      selectRouteTarget: () => "move:reward", selectSuccessors: ({ legalSuccessors }) => {
+        for (const action of legalSuccessors.filter(a => a.actionId === "unknown-reward")) {
+          assert.equal(action.target.cardInstanceId, null);
+          assert.equal(action.presentation, undefined, "未知牌面展示不能进入选择器");
+          assert.ok(!action.summary.includes("秘密牌名"));
+        }
+        return legalSuccessors;
+      },
       completesRouteTarget: ({ branchObservation }) => branchObservation.score > 0 },
   });
   // 自动排空不一定占独立actionChain项，必须检查正式执行写入的支付事实。
   const payments = results.flatMap(result => result.leaves || []).map(leaf => leaf.observation.payments);
+  assert.ok(results.flatMap(result => result.leaves || []).every(leaf => leaf.status !== "awaiting_input"),
+    "普通主行动不能把无安全后继的未结算条件流程作为结果叶");
   assert.ok(payments.every(ids => !ids.includes("hidden-move") && !ids.includes("hidden-income")),
     "新盲抽移动牌不能通过唯一支付自动结算或多选后继进入完成计划");
   for (const id of allowed) {
