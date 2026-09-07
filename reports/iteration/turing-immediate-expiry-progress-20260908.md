@@ -26,3 +26,4 @@
 - [冻结设计](turing-immediate-expiry-design-20260908.md)
 - [正式无用途对照](turing-immediate-expiry-20260908.json)
 - [536单点原始结果](blue536-turing-expiry-20260908.json)
+- [第50步排序与去借用正式对照](blue50-expiry-review-20260908.md)：发射80.75不变，b33叶85→73；去借用仍可执行，搜索准入与队列丢失位置待查。
