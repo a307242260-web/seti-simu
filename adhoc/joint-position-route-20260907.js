@@ -14,9 +14,16 @@ function jointPositionRoute({ root, actor, condition, stage, cardPoints, company
   assert.ok(Array.isArray(usedRocketIds));
   const sourceIds = rockets.getRocketsForPlayer(root.pieces, actor.id)
     .filter(r => r.surface === "solar-board" && (r.kind || "standard") === "standard").map(r => r.id);
+  // 单次查询固定盘面/actor/condition；完整pieces相同而阶段或首步不同，不必重建位置事实。
+  // 只缓存值，不合并路线状态；缓存随函数返回释放，不跨回合/存档。
+  const positionResults = new Map(), movementPoints = new Map();
   const fulfilled = pieces => {
+    const signature = JSON.stringify(pieces);
+    if (positionResults.has(signature)) return positionResults.get(signature);
     const facts = rockets.buildProbeLocationData({ ...root, pieces });
-    return cards.taskConditionMet({ condition }, actor, { probeLocations: facts.index, probeLocationDetails: facts.details });
+    const result = cards.taskConditionMet({ condition }, actor, { probeLocations: facts.index, probeLocationDetails: facts.details });
+    positionResults.set(signature, result);
+    return result;
   };
   if (fulfilled(root.pieces)) return { status: "satisfied", expanded: 0, choices: [], sourceIds };
   const compare = (a, b) => a.paid - b.paid || a.moves - b.moves;
@@ -48,7 +55,10 @@ function jointPositionRoute({ root, actor, condition, stage, cardPoints, company
       const rocket = n.pieces.rockets.find(r => r.id === rocketId);
       const at = rockets.getRocketSectorCoordinate(rocket);
       assert.ok(at, "联合位置来源缺少实际坐标");
-      const points = ability.getRequiredMovePointsFromCoordinate({ ...root, pieces: n.pieces, state: { ...root, pieces: n.pieces } }, actor, at);
+      const coordinateKey = `${at.x},${at.y}`;
+      if (!movementPoints.has(coordinateKey)) movementPoints.set(coordinateKey,
+        ability.getRequiredMovePointsFromCoordinate({ ...root, pieces: n.pieces, state: { ...root, pieces: n.pieces } }, actor, at));
+      const points = movementPoints.get(coordinateKey);
       assert.ok(Number.isInteger(points) && points > 0);
       if (n.stage === "card" && points > n.card) continue;
       if (n.stage === "company" && points !== 1) continue;

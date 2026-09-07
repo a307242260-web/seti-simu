@@ -1,0 +1,420 @@
+{
+  "scope": "实际42位置上的联合位置查询CPU/耗时；20次仅用于同进程微基准，不运行AI或完整局，不等于生产单决策性能",
+  "input": "reports/iteration/company-movement-input-42-20260906.json",
+  "inputSha256": "4225620b390098056682f64e81e859343d5a3d64afaf4e8f66a46becff786122",
+  "implementation": "adhoc/joint-position-route-20260907.js",
+  "implementationSha256": "1940cd2cc3bfefe2cc78db2c03acf9d9aa9a7f8d1a11c23159190cedbc457ce1",
+  "result": {
+    "status": "reachable",
+    "expanded": 339,
+    "paid": 1,
+    "moves": 3,
+    "sourceIds": [
+      1,
+      2
+    ],
+    "choices": [
+      {
+        "first": {
+          "mode": "start-company"
+        },
+        "paths": [
+          [
+            {
+              "mode": "start-company"
+            },
+            {
+              "mode": "company",
+              "rocketId": 1,
+              "deltaX": 0,
+              "deltaY": 1,
+              "direction": "out"
+            },
+            {
+              "mode": "company",
+              "rocketId": 2,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            {
+              "mode": "paid",
+              "rocketId": 2,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            }
+          ],
+          [
+            {
+              "mode": "start-company"
+            },
+            {
+              "mode": "company",
+              "rocketId": 1,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            {
+              "mode": "company",
+              "rocketId": 2,
+              "deltaX": 0,
+              "deltaY": 1,
+              "direction": "out"
+            },
+            {
+              "mode": "paid",
+              "rocketId": 1,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            }
+          ]
+        ]
+      },
+      {
+        "first": {
+          "mode": "paid",
+          "rocketId": 1,
+          "deltaX": -1,
+          "deltaY": 0,
+          "direction": "ccw"
+        },
+        "paths": [
+          [
+            {
+              "mode": "paid",
+              "rocketId": 1,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            {
+              "mode": "start-company"
+            },
+            {
+              "mode": "company",
+              "rocketId": 1,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            {
+              "mode": "company",
+              "rocketId": 2,
+              "deltaX": 0,
+              "deltaY": 1,
+              "direction": "out"
+            }
+          ],
+          [
+            {
+              "mode": "paid",
+              "rocketId": 1,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            {
+              "mode": "start-company"
+            },
+            {
+              "mode": "company",
+              "rocketId": 2,
+              "deltaX": 0,
+              "deltaY": 1,
+              "direction": "out"
+            },
+            {
+              "mode": "company",
+              "rocketId": 1,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            }
+          ]
+        ]
+      },
+      {
+        "first": {
+          "mode": "paid",
+          "rocketId": 2,
+          "deltaX": -1,
+          "deltaY": 0,
+          "direction": "ccw"
+        },
+        "paths": [
+          [
+            {
+              "mode": "paid",
+              "rocketId": 2,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            {
+              "mode": "start-company"
+            },
+            {
+              "mode": "company",
+              "rocketId": 1,
+              "deltaX": 0,
+              "deltaY": 1,
+              "direction": "out"
+            },
+            {
+              "mode": "company",
+              "rocketId": 2,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            }
+          ],
+          [
+            {
+              "mode": "paid",
+              "rocketId": 2,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            {
+              "mode": "start-company"
+            },
+            {
+              "mode": "company",
+              "rocketId": 2,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            {
+              "mode": "company",
+              "rocketId": 1,
+              "deltaX": 0,
+              "deltaY": 1,
+              "direction": "out"
+            }
+          ]
+        ]
+      }
+    ]
+  },
+  "iterations": 20,
+  "times": [
+    39.99916600000003,
+    38.35779200000002,
+    40.54195800000002,
+    40.73337499999997,
+    38.73258400000003,
+    38.13520799999998,
+    39.32433299999997,
+    37.9413340000001,
+    38.938541999999984,
+    38.546957999999904,
+    39.32187499999998,
+    40.73933299999999,
+    38.26699999999994,
+    38.12016700000004,
+    37.96950000000004,
+    38.03824999999995,
+    37.857208000000014,
+    38.208875000000035,
+    38.43437499999993,
+    38.22866699999986
+  ],
+  "medianMs": 38.396083499999975,
+  "cpuSelfSamples": [
+    [
+      "anonymous@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:539",
+      242
+    ],
+    [
+      "getNebulaLocations@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:529",
+      137
+    ],
+    [
+      "structuredClone@node:internal/worker/js_transferable:112",
+      76
+    ],
+    [
+      "getWheelStep@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:173",
+      65
+    ],
+    [
+      "key@file:///Users/bilibili/code/seti-simu/adhoc/joint-position-route-20260907.js:23",
+      54
+    ],
+    [
+      "append@file:///Users/bilibili/code/seti-simu/adhoc/joint-position-route-20260907.js:36",
+      41
+    ],
+    [
+      "jointPositionRoute@file:///Users/bilibili/code/seti-simu/adhoc/joint-position-route-20260907.js:9",
+      31
+    ],
+    [
+      "(garbage collector)@:0",
+      31
+    ],
+    [
+      "getBaseWheelCell@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:486",
+      19
+    ],
+    [
+      "resolveVisibleContent@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:562",
+      15
+    ],
+    [
+      "getNormalizedWheelStep@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:178",
+      12
+    ],
+    [
+      "mod8@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:82",
+      11
+    ],
+    [
+      "normalizeRotationState@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:137",
+      11
+    ],
+    [
+      "toBaseX@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:186",
+      11
+    ],
+    [
+      "getNebulaAtCoordinate@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:557",
+      9
+    ],
+    [
+      "structuredClone@:0",
+      9
+    ],
+    [
+      "getWheelCellAtDisplayCoordinate@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:511",
+      9
+    ],
+    [
+      "anonymous@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:389",
+      9
+    ],
+    [
+      "normalizeSolarInput@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:153",
+      7
+    ],
+    [
+      "polarToGlobalPoint@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:227",
+      7
+    ],
+    [
+      "main@file:///Users/bilibili/code/seti-simu/adhoc/benchmark-joint-position-route-20260907.js:11",
+      6
+    ],
+    [
+      "getPointBounds@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:261",
+      5
+    ],
+    [
+      "isPassThroughCell@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:525",
+      4
+    ],
+    [
+      "buildProbeLocationData@file:///Users/bilibili/code/seti-simu/randomizer/game/rockets.js:46",
+      4
+    ],
+    [
+      "canMoveRocket@file:///Users/bilibili/code/seti-simu/randomizer/game/rockets.js:380",
+      4
+    ],
+    [
+      "normalizeSectorBySlot@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:106",
+      4
+    ],
+    [
+      "createSolarSnapshot@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:690",
+      4
+    ],
+    [
+      "collectVisibleCoordinateContents@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:618",
+      3
+    ],
+    [
+      "compare@file:///Users/bilibili/code/seti-simu/adhoc/joint-position-route-20260907.js:22",
+      3
+    ],
+    [
+      "collectPlanetLocations@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:630",
+      3
+    ],
+    [
+      "getSectorCoordinateBoundary@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:348",
+      3
+    ],
+    [
+      "moveRocket@file:///Users/bilibili/code/seti-simu/randomizer/game/rockets.js:412",
+      3
+    ],
+    [
+      "getSectorLaunchSlots@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:384",
+      2
+    ],
+    [
+      "getSolarCellBoundary@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:270",
+      2
+    ],
+    [
+      "playerHasProbesOnDifferentPlanets@file:///Users/bilibili/code/seti-simu/randomizer/game/cards/effects.js:4366",
+      2
+    ],
+    [
+      "getOccupiedSlotIndices@file:///Users/bilibili/code/seti-simu/randomizer/game/rockets.js:229",
+      2
+    ],
+    [
+      "getVisibleContent@file:///Users/bilibili/code/seti-simu/randomizer/game/abilities/rocket.js:76",
+      2
+    ],
+    [
+      "moveActiveRocket@file:///Users/bilibili/code/seti-simu/randomizer/game/rockets.js:418",
+      2
+    ],
+    [
+      "post@node:inspector:118",
+      1
+    ],
+    [
+      "solarGridToGlobalPoint@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:190",
+      1
+    ],
+    [
+      "getPlayerKeys@file:///Users/bilibili/code/seti-simu/randomizer/game/end-game-scoring.js:208",
+      1
+    ],
+    [
+      "findAvailableSlotIndex@file:///Users/bilibili/code/seti-simu/randomizer/game/rockets.js:235",
+      1
+    ],
+    [
+      "playerOwnsTech@file:///Users/bilibili/code/seti-simu/randomizer/game/players.js:480",
+      1
+    ],
+    [
+      "asInactiveCell@file:///Users/bilibili/code/seti-simu/randomizer/solar-system/core.js:474",
+      1
+    ],
+    [
+      "taskConditionMet@file:///Users/bilibili/code/seti-simu/randomizer/game/cards/effects.js:4519",
+      1
+    ],
+    [
+      "fulfilled@file:///Users/bilibili/code/seti-simu/adhoc/joint-position-route-20260907.js:17",
+      1
+    ],
+    [
+      "canMoveFromCoordinate@file:///Users/bilibili/code/seti-simu/randomizer/game/rockets.js:396",
+      1
+    ]
+  ],
+  "stateUnchanged": true,
+  "verified": true
+}

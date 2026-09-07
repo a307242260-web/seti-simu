@@ -4,7 +4,7 @@ const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const cards = require("../randomizer/game/cards/effects");
 const { jointPositionRoute } = require("./joint-position-route-20260907");
 const input = "reports/iteration/company-movement-input-42-20260906.json";
-const output = "reports/iteration/joint-position-route-20260907.json";
+const output = process.argv[2] || "reports/iteration/joint-position-route-20260907.json";
 if (fs.existsSync(output)) console.log(`已有联合路线证据：${output}`);
 else {
   const report = { scope: "真实42位置与正式公司/付费移动，目标谓词取正式dlc7模型；该根未持有dlc7，不注入卡牌、不声称实际机器人任务或任务奖励；核对联合位置的路线、共享额度和恢复",

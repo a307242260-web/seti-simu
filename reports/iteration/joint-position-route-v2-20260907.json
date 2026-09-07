@@ -1,0 +1,568 @@
+{
+  "scope": "真实42位置与正式公司/付费移动，目标谓词取正式dlc7模型；该根未持有dlc7，不注入卡牌、不声称实际机器人任务或任务奖励；核对联合位置的路线、共享额度和恢复",
+  "input": "reports/iteration/company-movement-input-42-20260906.json",
+  "inputSha256": "4225620b390098056682f64e81e859343d5a3d64afaf4e8f66a46becff786122",
+  "stages": [
+    {
+      "label": "before-company",
+      "result": {
+        "status": "reachable",
+        "expanded": 339,
+        "paid": 1,
+        "moves": 3,
+        "sourceIds": [
+          1,
+          2
+        ],
+        "choices": [
+          {
+            "first": {
+              "mode": "start-company"
+            },
+            "paths": [
+              [
+                {
+                  "mode": "start-company"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 1,
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "direction": "out"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                },
+                {
+                  "mode": "paid",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                }
+              ],
+              [
+                {
+                  "mode": "start-company"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 1,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "direction": "out"
+                },
+                {
+                  "mode": "paid",
+                  "rocketId": 1,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                }
+              ]
+            ]
+          },
+          {
+            "first": {
+              "mode": "paid",
+              "rocketId": 1,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            "paths": [
+              [
+                {
+                  "mode": "paid",
+                  "rocketId": 1,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                },
+                {
+                  "mode": "start-company"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 1,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "direction": "out"
+                }
+              ],
+              [
+                {
+                  "mode": "paid",
+                  "rocketId": 1,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                },
+                {
+                  "mode": "start-company"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "direction": "out"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 1,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                }
+              ]
+            ]
+          },
+          {
+            "first": {
+              "mode": "paid",
+              "rocketId": 2,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            "paths": [
+              [
+                {
+                  "mode": "paid",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                },
+                {
+                  "mode": "start-company"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 1,
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "direction": "out"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                }
+              ],
+              [
+                {
+                  "mode": "paid",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                },
+                {
+                  "mode": "start-company"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 1,
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "direction": "out"
+                }
+              ]
+            ]
+          }
+        ]
+      },
+      "wallMs": 42.16024999999999
+    },
+    {
+      "label": "first-company-step",
+      "result": {
+        "status": "reachable",
+        "expanded": 172,
+        "paid": 1,
+        "moves": 3,
+        "sourceIds": [
+          1,
+          2
+        ],
+        "choices": [
+          {
+            "first": {
+              "mode": "company",
+              "rocketId": 1,
+              "deltaX": 0,
+              "deltaY": 1,
+              "direction": "out"
+            },
+            "paths": [
+              [
+                {
+                  "mode": "company",
+                  "rocketId": 1,
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "direction": "out"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                },
+                {
+                  "mode": "paid",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                }
+              ]
+            ]
+          },
+          {
+            "first": {
+              "mode": "company",
+              "rocketId": 1,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            "paths": [
+              [
+                {
+                  "mode": "company",
+                  "rocketId": 1,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "direction": "out"
+                },
+                {
+                  "mode": "paid",
+                  "rocketId": 1,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                }
+              ]
+            ]
+          },
+          {
+            "first": {
+              "mode": "company",
+              "rocketId": 2,
+              "deltaX": 0,
+              "deltaY": 1,
+              "direction": "out"
+            },
+            "paths": [
+              [
+                {
+                  "mode": "company",
+                  "rocketId": 2,
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "direction": "out"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 1,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                },
+                {
+                  "mode": "paid",
+                  "rocketId": 1,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                }
+              ]
+            ]
+          },
+          {
+            "first": {
+              "mode": "company",
+              "rocketId": 2,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            "paths": [
+              [
+                {
+                  "mode": "company",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                },
+                {
+                  "mode": "company",
+                  "rocketId": 1,
+                  "deltaX": 0,
+                  "deltaY": 1,
+                  "direction": "out"
+                },
+                {
+                  "mode": "paid",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                }
+              ]
+            ]
+          }
+        ]
+      },
+      "wallMs": 22.842208
+    },
+    {
+      "label": "second-company-step",
+      "result": {
+        "status": "reachable",
+        "expanded": 34,
+        "paid": 1,
+        "moves": 2,
+        "sourceIds": [
+          1,
+          2
+        ],
+        "choices": [
+          {
+            "first": {
+              "mode": "company",
+              "rocketId": 2,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            "paths": [
+              [
+                {
+                  "mode": "company",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                },
+                {
+                  "mode": "paid",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                }
+              ]
+            ]
+          }
+        ]
+      },
+      "wallMs": 4.893292000000002
+    },
+    {
+      "label": "company-settled",
+      "result": {
+        "status": "reachable",
+        "expanded": 8,
+        "paid": 1,
+        "moves": 1,
+        "sourceIds": [
+          1,
+          2
+        ],
+        "choices": [
+          {
+            "first": {
+              "mode": "paid",
+              "rocketId": 2,
+              "deltaX": -1,
+              "deltaY": 0,
+              "direction": "ccw"
+            },
+            "paths": [
+              [
+                {
+                  "mode": "paid",
+                  "rocketId": 2,
+                  "deltaX": -1,
+                  "deltaY": 0,
+                  "direction": "ccw"
+                }
+              ]
+            ]
+          }
+        ]
+      },
+      "wallMs": 1.1467499999999973
+    },
+    {
+      "label": "different-planets-reached",
+      "result": {
+        "status": "satisfied",
+        "expanded": 0,
+        "choices": [],
+        "sourceIds": [
+          1,
+          2
+        ]
+      },
+      "wallMs": 0.08841699999999264
+    }
+  ],
+  "submissions": [
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:5bda1856",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "寰宇动力",
+          "abilityId": "huanyu_free_moves"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "寰宇动力 1x 行动"
+      },
+      "restoredResubmissionEqual": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:b849344b",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:out",
+          "rocketId": 1,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 1 向外"
+      },
+      "restoredResubmissionEqual": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:abf3937a",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:ccw",
+          "rocketId": 2,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw"
+        },
+        "decision": null,
+        "summary": "移动 2 逆时针"
+      },
+      "restoredResubmissionEqual": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "move",
+        "phase": "quick",
+        "actionId": "move:cc916f6c",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "rocketId": 2,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw",
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动探测器 2 逆时针"
+      },
+      "restoredResubmissionEqual": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:56560af3",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "move-payment",
+          "choiceId": "energy",
+          "cardIds": []
+        },
+        "payload": {
+          "energyCost": 1,
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "消耗 1 能量"
+      },
+      "restoredResubmissionEqual": true
+    }
+  ],
+  "verified": true
+}
