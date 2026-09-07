@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-07T10:53:23.753Z",
+  "builtAt": "2026-09-07T11:43:43.027Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "4212b427",
-  "currentBaseline": "alien-trace-greedy-20260907",
+  "headCommit": "646858ac",
+  "currentBaseline": "hidden-reward-boundary-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -100,15 +100,15 @@ const REGISTRY = {
       "scoreSourceNote": "543步正式终局76/90/70/141，均94.25，较前候选105.5低11.25，较已通过R2e基线106.75低12.5，第三轮未通过。真实反例改为两牌换电后1号火星登陆，六步计划复用与正式完成验证通过；棕方慢样本9.84秒过门槛，Node74/76及唯一full-flow通过，两项指定既有失败保留。首处分歧在索引23：白方b_117改为直接发射；尚未证明整局下降原因，不以局部反例通过替代整局验收。"
     },
     "bestAvg": {
-      "value": 117.5,
-      "versionId": "alien-trace-greedy-20260907",
-      "name": "alien-trace-greedy-20260907",
-      "runKey": "9e486f54.4212b427.full",
+      "value": 123.75,
+      "versionId": "hidden-reward-boundary-20260907",
+      "name": "hidden-reward-boundary-20260907",
+      "runKey": "78020346.646858ac.full",
       "provenance": "save-final",
-      "steps": 648,
-      "wallMs": 615895,
-      "msPerStep": 950,
-      "scoreSourceNote": "648步正式终局87/140/141/102，均117.5，较现行规则基线107.25提高10.25；蓝-3绿-6尚待归因。痕迹选位31540→14103，但总节点136483→153040、正式提交169320→196162、耗时563481→615895ms；29策略4096截断及9控制截断，规则失败0。单点正式计划重放通过，性能未通过，未合回dev。运行时生产代码干净，仅有未提交诊断脚本和证据，不混淆生产版本。"
+      "steps": 690,
+      "wallMs": 556535,
+      "msPerStep": 807,
+      "scoreSourceNote": "690步正式终局87/147/121/140，均123.75；较4212b427蓝0绿+7棕-20白+38，棕方下降待归因。142383节点、180947正式提交、556535ms，较前版节点-6.96%、耗时-9.64%；27次4096策略截断及11次控制截断。第610步棕方搜索有1次EFFECT_EXECUTOR_NOT_REGISTERED，零失败门禁未通过，不因均分提升自动验收，不合dev。318真实单点12.70秒，35输入计划完整结算，49分与收入正式重放一致；针对性回归通过。运行时生产代码干净，期间只编辑只读汇总脚本及验收文档。详见hidden-reward-boundary-design-20260907.md。"
     },
     "bestPlayer": {
       "value": 152,
@@ -144,6 +144,22 @@ const REGISTRY = {
     },
     "topByAvg": [
       {
+        "value": 123.75,
+        "white": 140,
+        "bestPlayer": {
+          "color": "绿",
+          "score": 147
+        },
+        "versionId": "hidden-reward-boundary-20260907",
+        "name": "hidden-reward-boundary-20260907",
+        "runKey": "78020346.646858ac.full",
+        "provenance": "save-final",
+        "steps": 690,
+        "wallMs": 556535,
+        "msPerStep": 807,
+        "scoreSourceNote": "690步正式终局87/147/121/140，均123.75；较4212b427蓝0绿+7棕-20白+38，棕方下降待归因。142383节点、180947正式提交、556535ms，较前版节点-6.96%、耗时-9.64%；27次4096策略截断及11次控制截断。第610步棕方搜索有1次EFFECT_EXECUTOR_NOT_REGISTERED，零失败门禁未通过，不因均分提升自动验收，不合dev。318真实单点12.70秒，35输入计划完整结算，49分与收入正式重放一致；针对性回归通过。运行时生产代码干净，期间只编辑只读汇总脚本及验收文档。详见hidden-reward-boundary-design-20260907.md。"
+      },
+      {
         "value": 117.5,
         "white": 102,
         "bestPlayer": {
@@ -174,26 +190,548 @@ const REGISTRY = {
         "wallMs": 440588,
         "msPerStep": 758,
         "scoreSourceNote": "581步终局113/95/135/112、均113.75，与def25c80全部动作及终局状态一致。167次搜索、124241节点、152813正式输入（减少7）、0规则失败、23策略+9控制截断共32次。440588ms对444391ms，不据单次差异宣称提速。普通扫描payload边界反例修复，8模型扫描、9正式场景、16次Decision恢复及42的30输入计划重放通过；本轮范围修正按均分不变且边界合理通过。整体Goal仍未通过：any扫描空目录及同扇区重复义务待独立修复，none/undefined全面核验、目的式移动和place_data合并未完成。"
-      },
-      {
-        "value": 113.75,
-        "white": 112,
-        "bestPlayer": {
-          "color": "棕",
-          "score": 135
-        },
-        "versionId": "probe-scan-contract-20260907",
-        "name": "探测器扫描契约修复（范围验收未通过）",
-        "runKey": "b48d2904.def25c80.full",
-        "provenance": "save-final",
-        "steps": 581,
-        "wallMs": 444391,
-        "msPerStep": 765,
-        "scoreSourceNote": "固定581步终局113/95/135/112、均113.75；167次搜索、124241节点、152820正式输入、0规则失败，32次截断，444391ms。较前版均分+6.75，但节点、截断与耗时均增加。首次动作分歧433：白方由b17改打b58，不据此推断全部涨分因果。8模型规则、9个正式composition场景及16次Decision恢复验证通过；42冷决策14.889秒、4096节点/4804输入、0规则失败、30计划输入重放成功。复查发现generic扫描Decision额外透传卡牌身份也覆盖非probe模式，超出本轮边界，须单独收紧并用新版本验收；当前候选不通过。none/undefined全面核验、目的式移动、place_data合并和第一Goal均未完成。"
       }
     ]
   },
   "versions": [
+    {
+      "id": "hidden-reward-boundary-20260907",
+      "name": "hidden-reward-boundary-20260907",
+      "date": "2026-09-07",
+      "baseline": "alien-trace-greedy-20260907",
+      "head": "646858ac",
+      "commits": [
+        {
+          "hash": "1224298d",
+          "date": "2026-09-07",
+          "subject": "登记外星人贪心完整局与节点对照：分数提高但性能未通过"
+        },
+        {
+          "hash": "fba468fd",
+          "date": "2026-09-07",
+          "subject": "拆分剩余痕迹节点并记录策略搜索调用增加"
+        },
+        {
+          "hash": "00d6510a",
+          "date": "2026-09-07",
+          "subject": "按搜索规模和回合核对新增节点来源"
+        },
+        {
+          "hash": "170f166b",
+          "date": "2026-09-07",
+          "subject": "记录搜索使用未来盲抽移动牌的正式重放证据"
+        },
+        {
+          "hash": "2072dc67",
+          "date": "2026-09-07",
+          "subject": "修复搜索将未知牌用于移动支付并统一自动结算信息边界"
+        },
+        {
+          "hash": "8dda8300",
+          "date": "2026-09-07",
+          "subject": "记录未知牌支付修复的单点结果及两分重放偏差"
+        },
+        {
+          "hash": "e3b1cadd",
+          "date": "2026-09-07",
+          "subject": "定位两分重放偏差为奖励选牌未结算边界"
+        },
+        {
+          "hash": "71c3064d",
+          "date": "2026-09-07",
+          "subject": "允许遮蔽牌面的普通奖励入手并阻止未结算主行动成叶"
+        },
+        {
+          "hash": "646858ac",
+          "date": "2026-09-07",
+          "subject": "补齐条件无后继的结果契约与公共校验回归"
+        }
+      ],
+      "summary": "限制未知牌移动支付，普通精选奖励遮蔽牌面后入手，禁止主行动未结算条件状态成叶",
+      "diffStat": "36 files changed, 250767 insertions(+), 96 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/analyze-alien-trace-remaining-20260907.js",
+          "insertions": 57,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-alien-trace-318-20260907.js",
+          "insertions": 75,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-alien-trace-full-20260907.js",
+          "insertions": 43,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-hidden-payment-score-20260907.js",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-hidden-move-payment-20260907.js",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 6,
+          "deletions": 1
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 4,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/outcome-model.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/effects/search-payment-choices.test.js",
+          "insertions": 81,
+          "deletions": 10
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 27,
+          "deletions": 6
+        },
+        {
+          "file": "reports/iteration/alien-trace-318-2072dc67-20260907.json",
+          "insertions": 32445,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-trace-318-4212b427-20260907.json",
+          "insertions": 38242,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-trace-318-699098b0-20260907.json",
+          "insertions": 22584,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-trace-full-4212b427-20260907.log",
+          "insertions": 216,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-trace-full-review-20260907.json",
+          "insertions": 1728,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-trace-greedy-20260907/9e486f54.4212b427.full.action-log.html",
+          "insertions": 2290,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-trace-greedy-design-20260907.md",
+          "insertions": 73,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/alien-trace-remaining-20260907.json",
+          "insertions": 1904,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-trace-root-318-20260907.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/hidden-move-payment-20260907.json",
+          "insertions": 72,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/hidden-move-payment-design-20260907.md",
+          "insertions": 78,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/hidden-payment-fullflow-20260907.log",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/hidden-payment-score-replay-20260907.json",
+          "insertions": 85106,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/hidden-payment-unit-20260907.log",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/hidden-reward-boundary-design-20260907.md",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/hidden-reward-contract-unit-20260907.log",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/hidden-reward-fullflow-20260907.log",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/hidden-reward-retention-20260907.log",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/hidden-reward-unit-20260907.log",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 453,
+          "deletions": 37
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 19,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/9e486f54.4212b427.full.json",
+          "insertions": 19122,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 453,
+          "deletions": 37
+        },
+        {
+          "file": "seti-saves/seti-save-research-alien-trace-greedy-20260907-4212b427-full-v330.json",
+          "insertions": 45519,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 1
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "78020346.646858ac.full.json",
+          "recordPath": "reports/research/78020346.646858ac.full.json",
+          "mode": "full",
+          "steps": 690,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 556535,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "646858ac",
+          "createdAt": "2026-09-07T11:42:01.072Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "690步正式终局87/147/121/140，均123.75；较4212b427蓝0绿+7棕-20白+38，棕方下降待归因。142383节点、180947正式提交、556535ms，较前版节点-6.96%、耗时-9.64%；27次4096策略截断及11次控制截断。第610步棕方搜索有1次EFFECT_EXECUTOR_NOT_REGISTERED，零失败门禁未通过，不因均分提升自动验收，不合dev。318真实单点12.70秒，35输入计划完整结算，49分与收入正式重放一致；针对性回归通过。运行时生产代码干净，期间只编辑只读汇总脚本及验收文档。详见hidden-reward-boundary-design-20260907.md。",
+          "scores": {
+            "player-blue": 87,
+            "player-green": 147,
+            "player-brown": 121,
+            "player-white": 140
+          },
+          "avgScore": 123.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 87,
+              "base": 63,
+              "tile": 22,
+              "card": 2,
+              "tileScoresById": {
+                "a": 16,
+                "b": 0,
+                "c": 6,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "c1",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "c",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 2,
+                "cardEffectScore": 3,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 6,
+                "orbitScore": 15,
+                "scanScore": 7,
+                "taskCardScore": 4,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 147,
+              "base": 95,
+              "tile": 48,
+              "card": 4,
+              "tileScoresById": {
+                "a": 22,
+                "b": 16,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 13,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 0,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 38,
+                "orbitScore": 9,
+                "scanScore": 4,
+                "taskCardScore": 3,
+                "techBonusScore": 2
+              }
+            },
+            "player-brown": {
+              "total": 121,
+              "base": 85,
+              "tile": 36,
+              "card": 0,
+              "tileScoresById": {
+                "a": 15,
+                "b": 12,
+                "c": 0,
+                "d": 9
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 12,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 9,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 0
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 16,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 2,
+                "alienTraceYellowScore": 2,
+                "blueTechScore": 14,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 12,
+                "orbitScore": 6,
+                "scanScore": 11,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-white": {
+              "total": 140,
+              "base": 103,
+              "tile": 37,
+              "card": 0,
+              "tileScoresById": {
+                "a": 15,
+                "b": 0,
+                "c": 8,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 14,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 12,
+                "blueTechScore": 10,
+                "cardEffectScore": 0,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 18,
+                "orbitScore": 6,
+                "scanScore": 14,
+                "taskCardScore": 0,
+                "techBonusScore": 13
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-hidden-reward-boundary-20260907-646858ac-full-v339.json",
+          "reportPath": "reports/iteration/hidden-reward-boundary-20260907/78020346.646858ac.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "78020346.646858ac.full",
+            "path": "reports/iteration/hidden-reward-boundary-20260907/78020346.646858ac.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "alien-trace-greedy-20260907",
       "name": "alien-trace-greedy-20260907",
@@ -597,7 +1135,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

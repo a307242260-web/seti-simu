@@ -1,0 +1,220 @@
+[full进度] 第 1 轮 · 第 1 回合 · 决策#1/4000 · 席位=player-white · 动作=choose_card:04955932 · 蓝色玩家=0 绿色玩家=0 棕色玩家=0 白色玩家=0 · 用时=0.048s · 20.8步/s
+[full进度] 第 1 轮 · 第 1 回合 · 决策#24/4000 · 席位=player-white · 动作=place_data:8fd12fd3 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=6 · 用时=11.971s · 2.0步/s
+[full进度] 第 1 轮 · 第 2 回合 · 决策#42/4000 · 席位=player-green · 动作=industry:5bda1856 · 蓝色玩家=7 绿色玩家=7 棕色玩家=8 白色玩家=6 · 用时=26.036s · 1.6步/s
+[full进度] 第 1 轮 · 第 3 回合 · 决策#50/4000 · 席位=player-blue · 动作=play_card:6eb4a6de · 蓝色玩家=7 绿色玩家=12 棕色玩家=8 白色玩家=6 · 用时=37.784s · 1.3步/s
+[full进度] 第 1 轮 · 第 4 回合 · 决策#53/4000 · 席位=player-brown · 动作=place_data:50a9ac16 · 蓝色玩家=9 绿色玩家=12 棕色玩家=8 白色玩家=6 · 用时=49.608s · 1.1步/s
+[full进度] 第 1 轮 · 第 11 回合 · 决策#85/4000 · 席位=player-blue · 动作=choose_target:edd99210 · 蓝色玩家=11 绿色玩家=12 棕色玩家=18 白色玩家=13 · 用时=50.625s · 1.7步/s
+[full进度] 第 1 轮 · 第 12 回合 · 决策#89/4000 · 席位=player-brown · 动作=research_tech:547c8803 · 蓝色玩家=11 绿色玩家=12 棕色玩家=18 白色玩家=13 · 用时=54.47s · 1.6步/s
+[full进度] 第 1 轮 · 第 13 回合 · 决策#93/4000 · 席位=player-white · 动作=research_tech:806ccfc8 · 蓝色玩家=11 绿色玩家=12 棕色玩家=18 白色玩家=13 · 用时=55.67s · 1.7步/s
+[full进度] 第 1 轮 · 第 14 回合 · 决策#96/4000 · 席位=player-green · 动作=place_data:dbe01b29 · 蓝色玩家=11 绿色玩家=12 棕色玩家=18 白色玩家=18 · 用时=1m8.104s · 1.4步/s
+[full进度] 第 1 轮 · 第 16 回合 · 决策#122/4000 · 席位=player-brown · 动作=industry:2259bbe0 · 蓝色玩家=11 绿色玩家=17 棕色玩家=18 白色玩家=18 · 用时=1m9.412999999999997s · 1.8步/s
+[full进度] 第 1 轮 · 第 20 回合 · 决策#144/4000 · 席位=player-brown · 动作=place_data:50a9ac16 · 蓝色玩家=23 绿色玩家=17 棕色玩家=18 白色玩家=18 · 用时=1m10.435000000000002s · 2.0步/s
+[full进度] 第 1 轮 · 第 24 回合 · 决策#162/4000 · 席位=player-green · 动作=choose_target:52efd39a · 蓝色玩家=23 绿色玩家=28 棕色玩家=18 白色玩家=18 · 用时=1m11.474000000000004s · 2.3步/s
+[full进度] 第 2 轮 · 第 1 回合 · 决策#168/4000 · 席位=player-green · 动作=launch:70d77c1b · 蓝色玩家=23 绿色玩家=28 棕色玩家=18 白色玩家=18 · 用时=1m24.647999999999996s · 2.0步/s
+[full进度] 第 2 轮 · 第 2 回合 · 决策#170/4000 · 席位=player-blue · 动作=scan:96a13338 · 蓝色玩家=23 绿色玩家=28 棕色玩家=18 白色玩家=18 · 用时=1m35.881s · 1.8步/s
+[full进度] 第 2 轮 · 第 3 回合 · 决策#183/4000 · 席位=player-brown · 动作=launch:c1616852 · 蓝色玩家=25 绿色玩家=31 棕色玩家=18 白色玩家=18 · 用时=1m50.477000000000004s · 1.7步/s
+[full进度] 第 2 轮 · 第 4 回合 · 决策#189/4000 · 席位=player-white · 动作=launch:c94cda79 · 蓝色玩家=25 绿色玩家=31 棕色玩家=18 白色玩家=18 · 用时=2m5.293999999999997s · 1.5步/s
+[full进度] 第 2 轮 · 第 5 回合 · 决策#195/4000 · 席位=player-green · 动作=research_tech:f86fc96a · 蓝色玩家=25 绿色玩家=31 棕色玩家=18 白色玩家=18 · 用时=2m19.262s · 1.4步/s
+[full进度] 第 2 轮 · 第 6 回合 · 决策#200/4000 · 席位=player-blue · 动作=card_corner:9cd66663 · 蓝色玩家=25 绿色玩家=31 棕色玩家=18 白色玩家=18 · 用时=2m24.05600000000001s · 1.4步/s
+[full进度] 第 2 轮 · 第 8 回合 · 决策#211/4000 · 席位=player-white · 动作=place_data:8fd12fd3 · 蓝色玩家=27 绿色玩家=31 棕色玩家=24 白色玩家=28 · 用时=2m39.10400000000001s · 1.3步/s
+[full进度] 第 2 轮 · 第 9 回合 · 决策#220/4000 · 席位=player-green · 动作=play_card:859b94c1 · 蓝色玩家=27 绿色玩家=31 棕色玩家=24 白色玩家=28 · 用时=2m55.139999999999986s · 1.3步/s
+[full进度] 第 2 轮 · 第 11 回合 · 决策#230/4000 · 席位=player-brown · 动作=research_tech:547c8803 · 蓝色玩家=31 绿色玩家=31 棕色玩家=24 白色玩家=28 · 用时=3m1.9490000000000123s · 1.3步/s
+[full进度] 第 2 轮 · 第 12 回合 · 决策#234/4000 · 席位=player-white · 动作=research_tech:806ccfc8 · 蓝色玩家=31 绿色玩家=31 棕色玩家=24 白色玩家=28 · 用时=3m16.670999999999992s · 1.2步/s
+[full进度] 第 2 轮 · 第 13 回合 · 决策#239/4000 · 席位=player-green · 动作=card_corner:12343210 · 蓝色玩家=31 绿色玩家=37 棕色玩家=24 白色玩家=28 · 用时=3m24.11699999999999s · 1.2步/s
+[full进度] 第 2 轮 · 第 15 回合 · 决策#248/4000 · 席位=player-brown · 动作=industry:2259bbe0 · 蓝色玩家=31 绿色玩家=37 棕色玩家=24 白色玩家=28 · 用时=3m25.274s · 1.2步/s
+[full进度] 第 2 轮 · 第 16 回合 · 决策#262/4000 · 席位=player-white · 动作=scan:2d21a323 · 蓝色玩家=31 绿色玩家=37 棕色玩家=26 白色玩家=28 · 用时=3m37.60499999999999s · 1.2步/s
+[full进度] 第 2 轮 · 第 17 回合 · 决策#276/4000 · 席位=player-green · 动作=choose_payment:bfe8ea42 · 蓝色玩家=31 绿色玩家=37 棕色玩家=26 白色玩家=31 · 用时=3m38.619s · 1.3步/s
+[full进度] 第 2 轮 · 第 19 回合 · 决策#290/4000 · 席位=player-white · 动作=place_data:8fd12fd3 · 蓝色玩家=31 绿色玩家=37 棕色玩家=26 白色玩家=36 · 用时=3m39.637s · 1.3步/s
+[full进度] 第 3 轮 · 第 1 回合 · 决策#301/4000 · 席位=player-blue · 动作=scan:96a13338 · 蓝色玩家=31 绿色玩家=39 棕色玩家=26 白色玩家=38 · 用时=3m55.116000000000014s · 1.3步/s
+[full进度] 第 3 轮 · 第 2 回合 · 决策#308/4000 · 席位=player-brown · 动作=scan:0ca111ac · 蓝色玩家=31 绿色玩家=39 棕色玩家=26 白色玩家=38 · 用时=4m13.140999999999991s · 1.2步/s
+[full进度] 第 3 轮 · 第 3 回合 · 决策#318/4000 · 席位=player-white · 动作=play_card:85228d2b · 蓝色玩家=31 绿色玩家=39 棕色玩家=40 白色玩家=38 · 用时=4m28.220000000000027s · 1.2步/s
+[full进度] 第 3 轮 · 第 4 回合 · 决策#320/4000 · 席位=player-green · 动作=play_card:405c7a86 · 蓝色玩家=31 绿色玩家=39 棕色玩家=40 白色玩家=38 · 用时=4m44.60000000000002s · 1.1步/s
+[full进度] 第 3 轮 · 第 5 回合 · 决策#323/4000 · 席位=player-blue · 动作=move:b3b8b230 · 蓝色玩家=31 绿色玩家=41 棕色玩家=40 白色玩家=38 · 用时=5m0.12999999999999545s · 1.1步/s
+[full进度] 第 3 轮 · 第 7 回合 · 决策#334/4000 · 席位=player-white · 动作=move:e1dfc520 · 蓝色玩家=37 绿色玩家=41 棕色玩家=45 白色玩家=38 · 用时=5m15.322999999999979s · 1.1步/s
+[full进度] 第 3 轮 · 第 8 回合 · 决策#343/4000 · 席位=player-green · 动作=place_data:dbe01b29 · 蓝色玩家=37 绿色玩家=44 棕色玩家=45 白色玩家=40 · 用时=5m30.30200000000002s · 1.0步/s
+[full进度] 第 3 轮 · 第 9 回合 · 决策#357/4000 · 席位=player-blue · 动作=place_data:01c038e2 · 蓝色玩家=40 绿色玩家=44 棕色玩家=45 白色玩家=40 · 用时=5m31.36500000000001s · 1.1步/s
+[full进度] 第 3 轮 · 第 10 回合 · 决策#360/4000 · 席位=player-brown · 动作=research_tech:547c8803 · 蓝色玩家=40 绿色玩家=44 棕色玩家=45 白色玩家=40 · 用时=5m47.497000000000014s · 1.0步/s
+[full进度] 第 3 轮 · 第 11 回合 · 决策#373/4000 · 席位=player-white · 动作=place_data:8fd12fd3 · 蓝色玩家=40 绿色玩家=44 棕色玩家=45 白色玩家=50 · 用时=5m48.54399999999998s · 1.1步/s
+[full进度] 第 3 轮 · 第 11 回合 · 决策#376/4000 · 席位=player-white · 动作=card_corner:f9bb2ce2 · 蓝色玩家=40 绿色玩家=44 棕色玩家=45 白色玩家=51 · 用时=6m3.7210000000000036s · 1.0步/s
+[full进度] 第 3 轮 · 第 12 回合 · 决策#386/4000 · 席位=player-green · 动作=launch:70d77c1b · 蓝色玩家=40 绿色玩家=44 棕色玩家=45 白色玩家=51 · 用时=6m18.692000000000007s · 1.0步/s
+[full进度] 第 3 轮 · 第 13 回合 · 决策#393/4000 · 席位=player-blue · 动作=card_corner:9d358a9b · 蓝色玩家=45 绿色玩家=44 棕色玩家=45 白色玩家=51 · 用时=6m19.841000000000008s · 1.0步/s
+[full进度] 第 3 轮 · 第 14 回合 · 决策#395/4000 · 席位=player-brown · 动作=play_card:a60f16f6 · 蓝色玩家=45 绿色玩家=44 棕色玩家=45 白色玩家=51 · 用时=6m35.228999999999985s · 1.0步/s
+[full进度] 第 3 轮 · 第 15 回合 · 决策#404/4000 · 席位=player-white · 动作=scan:2d21a323 · 蓝色玩家=45 绿色玩家=44 棕色玩家=47 白色玩家=51 · 用时=6m44.85500000000002s · 1.0步/s
+[full进度] 第 3 轮 · 第 16 回合 · 决策#415/4000 · 席位=player-green · 动作=choose_payment:56560af3 · 蓝色玩家=45 绿色玩家=44 棕色玩家=47 白色玩家=61 · 用时=6m45.896000000000015s · 1.0步/s
+[full进度] 第 3 轮 · 第 17 回合 · 决策#426/4000 · 席位=player-blue · 动作=pass:c858282e · 蓝色玩家=47 绿色玩家=44 棕色玩家=47 白色玩家=61 · 用时=6m46.964s · 1.0步/s
+[full进度] 第 3 轮 · 第 18 回合 · 决策#428/4000 · 席位=player-brown · 动作=industry:2259bbe0 · 蓝色玩家=47 绿色玩家=44 棕色玩家=47 白色玩家=61 · 用时=7m0.21100000000001273s · 1.0步/s
+[full进度] 第 3 轮 · 第 18 回合 · 决策#439/4000 · 席位=player-brown · 动作=choose_payment:807aefb9 · 蓝色玩家=47 绿色玩家=44 棕色玩家=47 白色玩家=61 · 用时=7m1.2130000000000223s · 1.0步/s
+[full进度] 第 3 轮 · 第 20 回合 · 决策#447/4000 · 席位=player-green · 动作=end_turn:1f65daa3 · 蓝色玩家=47 绿色玩家=57 棕色玩家=47 白色玩家=64 · 用时=7m2.2679999999999723s · 1.1步/s
+[full进度] 第 3 轮 · 第 21 回合 · 决策#452/4000 · 席位=player-brown · 动作=place_data:50a9ac16 · 蓝色玩家=47 绿色玩家=57 棕色玩家=54 白色玩家=64 · 用时=7m5.97199999999998s · 1.1步/s
+[full进度] 第 3 轮 · 第 22 回合 · 决策#463/4000 · 席位=player-white · 动作=choose_target:29b5215c · 蓝色玩家=47 绿色玩家=57 棕色玩家=54 白色玩家=69 · 用时=7m7.021000000000015s · 1.1步/s
+[full进度] 第 3 轮 · 第 23 回合 · 决策#472/4000 · 席位=player-green · 动作=place_data:dbe01b29 · 蓝色玩家=47 绿色玩家=57 棕色玩家=54 白色玩家=72 · 用时=7m8.182999999999993s · 1.1步/s
+[full进度] 第 3 轮 · 第 23 回合 · 决策#483/4000 · 席位=player-green · 动作=choose_target:ccdcfd74 · 蓝色玩家=47 绿色玩家=59 棕色玩家=54 白色玩家=72 · 用时=7m9.285000000000025s · 1.1步/s
+[full进度] 第 3 轮 · 第 24 回合 · 决策#493/4000 · 席位=player-brown · 动作=research_tech:547c8803 · 蓝色玩家=47 绿色玩家=59 棕色玩家=54 白色玩家=72 · 用时=7m10.307000000000016s · 1.1步/s
+[full进度] 第 3 轮 · 第 24 回合 · 决策#501/4000 · 席位=player-brown · 动作=choose_card:64c3686d · 蓝色玩家=47 绿色玩家=59 棕色玩家=59 白色玩家=72 · 用时=7m11.394000000000005s · 1.2步/s
+[full进度] 第 4 轮 · 第 1 回合 · 决策#509/4000 · 席位=player-brown · 动作=card_corner:80f27544 · 蓝色玩家=47 绿色玩家=59 棕色玩家=59 白色玩家=72 · 用时=7m26.475000000000023s · 1.1步/s
+[full进度] 第 4 轮 · 第 2 回合 · 决策#518/4000 · 席位=player-white · 动作=play_card:914c82d7 · 蓝色玩家=47 绿色玩家=59 棕色玩家=63 白色玩家=72 · 用时=7m41.06900000000002s · 1.1步/s
+[full进度] 第 4 轮 · 第 3 回合 · 决策#520/4000 · 席位=player-green · 动作=launch:70d77c1b · 蓝色玩家=47 绿色玩家=59 棕色玩家=63 白色玩家=72 · 用时=7m59.51400000000001s · 1.1步/s
+[full进度] 第 4 轮 · 第 4 回合 · 决策#524/4000 · 席位=player-blue · 动作=launch:a4087d46 · 蓝色玩家=47 绿色玩家=59 棕色玩家=63 白色玩家=72 · 用时=8m15.110000000000014s · 1.1步/s
+[full进度] 第 4 轮 · 第 6 回合 · 决策#533/4000 · 席位=player-white · 动作=choose_target:a4b269bb · 蓝色玩家=47 绿色玩家=59 棕色玩家=63 白色玩家=72 · 用时=8m16.117999999999995s · 1.1步/s
+[full进度] 第 4 轮 · 第 7 回合 · 决策#542/4000 · 席位=player-green · 动作=choose_payment:56560af3 · 蓝色玩家=47 绿色玩家=59 棕色玩家=63 白色玩家=72 · 用时=8m17.137999999999977s · 1.1步/s
+[full进度] 第 4 轮 · 第 7 回合 · 决策#551/4000 · 席位=player-green · 动作=end_turn:1f65daa3 · 蓝色玩家=47 绿色玩家=62 棕色玩家=63 白色玩家=72 · 用时=8m18.173999999999978s · 1.1步/s
+[full进度] 第 4 轮 · 第 8 回合 · 决策#555/4000 · 席位=player-blue · 动作=place_data:01c038e2 · 蓝色玩家=58 绿色玩家=65 棕色玩家=63 白色玩家=72 · 用时=8m22.728999999999985s · 1.1步/s
+[full进度] 第 4 轮 · 第 10 回合 · 决策#564/4000 · 席位=player-white · 动作=accept_optional_effect:48049be3 · 蓝色玩家=58 绿色玩家=65 棕色玩家=63 白色玩家=78 · 用时=8m23.797000000000025s · 1.1步/s
+[full进度] 第 4 轮 · 第 10 回合 · 决策#565/4000 · 席位=player-white · 动作=move:b83c622d · 蓝色玩家=58 绿色玩家=65 棕色玩家=63 白色玩家=78 · 用时=8m29.12900000000002s · 1.1步/s
+[full进度] 第 4 轮 · 第 11 回合 · 决策#574/4000 · 席位=player-green · 动作=land:1cbade2c · 蓝色玩家=58 绿色玩家=65 棕色玩家=63 白色玩家=78 · 用时=8m30.144000000000005s · 1.1步/s
+[full进度] 第 4 轮 · 第 11 回合 · 决策#577/4000 · 席位=player-green · 动作=choose_payment:4a9ad768 · 蓝色玩家=58 绿色玩家=77 棕色玩家=63 白色玩家=78 · 用时=8m31.161s · 1.1步/s
+[full进度] 第 4 轮 · 第 11 回合 · 决策#586/4000 · 席位=player-green · 动作=choose_payment:ce8b6537 · 蓝色玩家=58 绿色玩家=77 棕色玩家=63 白色玩家=78 · 用时=8m32.208999999999946s · 1.1步/s
+[full进度] 第 4 轮 · 第 12 回合 · 决策#590/4000 · 席位=player-blue · 动作=scan:96a13338 · 蓝色玩家=58 绿色玩家=77 棕色玩家=63 白色玩家=78 · 用时=8m34.783000000000015s · 1.1步/s
+[full进度] 第 4 轮 · 第 12 回合 · 决策#598/4000 · 席位=player-blue · 动作=choose_target:b8fbeffa · 蓝色玩家=63 绿色玩家=77 棕色玩家=63 白色玩家=78 · 用时=8m35.79399999999998s · 1.2步/s
+[full进度] 第 4 轮 · 第 12 回合 · 决策#607/4000 · 席位=player-blue · 动作=choose_payment:b009da04 · 蓝色玩家=63 绿色玩家=77 棕色玩家=63 白色玩家=78 · 用时=8m36.823999999999955s · 1.2步/s
+[full进度] 第 4 轮 · 第 13 回合 · 决策#610/4000 · 席位=player-brown · 动作=quick_trade:5ad269c5 · 蓝色玩家=63 绿色玩家=77 棕色玩家=63 白色玩家=78 · 用时=8m52.139999999999986s · 1.1步/s
+[full进度] 第 4 轮 · 第 13 回合 · 决策#619/4000 · 席位=player-brown · 动作=place_data:50a9ac16 · 蓝色玩家=63 绿色玩家=77 棕色玩家=72 白色玩家=78 · 用时=8m53.23000000000002s · 1.2步/s
+[full进度] 第 4 轮 · 第 15 回合 · 决策#628/4000 · 席位=player-white · 动作=end_turn:b2f9b29d · 蓝色玩家=63 绿色玩家=77 棕色玩家=74 白色玩家=88 · 用时=8m54.335000000000036s · 1.2步/s
+[full进度] 第 4 轮 · 第 15 回合 · 决策#629/4000 · 席位=player-green · 动作=launch:70d77c1b · 蓝色玩家=63 绿色玩家=77 棕色玩家=74 白色玩家=88 · 用时=8m55.66999999999996s · 1.2步/s
+[full进度] 第 4 轮 · 第 15 回合 · 决策#637/4000 · 席位=player-green · 动作=choose_card:8e9f18de · 蓝色玩家=63 绿色玩家=77 棕色玩家=74 白色玩家=88 · 用时=8m56.684999999999945s · 1.2步/s
+[full进度] 第 4 轮 · 第 17 回合 · 决策#645/4000 · 席位=player-brown · 动作=choose_target:6ea8196a · 蓝色玩家=63 绿色玩家=77 棕色玩家=76 白色玩家=88 · 用时=8m57.76700000000005s · 1.2步/s
+[full进度] 第 4 轮 · 第 17 回合 · 决策#647/4000 · 席位=player-brown · 动作=move:971a88de · 蓝色玩家=63 绿色玩家=77 棕色玩家=76 白色玩家=88 · 用时=9m8.436000000000035s · 1.2步/s
+[full进度] 第 4 轮 · 第 18 回合 · 决策#655/4000 · 席位=player-white · 动作=choose_target:29b5215c · 蓝色玩家=63 绿色玩家=77 棕色玩家=76 白色玩家=88 · 用时=9m9.456999999999994s · 1.2步/s
+[full进度] 第 4 轮 · 第 18 回合 · 决策#656/4000 · 席位=player-white · 动作=scan:2d21a323 · 蓝色玩家=63 绿色玩家=77 棕色玩家=76 白色玩家=88 · 用时=9m11.573999999999955s · 1.2步/s
+[full进度] 第 4 轮 · 第 19 回合 · 决策#664/4000 · 席位=player-white · 动作=accept_optional_effect:de831bd9 · 蓝色玩家=63 绿色玩家=77 棕色玩家=76 白色玩家=93 · 用时=9m12.659999999999968s · 1.2步/s
+[full进度] 第 4 轮 · 第 20 回合 · 决策#672/4000 · 席位=player-green · 动作=end_turn:1f65daa3 · 蓝色玩家=63 绿色玩家=95 棕色玩家=76 白色玩家=93 · 用时=9m13.745000000000005s · 1.2步/s
+[full进度] 第 4 轮 · 第 23 回合 · 决策#679/4000 · 席位=player-green · 动作=pass:ff716055 · 蓝色玩家=63 绿色玩家=95 棕色玩家=85 白色玩家=96 · 用时=9m14.88900000000001s · 1.2步/s
+[full进度] 第 4 轮 · 第 24 回合 · 决策#686/4000 · 席位=player-white · 动作=choose_target:29b5215c · 蓝色玩家=63 绿色玩家=95 棕色玩家=85 白色玩家=101 · 用时=9m15.938999999999965s · 1.2步/s
+
+===== full（seti-free-analyze-v1）=====
+步骤=690 终局=true 耗时=556.5s
+均分=123.75 各席=player-blue=87 player-green=147 player-brown=121 player-white=140
+  player-blue 行动族={"choose_card":16,"choose_payment":13,"play_card":3,"choose_target":30,"end_turn":15,"research_tech":3,"industry":2,"launch":2,"accept_optional_effect":3,"move":5,"quick_trade":6,"orbit":2,"pass":4,"scan":3,"place_data":13,"card_corner":3,"analyze":1,"land":1}
+  player-green 行动族={"choose_card":25,"choose_payment":28,"industry":4,"choose_target":46,"orbit":2,"end_turn":23,"play_card":6,"place_data":16,"scan":2,"research_tech":3,"quick_trade":13,"land":4,"card_corner":2,"pass":4,"launch":4,"move":8,"analyze":2,"accept_optional_effect":1,"complete_task":1}
+  player-brown 行动族={"choose_card":26,"place_data":23,"choose_target":49,"play_card":5,"end_turn":22,"analyze":3,"research_tech":5,"industry":3,"quick_trade":4,"choose_payment":14,"scan":5,"pass":4,"launch":1,"move":5,"orbit":1,"card_corner":3,"land":2,"accept_optional_effect":1}
+  player-white 行动族={"choose_card":27,"choose_payment":13,"place_data":29,"choose_target":58,"card_corner":6,"scan":4,"end_turn":22,"analyze":4,"play_card":5,"research_tech":4,"pass":4,"launch":1,"move":5,"land":3,"industry":1,"quick_trade":5,"orbit":1,"accept_optional_effect":3}
+白色 quick_trade=5 研究步=[93,234,458,681]
+外星人: 首放 6 次、揭示 2 次
+终局轮=4
+反事实搜索触顶 38/690 次决策（maxExecutionNodes 预算耗尽）按席位: {"player-white":11,"player-green":11,"player-blue":7,"player-brown":9}
+  步24 player-white place_data     节点=4096/4096 前沿来源: launch×120 industry×103 choose_card×74
+  步42 player-green industry       节点=4096/4096 前沿来源: place_data×107 move×56 end_turn×52
+  步50 player-blue play_card      节点=4096/4096 前沿来源: launch×61 pass×39 end_turn×34
+  步53 player-brown place_data     节点=4096/4096 前沿来源: quick_trade×196 end_turn×189 choose_card×79
+  步96 player-green place_data     节点=4096/4096 前沿来源: choose_target×69 card_corner×40 pass×34
+  步168 player-green launch         节点=4096/4096 前沿来源: end_turn×170 place_data×58 quick_trade×48
+  步183 player-brown launch         节点=4096/4096 前沿来源: card_corner×96 pass×86 end_turn×25
+  步189 player-white launch         节点=4096/4096 前沿来源: card_corner×123 scan×84 end_turn×53
+  步195 player-green research_tech  节点=4096/4096 前沿来源: card_corner×251 end_turn×73 quick_trade×21
+  步211 player-white place_data     节点=4096/4096 前沿来源: card_corner×310 end_turn×40 industry×28
+  步220 player-green play_card      节点=4096/4096 前沿来源: industry×104 card_corner×84 quick_trade×79
+  步301 player-blue scan           节点=4096/4096 前沿来源: place_data×238 end_turn×85 choose_target×57
+  步308 player-brown scan           节点=4096/4096 前沿来源: quick_trade×205 end_turn×104 card_corner×77
+  步318 player-white play_card      节点=4096/4096 前沿来源: quick_trade×114 place_data×96 choose_card×69
+  步320 player-green play_card      节点=4096/4096 前沿来源: place_data×330 end_turn×163 card_corner×24
+  步323 player-blue move           节点=4096/4096 前沿来源: end_turn×107 place_data×85 card_corner×42
+  步334 player-white move           节点=4096/4096 前沿来源: choose_card×97 end_turn×82 quick_trade×46
+  步343 player-green place_data     节点=4096/4096 前沿来源: choose_target×186 end_turn×51 move×42
+  步360 player-brown research_tech  节点=4096/4096 前沿来源: card_corner×168 end_turn×68 industry×48
+  步376 player-white card_corner    节点=4096/4096 前沿来源: place_data×332 end_turn×113 quick_trade×52
+
+记录: reports/research/78020346.646858ac.full.json
+存档: seti-saves/seti-save-research-hidden-reward-boundary-20260907-646858ac-full-v339.json
+
+[登记] 版本 hidden-reward-boundary-20260907（head=646858ac，baseline=alien-trace-greedy-20260907，commits=9 个）
+  记录: reports/research/78020346.646858ac.full.json
+  存档: seti-saves/seti-save-research-hidden-reward-boundary-20260907-646858ac-full-v339.json
+[页面] /private/tmp/seti-hidden-reward-boundary-20260907/reports/robot-iteration.html
+[报告] 生成 1 份复盘报告
+[复盘报告] reports/iteration/hidden-reward-boundary-20260907/78020346.646858ac.full.action-log.html
+
+===== 固定盘面最佳（全盘运行）=====
+最佳白分: 140（hidden-reward-boundary-20260907 / hidden-reward-boundary-20260907 / 78020346.646858ac.full · 690 步 · 9m17s · 来源 save-final · 每步 807ms）
+最佳均分: 123.75（hidden-reward-boundary-20260907 / hidden-reward-boundary-20260907 / 78020346.646858ac.full · 690 步 · 9m17s · 来源 save-final · 每步 807ms）
+最快全盘（总耗时）: 874ms/步（resource-preparation-cache-20260907 / resource-preparation-cache-20260907 / aed4e5db.1f55695a.full · 604 步 · 8m48s · 来源 save-final · 每步 874ms）
+最快全盘（每步均耗时）: 807ms/步（hidden-reward-boundary-20260907 / hidden-reward-boundary-20260907 / 78020346.646858ac.full · 690 步 · 9m17s · 来源 save-final · 每步 807ms）
+
+[警告 83]
+  ! ordinary-movement-demand-20260907 声明的记录缺失：1066a36f.0b586daa.full.json
+  ! company-delayed-allowance-20260907 声明的记录缺失：b347c0e8.9968644b.full.json
+  ! main-goal-movement-20260907 声明的记录缺失：14114d45.77d36854.full.json
+  ! asteroid-movement-modifier-20260907 声明的记录缺失：7feb57c3.96e60c14.full.json
+  ! input-classification-20260907 声明的记录缺失：6eb79d83.18839186.full.json
+  ! visit-progress-read-20260907 声明的记录缺失：2a4865e5.1585d689.full.json
+  ! data-event-contract-20260907 声明的记录缺失：7f66d3e1.c555bc33.full.json
+  ! any-alien-contract-20260907 声明的记录缺失：0b8c855d.0caa713a.full.json
+  ! probe-scan-scope-20260907 声明的记录缺失：ddc98722.1f0d82ec.full.json
+  ! probe-scan-contract-20260907 声明的记录缺失：b48d2904.def25c80.full.json
+  ! trade-confirm-20260907 声明的记录缺失：7ac3da29.de8a4056.full.json
+  ! orbit-visit-trigger-20260907 声明的记录缺失：64334dc7.7613a096.full.json
+  ! probe-location-data-20260907 声明的记录缺失：ac62e0db.a41ae85a.full.json
+  ! final-probe-location-20260907 声明的记录缺失：c292b693.01b4d49e.full.json
+  ! probe-location-read-20260907 声明的记录缺失：beaacd3e.b8be61a5.full.json
+  ! card-launch-limit-20260907 声明的记录缺失：39fc344f.b10ae543.full.json
+  ! projection-isolation-20260907 声明的记录缺失：0eee8b82.744c5cf9.full.json
+  ! alien-card-cancel-20260907 声明的记录缺失：e81fab58.61cc94af.full.json
+  ! shared-leaf-observation-20260907 声明的记录缺失：dd9a1dab.a4453b64.full.json
+  ! policy-plan-evidence-20260906 声明的记录缺失：91f9a83a.73e7b2ca.full.json
+  ! amiba-data-overflow-20260906 声明的记录缺失：25c65ece.795cd6eb.full.json
+  ! company-free-move-20260906 声明的记录缺失：ffb71a57.553e19c6.full.json
+  ! card-trace-owner-20260906 声明的记录缺失：220d6a11.6cd56452.quick-200.json
+  ! card-trace-owner-20260906 声明的记录缺失：220d6a11.6cd56452.full.json
+  ! amiba-region-rule-20260906 声明的记录缺失：857426ea.be6bd7b6.quick-200.json
+  ! amiba-region-rule-20260906 声明的记录缺失：857426ea.be6bd7b6.full.json
+  ! search-statistics-p1-20260906 声明的记录缺失：4e84be21.06738145.quick-200.json
+  ! search-statistics-p1-20260906 声明的记录缺失：4e84be21.06738145.full.json
+  ! observe-decision-r4-20260906 声明的记录缺失：2848eba2.213f34db.quick-200.json
+  ! observe-decision-r4-20260906 声明的记录缺失：2848eba2.213f34db.full.json
+  ! round-data-income-r4-20260906 声明的记录缺失：cdcd5d61.6d67a974.quick-200.json
+  ! score-corner-r4-20260906 声明的记录缺失：7a4c63fd.0d21aebf.quick-200.json
+  ! score-corner-r4-20260906 声明的记录缺失：7a4c63fd.0d21aebf.full.json
+  ! search-deadline-r4-20260906 声明的记录缺失：76d49ed1.8a6ef25e.quick-200.json
+  ! search-deadline-r4-20260906 声明的记录缺失：76d49ed1.8a6ef25e.full.json
+  ! probe-source-r3p1-20260906 声明的记录缺失：c9b29e5a.d969b727.quick-200.json
+  ! probe-source-r3p1-20260906 声明的记录缺失：c9b29e5a.d969b727.full.json
+  ! card-income-id-r3c1-20260906 声明的记录缺失：22cf8cea.cf4280fd.quick-200.json
+  ! card-income-id-r3c1-20260906 声明的记录缺失：22cf8cea.cf4280fd.full.json
+  ! income-reserve-r3i1-20260906 声明的记录缺失：990c007e.082d3e12.quick-200.json
+  ! scan-earth-r3s1-20260906 声明的记录缺失：c3eebca2.4fba7beb.quick-200.json
+  ! scan-earth-r3s1-20260906 声明的记录缺失：c3eebca2.4fba7beb.full.json
+  ! sector-directory-s2-20260906 声明的记录缺失：5216eea5.904acf13.quick-200.json
+  ! sector-directory-s2-20260906 声明的记录缺失：5216eea5.904acf13.full.json
+  ! tile-dependency-r3t1-20260906 声明的记录缺失：6fbffdcf.5ebc336e.quick-200.json
+  ! tile-dependency-r3t1-20260906 声明的记录缺失：6fbffdcf.5ebc336e.full.json
+  ! plan-steps-r3-20260906 声明的记录缺失：e529366a.d7a78140.quick-200.json
+  ! plan-steps-r3-20260906 声明的记录缺失：e529366a.d7a78140.full.json
+  ! blue-future-r2e-20260905 声明的记录缺失：baea50cc.20feca27.quick-200.json
+  ! blue-future-r2e-20260905 声明的记录缺失：baea50cc.20feca27.full.json
+  ! search-result-retention-s1-20260905 声明的记录缺失：1ed8224b.e80ca9e7.quick-200.json
+  ! search-result-retention-s1-20260905 声明的记录缺失：1ed8224b.e80ca9e7.full.json
+  ! conditional-progress-r2c-20260905 声明的记录缺失：39530f19.fda901b9.quick-200.json
+  ! conditional-progress-r2c-20260905 声明的记录缺失：39530f19.fda901b9.full.json
+  ! resource-realization-r2b-20260905 声明的记录缺失：60664a0b.c1b7bd49.quick-200.json
+  ! resource-attribution-r2-20260905 声明的记录缺失：241f6fc0.4f994f86.quick-200.json
+  ! resource-attribution-r2-20260905 声明的记录缺失：241f6fc0.4f994f86.full.json
+  ! terminal-value-r1-20260905 声明的记录缺失：16bce41e.d9283ce5.quick-200.json
+  ! terminal-value-r1-20260905 声明的记录缺失：16bce41e.d9283ce5.full.json
+  ! fold-chain-real 声明的记录缺失：e749439d.0a377f88.full.json
+  ! elig-sum4 声明的记录缺失：3eb9e994.56e9a9c0.full.json
+  ! elig-threshold4 声明的记录缺失：aeaabc4b.3ebcf7f0.full.json
+  ! elig-aligned 声明的记录缺失：81738624.e9b52a49.full.json
+  ! completes-v4-placement 声明的记录缺失：ceddb30f.3c78eed2.full.json
+  ! placement-full 声明的记录缺失：5484d4eb.b8cfb508.full.json
+  ! pure-profit 声明的记录缺失：dd6cc9dd.4e6acd93.full.json
+  ! data-chain-fix 声明的记录缺失：a67b0b40.7de69080.full.json
+  ! place-chain 声明的记录缺失：1bafe69d.b355ccd6.full.json
+  ! unified-restore 声明的记录缺失：38e7df89.5cf59018.full.json
+  ! no-overflow 声明的记录缺失：074c68aa.0da417cc.full.json
+  ! overflow-fixed 声明的记录缺失：91b4195c.ba807548.full.json
+  ! overflow-target 声明的记录缺失：f04f92c6.d68e931b.full.json
+  ! place-trigger-final 声明的记录缺失：3c70096b.5e662798.full.json
+  ! place-data-unified 声明的记录缺失：b2570520.f6398808.full.json
+  ! blue-unified 声明的记录缺失：ef14823c.908a41e7.full.json
+  ! blue-analyze-pre 声明的记录缺失：346fb75c.c741f537.full.json
+  ! design-completion-fix 声明的记录缺失：b631c7f0.7b1c0afd.full.json
+  ! budget-4096-fixed 声明的记录缺失：7c12296c.0fc257dd.full.json
+  ! v4-need-placement 声明的记录缺失：efec250b.f6e4c887.full.json
+  ! v3-income-value 声明的记录缺失：c2f5eda1.0058821c.full.json
+  ! v2-countsgoal-removal 声明的记录缺失：085be66b.eae598e8.full.json
+  ! v1-simplify 声明的记录缺失：1d1505c5.294708a6.full.json
+  ! v0 声明的记录缺失：2c23b9bb.c5e0beab.full.json
+
+[提示 1]
+  · 工作树有未提交改动——记录 gitCommit 取 HEAD，若实验运行于脏树，代码版本与记录可能不完全对应（历史上有脏树运行的记录在注记里标注了 gitCommit 偏差）
+
+下一步：人工核对 versions.json 的 summary/records 注记后，提交记录体系产物（改动即文档，同一次提交）。

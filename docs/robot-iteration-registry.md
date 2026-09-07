@@ -292,6 +292,7 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 | 版本 | head | 说明 |
 |---|---|---|
+| `hidden-reward-boundary-20260907` | `646858ac` | 未知移动支付隔离、普通未知奖励入手、条件结算边界；690步均123.75、142383节点、556535ms；38截断及610棕方1次执行器未注册，零失败门禁未通过，棕方降20待归因，未合dev |
 | `alien-trace-greedy-20260907` | `4212b427` | 普通槽位贪心、排除纯溢出；648步均117.5、153040节点、38截断、0规则失败；痕迹减少但耗时增至615895ms，性能未通过，个别席位下降待归因，未合dev |
 | `reorganization-resources-20260907` | `e6923ed1` | 重组先弃后奖、永久收入不变；611步均107.25，136483节点、35截断、0规则失败；按规则bug例外通过，性能及整体Goal未完成 |
 | `resource-preparation-cache-20260907` | `1f55695a` | 准备缓存隔离交易动作身份；604步均108.5，124980节点、31截断、0规则失败；冷热反例25→0，仍低于已通过109.5，整体未通过 |
@@ -351,7 +352,9 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 - 记录 `summary.scores` 为运行当时口径；有存档的终局运行由 build 从存档 finalScores
   读取完整终局分（save-final），total = base + 板块 + 卡牌。
 - `registry.currentBaseline` 按代码祖先解析，不代表验收通过；最近已登记候选为
-  `alien-trace-greedy-20260907`，完整终局均117.5，实际搜索规则失败0，仍38截断；
+  `hidden-reward-boundary-20260907`，完整终局均123.75，仍38截断，610棕方出现1次
+  EFFECT_EXECUTOR_NOT_REGISTERED；零失败门禁未通过，棕方下降20待归因，未合dev。
+  前版`alien-trace-greedy-20260907`完整终局均117.5，实际搜索规则失败0，仍38截断；
   痕迹节点下降但整体节点/耗时上升，性能未通过，蓝绿席位下降待归因，未合dev。
   前版`reorganization-resources-20260907`完整终局均107.25，实际搜索规则失败0，仍35截断。
   重组规则修复按用户例外通过，整体Goal未通过。前版缓存均108.5、31截断；历史白137
