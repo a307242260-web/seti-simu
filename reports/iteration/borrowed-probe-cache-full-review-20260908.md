@@ -61,6 +61,7 @@ unit覆盖借用切换、清除、到期、永久科技禁用及跨席位观察�
 
 ## 产物与下一步
 
+- [八项借科技正式对照与重复能力切入点](turing-eight-effects-review-20260908.md)：当前合法行动相同不能证明借用无用；重复生效橙2/紫4已有正式状态证据，尚未剪枝。
 - [完整统计、具体目标来源、轮次席位和首差](borrowed-probe-cache-full-review-20260908.json)
 - [原始记录](../research/1969fccc.addcef7f.full.json)
 - [正式存档](../../seti-saves/seti-save-research-borrowed-probe-cache-20260908-addcef7f-full-v328.json)
