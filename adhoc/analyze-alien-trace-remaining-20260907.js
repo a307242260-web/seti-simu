@@ -27,10 +27,28 @@ const bySearchKind = r => Object.fromEntries(["control", "strategic"].map(kind =
   const nodes = rows.reduce((n, s) => n + s.diagnostics.executedNodeCount, 0);
   return [kind, { calls: rows.length, nodes, averageNodes: nodes / rows.length }];
 }));
+function boundaries(record) {
+  const save = JSON.parse(fs.readFileSync(record.savePath));
+  const sizes = {}, roundsAndSeats = {}, rows = [];
+  for (const search of record.metrics.searches.filter(s => s.kind === "strategic")) {
+    const row = save.replaySteps[search.step - 1];
+    const nodes = search.diagnostics.executedNodeCount;
+    const size = nodes <= 10 ? "1-10" : nodes < 4096 ? "11-4095" : "4096";
+    const bucket = sizes[size] ||= { calls: 0, nodes: 0 };
+    bucket.calls++; bucket.nodes += nodes;
+    const key = `R${row.after.r}:${search.seat}`;
+    const seatBucket = roundsAndSeats[key] ||= { calls: 0, nodes: 0 };
+    seatBucket.calls++; seatBucket.nodes += nodes;
+    rows.push({ step: search.step, seat: search.seat, round: row.after.r, nodes,
+      selectedFamily: row.action.family, selectedSummary: row.action.summary });
+  }
+  return { sizes, roundsAndSeats, rows };
+}
 const result = { source: "9e486f54.4212b427.full.json", traceNodes, groups,
   summaries: Object.fromEntries(Object.entries(summaries).sort((a, b) => b[1] - a[1])),
   origins: Object.fromEntries(Object.entries(origins).sort((a, b) => b[1] - a[1])),
   before: bySearchKind(baseline), after: bySearchKind(current),
+  searchBoundaries: { before: boundaries(baseline), after: boundaries(current) },
   caveats: ["物理痕迹总数含卡牌来源56个，不能与仅普通来源14103混用",
     "origin是来源归属次数；同物理节点可有多个origin，不能把origin占比当物理节点占比",
     "累计多次选到同槽不证明同状态重复；现有聚合记录不包含每次筛选前后的候选与状态",

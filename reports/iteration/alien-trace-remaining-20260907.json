@@ -125,6 +125,1776 @@
       "averageNodes": 1442.933962264151
     }
   },
+  "searchBoundaries": {
+    "before": {
+      "sizes": {
+        "4096": {
+          "calls": 27,
+          "nodes": 110592
+        },
+        "1-10": {
+          "calls": 40,
+          "nodes": 162
+        },
+        "11-4095": {
+          "calls": 27,
+          "nodes": 25641
+        }
+      },
+      "roundsAndSeats": {
+        "R1:player-white": {
+          "calls": 6,
+          "nodes": 4335
+        },
+        "R1:player-green": {
+          "calls": 6,
+          "nodes": 8224
+        },
+        "R1:player-blue": {
+          "calls": 3,
+          "nodes": 4130
+        },
+        "R1:player-brown": {
+          "calls": 7,
+          "nodes": 5513
+        },
+        "R2:player-green": {
+          "calls": 8,
+          "nodes": 11597
+        },
+        "R2:player-blue": {
+          "calls": 7,
+          "nodes": 5430
+        },
+        "R2:player-brown": {
+          "calls": 3,
+          "nodes": 4105
+        },
+        "R2:player-white": {
+          "calls": 6,
+          "nodes": 11836
+        },
+        "R3:player-green": {
+          "calls": 7,
+          "nodes": 5604
+        },
+        "R3:player-blue": {
+          "calls": 4,
+          "nodes": 8198
+        },
+        "R3:player-brown": {
+          "calls": 8,
+          "nodes": 12752
+        },
+        "R3:player-white": {
+          "calls": 9,
+          "nodes": 14576
+        },
+        "R4:player-white": {
+          "calls": 5,
+          "nodes": 5996
+        },
+        "R4:player-brown": {
+          "calls": 4,
+          "nodes": 12602
+        },
+        "R4:player-green": {
+          "calls": 7,
+          "nodes": 16406
+        },
+        "R4:player-blue": {
+          "calls": 4,
+          "nodes": 5091
+        }
+      },
+      "rows": [
+        {
+          "step": 24,
+          "seat": "player-white",
+          "round": 1,
+          "nodes": 4096,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 42,
+          "seat": "player-green",
+          "round": 1,
+          "nodes": 4096,
+          "selectedFamily": "industry",
+          "selectedSummary": "寰宇动力 1x 行动"
+        },
+        {
+          "step": 50,
+          "seat": "player-blue",
+          "round": 1,
+          "nodes": 4096,
+          "selectedFamily": "play_card",
+          "selectedSummary": "b_33.webp"
+        },
+        {
+          "step": 53,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 4096,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 77,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 2,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "外星人 2 蓝色痕迹"
+        },
+        {
+          "step": 78,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 12,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 81,
+          "seat": "player-white",
+          "round": 1,
+          "nodes": 1,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 89,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 1305,
+          "selectedFamily": "research_tech",
+          "selectedSummary": "研究科技"
+        },
+        {
+          "step": 93,
+          "seat": "player-white",
+          "round": 1,
+          "nodes": 231,
+          "selectedFamily": "research_tech",
+          "selectedSummary": "研究科技"
+        },
+        {
+          "step": 95,
+          "seat": "player-white",
+          "round": 1,
+          "nodes": 1,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 96,
+          "seat": "player-green",
+          "round": 1,
+          "nodes": 4096,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 111,
+          "seat": "player-blue",
+          "round": 1,
+          "nodes": 30,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 122,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 90,
+          "selectedFamily": "industry",
+          "selectedSummary": "赫利昂联合体 1x 行动"
+        },
+        {
+          "step": 127,
+          "seat": "player-white",
+          "round": 1,
+          "nodes": 1,
+          "selectedFamily": "pass",
+          "selectedSummary": "PASS"
+        },
+        {
+          "step": 128,
+          "seat": "player-white",
+          "round": 1,
+          "nodes": 5,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_49.webp"
+        },
+        {
+          "step": 135,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 5,
+          "selectedFamily": "quick_trade",
+          "selectedSummary": "2张牌 → 1能量"
+        },
+        {
+          "step": 148,
+          "seat": "player-green",
+          "round": 1,
+          "nodes": 4,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_37.png"
+        },
+        {
+          "step": 149,
+          "seat": "player-green",
+          "round": 1,
+          "nodes": 20,
+          "selectedFamily": "quick_trade",
+          "selectedSummary": "2张牌 → 1能量"
+        },
+        {
+          "step": 158,
+          "seat": "player-blue",
+          "round": 1,
+          "nodes": 4,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_5.png"
+        },
+        {
+          "step": 160,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 3,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_24.webp"
+        },
+        {
+          "step": 165,
+          "seat": "player-green",
+          "round": 1,
+          "nodes": 5,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "amiba_0.webp：弃牌角标"
+        },
+        {
+          "step": 166,
+          "seat": "player-green",
+          "round": 1,
+          "nodes": 3,
+          "selectedFamily": "pass",
+          "selectedSummary": "PASS"
+        },
+        {
+          "step": 167,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 2,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_4.png"
+        },
+        {
+          "step": 168,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 4096,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 170,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 4096,
+          "selectedFamily": "scan",
+          "selectedSummary": "扫描"
+        },
+        {
+          "step": 172,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 6,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_31.png → 开普勒22"
+        },
+        {
+          "step": 173,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 6,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "外星人 2 粉色痕迹"
+        },
+        {
+          "step": 174,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 46,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 181,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 21,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 182,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 4,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "标记 A"
+        },
+        {
+          "step": 183,
+          "seat": "player-brown",
+          "round": 2,
+          "nodes": 4096,
+          "selectedFamily": "research_tech",
+          "selectedSummary": "研究科技"
+        },
+        {
+          "step": 191,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 4096,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "amiba_3.webp：弃牌角标"
+        },
+        {
+          "step": 198,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 4096,
+          "selectedFamily": "play_card",
+          "selectedSummary": "dlc_4.png"
+        },
+        {
+          "step": 203,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 1252,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "chong_0.webp：弃牌角标"
+        },
+        {
+          "step": 214,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 3180,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 236,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 4096,
+          "selectedFamily": "play_card",
+          "selectedSummary": "b_11.webp"
+        },
+        {
+          "step": 251,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 5,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_7.webp"
+        },
+        {
+          "step": 252,
+          "seat": "player-brown",
+          "round": 2,
+          "nodes": 5,
+          "selectedFamily": "industry",
+          "selectedSummary": "赫利昂联合体 1x 行动"
+        },
+        {
+          "step": 256,
+          "seat": "player-brown",
+          "round": 2,
+          "nodes": 4,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_53.webp"
+        },
+        {
+          "step": 259,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 350,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 265,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 3276,
+          "selectedFamily": "research_tech",
+          "selectedSummary": "研究科技"
+        },
+        {
+          "step": 268,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 111,
+          "selectedFamily": "scan",
+          "selectedSummary": "扫描"
+        },
+        {
+          "step": 307,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 2,
+          "selectedFamily": "choose_payment",
+          "selectedSummary": "b_79.webp"
+        },
+        {
+          "step": 311,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 3,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_78.webp"
+        },
+        {
+          "step": 312,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 116,
+          "selectedFamily": "land",
+          "selectedSummary": "登陆"
+        },
+        {
+          "step": 315,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 3,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "标记 D"
+        },
+        {
+          "step": 317,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 2,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_101.webp"
+        },
+        {
+          "step": 318,
+          "seat": "player-blue",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "play_card",
+          "selectedSummary": "dlc_15.png"
+        },
+        {
+          "step": 325,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 327,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "scan",
+          "selectedSummary": "扫描"
+        },
+        {
+          "step": 330,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 5,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_10.png → 比邻星"
+        },
+        {
+          "step": 331,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 2,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "跳过"
+        },
+        {
+          "step": 332,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 10,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "外星人 1 粉2号位（1分）"
+        },
+        {
+          "step": 333,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 342,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "scan",
+          "selectedSummary": "扫描"
+        },
+        {
+          "step": 352,
+          "seat": "player-blue",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "dlc_25.png：弃牌角标"
+        },
+        {
+          "step": 359,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "move",
+          "selectedSummary": "移动探测器 8 逆时针"
+        },
+        {
+          "step": 365,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "b_78.webp：弃牌角标"
+        },
+        {
+          "step": 398,
+          "seat": "player-blue",
+          "round": 3,
+          "nodes": 1,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "dlc_7.png：弃牌角标"
+        },
+        {
+          "step": 402,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 2763,
+          "selectedFamily": "research_tech",
+          "selectedSummary": "研究科技"
+        },
+        {
+          "step": 404,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 179,
+          "selectedFamily": "industry",
+          "selectedSummary": "赫利昂联合体 1x 行动"
+        },
+        {
+          "step": 408,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 2260,
+          "selectedFamily": "scan",
+          "selectedSummary": "扫描"
+        },
+        {
+          "step": 416,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 1353,
+          "selectedFamily": "research_tech",
+          "selectedSummary": "研究科技"
+        },
+        {
+          "step": 420,
+          "seat": "player-blue",
+          "round": 3,
+          "nodes": 5,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_55.webp"
+        },
+        {
+          "step": 421,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 1611,
+          "selectedFamily": "quick_trade",
+          "selectedSummary": "2张牌 → 1信用点"
+        },
+        {
+          "step": 443,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 3,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "移动 10 向外"
+        },
+        {
+          "step": 444,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 4,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 448,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 142,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "b_17.webp：弃牌角标"
+        },
+        {
+          "step": 452,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 1,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "chong_8.webp：弃牌角标"
+        },
+        {
+          "step": 454,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 3,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "标记 D"
+        },
+        {
+          "step": 457,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 8,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "扫描 比邻星"
+        },
+        {
+          "step": 459,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 3,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "标记 D"
+        },
+        {
+          "step": 461,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 4,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_12.png"
+        },
+        {
+          "step": 463,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 3,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_32.webp"
+        },
+        {
+          "step": 465,
+          "seat": "player-white",
+          "round": 4,
+          "nodes": 2,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_138.webp"
+        },
+        {
+          "step": 466,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "scan",
+          "selectedSummary": "扫描"
+        },
+        {
+          "step": 475,
+          "seat": "player-white",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "scan",
+          "selectedSummary": "扫描"
+        },
+        {
+          "step": 492,
+          "seat": "player-green",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "land",
+          "selectedSummary": "登陆"
+        },
+        {
+          "step": 494,
+          "seat": "player-green",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "quick_trade",
+          "selectedSummary": "2信用点 → 1能量"
+        },
+        {
+          "step": 498,
+          "seat": "player-blue",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 504,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "scan",
+          "selectedSummary": "扫描"
+        },
+        {
+          "step": 517,
+          "seat": "player-white",
+          "round": 4,
+          "nodes": 293,
+          "selectedFamily": "quick_trade",
+          "selectedSummary": "2张牌 → 1能量"
+        },
+        {
+          "step": 535,
+          "seat": "player-green",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "industry",
+          "selectedSummary": "寰宇动力 1x 行动"
+        },
+        {
+          "step": 548,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 3734,
+          "selectedFamily": "play_card",
+          "selectedSummary": "b_128.webp"
+        },
+        {
+          "step": 559,
+          "seat": "player-white",
+          "round": 4,
+          "nodes": 1538,
+          "selectedFamily": "land",
+          "selectedSummary": "登陆"
+        },
+        {
+          "step": 562,
+          "seat": "player-green",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "b_21.webp：弃牌角标"
+        },
+        {
+          "step": 573,
+          "seat": "player-blue",
+          "round": 4,
+          "nodes": 11,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 575,
+          "seat": "player-blue",
+          "round": 4,
+          "nodes": 10,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 576,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 676,
+          "selectedFamily": "scan",
+          "selectedSummary": "扫描"
+        },
+        {
+          "step": 593,
+          "seat": "player-white",
+          "round": 4,
+          "nodes": 67,
+          "selectedFamily": "pass",
+          "selectedSummary": "PASS"
+        },
+        {
+          "step": 596,
+          "seat": "player-green",
+          "round": 4,
+          "nodes": 9,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 598,
+          "seat": "player-green",
+          "round": 4,
+          "nodes": 7,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 599,
+          "seat": "player-blue",
+          "round": 4,
+          "nodes": 974,
+          "selectedFamily": "research_tech",
+          "selectedSummary": "研究科技"
+        },
+        {
+          "step": 606,
+          "seat": "player-green",
+          "round": 4,
+          "nodes": 6,
+          "selectedFamily": "pass",
+          "selectedSummary": "PASS"
+        }
+      ]
+    },
+    "after": {
+      "sizes": {
+        "4096": {
+          "calls": 29,
+          "nodes": 118784
+        },
+        "1-10": {
+          "calls": 43,
+          "nodes": 138
+        },
+        "11-4095": {
+          "calls": 34,
+          "nodes": 34029
+        }
+      },
+      "roundsAndSeats": {
+        "R1:player-white": {
+          "calls": 6,
+          "nodes": 4335
+        },
+        "R1:player-green": {
+          "calls": 6,
+          "nodes": 8224
+        },
+        "R1:player-blue": {
+          "calls": 3,
+          "nodes": 4130
+        },
+        "R1:player-brown": {
+          "calls": 7,
+          "nodes": 5513
+        },
+        "R2:player-green": {
+          "calls": 9,
+          "nodes": 14161
+        },
+        "R2:player-blue": {
+          "calls": 7,
+          "nodes": 5348
+        },
+        "R2:player-brown": {
+          "calls": 5,
+          "nodes": 5919
+        },
+        "R2:player-white": {
+          "calls": 8,
+          "nodes": 17561
+        },
+        "R3:player-white": {
+          "calls": 5,
+          "nodes": 9484
+        },
+        "R3:player-blue": {
+          "calls": 4,
+          "nodes": 4104
+        },
+        "R3:player-brown": {
+          "calls": 7,
+          "nodes": 18738
+        },
+        "R3:player-green": {
+          "calls": 9,
+          "nodes": 12336
+        },
+        "R4:player-brown": {
+          "calls": 10,
+          "nodes": 9581
+        },
+        "R4:player-white": {
+          "calls": 8,
+          "nodes": 10830
+        },
+        "R4:player-green": {
+          "calls": 6,
+          "nodes": 12693
+        },
+        "R4:player-blue": {
+          "calls": 6,
+          "nodes": 9994
+        }
+      },
+      "rows": [
+        {
+          "step": 24,
+          "seat": "player-white",
+          "round": 1,
+          "nodes": 4096,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 42,
+          "seat": "player-green",
+          "round": 1,
+          "nodes": 4096,
+          "selectedFamily": "industry",
+          "selectedSummary": "寰宇动力 1x 行动"
+        },
+        {
+          "step": 50,
+          "seat": "player-blue",
+          "round": 1,
+          "nodes": 4096,
+          "selectedFamily": "play_card",
+          "selectedSummary": "b_33.webp"
+        },
+        {
+          "step": 53,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 4096,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 77,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 2,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "外星人 2 蓝色痕迹"
+        },
+        {
+          "step": 78,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 12,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 81,
+          "seat": "player-white",
+          "round": 1,
+          "nodes": 1,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 89,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 1305,
+          "selectedFamily": "research_tech",
+          "selectedSummary": "研究科技"
+        },
+        {
+          "step": 93,
+          "seat": "player-white",
+          "round": 1,
+          "nodes": 231,
+          "selectedFamily": "research_tech",
+          "selectedSummary": "研究科技"
+        },
+        {
+          "step": 95,
+          "seat": "player-white",
+          "round": 1,
+          "nodes": 1,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 96,
+          "seat": "player-green",
+          "round": 1,
+          "nodes": 4096,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 111,
+          "seat": "player-blue",
+          "round": 1,
+          "nodes": 30,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 122,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 90,
+          "selectedFamily": "industry",
+          "selectedSummary": "赫利昂联合体 1x 行动"
+        },
+        {
+          "step": 127,
+          "seat": "player-white",
+          "round": 1,
+          "nodes": 1,
+          "selectedFamily": "pass",
+          "selectedSummary": "PASS"
+        },
+        {
+          "step": 128,
+          "seat": "player-white",
+          "round": 1,
+          "nodes": 5,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_49.webp"
+        },
+        {
+          "step": 135,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 5,
+          "selectedFamily": "quick_trade",
+          "selectedSummary": "2张牌 → 1能量"
+        },
+        {
+          "step": 148,
+          "seat": "player-green",
+          "round": 1,
+          "nodes": 4,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_37.png"
+        },
+        {
+          "step": 149,
+          "seat": "player-green",
+          "round": 1,
+          "nodes": 20,
+          "selectedFamily": "quick_trade",
+          "selectedSummary": "2张牌 → 1能量"
+        },
+        {
+          "step": 158,
+          "seat": "player-blue",
+          "round": 1,
+          "nodes": 4,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_5.png"
+        },
+        {
+          "step": 160,
+          "seat": "player-brown",
+          "round": 1,
+          "nodes": 3,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_24.webp"
+        },
+        {
+          "step": 165,
+          "seat": "player-green",
+          "round": 1,
+          "nodes": 5,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "amiba_0.webp：弃牌角标"
+        },
+        {
+          "step": 166,
+          "seat": "player-green",
+          "round": 1,
+          "nodes": 3,
+          "selectedFamily": "pass",
+          "selectedSummary": "PASS"
+        },
+        {
+          "step": 167,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 2,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_4.png"
+        },
+        {
+          "step": 168,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 4096,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 170,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 3837,
+          "selectedFamily": "scan",
+          "selectedSummary": "扫描"
+        },
+        {
+          "step": 172,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 6,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_31.png → 开普勒22"
+        },
+        {
+          "step": 173,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 2,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "外星人 2 粉色痕迹"
+        },
+        {
+          "step": 174,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 46,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 181,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 21,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 182,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 4,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "标记 A"
+        },
+        {
+          "step": 183,
+          "seat": "player-brown",
+          "round": 2,
+          "nodes": 4096,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 189,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 4096,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 195,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 4096,
+          "selectedFamily": "research_tech",
+          "selectedSummary": "研究科技"
+        },
+        {
+          "step": 200,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 1429,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "chong_0.webp：弃牌角标"
+        },
+        {
+          "step": 211,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 4096,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 220,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 4096,
+          "selectedFamily": "play_card",
+          "selectedSummary": "chong_7.webp"
+        },
+        {
+          "step": 230,
+          "seat": "player-brown",
+          "round": 2,
+          "nodes": 1688,
+          "selectedFamily": "research_tech",
+          "selectedSummary": "研究科技"
+        },
+        {
+          "step": 234,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 4095,
+          "selectedFamily": "research_tech",
+          "selectedSummary": "研究科技"
+        },
+        {
+          "step": 239,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 1857,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "dlc_4.png：弃牌角标"
+        },
+        {
+          "step": 247,
+          "seat": "player-blue",
+          "round": 2,
+          "nodes": 5,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_7.webp"
+        },
+        {
+          "step": 248,
+          "seat": "player-brown",
+          "round": 2,
+          "nodes": 127,
+          "selectedFamily": "industry",
+          "selectedSummary": "赫利昂联合体 1x 行动"
+        },
+        {
+          "step": 261,
+          "seat": "player-brown",
+          "round": 2,
+          "nodes": 4,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "标记 A"
+        },
+        {
+          "step": 262,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 3372,
+          "selectedFamily": "scan",
+          "selectedSummary": "扫描"
+        },
+        {
+          "step": 265,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 5,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_20.png → 比邻星"
+        },
+        {
+          "step": 266,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 2,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "跳过"
+        },
+        {
+          "step": 267,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 1770,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 277,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 3,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_17.png"
+        },
+        {
+          "step": 278,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 6,
+          "selectedFamily": "quick_trade",
+          "selectedSummary": "2张牌 → 1信用点"
+        },
+        {
+          "step": 284,
+          "seat": "player-brown",
+          "round": 2,
+          "nodes": 4,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_53.webp"
+        },
+        {
+          "step": 293,
+          "seat": "player-white",
+          "round": 2,
+          "nodes": 125,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "chong_5.webp：弃牌角标"
+        },
+        {
+          "step": 301,
+          "seat": "player-green",
+          "round": 2,
+          "nodes": 3,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_78.webp"
+        },
+        {
+          "step": 305,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 2,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_18.png"
+        },
+        {
+          "step": 306,
+          "seat": "player-blue",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 312,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "play_card",
+          "selectedSummary": "b_60.webp"
+        },
+        {
+          "step": 318,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 320,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "analyze",
+          "selectedSummary": "分析"
+        },
+        {
+          "step": 329,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 3,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "盲抽虫牌"
+        },
+        {
+          "step": 330,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "chong_3.webp：弃牌角标"
+        },
+        {
+          "step": 333,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "scan",
+          "selectedSummary": "扫描"
+        },
+        {
+          "step": 354,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 3,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_18.webp"
+        },
+        {
+          "step": 355,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 362,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 1286,
+          "selectedFamily": "move",
+          "selectedSummary": "移动探测器 9 向外"
+        },
+        {
+          "step": 374,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 378,
+          "seat": "player-blue",
+          "round": 3,
+          "nodes": 2,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 392,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 2,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "移动 10 逆时针"
+        },
+        {
+          "step": 393,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 4096,
+          "selectedFamily": "move",
+          "selectedSummary": "移动探测器 10 逆时针"
+        },
+        {
+          "step": 399,
+          "seat": "player-blue",
+          "round": 3,
+          "nodes": 1,
+          "selectedFamily": "pass",
+          "selectedSummary": "PASS"
+        },
+        {
+          "step": 400,
+          "seat": "player-blue",
+          "round": 3,
+          "nodes": 5,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_55.webp"
+        },
+        {
+          "step": 409,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 3651,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "dlc_8.png：弃牌角标"
+        },
+        {
+          "step": 413,
+          "seat": "player-white",
+          "round": 3,
+          "nodes": 4,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_138.webp"
+        },
+        {
+          "step": 428,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 18,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "b_76.webp：弃牌角标"
+        },
+        {
+          "step": 429,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 17,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 430,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 3,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "标记 D"
+        },
+        {
+          "step": 431,
+          "seat": "player-brown",
+          "round": 3,
+          "nodes": 2793,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "amiba_7.webp：弃牌角标"
+        },
+        {
+          "step": 435,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 5,
+          "selectedFamily": "pass",
+          "selectedSummary": "PASS"
+        },
+        {
+          "step": 436,
+          "seat": "player-green",
+          "round": 3,
+          "nodes": 3,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "dlc_12.png"
+        },
+        {
+          "step": 451,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 2,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_32.webp"
+        },
+        {
+          "step": 452,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 456,
+          "seat": "player-white",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 460,
+          "seat": "player-green",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 471,
+          "seat": "player-blue",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 494,
+          "seat": "player-white",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "scan",
+          "selectedSummary": "扫描"
+        },
+        {
+          "step": 505,
+          "seat": "player-green",
+          "round": 4,
+          "nodes": 3,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "取消"
+        },
+        {
+          "step": 506,
+          "seat": "player-green",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "industry",
+          "selectedSummary": "寰宇动力 1x 行动"
+        },
+        {
+          "step": 514,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 2,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "外星人 1 蓝2号位（1分）"
+        },
+        {
+          "step": 515,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "quick_trade",
+          "selectedSummary": "2张牌 → 1能量"
+        },
+        {
+          "step": 525,
+          "seat": "player-white",
+          "round": 4,
+          "nodes": 2,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "外星人 1 蓝1号位"
+        },
+        {
+          "step": 526,
+          "seat": "player-white",
+          "round": 4,
+          "nodes": 2435,
+          "selectedFamily": "quick_trade",
+          "selectedSummary": "2信用点 → 1能量"
+        },
+        {
+          "step": 537,
+          "seat": "player-blue",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "research_tech",
+          "selectedSummary": "研究科技"
+        },
+        {
+          "step": 540,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 335,
+          "selectedFamily": "industry",
+          "selectedSummary": "赫利昂联合体 1x 行动"
+        },
+        {
+          "step": 547,
+          "seat": "player-white",
+          "round": 4,
+          "nodes": 149,
+          "selectedFamily": "land",
+          "selectedSummary": "登陆"
+        },
+        {
+          "step": 552,
+          "seat": "player-green",
+          "round": 4,
+          "nodes": 4096,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 564,
+          "seat": "player-blue",
+          "round": 4,
+          "nodes": 1767,
+          "selectedFamily": "launch",
+          "selectedSummary": "发射"
+        },
+        {
+          "step": 570,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 6,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "b_21.webp → 比邻星"
+        },
+        {
+          "step": 571,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 2,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "外星人 2 粉4号位（5分+外星人牌）"
+        },
+        {
+          "step": 572,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 3,
+          "selectedFamily": "choose_card",
+          "selectedSummary": "盲抽虫牌"
+        },
+        {
+          "step": 573,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 1022,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 585,
+          "seat": "player-white",
+          "round": 4,
+          "nodes": 38,
+          "selectedFamily": "card_corner",
+          "selectedSummary": "amiba_5.webp：弃牌角标"
+        },
+        {
+          "step": 593,
+          "seat": "player-white",
+          "round": 4,
+          "nodes": 2,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 594,
+          "seat": "player-green",
+          "round": 4,
+          "nodes": 169,
+          "selectedFamily": "play_card",
+          "selectedSummary": "b_58.webp"
+        },
+        {
+          "step": 608,
+          "seat": "player-blue",
+          "round": 4,
+          "nodes": 20,
+          "selectedFamily": "end_turn",
+          "selectedSummary": "结束回合"
+        },
+        {
+          "step": 609,
+          "seat": "player-blue",
+          "round": 4,
+          "nodes": 3,
+          "selectedFamily": "choose_target",
+          "selectedSummary": "标记 D"
+        },
+        {
+          "step": 614,
+          "seat": "player-white",
+          "round": 4,
+          "nodes": 12,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 622,
+          "seat": "player-green",
+          "round": 4,
+          "nodes": 233,
+          "selectedFamily": "place_data",
+          "selectedSummary": "放置数据"
+        },
+        {
+          "step": 632,
+          "seat": "player-blue",
+          "round": 4,
+          "nodes": 12,
+          "selectedFamily": "pass",
+          "selectedSummary": "PASS"
+        },
+        {
+          "step": 633,
+          "seat": "player-brown",
+          "round": 4,
+          "nodes": 17,
+          "selectedFamily": "move",
+          "selectedSummary": "移动探测器 18 顺时针"
+        }
+      ]
+    }
+  },
   "caveats": [
     "物理痕迹总数含卡牌来源56个，不能与仅普通来源14103混用",
     "origin是来源归属次数；同物理节点可有多个origin，不能把origin占比当物理节点占比",
