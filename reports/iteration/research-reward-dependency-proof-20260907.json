@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "source": "f9209270.36994979.full.json",
+  "oldCompiler": "aaaed8d0",
+  "researchStep": 231,
+  "removedAt": 221,
+  "removedBy": "player-blue",
+  "removedAction": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "choose_card",
+    "phase": "conditional",
+    "actionId": "choose_card:b2513383",
+    "actorId": "player-blue",
+    "stateVersion": 109,
+    "decisionVersion": 6,
+    "target": {
+      "choiceId": "pick:card-46-0",
+      "cardInstanceId": "card-46-0",
+      "publicSlotIndex": 1
+    },
+    "payload": {},
+    "decision": null,
+    "summary": "b_108.webp",
+    "presentation": {
+      "cardKind": "pick",
+      "cardId": "card-46-0",
+      "imageSrc": "../assets/cards/basic/split/b_108.webp",
+      "imageAlt": "b_108.webp"
+    }
+  },
+  "expected": {
+    "id": "card-46-0",
+    "cardId": "b_108.webp"
+  },
+  "actual": {
+    "id": "card-56-0",
+    "cardId": "dlc_25.png"
+  },
+  "expectedDependencies": [
+    {
+      "scope": {
+        "kind": "tech",
+        "id": "orange2"
+      },
+      "fact": {
+        "tileId": "orange2",
+        "techType": "orange",
+        "stackIndex": 2,
+        "bonusId": "bonus_1c",
+        "remaining": 2,
+        "firstTakeClaimedBy": "player-blue",
+        "depleted": false
+      }
+    }
+  ],
+  "olderDependencies": [
+    {
+      "scope": {
+        "kind": "tech",
+        "id": "orange2"
+      },
+      "fact": {
+        "tileId": "orange2",
+        "techType": "orange",
+        "stackIndex": 2,
+        "bonusId": "bonus_1c",
+        "remaining": 2,
+        "firstTakeClaimedBy": "player-blue",
+        "depleted": false
+      }
+    }
+  ],
+  "diagnosticAddedDependencyResult": {
+    "hit": false,
+    "reason": "next-step-affected",
+    "affected": {
+      "kind": "card-slot",
+      "id": "1"
+    }
+  },
+  "actualReward": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "choose_card",
+    "phase": "conditional",
+    "actionId": "choose_card:7f1b15aa",
+    "actorId": "player-white",
+    "stateVersion": 115,
+    "decisionVersion": 6,
+    "target": {
+      "choiceId": "pick:card-56-0",
+      "cardInstanceId": "card-56-0",
+      "publicSlotIndex": 1
+    },
+    "payload": {},
+    "decision": null,
+    "summary": "dlc_25.png",
+    "presentation": {
+      "cardKind": "pick",
+      "cardId": "card-56-0",
+      "imageSrc": "../assets/cards/space-agency/split/dlc_25.png",
+      "imageAlt": "dlc_25.png"
+    }
+  },
+  "scope": "只读旧/新compiler及真实观察；补依赖仅用于诊断副本，不是生产修复或全盘因果实验"
+}
