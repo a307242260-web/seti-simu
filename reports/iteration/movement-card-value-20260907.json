@@ -1,0 +1,255 @@
+{
+  "scope": "只复算已有正式状态，不运行AI；当前状态终局价值不是保证兑现值，不能单独归因整局下降",
+  "endpoints": [
+    {
+      "source": "reports/iteration/asteroid-modifier-decision-42-20260907.json",
+      "scoring": {
+        "playerId": "player-green",
+        "baseScore": 19,
+        "tileScore": 0,
+        "cardScore": 0,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 19,
+        "totalScore": 19,
+        "tileScoresById": {
+          "a": 0,
+          "b": 0,
+          "c": 0,
+          "d": 0
+        },
+        "tiles": [],
+        "cards": [],
+        "jiuzheCards": []
+      }
+    },
+    {
+      "source": "reports/iteration/main-goal-movement-final-decision-42-20260907.json",
+      "scoring": {
+        "playerId": "player-green",
+        "baseScore": 17,
+        "tileScore": 0,
+        "cardScore": 0,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 17,
+        "totalScore": 17,
+        "tileScoresById": {
+          "a": 0,
+          "b": 0,
+          "c": 0,
+          "d": 0
+        },
+        "tiles": [],
+        "cards": [],
+        "jiuzheCards": []
+      }
+    },
+    {
+      "source": "reports/iteration/ordinary-movement-demand-decision-42-20260907.json",
+      "scoring": {
+        "playerId": "player-green",
+        "baseScore": 17,
+        "tileScore": 0,
+        "cardScore": 5,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 22,
+        "totalScore": 22,
+        "tileScoresById": {
+          "a": 0,
+          "b": 0,
+          "c": 0,
+          "d": 0
+        },
+        "tiles": [],
+        "cards": [
+          {
+            "cardId": "b_115.webp",
+            "rule": {
+              "kind": "unmarkedFinalRightmost"
+            },
+            "score": 5
+          }
+        ],
+        "jiuzheCards": []
+      }
+    }
+  ],
+  "finals": [
+    {
+      "recordPath": "reports/research/7feb57c3.96e60c14.full.json",
+      "savePath": "seti-saves/seti-save-research-asteroid-movement-modifier-20260907-96e60c14-full-v299.json",
+      "scoring": {
+        "playerId": "player-green",
+        "baseScore": 66,
+        "tileScore": 20,
+        "cardScore": 0,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 86,
+        "totalScore": 86,
+        "tileScoresById": {
+          "a": 10,
+          "b": 0,
+          "c": 0,
+          "d": 10
+        },
+        "tiles": [
+          {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "slotIndex": 3,
+            "baseValue": 2,
+            "multiplier": 5,
+            "score": 10
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 2,
+            "baseValue": 2,
+            "multiplier": 5,
+            "score": 10
+          }
+        ],
+        "cards": [],
+        "jiuzheCards": []
+      },
+      "searchAtStep72": []
+    },
+    {
+      "recordPath": "reports/research/14114d45.77d36854.full.json",
+      "savePath": "seti-saves/seti-save-research-main-goal-movement-20260907-77d36854-full-v297.json",
+      "scoring": {
+        "playerId": "player-green",
+        "baseScore": 88,
+        "tileScore": 36,
+        "cardScore": 0,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 124,
+        "totalScore": 124,
+        "tileScoresById": {
+          "a": 22,
+          "b": 8,
+          "c": 0,
+          "d": 6
+        },
+        "tiles": [
+          {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 11,
+            "score": 22
+          },
+          {
+            "tileId": "b",
+            "variant": 1,
+            "formulaId": "b1",
+            "slotIndex": 1,
+            "baseValue": 1,
+            "multiplier": 8,
+            "score": 8
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 3,
+            "baseValue": 2,
+            "multiplier": 3,
+            "score": 6
+          }
+        ],
+        "cards": [],
+        "jiuzheCards": []
+      },
+      "searchAtStep72": []
+    },
+    {
+      "recordPath": "reports/research/1066a36f.0b586daa.full.json",
+      "savePath": "seti-saves/seti-save-research-ordinary-movement-demand-20260907-0b586daa-full-v298.json",
+      "scoring": {
+        "playerId": "player-green",
+        "baseScore": 71,
+        "tileScore": 42,
+        "cardScore": 0,
+        "jiuzheCardScore": 0,
+        "runezuSymbolScore": 0,
+        "jiuzheThreat": 0,
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "prePenaltyTotalScore": 113,
+        "totalScore": 113,
+        "tileScoresById": {
+          "a": 22,
+          "b": 6,
+          "c": 0,
+          "d": 14
+        },
+        "tiles": [
+          {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 11,
+            "score": 22
+          },
+          {
+            "tileId": "b",
+            "variant": 1,
+            "formulaId": "b1",
+            "slotIndex": 2,
+            "baseValue": 1,
+            "multiplier": 6,
+            "score": 6
+          },
+          {
+            "tileId": "d",
+            "variant": 2,
+            "formulaId": "d2",
+            "slotIndex": 1,
+            "baseValue": 2,
+            "multiplier": 7,
+            "score": 14
+          }
+        ],
+        "cards": [
+          {
+            "cardId": "b_115.webp",
+            "rule": {
+              "kind": "unmarkedFinalRightmost"
+            },
+            "score": 0
+          }
+        ],
+        "jiuzheCards": []
+      },
+      "searchAtStep72": []
+    }
+  ],
+  "passed": true
+}

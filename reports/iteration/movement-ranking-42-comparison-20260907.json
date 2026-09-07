@@ -1,0 +1,396 @@
+{
+  "scope": "当前0b586daa行为的同根候选排序；不能独立证明整局降分原因",
+  "capture": "reports/iteration/movement-ranking-42-20260907.capture.json.gz",
+  "rows": [
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:5bda1856",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "寰宇动力",
+          "abilityId": "huanyu_free_moves"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "寰宇动力 1x 行动"
+      },
+      "leafId": "leaf:18424358",
+      "leafCount": 1193,
+      "exactOldWinningPlan": false,
+      "score": 72,
+      "sortKey": [
+        72,
+        0,
+        0,
+        -2
+      ],
+      "realizedScore": 17,
+      "realizedScoreDelta": 10,
+      "securedBonus": 5,
+      "incomeValue": 38,
+      "otherInfrastructure": 11.5,
+      "publicityResearchValue": 7.5,
+      "income": {
+        "credits": 6,
+        "energy": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "handSize": 2,
+        "additionalPublicScan": 0
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 10,
+        "score": 17
+      },
+      "actualReplayMatchesScoreAndIncome": true,
+      "plan": [
+        {
+          "actionId": "industry:5bda1856",
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动"
+        },
+        {
+          "actionId": "choose_target:b849344b",
+          "family": "choose_target",
+          "summary": "移动 1 向外"
+        },
+        {
+          "actionId": "choose_target:96f6cb01",
+          "family": "choose_target",
+          "summary": "移动 2 向外"
+        },
+        {
+          "actionId": "orbit:0b7a5527",
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）"
+        },
+        {
+          "actionId": "choose_card:cb33e16c",
+          "family": "choose_card",
+          "summary": "dlc_39.png"
+        },
+        {
+          "actionId": "choose_target:a2b5645b",
+          "family": "choose_target",
+          "summary": "扫描 南河三"
+        },
+        {
+          "actionId": "choose_card:f710a06a",
+          "family": "choose_card",
+          "summary": "收入 dlc_39.png"
+        },
+        {
+          "actionId": "end_turn:1f65daa3",
+          "family": "end_turn",
+          "summary": "结束回合"
+        },
+        {
+          "actionId": "play_card:91c74616",
+          "family": "play_card",
+          "summary": "dlc_35.png"
+        },
+        {
+          "actionId": "end_turn:1f65daa3",
+          "family": "end_turn",
+          "summary": "结束回合"
+        },
+        {
+          "actionId": "play_card:edfaf2d4",
+          "family": "play_card",
+          "summary": "b_115.webp"
+        },
+        {
+          "actionId": "end_turn:1f65daa3",
+          "family": "end_turn",
+          "summary": "结束回合"
+        },
+        {
+          "actionId": "place_data:dbe01b29",
+          "family": "place_data",
+          "summary": "放置数据"
+        },
+        {
+          "actionId": "choose_target:52efd39a",
+          "family": "choose_target",
+          "summary": "第一排放置位 1"
+        },
+        {
+          "actionId": "place_data:dbe01b29",
+          "family": "place_data",
+          "summary": "放置数据"
+        },
+        {
+          "actionId": "choose_target:52efd39a",
+          "family": "choose_target",
+          "summary": "第一排放置位 2"
+        },
+        {
+          "actionId": "place_data:dbe01b29",
+          "family": "place_data",
+          "summary": "放置数据"
+        },
+        {
+          "actionId": "choose_target:52efd39a",
+          "family": "choose_target",
+          "summary": "第一排放置位 3"
+        },
+        {
+          "actionId": "scan:1b66b805",
+          "family": "scan",
+          "summary": "扫描"
+        },
+        {
+          "actionId": "choose_target:a2b5645b",
+          "family": "choose_target",
+          "summary": "扫描 南河三"
+        },
+        {
+          "actionId": "choose_card:06822fc6",
+          "family": "choose_card",
+          "summary": "b_2.webp → 南河三"
+        },
+        {
+          "actionId": "choose_card:f8db866c",
+          "family": "choose_card",
+          "summary": "dlc_21.png → 南河三"
+        },
+        {
+          "actionId": "choose_target:f36c783c",
+          "family": "choose_target",
+          "summary": "外星人 1 粉色痕迹"
+        },
+        {
+          "actionId": "place_data:dbe01b29",
+          "family": "place_data",
+          "summary": "放置数据"
+        },
+        {
+          "actionId": "choose_target:52efd39a",
+          "family": "choose_target",
+          "summary": "第一排放置位 4"
+        },
+        {
+          "actionId": "choose_card:e72339e2",
+          "family": "choose_card",
+          "summary": "收入 dlc_11.png"
+        }
+      ]
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "leafId": "leaf:031c3b0d",
+      "leafCount": 40,
+      "exactOldWinningPlan": true,
+      "score": 62,
+      "sortKey": [
+        62,
+        0,
+        -2,
+        -2
+      ],
+      "realizedScore": 19,
+      "realizedScoreDelta": 12,
+      "securedBonus": 0,
+      "incomeValue": 18,
+      "otherInfrastructure": 24.5,
+      "publicityResearchValue": 7.5,
+      "income": {
+        "credits": 5,
+        "energy": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "handSize": 2,
+        "additionalPublicScan": 0
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 0,
+        "energy": 0,
+        "handSize": 0,
+        "publicity": 7,
+        "score": 19
+      },
+      "actualReplayMatchesScoreAndIncome": true,
+      "plan": [
+        {
+          "actionId": "place_data:dbe01b29",
+          "family": "place_data",
+          "summary": "放置数据"
+        },
+        {
+          "actionId": "choose_target:52efd39a",
+          "family": "choose_target",
+          "summary": "第一排放置位 1"
+        },
+        {
+          "actionId": "place_data:dbe01b29",
+          "family": "place_data",
+          "summary": "放置数据"
+        },
+        {
+          "actionId": "choose_target:52efd39a",
+          "family": "choose_target",
+          "summary": "第一排放置位 2"
+        },
+        {
+          "actionId": "scan:1b66b805",
+          "family": "scan",
+          "summary": "扫描"
+        },
+        {
+          "actionId": "choose_target:a2b5645b",
+          "family": "choose_target",
+          "summary": "扫描 南河三"
+        },
+        {
+          "actionId": "choose_card:06822fc6",
+          "family": "choose_card",
+          "summary": "b_2.webp → 南河三"
+        },
+        {
+          "actionId": "place_data:dbe01b29",
+          "family": "place_data",
+          "summary": "放置数据"
+        },
+        {
+          "actionId": "choose_target:52efd39a",
+          "family": "choose_target",
+          "summary": "第一排放置位 3"
+        },
+        {
+          "actionId": "place_data:dbe01b29",
+          "family": "place_data",
+          "summary": "放置数据"
+        },
+        {
+          "actionId": "choose_target:52efd39a",
+          "family": "choose_target",
+          "summary": "第一排放置位 4"
+        },
+        {
+          "actionId": "choose_card:b0a3fa5c",
+          "family": "choose_card",
+          "summary": "收入 b_115.webp"
+        },
+        {
+          "actionId": "card_corner:fbf752cc",
+          "family": "card_corner",
+          "summary": "dlc_11.png：弃牌角标"
+        },
+        {
+          "actionId": "place_data:dbe01b29",
+          "family": "place_data",
+          "summary": "放置数据"
+        },
+        {
+          "actionId": "choose_target:52efd39a",
+          "family": "choose_target",
+          "summary": "第一排放置位 5"
+        },
+        {
+          "actionId": "quick_trade:ee5652be",
+          "family": "quick_trade",
+          "summary": "2信用点 → 1能量"
+        },
+        {
+          "actionId": "end_turn:1f65daa3",
+          "family": "end_turn",
+          "summary": "结束回合"
+        },
+        {
+          "actionId": "scan:1b66b805",
+          "family": "scan",
+          "summary": "扫描"
+        },
+        {
+          "actionId": "choose_target:a2b5645b",
+          "family": "choose_target",
+          "summary": "扫描 南河三"
+        },
+        {
+          "actionId": "choose_card:f8db866c",
+          "family": "choose_card",
+          "summary": "dlc_21.png → 南河三"
+        },
+        {
+          "actionId": "choose_target:f36c783c",
+          "family": "choose_target",
+          "summary": "外星人 1 粉色痕迹"
+        },
+        {
+          "actionId": "place_data:dbe01b29",
+          "family": "place_data",
+          "summary": "放置数据"
+        },
+        {
+          "actionId": "choose_target:52efd39a",
+          "family": "choose_target",
+          "summary": "第一排放置位 6"
+        },
+        {
+          "actionId": "quick_trade:0037d2c5",
+          "family": "quick_trade",
+          "summary": "2张牌 → 1能量"
+        },
+        {
+          "actionId": "choose_payment:69f4d963",
+          "family": "choose_payment",
+          "summary": "dlc_35.png"
+        },
+        {
+          "actionId": "choose_payment:e70def88",
+          "family": "choose_payment",
+          "summary": "dlc_37.png"
+        },
+        {
+          "actionId": "choose_payment:c54ec275",
+          "family": "choose_payment",
+          "summary": "确认弃牌（2/2）"
+        },
+        {
+          "actionId": "end_turn:1f65daa3",
+          "family": "end_turn",
+          "summary": "结束回合"
+        },
+        {
+          "actionId": "analyze:5f90deda",
+          "family": "analyze",
+          "summary": "分析"
+        },
+        {
+          "actionId": "choose_target:7876797c",
+          "family": "choose_target",
+          "summary": "外星人 1 蓝色痕迹"
+        }
+      ]
+    }
+  ],
+  "conclusion": "旧30输入填数据优胜计划仍完整保留且是本动作最佳叶，62低于公司72，不是该旧叶被剪掉；两条叶的已得分和收入与正式重放一致。整局及77d历史排序仍待核对。"
+}
