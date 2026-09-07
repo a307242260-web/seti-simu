@@ -7,6 +7,28 @@
   },
   "versions": [
     {
+      "id": "resource-preparation-cache-20260907",
+      "name": "resource-preparation-cache-20260907",
+      "date": "2026-09-07",
+      "baseline": "company-movement-finish-20260907",
+      "head": "1f55695a",
+      "commits": [
+        "02e0e8f6",
+        "224cb412",
+        "a8ee76c6",
+        "6e501e71",
+        "3d4f183f",
+        "1f55695a"
+      ],
+      "summary": "资源准备缓存包含交易动作身份，隔离不同玩家的同成本代表选择",
+      "records": {
+        "aed4e5db.1f55695a.full.json": {
+          "note": "604步，正式终局83/151/111/89、均108.5（较前候选+16.75，仍低于已通过109.5）；527641ms，124980节点、161563提交、31截断、0规则失败。缓存冷热反例25→0，171单决策33输入正式重放通过；首次动作差异124为棕方公司收入选牌b139→b2，不据此宣称历史第二轮收入分歧及全部降分已归因。缓存局部修复通过，整体Goal未通过。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "company-movement-finish-20260907",
       "name": "company-movement-finish-20260907",
       "date": "2026-09-07",

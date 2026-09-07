@@ -1,0 +1,885 @@
+{
+  "scope": "已有唯一完整局离线核验；缓存一致性修复不自动证明全部历史降分因果",
+  "sources": [
+    "reports/research/7feb57c3.96e60c14.full.json",
+    "reports/research/f237707b.4b246dca.full.json",
+    "reports/research/aed4e5db.1f55695a.full.json"
+  ],
+  "measurements": [
+    {
+      "commit": "96e60c14",
+      "steps": 596,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "total": 100
+        },
+        {
+          "playerId": "player-green",
+          "total": 86
+        },
+        {
+          "playerId": "player-brown",
+          "total": 115
+        },
+        {
+          "playerId": "player-white",
+          "total": 137
+        }
+      ],
+      "mean": 109.5,
+      "wallMs": 501885,
+      "searches": 184,
+      "nodes": 135649,
+      "inputs": 171604,
+      "cutoffs": [
+        {
+          "step": 24,
+          "kind": "strategic"
+        },
+        {
+          "step": 42,
+          "kind": "strategic"
+        },
+        {
+          "step": 59,
+          "kind": "strategic"
+        },
+        {
+          "step": 62,
+          "kind": "strategic"
+        },
+        {
+          "step": 148,
+          "kind": "strategic"
+        },
+        {
+          "step": 152,
+          "kind": "strategic"
+        },
+        {
+          "step": 160,
+          "kind": "strategic"
+        },
+        {
+          "step": 164,
+          "kind": "strategic"
+        },
+        {
+          "step": 180,
+          "kind": "strategic"
+        },
+        {
+          "step": 197,
+          "kind": "control"
+        },
+        {
+          "step": 198,
+          "kind": "control"
+        },
+        {
+          "step": 223,
+          "kind": "control"
+        },
+        {
+          "step": 232,
+          "kind": "control"
+        },
+        {
+          "step": 264,
+          "kind": "control"
+        },
+        {
+          "step": 270,
+          "kind": "strategic"
+        },
+        {
+          "step": 278,
+          "kind": "strategic"
+        },
+        {
+          "step": 280,
+          "kind": "strategic"
+        },
+        {
+          "step": 285,
+          "kind": "strategic"
+        },
+        {
+          "step": 303,
+          "kind": "strategic"
+        },
+        {
+          "step": 328,
+          "kind": "strategic"
+        },
+        {
+          "step": 332,
+          "kind": "strategic"
+        },
+        {
+          "step": 369,
+          "kind": "strategic"
+        },
+        {
+          "step": 412,
+          "kind": "control"
+        },
+        {
+          "step": 420,
+          "kind": "strategic"
+        },
+        {
+          "step": 428,
+          "kind": "strategic"
+        },
+        {
+          "step": 435,
+          "kind": "control"
+        },
+        {
+          "step": 435,
+          "kind": "strategic"
+        },
+        {
+          "step": 439,
+          "kind": "strategic"
+        },
+        {
+          "step": 443,
+          "kind": "strategic"
+        },
+        {
+          "step": 449,
+          "kind": "strategic"
+        },
+        {
+          "step": 476,
+          "kind": "strategic"
+        },
+        {
+          "step": 492,
+          "kind": "strategic"
+        },
+        {
+          "step": 497,
+          "kind": "strategic"
+        },
+        {
+          "step": 537,
+          "kind": "control"
+        },
+        {
+          "step": 539,
+          "kind": "strategic"
+        },
+        {
+          "step": 553,
+          "kind": "strategic"
+        }
+      ],
+      "failures": []
+    },
+    {
+      "commit": "4b246dca",
+      "steps": 571,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "total": 59
+        },
+        {
+          "playerId": "player-green",
+          "total": 129
+        },
+        {
+          "playerId": "player-brown",
+          "total": 79
+        },
+        {
+          "playerId": "player-white",
+          "total": 100
+        }
+      ],
+      "mean": 91.75,
+      "wallMs": 530019,
+      "searches": 172,
+      "nodes": 134155,
+      "inputs": 168976,
+      "cutoffs": [
+        {
+          "step": 24,
+          "kind": "strategic"
+        },
+        {
+          "step": 42,
+          "kind": "strategic"
+        },
+        {
+          "step": 50,
+          "kind": "strategic"
+        },
+        {
+          "step": 53,
+          "kind": "strategic"
+        },
+        {
+          "step": 96,
+          "kind": "strategic"
+        },
+        {
+          "step": 155,
+          "kind": "control"
+        },
+        {
+          "step": 162,
+          "kind": "strategic"
+        },
+        {
+          "step": 166,
+          "kind": "strategic"
+        },
+        {
+          "step": 173,
+          "kind": "strategic"
+        },
+        {
+          "step": 191,
+          "kind": "strategic"
+        },
+        {
+          "step": 193,
+          "kind": "strategic"
+        },
+        {
+          "step": 205,
+          "kind": "control"
+        },
+        {
+          "step": 209,
+          "kind": "strategic"
+        },
+        {
+          "step": 216,
+          "kind": "strategic"
+        },
+        {
+          "step": 233,
+          "kind": "strategic"
+        },
+        {
+          "step": 263,
+          "kind": "strategic"
+        },
+        {
+          "step": 278,
+          "kind": "control"
+        },
+        {
+          "step": 333,
+          "kind": "strategic"
+        },
+        {
+          "step": 341,
+          "kind": "strategic"
+        },
+        {
+          "step": 343,
+          "kind": "strategic"
+        },
+        {
+          "step": 345,
+          "kind": "strategic"
+        },
+        {
+          "step": 370,
+          "kind": "strategic"
+        },
+        {
+          "step": 386,
+          "kind": "strategic"
+        },
+        {
+          "step": 429,
+          "kind": "control"
+        },
+        {
+          "step": 444,
+          "kind": "strategic"
+        },
+        {
+          "step": 449,
+          "kind": "strategic"
+        },
+        {
+          "step": 451,
+          "kind": "strategic"
+        },
+        {
+          "step": 457,
+          "kind": "strategic"
+        },
+        {
+          "step": 467,
+          "kind": "strategic"
+        },
+        {
+          "step": 475,
+          "kind": "strategic"
+        },
+        {
+          "step": 481,
+          "kind": "strategic"
+        },
+        {
+          "step": 486,
+          "kind": "control"
+        },
+        {
+          "step": 486,
+          "kind": "strategic"
+        },
+        {
+          "step": 498,
+          "kind": "strategic"
+        },
+        {
+          "step": 535,
+          "kind": "strategic"
+        }
+      ],
+      "failures": []
+    },
+    {
+      "commit": "1f55695a",
+      "steps": 604,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "total": 83
+        },
+        {
+          "playerId": "player-green",
+          "total": 151
+        },
+        {
+          "playerId": "player-brown",
+          "total": 111
+        },
+        {
+          "playerId": "player-white",
+          "total": 89
+        }
+      ],
+      "mean": 108.5,
+      "wallMs": 527641,
+      "searches": 180,
+      "nodes": 124980,
+      "inputs": 161563,
+      "cutoffs": [
+        {
+          "step": 24,
+          "kind": "strategic"
+        },
+        {
+          "step": 42,
+          "kind": "strategic"
+        },
+        {
+          "step": 50,
+          "kind": "strategic"
+        },
+        {
+          "step": 53,
+          "kind": "strategic"
+        },
+        {
+          "step": 96,
+          "kind": "strategic"
+        },
+        {
+          "step": 168,
+          "kind": "strategic"
+        },
+        {
+          "step": 170,
+          "kind": "strategic"
+        },
+        {
+          "step": 174,
+          "kind": "control"
+        },
+        {
+          "step": 181,
+          "kind": "control"
+        },
+        {
+          "step": 183,
+          "kind": "strategic"
+        },
+        {
+          "step": 191,
+          "kind": "strategic"
+        },
+        {
+          "step": 198,
+          "kind": "strategic"
+        },
+        {
+          "step": 235,
+          "kind": "strategic"
+        },
+        {
+          "step": 254,
+          "kind": "control"
+        },
+        {
+          "step": 309,
+          "kind": "control"
+        },
+        {
+          "step": 313,
+          "kind": "strategic"
+        },
+        {
+          "step": 325,
+          "kind": "strategic"
+        },
+        {
+          "step": 335,
+          "kind": "strategic"
+        },
+        {
+          "step": 341,
+          "kind": "strategic"
+        },
+        {
+          "step": 344,
+          "kind": "strategic"
+        },
+        {
+          "step": 370,
+          "kind": "strategic"
+        },
+        {
+          "step": 439,
+          "kind": "control"
+        },
+        {
+          "step": 450,
+          "kind": "strategic"
+        },
+        {
+          "step": 458,
+          "kind": "strategic"
+        },
+        {
+          "step": 471,
+          "kind": "strategic"
+        },
+        {
+          "step": 473,
+          "kind": "strategic"
+        },
+        {
+          "step": 484,
+          "kind": "strategic"
+        },
+        {
+          "step": 512,
+          "kind": "strategic"
+        },
+        {
+          "step": 530,
+          "kind": "strategic"
+        },
+        {
+          "step": 541,
+          "kind": "control"
+        },
+        {
+          "step": 586,
+          "kind": "control"
+        }
+      ],
+      "failures": []
+    }
+  ],
+  "commonSteps": 123,
+  "firstDifference": {
+    "before": {
+      "stepIndex": 123,
+      "actorPlayerId": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:0b4d20ab",
+        "actorId": "player-brown",
+        "stateVersion": 54,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "hand:card-12-0",
+          "cardInstanceId": "card-12-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_139.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-12-0",
+          "imageSrc": "../assets/cards/basic/split/b_139.webp",
+          "imageAlt": "b_139.webp"
+        }
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 16,
+        "c": "player-brown",
+        "p": {
+          "player-blue": [
+            11,
+            1,
+            1,
+            2,
+            0,
+            2
+          ],
+          "player-green": [
+            17,
+            0,
+            0,
+            10,
+            1,
+            2
+          ],
+          "player-brown": [
+            18,
+            1,
+            1,
+            3,
+            3,
+            0
+          ],
+          "player-white": [
+            18,
+            1,
+            0,
+            2,
+            0,
+            1
+          ]
+        }
+      }
+    },
+    "after": {
+      "stepIndex": 123,
+      "actorPlayerId": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:9fcccf93",
+        "actorId": "player-brown",
+        "stateVersion": 54,
+        "decisionVersion": 1,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "hand:card-17-0",
+          "cardInstanceId": "card-17-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_2.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-17-0",
+          "imageSrc": "../assets/cards/basic/split/b_2.webp",
+          "imageAlt": "b_2.webp"
+        }
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 16,
+        "c": "player-brown",
+        "p": {
+          "player-blue": [
+            11,
+            1,
+            1,
+            2,
+            0,
+            2
+          ],
+          "player-green": [
+            17,
+            0,
+            0,
+            10,
+            1,
+            2
+          ],
+          "player-brown": [
+            18,
+            1,
+            1,
+            3,
+            3,
+            0
+          ],
+          "player-white": [
+            18,
+            1,
+            0,
+            2,
+            0,
+            1
+          ]
+        }
+      }
+    }
+  },
+  "brownIncomeChoices": [
+    [
+      {
+        "step": 70,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:1fb515cd",
+          "actorId": "player-brown",
+          "stateVersion": 25,
+          "decisionVersion": 1,
+          "target": {
+            "choiceId": "income:card-10-0",
+            "cardInstanceId": "card-10-0"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "收入 b_12.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-10-0",
+            "imageSrc": "../assets/cards/basic/split/b_12.webp",
+            "imageAlt": "b_12.webp"
+          }
+        }
+      },
+      {
+        "step": 231,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:fe96c6cd",
+          "actorId": "player-brown",
+          "stateVersion": 116,
+          "decisionVersion": 4,
+          "target": {
+            "choiceId": "income:card-54-0",
+            "cardInstanceId": "card-54-0"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "收入 dlc_25.png",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-54-0",
+            "imageSrc": "../assets/cards/space-agency/split/dlc_25.png",
+            "imageAlt": "dlc_25.png"
+          }
+        }
+      },
+      {
+        "step": 379,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:ca4d4d29",
+          "actorId": "player-brown",
+          "stateVersion": 192,
+          "decisionVersion": 8,
+          "target": {
+            "choiceId": "income:card-57-0",
+            "cardInstanceId": "card-57-0"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "收入 dlc_20.png",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-57-0",
+            "imageSrc": "../assets/cards/space-agency/split/dlc_20.png",
+            "imageAlt": "dlc_20.png"
+          }
+        }
+      },
+      {
+        "step": 523,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:0ed4e107",
+          "actorId": "player-brown",
+          "stateVersion": 263,
+          "decisionVersion": 17,
+          "target": {
+            "choiceId": "income:card-32-pass-3-3",
+            "cardInstanceId": "card-32-pass-3-3"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "收入 b_32.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-32-pass-3-3",
+            "imageSrc": "../assets/cards/basic/split/b_32.webp",
+            "imageAlt": "b_32.webp"
+          }
+        }
+      }
+    ],
+    [
+      {
+        "step": 61,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:1fb515cd",
+          "actorId": "player-brown",
+          "stateVersion": 19,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "income:card-10-0",
+            "cardInstanceId": "card-10-0"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "收入 b_12.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-10-0",
+            "imageSrc": "../assets/cards/basic/split/b_12.webp",
+            "imageAlt": "b_12.webp"
+          }
+        }
+      },
+      {
+        "step": 182,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:dcbabd95",
+          "actorId": "player-brown",
+          "stateVersion": 83,
+          "decisionVersion": 6,
+          "target": {
+            "choiceId": "income:card-21-pass-1-2",
+            "cardInstanceId": "card-21-pass-1-2"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "收入 b_24.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-21-pass-1-2",
+            "imageSrc": "../assets/cards/basic/split/b_24.webp",
+            "imageAlt": "b_24.webp"
+          }
+        }
+      },
+      {
+        "step": 384,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:dc6365bd",
+          "actorId": "player-brown",
+          "stateVersion": 195,
+          "decisionVersion": 9,
+          "target": {
+            "choiceId": "income:card-28-pass-2-4",
+            "cardInstanceId": "card-28-pass-2-4"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "收入 b_53.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-28-pass-2-4",
+            "imageSrc": "../assets/cards/basic/split/b_53.webp",
+            "imageAlt": "b_53.webp"
+          }
+        }
+      }
+    ],
+    [
+      {
+        "step": 61,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:1fb515cd",
+          "actorId": "player-brown",
+          "stateVersion": 19,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "income:card-10-0",
+            "cardInstanceId": "card-10-0"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "收入 b_12.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-10-0",
+            "imageSrc": "../assets/cards/basic/split/b_12.webp",
+            "imageAlt": "b_12.webp"
+          }
+        }
+      },
+      {
+        "step": 232,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:fe96c6cd",
+          "actorId": "player-brown",
+          "stateVersion": 113,
+          "decisionVersion": 7,
+          "target": {
+            "choiceId": "income:card-54-0",
+            "cardInstanceId": "card-54-0"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "收入 b_10.webp",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-54-0",
+            "imageSrc": "../assets/cards/basic/split/b_10.webp",
+            "imageAlt": "b_10.webp"
+          }
+        }
+      }
+    ]
+  ],
+  "effectGatePassed": false,
+  "checksPassed": true,
+  "goalComplete": false
+}

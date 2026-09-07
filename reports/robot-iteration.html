@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-07T07:02:14.240Z",
+  "builtAt": "2026-09-07T08:23:13.455Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "4b246dca",
-  "currentBaseline": "company-movement-finish-20260907",
+  "headCommit": "1f55695a",
+  "currentBaseline": "resource-preparation-cache-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,520 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "resource-preparation-cache-20260907",
+      "name": "resource-preparation-cache-20260907",
+      "date": "2026-09-07",
+      "baseline": "company-movement-finish-20260907",
+      "head": "1f55695a",
+      "commits": [
+        {
+          "hash": "02e0e8f6",
+          "date": "2026-09-07",
+          "subject": "登记公司结束移动修复的降分结果及后续归因边界"
+        },
+        {
+          "hash": "224cb412",
+          "date": "2026-09-07",
+          "subject": "核对公司提前移动未被旋转抵消及揭示触发的正常重搜"
+        },
+        {
+          "hash": "a8ee76c6",
+          "date": "2026-09-07",
+          "subject": "记录棕方收入分歧根状态与同分候选对照"
+        },
+        {
+          "hash": "6e501e71",
+          "date": "2026-09-07",
+          "subject": "核对棕方历史代码搜索与开局重放状态"
+        },
+        {
+          "hash": "3d4f183f",
+          "date": "2026-09-07",
+          "subject": "复现资源准备缓存遗漏玩家动作排序依赖并记录修复设计"
+        },
+        {
+          "hash": "1f55695a",
+          "date": "2026-09-07",
+          "subject": "资源准备缓存按交易动作身份隔离同成本代表"
+        }
+      ],
+      "summary": "资源准备缓存包含交易动作身份，隔离不同玩家的同成本代表选择",
+      "diffStat": "36 files changed, 223045 insertions(+), 13 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/analyze-brown-ranking-20260907.js",
+          "insertions": 32,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-brown-income-roots-20260907.js",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-brown-ranking-20260907.js",
+          "insertions": 50,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-brown-roots-from-start-20260907.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-company-finish-full-20260907.js",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-company-timing-193-20260907.js",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-probe-location-42-20260907.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "adhoc/verify-resource-cache-seat-order-20260907.js",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 4,
+          "deletions": 2
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/brown-income-root-comparison-20260907.json",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-income-roots-20260907.json",
+          "insertions": 8421,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-ranking-0-20260907.capture.jsonl.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/brown-ranking-0-20260907.json",
+          "insertions": 9220,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-ranking-0-6b5381c1-20260907.capture.jsonl.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/brown-ranking-0-6b5381c1-20260907.json",
+          "insertions": 9221,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-ranking-1-20260907.capture.jsonl.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/brown-ranking-1-20260907.json",
+          "insertions": 9220,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-ranking-comparison-20260907.json",
+          "insertions": 43567,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/brown-roots-from-start-20260907.json",
+          "insertions": 75105,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-finish-full-verification-20260907.json",
+          "insertions": 1389,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-movement-finish-20260907/f237707b.4b246dca.full.action-log.html",
+          "insertions": 2120,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-movement-finish-design-20260907.md",
+          "insertions": 12,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-timing-193-20260907.json",
+          "insertions": 331,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-score-causality-20260907.md",
+          "insertions": 80,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 428,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/resource-cache-decision-171-20260907.json",
+          "insertions": 5977,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-cache-seat-order-20260907.json",
+          "insertions": 736,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-cache-seat-order-fixed-20260907.json",
+          "insertions": 314,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/resource-preparation-cache-design-20260907.md",
+          "insertions": 51,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/f237707b.4b246dca.full.json",
+          "insertions": 15824,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 428,
+          "deletions": 4
+        },
+        {
+          "file": "seti-saves/seti-save-research-company-movement-finish-20260907-4b246dca-full-v301.json",
+          "insertions": 40223,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "aed4e5db.1f55695a.full.json",
+          "recordPath": "reports/research/aed4e5db.1f55695a.full.json",
+          "mode": "full",
+          "steps": 604,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 527641,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "1f55695a",
+          "createdAt": "2026-09-07T08:20:02.529Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "604步，正式终局83/151/111/89、均108.5（较前候选+16.75，仍低于已通过109.5）；527641ms，124980节点、161563提交、31截断、0规则失败。缓存冷热反例25→0，171单决策33输入正式重放通过；首次动作差异124为棕方公司收入选牌b139→b2，不据此宣称历史第二轮收入分歧及全部降分已归因。缓存局部修复通过，整体Goal未通过。",
+          "scores": {
+            "player-blue": 83,
+            "player-green": 151,
+            "player-brown": 111,
+            "player-white": 89
+          },
+          "avgScore": 108.5,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 83,
+              "base": 55,
+              "tile": 24,
+              "card": 4,
+              "tileScoresById": {
+                "a": 16,
+                "b": 0,
+                "c": 8,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 2,
+                "cardEffectScore": 3,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 11,
+                "orbitScore": 9,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-green": {
+              "total": 151,
+              "base": 91,
+              "tile": 60,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 24,
+                "c": 0,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 24,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 0
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 11,
+                "alienTraceYellowScore": 11,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 23,
+                "orbitScore": 9,
+                "scanScore": 6,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-brown": {
+              "total": 111,
+              "base": 75,
+              "tile": 34,
+              "card": 2,
+              "tileScoresById": {
+                "a": 15,
+                "b": 4,
+                "c": 0,
+                "d": 15
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 4,
+                  "score": 4,
+                  "slotIndex": 3,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "amiba_7.webp",
+                  "rule": {
+                    "kind": "amibaTraceCount",
+                    "scorePer": 2,
+                    "traceType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 13,
+                "blueTechScore": 6,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 22,
+                "orbitScore": 0,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            },
+            "player-white": {
+              "total": 89,
+              "base": 68,
+              "tile": 21,
+              "card": 0,
+              "tileScoresById": {
+                "a": 15,
+                "b": 6,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 14,
+                "alienTracePinkScore": 6,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 5,
+                "orbitScore": 6,
+                "scanScore": 12,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-resource-preparation-cache-20260907-1f55695a-full-v310.json",
+          "reportPath": "reports/iteration/resource-preparation-cache-20260907/aed4e5db.1f55695a.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "aed4e5db.1f55695a.full",
+            "path": "reports/iteration/resource-preparation-cache-20260907/aed4e5db.1f55695a.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "company-movement-finish-20260907",
       "name": "company-movement-finish-20260907",
@@ -604,7 +1118,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
@@ -23456,7 +23970,7 @@ const REGISTRY = {
           },
           "savePath": "seti-saves/seti-save-research-fold-multifill-0a377f88-full-v283.json",
           "reportPath": "reports/iteration/fold-chain-real/e749439d.0a377f88.full.action-log.html",
-          "reportExists": true
+          "reportExists": false
         }
       ],
       "roadmap": null,
@@ -23464,14 +23978,8 @@ const REGISTRY = {
       "completeness": {
         "record": true,
         "save": true,
-        "report": true,
-        "reportLinks": [
-          {
-            "runKey": "e749439d.0a377f88.full",
-            "path": "reports/iteration/fold-chain-real/e749439d.0a377f88.full.action-log.html",
-            "mode": "full"
-          }
-        ]
+        "report": false,
+        "reportLinks": []
       }
     },
     {
@@ -26967,6 +27475,11 @@ const REGISTRY = {
       "kind": "commit-mismatch",
       "level": "warn",
       "text": "fold-chain-real 的记录 e749439d.0a377f88.full.json gitCommit=0a377f88 不在版本 commits（29e66b9b）内——运行于脏工作树或归属错误，请核对 versions.json"
+    },
+    {
+      "kind": "missing-report",
+      "level": "warn",
+      "text": "fold-chain-real 的记录 e749439d.0a377f88.full.json 有存档但缺复盘报告（node tools/robot_iterate.js build --reports 可补齐）"
     },
     {
       "kind": "missing-save",
