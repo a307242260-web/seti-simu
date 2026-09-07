@@ -45,7 +45,7 @@ const seatId = "strategic-seat";
   branchObservation.probeRouteRequirements.movementContext.phase = "card";
   primary.movementNextSteps = [first, alternate].map(a => ({ family: a.family, ...a.target }));
   assert.deepEqual(select([first, alternate, second, finish]).map(a => a.actionId).sort(),
-    ["finish", "first-alternate", "first-out"], "同成本首步不能被任意一条路径抹掉");
+    ["first-alternate", "first-out"], "同成本首步全部保留，但不能额外放弃可用免费移动");
   const roots = evaluator.selectSecondaryAgentRootActions({ focalSeatId: seatId,
     rootObservation: branchObservation, legalActions: [first, alternate, second, finish] });
   assert.deepEqual(roots.map(a => a.actionId).sort(), ["finish", "first-alternate", "first-out"],

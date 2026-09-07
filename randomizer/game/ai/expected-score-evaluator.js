@@ -2845,7 +2845,11 @@
           const primary = requirements.candidates.find((goal) => (
             `probe:${goal.requirementId}` === input.routePlanId
           ));
-          const finish = successors.filter((action) => action.target?.skip === true);
+          // 卡牌的结束阶段也必须满足目标路线；不能放弃可用免费点后再付费走同一路。
+          // 公司第二艘准备与缺失目标的退出语义不属于这一张卡牌路线的首步筛选。
+          const finish = successors.filter((action) => action.target?.skip === true
+            && (!primary || requirements.movementContext.phase !== "card"
+              || actionAdvancesProbeGoal(action, primary)));
           const primaryMoves = primary ? successors.filter((action) => (
             action.target?.skip !== true && actionAdvancesProbeGoal(action, primary)
           )) : [];
