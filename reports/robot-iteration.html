@@ -78,26 +78,26 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-07T19:54:55.392Z",
+  "builtAt": "2026-09-07T20:18:54.320Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "ee9dea52",
+  "headCommit": "0cc25d52",
   "currentBaseline": "reorganization-resources-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
-      "value": 141,
-      "versionId": "probe-source-r3p1-20260906",
-      "name": "探测来源与登陆修复（第三轮未通过）",
-      "runKey": "c9b29e5a.d969b727.full",
+      "value": 149,
+      "versionId": "company-base-income-scoring-20260908",
+      "name": "公司初始收入计分修复（规则验证通过，性能目标未完成）",
+      "runKey": "68307c5f.a7d65847.full",
       "provenance": "save-final",
-      "steps": 543,
-      "wallMs": 88647,
-      "msPerStep": 163,
-      "scoreSourceNote": "543步正式终局76/90/70/141，均94.25，较前候选105.5低11.25，较已通过R2e基线106.75低12.5，第三轮未通过。真实反例改为两牌换电后1号火星登陆，六步计划复用与正式完成验证通过；棕方慢样本9.84秒过门槛，Node74/76及唯一full-flow通过，两项指定既有失败保留。首处分歧在索引23：白方b_117改为直接发射；尚未证明整局下降原因，不以局部反例通过替代整局验收。"
+      "steps": 648,
+      "wallMs": 687322,
+      "msPerStep": 1061,
+      "scoreSourceNote": "648步，正式终局77/114/87/149，均106.75；逐席完整breakdown与修复后正式计分器一致。147031物理节点、198796输入、687322ms；28次战略4096截断、5次控制截断，实际规则执行失败0。真实公司身份规则unit、两局旧终局重算、32组观察/预览检查、193冷根24步正式计划和唯一full-flow通过。规则修复不维持虚增历史分；前版旧终局诊断重算均100.75不等于新策略实验。前61步Action/after一致，第62步棕方打b65改弃b109角标；不能直接据此归因整局各席变化。规则修复验证通过，性能及108.5总目标未完成；蓝棕相对旧终局诊断仍下降，后续不得用均分掩盖。完整局运行期间仅新增只读审计/汇总脚本，无生产改动。详见company-base-income-full-review-20260908.md。"
     },
     "bestAvg": {
       "value": 123.75,
@@ -194,6 +194,419 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "company-base-income-scoring-20260908",
+      "name": "公司初始收入计分修复（规则验证通过，性能目标未完成）",
+      "date": "2026-09-08",
+      "baseline": "chong-blue-card-order-20260908",
+      "head": "a7d65847",
+      "commits": [
+        {
+          "hash": "c57389c2",
+          "date": "2026-09-08",
+          "subject": "记录虫蓝槽位顺序全盘结果及绿方终局板块损失"
+        },
+        {
+          "hash": "a7d65847",
+          "date": "2026-09-08",
+          "subject": "修复A类终局计分未扣所选公司初始收入并验证真实计划"
+        }
+      ],
+      "summary": "A1和A2按所选公司目录扣除初始收入，终局、观察、板块预览和未标记板块卡共用正式计分",
+      "diffStat": "18 files changed, 156386 insertions(+), 8 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/inspect-chong-blue-full-delta-20260908.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-expired-sector-full-20260908.js",
+          "insertions": 6,
+          "deletions": 4
+        },
+        {
+          "file": "adhoc/verify-company-base-income-20260908.js",
+          "insertions": 96,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 6,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/end-game-scoring.js",
+          "insertions": 15,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/end-game-scoring.test.js",
+          "insertions": 44,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/chong-blue-card-order-20260908/6a79eb7c.4fbce3b5.full.action-log.html",
+          "insertions": 2239,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/chong-blue-card-order-design-20260908.md",
+          "insertions": 4,
+          "deletions": 3
+        },
+        {
+          "file": "reports/iteration/chong-blue-card-order-full-review-20260908.json",
+          "insertions": 23457,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/chong-blue-card-order-full-review-20260908.md",
+          "insertions": 100,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/chong-blue-full-delta-20260908.json",
+          "insertions": 20249,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-base-income-finals-20260908.json",
+          "insertions": 452,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-base-income-root193-20260908.json",
+          "insertions": 46822,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-base-income-scoring-design-20260908.md",
+          "insertions": 52,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-base-income-validation-20260908.md",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/6a79eb7c.4fbce3b5.full.json",
+          "insertions": 17388,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-chong-blue-card-order-20260908-4fbce3b5-full-v324.json",
+          "insertions": 45381,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "68307c5f.a7d65847.full.json",
+          "recordPath": "reports/research/68307c5f.a7d65847.full.json",
+          "mode": "full",
+          "steps": 648,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 687322,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "a7d65847",
+          "createdAt": "2026-09-07T20:15:16.310Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "648步，正式终局77/114/87/149，均106.75；逐席完整breakdown与修复后正式计分器一致。147031物理节点、198796输入、687322ms；28次战略4096截断、5次控制截断，实际规则执行失败0。真实公司身份规则unit、两局旧终局重算、32组观察/预览检查、193冷根24步正式计划和唯一full-flow通过。规则修复不维持虚增历史分；前版旧终局诊断重算均100.75不等于新策略实验。前61步Action/after一致，第62步棕方打b65改弃b109角标；不能直接据此归因整局各席变化。规则修复验证通过，性能及108.5总目标未完成；蓝棕相对旧终局诊断仍下降，后续不得用均分掩盖。完整局运行期间仅新增只读审计/汇总脚本，无生产改动。详见company-base-income-full-review-20260908.md。",
+          "scores": {
+            "player-blue": 77,
+            "player-green": 114,
+            "player-brown": 87,
+            "player-white": 149
+          },
+          "avgScore": 106.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 77,
+              "base": 50,
+              "tile": 21,
+              "card": 6,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 0,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 0,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 6
+                },
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 0
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 2,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 6,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-green": {
+              "total": 114,
+              "base": 78,
+              "tile": 26,
+              "card": 10,
+              "tileScoresById": {
+                "a": 0,
+                "b": 8,
+                "c": 8,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 10
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 11,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 24,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 87,
+              "base": 61,
+              "tile": 22,
+              "card": 4,
+              "tileScoresById": {
+                "a": 16,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_10.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "publicity",
+                    "scorePer": 1
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 6,
+                "orbitScore": 18,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-white": {
+              "total": 149,
+              "base": 100,
+              "tile": 49,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 18,
+                "c": 0,
+                "d": 9
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 18,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 9,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 12,
+                "alienTracePinkScore": 11,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 23,
+                "orbitScore": 0,
+                "scanScore": 12,
+                "taskCardScore": 0,
+                "techBonusScore": 17
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-company-base-income-scoring-20260908-a7d65847-full-v321.json",
+          "reportPath": "reports/iteration/company-base-income-scoring-20260908/68307c5f.a7d65847.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "68307c5f.a7d65847.full",
+            "path": "reports/iteration/company-base-income-scoring-20260908/68307c5f.a7d65847.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "chong-blue-card-order-20260908",
       "name": "虫族蓝8/9顺序（计分缺陷已复现，效果与性能未通过）",

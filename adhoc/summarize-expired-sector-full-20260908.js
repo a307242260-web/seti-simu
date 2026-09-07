@@ -2,19 +2,22 @@
 const fs = require("node:fs");
 const assert = require("node:assert/strict");
 const chongBlue = process.argv.includes("--chong-blue");
-const output = chongBlue ? "reports/iteration/chong-blue-card-order-full-review-20260908.json"
+const companyIncome = process.argv.includes("--company-income");
+const output = companyIncome ? "reports/iteration/company-base-income-full-review-20260908.json"
+  : chongBlue ? "reports/iteration/chong-blue-card-order-full-review-20260908.json"
   : "reports/iteration/expired-sector-goal-full-review-20260908.json";
 if (fs.existsSync(output)) {
   console.log(`已有 checkpoint：${output}`);
   process.exit(0);
 }
-const baselineFile = chongBlue ? "reports/research/d5ef5962.2b44f883.full.json" : "reports/research/81eb1a1e.bb028006.full.json";
-const files = fs.readdirSync("reports/research").filter(f => f.endsWith(chongBlue ? ".4fbce3b5.full.json" : ".2b44f883.full.json"));
+const baselineFile = companyIncome ? "reports/research/6a79eb7c.4fbce3b5.full.json"
+  : chongBlue ? "reports/research/d5ef5962.2b44f883.full.json" : "reports/research/81eb1a1e.bb028006.full.json";
+const files = fs.readdirSync("reports/research").filter(f => f.endsWith(companyIncome ? ".a7d65847.full.json" : chongBlue ? ".4fbce3b5.full.json" : ".2b44f883.full.json"));
 assert.equal(files.length, 1, "等待唯一完整局落盘，不重复运行 AI");
 const candidateFile = `reports/research/${files[0]}`;
 const read = p => JSON.parse(fs.readFileSync(p, "utf8"));
 const baseline = read(baselineFile), candidate = read(candidateFile);
-assert.equal(candidate.name, chongBlue ? "chong-blue-card-order-20260908" : "expired-sector-goal-20260908");
+assert.equal(candidate.name, companyIncome ? "company-base-income-scoring-20260908" : chongBlue ? "chong-blue-card-order-20260908" : "expired-sector-goal-20260908");
 assert.equal(candidate.terminal, true);
 const merge = (into, values) => {
   for (const [key, value] of Object.entries(values)) into[key] = (into[key] || 0) + value;

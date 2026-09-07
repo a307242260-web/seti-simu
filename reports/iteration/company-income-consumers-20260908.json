@@ -1,0 +1,527 @@
+{
+  "passed": true,
+  "records": [
+    {
+      "file": "reports/research/d5ef5962.2b44f883.full.json",
+      "checks": [
+        {
+          "viewer": "player-blue",
+          "player": "player-blue",
+          "score": 76,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-blue",
+          "player": "player-green",
+          "score": 120,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 3,
+            "multiplier": 5,
+            "immediateScore": 15
+          }
+        },
+        {
+          "viewer": "player-blue",
+          "player": "player-brown",
+          "score": 82,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 2,
+            "multiplier": 5,
+            "immediateScore": 10
+          }
+        },
+        {
+          "viewer": "player-blue",
+          "player": "player-white",
+          "score": 101,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-green",
+          "player": "player-blue",
+          "score": 76,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-green",
+          "player": "player-green",
+          "score": 120,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 3,
+            "multiplier": 5,
+            "immediateScore": 15
+          }
+        },
+        {
+          "viewer": "player-green",
+          "player": "player-brown",
+          "score": 82,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 2,
+            "multiplier": 5,
+            "immediateScore": 10
+          }
+        },
+        {
+          "viewer": "player-green",
+          "player": "player-white",
+          "score": 101,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-brown",
+          "player": "player-blue",
+          "score": 76,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-brown",
+          "player": "player-green",
+          "score": 120,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 3,
+            "multiplier": 5,
+            "immediateScore": 15
+          }
+        },
+        {
+          "viewer": "player-brown",
+          "player": "player-brown",
+          "score": 82,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 2,
+            "multiplier": 5,
+            "immediateScore": 10
+          }
+        },
+        {
+          "viewer": "player-brown",
+          "player": "player-white",
+          "score": 101,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-white",
+          "player": "player-blue",
+          "score": 76,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-white",
+          "player": "player-green",
+          "score": 120,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 3,
+            "multiplier": 5,
+            "immediateScore": 15
+          }
+        },
+        {
+          "viewer": "player-white",
+          "player": "player-brown",
+          "score": 82,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 2,
+            "multiplier": 5,
+            "immediateScore": 10
+          }
+        },
+        {
+          "viewer": "player-white",
+          "player": "player-white",
+          "score": 101,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        }
+      ]
+    },
+    {
+      "file": "reports/research/6a79eb7c.4fbce3b5.full.json",
+      "checks": [
+        {
+          "viewer": "player-blue",
+          "player": "player-blue",
+          "score": 98,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-blue",
+          "player": "player-green",
+          "score": 108,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-blue",
+          "player": "player-brown",
+          "score": 97,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-blue",
+          "player": "player-white",
+          "score": 100,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-green",
+          "player": "player-blue",
+          "score": 98,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-green",
+          "player": "player-green",
+          "score": 108,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-green",
+          "player": "player-brown",
+          "score": 97,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-green",
+          "player": "player-white",
+          "score": 100,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-brown",
+          "player": "player-blue",
+          "score": 98,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-brown",
+          "player": "player-green",
+          "score": 108,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-brown",
+          "player": "player-brown",
+          "score": 97,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-brown",
+          "player": "player-white",
+          "score": 100,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-white",
+          "player": "player-blue",
+          "score": 98,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-white",
+          "player": "player-green",
+          "score": 108,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-white",
+          "player": "player-brown",
+          "score": 97,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        },
+        {
+          "viewer": "player-white",
+          "player": "player-white",
+          "score": 100,
+          "candidate": {
+            "tileId": "a",
+            "variant": 2,
+            "formulaId": "a2",
+            "available": false,
+            "reason": "该玩家没有待标记的终局计分门槛",
+            "slotIndex": 3,
+            "baseValue": 1,
+            "multiplier": 5,
+            "immediateScore": 5
+          }
+        }
+      ]
+    }
+  ]
+}
