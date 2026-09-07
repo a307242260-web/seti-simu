@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-07T19:40:36.931Z",
+  "builtAt": "2026-09-07T19:54:55.392Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "5720c086",
+  "headCommit": "ee9dea52",
   "currentBaseline": "reorganization-resources-20260907",
   "worktreeDirty": true,
   "bestOf": {
@@ -196,7 +196,7 @@ const REGISTRY = {
   "versions": [
     {
       "id": "chong-blue-card-order-20260908",
-      "name": "虫族蓝8/9顺序（均分达标，降分与性能未通过）",
+      "name": "虫族蓝8/9顺序（计分缺陷已复现，效果与性能未通过）",
       "date": "2026-09-08",
       "baseline": "expired-sector-goal-20260908",
       "head": "4fbce3b5",
@@ -331,7 +331,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T19:33:28.219Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": "645步，正式终局108/119/102/116，均111.25（前版105.25）；蓝+22、绿-12、棕+15、白-1，下降待因果核对。前230步Action/after一致；231白方研究改换能量。137670节点、183320输入、646918ms，较前版节点+10.87%、耗时+13.45%；战略4096截断25不变，控制4→10，实际规则失败0。非满额战略搜索63→83次是节点增量主要来源。绿方基础分+6、板块-16、卡牌-2，环绕5→2使A板块少22分；为何改为登陆尚未归因。候选生产未合dev；只读汇总在全盘运行期间编辑。详见chong-blue-card-order-full-review-20260908.md。",
+          "note": "645步，历史原始终局108/119/102/116，均111.25（前版105.25），含已复现的公司初始收入计分缺陷，不作为正确规则下达标证据。蓝+22、绿-12、棕+15、白-1，下降待因果核对。前230步Action/after一致；231白方研究改换能量。137670节点、183320输入、646918ms，较前版节点+10.87%、耗时+13.45%；战略4096截断25不变，控制4→10，实际规则失败0。非满额战略搜索63→83次是节点增量主要来源。绿方A2按收入增加量最小值计分，不按环绕数；总收入6/4/4→8/2/2。独立计分缺陷使两局绿方均虚增11分，不能解释相对下降12分。相同终局状态诊断重算均94.75→100.75，不是修复后完整局，不覆盖历史分数。候选生产未合dev；独立修复未实施。详见chong-blue-card-order-full-review-20260908.md及green-income-company-base-review-20260908.md。",
           "scores": {
             "player-blue": 108,
             "player-green": 119,
