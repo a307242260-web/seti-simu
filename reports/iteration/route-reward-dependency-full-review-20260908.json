@@ -1,0 +1,2876 @@
+{
+  "baseline": {
+    "file": "reports/research/f6c9aabe.7a33ec07.full.json",
+    "commit": "7a33ec07",
+    "steps": 640,
+    "scores": {
+      "player-blue": 85,
+      "player-green": 136,
+      "player-brown": 82,
+      "player-white": 104
+    },
+    "average": 101.75,
+    "wallMs": 567380,
+    "nodes": 142337,
+    "inputs": 188152,
+    "failures": {},
+    "decisions": {
+      "pass:main": 4370,
+      "analyze:main": 3396,
+      "card_corner:quick": 4850,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 1097,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 1409,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_income": 4963,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 4659,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 5859,
+      "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 2072,
+      "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 1695,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 2413,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 13022,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research": 3390,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech": 198,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 6164,
+      "end_turn:turn_control": 13380,
+      "industry:quick": 2896,
+      "land:main": 2386,
+      "launch:main": 813,
+      "move:quick": 3560,
+      "orbit:main": 1562,
+      "place_data:quick": 12719,
+      "play_card:main": 1870,
+      "quick_trade:quick": 9630,
+      "research_tech:main": 1147,
+      "scan:main": 4485,
+      "choose_target:conditional/decision=choose_target/effect=probe_land_choice": 1,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 828,
+      "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger": 762,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker": 29,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 2074,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace": 33,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 1185,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income": 837,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income": 396,
+      "choose_target:conditional/decision=choose_target/effect=residual_final_mark": 4806,
+      "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 12460,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4": 1734,
+      "choose_card:conditional/decision=choose_card/effect=probe_turn_pass_reserve": 42,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_return_unfinished_task_to_hand/cardEffect=card_return_unfinished_task_to_hand": 124,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_choose_symbol_reward/cardEffect=amiba_choose_symbol_reward": 382,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income": 2313,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward": 4,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:chong_land_for_pickup/cardEffect=chong_land_for_pickup": 39,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:chong_pickup_fossil/cardEffect=chong_pickup_fossil": 108,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_draw_then_scan/cardEffect=card_draw_then_scan": 9,
+      "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task": 70,
+      "complete_task:quick": 6,
+      "choose_reward:conditional/decision=choose_reward/effect=card_play_domain_effect:decision:card_pay_credits_for_reward/cardEffect=card_pay_credits_for_reward": 50,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card": 19,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_hand_scan/cardEffect=card_hand_scan": 21
+    },
+    "full": [
+      {
+        "step": 24,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 42,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 50,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 53,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 96,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 164,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 170,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 181,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 187,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 193,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 196,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 202,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 213,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 259,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 304,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 306,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 308,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 314,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 336,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 356,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 370,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 420,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 442,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 455,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 461,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 474,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 580,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      }
+    ],
+    "controlTruncations": [
+      {
+        "step": 202,
+        "seat": "player-white",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 393,
+        "seat": "player-green",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 394,
+        "seat": "player-green",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 525,
+        "seat": "player-blue",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 611,
+        "seat": "player-green",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 618,
+        "seat": "player-green",
+        "nodes": 1,
+        "limit": 1
+      }
+    ]
+  },
+  "candidate": {
+    "file": "reports/research/81eb1a1e.bb028006.full.json",
+    "commit": "bb028006",
+    "steps": 605,
+    "scores": {
+      "player-blue": 86,
+      "player-green": 131,
+      "player-brown": 87,
+      "player-white": 117
+    },
+    "average": 105.25,
+    "wallMs": 566738,
+    "nodes": 124171,
+    "inputs": 164055,
+    "failures": {},
+    "decisions": {
+      "pass:main": 3910,
+      "analyze:main": 3395,
+      "card_corner:quick": 4333,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 910,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 1358,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_income": 4088,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 4535,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 5129,
+      "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 1877,
+      "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 1151,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 1749,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 12416,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research": 3139,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech": 201,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 4856,
+      "end_turn:turn_control": 12096,
+      "industry:quick": 2432,
+      "land:main": 1803,
+      "launch:main": 667,
+      "move:quick": 2757,
+      "orbit:main": 1365,
+      "place_data:quick": 10812,
+      "play_card:main": 1590,
+      "quick_trade:quick": 8320,
+      "research_tech:main": 1069,
+      "scan:main": 3725,
+      "choose_target:conditional/decision=choose_target/effect=probe_land_choice": 1,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 340,
+      "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger": 1057,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker": 29,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 2538,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace": 29,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 1190,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income": 549,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income": 262,
+      "choose_target:conditional/decision=choose_target/effect=residual_final_mark": 4469,
+      "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 12309,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4": 550,
+      "choose_card:conditional/decision=choose_card/effect=probe_turn_pass_reserve": 42,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_return_unfinished_task_to_hand/cardEffect=card_return_unfinished_task_to_hand": 100,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_choose_symbol_reward/cardEffect=amiba_choose_symbol_reward": 536,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income": 123,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward": 4,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:chong_land_for_pickup/cardEffect=chong_land_for_pickup": 30,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:chong_pickup_fossil/cardEffect=chong_pickup_fossil": 108,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_draw_then_scan/cardEffect=card_draw_then_scan": 9,
+      "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task": 15,
+      "complete_task:quick": 6,
+      "choose_reward:conditional/decision=choose_reward/effect=card_play_domain_effect:decision:card_pay_credits_for_reward/cardEffect=card_pay_credits_for_reward": 17,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card": 24,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step/cardEffect=card_probe_sector_scan": 96,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_free_move/cardEffect=card_free_move": 53,
+      "choose_payment:conditional/decision=choose_payment/effect=standard_action_session_decision/context=discard": 2
+    },
+    "full": [
+      {
+        "step": 24,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 42,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 50,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 53,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 96,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 164,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 170,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 181,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 187,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 193,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 196,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 202,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 213,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 259,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 304,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 306,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 308,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 314,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 336,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 444,
+        "seat": "player-brown",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 465,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 469,
+        "seat": "player-green",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 475,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 493,
+        "seat": "player-white",
+        "nodes": 4096,
+        "limit": 4096
+      },
+      {
+        "step": 541,
+        "seat": "player-blue",
+        "nodes": 4096,
+        "limit": 4096
+      }
+    ],
+    "controlTruncations": [
+      {
+        "step": 202,
+        "seat": "player-white",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 372,
+        "seat": "player-green",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 570,
+        "seat": "player-blue",
+        "nodes": 1,
+        "limit": 1
+      },
+      {
+        "step": 602,
+        "seat": "player-green",
+        "nodes": 1,
+        "limit": 1
+      }
+    ]
+  },
+  "firstMismatches": [
+    {
+      "index": 369,
+      "before": {
+        "stepIndex": 369,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 187,
+          "decisionVersion": 8,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据"
+        },
+        "phase": "quick",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 3,
+          "t": 12,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              39,
+              0,
+              1,
+              4,
+              3,
+              1
+            ],
+            "player-green": [
+              44,
+              3,
+              3,
+              3,
+              3,
+              3
+            ],
+            "player-brown": [
+              43,
+              2,
+              0,
+              6,
+              2,
+              2
+            ],
+            "player-white": [
+              47,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      "after": {
+        "stepIndex": 369,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "orbit",
+          "phase": "main",
+          "actionId": "orbit:90e248b6",
+          "actorId": "player-green",
+          "stateVersion": 187,
+          "decisionVersion": 8,
+          "target": {
+            "rocketId": 11,
+            "planetId": "venus"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R11，1信用点 + 1能量）"
+        },
+        "phase": "main",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 3,
+          "t": 12,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              39,
+              0,
+              1,
+              4,
+              3,
+              1
+            ],
+            "player-green": [
+              50,
+              2,
+              2,
+              3,
+              3,
+              3
+            ],
+            "player-brown": [
+              43,
+              2,
+              0,
+              6,
+              2,
+              2
+            ],
+            "player-white": [
+              47,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 370,
+      "before": {
+        "stepIndex": 370,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:52efd39a",
+          "actorId": "player-green",
+          "stateVersion": 187,
+          "decisionVersion": 8,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "第一排放置位 3"
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 3,
+          "t": 12,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              39,
+              0,
+              1,
+              4,
+              3,
+              1
+            ],
+            "player-green": [
+              44,
+              3,
+              3,
+              3,
+              3,
+              3
+            ],
+            "player-brown": [
+              43,
+              2,
+              0,
+              6,
+              2,
+              2
+            ],
+            "player-white": [
+              47,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      "after": {
+        "stepIndex": 370,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:fdba001a",
+          "actorId": "player-green",
+          "stateVersion": 187,
+          "decisionVersion": 8,
+          "target": {
+            "choiceId": "income:card-50-0",
+            "cardInstanceId": "card-50-0"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "收入 dlc_29.png",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-50-0",
+            "imageSrc": "../assets/cards/space-agency/split/dlc_29.png",
+            "imageAlt": "dlc_29.png"
+          }
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 3,
+          "t": 12,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              39,
+              0,
+              1,
+              4,
+              3,
+              1
+            ],
+            "player-green": [
+              50,
+              2,
+              3,
+              3,
+              2,
+              3
+            ],
+            "player-brown": [
+              43,
+              2,
+              0,
+              6,
+              2,
+              2
+            ],
+            "player-white": [
+              47,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 371,
+      "before": {
+        "stepIndex": 371,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:1b66b805",
+          "actorId": "player-green",
+          "stateVersion": 188,
+          "decisionVersion": 8,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描"
+        },
+        "phase": "main",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 3,
+          "t": 12,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              39,
+              0,
+              1,
+              4,
+              3,
+              1
+            ],
+            "player-green": [
+              44,
+              2,
+              1,
+              3,
+              3,
+              3
+            ],
+            "player-brown": [
+              43,
+              2,
+              0,
+              6,
+              2,
+              2
+            ],
+            "player-white": [
+              47,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      "after": {
+        "stepIndex": 371,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 188,
+          "decisionVersion": 8,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据"
+        },
+        "phase": "quick",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 3,
+          "t": 12,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              39,
+              0,
+              1,
+              4,
+              3,
+              1
+            ],
+            "player-green": [
+              50,
+              2,
+              3,
+              3,
+              2,
+              3
+            ],
+            "player-brown": [
+              43,
+              2,
+              0,
+              6,
+              2,
+              2
+            ],
+            "player-white": [
+              47,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 372,
+      "before": {
+        "stepIndex": 372,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:2dae6b0e",
+          "actorId": "player-green",
+          "stateVersion": 188,
+          "decisionVersion": 8,
+          "target": {
+            "choiceId": "nebula:sector-1-b",
+            "nebulaId": "sector-1-b",
+            "sectorX": 6
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "扫描 织女一"
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 3,
+          "t": 12,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              39,
+              0,
+              1,
+              4,
+              3,
+              1
+            ],
+            "player-green": [
+              46,
+              2,
+              1,
+              3,
+              3,
+              3
+            ],
+            "player-brown": [
+              43,
+              2,
+              0,
+              6,
+              2,
+              2
+            ],
+            "player-white": [
+              47,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      "after": {
+        "stepIndex": 372,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:52efd39a",
+          "actorId": "player-green",
+          "stateVersion": 188,
+          "decisionVersion": 8,
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "第一排放置位 3"
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 3,
+          "t": 12,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              39,
+              0,
+              1,
+              4,
+              3,
+              1
+            ],
+            "player-green": [
+              50,
+              2,
+              3,
+              3,
+              2,
+              3
+            ],
+            "player-brown": [
+              43,
+              2,
+              0,
+              6,
+              2,
+              2
+            ],
+            "player-white": [
+              47,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      }
+    },
+    {
+      "index": 373,
+      "before": {
+        "stepIndex": 373,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:37d1a178",
+          "actorId": "player-green",
+          "stateVersion": 188,
+          "decisionVersion": 8,
+          "target": {
+            "choiceId": "public:card-72-0:sector-1-a",
+            "cardInstanceId": "card-72-0",
+            "publicSlotIndex": 2,
+            "nebulaId": "sector-1-a"
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "b_61.webp → 南河三",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "card-72-0",
+            "imageSrc": "../assets/cards/basic/split/b_61.webp",
+            "imageAlt": "b_61.webp"
+          }
+        },
+        "phase": "conditional",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 3,
+          "t": 12,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              39,
+              0,
+              1,
+              4,
+              3,
+              1
+            ],
+            "player-green": [
+              46,
+              2,
+              1,
+              3,
+              3,
+              3
+            ],
+            "player-brown": [
+              43,
+              2,
+              0,
+              6,
+              2,
+              2
+            ],
+            "player-white": [
+              47,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      "after": {
+        "stepIndex": 373,
+        "actorPlayerId": "player-green",
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:1f65daa3",
+          "actorId": "player-green",
+          "stateVersion": 189,
+          "decisionVersion": 8,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        },
+        "phase": "turn_control",
+        "decisionId": null,
+        "decisionVersion": null,
+        "after": {
+          "r": 3,
+          "t": 12,
+          "c": "player-green",
+          "p": {
+            "player-blue": [
+              39,
+              0,
+              1,
+              4,
+              3,
+              1
+            ],
+            "player-green": [
+              50,
+              2,
+              3,
+              3,
+              2,
+              3
+            ],
+            "player-brown": [
+              43,
+              2,
+              0,
+              6,
+              2,
+              2
+            ],
+            "player-white": [
+              47,
+              1,
+              0,
+              2,
+              1,
+              1
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "completeFinalStateEqual": false,
+  "scope": "唯一固定完整局记录汇总，逐步比较动作与after；差异位置不自动等于降分原因",
+  "searchesBeforeFirstActionDifference": [
+    {
+      "step": 24,
+      "kind": "control",
+      "action": "place_data:8fd12fd3",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.118959000000018
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.89383399999997
+      }
+    },
+    {
+      "step": 24,
+      "kind": "strategic",
+      "action": "place_data:8fd12fd3",
+      "before": {
+        "nodes": 4096,
+        "inputs": 6466,
+        "ms": 9712.385999999999
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 6466,
+        "ms": 10601.928167
+      }
+    },
+    {
+      "step": 42,
+      "kind": "control",
+      "action": "industry:5bda1856",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.008334000000104
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.360665999998673
+      }
+    },
+    {
+      "step": 42,
+      "kind": "strategic",
+      "action": "industry:5bda1856",
+      "before": {
+        "nodes": 4096,
+        "inputs": 6182,
+        "ms": 11406.749208
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 6182,
+        "ms": 12802.892208
+      }
+    },
+    {
+      "step": 50,
+      "kind": "control",
+      "action": "play_card:6eb4a6de",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 6.336624999999913
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.932374999996682
+      }
+    },
+    {
+      "step": 50,
+      "kind": "strategic",
+      "action": "play_card:6eb4a6de",
+      "before": {
+        "nodes": 4096,
+        "inputs": 4968,
+        "ms": 9215.129832999999
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 4968,
+        "ms": 9891.089833000002
+      }
+    },
+    {
+      "step": 53,
+      "kind": "control",
+      "action": "place_data:50a9ac16",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.577750000004016
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.4667499999995925
+      }
+    },
+    {
+      "step": 53,
+      "kind": "strategic",
+      "action": "place_data:50a9ac16",
+      "before": {
+        "nodes": 4096,
+        "inputs": 5529,
+        "ms": 11037.003250000002
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 5529,
+        "ms": 12404.64475
+      }
+    },
+    {
+      "step": 76,
+      "kind": "control",
+      "action": "analyze:c31ddbb9",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.702166999995825
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.365416999993613
+      }
+    },
+    {
+      "step": 76,
+      "kind": "strategic",
+      "action": "analyze:c31ddbb9",
+      "before": {
+        "nodes": 2455,
+        "inputs": 3584,
+        "ms": 5780.049082999998
+      },
+      "after": {
+        "nodes": 2455,
+        "inputs": 3584,
+        "ms": 6397.920082999997
+      }
+    },
+    {
+      "step": 81,
+      "kind": "control",
+      "action": "end_turn:b2f9b29d",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.687333000001672
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.468082999999751
+      }
+    },
+    {
+      "step": 81,
+      "kind": "strategic",
+      "action": "end_turn:b2f9b29d",
+      "before": {
+        "nodes": 1,
+        "inputs": 2,
+        "ms": 8.16349999999511
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 2,
+        "ms": 7.667042000000947
+      }
+    },
+    {
+      "step": 89,
+      "kind": "control",
+      "action": "research_tech:547c8803",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 6.28966699999728
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.005833000002895
+      }
+    },
+    {
+      "step": 89,
+      "kind": "strategic",
+      "action": "research_tech:547c8803",
+      "before": {
+        "nodes": 1305,
+        "inputs": 1893,
+        "ms": 3100.349000000002
+      },
+      "after": {
+        "nodes": 1305,
+        "inputs": 1893,
+        "ms": 3451.4277919999877
+      }
+    },
+    {
+      "step": 93,
+      "kind": "control",
+      "action": "research_tech:806ccfc8",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.962500000001455
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.114499999996042
+      }
+    },
+    {
+      "step": 93,
+      "kind": "strategic",
+      "action": "research_tech:806ccfc8",
+      "before": {
+        "nodes": 231,
+        "inputs": 310,
+        "ms": 873.846458
+      },
+      "after": {
+        "nodes": 231,
+        "inputs": 310,
+        "ms": 924.8873329999915
+      }
+    },
+    {
+      "step": 95,
+      "kind": "control",
+      "action": "end_turn:b2f9b29d",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 6.0147500000020955
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.413709000000381
+      }
+    },
+    {
+      "step": 95,
+      "kind": "strategic",
+      "action": "end_turn:b2f9b29d",
+      "before": {
+        "nodes": 1,
+        "inputs": 2,
+        "ms": 6.367291000002297
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 2,
+        "ms": 8.788000000000466
+      }
+    },
+    {
+      "step": 96,
+      "kind": "control",
+      "action": "place_data:dbe01b29",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 6.585874999997031
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.343000000008033
+      }
+    },
+    {
+      "step": 96,
+      "kind": "strategic",
+      "action": "place_data:dbe01b29",
+      "before": {
+        "nodes": 4096,
+        "inputs": 6593,
+        "ms": 11582.800958
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 6593,
+        "ms": 11965.837459000002
+      }
+    },
+    {
+      "step": 111,
+      "kind": "control",
+      "action": "launch:a4087d46",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 6.578000000008615
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.203791000007186
+      }
+    },
+    {
+      "step": 111,
+      "kind": "strategic",
+      "action": "launch:a4087d46",
+      "before": {
+        "nodes": 25,
+        "inputs": 34,
+        "ms": 65.38712500000838
+      },
+      "after": {
+        "nodes": 25,
+        "inputs": 34,
+        "ms": 73.98845900000015
+      }
+    },
+    {
+      "step": 122,
+      "kind": "control",
+      "action": "industry:2259bbe0",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.663457999995444
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.080874999999651
+      }
+    },
+    {
+      "step": 122,
+      "kind": "strategic",
+      "action": "industry:2259bbe0",
+      "before": {
+        "nodes": 90,
+        "inputs": 132,
+        "ms": 220.0202089999948
+      },
+      "after": {
+        "nodes": 90,
+        "inputs": 132,
+        "ms": 229.8111659999995
+      }
+    },
+    {
+      "step": 127,
+      "kind": "control",
+      "action": "pass:a1f33c73",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.379333000004408
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.410040999995545
+      }
+    },
+    {
+      "step": 127,
+      "kind": "strategic",
+      "action": "pass:a1f33c73",
+      "before": {
+        "nodes": 1,
+        "inputs": 2,
+        "ms": 7.879082999992534
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 2,
+        "ms": 8.042625000001863
+      }
+    },
+    {
+      "step": 128,
+      "kind": "strategic",
+      "action": "choose_card:29c580eb",
+      "before": {
+        "nodes": 5,
+        "inputs": 5,
+        "ms": 26.87750000000233
+      },
+      "after": {
+        "nodes": 5,
+        "inputs": 5,
+        "ms": 26.966082999992068
+      }
+    },
+    {
+      "step": 141,
+      "kind": "control",
+      "action": "quick_trade:9256f5c4",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.123000000006869
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.35066700000607
+      }
+    },
+    {
+      "step": 141,
+      "kind": "strategic",
+      "action": "quick_trade:9256f5c4",
+      "before": {
+        "nodes": 5,
+        "inputs": 11,
+        "ms": 25.564833000011276
+      },
+      "after": {
+        "nodes": 5,
+        "inputs": 11,
+        "ms": 22.23125000001164
+      }
+    },
+    {
+      "step": 152,
+      "kind": "control",
+      "action": "end_turn:d59ab08c",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.375708000006853
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.25691700000607
+      }
+    },
+    {
+      "step": 157,
+      "kind": "control",
+      "action": "pass:c858282e",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 6.632333000001381
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.659625000000233
+      }
+    },
+    {
+      "step": 158,
+      "kind": "strategic",
+      "action": "choose_card:1061905a",
+      "before": {
+        "nodes": 4,
+        "inputs": 4,
+        "ms": 23.068417000002228
+      },
+      "after": {
+        "nodes": 4,
+        "inputs": 4,
+        "ms": 21.939457999993465
+      }
+    },
+    {
+      "step": 159,
+      "kind": "control",
+      "action": "pass:ac4b4ab2",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 6.347790999992867
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.272624999997788
+      }
+    },
+    {
+      "step": 160,
+      "kind": "strategic",
+      "action": "choose_card:11fb9e5d",
+      "before": {
+        "nodes": 3,
+        "inputs": 3,
+        "ms": 20.478082999994513
+      },
+      "after": {
+        "nodes": 3,
+        "inputs": 3,
+        "ms": 18.271208999998635
+      }
+    },
+    {
+      "step": 161,
+      "kind": "control",
+      "action": "card_corner:26b9b118",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.343458000003011
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 6.626959000001079
+      }
+    },
+    {
+      "step": 161,
+      "kind": "strategic",
+      "action": "card_corner:26b9b118",
+      "before": {
+        "nodes": 7,
+        "inputs": 13,
+        "ms": 29.083666999998968
+      },
+      "after": {
+        "nodes": 7,
+        "inputs": 13,
+        "ms": 27.85929199999373
+      }
+    },
+    {
+      "step": 162,
+      "kind": "control",
+      "action": "pass:ff716055",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.886167000004207
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 6.0544170000066515
+      }
+    },
+    {
+      "step": 162,
+      "kind": "strategic",
+      "action": "pass:ff716055",
+      "before": {
+        "nodes": 5,
+        "inputs": 11,
+        "ms": 22.55829200000153
+      },
+      "after": {
+        "nodes": 5,
+        "inputs": 11,
+        "ms": 19.23879200000374
+      }
+    },
+    {
+      "step": 163,
+      "kind": "strategic",
+      "action": "choose_card:2eb6f05e",
+      "before": {
+        "nodes": 2,
+        "inputs": 2,
+        "ms": 19.170916000002762
+      },
+      "after": {
+        "nodes": 2,
+        "inputs": 2,
+        "ms": 17.62533299998904
+      }
+    },
+    {
+      "step": 164,
+      "kind": "control",
+      "action": "launch:70d77c1b",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.961415999991004
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.644041999999899
+      }
+    },
+    {
+      "step": 164,
+      "kind": "strategic",
+      "action": "launch:70d77c1b",
+      "before": {
+        "nodes": 4096,
+        "inputs": 4994,
+        "ms": 10990.972999999998
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 4994,
+        "ms": 11851.315415999998
+      }
+    },
+    {
+      "step": 168,
+      "kind": "control",
+      "action": "launch:a4087d46",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.3752499999973224
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.559917000005953
+      }
+    },
+    {
+      "step": 168,
+      "kind": "strategic",
+      "action": "launch:a4087d46",
+      "before": {
+        "nodes": 2665,
+        "inputs": 5036,
+        "ms": 8002.8392500000045
+      },
+      "after": {
+        "nodes": 2665,
+        "inputs": 5036,
+        "ms": 9024.695582999993
+      }
+    },
+    {
+      "step": 170,
+      "kind": "control",
+      "action": "quick_trade:5ad269c5",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.830833999993047
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.188125000000582
+      }
+    },
+    {
+      "step": 170,
+      "kind": "strategic",
+      "action": "quick_trade:5ad269c5",
+      "before": {
+        "nodes": 4096,
+        "inputs": 5486,
+        "ms": 12705.570666
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 5486,
+        "ms": 13885.635416000005
+      }
+    },
+    {
+      "step": 181,
+      "kind": "control",
+      "action": "launch:c94cda79",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.165625000008731
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.347291999991285
+      }
+    },
+    {
+      "step": 181,
+      "kind": "strategic",
+      "action": "launch:c94cda79",
+      "before": {
+        "nodes": 4096,
+        "inputs": 4757,
+        "ms": 12566.393500000006
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 4757,
+        "ms": 13532.774207999988
+      }
+    },
+    {
+      "step": 187,
+      "kind": "control",
+      "action": "industry:5bda1856",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.282041999977082
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 12.957667000009678
+      }
+    },
+    {
+      "step": 187,
+      "kind": "strategic",
+      "action": "industry:5bda1856",
+      "before": {
+        "nodes": 4096,
+        "inputs": 5331,
+        "ms": 12888.80266700001
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 5331,
+        "ms": 14186.521792000014
+      }
+    },
+    {
+      "step": 193,
+      "kind": "control",
+      "action": "play_card:6a42cfad",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.94474999999511
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.901374999986729
+      }
+    },
+    {
+      "step": 193,
+      "kind": "strategic",
+      "action": "play_card:6a42cfad",
+      "before": {
+        "nodes": 4096,
+        "inputs": 4998,
+        "ms": 11667.691375000024
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 4998,
+        "ms": 13469.08162500002
+      }
+    },
+    {
+      "step": 196,
+      "kind": "control",
+      "action": "research_tech:547c8803",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.334958999999799
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.77158299999428
+      }
+    },
+    {
+      "step": 196,
+      "kind": "strategic",
+      "action": "research_tech:547c8803",
+      "before": {
+        "nodes": 4096,
+        "inputs": 4867,
+        "ms": 11259.922250000003
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 4867,
+        "ms": 12982.774208000017
+      }
+    },
+    {
+      "step": 202,
+      "kind": "control",
+      "action": "place_data:8fd12fd3",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.430625000008149
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.167874999984633
+      }
+    },
+    {
+      "step": 202,
+      "kind": "strategic",
+      "action": "place_data:8fd12fd3",
+      "before": {
+        "nodes": 4096,
+        "inputs": 4701,
+        "ms": 11039.989625000017
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 4701,
+        "ms": 13178.675457999983
+      }
+    },
+    {
+      "step": 213,
+      "kind": "control",
+      "action": "place_data:01c038e2",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.510167000000365
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.479082999983802
+      }
+    },
+    {
+      "step": 213,
+      "kind": "strategic",
+      "action": "place_data:01c038e2",
+      "before": {
+        "nodes": 4096,
+        "inputs": 4277,
+        "ms": 12623.566125000012
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 4277,
+        "ms": 14832.792207999999
+      }
+    },
+    {
+      "step": 226,
+      "kind": "control",
+      "action": "industry:2259bbe0",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.762291999999434
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.059000000008382
+      }
+    },
+    {
+      "step": 226,
+      "kind": "strategic",
+      "action": "industry:2259bbe0",
+      "before": {
+        "nodes": 3110,
+        "inputs": 3307,
+        "ms": 7851.457207999978
+      },
+      "after": {
+        "nodes": 3110,
+        "inputs": 3307,
+        "ms": 8922.921417000005
+      }
+    },
+    {
+      "step": 231,
+      "kind": "control",
+      "action": "research_tech:806ccfc8",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.38491600000998
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 12.021542000002228
+      }
+    },
+    {
+      "step": 231,
+      "kind": "strategic",
+      "action": "research_tech:806ccfc8",
+      "before": {
+        "nodes": 3319,
+        "inputs": 3898,
+        "ms": 9300.86179200001
+      },
+      "after": {
+        "nodes": 3319,
+        "inputs": 3898,
+        "ms": 10046.53145900002
+      }
+    },
+    {
+      "step": 235,
+      "kind": "control",
+      "action": "place_data:dbe01b29",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 8.860332999989623
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.661707999999635
+      }
+    },
+    {
+      "step": 235,
+      "kind": "strategic",
+      "action": "place_data:dbe01b29",
+      "before": {
+        "nodes": 3907,
+        "inputs": 5780,
+        "ms": 12125.606
+      },
+      "after": {
+        "nodes": 3907,
+        "inputs": 5780,
+        "ms": 13883.563542000018
+      }
+    },
+    {
+      "step": 245,
+      "kind": "control",
+      "action": "end_turn:320f2608",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.939209000003757
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.352249999996275
+      }
+    },
+    {
+      "step": 246,
+      "kind": "control",
+      "action": "scan:0ca111ac",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.75999999998021
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.514665999973658
+      }
+    },
+    {
+      "step": 246,
+      "kind": "strategic",
+      "action": "scan:0ca111ac",
+      "before": {
+        "nodes": 112,
+        "inputs": 118,
+        "ms": 290.229416999995
+      },
+      "after": {
+        "nodes": 112,
+        "inputs": 118,
+        "ms": 343.5749170000199
+      }
+    },
+    {
+      "step": 259,
+      "kind": "control",
+      "action": "launch:c94cda79",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.206291999988025
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 12.055499999958556
+      }
+    },
+    {
+      "step": 259,
+      "kind": "strategic",
+      "action": "launch:c94cda79",
+      "before": {
+        "nodes": 4096,
+        "inputs": 5253,
+        "ms": 12042.22329200001
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 5253,
+        "ms": 13621.184291000012
+      }
+    },
+    {
+      "step": 271,
+      "kind": "control",
+      "action": "pass:c858282e",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.452041000011377
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.809166999999434
+      }
+    },
+    {
+      "step": 272,
+      "kind": "strategic",
+      "action": "choose_card:54f41e56",
+      "before": {
+        "nodes": 5,
+        "inputs": 5,
+        "ms": 35.34575000003679
+      },
+      "after": {
+        "nodes": 5,
+        "inputs": 5,
+        "ms": 32.92366700002458
+      }
+    },
+    {
+      "step": 276,
+      "kind": "control",
+      "action": "end_turn:d59ab08c",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.426457999972627
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.729916000040248
+      }
+    },
+    {
+      "step": 276,
+      "kind": "strategic",
+      "action": "end_turn:d59ab08c",
+      "before": {
+        "nodes": 4,
+        "inputs": 4,
+        "ms": 17.212874999968335
+      },
+      "after": {
+        "nodes": 4,
+        "inputs": 4,
+        "ms": 18.650500000047032
+      }
+    },
+    {
+      "step": 278,
+      "kind": "strategic",
+      "action": "choose_target:ddd8721a",
+      "before": {
+        "nodes": 2,
+        "inputs": 2,
+        "ms": 22.744249999988824
+      },
+      "after": {
+        "nodes": 2,
+        "inputs": 2,
+        "ms": 26.254832999955397
+      }
+    },
+    {
+      "step": 279,
+      "kind": "strategic",
+      "action": "choose_target:5f87c6ef",
+      "before": {
+        "nodes": 2,
+        "inputs": 2,
+        "ms": 26.6102499999688
+      },
+      "after": {
+        "nodes": 2,
+        "inputs": 2,
+        "ms": 27.032958999974653
+      }
+    },
+    {
+      "step": 280,
+      "kind": "strategic",
+      "action": "choose_target:7af26739",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 25.850916999974288
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 26.51312499999767
+      }
+    },
+    {
+      "step": 281,
+      "kind": "control",
+      "action": "card_corner:321c41b9",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.895375000021886
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.339417000010144
+      }
+    },
+    {
+      "step": 281,
+      "kind": "strategic",
+      "action": "card_corner:321c41b9",
+      "before": {
+        "nodes": 2,
+        "inputs": 2,
+        "ms": 12.081833000003826
+      },
+      "after": {
+        "nodes": 2,
+        "inputs": 2,
+        "ms": 13.415083000028972
+      }
+    },
+    {
+      "step": 283,
+      "kind": "control",
+      "action": "end_turn:b2f9b29d",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.834167000022717
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.685124999959953
+      }
+    },
+    {
+      "step": 289,
+      "kind": "control",
+      "action": "pass:ac4b4ab2",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.79216599999927
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.155458999972325
+      }
+    },
+    {
+      "step": 289,
+      "kind": "strategic",
+      "action": "pass:ac4b4ab2",
+      "before": {
+        "nodes": 3,
+        "inputs": 3,
+        "ms": 13.357874999986961
+      },
+      "after": {
+        "nodes": 3,
+        "inputs": 3,
+        "ms": 13.827124999952503
+      }
+    },
+    {
+      "step": 290,
+      "kind": "strategic",
+      "action": "choose_card:518629a3",
+      "before": {
+        "nodes": 4,
+        "inputs": 4,
+        "ms": 27.311291000049096
+      },
+      "after": {
+        "nodes": 4,
+        "inputs": 4,
+        "ms": 26.349707999965176
+      }
+    },
+    {
+      "step": 291,
+      "kind": "control",
+      "action": "land:d5ee03a2",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.532374999951571
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.8366669999668375
+      }
+    },
+    {
+      "step": 291,
+      "kind": "strategic",
+      "action": "land:d5ee03a2",
+      "before": {
+        "nodes": 23,
+        "inputs": 27,
+        "ms": 61.44758300000103
+      },
+      "after": {
+        "nodes": 23,
+        "inputs": 27,
+        "ms": 64.09675000002608
+      }
+    },
+    {
+      "step": 294,
+      "kind": "control",
+      "action": "card_corner:2b283ebd",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.902125000022352
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.192500000004657
+      }
+    },
+    {
+      "step": 294,
+      "kind": "strategic",
+      "action": "card_corner:2b283ebd",
+      "before": {
+        "nodes": 12,
+        "inputs": 12,
+        "ms": 44.880208000016864
+      },
+      "after": {
+        "nodes": 12,
+        "inputs": 12,
+        "ms": 45.32150000002002
+      }
+    },
+    {
+      "step": 296,
+      "kind": "control",
+      "action": "card_corner:09cd55f3",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.511624999984633
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.76916699996218
+      }
+    },
+    {
+      "step": 296,
+      "kind": "strategic",
+      "action": "card_corner:09cd55f3",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.975333000009414
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.34145800000988
+      }
+    },
+    {
+      "step": 297,
+      "kind": "control",
+      "action": "pass:ff716055",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.580415999982506
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.236833999981172
+      }
+    },
+    {
+      "step": 298,
+      "kind": "strategic",
+      "action": "choose_card:40f1b671",
+      "before": {
+        "nodes": 3,
+        "inputs": 3,
+        "ms": 24.67070799996145
+      },
+      "after": {
+        "nodes": 3,
+        "inputs": 3,
+        "ms": 24.57808299997123
+      }
+    },
+    {
+      "step": 301,
+      "kind": "control",
+      "action": "end_turn:b2f9b29d",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.783750000002328
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 9.552374999970198
+      }
+    },
+    {
+      "step": 302,
+      "kind": "control",
+      "action": "pass:a1f33c73",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.231749999977183
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 7.029916999978013
+      }
+    },
+    {
+      "step": 303,
+      "kind": "strategic",
+      "action": "choose_card:a17893ff",
+      "before": {
+        "nodes": 2,
+        "inputs": 2,
+        "ms": 22.38504099997226
+      },
+      "after": {
+        "nodes": 2,
+        "inputs": 2,
+        "ms": 20.037584000034258
+      }
+    },
+    {
+      "step": 304,
+      "kind": "control",
+      "action": "launch:a4087d46",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.551458000030834
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 10.813666999980342
+      }
+    },
+    {
+      "step": 304,
+      "kind": "strategic",
+      "action": "launch:a4087d46",
+      "before": {
+        "nodes": 4096,
+        "inputs": 5689,
+        "ms": 13603.715791000053
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 5689,
+        "ms": 14594.385707999987
+      }
+    },
+    {
+      "step": 306,
+      "kind": "control",
+      "action": "play_card:10f2f001",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 12.0477499999688
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 12.248999999952503
+      }
+    },
+    {
+      "step": 306,
+      "kind": "strategic",
+      "action": "play_card:10f2f001",
+      "before": {
+        "nodes": 4096,
+        "inputs": 4981,
+        "ms": 12167.926957999996
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 4981,
+        "ms": 13390.205499999982
+      }
+    },
+    {
+      "step": 308,
+      "kind": "control",
+      "action": "launch:c94cda79",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 12.217208000016399
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 12.034458000038285
+      }
+    },
+    {
+      "step": 308,
+      "kind": "strategic",
+      "action": "launch:c94cda79",
+      "before": {
+        "nodes": 4096,
+        "inputs": 5436,
+        "ms": 13067.218999999983
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 5436,
+        "ms": 13945.201624999987
+      }
+    },
+    {
+      "step": 314,
+      "kind": "control",
+      "action": "launch:70d77c1b",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 12.56716699997196
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 12.918249999987893
+      }
+    },
+    {
+      "step": 314,
+      "kind": "strategic",
+      "action": "launch:70d77c1b",
+      "before": {
+        "nodes": 4096,
+        "inputs": 4962,
+        "ms": 13488.50216699997
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 4962,
+        "ms": 14165.777666000009
+      }
+    },
+    {
+      "step": 334,
+      "kind": "strategic",
+      "action": "choose_card:2b3289bc",
+      "before": {
+        "nodes": 4,
+        "inputs": 4,
+        "ms": 24.300083000038285
+      },
+      "after": {
+        "nodes": 4,
+        "inputs": 4,
+        "ms": 26.27379100001417
+      }
+    },
+    {
+      "step": 335,
+      "kind": "strategic",
+      "action": "choose_card:864e7fed",
+      "before": {
+        "nodes": 3,
+        "inputs": 3,
+        "ms": 23.177250000007916
+      },
+      "after": {
+        "nodes": 3,
+        "inputs": 3,
+        "ms": 25.50199999997858
+      }
+    },
+    {
+      "step": 336,
+      "kind": "control",
+      "action": "place_data:8fd12fd3",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.613124999974389
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.035000000032596
+      }
+    },
+    {
+      "step": 336,
+      "kind": "strategic",
+      "action": "place_data:8fd12fd3",
+      "before": {
+        "nodes": 4096,
+        "inputs": 6802,
+        "ms": 14869.962499999965
+      },
+      "after": {
+        "nodes": 4096,
+        "inputs": 6802,
+        "ms": 16578.419292000006
+      }
+    },
+    {
+      "step": 355,
+      "kind": "control",
+      "action": "end_turn:320f2608",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.473124999960419
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.75504199997522
+      }
+    },
+    {
+      "step": 355,
+      "kind": "strategic",
+      "action": "end_turn:320f2608",
+      "before": {
+        "nodes": 47,
+        "inputs": 79,
+        "ms": 187.3073330000043
+      },
+      "after": {
+        "nodes": 47,
+        "inputs": 79,
+        "ms": 184.95529199996963
+      }
+    },
+    {
+      "step": 356,
+      "kind": "control",
+      "action": "land:c95c1043",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.482167000009213
+      },
+      "after": null
+    },
+    {
+      "step": 356,
+      "kind": "strategic",
+      "action": "land:c95c1043",
+      "before": {
+        "nodes": 4096,
+        "inputs": 5351,
+        "ms": 11786.299790999969
+      },
+      "after": null
+    },
+    {
+      "step": 359,
+      "kind": "control",
+      "action": "scan:2d21a323",
+      "before": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 11.698499999998603
+      },
+      "after": {
+        "nodes": 1,
+        "inputs": 1,
+        "ms": 12.839042000006884
+      }
+    },
+    {
+      "step": 359,
+      "kind": "strategic",
+      "action": "scan:2d21a323",
+      "before": {
+        "nodes": 173,
+        "inputs": 286,
+        "ms": 624.8785420000204
+      },
+      "after": {
+        "nodes": 173,
+        "inputs": 286,
+        "ms": 715.0990830000374
+      }
+    }
+  ],
+  "firstDifferenceStep": 370,
+  "cappedDecisionCounts": {
+    "analyze:main": 3027,
+    "card_corner:quick": 2960,
+    "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 644,
+    "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 1199,
+    "choose_card:conditional/decision=choose_card/effect=science_domain_income": 3948,
+    "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 4418,
+    "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 4321,
+    "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 1558,
+    "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 1135,
+    "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 1183,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 11362,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_research": 2902,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech": 201,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 4042,
+    "end_turn:turn_control": 9502,
+    "industry:quick": 1873,
+    "land:main": 1746,
+    "launch:main": 625,
+    "move:quick": 2654,
+    "orbit:main": 1340,
+    "pass:main": 1383,
+    "place_data:quick": 7840,
+    "play_card:main": 1130,
+    "quick_trade:quick": 7296,
+    "research_tech:main": 990,
+    "scan:main": 2944,
+    "choose_target:conditional/decision=choose_target/effect=probe_land_choice": 1,
+    "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 340,
+    "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger": 861,
+    "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker": 29,
+    "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 2029,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace": 29,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 752,
+    "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 10793,
+    "choose_target:conditional/decision=choose_target/effect=residual_final_mark": 3836,
+    "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_return_unfinished_task_to_hand/cardEffect=card_return_unfinished_task_to_hand": 56,
+    "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_choose_symbol_reward/cardEffect=amiba_choose_symbol_reward": 206,
+    "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income": 119,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4": 498,
+    "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income": 208,
+    "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income": 67,
+    "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward": 4,
+    "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:chong_land_for_pickup/cardEffect=chong_land_for_pickup": 21,
+    "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:chong_pickup_fossil/cardEffect=chong_pickup_fossil": 108,
+    "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_draw_then_scan/cardEffect=card_draw_then_scan": 9,
+    "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task": 15,
+    "complete_task:quick": 6,
+    "choose_reward:conditional/decision=choose_reward/effect=card_play_domain_effect:decision:card_pay_credits_for_reward/cardEffect=card_pay_credits_for_reward": 17,
+    "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card": 24,
+    "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step/cardEffect=card_probe_sector_scan": 96,
+    "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_free_move/cardEffect=card_free_move": 53
+  }
+}
