@@ -1,0 +1,3550 @@
+{
+  "sources": [
+    "reports/research/7feb57c3.96e60c14.full.json",
+    "reports/research/14114d45.77d36854.full.json"
+  ],
+  "scope": "已生成固定局与正式save-final只读核验；不重跑AI，动作首差不是效果因果证明",
+  "measurements": [
+    {
+      "commit": "96e60c14",
+      "steps": 596,
+      "terminal": true,
+      "wallMs": 501885,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "total": 100
+        },
+        {
+          "playerId": "player-green",
+          "total": 86
+        },
+        {
+          "playerId": "player-brown",
+          "total": 115
+        },
+        {
+          "playerId": "player-white",
+          "total": 137
+        }
+      ],
+      "mean": 109.5,
+      "all": {
+        "searches": 184,
+        "nodes": 135649,
+        "classes": [
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+            "count": 20773,
+            "percent": 15.314
+          },
+          {
+            "key": "end_turn:turn_control",
+            "count": 12032,
+            "percent": 8.87
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+            "count": 10228,
+            "percent": 7.54
+          },
+          {
+            "key": "place_data:quick",
+            "count": 10131,
+            "percent": 7.469
+          },
+          {
+            "key": "quick_trade:quick",
+            "count": 9479,
+            "percent": 6.988
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+            "count": 7672,
+            "percent": 5.656
+          },
+          {
+            "key": "move:quick",
+            "count": 5314,
+            "percent": 3.917
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+            "count": 4988,
+            "percent": 3.677
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+            "count": 4846,
+            "percent": 3.572
+          },
+          {
+            "key": "pass:main",
+            "count": 3850,
+            "percent": 2.838
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+            "count": 3559,
+            "percent": 2.624
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+            "count": 3222,
+            "percent": 2.375
+          },
+          {
+            "key": "scan:main",
+            "count": 3058,
+            "percent": 2.254
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+            "count": 3033,
+            "percent": 2.236
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+            "count": 3026,
+            "percent": 2.231
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+            "count": 2941,
+            "percent": 2.168
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+            "count": 2676,
+            "percent": 1.973
+          },
+          {
+            "key": "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+            "count": 2587,
+            "percent": 1.907
+          },
+          {
+            "key": "card_corner:quick",
+            "count": 2503,
+            "percent": 1.845
+          },
+          {
+            "key": "analyze:main",
+            "count": 2251,
+            "percent": 1.659
+          },
+          {
+            "key": "industry:quick",
+            "count": 2234,
+            "percent": 1.647
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+            "count": 2043,
+            "percent": 1.506
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+            "count": 1933,
+            "percent": 1.425
+          },
+          {
+            "key": "land:main",
+            "count": 1746,
+            "percent": 1.287
+          },
+          {
+            "key": "play_card:main",
+            "count": 1548,
+            "percent": 1.141
+          },
+          {
+            "key": "orbit:main",
+            "count": 1498,
+            "percent": 1.104
+          },
+          {
+            "key": "research_tech:main",
+            "count": 990,
+            "percent": 0.73
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4",
+            "count": 865,
+            "percent": 0.638
+          },
+          {
+            "key": "launch:main",
+            "count": 803,
+            "percent": 0.592
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card",
+            "count": 788,
+            "percent": 0.581
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+            "count": 563,
+            "percent": 0.415
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income",
+            "count": 437,
+            "percent": 0.322
+          },
+          {
+            "key": "choose_reward:conditional/decision=choose_reward/effect=card_play_domain_effect:decision:card_pay_credits_for_reward/cardEffect=card_pay_credits_for_reward",
+            "count": 280,
+            "percent": 0.206
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech",
+            "count": 273,
+            "percent": 0.201
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income",
+            "count": 262,
+            "percent": 0.193
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards",
+            "count": 253,
+            "percent": 0.187
+          },
+          {
+            "key": "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger",
+            "count": 188,
+            "percent": 0.139
+          },
+          {
+            "key": "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+            "count": 188,
+            "percent": 0.139
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_hand_scan/cardEffect=card_hand_scan",
+            "count": 156,
+            "percent": 0.115
+          },
+          {
+            "key": "complete_task:quick",
+            "count": 90,
+            "percent": 0.066
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker",
+            "count": 71,
+            "percent": 0.052
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income",
+            "count": 66,
+            "percent": 0.049
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace",
+            "count": 56,
+            "percent": 0.041
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=probe_turn_pass_reserve",
+            "count": 42,
+            "percent": 0.031
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_free_move/cardEffect=card_free_move",
+            "count": 37,
+            "percent": 0.027
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_orbit/cardEffect=card_orbit",
+            "count": 22,
+            "percent": 0.016
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_return_unfinished_task_to_hand/cardEffect=card_return_unfinished_task_to_hand",
+            "count": 20,
+            "percent": 0.015
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward",
+            "count": 17,
+            "percent": 0.013
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_choose_symbol_reward/cardEffect=amiba_choose_symbol_reward",
+            "count": 4,
+            "percent": 0.003
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_card_corner_repeat/cardEffect=card_discard_card_corner_repeat",
+            "count": 4,
+            "percent": 0.003
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_income_decision/cardEffect=card_income",
+            "count": 3,
+            "percent": 0.002
+          }
+        ],
+        "families": [
+          {
+            "key": "choose_target",
+            "count": 51015,
+            "percent": 37.608
+          },
+          {
+            "key": "choose_card",
+            "count": 23864,
+            "percent": 17.592
+          },
+          {
+            "key": "end_turn",
+            "count": 12032,
+            "percent": 8.87
+          },
+          {
+            "key": "place_data",
+            "count": 10131,
+            "percent": 7.469
+          },
+          {
+            "key": "quick_trade",
+            "count": 9479,
+            "percent": 6.988
+          },
+          {
+            "key": "move",
+            "count": 5314,
+            "percent": 3.917
+          },
+          {
+            "key": "pass",
+            "count": 3850,
+            "percent": 2.838
+          },
+          {
+            "key": "scan",
+            "count": 3058,
+            "percent": 2.254
+          },
+          {
+            "key": "choose_payment",
+            "count": 2587,
+            "percent": 1.907
+          },
+          {
+            "key": "card_corner",
+            "count": 2503,
+            "percent": 1.845
+          },
+          {
+            "key": "analyze",
+            "count": 2251,
+            "percent": 1.659
+          },
+          {
+            "key": "industry",
+            "count": 2234,
+            "percent": 1.647
+          },
+          {
+            "key": "land",
+            "count": 1746,
+            "percent": 1.287
+          },
+          {
+            "key": "play_card",
+            "count": 1548,
+            "percent": 1.141
+          },
+          {
+            "key": "orbit",
+            "count": 1498,
+            "percent": 1.104
+          },
+          {
+            "key": "research_tech",
+            "count": 990,
+            "percent": 0.73
+          },
+          {
+            "key": "launch",
+            "count": 803,
+            "percent": 0.592
+          },
+          {
+            "key": "accept_optional_effect",
+            "count": 376,
+            "percent": 0.277
+          },
+          {
+            "key": "choose_reward",
+            "count": 280,
+            "percent": 0.206
+          },
+          {
+            "key": "complete_task",
+            "count": 90,
+            "percent": 0.066
+          }
+        ]
+      },
+      "full": {
+        "searches": 28,
+        "nodes": 114688,
+        "classes": [
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+            "count": 20196,
+            "percent": 17.61
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+            "count": 9896,
+            "percent": 8.629
+          },
+          {
+            "key": "end_turn:turn_control",
+            "count": 9455,
+            "percent": 8.244
+          },
+          {
+            "key": "quick_trade:quick",
+            "count": 8454,
+            "percent": 7.371
+          },
+          {
+            "key": "place_data:quick",
+            "count": 8180,
+            "percent": 7.132
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+            "count": 7146,
+            "percent": 6.231
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+            "count": 4748,
+            "percent": 4.14
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+            "count": 3953,
+            "percent": 3.447
+          },
+          {
+            "key": "move:quick",
+            "count": 3569,
+            "percent": 3.112
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+            "count": 3384,
+            "percent": 2.951
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+            "count": 2908,
+            "percent": 2.536
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+            "count": 2613,
+            "percent": 2.278
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+            "count": 2404,
+            "percent": 2.096
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+            "count": 2371,
+            "percent": 2.067
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+            "count": 2352,
+            "percent": 2.051
+          },
+          {
+            "key": "scan:main",
+            "count": 2324,
+            "percent": 2.026
+          },
+          {
+            "key": "analyze:main",
+            "count": 2209,
+            "percent": 1.926
+          },
+          {
+            "key": "card_corner:quick",
+            "count": 2046,
+            "percent": 1.784
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+            "count": 1910,
+            "percent": 1.665
+          },
+          {
+            "key": "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+            "count": 1878,
+            "percent": 1.637
+          },
+          {
+            "key": "land:main",
+            "count": 1633,
+            "percent": 1.424
+          },
+          {
+            "key": "pass:main",
+            "count": 1520,
+            "percent": 1.325
+          },
+          {
+            "key": "industry:quick",
+            "count": 1393,
+            "percent": 1.215
+          },
+          {
+            "key": "orbit:main",
+            "count": 1314,
+            "percent": 1.146
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+            "count": 1301,
+            "percent": 1.134
+          },
+          {
+            "key": "play_card:main",
+            "count": 1291,
+            "percent": 1.126
+          },
+          {
+            "key": "research_tech:main",
+            "count": 799,
+            "percent": 0.697
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4",
+            "count": 786,
+            "percent": 0.685
+          },
+          {
+            "key": "launch:main",
+            "count": 535,
+            "percent": 0.466
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card",
+            "count": 412,
+            "percent": 0.359
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income",
+            "count": 264,
+            "percent": 0.23
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+            "count": 241,
+            "percent": 0.21
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech",
+            "count": 235,
+            "percent": 0.205
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_hand_scan/cardEffect=card_hand_scan",
+            "count": 153,
+            "percent": 0.133
+          },
+          {
+            "key": "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger",
+            "count": 148,
+            "percent": 0.129
+          },
+          {
+            "key": "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task",
+            "count": 125,
+            "percent": 0.109
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income",
+            "count": 120,
+            "percent": 0.105
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards",
+            "count": 93,
+            "percent": 0.081
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker",
+            "count": 71,
+            "percent": 0.062
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income",
+            "count": 66,
+            "percent": 0.058
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace",
+            "count": 56,
+            "percent": 0.049
+          },
+          {
+            "key": "complete_task:quick",
+            "count": 54,
+            "percent": 0.047
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_free_move/cardEffect=card_free_move",
+            "count": 37,
+            "percent": 0.032
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_return_unfinished_task_to_hand/cardEffect=card_return_unfinished_task_to_hand",
+            "count": 20,
+            "percent": 0.017
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_orbit/cardEffect=card_orbit",
+            "count": 14,
+            "percent": 0.012
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_choose_symbol_reward/cardEffect=amiba_choose_symbol_reward",
+            "count": 4,
+            "percent": 0.003
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_card_corner_repeat/cardEffect=card_discard_card_corner_repeat",
+            "count": 4,
+            "percent": 0.003
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_income_decision/cardEffect=card_income",
+            "count": 3,
+            "percent": 0.003
+          }
+        ],
+        "families": [
+          {
+            "key": "choose_target",
+            "count": 46559,
+            "percent": 40.596
+          },
+          {
+            "key": "choose_card",
+            "count": 21202,
+            "percent": 18.487
+          },
+          {
+            "key": "end_turn",
+            "count": 9455,
+            "percent": 8.244
+          },
+          {
+            "key": "quick_trade",
+            "count": 8454,
+            "percent": 7.371
+          },
+          {
+            "key": "place_data",
+            "count": 8180,
+            "percent": 7.132
+          },
+          {
+            "key": "move",
+            "count": 3569,
+            "percent": 3.112
+          },
+          {
+            "key": "scan",
+            "count": 2324,
+            "percent": 2.026
+          },
+          {
+            "key": "analyze",
+            "count": 2209,
+            "percent": 1.926
+          },
+          {
+            "key": "card_corner",
+            "count": 2046,
+            "percent": 1.784
+          },
+          {
+            "key": "choose_payment",
+            "count": 1878,
+            "percent": 1.637
+          },
+          {
+            "key": "land",
+            "count": 1633,
+            "percent": 1.424
+          },
+          {
+            "key": "pass",
+            "count": 1520,
+            "percent": 1.325
+          },
+          {
+            "key": "industry",
+            "count": 1393,
+            "percent": 1.215
+          },
+          {
+            "key": "orbit",
+            "count": 1314,
+            "percent": 1.146
+          },
+          {
+            "key": "play_card",
+            "count": 1291,
+            "percent": 1.126
+          },
+          {
+            "key": "research_tech",
+            "count": 799,
+            "percent": 0.697
+          },
+          {
+            "key": "launch",
+            "count": 535,
+            "percent": 0.466
+          },
+          {
+            "key": "accept_optional_effect",
+            "count": 273,
+            "percent": 0.238
+          },
+          {
+            "key": "complete_task",
+            "count": 54,
+            "percent": 0.047
+          }
+        ]
+      },
+      "submissions": 171604,
+      "cutoffs": [
+        {
+          "step": 24,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "quick_trade:quick",
+              "count": 592,
+              "percent": 14.453
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 497,
+              "percent": 12.134
+            },
+            {
+              "key": "place_data:quick",
+              "count": 497,
+              "percent": 12.134
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+              "count": 364,
+              "percent": 8.887
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+              "count": 307,
+              "percent": 7.495
+            }
+          ]
+        },
+        {
+          "step": 42,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+              "count": 2945,
+              "percent": 71.899
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+              "count": 162,
+              "percent": 3.955
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 132,
+              "percent": 3.223
+            },
+            {
+              "key": "place_data:quick",
+              "count": 126,
+              "percent": 3.076
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+              "count": 107,
+              "percent": 2.612
+            }
+          ]
+        },
+        {
+          "step": 59,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+              "count": 784,
+              "percent": 19.141
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 533,
+              "percent": 13.013
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 311,
+              "percent": 7.593
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 229,
+              "percent": 5.591
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+              "count": 225,
+              "percent": 5.493
+            }
+          ]
+        },
+        {
+          "step": 62,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "place_data:quick",
+              "count": 673,
+              "percent": 16.431
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 538,
+              "percent": 13.135
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+              "count": 489,
+              "percent": 11.938
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 381,
+              "percent": 9.302
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+              "count": 369,
+              "percent": 9.009
+            }
+          ]
+        },
+        {
+          "step": 148,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+              "count": 1914,
+              "percent": 46.729
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 321,
+              "percent": 7.837
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+              "count": 303,
+              "percent": 7.397
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 222,
+              "percent": 5.42
+            },
+            {
+              "key": "move:quick",
+              "count": 157,
+              "percent": 3.833
+            }
+          ]
+        },
+        {
+          "step": 152,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+              "count": 693,
+              "percent": 16.919
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 440,
+              "percent": 10.742
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+              "count": 393,
+              "percent": 9.595
+            },
+            {
+              "key": "place_data:quick",
+              "count": 376,
+              "percent": 9.18
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 364,
+              "percent": 8.887
+            }
+          ]
+        },
+        {
+          "step": 160,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "move:quick",
+              "count": 695,
+              "percent": 16.968
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 661,
+              "percent": 16.138
+            },
+            {
+              "key": "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+              "count": 498,
+              "percent": 12.158
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 311,
+              "percent": 7.593
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+              "count": 248,
+              "percent": 6.055
+            }
+          ]
+        },
+        {
+          "step": 164,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "quick_trade:quick",
+              "count": 1250,
+              "percent": 30.518
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 604,
+              "percent": 14.746
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+              "count": 541,
+              "percent": 13.208
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+              "count": 432,
+              "percent": 10.547
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 294,
+              "percent": 7.178
+            }
+          ]
+        },
+        {
+          "step": 180,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "quick_trade:quick",
+              "count": 964,
+              "percent": 23.535
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 676,
+              "percent": 16.504
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+              "count": 561,
+              "percent": 13.696
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+              "count": 489,
+              "percent": 11.938
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 420,
+              "percent": 10.254
+            }
+          ]
+        },
+        {
+          "step": 197,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 198,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 223,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 232,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 264,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 270,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1312,
+              "percent": 32.031
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+              "count": 400,
+              "percent": 9.766
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 363,
+              "percent": 8.862
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 334,
+              "percent": 8.154
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 312,
+              "percent": 7.617
+            }
+          ]
+        },
+        {
+          "step": 278,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+              "count": 672,
+              "percent": 16.406
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 601,
+              "percent": 14.673
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 496,
+              "percent": 12.109
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 436,
+              "percent": 10.645
+            },
+            {
+              "key": "place_data:quick",
+              "count": 223,
+              "percent": 5.444
+            }
+          ]
+        },
+        {
+          "step": 280,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 845,
+              "percent": 20.63
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 652,
+              "percent": 15.918
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 335,
+              "percent": 8.179
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+              "count": 319,
+              "percent": 7.788
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 242,
+              "percent": 5.908
+            }
+          ]
+        },
+        {
+          "step": 285,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 958,
+              "percent": 23.389
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 605,
+              "percent": 14.771
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+              "count": 345,
+              "percent": 8.423
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 336,
+              "percent": 8.203
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+              "count": 301,
+              "percent": 7.349
+            }
+          ]
+        },
+        {
+          "step": 303,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+              "count": 824,
+              "percent": 20.117
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 441,
+              "percent": 10.767
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 392,
+              "percent": 9.57
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+              "count": 365,
+              "percent": 8.911
+            },
+            {
+              "key": "place_data:quick",
+              "count": 363,
+              "percent": 8.862
+            }
+          ]
+        },
+        {
+          "step": 328,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+              "count": 1088,
+              "percent": 26.563
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 639,
+              "percent": 15.601
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 500,
+              "percent": 12.207
+            },
+            {
+              "key": "place_data:quick",
+              "count": 373,
+              "percent": 9.106
+            },
+            {
+              "key": "card_corner:quick",
+              "count": 273,
+              "percent": 6.665
+            }
+          ]
+        },
+        {
+          "step": 332,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1020,
+              "percent": 24.902
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 844,
+              "percent": 20.605
+            },
+            {
+              "key": "place_data:quick",
+              "count": 329,
+              "percent": 8.032
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+              "count": 304,
+              "percent": 7.422
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 297,
+              "percent": 7.251
+            }
+          ]
+        },
+        {
+          "step": 369,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 720,
+              "percent": 17.578
+            },
+            {
+              "key": "move:quick",
+              "count": 603,
+              "percent": 14.722
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 540,
+              "percent": 13.184
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+              "count": 510,
+              "percent": 12.451
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+              "count": 391,
+              "percent": 9.546
+            }
+          ]
+        },
+        {
+          "step": 412,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 420,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1068,
+              "percent": 26.074
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 482,
+              "percent": 11.768
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 446,
+              "percent": 10.889
+            },
+            {
+              "key": "place_data:quick",
+              "count": 444,
+              "percent": 10.84
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+              "count": 433,
+              "percent": 10.571
+            }
+          ]
+        },
+        {
+          "step": 428,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1802,
+              "percent": 43.994
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+              "count": 350,
+              "percent": 8.545
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+              "count": 296,
+              "percent": 7.227
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 296,
+              "percent": 7.227
+            },
+            {
+              "key": "place_data:quick",
+              "count": 281,
+              "percent": 6.86
+            }
+          ]
+        },
+        {
+          "step": 435,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 435,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1872,
+              "percent": 45.703
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 869,
+              "percent": 21.216
+            },
+            {
+              "key": "place_data:quick",
+              "count": 269,
+              "percent": 6.567
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 264,
+              "percent": 6.445
+            },
+            {
+              "key": "analyze:main",
+              "count": 231,
+              "percent": 5.64
+            }
+          ]
+        },
+        {
+          "step": 439,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 968,
+              "percent": 23.633
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 684,
+              "percent": 16.699
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 339,
+              "percent": 8.276
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+              "count": 244,
+              "percent": 5.957
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 233,
+              "percent": 5.688
+            }
+          ]
+        },
+        {
+          "step": 443,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1940,
+              "percent": 47.363
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 1036,
+              "percent": 25.293
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+              "count": 293,
+              "percent": 7.153
+            },
+            {
+              "key": "analyze:main",
+              "count": 231,
+              "percent": 5.64
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 129,
+              "percent": 3.149
+            }
+          ]
+        },
+        {
+          "step": 449,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "place_data:quick",
+              "count": 594,
+              "percent": 14.502
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 560,
+              "percent": 13.672
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+              "count": 477,
+              "percent": 11.646
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+              "count": 474,
+              "percent": 11.572
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 391,
+              "percent": 9.546
+            }
+          ]
+        },
+        {
+          "step": 476,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 691,
+              "percent": 16.87
+            },
+            {
+              "key": "place_data:quick",
+              "count": 483,
+              "percent": 11.792
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 472,
+              "percent": 11.523
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 441,
+              "percent": 10.767
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 260,
+              "percent": 6.348
+            }
+          ]
+        },
+        {
+          "step": 492,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 824,
+              "percent": 20.117
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 542,
+              "percent": 13.232
+            },
+            {
+              "key": "place_data:quick",
+              "count": 481,
+              "percent": 11.743
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+              "count": 478,
+              "percent": 11.67
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+              "count": 259,
+              "percent": 6.323
+            }
+          ]
+        },
+        {
+          "step": 497,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+              "count": 2111,
+              "percent": 51.538
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+              "count": 291,
+              "percent": 7.104
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 276,
+              "percent": 6.738
+            },
+            {
+              "key": "move:quick",
+              "count": 244,
+              "percent": 5.957
+            },
+            {
+              "key": "place_data:quick",
+              "count": 157,
+              "percent": 3.833
+            }
+          ]
+        },
+        {
+          "step": 537,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 539,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1111,
+              "percent": 27.124
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 794,
+              "percent": 19.385
+            },
+            {
+              "key": "place_data:quick",
+              "count": 509,
+              "percent": 12.427
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+              "count": 438,
+              "percent": 10.693
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 157,
+              "percent": 3.833
+            }
+          ]
+        },
+        {
+          "step": 553,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "place_data:quick",
+              "count": 646,
+              "percent": 15.771
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 623,
+              "percent": 15.21
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 524,
+              "percent": 12.793
+            },
+            {
+              "key": "pass:main",
+              "count": 321,
+              "percent": 7.837
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 294,
+              "percent": 7.178
+            }
+          ]
+        }
+      ],
+      "failures": []
+    },
+    {
+      "commit": "77d36854",
+      "steps": 584,
+      "terminal": true,
+      "wallMs": 566004,
+      "scores": [
+        {
+          "playerId": "player-blue",
+          "total": 101
+        },
+        {
+          "playerId": "player-green",
+          "total": 124
+        },
+        {
+          "playerId": "player-brown",
+          "total": 97
+        },
+        {
+          "playerId": "player-white",
+          "total": 80
+        }
+      ],
+      "mean": 100.5,
+      "all": {
+        "searches": 177,
+        "nodes": 136381,
+        "classes": [
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+            "count": 23129,
+            "percent": 16.959
+          },
+          {
+            "key": "place_data:quick",
+            "count": 12658,
+            "percent": 9.281
+          },
+          {
+            "key": "end_turn:turn_control",
+            "count": 12193,
+            "percent": 8.94
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+            "count": 11235,
+            "percent": 8.238
+          },
+          {
+            "key": "quick_trade:quick",
+            "count": 7842,
+            "percent": 5.75
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+            "count": 5776,
+            "percent": 4.235
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+            "count": 5022,
+            "percent": 3.682
+          },
+          {
+            "key": "pass:main",
+            "count": 5018,
+            "percent": 3.679
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+            "count": 4659,
+            "percent": 3.416
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+            "count": 4393,
+            "percent": 3.221
+          },
+          {
+            "key": "move:quick",
+            "count": 4372,
+            "percent": 3.206
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+            "count": 4044,
+            "percent": 2.965
+          },
+          {
+            "key": "card_corner:quick",
+            "count": 3914,
+            "percent": 2.87
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+            "count": 3623,
+            "percent": 2.657
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+            "count": 3189,
+            "percent": 2.338
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+            "count": 3086,
+            "percent": 2.263
+          },
+          {
+            "key": "scan:main",
+            "count": 2944,
+            "percent": 2.159
+          },
+          {
+            "key": "analyze:main",
+            "count": 2570,
+            "percent": 1.884
+          },
+          {
+            "key": "industry:quick",
+            "count": 2267,
+            "percent": 1.662
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+            "count": 1746,
+            "percent": 1.28
+          },
+          {
+            "key": "land:main",
+            "count": 1592,
+            "percent": 1.167
+          },
+          {
+            "key": "orbit:main",
+            "count": 1453,
+            "percent": 1.065
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+            "count": 1303,
+            "percent": 0.955
+          },
+          {
+            "key": "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+            "count": 1253,
+            "percent": 0.919
+          },
+          {
+            "key": "play_card:main",
+            "count": 1182,
+            "percent": 0.867
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+            "count": 1097,
+            "percent": 0.804
+          },
+          {
+            "key": "research_tech:main",
+            "count": 1044,
+            "percent": 0.766
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4",
+            "count": 687,
+            "percent": 0.504
+          },
+          {
+            "key": "launch:main",
+            "count": 621,
+            "percent": 0.455
+          },
+          {
+            "key": "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger",
+            "count": 525,
+            "percent": 0.385
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards",
+            "count": 436,
+            "percent": 0.32
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income",
+            "count": 381,
+            "percent": 0.279
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income",
+            "count": 343,
+            "percent": 0.252
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+            "count": 279,
+            "percent": 0.205
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech",
+            "count": 184,
+            "percent": 0.135
+          },
+          {
+            "key": "choose_reward:conditional/decision=choose_reward/effect=card_play_domain_effect:decision:card_pay_credits_for_reward/cardEffect=card_pay_credits_for_reward",
+            "count": 58,
+            "percent": 0.043
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_choose_hand_corner_reward/cardEffect=card_choose_hand_corner_reward",
+            "count": 45,
+            "percent": 0.033
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=probe_turn_pass_reserve",
+            "count": 42,
+            "percent": 0.031
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker",
+            "count": 29,
+            "percent": 0.021
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace",
+            "count": 29,
+            "percent": 0.021
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_free_move/cardEffect=card_free_move",
+            "count": 27,
+            "percent": 0.02
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward",
+            "count": 26,
+            "percent": 0.019
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_land/cardEffect=card_land",
+            "count": 17,
+            "percent": 0.012
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+            "count": 13,
+            "percent": 0.01
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income",
+            "count": 8,
+            "percent": 0.006
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_card_corner_repeat/cardEffect=card_discard_card_corner_repeat",
+            "count": 8,
+            "percent": 0.006
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:chong_land_for_pickup/cardEffect=chong_land_for_pickup",
+            "count": 8,
+            "percent": 0.006
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_choose_symbol_reward/cardEffect=amiba_choose_symbol_reward",
+            "count": 5,
+            "percent": 0.004
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card",
+            "count": 4,
+            "percent": 0.003
+          },
+          {
+            "key": "choose_payment:conditional/decision=choose_payment/effect=standard_action_session_decision/context=discard",
+            "count": 2,
+            "percent": 0.001
+          }
+        ],
+        "families": [
+          {
+            "key": "choose_target",
+            "count": 47979,
+            "percent": 35.18
+          },
+          {
+            "key": "choose_card",
+            "count": 26894,
+            "percent": 19.72
+          },
+          {
+            "key": "place_data",
+            "count": 12658,
+            "percent": 9.281
+          },
+          {
+            "key": "end_turn",
+            "count": 12193,
+            "percent": 8.94
+          },
+          {
+            "key": "quick_trade",
+            "count": 7842,
+            "percent": 5.75
+          },
+          {
+            "key": "pass",
+            "count": 5018,
+            "percent": 3.679
+          },
+          {
+            "key": "move",
+            "count": 4372,
+            "percent": 3.206
+          },
+          {
+            "key": "card_corner",
+            "count": 3914,
+            "percent": 2.87
+          },
+          {
+            "key": "scan",
+            "count": 2944,
+            "percent": 2.159
+          },
+          {
+            "key": "analyze",
+            "count": 2570,
+            "percent": 1.884
+          },
+          {
+            "key": "industry",
+            "count": 2267,
+            "percent": 1.662
+          },
+          {
+            "key": "land",
+            "count": 1592,
+            "percent": 1.167
+          },
+          {
+            "key": "orbit",
+            "count": 1453,
+            "percent": 1.065
+          },
+          {
+            "key": "choose_payment",
+            "count": 1255,
+            "percent": 0.92
+          },
+          {
+            "key": "play_card",
+            "count": 1182,
+            "percent": 0.867
+          },
+          {
+            "key": "research_tech",
+            "count": 1044,
+            "percent": 0.766
+          },
+          {
+            "key": "launch",
+            "count": 621,
+            "percent": 0.455
+          },
+          {
+            "key": "accept_optional_effect",
+            "count": 525,
+            "percent": 0.385
+          },
+          {
+            "key": "choose_reward",
+            "count": 58,
+            "percent": 0.043
+          }
+        ]
+      },
+      "full": {
+        "searches": 27,
+        "nodes": 110592,
+        "classes": [
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+            "count": 21430,
+            "percent": 19.378
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+            "count": 10081,
+            "percent": 9.115
+          },
+          {
+            "key": "end_turn:turn_control",
+            "count": 9440,
+            "percent": 8.536
+          },
+          {
+            "key": "place_data:quick",
+            "count": 8253,
+            "percent": 7.463
+          },
+          {
+            "key": "quick_trade:quick",
+            "count": 7495,
+            "percent": 6.777
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+            "count": 4115,
+            "percent": 3.721
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+            "count": 3968,
+            "percent": 3.588
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+            "count": 3905,
+            "percent": 3.531
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+            "count": 3653,
+            "percent": 3.303
+          },
+          {
+            "key": "move:quick",
+            "count": 3597,
+            "percent": 3.252
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+            "count": 3057,
+            "percent": 2.764
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+            "count": 3055,
+            "percent": 2.762
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+            "count": 2963,
+            "percent": 2.679
+          },
+          {
+            "key": "card_corner:quick",
+            "count": 2850,
+            "percent": 2.577
+          },
+          {
+            "key": "scan:main",
+            "count": 2630,
+            "percent": 2.378
+          },
+          {
+            "key": "analyze:main",
+            "count": 2418,
+            "percent": 2.186
+          },
+          {
+            "key": "pass:main",
+            "count": 2129,
+            "percent": 1.925
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+            "count": 2099,
+            "percent": 1.898
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+            "count": 1659,
+            "percent": 1.5
+          },
+          {
+            "key": "land:main",
+            "count": 1533,
+            "percent": 1.386
+          },
+          {
+            "key": "orbit:main",
+            "count": 1418,
+            "percent": 1.282
+          },
+          {
+            "key": "industry:quick",
+            "count": 1252,
+            "percent": 1.132
+          },
+          {
+            "key": "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+            "count": 1104,
+            "percent": 0.998
+          },
+          {
+            "key": "research_tech:main",
+            "count": 1003,
+            "percent": 0.907
+          },
+          {
+            "key": "play_card:main",
+            "count": 894,
+            "percent": 0.808
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move",
+            "count": 884,
+            "percent": 0.799
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+            "count": 750,
+            "percent": 0.678
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4",
+            "count": 613,
+            "percent": 0.554
+          },
+          {
+            "key": "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger",
+            "count": 515,
+            "percent": 0.466
+          },
+          {
+            "key": "launch:main",
+            "count": 433,
+            "percent": 0.392
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves",
+            "count": 279,
+            "percent": 0.252
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards",
+            "count": 272,
+            "percent": 0.246
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income",
+            "count": 222,
+            "percent": 0.201
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income",
+            "count": 192,
+            "percent": 0.174
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech",
+            "count": 184,
+            "percent": 0.166
+          },
+          {
+            "key": "choose_reward:conditional/decision=choose_reward/effect=card_play_domain_effect:decision:card_pay_credits_for_reward/cardEffect=card_pay_credits_for_reward",
+            "count": 58,
+            "percent": 0.052
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_choose_hand_corner_reward/cardEffect=card_choose_hand_corner_reward",
+            "count": 45,
+            "percent": 0.041
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker",
+            "count": 29,
+            "percent": 0.026
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace",
+            "count": 29,
+            "percent": 0.026
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_free_move/cardEffect=card_free_move",
+            "count": 27,
+            "percent": 0.024
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_land/cardEffect=card_land",
+            "count": 17,
+            "percent": 0.015
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+            "count": 13,
+            "percent": 0.012
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income",
+            "count": 8,
+            "percent": 0.007
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_card_corner_repeat/cardEffect=card_discard_card_corner_repeat",
+            "count": 8,
+            "percent": 0.007
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_choose_symbol_reward/cardEffect=amiba_choose_symbol_reward",
+            "count": 5,
+            "percent": 0.005
+          },
+          {
+            "key": "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:chong_land_for_pickup/cardEffect=chong_land_for_pickup",
+            "count": 4,
+            "percent": 0.004
+          },
+          {
+            "key": "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card",
+            "count": 4,
+            "percent": 0.004
+          }
+        ],
+        "families": [
+          {
+            "key": "choose_target",
+            "count": 39696,
+            "percent": 35.894
+          },
+          {
+            "key": "choose_card",
+            "count": 23874,
+            "percent": 21.587
+          },
+          {
+            "key": "end_turn",
+            "count": 9440,
+            "percent": 8.536
+          },
+          {
+            "key": "place_data",
+            "count": 8253,
+            "percent": 7.463
+          },
+          {
+            "key": "quick_trade",
+            "count": 7495,
+            "percent": 6.777
+          },
+          {
+            "key": "move",
+            "count": 3597,
+            "percent": 3.252
+          },
+          {
+            "key": "card_corner",
+            "count": 2850,
+            "percent": 2.577
+          },
+          {
+            "key": "scan",
+            "count": 2630,
+            "percent": 2.378
+          },
+          {
+            "key": "analyze",
+            "count": 2418,
+            "percent": 2.186
+          },
+          {
+            "key": "pass",
+            "count": 2129,
+            "percent": 1.925
+          },
+          {
+            "key": "land",
+            "count": 1533,
+            "percent": 1.386
+          },
+          {
+            "key": "orbit",
+            "count": 1418,
+            "percent": 1.282
+          },
+          {
+            "key": "industry",
+            "count": 1252,
+            "percent": 1.132
+          },
+          {
+            "key": "choose_payment",
+            "count": 1104,
+            "percent": 0.998
+          },
+          {
+            "key": "research_tech",
+            "count": 1003,
+            "percent": 0.907
+          },
+          {
+            "key": "play_card",
+            "count": 894,
+            "percent": 0.808
+          },
+          {
+            "key": "accept_optional_effect",
+            "count": 515,
+            "percent": 0.466
+          },
+          {
+            "key": "launch",
+            "count": 433,
+            "percent": 0.392
+          },
+          {
+            "key": "choose_reward",
+            "count": 58,
+            "percent": 0.052
+          }
+        ]
+      },
+      "submissions": 174587,
+      "cutoffs": [
+        {
+          "step": 24,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "quick_trade:quick",
+              "count": 586,
+              "percent": 14.307
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 576,
+              "percent": 14.063
+            },
+            {
+              "key": "place_data:quick",
+              "count": 559,
+              "percent": 13.647
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+              "count": 282,
+              "percent": 6.885
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+              "count": 263,
+              "percent": 6.421
+            }
+          ]
+        },
+        {
+          "step": 42,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+              "count": 777,
+              "percent": 18.97
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+              "count": 551,
+              "percent": 13.452
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 549,
+              "percent": 13.403
+            },
+            {
+              "key": "place_data:quick",
+              "count": 370,
+              "percent": 9.033
+            },
+            {
+              "key": "move:quick",
+              "count": 359,
+              "percent": 8.765
+            }
+          ]
+        },
+        {
+          "step": 50,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+              "count": 813,
+              "percent": 19.849
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 610,
+              "percent": 14.893
+            },
+            {
+              "key": "move:quick",
+              "count": 435,
+              "percent": 10.62
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 326,
+              "percent": 7.959
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+              "count": 198,
+              "percent": 4.834
+            }
+          ]
+        },
+        {
+          "step": 53,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "place_data:quick",
+              "count": 672,
+              "percent": 16.406
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 552,
+              "percent": 13.477
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+              "count": 489,
+              "percent": 11.938
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 402,
+              "percent": 9.814
+            },
+            {
+              "key": "analyze:main",
+              "count": 367,
+              "percent": 8.96
+            }
+          ]
+        },
+        {
+          "step": 96,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "move:quick",
+              "count": 707,
+              "percent": 17.261
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 516,
+              "percent": 12.598
+            },
+            {
+              "key": "place_data:quick",
+              "count": 495,
+              "percent": 12.085
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 369,
+              "percent": 9.009
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 272,
+              "percent": 6.641
+            }
+          ]
+        },
+        {
+          "step": 165,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1063,
+              "percent": 25.952
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 504,
+              "percent": 12.305
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 463,
+              "percent": 11.304
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 444,
+              "percent": 10.84
+            },
+            {
+              "key": "move:quick",
+              "count": 303,
+              "percent": 7.397
+            }
+          ]
+        },
+        {
+          "step": 172,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1001,
+              "percent": 24.438
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+              "count": 655,
+              "percent": 15.991
+            },
+            {
+              "key": "place_data:quick",
+              "count": 560,
+              "percent": 13.672
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 542,
+              "percent": 13.232
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+              "count": 507,
+              "percent": 12.378
+            }
+          ]
+        },
+        {
+          "step": 174,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 695,
+              "percent": 16.968
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+              "count": 468,
+              "percent": 11.426
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+              "count": 448,
+              "percent": 10.938
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 417,
+              "percent": 10.181
+            },
+            {
+              "key": "place_data:quick",
+              "count": 349,
+              "percent": 8.521
+            }
+          ]
+        },
+        {
+          "step": 184,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+              "count": 616,
+              "percent": 15.039
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_research",
+              "count": 527,
+              "percent": 12.866
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card",
+              "count": 526,
+              "percent": 12.842
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards",
+              "count": 384,
+              "percent": 9.375
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 348,
+              "percent": 8.496
+            }
+          ]
+        },
+        {
+          "step": 195,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 666,
+              "percent": 16.26
+            },
+            {
+              "key": "place_data:quick",
+              "count": 456,
+              "percent": 11.133
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 446,
+              "percent": 10.889
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 378,
+              "percent": 9.229
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+              "count": 378,
+              "percent": 9.229
+            }
+          ]
+        },
+        {
+          "step": 241,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 242,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 273,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 929,
+              "percent": 22.681
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 502,
+              "percent": 12.256
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+              "count": 448,
+              "percent": 10.938
+            },
+            {
+              "key": "place_data:quick",
+              "count": 341,
+              "percent": 8.325
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+              "count": 247,
+              "percent": 6.03
+            }
+          ]
+        },
+        {
+          "step": 278,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 680,
+              "percent": 16.602
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 492,
+              "percent": 12.012
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 448,
+              "percent": 10.938
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 316,
+              "percent": 7.715
+            },
+            {
+              "key": "place_data:quick",
+              "count": 248,
+              "percent": 6.055
+            }
+          ]
+        },
+        {
+          "step": 284,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1156,
+              "percent": 28.223
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 742,
+              "percent": 18.115
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+              "count": 297,
+              "percent": 7.251
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 288,
+              "percent": 7.031
+            },
+            {
+              "key": "place_data:quick",
+              "count": 216,
+              "percent": 5.273
+            }
+          ]
+        },
+        {
+          "step": 294,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1998,
+              "percent": 48.779
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+              "count": 501,
+              "percent": 12.231
+            },
+            {
+              "key": "land:main",
+              "count": 340,
+              "percent": 8.301
+            },
+            {
+              "key": "orbit:main",
+              "count": 339,
+              "percent": 8.276
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 326,
+              "percent": 7.959
+            }
+          ]
+        },
+        {
+          "step": 314,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1445,
+              "percent": 35.278
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 1172,
+              "percent": 28.613
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+              "count": 334,
+              "percent": 8.154
+            },
+            {
+              "key": "land:main",
+              "count": 241,
+              "percent": 5.884
+            },
+            {
+              "key": "orbit:main",
+              "count": 240,
+              "percent": 5.859
+            }
+          ]
+        },
+        {
+          "step": 323,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech",
+              "count": 658,
+              "percent": 16.064
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 531,
+              "percent": 12.964
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 472,
+              "percent": 11.523
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+              "count": 251,
+              "percent": 6.128
+            },
+            {
+              "key": "place_data:quick",
+              "count": 248,
+              "percent": 6.055
+            }
+          ]
+        },
+        {
+          "step": 335,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 648,
+              "percent": 15.82
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 576,
+              "percent": 14.063
+            },
+            {
+              "key": "pass:main",
+              "count": 431,
+              "percent": 10.522
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 427,
+              "percent": 10.425
+            },
+            {
+              "key": "card_corner:quick",
+              "count": 336,
+              "percent": 8.203
+            }
+          ]
+        },
+        {
+          "step": 354,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 354,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "quick_trade:quick",
+              "count": 771,
+              "percent": 18.823
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+              "count": 688,
+              "percent": 16.797
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection",
+              "count": 415,
+              "percent": 10.132
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 345,
+              "percent": 8.423
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+              "count": 344,
+              "percent": 8.398
+            }
+          ]
+        },
+        {
+          "step": 428,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1698,
+              "percent": 41.455
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 416,
+              "percent": 10.156
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 377,
+              "percent": 9.204
+            },
+            {
+              "key": "place_data:quick",
+              "count": 271,
+              "percent": 6.616
+            },
+            {
+              "key": "card_corner:quick",
+              "count": 212,
+              "percent": 5.176
+            }
+          ]
+        },
+        {
+          "step": 432,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 432,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 840,
+              "percent": 20.508
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 579,
+              "percent": 14.136
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 412,
+              "percent": 10.059
+            },
+            {
+              "key": "place_data:quick",
+              "count": 362,
+              "percent": 8.838
+            },
+            {
+              "key": "pass:main",
+              "count": 252,
+              "percent": 6.152
+            }
+          ]
+        },
+        {
+          "step": 438,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 768,
+              "percent": 18.75
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+              "count": 754,
+              "percent": 18.408
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 485,
+              "percent": 11.841
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 407,
+              "percent": 9.937
+            },
+            {
+              "key": "place_data:quick",
+              "count": 366,
+              "percent": 8.936
+            }
+          ]
+        },
+        {
+          "step": 451,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "quick_trade:quick",
+              "count": 600,
+              "percent": 14.648
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 518,
+              "percent": 12.646
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step",
+              "count": 476,
+              "percent": 11.621
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 434,
+              "percent": 10.596
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+              "count": 327,
+              "percent": 7.983
+            }
+          ]
+        },
+        {
+          "step": 457,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1000,
+              "percent": 24.414
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=residual_final_mark",
+              "count": 355,
+              "percent": 8.667
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+              "count": 344,
+              "percent": 8.398
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 328,
+              "percent": 8.008
+            },
+            {
+              "key": "place_data:quick",
+              "count": 285,
+              "percent": 6.958
+            }
+          ]
+        },
+        {
+          "step": 464,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1079,
+              "percent": 26.343
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 804,
+              "percent": 19.629
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 475,
+              "percent": 11.597
+            },
+            {
+              "key": "place_data:quick",
+              "count": 353,
+              "percent": 8.618
+            },
+            {
+              "key": "card_corner:quick",
+              "count": 305,
+              "percent": 7.446
+            }
+          ]
+        },
+        {
+          "step": 483,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 1435,
+              "percent": 35.034
+            },
+            {
+              "key": "place_data:quick",
+              "count": 395,
+              "percent": 9.644
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 357,
+              "percent": 8.716
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+              "count": 279,
+              "percent": 6.812
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 260,
+              "percent": 6.348
+            }
+          ]
+        },
+        {
+          "step": 515,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 826,
+              "percent": 20.166
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 548,
+              "percent": 13.379
+            },
+            {
+              "key": "end_turn:turn_control",
+              "count": 362,
+              "percent": 8.838
+            },
+            {
+              "key": "place_data:quick",
+              "count": 355,
+              "percent": 8.667
+            },
+            {
+              "key": "quick_trade:quick",
+              "count": 338,
+              "percent": 8.252
+            }
+          ]
+        },
+        {
+          "step": 525,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 528,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 532,
+          "kind": "control",
+          "cap": 1,
+          "top": [
+            {
+              "key": "end_turn:turn_control",
+              "count": 1,
+              "percent": 100
+            }
+          ]
+        },
+        {
+          "step": 541,
+          "kind": "strategic",
+          "cap": 4096,
+          "top": [
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+              "count": 913,
+              "percent": 22.29
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+              "count": 606,
+              "percent": 14.795
+            },
+            {
+              "key": "place_data:quick",
+              "count": 474,
+              "percent": 11.572
+            },
+            {
+              "key": "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+              "count": 468,
+              "percent": 11.426
+            },
+            {
+              "key": "choose_target:conditional/decision=choose_target/effect=science_domain_place_data",
+              "count": 271,
+              "percent": 6.616
+            }
+          ]
+        }
+      ],
+      "failures": []
+    }
+  ],
+  "noScoreRegression": false,
+  "noRuleFailures": true,
+  "zeroCutoffs": false,
+  "goalComplete": false,
+  "verified": false,
+  "logicGatePassed": false,
+  "iterationAccepted": false,
+  "knownImplementationDefects": [
+    "company-delayed-availability-repro-20260907.json：暂不可启用被误当作后续无额度"
+  ],
+  "firstReplayDifference": {
+    "step": 42,
+    "before": {
+      "stepIndex": 41,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 2,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            7,
+            6,
+            2,
+            4,
+            3,
+            0
+          ],
+          "player-green": [
+            7,
+            4,
+            3,
+            3,
+            3,
+            0
+          ],
+          "player-brown": [
+            8,
+            3,
+            2,
+            7,
+            4,
+            0
+          ],
+          "player-white": [
+            6,
+            4,
+            0,
+            5,
+            1,
+            0
+          ]
+        }
+      }
+    },
+    "after": {
+      "stepIndex": 41,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:5bda1856",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "寰宇动力",
+          "abilityId": "huanyu_free_moves"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "寰宇动力 1x 行动"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 2,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            7,
+            6,
+            2,
+            4,
+            3,
+            0
+          ],
+          "player-green": [
+            7,
+            4,
+            3,
+            3,
+            3,
+            0
+          ],
+          "player-brown": [
+            8,
+            3,
+            2,
+            7,
+            4,
+            0
+          ],
+          "player-white": [
+            6,
+            4,
+            0,
+            5,
+            1,
+            0
+          ]
+        }
+      }
+    }
+  },
+  "error": {
+    "message": "完整终局均分不得低于当前109.5；下降需继续因果分析",
+    "stack": "AssertionError [ERR_ASSERTION]: 完整终局均分不得低于当前109.5；下降需继续因果分析\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/verify-main-goal-full-20260907.js:61:12)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+  },
+  "sha256": {
+    "reports/research/7feb57c3.96e60c14.full.json": "70999bdabd0d8ca9061af2b565ce6d3e7a17b0b2df5cc09a295941b3a60aa0b3",
+    "reports/research/14114d45.77d36854.full.json": "f6b9f3dccb2f3674ea27234edd5eae0c11124edd269457df8678456a8b4d483d",
+    "seti-saves/seti-save-research-asteroid-movement-modifier-20260907-96e60c14-full-v299.json": "877dc7d38074a4148861863c84bf7d6d8f609dd9e732b8312ec2281002e72051",
+    "seti-saves/seti-save-research-main-goal-movement-20260907-77d36854-full-v297.json": "586f09a5920d8cf3bc2828a2bcda02b6506c99425b47f01e1e725947197c2a07"
+  }
+}

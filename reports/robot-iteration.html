@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-07T01:19:29.043Z",
+  "builtAt": "2026-09-07T05:05:42.414Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "96e60c14",
-  "currentBaseline": "asteroid-movement-modifier-20260907",
+  "headCommit": "77d36854",
+  "currentBaseline": "main-goal-movement-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,603 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "main-goal-movement-20260907",
+      "name": "main-goal-movement-20260907",
+      "date": "2026-09-07",
+      "baseline": "asteroid-movement-modifier-20260907",
+      "head": "77d36854",
+      "commits": [
+        {
+          "hash": "d4fa9350",
+          "date": "2026-09-07",
+          "subject": "登记小行星回合减费修复的固定局验收与未完成项"
+        },
+        {
+          "hash": "fbad715f",
+          "date": "2026-09-07",
+          "subject": "建立卡牌移动目的实例目录并核验热点注册阶段"
+        },
+        {
+          "hash": "fbb35601",
+          "date": "2026-09-07",
+          "subject": "连接卡牌移动目的与阶段路线并核对公司实际额度"
+        },
+        {
+          "hash": "1b612a69",
+          "date": "2026-09-07",
+          "subject": "补联合位置路线的多来源与共享移动额度原型"
+        },
+        {
+          "hash": "e93b91a4",
+          "date": "2026-09-07",
+          "subject": "复用联合路线原型的位置与费用读取并核验完整路线一致性"
+        },
+        {
+          "hash": "73785c89",
+          "date": "2026-09-07",
+          "subject": "核验移动访问的支付完成事件并明确逐输入计划证据边界"
+        },
+        {
+          "hash": "5cb8063b",
+          "date": "2026-09-07",
+          "subject": "记录主要目标优先的移动标准并撤销独立访问规划前置要求"
+        },
+        {
+          "hash": "77d36854",
+          "date": "2026-09-07",
+          "subject": "按主要目标收敛公司和卡牌移动并记录第二艘计划依赖"
+        }
+      ],
+      "summary": "公司与卡牌移动按主要目标生成等成本方向，路线计入免费额度，第二艘保留独立目的与计划依赖，派生目录同步隐藏来源",
+      "diffStat": "56 files changed, 33799 insertions(+), 170 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/audit-movement-completion-events-20260907.js",
+          "insertions": 89,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-joint-position-route-20260907.js",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/card-movement-purpose-directory-20260907.js",
+          "insertions": 101,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/card-movement-route-guidance-20260907.js",
+          "insertions": 90,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/joint-position-route-20260907.js",
+          "insertions": 89,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-asteroid-modifier-full-20260907.js",
+          "insertions": 68,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-card-movement-directory-20260907.js",
+          "insertions": 86,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-card-movement-guidance-20260907.js",
+          "insertions": 93,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-joint-position-route-20260907.js",
+          "insertions": 82,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-main-goal-movement-20260907.js",
+          "insertions": 125,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-probe-location-42-20260907.js",
+          "insertions": 5,
+          "deletions": 2
+        },
+        {
+          "file": "adhoc/verify-visit-stage-route-20260907.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "adhoc/visit-stage-route-20260907.js",
+          "insertions": 19,
+          "deletions": 8
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 15,
+          "deletions": 1
+        },
+        {
+          "file": "docs/ai-node-performance-plan-20260906.md",
+          "insertions": 39,
+          "deletions": 2
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 13,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 14,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 71,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.js",
+          "insertions": 35,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.test.js",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/strategic-goal-evaluator.test.js",
+          "insertions": 46,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.js",
+          "insertions": 20,
+          "deletions": 20
+        },
+        {
+          "file": "randomizer/game/production-kernel.js",
+          "insertions": 140,
+          "deletions": 85
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 36,
+          "deletions": 35
+        },
+        {
+          "file": "reports/iteration/asteroid-modifier-full-verification-20260907.json",
+          "insertions": 450,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/asteroid-movement-modifier-20260907/7feb57c3.96e60c14.full.action-log.html",
+          "insertions": 2052,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/asteroid-movement-modifier-design-20260907.md",
+          "insertions": 15,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/card-movement-directory-20260907.json",
+          "insertions": 822,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-movement-directory-design-20260907.md",
+          "insertions": 62,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-movement-guidance-20260907.json",
+          "insertions": 1973,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-movement-guidance-design-20260907.md",
+          "insertions": 71,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/card-movement-guidance-v2-20260907.json",
+          "insertions": 1973,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/company-demand-design-20260906.md",
+          "insertions": 31,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/joint-position-route-20260907.json",
+          "insertions": 568,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/joint-position-route-design-20260907.md",
+          "insertions": 55,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/joint-position-route-v2-20260907.json",
+          "insertions": 568,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/joint-route-cost-after-local-read-reuse-20260907.json",
+          "insertions": 408,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/joint-route-cost-before-key-cache-20260907.json",
+          "insertions": 420,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/joint-route-read-reuse-design-20260907.md",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/main-goal-movement-contract-20260907.json",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/main-goal-movement-contract-v2-20260907.json",
+          "insertions": 486,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/main-goal-movement-contract-v3-20260907.json",
+          "insertions": 486,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/main-goal-movement-decision-148-20260907.json",
+          "insertions": 5309,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/main-goal-movement-decision-42-20260907.json",
+          "insertions": 5692,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/main-goal-movement-decision-497-20260907.json",
+          "insertions": 1377,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/main-goal-movement-design-20260907.md",
+          "insertions": 88,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/main-goal-movement-final-decision-42-20260907.json",
+          "insertions": 5693,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/main-goal-movement-verification-20260907.md",
+          "insertions": 60,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-completion-events-20260907.json",
+          "insertions": 1559,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/movement-completion-integration-20260907.md",
+          "insertions": 55,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 464,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/visit-source-contract-20260907.md",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/visit-stage-route-design-20260907.md",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/visit-stage-route-v5-20260907.json",
+          "insertions": 1171,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 464,
+          "deletions": 4
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "14114d45.77d36854.full.json",
+          "recordPath": "reports/research/14114d45.77d36854.full.json",
+          "mode": "full",
+          "steps": 584,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 566004,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "77d36854",
+          "createdAt": "2026-09-07T05:02:10.948Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "未通过：584步，正式终局101/124/97/80，均100.5低于基线109.5；136381节点、566004ms，27策略+7控制截断，0规则执行失败。公司移动选择7672→279，但整体未提速。另已正式复现未来公司额度漏算：当前不能启用被误当作后半段无额度；下一轮独立修复。该缺陷与整局降分的因果关系尚未证明，不调权补分。运行开始时生产树干净，运行中仅新增验证脚本和报告。",
+          "scores": {
+            "player-blue": 101,
+            "player-green": 124,
+            "player-brown": 97,
+            "player-white": 80
+          },
+          "avgScore": 100.5,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 101,
+              "base": 62,
+              "tile": 31,
+              "card": 8,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 8
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 10,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 6,
+                "orbitScore": 9,
+                "scanScore": 6,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            },
+            "player-green": {
+              "total": 124,
+              "base": 88,
+              "tile": 36,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 8,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 17,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 32,
+                "orbitScore": 9,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 0
+              }
+            },
+            "player-brown": {
+              "total": 97,
+              "base": 63,
+              "tile": 34,
+              "card": 0,
+              "tileScoresById": {
+                "a": 24,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 24,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 6,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 8,
+                "orbitScore": 6,
+                "scanScore": 7,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-white": {
+              "total": 80,
+              "base": 64,
+              "tile": 16,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 11,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 9,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 19,
+                "orbitScore": 0,
+                "scanScore": 6,
+                "taskCardScore": 0,
+                "techBonusScore": 13
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-main-goal-movement-20260907-77d36854-full-v297.json",
+          "reportPath": "reports/iteration/main-goal-movement-20260907/14114d45.77d36854.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "14114d45.77d36854.full",
+            "path": "reports/iteration/main-goal-movement-20260907/14114d45.77d36854.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "asteroid-movement-modifier-20260907",
       "name": "穿越小行星带回合减费修复",
@@ -640,7 +1237,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
