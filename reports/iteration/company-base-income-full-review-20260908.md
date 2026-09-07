@@ -73,6 +73,9 @@ V输入审计通过。浏览器UMD晚加载语义通过，但本次未运行真�
 - [完整分类、满额点和首差](company-base-income-full-review-20260908.json)，只读汇总命令：
   `node adhoc/summarize-expired-sector-full-20260908.js --company-income`。
 - [消费者一致性检查](company-income-consumers-20260908.json)
+- [蓝方第161步扫描/发射候选与节点分布](blue161-candidates-review-20260908.md)：发射28.33、
+  扫描31.50；差别来自现有首痕迹预期，发射并非完全未搜。该点仍4096截断，
+  终局板块、放数据、图灵借科技约占60%，不将局部排序解释外推为整局最优。
 - [按正确规则对齐的分数来源与逐回合行动](company-income-full-delta-20260908.json)，
   `node adhoc/inspect-chong-blue-full-delta-20260908.js --company-income`；使用已验证的前版
   终局诊断分，不调用主目录未更新的生产计分器重算。蓝方少21分=基础-22、板块-1、卡牌+2；
