@@ -1,0 +1,9 @@
+{
+  "scope": "第一次历史42候选补证导出失败，不是规则执行失败",
+  "codeCommit": "96e60c14",
+  "message": "RangeError: Invalid string length",
+  "site": "JSON.stringify({ codeCommit, tree, scope, wallMs, legalActions, result, diagnostics })",
+  "verifiedBeforeFailure": "决策成功、动作和完整计划与原96e记录一致、节点和正式输入数一致、failedNodeCountByCode为空",
+  "savedCapture": false,
+  "nextAction": "缺失证据按JSONL逐叶压缩导出；不重跑完整局、不调整生产代码"
+}
