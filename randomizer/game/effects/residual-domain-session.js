@@ -1032,6 +1032,8 @@
   }
 
   function createFormalCardEffectNode(effect, ownerId, cardInstanceId) {
+    const scan = cardPlayDomain.createScienceScanEffect(effect, ownerId, cardInstanceId);
+    if (scan) return { ...scan, priority: "trigger" };
     if (effect.type === cardEffects.REWARD_TYPES.ALIEN_TRACE) {
       return { priority: "trigger", effect: science.createAlienTraceEffect(ownerId, effect, cardInstanceId) };
     }
@@ -1054,19 +1056,6 @@
       payload.options = {
         ...clone(effect.options || {}),
         skipCost: effect.options?.skipCost !== false,
-      };
-    } else if (effect.type === cardEffects.EFFECT_TYPES.SCAN_ACTION) {
-      // 扫描行动走 science EXECUTE → scanQueue（串尾自带 SCAN_FINALIZE 统一结算）。
-      // 其余扫描家族（SCAN_NEBULA/ANY_SECTOR_SCAN/SCAN_COLOR_CHOICE/PUBLIC_SCAN 等）
-      // 在卡牌域统一收敛到 science SCAN_STEP（play-domain createSpawnedCardEffect）；
-      // 本域（外星/任务/公司触发）当前没有任何扫描家族效果来源，故不重复映射。
-      type = science.EFFECT_TYPES.EXECUTE;
-      payload.action = {
-        family: "scan",
-        phase: "main",
-        actorId: ownerId,
-        target: { kind: "card-scan-action" },
-        payload: { skipCost: true },
       };
     }
     return {
@@ -1175,7 +1164,7 @@
         }
       }
     }
-    return { ok: true, spawnedEffects, irreversible };
+    return { ok: true, spawnedEffects: cardPlayDomain.chainScanFinalize(spawnedEffects, player.id, "trigger"), irreversible };
   }
 
   // 统一奖励应用：reward 对象（资源/数据/抽卡/精选/移动/符文符号）转效果并结算。

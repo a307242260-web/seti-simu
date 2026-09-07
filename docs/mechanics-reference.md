@@ -335,6 +335,10 @@ PASS 提交后（`passCompletionPending` 置位或已计入 `passedPlayerIds`）
 
 ### 扫描效果队列
 
+打牌与卡牌触发奖励共用`play-domain.createScienceScanEffect`生成九类正式扫描描述，
+并共用`chainScanFinalize`在整批SCAN_STEP之后追加一次收尾；触发批保留trigger优先级，
+打牌批保留direct优先级。非扫描返回null，不转移原owner；不恢复旧卡牌扫描执行器。
+
 `science-session`显式注入共享`rockets`模块，探测器扇区读取统一使用
 `getRocketSectorCoordinate`；Browser与Node遵循相同依赖，不借用隐式全局变量。
 

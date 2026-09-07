@@ -1,0 +1,53 @@
+{
+  "source": "610正式检查点与已录制复现链，无AI",
+  "results": [
+    {
+      "color": "yellow",
+      "candidates": [
+        "sector-4-a",
+        "sector-3-a"
+      ],
+      "finalScore": 65,
+      "restoredIdentically": true,
+      "finalizeCount": 1,
+      "settleCount": 1,
+      "filledSectorFixture": {
+        "nebulaId": "sector-4-a",
+        "settlementDelta": 1,
+        "restoredIdentically": true
+      }
+    },
+    {
+      "color": "red",
+      "candidates": [
+        "sector-2-b",
+        "sector-3-b"
+      ],
+      "finalScore": 65,
+      "restoredIdentically": true,
+      "finalizeCount": 1,
+      "settleCount": 1,
+      "filledSectorFixture": {
+        "nebulaId": "sector-2-b",
+        "settlementDelta": 1,
+        "restoredIdentically": true
+      }
+    },
+    {
+      "color": "blue",
+      "candidates": [
+        "sector-2-a",
+        "sector-1-a"
+      ],
+      "finalScore": 65,
+      "restoredIdentically": true,
+      "finalizeCount": 1,
+      "settleCount": 1,
+      "filledSectorFixture": {
+        "nebulaId": "sector-2-a",
+        "settlementDelta": 1,
+        "restoredIdentically": true
+      }
+    }
+  ]
+}

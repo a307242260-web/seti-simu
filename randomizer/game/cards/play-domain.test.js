@@ -16,6 +16,55 @@ const aliens = require("../aliens");
 const solar = require("../../solar-system/core");
 const rockets = require("../rockets");
 
+// 共享扫描转换覆盖完整有限目录；非扫描不接管，probe回手仍交正式卡牌执行器。
+for (const [name, mode] of [
+  ["PUBLIC_SCAN", "public"], ["SCAN_ACTION", null], ["SCAN_NEBULA", "specified"],
+  ["ANY_SECTOR_SCAN", "any"], ["SCAN_COLOR_CHOICE", "color"],
+  ["PLANET_SECTOR_SCAN", "planet"], ["LANDING_SECTOR_SCAN", "landing"],
+  ["PROBE_SECTOR_SCAN", "probe"], ["CONDITIONAL_SECTOR_SCAN", "conditional"],
+]) {
+  const input = { id: "scan-proof", type: cardEffects.EFFECT_TYPES[name], label: "扫描奖励",
+    options: { repeat: 2, nebulaId: "sector-1-a", color: "blue", planetId: "mars",
+      gainData: false, returnToHandIfSignalCount: 2, condition: { type: "proof-condition" } } };
+  const before = structuredClone(input);
+  const node = playDomain.createScienceScanEffect(input, "p1", "card-instance");
+  assert.equal(node.priority, "direct");
+  assert.equal(node.effect.ownerId, "p1");
+  assert.equal(node.effect.payload.cardInstanceId, "card-instance");
+  assert.deepEqual(node.effect.payload.cardEffect, input);
+  assert.equal(node.effect.type, mode ? scienceSession.EFFECT_TYPES.SCAN_STEP : scienceSession.EFFECT_TYPES.EXECUTE);
+  if (mode) assert.equal(node.effect.payload.options.mode, mode);
+  if (name === "PROBE_SECTOR_SCAN") {
+    const next = node.effect.payload.afterProbeScan;
+    assert.equal(next.effect.type, "card_play_domain_effect:effect:card_return_played_card_to_hand_if");
+    assert.equal(next.effect.payload.cardInstanceId, "card-instance");
+    assert.equal(next.effect.payload.cardEffect.options.condition.count, 2);
+  }
+  node.effect.payload.cardEffect.options.repeat = 99;
+  assert.deepEqual(input, before, "转换产物与输入独立");
+}
+assert.equal(playDomain.createScienceScanEffect({ type: "gain_resources" }, "p1", "c1"), null);
+
+{
+  const scan = playDomain.createScienceScanEffect({ type: cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE,
+    options: { color: "yellow" } }, "p1", "c1");
+  const batch = [scan, structuredClone(scan)];
+  const before = structuredClone(batch);
+  for (const priority of ["direct", "trigger"]) {
+    const chained = playDomain.chainScanFinalize(batch, "p1", priority);
+    assert.deepEqual(chained.slice(0, -1), before, "扫描顺序不变");
+    assert.deepEqual(chained.at(-1), { priority,
+      effect: { type: scienceSession.EFFECT_TYPES.SCAN_FINALIZE, ownerId: "p1" } });
+    assert.equal(chained.length, 3, "同批两个扫描只追加一次收尾");
+  }
+  assert.deepEqual(batch, before, "组链不修改输入");
+  assert.equal(playDomain.chainScanFinalize(batch, "p1").at(-1).priority, "direct");
+  const action = [playDomain.createScienceScanEffect({ type: cardEffects.EFFECT_TYPES.SCAN_ACTION,
+    options: {} }, "p1", "c1")];
+  assert.deepEqual(playDomain.chainScanFinalize(action, "p1"), action, "主扫描自带收尾，不重复追加");
+  assert.deepEqual(playDomain.chainScanFinalize([], "p1"), []);
+}
+
 assert.equal(playDomain.REACHABLE_PLAY_EFFECT_TYPES.length, 66);
 assert.deepEqual(
   playDomain.OWNED_PLAY_EFFECT_TYPES,
