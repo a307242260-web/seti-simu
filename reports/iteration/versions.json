@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "company-delayed-allowance-20260907",
+      "name": "company-delayed-allowance-20260907",
+      "date": "2026-09-07",
+      "baseline": "main-goal-movement-20260907",
+      "head": "9968644b",
+      "commits": [
+        "7f2e6a96",
+        "9968644b"
+      ],
+      "summary": "公司未来移动额度改读未用额度；当前启用仍校验正式方向与公司条件",
+      "records": {
+        "b347c0e8.9968644b.full.json": {
+          "note": "584步，正式终局101/124/97/80，均100.5；全部replay与终局状态同77d36854，136381节点、174587正式输入、27策略及7控制截断、0规则失败。公司未来额度反例修复通过；完整局仍低于109.5，整体效果与Goal未通过，不宣称提速或查明此前降分原因。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "main-goal-movement-20260907",
       "name": "main-goal-movement-20260907",
       "date": "2026-09-07",
