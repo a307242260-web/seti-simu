@@ -224,8 +224,10 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   targetId=null 进初始 frontier（L4a 放开）；未绑定 origin 展开 ≤3 层
   （`MAX_UNTARGETED_DEPTH`）即收束 pruned（浅尝，防无限深挖）；
 - `expected-score-evaluator#selectSecondaryAgentSuccessors`：`!routeTargetId` 分支
-  返回 targeted + 未绑定后继 top-K（`MAX_UNIFIED_SUCCESSORS`=4，按 family 基础
-  价值 + 净资源收益排序）+ controls；未绑定分支的 choose_payment（弃牌/移动支付）
+  返回 targeted + 合格未绑定后继（按 family 基础价值 + 净资源收益排序）+ controls，
+  统一交全局搜索预算。普通move与quick_trade/card_corner仅经targeted进入；目录
+  未选中的移动不再作为无目标后继补回。正式合法集、同成本路线首步及支付不变。
+  未绑定分支的 choose_payment（弃牌/移动支付）
   与交易选牌视为纯结算直接不展开；绑定分支弃牌折叠的 `targetUsesFungibleResources`
   扩展覆盖探测行动目标（orbit:/land:/move: 前缀），card:/decision: 卡牌身份目标
   仍保留全部 choice；弃牌会话延续层（actionChain 末尾已是 choose_payment）直接

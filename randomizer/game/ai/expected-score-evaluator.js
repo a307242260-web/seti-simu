@@ -59,7 +59,8 @@
   // launch、全盘 84.5→57 崩）。place_data 是合法主行动后继（数据溢出/缺口时
   // 填上拿资源，"溢出不浪费"），untargeted 枚举保留。
   const UNTARGETED_MEANS_ONLY_FAMILIES = Object.freeze(new Set([
-    "quick_trade", "card_corner",
+    // 普通移动与免费移动一致：目录拒绝的方向不得从无目标后继补回。
+    "quick_trade", "card_corner", "move",
   ]));
   // 未绑定后继的立即价值排序：family 基础价值（探测/着陆等直接推进盘面 > 纯资源
   // 转换 > 卡角/公司） + 净资源收益（cost/gain）。仅用于搜索预算分配，不是最终

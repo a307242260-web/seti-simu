@@ -1,0 +1,3107 @@
+{
+  "scope": "真实42/148/497当前合法集与目标入口只读核验，不运行AI",
+  "mode": "before",
+  "rows": [
+    {
+      "step": 42,
+      "legal": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:1b66b805",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:91c74616",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-5-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "dlc_35.png"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:4b198271",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-6-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "handIndex": 1
+          },
+          "decision": null,
+          "summary": "b_115.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:5ef1aba4",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-7-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 3
+            },
+            "handIndex": 2
+          },
+          "decision": null,
+          "summary": "dlc_11.png"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "pass",
+          "phase": "main",
+          "actionId": "pass:ff716055",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "pass"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "PASS"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:2729ba3d",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 1 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:00ca1be1",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 1,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 1 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:6409366d",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 1,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 1 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:8fb1f33c",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:695254e0",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 2,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:cc916f6c",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 2,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:ee5652be",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "credits-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1能量"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:90440450",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "credits-for-card"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:dafd4f4a",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "cards-for-credit"
+          },
+          "payload": {
+            "cost": {
+              "handSize": 2
+            },
+            "gain": {
+              "credits": 1
+            }
+          },
+          "decision": null,
+          "summary": "2张牌 → 1信用点"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:0037d2c5",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "cards-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "handSize": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2张牌 → 1能量"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:38002215",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "cards-for-pick-card"
+          },
+          "payload": {
+            "cost": {
+              "handSize": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2张牌 → 精选1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:fcb81f7a",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "energy-for-card"
+          },
+          "payload": {
+            "cost": {
+              "energy": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2能量 → 1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:5efaa113",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "payload": {
+            "cost": {
+              "energy": 2
+            },
+            "gain": {
+              "credits": 1
+            }
+          },
+          "decision": null,
+          "summary": "2能量 → 1信用点"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:76cce73d",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "publicity-for-card"
+          },
+          "payload": {
+            "cost": {
+              "publicity": 3
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "3宣传 → 精选1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:16a0f2d7",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "tradeId": "energy-for-move"
+          },
+          "payload": {
+            "cost": {
+              "energy": 1
+            },
+            "gain": {}
+          },
+          "decision": null,
+          "summary": "1能量 → 移动1步"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "industry",
+          "phase": "quick",
+          "actionId": "industry:5bda1856",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "寰宇动力 1x 行动"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:7945e2ee",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-5-0"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "dlc_35.png：弃牌角标"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:37c1e431",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-6-0"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "b_115.webp：弃牌角标"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:fbf752cc",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-7-0"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "dlc_11.png：弃牌角标"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据"
+        }
+      ],
+      "catalog": [
+        {
+          "targetId": "land:mars:planet:",
+          "planId": "probe:rocket:1:land:mars:planet:",
+          "resultTargetIds": [
+            "land:mars:planet:"
+          ],
+          "compatibleActionIds": [
+            "industry:5bda1856"
+          ]
+        },
+        {
+          "targetId": "orbit:mars:planet:",
+          "planId": "probe:rocket:1:orbit:mars:planet:",
+          "resultTargetIds": [
+            "income:gain:5,1,0,0,1,0",
+            "orbit:mars:planet:"
+          ],
+          "compatibleActionIds": [
+            "industry:5bda1856"
+          ]
+        },
+        {
+          "targetId": "income:gain:5,1,0,0,1,0",
+          "planId": "income:data:computer-slot-4",
+          "resultTargetIds": [
+            "income:gain:5,1,0,0,1,0"
+          ],
+          "compatibleActionIds": [
+            "place_data:dbe01b29"
+          ]
+        },
+        {
+          "targetId": "sector:win:sector-1-a:1",
+          "planId": "sector:standard-scan:sector-1-a",
+          "resultTargetIds": [
+            "sector:win:sector-1-a:1"
+          ],
+          "compatibleActionIds": [
+            "scan:1b66b805"
+          ]
+        },
+        {
+          "targetId": "tech:gain:blue1",
+          "planId": "tech:blue1:1",
+          "resultTargetIds": [
+            "tech:gain:blue1"
+          ],
+          "compatibleActionIds": [
+            "place_data:dbe01b29"
+          ]
+        },
+        {
+          "targetId": "tech:gain:blue2",
+          "planId": "tech:blue2:1",
+          "resultTargetIds": [
+            "tech:gain:blue2"
+          ],
+          "compatibleActionIds": [
+            "place_data:dbe01b29"
+          ]
+        },
+        {
+          "targetId": "tech:gain:orange3",
+          "planId": "tech:orange3:",
+          "resultTargetIds": [
+            "tech:gain:orange3"
+          ],
+          "compatibleActionIds": [
+            "place_data:dbe01b29"
+          ]
+        }
+      ],
+      "roots": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:1b66b805",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "industry",
+          "phase": "quick",
+          "actionId": "industry:5bda1856",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "寰宇动力 1x 行动"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据"
+        }
+      ],
+      "selected": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据",
+          "routeTargetId": "income:gain:5,1,0,0,1,0",
+          "routePlanId": "income:data:computer-slot-4",
+          "routeResultTargetIds": [
+            "income:gain:5,1,0,0,1,0"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据",
+          "routeTargetId": "tech:gain:blue1",
+          "routePlanId": "tech:blue1:1",
+          "routeResultTargetIds": [
+            "tech:gain:blue1"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据",
+          "routeTargetId": "tech:gain:blue2",
+          "routePlanId": "tech:blue2:1",
+          "routeResultTargetIds": [
+            "tech:gain:blue2"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据",
+          "routeTargetId": "tech:gain:orange3",
+          "routePlanId": "tech:orange3:",
+          "routeResultTargetIds": [
+            "tech:gain:orange3"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "industry",
+          "phase": "quick",
+          "actionId": "industry:5bda1856",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "寰宇动力 1x 行动",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:1:land:mars:planet:",
+          "routeResultTargetIds": [
+            "land:mars:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "industry",
+          "phase": "quick",
+          "actionId": "industry:5bda1856",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "寰宇动力 1x 行动",
+          "routeTargetId": "orbit:mars:planet:",
+          "routePlanId": "probe:rocket:1:orbit:mars:planet:",
+          "routeResultTargetIds": [
+            "income:gain:5,1,0,0,1,0",
+            "orbit:mars:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:1b66b805",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描",
+          "routeTargetId": "sector:win:sector-1-a:1",
+          "routePlanId": "sector:standard-scan:sector-1-a",
+          "routeResultTargetIds": [
+            "sector:win:sector-1-a:1"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:00ca1be1",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 1,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 1 顺时针",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:2729ba3d",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 1 向外",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:6409366d",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 1,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 1 逆时针",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:695254e0",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 2,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 顺时针",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:8fb1f33c",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 向外",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:cc916f6c",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 2,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 逆时针",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:91c74616",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-5-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "dlc_35.png",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:4b198271",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-6-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "handIndex": 1
+          },
+          "decision": null,
+          "summary": "b_115.webp",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:5ef1aba4",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-7-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 3
+            },
+            "handIndex": 2
+          },
+          "decision": null,
+          "summary": "dlc_11.png",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "pass",
+          "phase": "main",
+          "actionId": "pass:ff716055",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "pass"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "PASS",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        }
+      ],
+      "leaks": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:00ca1be1",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 1,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 1 顺时针",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:2729ba3d",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 1 向外",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:6409366d",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 1,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 1 逆时针",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:695254e0",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 2,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 顺时针",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:8fb1f33c",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 向外",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:cc916f6c",
+          "actorId": "player-green",
+          "stateVersion": 11,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 2,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 逆时针",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        }
+      ]
+    },
+    {
+      "step": 148,
+      "legal": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:70d77c1b",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:1b66b805",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:269f8980",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-21-pass-1-2"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_24.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:b59b1abd",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-45-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 1
+          },
+          "decision": null,
+          "summary": "dlc_32.png"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:a07511cf",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-46-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 2
+          },
+          "decision": null,
+          "summary": "b_13.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "pass",
+          "phase": "main",
+          "actionId": "pass:ff716055",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "kind": "pass"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "PASS"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:8fb1f33c",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:695254e0",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "rocketId": 2,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:cc916f6c",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "rocketId": 2,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:ee5652be",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "tradeId": "credits-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1能量"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:90440450",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "tradeId": "credits-for-card"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:dafd4f4a",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "tradeId": "cards-for-credit"
+          },
+          "payload": {
+            "cost": {
+              "handSize": 2
+            },
+            "gain": {
+              "credits": 1
+            }
+          },
+          "decision": null,
+          "summary": "2张牌 → 1信用点"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:0037d2c5",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "tradeId": "cards-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "handSize": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2张牌 → 1能量"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:38002215",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "tradeId": "cards-for-pick-card"
+          },
+          "payload": {
+            "cost": {
+              "handSize": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2张牌 → 精选1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:fcb81f7a",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "tradeId": "energy-for-card"
+          },
+          "payload": {
+            "cost": {
+              "energy": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2能量 → 1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:5efaa113",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "payload": {
+            "cost": {
+              "energy": 2
+            },
+            "gain": {
+              "credits": 1
+            }
+          },
+          "decision": null,
+          "summary": "2能量 → 1信用点"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:76cce73d",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "tradeId": "publicity-for-card"
+          },
+          "payload": {
+            "cost": {
+              "publicity": 3
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "3宣传 → 精选1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:16a0f2d7",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "tradeId": "energy-for-move"
+          },
+          "payload": {
+            "cost": {
+              "energy": 1
+            },
+            "gain": {}
+          },
+          "decision": null,
+          "summary": "1能量 → 移动1步"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "industry",
+          "phase": "quick",
+          "actionId": "industry:5bda1856",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "寰宇动力 1x 行动"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:f41c30d8",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-21-pass-1-2"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "b_24.webp：弃牌角标"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:91432e3a",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-45-0"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "dlc_32.png：弃牌角标"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:e4a943d4",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-46-0"
+          },
+          "payload": {
+            "kind": "move",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "b_13.webp：弃牌角标"
+        }
+      ],
+      "catalog": [
+        {
+          "targetId": "land:venus:planet:",
+          "planId": "probe:rocket:2:land:venus:planet:",
+          "resultTargetIds": [
+            "land:venus:planet:"
+          ],
+          "compatibleActionIds": [
+            "industry:5bda1856",
+            "move:cc916f6c",
+            "play_card:269f8980"
+          ]
+        },
+        {
+          "targetId": "orbit:venus:planet:",
+          "planId": "probe:rocket:2:orbit:venus:planet:",
+          "resultTargetIds": [
+            "income:gain:5,2,0,0,2,0",
+            "orbit:venus:planet:"
+          ],
+          "compatibleActionIds": [
+            "industry:5bda1856",
+            "move:cc916f6c",
+            "play_card:269f8980"
+          ]
+        },
+        {
+          "targetId": "income:gain:5,2,0,0,2,0",
+          "planId": "income:data:computer-slot-4",
+          "resultTargetIds": [
+            "income:gain:5,2,0,0,2,0"
+          ],
+          "compatibleActionIds": [
+            "scan:1b66b805"
+          ]
+        },
+        {
+          "targetId": "sector:win:sector-1-a:1",
+          "planId": "sector:standard-scan:sector-1-a",
+          "resultTargetIds": [
+            "sector:win:sector-1-a:1"
+          ],
+          "compatibleActionIds": [
+            "scan:1b66b805"
+          ]
+        },
+        {
+          "targetId": "tech:gain:orange2",
+          "planId": "tech:orange2:",
+          "resultTargetIds": [
+            "tech:gain:orange2"
+          ],
+          "compatibleActionIds": [
+            "card_corner:f41c30d8"
+          ]
+        },
+        {
+          "targetId": "tech:gain:orange3",
+          "planId": "tech:orange3:",
+          "resultTargetIds": [
+            "tech:gain:orange3"
+          ],
+          "compatibleActionIds": [
+            "card_corner:f41c30d8"
+          ]
+        },
+        {
+          "targetId": "tech:gain:purple4",
+          "planId": "tech:purple4:",
+          "resultTargetIds": [
+            "tech:gain:purple4"
+          ],
+          "compatibleActionIds": [
+            "card_corner:f41c30d8"
+          ]
+        }
+      ],
+      "roots": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:1b66b805",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:269f8980",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-21-pass-1-2"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_24.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:cc916f6c",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "rocketId": 2,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "industry",
+          "phase": "quick",
+          "actionId": "industry:5bda1856",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "寰宇动力 1x 行动"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:f41c30d8",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-21-pass-1-2"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "b_24.webp：弃牌角标"
+        }
+      ],
+      "selected": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:1b66b805",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描",
+          "routeTargetId": "income:gain:5,2,0,0,2,0",
+          "routePlanId": "income:data:computer-slot-4",
+          "routeResultTargetIds": [
+            "income:gain:5,2,0,0,2,0"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:f41c30d8",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-21-pass-1-2"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "b_24.webp：弃牌角标",
+          "routeTargetId": "tech:gain:orange2",
+          "routePlanId": "tech:orange2:",
+          "routeResultTargetIds": [
+            "tech:gain:orange2"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:f41c30d8",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-21-pass-1-2"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "b_24.webp：弃牌角标",
+          "routeTargetId": "tech:gain:orange3",
+          "routePlanId": "tech:orange3:",
+          "routeResultTargetIds": [
+            "tech:gain:orange3"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:f41c30d8",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-21-pass-1-2"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "b_24.webp：弃牌角标",
+          "routeTargetId": "tech:gain:purple4",
+          "routePlanId": "tech:purple4:",
+          "routeResultTargetIds": [
+            "tech:gain:purple4"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "industry",
+          "phase": "quick",
+          "actionId": "industry:5bda1856",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "寰宇动力 1x 行动",
+          "routeTargetId": "orbit:venus:planet:",
+          "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+          "routeResultTargetIds": [
+            "income:gain:5,2,0,0,2,0",
+            "orbit:venus:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:cc916f6c",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "rocketId": 2,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 逆时针",
+          "routeTargetId": "orbit:venus:planet:",
+          "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+          "routeResultTargetIds": [
+            "income:gain:5,2,0,0,2,0",
+            "orbit:venus:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:269f8980",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-21-pass-1-2"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_24.webp",
+          "routeTargetId": "orbit:venus:planet:",
+          "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+          "routeResultTargetIds": [
+            "income:gain:5,2,0,0,2,0",
+            "orbit:venus:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "industry",
+          "phase": "quick",
+          "actionId": "industry:5bda1856",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "寰宇动力 1x 行动",
+          "routeTargetId": "land:venus:planet:",
+          "routePlanId": "probe:rocket:2:land:venus:planet:",
+          "routeResultTargetIds": [
+            "land:venus:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:cc916f6c",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "rocketId": 2,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 逆时针",
+          "routeTargetId": "land:venus:planet:",
+          "routePlanId": "probe:rocket:2:land:venus:planet:",
+          "routeResultTargetIds": [
+            "land:venus:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:269f8980",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-21-pass-1-2"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_24.webp",
+          "routeTargetId": "land:venus:planet:",
+          "routePlanId": "probe:rocket:2:land:venus:planet:",
+          "routeResultTargetIds": [
+            "land:venus:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:1b66b805",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描",
+          "routeTargetId": "sector:win:sector-1-a:1",
+          "routePlanId": "sector:standard-scan:sector-1-a",
+          "routeResultTargetIds": [
+            "sector:win:sector-1-a:1"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:70d77c1b",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:695254e0",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "rocketId": 2,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 顺时针",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:8fb1f33c",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 向外",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:a07511cf",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-46-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 2
+          },
+          "decision": null,
+          "summary": "b_13.webp",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:b59b1abd",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "cardInstanceId": "card-45-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 1
+          },
+          "decision": null,
+          "summary": "dlc_32.png",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "pass",
+          "phase": "main",
+          "actionId": "pass:ff716055",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "kind": "pass"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "PASS",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        }
+      ],
+      "leaks": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:695254e0",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "rocketId": 2,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 顺时针",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:8fb1f33c",
+          "actorId": "player-green",
+          "stateVersion": 69,
+          "decisionVersion": 2,
+          "target": {
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 2 向外",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        }
+      ]
+    },
+    {
+      "step": 497,
+      "legal": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:70d77c1b",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "orbit",
+          "phase": "main",
+          "actionId": "orbit:0372d487",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "planetId": "mars"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "环绕火星 - 奖励：精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R12，1信用点 + 1能量）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "land",
+          "phase": "main",
+          "actionId": "land:1cbade2c",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "select": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "登陆"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:1b66b805",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:57da1d07",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "cardInstanceId": "card-31-pass-3-2"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "dlc_12.png"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:31e55c73",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "cardInstanceId": "card-81-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 3
+            },
+            "handIndex": 1
+          },
+          "decision": null,
+          "summary": "b_137.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "pass",
+          "phase": "main",
+          "actionId": "pass:ff716055",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "kind": "pass"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "PASS"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:f7da222d",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:5212ef59",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:0c89471d",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:4c45c4af",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": -1
+          },
+          "payload": {
+            "direction": "in",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 向内"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:ee5652be",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "tradeId": "credits-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1能量"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:90440450",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "tradeId": "credits-for-card"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2信用点 → 1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:dafd4f4a",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "tradeId": "cards-for-credit"
+          },
+          "payload": {
+            "cost": {
+              "handSize": 2
+            },
+            "gain": {
+              "credits": 1
+            }
+          },
+          "decision": null,
+          "summary": "2张牌 → 1信用点"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:0037d2c5",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "tradeId": "cards-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "handSize": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "decision": null,
+          "summary": "2张牌 → 1能量"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:38002215",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "tradeId": "cards-for-pick-card"
+          },
+          "payload": {
+            "cost": {
+              "handSize": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2张牌 → 精选1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:fcb81f7a",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "tradeId": "energy-for-card"
+          },
+          "payload": {
+            "cost": {
+              "energy": 2
+            },
+            "gain": {
+              "handSize": 1
+            }
+          },
+          "decision": null,
+          "summary": "2能量 → 1张牌"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:5efaa113",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "payload": {
+            "cost": {
+              "energy": 2
+            },
+            "gain": {
+              "credits": 1
+            }
+          },
+          "decision": null,
+          "summary": "2能量 → 1信用点"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "quick_trade",
+          "phase": "quick",
+          "actionId": "quick_trade:16a0f2d7",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "tradeId": "energy-for-move"
+          },
+          "payload": {
+            "cost": {
+              "energy": 1
+            },
+            "gain": {}
+          },
+          "decision": null,
+          "summary": "1能量 → 移动1步"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "industry",
+          "phase": "quick",
+          "actionId": "industry:5bda1856",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "寰宇动力 1x 行动"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:6c88b5bf",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "cardInstanceId": "card-31-pass-3-2"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "dlc_12.png：弃牌角标"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:06775b03",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "cardInstanceId": "card-81-0"
+          },
+          "payload": {
+            "kind": "move",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "b_137.webp：弃牌角标"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据"
+        }
+      ],
+      "catalog": [
+        {
+          "targetId": "land:mars:planet:",
+          "planId": "probe:rocket:12:land:mars:planet:",
+          "resultTargetIds": [
+            "land:mars:planet:"
+          ],
+          "compatibleActionIds": [
+            "land:1cbade2c"
+          ]
+        },
+        {
+          "targetId": "orbit:venus:planet:",
+          "planId": "probe:rocket:12:orbit:venus:planet:",
+          "resultTargetIds": [
+            "income:gain:6,2,0,0,2,0",
+            "orbit:venus:planet:"
+          ],
+          "compatibleActionIds": [
+            "industry:5bda1856",
+            "move:0c89471d",
+            "move:4c45c4af",
+            "play_card:57da1d07"
+          ]
+        },
+        {
+          "targetId": "income:gain:6,2,0,0,2,0",
+          "planId": "income:data:computer-slot-4",
+          "resultTargetIds": [
+            "income:gain:6,2,0,0,2,0"
+          ],
+          "compatibleActionIds": [
+            "place_data:dbe01b29"
+          ]
+        },
+        {
+          "targetId": "sector:win:sector-3-a:2",
+          "planId": "sector:standard-scan:sector-3-a",
+          "resultTargetIds": [
+            "sector:win:sector-3-a:2"
+          ],
+          "compatibleActionIds": [
+            "scan:1b66b805"
+          ]
+        }
+      ],
+      "roots": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "land",
+          "phase": "main",
+          "actionId": "land:1cbade2c",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "select": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "登陆"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:1b66b805",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:57da1d07",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "cardInstanceId": "card-31-pass-3-2"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "dlc_12.png"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:0c89471d",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:4c45c4af",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": -1
+          },
+          "payload": {
+            "direction": "in",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 向内"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "industry",
+          "phase": "quick",
+          "actionId": "industry:5bda1856",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "寰宇动力 1x 行动"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据"
+        }
+      ],
+      "selected": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "land",
+          "phase": "main",
+          "actionId": "land:1cbade2c",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "select": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "登陆",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:12:land:mars:planet:",
+          "routeResultTargetIds": [
+            "land:mars:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "place_data",
+          "phase": "quick",
+          "actionId": "place_data:dbe01b29",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "放置数据",
+          "routeTargetId": "income:gain:6,2,0,0,2,0",
+          "routePlanId": "income:data:computer-slot-4",
+          "routeResultTargetIds": [
+            "income:gain:6,2,0,0,2,0"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "industry",
+          "phase": "quick",
+          "actionId": "industry:5bda1856",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "寰宇动力 1x 行动",
+          "routeTargetId": "orbit:venus:planet:",
+          "routePlanId": "probe:rocket:12:orbit:venus:planet:",
+          "routeResultTargetIds": [
+            "income:gain:6,2,0,0,2,0",
+            "orbit:venus:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:0c89471d",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "ccw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 逆时针",
+          "routeTargetId": "orbit:venus:planet:",
+          "routePlanId": "probe:rocket:12:orbit:venus:planet:",
+          "routeResultTargetIds": [
+            "income:gain:6,2,0,0,2,0",
+            "orbit:venus:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:4c45c4af",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": -1
+          },
+          "payload": {
+            "direction": "in",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 向内",
+          "routeTargetId": "orbit:venus:planet:",
+          "routePlanId": "probe:rocket:12:orbit:venus:planet:",
+          "routeResultTargetIds": [
+            "income:gain:6,2,0,0,2,0",
+            "orbit:venus:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:57da1d07",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "cardInstanceId": "card-31-pass-3-2"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "dlc_12.png",
+          "routeTargetId": "orbit:venus:planet:",
+          "routePlanId": "probe:rocket:12:orbit:venus:planet:",
+          "routeResultTargetIds": [
+            "income:gain:6,2,0,0,2,0",
+            "orbit:venus:planet:"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:1b66b805",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描",
+          "routeTargetId": "sector:win:sector-3-a:2",
+          "routePlanId": "sector:standard-scan:sector-3-a",
+          "routeResultTargetIds": [
+            "sector:win:sector-3-a:2"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "orbit",
+          "phase": "main",
+          "actionId": "orbit:0372d487",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "planetId": "mars"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "环绕火星 - 奖励：精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R12，1信用点 + 1能量）",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:70d77c1b",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:5212ef59",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 顺时针",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:f7da222d",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 向外",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:31e55c73",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "cardInstanceId": "card-81-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 3
+            },
+            "handIndex": 1
+          },
+          "decision": null,
+          "summary": "b_137.webp",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "pass",
+          "phase": "main",
+          "actionId": "pass:ff716055",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "kind": "pass"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "PASS",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        }
+      ],
+      "leaks": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:5212ef59",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "direction": "cw",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 顺时针",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "move",
+          "phase": "quick",
+          "actionId": "move:f7da222d",
+          "actorId": "player-green",
+          "stateVersion": 252,
+          "decisionVersion": 13,
+          "target": {
+            "rocketId": 12,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "移动探测器 12 向外",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "routeResultTargetIds": []
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

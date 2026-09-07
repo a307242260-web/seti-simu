@@ -1056,13 +1056,12 @@ function observation({
   assert.deepEqual(
     scheduled.map((candidate) => candidate.actionId),
     [reachableMove.actionId, unreachableMove.actionId],
-    "首个目标完成后应按正式资源缺口选择成本最低的下一个结果目标；被调度器剪枝的"
-      + "高成本目标动作作为未绑定后继仍被返回（被尝试过而非不可见）",
+    "首个目标完成后按资源缺口排序；12信用可转换补足远目标能量，两条真实可达路线均保留",
   );
-  assert.equal(
-    scheduled[0].targetSchedulerPrunedCount,
-    1,
-    "资源下界目标调度的性能折损必须显式计数",
+  assert.deepEqual(
+    scheduled.map(candidate => candidate.routeTargetId),
+    ["orbit:mars:planet:", "land:neptune:planet:"],
+    "保留的移动必须具名绑定目标，不能以未绑定动作补回",
   );
 }
 
@@ -1102,9 +1101,9 @@ function observation({
     routeTargetId: null,
     focalProxyDepth: 1,
     maxProxyDepth: 15,
-  }).map((candidate) => candidate.actionId), [rotatedNearMove.actionId, staleFarMove.actionId],
+  }).map((candidate) => candidate.actionId), [rotatedNearMove.actionId],
   "科技旋转后的下一目标必须按子状态新距离调度，即使近目标还需一次资源准备；"
-    + "被剪枝的远目标动作作为未绑定后继仍被返回");
+    + "目录未选中的旧远方向不再作为无目标后继补回");
 }
 
 {

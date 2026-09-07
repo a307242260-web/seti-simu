@@ -1,0 +1,5869 @@
+{
+  "scope": "指定真实检查点单次冷决策及完整计划正式fork重放；不声称移动需求剪枝完成",
+  "checkpointPath": "reports/iteration/company-movement-input-42-20260906.json",
+  "checkpointStep": null,
+  "steps": [
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:5bda1856",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "寰宇动力",
+          "abilityId": "huanyu_free_moves"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "寰宇动力 1x 行动"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:b849344b",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:out",
+          "rocketId": 1,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 1 向外"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:96f6cb01",
+        "actorId": "player-green",
+        "stateVersion": 11,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:out",
+          "rocketId": 2,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 2 向外"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "orbit",
+        "phase": "main",
+        "actionId": "orbit:0b7a5527",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "rocketId": 1,
+          "planetId": "mars"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:cb33e16c",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "pick:card-38-0",
+          "cardInstanceId": "card-38-0",
+          "publicSlotIndex": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "dlc_39.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-38-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_39.png",
+          "imageAlt": "dlc_39.png"
+        }
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:a2b5645b",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "nebula:sector-1-a",
+          "nebulaId": "sector-1-a",
+          "sectorX": 5
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 南河三"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:f710a06a",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-38-0",
+          "cardInstanceId": "card-38-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_39.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-38-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_39.png",
+          "imageAlt": "dlc_39.png"
+        }
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:1f65daa3",
+        "actorId": "player-green",
+        "stateVersion": 13,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:91c74616",
+        "actorId": "player-green",
+        "stateVersion": 15,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-5-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "dlc_35.png"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:1f65daa3",
+        "actorId": "player-green",
+        "stateVersion": 16,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:edfaf2d4",
+        "actorId": "player-green",
+        "stateVersion": 18,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-6-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "b_115.webp"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:1f65daa3",
+        "actorId": "player-green",
+        "stateVersion": 19,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 21,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:52efd39a",
+        "actorId": "player-green",
+        "stateVersion": 21,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 1"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 22,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:52efd39a",
+        "actorId": "player-green",
+        "stateVersion": 22,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 2"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 23,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:52efd39a",
+        "actorId": "player-green",
+        "stateVersion": 23,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 3"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:1b66b805",
+        "actorId": "player-green",
+        "stateVersion": 24,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:a2b5645b",
+        "actorId": "player-green",
+        "stateVersion": 24,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "nebula:sector-1-a",
+          "nebulaId": "sector-1-a",
+          "sectorX": 5
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 南河三"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:06822fc6",
+        "actorId": "player-green",
+        "stateVersion": 24,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "public:card-17-0:sector-1-a",
+          "cardInstanceId": "card-17-0",
+          "publicSlotIndex": 0,
+          "nebulaId": "sector-1-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "b_2.webp → 南河三",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-17-0",
+          "imageSrc": "../assets/cards/basic/split/b_2.webp",
+          "imageAlt": "b_2.webp"
+        }
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:f8db866c",
+        "actorId": "player-green",
+        "stateVersion": 24,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "public:card-19-0:sector-1-a",
+          "cardInstanceId": "card-19-0",
+          "publicSlotIndex": 2,
+          "nebulaId": "sector-1-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "dlc_21.png → 南河三",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-19-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_21.png",
+          "imageAlt": "dlc_21.png"
+        }
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:f36c783c",
+        "actorId": "player-green",
+        "stateVersion": 24,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "trace:1:pink",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "pink"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 1 粉色痕迹"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 25,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:52efd39a",
+        "actorId": "player-green",
+        "stateVersion": 25,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 4"
+      },
+      "ok": true
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:e72339e2",
+        "actorId": "player-green",
+        "stateVersion": 25,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-7-0",
+          "cardInstanceId": "card-7-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_11.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-7-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_11.png",
+          "imageAlt": "dlc_11.png"
+        }
+      },
+      "ok": true
+    }
+  ],
+  "wallMs": 13542.24525,
+  "diagnostics": {
+    "successfulInputSubmissionCount": 6379,
+    "attemptedNodeCountByFamily": {
+      "analyze": 20,
+      "card_corner": 9,
+      "choose_card": 1160,
+      "choose_target": 779,
+      "end_turn": 245,
+      "industry": 6,
+      "land": 71,
+      "launch": 16,
+      "move": 399,
+      "orbit": 123,
+      "pass": 66,
+      "place_data": 268,
+      "play_card": 51,
+      "quick_trade": 550,
+      "research_tech": 105,
+      "scan": 228
+    },
+    "failedNodeCountByFamily": {},
+    "failedNodeCountByCode": {},
+    "candidateCount": 3,
+    "executedNodeCount": 4096,
+    "expandedSearchNodeCount": 0,
+    "maxNodes": 128,
+    "maxExecutionNodes": 4096,
+    "maxFrontierNodes": 256,
+    "maxMilliseconds": 30000,
+    "executionLimitReached": true,
+    "remainingFrontierNodeCount": 256,
+    "remainingFrontierOriginCountByGoalDepth": {
+      "1": 376,
+      "2": 8
+    },
+    "frontierOriginCountByFamily": {
+      "place_data": 152,
+      "move": 73,
+      "end_turn": 49,
+      "choose_card": 32,
+      "quick_trade": 28,
+      "choose_target": 16,
+      "orbit": 16,
+      "card_corner": 13,
+      "play_card": 2,
+      "scan": 2,
+      "pass": 1
+    },
+    "frontierNodeBreakdown": [
+      {
+        "action": "choose_target:R2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 12,
+        "isConditional": true
+      },
+      {
+        "action": "choose_target:结束移动",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 12,
+        "isConditional": true
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "orbit:环绕火星 - 奖励：精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R2，1信",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "pass:PASS",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "play_card:dlc_39.png",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "scan:扫描",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向内",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向内",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "scan:扫描",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "play_card:dlc_39.png",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向内",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向内",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向内",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向内",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向内",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向内",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向内",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向内",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向内",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向内",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "choose_card:dlc_21.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:6,1,0,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_21.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:6,1,0,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_21.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:6,1,0,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 13,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_21.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:6,1,0,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 13,
+        "isConditional": true
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 20,
+        "isConditional": false
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 20,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 19,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 19,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:6,1,0,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:6,1,0,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "choose_card:dlc_39.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_39.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_39.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_39.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": true
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": false
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": false
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": false
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": false
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 逆时针",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 4,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:dlc_39.png：弃牌角标",
+        "originCount": 3,
+        "routeTargetId": "tech:gain:blue1",
+        "routePlanId": "tech:blue1:1",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "choose_card:dlc_21.png",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:未知牌（仅按数量使用）",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:未知牌（仅按数量使用）",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:未知牌（仅按数量使用）",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:未知牌（仅按数量使用）",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_21.png",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 13,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_21.png",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 13,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_21.png",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 12,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_21.png",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 12,
+        "isConditional": true
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 6,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:5,1,0,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 6,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "orbit:mars:planet:",
+        "routePlanId": "probe:rocket:2:orbit:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 6,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 3,
+        "routeTargetId": "orbit:mars:planet:",
+        "routePlanId": "probe:rocket:2:orbit:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 6,
+        "isConditional": false
+      },
+      {
+        "action": "choose_card:dlc_39.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_39.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_39.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_39.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_39.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_39.png",
+        "originCount": 1,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 18,
+        "isConditional": false
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 18,
+        "isConditional": false
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 18,
+        "isConditional": false
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 18,
+        "isConditional": false
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 18,
+        "isConditional": false
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 18,
+        "isConditional": false
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 18,
+        "isConditional": false
+      },
+      {
+        "action": "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 18,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:3:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": false
+      },
+      {
+        "action": "choose_card:未知牌（仅按数量使用）",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:未知牌（仅按数量使用）",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:未知牌（仅按数量使用）",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:未知牌（仅按数量使用）",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:未知牌（仅按数量使用）",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:未知牌（仅按数量使用）",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:未知牌（仅按数量使用）",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:未知牌（仅按数量使用）",
+        "originCount": 1,
+        "routeTargetId": "orbit:venus:planet:",
+        "routePlanId": "probe:rocket:2:orbit:venus:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:未知牌（仅按数量使用）",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-1-a:1",
+        "routePlanId": "sector:standard-scan:sector-1-a",
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": true
+      },
+      {
+        "action": "card_corner:b_115.webp：弃牌角标",
+        "originCount": 1,
+        "routeTargetId": "data:analyze",
+        "routePlanId": "data:corner:card-6-0",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_115.webp：弃牌角标",
+        "originCount": 1,
+        "routeTargetId": "data:analyze",
+        "routePlanId": "data:corner:card-6-0",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:dlc_35.png：弃牌角标",
+        "originCount": 3,
+        "routeTargetId": "tech:gain:blue1",
+        "routePlanId": "tech:blue1:1",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:dlc_35.png：弃牌角标",
+        "originCount": 3,
+        "routeTargetId": "tech:gain:blue1",
+        "routePlanId": "tech:blue1:1",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:dlc_11.png：弃牌角标",
+        "originCount": 1,
+        "routeTargetId": "data:analyze",
+        "routePlanId": "data:corner:card-7-0",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:dlc_11.png：弃牌角标",
+        "originCount": 1,
+        "routeTargetId": "data:analyze",
+        "routePlanId": "data:corner:card-7-0",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "choose_target:结束移动",
+        "originCount": 2,
+        "routeTargetId": "orbit:mars:planet:",
+        "routePlanId": "probe:rocket:1:orbit:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": true
+      },
+      {
+        "action": "choose_target:结束移动",
+        "originCount": 2,
+        "routeTargetId": "orbit:mars:planet:",
+        "routePlanId": "probe:rocket:1:orbit:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": true
+      },
+      {
+        "action": "choose_target:结束移动",
+        "originCount": 2,
+        "routeTargetId": "orbit:mars:planet:",
+        "routePlanId": "probe:rocket:1:orbit:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": true
+      },
+      {
+        "action": "choose_target:移动 1 向外",
+        "originCount": 2,
+        "routeTargetId": "orbit:mars:planet:",
+        "routePlanId": "probe:rocket:1:orbit:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": true
+      },
+      {
+        "action": "choose_target:移动 1 向外",
+        "originCount": 2,
+        "routeTargetId": "orbit:mars:planet:",
+        "routePlanId": "probe:rocket:1:orbit:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": true
+      },
+      {
+        "action": "choose_target:移动 1 向外",
+        "originCount": 2,
+        "routeTargetId": "orbit:mars:planet:",
+        "routePlanId": "probe:rocket:1:orbit:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": true
+      },
+      {
+        "action": "choose_target:结束移动",
+        "originCount": 2,
+        "routeTargetId": "orbit:mars:planet:",
+        "routePlanId": "probe:rocket:1:orbit:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": true
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 18,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 18,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:5,1,0,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 2,
+        "chainDepth": 18,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 2 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:2:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 23,
+        "isConditional": false
+      }
+    ],
+    "maxDepth": 15,
+    "maxProxyDepth": 15,
+    "secondaryAgentSearch": true,
+    "rootTargetCount": 7,
+    "rolloutVersion": "secondary-agent-rollout-v20",
+    "maxFrontierPerRoot": 1,
+    "maxFrontierSize": 266,
+    "maxRetainedFrontierSize": 256,
+    "maxFrontierOriginCount": 475,
+    "transpositionHitCount": 2805,
+    "sharedPhysicalExecutionOriginCount": 696,
+    "targetEquivalentChoicePrunedCount": 531,
+    "unreachableRouteOriginCount": 133,
+    "completedGoalTransitionCount": 1026,
+    "maxCompletedGoalDepth": 3,
+    "opponentExecutedNodeCount": 0,
+    "focalPlanningTurnAdvanceCount": 245,
+    "focalPassBoundaryLeafCount": 66,
+    "hiddenInformationFilteredActionCount": 3674,
+    "hiddenInformationBarrierCountByCode": {
+      "hidden_card_reveal": 11
+    },
+    "executedNodeCountByFamily": {
+      "analyze": 20,
+      "card_corner": 9,
+      "choose_card": 1160,
+      "choose_target": 779,
+      "end_turn": 245,
+      "industry": 6,
+      "land": 71,
+      "launch": 16,
+      "move": 399,
+      "orbit": 123,
+      "pass": 66,
+      "place_data": 268,
+      "play_card": 51,
+      "quick_trade": 550,
+      "research_tech": 105,
+      "scan": 228
+    },
+    "executedNodeCountByDecisionKind": {
+      "analyze:main": 20,
+      "card_corner:quick": 9,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_income": 444,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 285,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 324,
+      "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 107,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 17,
+      "choose_target:conditional/decision=choose_target/effect=probe_land_choice": 1,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 4,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 135,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research": 315,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 307,
+      "end_turn:turn_control": 245,
+      "industry:quick": 6,
+      "land:main": 71,
+      "launch:main": 16,
+      "move:quick": 399,
+      "orbit:main": 123,
+      "pass:main": 66,
+      "place_data:quick": 268,
+      "play_card:main": 51,
+      "quick_trade:quick": 550,
+      "research_tech:main": 105,
+      "scan:main": 228
+    },
+    "executedNodeCountByActionSummary": {
+      "choose_target:扫描 南河三": 307,
+      "place_data:放置数据": 268,
+      "end_turn:结束回合": 245,
+      "scan:扫描": 228,
+      "choose_card:b_2.webp → 南河三": 176,
+      "quick_trade:2张牌 → 1能量": 173,
+      "quick_trade:2张牌 → 1信用点": 167,
+      "choose_card:收入 dlc_11.png": 163,
+      "move:移动探测器 3 逆时针": 160,
+      "quick_trade:3宣传 → 精选1张牌": 160,
+      "choose_card:dlc_39.png": 158,
+      "move:移动探测器 2 逆时针": 142,
+      "choose_card:b_2.webp": 122,
+      "choose_target:研究 blue1（蓝槽 1）": 105,
+      "choose_target:研究 blue2（蓝槽 1）": 105,
+      "choose_target:研究 orange3": 105,
+      "research_tech:研究科技": 105,
+      "move:移动探测器 2 向内": 96,
+      "choose_card:dlc_21.png": 86,
+      "choose_card:收入 dlc_35.png": 77,
+      "choose_card:收入 b_115.webp": 76,
+      "choose_card:dlc_39.png → 比邻星": 75,
+      "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄色痕迹": 71,
+      "land:登陆": 71,
+      "choose_card:dlc_21.png → 南河三": 69,
+      "pass:PASS": 66,
+      "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（R2，1信用点 + 1能量）": 59,
+      "choose_card:收入 dlc_21.png": 56,
+      "quick_trade:2信用点 → 1能量": 50,
+      "choose_target:外星人 1 粉色痕迹": 44,
+      "choose_card:收入 dlc_39.png": 38,
+      "orbit:环绕火星 - 奖励：精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R2，1信用点 + 1能量）": 35,
+      "choose_card:收入 b_2.webp": 34,
+      "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（R3，1信用点 + 1能量）": 26,
+      "analyze:分析": 20,
+      "choose_target:外星人 1 蓝色痕迹": 20,
+      "play_card:dlc_35.png": 17,
+      "launch:发射": 16,
+      "choose_target:结束移动": 12,
+      "play_card:dlc_21.png": 10,
+      "play_card:b_115.webp": 9,
+      "play_card:dlc_11.png": 9,
+      "choose_target:R2 逆时针": 6,
+      "industry:寰宇动力 1x 行动": 6,
+      "play_card:dlc_39.png": 6,
+      "choose_card:dlc_38.png": 5,
+      "choose_card:结束公共牌扫描": 4,
+      "card_corner:b_115.webp：弃牌角标": 3,
+      "card_corner:dlc_11.png：弃牌角标": 3,
+      "card_corner:dlc_35.png：弃牌角标": 3,
+      "orbit:环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）": 3,
+      "choose_card:b_38.webp": 2,
+      "choose_card:b_105.webp": 1,
+      "choose_card:b_107.webp": 1,
+      "choose_card:b_11.webp": 1,
+      "choose_card:b_116.webp": 1,
+      "choose_card:b_121.webp": 1,
+      "choose_card:b_124.webp": 1,
+      "choose_card:b_14.webp": 1,
+      "choose_card:b_21.webp": 1,
+      "choose_card:b_34.webp": 1,
+      "choose_card:b_36.webp": 1,
+      "choose_card:b_61.webp": 1,
+      "choose_card:b_72.webp": 1,
+      "choose_card:b_88.webp": 1,
+      "choose_card:b_92.webp": 1,
+      "choose_card:b_93.webp": 1,
+      "choose_card:b_96.webp": 1,
+      "choose_card:dlc_10.png": 1,
+      "choose_card:dlc_36.png": 1,
+      "choose_card:dlc_37.png": 1,
+      "choose_target:R2 向内": 1,
+      "choose_target:登陆火星（主星）｜奖励：首次登陆：额外获得 2 个数据；获得 6 分；获得 1 个黄色外星人标记": 1,
+      "choose_target:移动 1 向外": 1,
+      "choose_target:移动 2 向外": 1,
+      "move:移动探测器 1 向外": 1
+    },
+    "executedNodeCountByActor": {
+      "player-green": 4096
+    },
+    "executedOriginCountByTarget": {
+      "orbit:venus:planet:": 1034,
+      "income:gain:5,1,0,0,2,0": 724,
+      "tech:gain:blue2": 552,
+      "sector:win:sector-1-a:1": 517,
+      "tech:gain:blue1": 342,
+      "tech:gain:orange3": 342,
+      "data:analyze": 248,
+      "<unbound>": 238,
+      "income:gain:6,1,0,0,1,0": 195,
+      "decision:choose_card:6225123f": 159,
+      "land:mars:planet:": 156,
+      "decision:choose_card:cb33e16c": 124,
+      "decision:choose_card:a677d061": 79,
+      "orbit:mars:planet:": 68,
+      "income:gain:5,1,0,0,1,0": 14
+    },
+    "executedOriginCountByTargetAndDecisionKind": {
+      "orbit:venus:planet: -> move:quick": 398,
+      "orbit:venus:planet: -> quick_trade:quick": 356,
+      "tech:gain:blue2 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 210,
+      "income:gain:5,1,0,0,2,0 -> place_data:quick": 192,
+      "sector:win:sector-1-a:1 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 152,
+      "income:gain:5,1,0,0,2,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 131,
+      "tech:gain:blue1 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 109,
+      "tech:gain:blue1 -> research_tech:main": 109,
+      "tech:gain:blue2 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 109,
+      "tech:gain:blue2 -> research_tech:main": 109,
+      "tech:gain:orange3 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 109,
+      "tech:gain:orange3 -> research_tech:main": 109,
+      "sector:win:sector-1-a:1 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 106,
+      "sector:win:sector-1-a:1 -> scan:main": 106,
+      "income:gain:5,1,0,0,2,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 105,
+      "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 100,
+      "decision:choose_card:6225123f -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 97,
+      "income:gain:5,1,0,0,2,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 91,
+      "income:gain:5,1,0,0,2,0 -> scan:main": 91,
+      "sector:win:sector-1-a:1 -> quick_trade:quick": 88,
+      "orbit:venus:planet: -> orbit:main": 85,
+      "tech:gain:blue1 -> place_data:quick": 78,
+      "tech:gain:blue2 -> place_data:quick": 78,
+      "tech:gain:orange3 -> place_data:quick": 78,
+      "<unbound> -> end_turn:turn_control": 76,
+      "decision:choose_card:cb33e16c -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 76,
+      "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 71,
+      "land:mars:planet: -> land:main": 71,
+      "income:gain:5,1,0,0,2,0 -> quick_trade:quick": 68,
+      "<unbound> -> pass:main": 66,
+      "decision:choose_card:a677d061 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 49,
+      "income:gain:6,1,0,0,1,0 -> place_data:quick": 48,
+      "<unbound> -> play_card:main": 45,
+      "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 44,
+      "data:analyze -> end_turn:turn_control": 44,
+      "data:analyze -> quick_trade:quick": 42,
+      "sector:win:sector-1-a:1 -> end_turn:turn_control": 42,
+      "tech:gain:blue1 -> end_turn:turn_control": 39,
+      "tech:gain:blue2 -> end_turn:turn_control": 39,
+      "tech:gain:orange3 -> end_turn:turn_control": 39,
+      "income:gain:5,1,0,0,2,0 -> end_turn:turn_control": 38,
+      "income:gain:6,1,0,0,1,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 38,
+      "data:analyze -> place_data:quick": 36,
+      "orbit:mars:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 36,
+      "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 36,
+      "orbit:venus:planet: -> end_turn:turn_control": 36,
+      "<unbound> -> orbit:main": 35,
+      "income:gain:6,1,0,0,1,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 32,
+      "decision:choose_card:6225123f -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 31,
+      "decision:choose_card:6225123f -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 31,
+      "data:analyze -> analyze:main": 30,
+      "decision:choose_card:cb33e16c -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 24,
+      "decision:choose_card:cb33e16c -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 24,
+      "income:gain:6,1,0,0,1,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 22,
+      "income:gain:6,1,0,0,1,0 -> scan:main": 22,
+      "sector:win:sector-1-a:1 -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 22,
+      "orbit:venus:planet: -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 17,
+      "<unbound> -> launch:main": 16,
+      "decision:choose_card:a677d061 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 15,
+      "decision:choose_card:a677d061 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 15,
+      "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 14,
+      "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 14,
+      "data:analyze -> scan:main": 14,
+      "income:gain:6,1,0,0,1,0 -> end_turn:turn_control": 11,
+      "income:gain:6,1,0,0,1,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 10,
+      "income:gain:6,1,0,0,1,0 -> quick_trade:quick": 10,
+      "orbit:mars:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 9,
+      "orbit:mars:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 9,
+      "income:gain:5,1,0,0,1,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 7,
+      "data:analyze -> card_corner:quick": 6,
+      "land:mars:planet: -> industry:quick": 6,
+      "orbit:mars:planet: -> industry:quick": 6,
+      "orbit:venus:planet: -> play_card:main": 6,
+      "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 4,
+      "income:gain:5,1,0,0,1,0 -> place_data:quick": 4,
+      "income:gain:5,1,0,0,2,0 -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 4,
+      "income:gain:5,1,0,0,2,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 4,
+      "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 4,
+      "orbit:mars:planet: -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 4,
+      "tech:gain:blue1 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 4,
+      "tech:gain:blue2 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 4,
+      "tech:gain:orange3 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 4,
+      "orbit:mars:planet: -> orbit:main": 3,
+      "tech:gain:blue1 -> card_corner:quick": 3,
+      "tech:gain:blue2 -> card_corner:quick": 3,
+      "tech:gain:orange3 -> card_corner:quick": 3,
+      "income:gain:6,1,0,0,1,0 -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 2,
+      "land:mars:planet: -> quick_trade:quick": 2,
+      "income:gain:5,1,0,0,1,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 1,
+      "income:gain:5,1,0,0,1,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 1,
+      "income:gain:5,1,0,0,1,0 -> scan:main": 1,
+      "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=probe_land_choice": 1,
+      "land:mars:planet: -> move:quick": 1,
+      "orbit:mars:planet: -> move:quick": 1,
+      "sector:win:sector-1-a:1 -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 1
+    },
+    "routeEntryStatsByTarget": {
+      "orbit:venus:planet:": {
+        "bindingOriginCount": 582,
+        "distinctEntryStateCount": 508,
+        "maxBindingsPerEntryState": 4,
+        "completedTransitionCount": 67,
+        "retainedCompletedTransitionCount": 67
+      },
+      "sector:win:sector-1-a:1": {
+        "bindingOriginCount": 575,
+        "distinctEntryStateCount": 539,
+        "maxBindingsPerEntryState": 2,
+        "completedTransitionCount": 22,
+        "retainedCompletedTransitionCount": 22
+      },
+      "data:analyze": {
+        "bindingOriginCount": 496,
+        "distinctEntryStateCount": 481,
+        "maxBindingsPerEntryState": 2,
+        "completedTransitionCount": 30,
+        "retainedCompletedTransitionCount": 30
+      },
+      "tech:gain:blue1": {
+        "bindingOriginCount": 487,
+        "distinctEntryStateCount": 481,
+        "maxBindingsPerEntryState": 2,
+        "completedTransitionCount": 109,
+        "retainedCompletedTransitionCount": 109
+      },
+      "tech:gain:orange3": {
+        "bindingOriginCount": 487,
+        "distinctEntryStateCount": 481,
+        "maxBindingsPerEntryState": 2,
+        "completedTransitionCount": 109,
+        "retainedCompletedTransitionCount": 109
+      },
+      "land:mars:planet:": {
+        "bindingOriginCount": 451,
+        "distinctEntryStateCount": 377,
+        "maxBindingsPerEntryState": 6,
+        "completedTransitionCount": 71,
+        "retainedCompletedTransitionCount": 71
+      },
+      "tech:gain:blue2": {
+        "bindingOriginCount": 345,
+        "distinctEntryStateCount": 341,
+        "maxBindingsPerEntryState": 2,
+        "completedTransitionCount": 210,
+        "retainedCompletedTransitionCount": 210
+      },
+      "tech:gain:orange2": {
+        "bindingOriginCount": 310,
+        "distinctEntryStateCount": 302,
+        "maxBindingsPerEntryState": 2,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "income:gain:5,1,0,0,2,0": {
+        "bindingOriginCount": 284,
+        "distinctEntryStateCount": 284,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 105,
+        "retainedCompletedTransitionCount": 105
+      },
+      "orbit:uranus:planet:": {
+        "bindingOriginCount": 280,
+        "distinctEntryStateCount": 140,
+        "maxBindingsPerEntryState": 2,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "income:gain:5,1,0,0,3,0": {
+        "bindingOriginCount": 168,
+        "distinctEntryStateCount": 168,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "income:gain:6,1,0,0,2,0": {
+        "bindingOriginCount": 90,
+        "distinctEntryStateCount": 90,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "income:gain:6,1,0,0,1,0": {
+        "bindingOriginCount": 64,
+        "distinctEntryStateCount": 64,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 38,
+        "retainedCompletedTransitionCount": 38
+      },
+      "orbit:mars:planet:": {
+        "bindingOriginCount": 51,
+        "distinctEntryStateCount": 40,
+        "maxBindingsPerEntryState": 2,
+        "completedTransitionCount": 36,
+        "retainedCompletedTransitionCount": 36
+      },
+      "income:gain:5,1,0,0,1,0": {
+        "bindingOriginCount": 7,
+        "distinctEntryStateCount": 7,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 7,
+        "retainedCompletedTransitionCount": 7
+      },
+      "sector:win:sector-1-a:2": {
+        "bindingOriginCount": 5,
+        "distinctEntryStateCount": 5,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      }
+    },
+    "completedRouteGroupsByTarget": {
+      "tech:gain:blue2": [
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 28,
+          "retainedCompletedTransitionCount": 28
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 28,
+          "retainedCompletedTransitionCount": 28
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 28,
+          "retainedCompletedTransitionCount": 28
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 24,
+          "retainedCompletedTransitionCount": 24
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 24,
+          "retainedCompletedTransitionCount": 24
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 20,
+          "retainedCompletedTransitionCount": 20
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 18,
+          "retainedCompletedTransitionCount": 18
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 8,
+          "retainedCompletedTransitionCount": 8
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 8,
+          "retainedCompletedTransitionCount": 8
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "launch",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 8,
+          "retainedCompletedTransitionCount": 8
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 8,
+          "retainedCompletedTransitionCount": 8
+        },
+        {
+          "routeFamilies": [
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        }
+      ],
+      "tech:gain:blue1": [
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 14,
+          "retainedCompletedTransitionCount": 14
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 14,
+          "retainedCompletedTransitionCount": 14
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 14,
+          "retainedCompletedTransitionCount": 14
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 11,
+          "retainedCompletedTransitionCount": 11
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 10,
+          "retainedCompletedTransitionCount": 10
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "launch",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "tech:gain:orange3": [
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 14,
+          "retainedCompletedTransitionCount": 14
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 14,
+          "retainedCompletedTransitionCount": 14
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 14,
+          "retainedCompletedTransitionCount": 14
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 11,
+          "retainedCompletedTransitionCount": 11
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 10,
+          "retainedCompletedTransitionCount": 10
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "launch",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "place_data",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "income:gain:5,1,0,0,2,0": [
+        {
+          "routeFamilies": [
+            "play_card",
+            "place_data",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 32,
+          "retainedCompletedTransitionCount": 32
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "place_data",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 30,
+          "retainedCompletedTransitionCount": 30
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 15,
+          "retainedCompletedTransitionCount": 15
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "place_data",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 8,
+          "retainedCompletedTransitionCount": 8
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "place_data",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 8,
+          "retainedCompletedTransitionCount": 8
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "place_data",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 8,
+          "retainedCompletedTransitionCount": 8
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "place_data",
+            "quick_trade",
+            "quick_trade",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        }
+      ],
+      "decision:choose_card:6225123f": [
+        {
+          "routeFamilies": [
+            "play_card",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 27,
+          "retainedCompletedTransitionCount": 27
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 20,
+          "retainedCompletedTransitionCount": 20
+        },
+        {
+          "routeFamilies": [
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 20,
+          "retainedCompletedTransitionCount": 20
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 9,
+          "retainedCompletedTransitionCount": 9
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 9,
+          "retainedCompletedTransitionCount": 9
+        }
+      ],
+      "decision:choose_card:cb33e16c": [
+        {
+          "routeFamilies": [
+            "play_card",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 24,
+          "retainedCompletedTransitionCount": 24
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 16,
+          "retainedCompletedTransitionCount": 16
+        },
+        {
+          "routeFamilies": [
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 16,
+          "retainedCompletedTransitionCount": 16
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 8,
+          "retainedCompletedTransitionCount": 8
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 6
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 6
+        }
+      ],
+      "land:mars:planet:": [
+        {
+          "routeFamilies": [
+            "play_card",
+            "land"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 17,
+          "retainedCompletedTransitionCount": 17
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "land"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 16,
+          "retainedCompletedTransitionCount": 16
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "land"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 8,
+          "retainedCompletedTransitionCount": 8
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "land"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 8,
+          "retainedCompletedTransitionCount": 8
+        },
+        {
+          "routeFamilies": [
+            "land"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 6
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "land"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 6
+        },
+        {
+          "routeFamilies": [
+            "industry",
+            "land"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "play_card",
+            "land"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "play_card",
+            "land"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "launch",
+            "land"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "industry",
+            "move",
+            "quick_trade",
+            "land"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        }
+      ],
+      "orbit:venus:planet:": [
+        {
+          "routeFamilies": [
+            "move",
+            "move",
+            "quick_trade",
+            "move",
+            "quick_trade",
+            "orbit"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 28,
+          "retainedCompletedTransitionCount": 28
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "move",
+            "move",
+            "quick_trade",
+            "orbit"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "move",
+            "move",
+            "quick_trade",
+            "quick_trade",
+            "move",
+            "quick_trade",
+            "orbit"
+          ],
+          "quickTradeCount": 3,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "move",
+            "play_card",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "move",
+            "move",
+            "quick_trade",
+            "move",
+            "quick_trade",
+            "orbit"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "move",
+            "move",
+            "quick_trade",
+            "orbit"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "move",
+            "move",
+            "quick_trade",
+            "orbit"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "move",
+            "move",
+            "quick_trade",
+            "orbit"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "move",
+            "move",
+            "play_card",
+            "quick_trade",
+            "quick_trade",
+            "quick_trade",
+            "quick_trade",
+            "orbit"
+          ],
+          "quickTradeCount": 4,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "decision:choose_card:a677d061": [
+        {
+          "routeFamilies": [
+            "play_card",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 15,
+          "retainedCompletedTransitionCount": 15
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 3,
+          "retainedCompletedTransitionCount": 3
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 3,
+          "retainedCompletedTransitionCount": 3
+        }
+      ],
+      "income:gain:6,1,0,0,1,0": [
+        {
+          "routeFamilies": [
+            "play_card",
+            "place_data",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "place_data",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 6
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 6
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "place_data",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "place_data",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "place_data",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "place_data",
+            "quick_trade",
+            "quick_trade",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "place_data",
+            "quick_trade",
+            "quick_trade",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "orbit:mars:planet:": [
+        {
+          "routeFamilies": [
+            "industry",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 24,
+          "retainedCompletedTransitionCount": 24
+        },
+        {
+          "routeFamilies": [
+            "industry",
+            "move",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        }
+      ],
+      "data:analyze": [
+        {
+          "routeFamilies": [
+            "place_data",
+            "quick_trade",
+            "analyze"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 10,
+          "retainedCompletedTransitionCount": 10
+        },
+        {
+          "routeFamilies": [
+            "card_corner",
+            "place_data",
+            "quick_trade",
+            "scan",
+            "place_data",
+            "quick_trade",
+            "analyze"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 8,
+          "retainedCompletedTransitionCount": 8
+        },
+        {
+          "routeFamilies": [
+            "quick_trade",
+            "scan",
+            "place_data",
+            "quick_trade",
+            "analyze"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 6
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "quick_trade",
+            "analyze"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "card_corner",
+            "place_data",
+            "card_corner",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        }
+      ],
+      "sector:win:sector-1-a:1": [
+        {
+          "routeFamilies": [
+            "quick_trade",
+            "scan"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 6
+        },
+        {
+          "routeFamilies": [
+            "scan",
+            "quick_trade",
+            "quick_trade",
+            "scan"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 5,
+          "retainedCompletedTransitionCount": 5
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "scan"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "quick_trade",
+            "scan"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "quick_trade",
+            "scan"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "scan",
+            "quick_trade",
+            "scan"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "play_card",
+            "scan"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "launch",
+            "scan"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "scan"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "income:gain:5,1,0,0,1,0": [
+        {
+          "routeFamilies": [
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "scan",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 3,
+          "retainedCompletedTransitionCount": 3
+        }
+      ]
+    },
+    "goalClusters": [],
+    "prunedNodeCount": 3716,
+    "beamPrunedOriginCount": 5441,
+    "forkMilliseconds": 444.6300929999878,
+    "executionMilliseconds": 1573.1712619999896,
+    "projectionMilliseconds": 731.854349999991,
+    "identityMilliseconds": 6.593718999991182,
+    "checkpointMilliseconds": 652.1871249999906,
+    "frontierMilliseconds": 352.3607049999949,
+    "orchestrationMilliseconds": 7462.188955000056,
+    "totalMilliseconds": 11222.986209
+  },
+  "actionId": "industry:5bda1856",
+  "plan": {
+    "schemaVersion": "seti-action-plan-v2",
+    "nextActionId": "choose_target:b849344b",
+    "steps": [
+      {
+        "actionId": "choose_target:b849344b",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"direction\":\"out\"},\"target\":{\"choiceId\":\"move:1:out\",\"deltaX\":0,\"deltaY\":1,\"kind\":\"residual-domain\",\"rocketId\":1}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "movement-source",
+              "id": "1"
+            },
+            "fact": {
+              "id": 1,
+              "playerId": "player-green",
+              "surface": "solar-board",
+              "sectorX": 5,
+              "sectorY": 1,
+              "polar": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:mars:planet:",
+              "sourceId": "rocket:1"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:mars:planet:",
+                "requirementId": "rocket:1:orbit:mars:planet:",
+                "sourceId": "rocket:1",
+                "rocketId": 1,
+                "movementSteps": 1,
+                "movementNextSteps": [
+                  {
+                    "family": "choose_target",
+                    "rocketId": 1,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  }
+                ],
+                "paidMovementPoints": 0,
+                "markers": 0
+              }
+            ]
+          },
+          {
+            "scope": {
+              "kind": "movement-context",
+              "id": "self"
+            },
+            "fact": {
+              "phase": "company",
+              "cardRemaining": 0,
+              "companyAvailable": false,
+              "companyRemaining": 2,
+              "usedRocketIds": []
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:96f6cb01",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"direction\":\"out\"},\"target\":{\"choiceId\":\"move:2:out\",\"deltaX\":0,\"deltaY\":1,\"kind\":\"residual-domain\",\"rocketId\":2}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "movement-source",
+              "id": "2"
+            },
+            "fact": {
+              "id": 2,
+              "playerId": "player-green",
+              "surface": "solar-board",
+              "sectorX": 5,
+              "sectorY": 1,
+              "polar": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:mars:planet:",
+              "sourceId": "rocket:1"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:mars:planet:",
+                "requirementId": "rocket:1:orbit:mars:planet:",
+                "sourceId": "rocket:1",
+                "rocketId": 1,
+                "movementSteps": 0,
+                "movementNextSteps": [
+                  {
+                    "family": "choose_target",
+                    "skip": true
+                  }
+                ],
+                "paidMovementPoints": 0,
+                "markers": 0
+              }
+            ]
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:mars:planet:",
+              "sourceId": "rocket:2"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:mars:planet:",
+                "requirementId": "rocket:2:orbit:mars:planet:",
+                "sourceId": "rocket:2",
+                "rocketId": 2,
+                "movementSteps": 1,
+                "movementNextSteps": [
+                  {
+                    "family": "choose_target",
+                    "rocketId": 2,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  }
+                ],
+                "paidMovementPoints": 0,
+                "markers": 0
+              }
+            ]
+          },
+          {
+            "scope": {
+              "kind": "movement-context",
+              "id": "self"
+            },
+            "fact": {
+              "phase": "company",
+              "cardRemaining": 0,
+              "companyAvailable": false,
+              "companyRemaining": 1,
+              "usedRocketIds": [
+                1
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "orbit:0b7a5527",
+        "actionKey": "{\"family\":\"orbit\",\"payload\":{},\"target\":{\"planetId\":\"mars\",\"rocketId\":1}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:mars:planet:",
+              "sourceId": "rocket:1"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:mars:planet:",
+                "requirementId": "rocket:1:orbit:mars:planet:",
+                "sourceId": "rocket:1",
+                "rocketId": 1,
+                "movementSteps": 0,
+                "movementNextSteps": [
+                  {
+                    "family": "orbit",
+                    "rocketId": 1,
+                    "planetId": "mars",
+                    "target": {}
+                  }
+                ],
+                "paidMovementPoints": 0,
+                "markers": 0
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "actionId": "choose_card:cb33e16c",
+        "actionKey": "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-38-0\",\"choiceId\":\"pick:card-38-0\",\"publicSlotIndex\":1}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "1"
+            },
+            "fact": {
+              "id": "card-38-0",
+              "cardId": "dlc_39.png"
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:1",
+              "ownCount": 0,
+              "maxOpponentCount": 1,
+              "openSlotCount": 4,
+              "nextSlotScore": 2,
+              "ranking": [
+                {
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "count": 1,
+                  "latestReplacementOrder": 9
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:a2b5645b",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"gainData\":true},\"target\":{\"choiceId\":\"nebula:sector-1-a\",\"nebulaId\":\"sector-1-a\",\"sectorX\":5}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:1",
+              "ownCount": 0,
+              "maxOpponentCount": 1,
+              "openSlotCount": 4,
+              "nextSlotScore": 2,
+              "ranking": [
+                {
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "count": 1,
+                  "latestReplacementOrder": 9
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_card:f710a06a",
+        "actionKey": "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-38-0\",\"choiceId\":\"income:card-38-0\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": []
+      },
+      {
+        "actionId": "end_turn:1f65daa3",
+        "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": []
+      },
+      {
+        "actionId": "play_card:91c74616",
+        "actionKey": "{\"family\":\"play_card\",\"payload\":{\"cost\":{\"credits\":1},\"handIndex\":0},\"target\":{\"cardInstanceId\":\"card-5-0\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": []
+      },
+      {
+        "actionId": "end_turn:1f65daa3",
+        "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": []
+      },
+      {
+        "actionId": "play_card:edfaf2d4",
+        "actionKey": "{\"family\":\"play_card\",\"payload\":{\"cost\":{\"credits\":2},\"handIndex\":0},\"target\":{\"cardInstanceId\":\"card-6-0\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": []
+      },
+      {
+        "actionId": "end_turn:1f65daa3",
+        "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": []
+      },
+      {
+        "actionId": "place_data:dbe01b29",
+        "actionKey": "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "0"
+            },
+            "fact": {
+              "id": "card-17-0",
+              "cardId": "b_2.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "dlc_21.png"
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:1",
+              "ownCount": 1,
+              "maxOpponentCount": 1,
+              "openSlotCount": 3,
+              "nextSlotScore": 0,
+              "ranking": [
+                {
+                  "playerId": "player-green",
+                  "playerColor": "green",
+                  "count": 1,
+                  "latestReplacementOrder": 11
+                },
+                {
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "count": 1,
+                  "latestReplacementOrder": 9
+                }
+              ]
+            }
+          },
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          },
+          {
+            "scope": {
+              "kind": "scan-earth",
+              "id": "standard"
+            },
+            "fact": {
+              "sectorX": 5
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:52efd39a",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "0"
+            },
+            "fact": {
+              "id": "card-17-0",
+              "cardId": "b_2.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "dlc_21.png"
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:1",
+              "ownCount": 1,
+              "maxOpponentCount": 1,
+              "openSlotCount": 3,
+              "nextSlotScore": 0,
+              "ranking": [
+                {
+                  "playerId": "player-green",
+                  "playerColor": "green",
+                  "count": 1,
+                  "latestReplacementOrder": 11
+                },
+                {
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "count": 1,
+                  "latestReplacementOrder": 9
+                }
+              ]
+            }
+          },
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          },
+          {
+            "scope": {
+              "kind": "scan-earth",
+              "id": "standard"
+            },
+            "fact": {
+              "sectorX": 5
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "place_data:dbe01b29",
+        "actionKey": "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "0"
+            },
+            "fact": {
+              "id": "card-17-0",
+              "cardId": "b_2.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "dlc_21.png"
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:1",
+              "ownCount": 1,
+              "maxOpponentCount": 1,
+              "openSlotCount": 3,
+              "nextSlotScore": 0,
+              "ranking": [
+                {
+                  "playerId": "player-green",
+                  "playerColor": "green",
+                  "count": 1,
+                  "latestReplacementOrder": 11
+                },
+                {
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "count": 1,
+                  "latestReplacementOrder": 9
+                }
+              ]
+            }
+          },
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          },
+          {
+            "scope": {
+              "kind": "scan-earth",
+              "id": "standard"
+            },
+            "fact": {
+              "sectorX": 5
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:52efd39a",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "0"
+            },
+            "fact": {
+              "id": "card-17-0",
+              "cardId": "b_2.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "dlc_21.png"
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:1",
+              "ownCount": 1,
+              "maxOpponentCount": 1,
+              "openSlotCount": 3,
+              "nextSlotScore": 0,
+              "ranking": [
+                {
+                  "playerId": "player-green",
+                  "playerColor": "green",
+                  "count": 1,
+                  "latestReplacementOrder": 11
+                },
+                {
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "count": 1,
+                  "latestReplacementOrder": 9
+                }
+              ]
+            }
+          },
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          },
+          {
+            "scope": {
+              "kind": "scan-earth",
+              "id": "standard"
+            },
+            "fact": {
+              "sectorX": 5
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "place_data:dbe01b29",
+        "actionKey": "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "0"
+            },
+            "fact": {
+              "id": "card-17-0",
+              "cardId": "b_2.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "dlc_21.png"
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:1",
+              "ownCount": 1,
+              "maxOpponentCount": 1,
+              "openSlotCount": 3,
+              "nextSlotScore": 0,
+              "ranking": [
+                {
+                  "playerId": "player-green",
+                  "playerColor": "green",
+                  "count": 1,
+                  "latestReplacementOrder": 11
+                },
+                {
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "count": 1,
+                  "latestReplacementOrder": 9
+                }
+              ]
+            }
+          },
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1,
+                2
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          },
+          {
+            "scope": {
+              "kind": "scan-earth",
+              "id": "standard"
+            },
+            "fact": {
+              "sectorX": 5
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:52efd39a",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "0"
+            },
+            "fact": {
+              "id": "card-17-0",
+              "cardId": "b_2.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "dlc_21.png"
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:1",
+              "ownCount": 1,
+              "maxOpponentCount": 1,
+              "openSlotCount": 3,
+              "nextSlotScore": 0,
+              "ranking": [
+                {
+                  "playerId": "player-green",
+                  "playerColor": "green",
+                  "count": 1,
+                  "latestReplacementOrder": 11
+                },
+                {
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "count": 1,
+                  "latestReplacementOrder": 9
+                }
+              ]
+            }
+          },
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1,
+                2
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          },
+          {
+            "scope": {
+              "kind": "scan-earth",
+              "id": "standard"
+            },
+            "fact": {
+              "sectorX": 5
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "scan:1b66b805",
+        "actionKey": "{\"family\":\"scan\",\"payload\":{},\"target\":{\"kind\":\"standard-scan\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "0"
+            },
+            "fact": {
+              "id": "card-17-0",
+              "cardId": "b_2.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "dlc_21.png"
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:1",
+              "ownCount": 1,
+              "maxOpponentCount": 1,
+              "openSlotCount": 3,
+              "nextSlotScore": 0,
+              "ranking": [
+                {
+                  "playerId": "player-green",
+                  "playerColor": "green",
+                  "count": 1,
+                  "latestReplacementOrder": 11
+                },
+                {
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "count": 1,
+                  "latestReplacementOrder": 9
+                }
+              ]
+            }
+          },
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1,
+                2,
+                3
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          },
+          {
+            "scope": {
+              "kind": "scan-earth",
+              "id": "standard"
+            },
+            "fact": {
+              "sectorX": 5
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:a2b5645b",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"gainData\":true},\"target\":{\"choiceId\":\"nebula:sector-1-a\",\"nebulaId\":\"sector-1-a\",\"sectorX\":5}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "0"
+            },
+            "fact": {
+              "id": "card-17-0",
+              "cardId": "b_2.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "dlc_21.png"
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:1",
+              "ownCount": 1,
+              "maxOpponentCount": 1,
+              "openSlotCount": 3,
+              "nextSlotScore": 0,
+              "ranking": [
+                {
+                  "playerId": "player-green",
+                  "playerColor": "green",
+                  "count": 1,
+                  "latestReplacementOrder": 11
+                },
+                {
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "count": 1,
+                  "latestReplacementOrder": 9
+                }
+              ]
+            }
+          },
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1,
+                2,
+                3
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_card:06822fc6",
+        "actionKey": "{\"family\":\"choose_card\",\"payload\":{\"gainData\":true},\"target\":{\"cardInstanceId\":\"card-17-0\",\"choiceId\":\"public:card-17-0:sector-1-a\",\"nebulaId\":\"sector-1-a\",\"publicSlotIndex\":0}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "0"
+            },
+            "fact": {
+              "id": "card-17-0",
+              "cardId": "b_2.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "dlc_21.png"
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:1",
+              "ownCount": 2,
+              "maxOpponentCount": 1,
+              "openSlotCount": 2,
+              "nextSlotScore": 0,
+              "ranking": [
+                {
+                  "playerId": "player-green",
+                  "playerColor": "green",
+                  "count": 2,
+                  "latestReplacementOrder": 12
+                },
+                {
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "count": 1,
+                  "latestReplacementOrder": 9
+                }
+              ]
+            }
+          },
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1,
+                2,
+                3
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_card:f8db866c",
+        "actionKey": "{\"family\":\"choose_card\",\"payload\":{\"gainData\":true},\"target\":{\"cardInstanceId\":\"card-19-0\",\"choiceId\":\"public:card-19-0:sector-1-a\",\"nebulaId\":\"sector-1-a\",\"publicSlotIndex\":2}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "2"
+            },
+            "fact": {
+              "id": "card-19-0",
+              "cardId": "dlc_21.png"
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:1",
+              "ownCount": 3,
+              "maxOpponentCount": 1,
+              "openSlotCount": 1,
+              "nextSlotScore": 0,
+              "ranking": [
+                {
+                  "playerId": "player-green",
+                  "playerColor": "green",
+                  "count": 3,
+                  "latestReplacementOrder": 13
+                },
+                {
+                  "playerId": "player-white",
+                  "playerColor": "white",
+                  "count": 1,
+                  "latestReplacementOrder": 9
+                }
+              ]
+            }
+          },
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1,
+                2,
+                3
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:f36c783c",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"alienSlotId\":1,\"choiceId\":\"trace:1:pink\",\"kind\":\"planet-reward-alien-trace\",\"traceType\":\"pink\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          },
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1,
+                2,
+                3
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "place_data:dbe01b29",
+        "actionKey": "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1,
+                2,
+                3
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_target:52efd39a",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1,
+                2,
+                3
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          }
+        ]
+      },
+      {
+        "actionId": "choose_card:e72339e2",
+        "actionKey": "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-7-0\",\"choiceId\":\"income:card-7-0\"}}",
+        "actorId": "player-green",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "computerSlots": [
+                1,
+                2,
+                3,
+                4
+              ],
+              "blueBonusCount": 0,
+              "blueSlots": [],
+              "analyzeReady": false
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "passed": true
+}
