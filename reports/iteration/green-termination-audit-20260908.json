@@ -1,0 +1,342 @@
+{
+  "source": "reports/iteration/green-round4-candidate-termination-20260908.json",
+  "originalError": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  [\n    {\n      action: {\n        actionId: 'launch:70d77c1b',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'play_card:213c5409',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'play_card:13440839',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'play_card:84ddf847',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'pass:ff716055',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'quick_trade:90440450',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'quick_trade:dafd4f4a',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'quick_trade:0037d2c5',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'quick_trade:38002215',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'quick_trade:fcb81f7a',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'quick_trade:5efaa113',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'quick_trade:76cce73d',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'quick_trade:16a0f2d7',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'card_corner:f60aef0b',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'card_corner:fe5a73e8',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    },\n    {\n      action: {\n        actionId: 'card_corner:de958113',\n        actorId: 'player-green',\n...\n      },\n-     status: 'unresolved'\n    }\n  ]\n\n    at Object.<anonymous> (/private/tmp/seti-route-reward-dependency-20260908/adhoc/diagnose-green-round4-20260908.js:54:14)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49",
+  "passed": true,
+  "counts": [
+    {
+      "kind": "control",
+      "nodes": 1,
+      "inputs": 1
+    },
+    {
+      "kind": "strategic",
+      "nodes": 4096,
+      "inputs": 5323
+    }
+  ],
+  "comparison": "只读纠正比较器；保留原运行失败记录。所有根评分、动作链、叶数和物理节点/提交数完全一致，不重新运行搜索",
+  "roots": [
+    {
+      "action": "发射",
+      "score": 23,
+      "selectedLeafId": "leaf:14d0c7fd",
+      "terminalReason": "goal-completed",
+      "depth": 2,
+      "endings": {
+        "goal-completed": 140,
+        "route-unreachable": 24
+      },
+      "legalSuccessors": [
+        {
+          "family": "quick_trade",
+          "summary": "3宣传 → 精选1张牌",
+          "actor": "player-green"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_132.webp：弃牌角标",
+          "actor": "player-green"
+        },
+        {
+          "family": "end_turn",
+          "summary": "结束回合",
+          "actor": "player-green"
+        }
+      ]
+    },
+    {
+      "action": "扫描",
+      "score": 8,
+      "selectedLeafId": "leaf:10b92833",
+      "terminalReason": "route-unreachable",
+      "depth": 0,
+      "endings": {
+        "route-unreachable": 8
+      },
+      "legalSuccessors": [
+        {
+          "family": "quick_trade",
+          "summary": "3宣传 → 精选1张牌",
+          "actor": "player-green"
+        },
+        {
+          "family": "end_turn",
+          "summary": "结束回合",
+          "actor": "player-green"
+        }
+      ]
+    },
+    {
+      "action": "分析",
+      "score": 14,
+      "selectedLeafId": "leaf:012bd163",
+      "terminalReason": "goal-completed",
+      "depth": 2,
+      "endings": {
+        "goal-completed": 526,
+        "route-unreachable": 36,
+        "focal-pass": 30,
+        "focal-pass-decision-boundary": 1
+      },
+      "legalSuccessors": [
+        {
+          "family": "quick_trade",
+          "summary": "2信用点 → 1能量",
+          "actor": "player-green"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2信用点 → 1张牌",
+          "actor": "player-green"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 1信用点",
+          "actor": "player-green"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 1能量",
+          "actor": "player-green"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 精选1张牌",
+          "actor": "player-green"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "3宣传 → 精选1张牌",
+          "actor": "player-green"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "1能量 → 移动1步",
+          "actor": "player-green"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_111.webp：弃牌角标",
+          "actor": "player-green"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_135.webp：弃牌角标",
+          "actor": "player-green"
+        },
+        {
+          "family": "place_data",
+          "summary": "放置数据",
+          "actor": "player-green"
+        },
+        {
+          "family": "end_turn",
+          "summary": "结束回合",
+          "actor": "player-green"
+        }
+      ]
+    },
+    {
+      "action": "PASS",
+      "score": 0,
+      "selectedLeafId": "leaf:824c2a02",
+      "endings": {
+        "undefined": 1
+      },
+      "legalSuccessors": [
+        {
+          "family": "launch",
+          "summary": "发射",
+          "actor": "player-blue"
+        },
+        {
+          "family": "scan",
+          "summary": "扫描",
+          "actor": "player-blue"
+        },
+        {
+          "family": "analyze",
+          "summary": "分析",
+          "actor": "player-blue"
+        },
+        {
+          "family": "research_tech",
+          "summary": "研究科技",
+          "actor": "player-blue"
+        },
+        {
+          "family": "play_card",
+          "summary": "b_55.webp",
+          "actor": "player-blue"
+        },
+        {
+          "family": "play_card",
+          "summary": "dlc_41.png",
+          "actor": "player-blue"
+        },
+        {
+          "family": "play_card",
+          "summary": "b_8.webp",
+          "actor": "player-blue"
+        },
+        {
+          "family": "play_card",
+          "summary": "b_60.webp",
+          "actor": "player-blue"
+        },
+        {
+          "family": "pass",
+          "summary": "PASS",
+          "actor": "player-blue"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2信用点 → 1能量",
+          "actor": "player-blue"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2信用点 → 1张牌",
+          "actor": "player-blue"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 1信用点",
+          "actor": "player-blue"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 1能量",
+          "actor": "player-blue"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 精选1张牌",
+          "actor": "player-blue"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2能量 → 1张牌",
+          "actor": "player-blue"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2能量 → 1信用点",
+          "actor": "player-blue"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "3宣传 → 精选1张牌",
+          "actor": "player-blue"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "1能量 → 移动1步",
+          "actor": "player-blue"
+        },
+        {
+          "family": "industry",
+          "summary": "图灵系统 1x 行动",
+          "actor": "player-blue"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_55.webp：弃牌角标",
+          "actor": "player-blue"
+        },
+        {
+          "family": "card_corner",
+          "summary": "dlc_41.png：弃牌角标",
+          "actor": "player-blue"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_8.webp：弃牌角标",
+          "actor": "player-blue"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_60.webp：弃牌角标",
+          "actor": "player-blue"
+        }
+      ]
+    },
+    {
+      "action": "b_20.webp：弃牌角标",
+      "score": 12,
+      "selectedLeafId": "leaf:37497221",
+      "terminalReason": "goal-completed",
+      "depth": 2,
+      "endings": {
+        "goal-completed": 15
+      },
+      "legalSuccessors": [
+        {
+          "family": "quick_trade",
+          "summary": "2信用点 → 1能量",
+          "actor": "player-green"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2信用点 → 1张牌",
+          "actor": "player-green"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 1信用点",
+          "actor": "player-green"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 1能量",
+          "actor": "player-green"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2张牌 → 精选1张牌",
+          "actor": "player-green"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2能量 → 1张牌",
+          "actor": "player-green"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "2能量 → 1信用点",
+          "actor": "player-green"
+        },
+        {
+          "family": "quick_trade",
+          "summary": "1能量 → 移动1步",
+          "actor": "player-green"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_111.webp：弃牌角标",
+          "actor": "player-green"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_135.webp：弃牌角标",
+          "actor": "player-green"
+        },
+        {
+          "family": "card_corner",
+          "summary": "b_59.webp：弃牌角标",
+          "actor": "player-green"
+        },
+        {
+          "family": "place_data",
+          "summary": "放置数据",
+          "actor": "player-green"
+        },
+        {
+          "family": "end_turn",
+          "summary": "结束回合",
+          "actor": "player-green"
+        }
+      ]
+    }
+  ]
+}
