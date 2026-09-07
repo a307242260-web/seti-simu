@@ -1,0 +1,274 @@
+{
+  "scope": "隔离规则状态经正式 checkpoint 恢复、标准输入与 Production 奖励队列；无 AI 搜索",
+  "cases": [
+    {
+      "family": "land",
+      "prior": 0,
+      "delta": {
+        "data": 3,
+        "cards": 0,
+        "score": 9,
+        "fossils": 2
+      },
+      "actions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "land",
+          "phase": "main",
+          "actionId": "land:d5ee03a2",
+          "actorId": "player-white",
+          "stateVersion": 2,
+          "decisionVersion": 0,
+          "target": {
+            "select": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "登陆"
+        }
+      ],
+      "marker": {
+        "id": "aomomo-landing-17",
+        "kind": "landing",
+        "playerColor": "white",
+        "playerId": "player-white",
+        "sequence": 17
+      }
+    },
+    {
+      "family": "land",
+      "prior": 1,
+      "delta": {
+        "data": 2,
+        "cards": 0,
+        "score": 9,
+        "fossils": 2
+      },
+      "actions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "land",
+          "phase": "main",
+          "actionId": "land:d5ee03a2",
+          "actorId": "player-white",
+          "stateVersion": 2,
+          "decisionVersion": 0,
+          "target": {
+            "select": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "登陆"
+        }
+      ],
+      "marker": {
+        "id": "aomomo-landing-18",
+        "kind": "landing",
+        "playerColor": "white",
+        "playerId": "player-white",
+        "sequence": 18
+      }
+    },
+    {
+      "family": "land",
+      "prior": 2,
+      "delta": {
+        "data": 1,
+        "cards": 0,
+        "score": 9,
+        "fossils": 2
+      },
+      "actions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "land",
+          "phase": "main",
+          "actionId": "land:d5ee03a2",
+          "actorId": "player-white",
+          "stateVersion": 2,
+          "decisionVersion": 0,
+          "target": {
+            "select": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "登陆"
+        }
+      ],
+      "marker": {
+        "id": "aomomo-landing-19",
+        "kind": "landing",
+        "playerColor": "white",
+        "playerId": "player-white",
+        "sequence": 19
+      }
+    },
+    {
+      "family": "land",
+      "prior": 3,
+      "delta": {
+        "data": 0,
+        "cards": 0,
+        "score": 9,
+        "fossils": 2
+      },
+      "actions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "land",
+          "phase": "main",
+          "actionId": "land:d5ee03a2",
+          "actorId": "player-white",
+          "stateVersion": 2,
+          "decisionVersion": 0,
+          "target": {
+            "select": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "登陆"
+        }
+      ],
+      "marker": {
+        "id": "aomomo-landing-20",
+        "kind": "landing",
+        "playerColor": "white",
+        "playerId": "player-white",
+        "sequence": 20
+      }
+    },
+    {
+      "family": "orbit",
+      "prior": 0,
+      "delta": {
+        "data": 1,
+        "cards": 1,
+        "score": 10,
+        "fossils": 1
+      },
+      "actions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "orbit",
+          "phase": "main",
+          "actionId": "orbit:cd45c7ea",
+          "actorId": "player-white",
+          "stateVersion": 2,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 3,
+            "planetId": "aomomo"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "环绕奥陌陌 - 奖励：奥陌陌首次环绕：获得 1 张奥陌陌牌；奥陌陌环绕：10分+1化石；奥陌陌扇区扫描（R3，1信用点 + 1能量）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_card",
+          "phase": "conditional",
+          "actionId": "choose_card:2113a60a",
+          "actorId": "player-white",
+          "stateVersion": 2,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "aomomo:display:1",
+            "source": "display",
+            "cardIndex": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得展示的对照分析",
+          "presentation": {
+            "cardKind": "pick",
+            "cardId": "1",
+            "imageSrc": "../assets/aliens/奥陌陌/cards/1.webp",
+            "imageAlt": "对照分析"
+          }
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:15ccecf5",
+          "actorId": "player-white",
+          "stateVersion": 2,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "nebula:sector-3-a",
+            "nebulaId": "sector-3-a",
+            "sectorX": 1
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "扫描 开普勒22"
+        }
+      ],
+      "marker": {
+        "id": "aomomo-orbit-17",
+        "kind": "orbit",
+        "playerColor": "white",
+        "playerId": "player-white",
+        "sequence": 17
+      }
+    },
+    {
+      "family": "orbit",
+      "prior": 1,
+      "delta": {
+        "data": 1,
+        "cards": 0,
+        "score": 10,
+        "fossils": 1
+      },
+      "actions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "orbit",
+          "phase": "main",
+          "actionId": "orbit:cd45c7ea",
+          "actorId": "player-white",
+          "stateVersion": 2,
+          "decisionVersion": 0,
+          "target": {
+            "rocketId": 3,
+            "planetId": "aomomo"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "环绕奥陌陌 - 奖励：奥陌陌环绕：10分+1化石；奥陌陌扇区扫描（R3，1信用点 + 1能量）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:15ccecf5",
+          "actorId": "player-white",
+          "stateVersion": 2,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "nebula:sector-3-a",
+            "nebulaId": "sector-3-a",
+            "sectorX": 1
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "扫描 开普勒22"
+        }
+      ],
+      "marker": {
+        "id": "aomomo-orbit-18",
+        "kind": "orbit",
+        "playerColor": "white",
+        "playerId": "player-white",
+        "sequence": 18
+      }
+    }
+  ],
+  "passed": true
+}
