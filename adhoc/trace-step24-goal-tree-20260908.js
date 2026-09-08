@@ -2,7 +2,8 @@ const fs = require('node:fs'), assert = require('node:assert/strict'), inspector
 const base = '/Users/bilibili/code/seti-simu';
 const req = require('node:module').createRequire(process.cwd() + '/adhoc/trace24.js');
 const unbounded=process.argv.includes('--unbounded');
-const output = base + '/reports/iteration/'+(unbounded?'step24-unbounded-trace-20260908':'step24-goal-trace-aaaed8d0-20260908')+'.json';
+const entryStates=process.argv.includes('--entry-states');
+const output = base + '/reports/iteration/'+(unbounded?'step24-unbounded-trace-20260908':entryStates?'step24-entry-states-aaaed8d0-20260908':'step24-goal-trace-aaaed8d0-20260908')+'.json';
 if (fs.existsSync(output)) { console.log('已有追踪，跳过：' + output); process.exit(0); }
 const streamPath=output.replace(/\.json$/,'.jsonl');
 const stream=unbounded?fs.openSync(streamPath,'wx'):null;
@@ -18,6 +19,7 @@ debug.on('Debugger.paused', ({params}) => {
   try {
     const r=post('Debugger.evaluateOnCallFrame',{callFrameId:params.callFrames[0].callFrameId,expression:`JSON.stringify({ordinal:executedNodeCount,strategic:Boolean(secondaryAgentSearch),queue:frontier.length,key,node:{action:node.action,priority:node.priority,depth:node.depth,origins:node.origins.map(o=>({target:o.routeTargetId,plan:o.routePlanId,chain:o.chain,goalPaths:o.goalTracePaths,proxyDepth:o.proxyDepth}))},execution:{failed:execution.failed,priority:execution.branchPriority,inputs:execution.planSteps?.map(s=>s.action)}})`,returnByValue:true});
     assert.equal(r.exceptionDetails,undefined);const row=JSON.parse(r.result.value);rowCount++;
+    if(entryStates){const state=post('Debugger.evaluateOnCallFrame',{callFrameId:params.callFrames[0].callFrameId,expression:`JSON.stringify({player:(node.envelope.session?.session?.workingState || JSON.parse(node.envelope.committedState)).players.players.find(p=>p.id==='player-white'),entryOrigins:node.origins.map(o=>({target:o.routeTargetId,paths:o.goalTracePaths,chain:o.chain,entry:!(o.goalTraceActions||[]).length,informationMasked:o.informationMasked}))})`,returnByValue:true});assert.equal(state.exceptionDetails,undefined);row.entryState=JSON.parse(state.result.value);}
     if(unbounded)fs.writeSync(stream,r.result.value+'\n');else report.rows.push(row);
     if(rowCount%256===0)console.log('[第24步'+(unbounded?'去上限':'目标追踪')+'] 已执行 '+rowCount+' 节点 · 队列 '+row.queue+' · 用时 '+((performance.now()-started)/1000).toFixed(1)+'s · RSS '+Math.round(process.memoryUsage().rss/1048576)+'MB');
   }catch(e){report.errors.push(e.stack);}
