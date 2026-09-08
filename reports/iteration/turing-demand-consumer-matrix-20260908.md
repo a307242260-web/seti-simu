@@ -139,10 +139,27 @@ round/turn是借用有效期而非公司额度恢复期。无待消费需求用n
 发生事件也须分开：前者复用正式匹配，后者必须来自具名计划及实际执行证据，
 不得为了发现消费者而伪造visitPlanet/researchTech等事件输入生产匹配器。
 
-期限仍有明确待验收项：PASS_COMMIT产出pass事件，后续回合末handoff中公司清理
-排在card_trigger.turn_end前；但事件产生后的即时触发调度可能早于该handoff。
-上述匹配测试未执行这个完整事务，不能据静态队列顺序断言DLC33借橙1可用或不可用。
-下一步必须核对正式事件插队与发射读取的顺序，之后才能冻结过期消费判定。
+PASS期限已有完整正式事务证据：PASS_COMMIT产出pass事件后，即时触发Decision
+在公司turn_end清理前结算；不能只按回合末handoff中company先于card_trigger排序
+推断所有卡牌触发都在借用失效后。`adhoc/verify-turing-pass-consumption-20260908.js`
+使用真实第50步根派生fixture（增加DLC33保留牌，将现有探测器改属蓝方），分别
+不借用及正式启用图灵借橙1，再走正式PASS、预留牌选择、接受DLC33发射与回合推进。
+
+| 对照 | DLC33奖励选择前 | 完成PASS后 | 判定 |
+| --- | --- | --- | --- |
+| 不借用 | 1艘、无借用 | 1艘、无借用 | 普通上限已满，卡牌发射按正式规则跳过 |
+| 借橙1 | 1艘、橙1仍有效 | 2艘、借用已清空 | PASS即时奖励真实消费借用，之后正常失效 |
+
+两条事务均完成并推进到棕方；唯一触发槽消费后DLC33移出保留区，完成任务数+1。
+证据：[正式PASS对照](turing-pass-consumption-v2-20260908.json)。原始fixture一并保存，
+不冒充历史第50步曾有DLC33，不是AI搜索、历史降分因果或性能测量。
+首次诊断错误断言“消费标志仍可在保留牌中读取”，实际卡牌按规则移出保留区；
+失败记录[turing-pass-consumption-20260908.json](turing-pass-consumption-20260908.json)
+保留，修正诊断为保留区移出及完成数验证后通过，未改生产规则、未重跑AI完整局。
+
+据此收敛期限契约：未消费需求的截止点是正式借用清理边界，不是提交PASS的瞬间。
+PASS即时奖励消费必须保留；company.turn_end之后不得继续沿用该需求。仍需按八种
+消费者完成统一需求提取与改善证据，不能把这个单一事务外推成全部设计已闭合。
 
 检查位置：players.js借用读取，industry/state.js与passives.js，
 effects/residual-domain-session.js公司枚举/执行，abilities/rocket.js与planet.js，
