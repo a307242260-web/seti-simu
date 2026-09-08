@@ -1,0 +1,590 @@
+{
+  "scope": "终局直接计分条件；不证明替代策略最优或全部反事实因果",
+  "versions": [
+    {
+      "record": "3c7e0003.af937808.full.json",
+      "final": {
+        "baseScore": 72,
+        "cardScore": 4,
+        "cards": [
+          {
+            "cardId": "amiba_6.webp",
+            "rule": {
+              "kind": "amibaTraceCount",
+              "scorePer": 2,
+              "traceType": "yellow"
+            },
+            "score": 4
+          }
+        ],
+        "jiuzheCardScore": 0,
+        "jiuzheCards": [],
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "jiuzheThreat": 0,
+        "playerId": "player-brown",
+        "prePenaltyTotalScore": 106,
+        "runezuSymbolScore": 0,
+        "tileScore": 30,
+        "tileScoresById": {
+          "a": 8,
+          "b": 16,
+          "c": 0,
+          "d": 6
+        },
+        "tiles": [
+          {
+            "baseValue": 1,
+            "formulaId": "a2",
+            "multiplier": 8,
+            "score": 8,
+            "slotIndex": 2,
+            "tileId": "a",
+            "variant": 2
+          },
+          {
+            "baseValue": 2,
+            "formulaId": "b1",
+            "multiplier": 8,
+            "score": 16,
+            "slotIndex": 1,
+            "tileId": "b",
+            "variant": 1
+          },
+          {
+            "baseValue": 2,
+            "formulaId": "d2",
+            "multiplier": 3,
+            "score": 6,
+            "slotIndex": 3,
+            "tileId": "d",
+            "variant": 2
+          }
+        ],
+        "totalScore": 106
+      },
+      "traces": {
+        "pink": 2,
+        "yellow": 2,
+        "blue": 2
+      },
+      "income": {
+        "additionalPublicScan": 0,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 1
+      },
+      "baseIncome": {
+        "credits": 3,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 1
+      },
+      "incomeGrowth": {
+        "credits": 1,
+        "energy": 3,
+        "handSize": 1
+      },
+      "ownedTechIds": [
+        "blue1",
+        "blue2",
+        "orange2",
+        "purple2"
+      ],
+      "reservedCards": [
+        {
+          "alienCardId": 6,
+          "amibaCard": true,
+          "amibaTask": null,
+          "cardId": "amiba_6.webp",
+          "cardTypeCode": 3,
+          "discardActionCode": 4,
+          "faceUp": true,
+          "id": "alien-amiba-6-18",
+          "incomeCode": 2,
+          "price": 1,
+          "scanActionCode": 0,
+          "set": "alien:阿米巴"
+        }
+      ],
+      "marks": [
+        {
+          "id": "final-mark-2",
+          "playerColor": "brown",
+          "playerId": "player-brown",
+          "slot3Order": null,
+          "slotIndex": 2,
+          "threshold": 25,
+          "tileId": "a"
+        },
+        {
+          "id": "final-mark-5",
+          "playerColor": "brown",
+          "playerId": "player-brown",
+          "slot3Order": null,
+          "slotIndex": 1,
+          "threshold": 50,
+          "tileId": "b"
+        },
+        {
+          "id": "final-mark-8",
+          "playerColor": "brown",
+          "playerId": "player-brown",
+          "slot3Order": 1,
+          "slotIndex": 3,
+          "threshold": 70,
+          "tileId": "d"
+        }
+      ],
+      "markInputs": [
+        {
+          "step": 146,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:77b85194",
+            "actorId": "player-brown",
+            "stateVersion": 69,
+            "decisionVersion": 3,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "final:a",
+              "tileId": "a"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "标记 A",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "a",
+              "imageSrc": "../assets/final/final_a2.png",
+              "imageAlt": "终局计分板块 A"
+            }
+          },
+          "after": {
+            "r": 1,
+            "t": 20,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                11,
+                1,
+                0,
+                3,
+                1,
+                1
+              ],
+              "player-green": [
+                31,
+                0,
+                0,
+                3,
+                1,
+                1
+              ],
+              "player-brown": [
+                29,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "player-white": [
+                11,
+                0,
+                0,
+                1,
+                2,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "step": 411,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:50e87600",
+            "actorId": "player-brown",
+            "stateVersion": 200,
+            "decisionVersion": 20,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "final:b",
+              "tileId": "b"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "标记 B",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "b",
+              "imageSrc": "../assets/final/final_b1.png",
+              "imageAlt": "终局计分板块 B"
+            }
+          },
+          "after": {
+            "r": 3,
+            "t": 11,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                28,
+                1,
+                2,
+                2,
+                1,
+                1
+              ],
+              "player-green": [
+                48,
+                2,
+                3,
+                7,
+                1,
+                1
+              ],
+              "player-brown": [
+                52,
+                1,
+                1,
+                6,
+                2,
+                0
+              ],
+              "player-white": [
+                41,
+                1,
+                1,
+                1,
+                0,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "step": 570,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:48a67af4",
+            "actorId": "player-brown",
+            "stateVersion": 276,
+            "decisionVersion": 28,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "final:d",
+              "tileId": "d"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "标记 D",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "d",
+              "imageSrc": "../assets/final/final_d2.png",
+              "imageAlt": "终局计分板块 D"
+            }
+          },
+          "after": {
+            "r": 4,
+            "t": 10,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                41,
+                2,
+                2,
+                1,
+                0,
+                2
+              ],
+              "player-green": [
+                69,
+                2,
+                3,
+                3,
+                2,
+                1
+              ],
+              "player-brown": [
+                70,
+                1,
+                2,
+                0,
+                0,
+                1
+              ],
+              "player-white": [
+                54,
+                3,
+                2,
+                2,
+                4,
+                1
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "record": "4a694948.ad676add.full.json",
+      "final": {
+        "baseScore": 57,
+        "cardScore": 0,
+        "cards": [],
+        "jiuzheCardScore": 0,
+        "jiuzheCards": [],
+        "jiuzhePenaltyApplied": false,
+        "jiuzhePenaltyScore": 0,
+        "jiuzheThreat": 0,
+        "playerId": "player-brown",
+        "prePenaltyTotalScore": 72,
+        "runezuSymbolScore": 0,
+        "tileScore": 15,
+        "tileScoresById": {
+          "a": 5,
+          "b": 0,
+          "c": 0,
+          "d": 10
+        },
+        "tiles": [
+          {
+            "baseValue": 1,
+            "formulaId": "a2",
+            "multiplier": 5,
+            "score": 5,
+            "slotIndex": 3,
+            "tileId": "a",
+            "variant": 2
+          },
+          {
+            "baseValue": 2,
+            "formulaId": "d2",
+            "multiplier": 5,
+            "score": 10,
+            "slotIndex": 2,
+            "tileId": "d",
+            "variant": 2
+          }
+        ],
+        "totalScore": 72
+      },
+      "traces": {
+        "pink": 0,
+        "yellow": 3,
+        "blue": 1
+      },
+      "income": {
+        "additionalPublicScan": 0,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 1
+      },
+      "baseIncome": {
+        "credits": 3,
+        "energy": 1,
+        "handSize": 1,
+        "publicity": 1
+      },
+      "incomeGrowth": {
+        "credits": 1,
+        "energy": 1,
+        "handSize": 2
+      },
+      "ownedTechIds": [
+        "blue1",
+        "orange2",
+        "orange3",
+        "purple2",
+        "purple4"
+      ],
+      "reservedCards": [
+        {
+          "cardEffectState": {
+            "completedTaskIds": [],
+            "consumedTriggerIds": [],
+            "modelCardId": "b_139.webp",
+            "pluto": {
+              "landDone": false,
+              "orbitDone": false
+            }
+          },
+          "cardId": "b_139.webp",
+          "cardTypeCode": 0,
+          "discardActionCode": 2,
+          "faceUp": true,
+          "id": "card-12-0",
+          "incomeCode": 2,
+          "price": 0,
+          "scanActionCode": 1,
+          "set": "basic"
+        }
+      ],
+      "marks": [
+        {
+          "id": "final-mark-9",
+          "playerColor": "brown",
+          "playerId": "player-brown",
+          "slot3Order": 2,
+          "slotIndex": 3,
+          "threshold": 50,
+          "tileId": "a"
+        },
+        {
+          "id": "final-mark-6",
+          "playerColor": "brown",
+          "playerId": "player-brown",
+          "slot3Order": null,
+          "slotIndex": 2,
+          "threshold": 25,
+          "tileId": "d"
+        }
+      ],
+      "markInputs": [
+        {
+          "step": 388,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:48a67af4",
+            "actorId": "player-brown",
+            "stateVersion": 193,
+            "decisionVersion": 10,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "final:d",
+              "tileId": "d"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "标记 D",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "d",
+              "imageSrc": "../assets/final/final_d2.png",
+              "imageAlt": "终局计分板块 D"
+            }
+          },
+          "after": {
+            "r": 3,
+            "t": 15,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                51,
+                2,
+                1,
+                0,
+                3,
+                1
+              ],
+              "player-green": [
+                51,
+                2,
+                0,
+                6,
+                5,
+                1
+              ],
+              "player-brown": [
+                26,
+                1,
+                1,
+                2,
+                0,
+                1
+              ],
+              "player-white": [
+                37,
+                0,
+                1,
+                0,
+                1,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "step": 566,
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:77b85194",
+            "actorId": "player-brown",
+            "stateVersion": 291,
+            "decisionVersion": 12,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "final:a",
+              "tileId": "a"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "标记 A",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "a",
+              "imageSrc": "../assets/final/final_a2.png",
+              "imageAlt": "终局计分板块 A"
+            }
+          },
+          "after": {
+            "r": 4,
+            "t": 22,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                67,
+                0,
+                0,
+                0,
+                3,
+                1
+              ],
+              "player-green": [
+                84,
+                1,
+                0,
+                4,
+                1,
+                1
+              ],
+              "player-brown": [
+                57,
+                1,
+                0,
+                2,
+                2,
+                1
+              ],
+              "player-white": [
+                56,
+                3,
+                0,
+                0,
+                4,
+                1
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

@@ -7,7 +7,7 @@ assert.ok(['suffix', 'leaf'].includes(policy));
 const board = process.argv[3] || 'candidate';
 assert.ok(['candidate', 'baseline'].includes(board));
 const targetStep = process.argv[4] === undefined ? (board === 'candidate' ? 105 : 107) : Number(process.argv[4]);
-assert.ok(board === 'candidate' ? [105, 156, 182, 206, 294, 346, 369].includes(targetStep) : [107, 394].includes(targetStep));
+assert.ok(board === 'candidate' ? [105, 156, 182, 206, 294, 346, 369, 566].includes(targetStep) : [107, 394].includes(targetStep));
 const boardRecord = board === 'candidate' ? '4a694948.ad676add.full.json' : '3c7e0003.af937808.full.json';
 const source = policy === 'suffix' ? '/private/tmp/seti-route-suffix-facts-20260908' : '/private/tmp/seti-route-leaf-eligibility-20260909';
 const output = path.join(root, `reports/iteration/route-leaf-brown${targetStep}-${policy}-20260909.json`);
