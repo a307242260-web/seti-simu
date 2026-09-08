@@ -1,0 +1,49 @@
+{
+  "sourcePair": [
+    473,
+    219
+  ],
+  "actions": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:124d76d3",
+      "actorId": "player-white",
+      "stateVersion": 2,
+      "decisionVersion": 0,
+      "target": {
+        "cardInstanceId": "card-13-0"
+      },
+      "payload": {
+        "cost": {
+          "credits": 3
+        },
+        "handIndex": 0
+      },
+      "decision": null,
+      "summary": "b_117.webp"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "move",
+      "phase": "quick",
+      "actionId": "move:e0158279",
+      "actorId": "player-white",
+      "stateVersion": 3,
+      "decisionVersion": 0,
+      "target": {
+        "rocketId": 3,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payload": {
+        "direction": "out",
+        "requiredMovePoints": 1
+      },
+      "decision": null,
+      "summary": "移动探测器 3 向外"
+    }
+  ],
+  "error": "AssertionError [ERR_ASSERTION]: 正式动作必须可用\n    at submit (/Users/bilibili/code/seti-simu/adhoc/verify-step24-endturn-closure-20260908.js:14:10)\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/verify-step24-endturn-closure-20260908.js:32:5)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+}

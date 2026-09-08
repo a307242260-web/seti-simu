@@ -3,15 +3,20 @@ const base = '/Users/bilibili/code/seti-simu';
 const req = require('node:module').createRequire(process.cwd() + '/adhoc/trace24.js');
 const unbounded=process.argv.includes('--unbounded');
 const entryStates=process.argv.includes('--entry-states');
-const output = base + '/reports/iteration/'+(unbounded?'step24-unbounded-trace-20260908':entryStates?'step24-entry-states-aaaed8d0-20260908':'step24-goal-trace-aaaed8d0-20260908')+'.json';
+const recordArg = process.argv.indexOf('--record');
+const recordFile = recordArg >= 0 ? process.argv[recordArg + 1] : 'reports/research/7dfcf27e.aaaed8d0.full.json';
+assert.ok(recordFile, '--record需要记录路径');
+const record = JSON.parse(fs.readFileSync(base + '/' + recordFile));
+const sourceCommit = record.gitCommit;
+const compressed = process.argv.includes('--gzip');
+const output = base + '/reports/iteration/'+(unbounded?'step24-unbounded-trace-20260908':entryStates?`step24-entry-states-${sourceCommit}-20260908`:`step24-goal-trace-${sourceCommit}-20260908`)+'.json'+(compressed?'.gz':'');
 if (fs.existsSync(output)) { console.log('已有追踪，跳过：' + output); process.exit(0); }
 const streamPath=output.replace(/\.json$/,'.jsonl');
 const stream=unbounded?fs.openSync(streamPath,'wx'):null;
 const started=performance.now();let rowCount=0;
-const record = JSON.parse(fs.readFileSync(base + '/reports/research/7dfcf27e.aaaed8d0.full.json'));
 const save = JSON.parse(fs.readFileSync(base + '/' + record.savePath));
 const config = JSON.parse(fs.readFileSync('/private/tmp/seti-trigger-scan-mapping-20260907/reports/iteration/data-root-53-aaaed8d0-20260907.json')).root.config;
-const report = {source:'aaaed8d0',unbounded,codeHead:require('node:child_process').execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),step:24,rows:[],errors:[],streamPath:unbounded?streamPath:null,note:'只读断点追踪；耗时含日志开销，不作为性能成绩'};
+const report = {source:sourceCommit,recordFile,unbounded,codeHead:require('node:child_process').execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),step:24,rows:[],errors:[],streamPath:unbounded?streamPath:null,note:'只读断点追踪；耗时含日志开销，不作为性能成绩'};
 const debug = new inspector.Session(); debug.connect();
 const post = (method, params={}) => { let done=false,error,result; debug.post(method,params,(e,r)=>{done=true;error=e;result=r;}); assert.ok(done);if(error)throw error;return result; };
 const env = req('../randomizer/app/simulation-env').createSimulationEnv();
@@ -48,4 +53,4 @@ try {
   report.passed=true;
   if(unbounded)report.outcomeCompleteness=result.actionOutcomes.map(o=>({action:o.actionId,status:o.status,completeness:o.searchCompleteness,reasons:o.reasonCodes}));
 }catch(e){report.error=e.stack;process.exitCode=1;}
-finally{post('Debugger.disable');debug.disconnect();env.dispose();if(stream!==null)fs.closeSync(stream);report.wallMs=performance.now()-started;report.rowCount=rowCount;fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n',{flag:'wx'});console.log(JSON.stringify({output,rows:rowCount,passed:report.passed,error:report.error,parity:report.parity,actionMatches:report.actionMatches}));}
+finally{post('Debugger.disable');debug.disconnect();env.dispose();if(stream!==null)fs.closeSync(stream);report.wallMs=performance.now()-started;report.rowCount=rowCount;const bytes=JSON.stringify(report,null,2)+'\n';fs.writeFileSync(output,compressed?require('node:zlib').gzipSync(bytes):bytes,{flag:'wx'});console.log(JSON.stringify({output,rows:rowCount,passed:report.passed,error:report.error,parity:report.parity,actionMatches:report.actionMatches}));}
