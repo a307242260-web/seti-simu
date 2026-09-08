@@ -653,4 +653,51 @@ for (const free of [false, true]) for (const withBlue of [false, true]) {
   assert.equal(actor.resources.energy, energy - (free ? 0 : data.ANALYZE_ENERGY_COST));
   assert.equal(actor.mainActionCompleted, true);
 }
+// 计算机收入的真实抽牌来源必须声明隐藏信息边界，不能只测手造屏障后的过滤。
+for (const [incomeCode, emptyDeck] of [[0, false], [1, false], [2, false], [3, false], [4, false], [2, true]]) {
+  const executors = new Map();
+  scienceSession.createScienceDomain({ runtime: { registerExecutor(type, executor) {
+    executors.set(type, executor);
+  } }, commitWorkingState(state) { return state; } });
+  const { root } = createCanonicalState();
+  const actor = root.players.players[0];
+  actor.hand = [{ id: "income-source", cardId: "b_2.webp", incomeCode }];
+  actor.resources.handSize = 1;
+  actor.income = players.normalizeIncome(null);
+  root.cards.drawPileCardIds = ["dlc_40.png"];
+  if (emptyDeck) {
+    root.cards.drawPileCardIds = [];
+    root.cards.removedFromGameCardIds = require("../../../assets/cards/card_model.json").map(c => c.card_id);
+  }
+  const executor = executors.get(scienceSession.EFFECT_TYPES.INCOME);
+  const effect = { ownerId: actor.id, payload: {} };
+  const before = structuredClone(root);
+  const choices = executor.getLegalChoices(root, effect, { state: root });
+  assert.equal(choices.length, 1);
+  const result = executor.resolveDecision(root, effect, choices[0], { state: root });
+  if (emptyDeck) {
+    assert.equal(result.ok, false);
+    assert.equal(result.code, "SCIENCE_INCOME_DRAW_FAILED");
+    assert.equal(result.irreversible, undefined);
+    assert.equal(result.nextState, undefined, "抽牌失败不能产生成功提交状态");
+    continue;
+  }
+  assert.equal(result.ok, true);
+  assert.equal(root.cards.removedFromGameCardIds.includes("b_2.webp"), true);
+  if (incomeCode === 2) {
+    assert.equal(actor.hand.length, 1);
+    assert.equal(actor.hand[0].cardId, "dlc_40.png");
+    assert.equal(result.irreversible?.code, "hidden_card_reveal", "收入盲抽必须触发未知牌面过滤");
+  } else {
+    assert.equal(actor.hand.length, 0);
+    assert.equal(result.irreversible, undefined, "钱电收入没有揭示新信息");
+  }
+  const restored = structuredClone(before);
+  const restoredResult = executor.resolveDecision(restored, effect, choices[0], { state: restored });
+  assert.equal(restoredResult.ok, true);
+  assert.deepEqual(restored, root, "恢复后收入结算的资源、牌与随机序号必须一致");
+  const after = structuredClone(root);
+  assert.equal(executor.resolveDecision(root, effect, choices[0], { state: root }).code, "SCIENCE_INCOME_STALE");
+  assert.deepEqual(root, after, "重复收入选择不得再次扣牌或发奖");
+}
 console.log("science scan and blue reward tests passed");

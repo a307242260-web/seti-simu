@@ -1576,11 +1576,22 @@
           () => nextCommittedRandom(root),
           { root },
         );
+        let revealedCard = false;
+        let drawFailure = null;
         players.gainIncome(actor, gain, {
-          blindDraw: (target) => drawContext.blindDraw(target),
+          blindDraw: (target) => {
+            const result = drawContext.blindDraw(target);
+            if (!result.ok) drawFailure = result;
+            else revealedCard = true;
+            return result;
+          },
           gainData: (target) => data.gainData(target, { source: "place_data_income", root }),
         });
+        if (drawFailure) return fail("SCIENCE_INCOME_DRAW_FAILED", drawFailure.message);
         return scienceResult(state, root, EFFECT_TYPES.INCOME, {
+          ...(revealedCard ? {
+            irreversible: { code: "hidden_card_reveal", reason: "收入盲抽翻出新牌" },
+          } : {}),
           events: [{ type: "place_data_income", playerId: actor.id, cardInstanceId: card.id }],
         });
       },
