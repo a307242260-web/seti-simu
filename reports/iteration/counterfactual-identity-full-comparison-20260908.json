@@ -1,0 +1,128 @@
+{
+  "correctBaseline": {
+    "file": "1a061690.1501ebfd.full.json",
+    "commit": "1501ebfd",
+    "summary": {
+      "round": 4,
+      "terminal": true,
+      "scores": {
+        "player-blue": 74,
+        "player-green": 105,
+        "player-brown": 115,
+        "player-white": 113
+      },
+      "avgScore": 101.75
+    },
+    "steps": 613,
+    "wallMs": 579822,
+    "nodes": 143252,
+    "inputs": 182804,
+    "counts": {
+      "control": 84,
+      "strategic": 88
+    },
+    "executionCaps": {
+      "strategic": 30,
+      "control": 8
+    },
+    "beamCaps": null,
+    "executionOrBeamSearches": null,
+    "failures": {},
+    "savePath": "/Users/bilibili/code/seti-simu/seti-saves/seti-save-research-grant-data-route-20260908-1501ebfd-full-v316.json"
+  },
+  "directBaseline": {
+    "file": "95016f07.438305b4.full.json",
+    "commit": "438305b4",
+    "summary": {
+      "round": 4,
+      "terminal": true,
+      "scores": {
+        "player-blue": 83,
+        "player-green": 137,
+        "player-brown": 98,
+        "player-white": 79
+      },
+      "avgScore": 99.25
+    },
+    "steps": 583,
+    "wallMs": 486150,
+    "nodes": 116318,
+    "inputs": 151370,
+    "counts": {
+      "control": 79,
+      "strategic": 92
+    },
+    "executionCaps": {
+      "strategic": 22,
+      "control": 11
+    },
+    "beamCaps": {
+      "strategic": 31
+    },
+    "executionOrBeamSearches": {
+      "strategic": 31,
+      "control": 11
+    },
+    "failures": {},
+    "savePath": "/Users/bilibili/code/seti-simu/seti-saves/seti-save-research-quick-turn-order-20260908-438305b4-full-v300.json"
+  },
+  "candidate": {
+    "file": "362fa7f3.0b01af15.full.json",
+    "commit": "0b01af15",
+    "summary": {
+      "round": 4,
+      "terminal": true,
+      "scores": {
+        "player-blue": 96,
+        "player-green": 89,
+        "player-brown": 103,
+        "player-white": 110
+      },
+      "avgScore": 99.5
+    },
+    "steps": 635,
+    "wallMs": 659435,
+    "nodes": 138008,
+    "inputs": 176619,
+    "counts": {
+      "control": 83,
+      "strategic": 109
+    },
+    "executionCaps": {
+      "strategic": 27,
+      "control": 5
+    },
+    "beamCaps": {
+      "strategic": 35
+    },
+    "executionOrBeamSearches": {
+      "strategic": 35,
+      "control": 5
+    },
+    "failures": {},
+    "savePath": "/private/tmp/seti-counterfactual-identity-20260908/seti-saves/seti-save-research-counterfactual-identity-20260908-0b01af15-full-v319.json"
+  },
+  "versusCorrect": {
+    "mean": -2.25,
+    "nodes": -5244,
+    "wallMs": 79613,
+    "seats": {
+      "player-blue": 22,
+      "player-green": -16,
+      "player-brown": -12,
+      "player-white": -3
+    }
+  },
+  "versusDirect": {
+    "mean": 0.25,
+    "nodes": 21690,
+    "wallMs": 173285,
+    "seats": {
+      "player-blue": 13,
+      "player-green": -48,
+      "player-brown": 5,
+      "player-white": 31
+    }
+  },
+  "boundary": "无前沿字段的旧记录保留null；执行或前沿裁剪的搜索按并集计数，不重复相加。总节点减少不替代指定行为的节省及正确性证据。"
+}
