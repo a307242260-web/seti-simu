@@ -1,8 +1,8 @@
-// 使用已捕获的156/182优胜计划检查后续正式输入；不重新搜索、不重跑整局。
+// 使用已捕获的156/182/206优胜计划检查后续正式输入；不重新搜索、不重跑整局。
 const fs = require('node:fs'), assert = require('node:assert/strict');
 const source = '/private/tmp/seti-route-leaf-eligibility-20260909';
 const targetStep = Number(process.argv[2] || 156);
-assert.ok([156, 182].includes(targetStep));
+assert.ok([156, 182, 206].includes(targetStep));
 const output = `reports/iteration/brown${targetStep}-plan-boundary-20260909-v2.json`;
 if (fs.existsSync(output)) { console.log('已有计划边界检查点：' + output); process.exit(0); }
 const capture = require(`../reports/iteration/route-leaf-brown${targetStep}-leaf-20260909.json`);

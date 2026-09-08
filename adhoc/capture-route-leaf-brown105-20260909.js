@@ -1,4 +1,4 @@
-// 重放指定盘面的正式前缀并冷搜索棕方单步；默认105/107，可指定156/182，不运行完整局。
+// 重放指定盘面的正式前缀并冷搜索棕方单步；默认105/107，可指定156/182/206，不运行完整局。
 const fs = require('node:fs'), path = require('node:path'), cp = require('node:child_process');
 const assert = require('node:assert/strict'), inspector = require('node:inspector');
 const root = path.resolve(__dirname, '..');
@@ -7,7 +7,7 @@ assert.ok(['suffix', 'leaf'].includes(policy));
 const board = process.argv[3] || 'candidate';
 assert.ok(['candidate', 'baseline'].includes(board));
 const targetStep = process.argv[4] === undefined ? (board === 'candidate' ? 105 : 107) : Number(process.argv[4]);
-assert.ok(board === 'candidate' ? [105, 156, 182].includes(targetStep) : targetStep === 107);
+assert.ok(board === 'candidate' ? [105, 156, 182, 206].includes(targetStep) : targetStep === 107);
 const boardRecord = board === 'candidate' ? '4a694948.ad676add.full.json' : '3c7e0003.af937808.full.json';
 const source = policy === 'suffix' ? '/private/tmp/seti-route-suffix-facts-20260908' : '/private/tmp/seti-route-leaf-eligibility-20260909';
 const output = path.join(root, `reports/iteration/route-leaf-brown${targetStep}-${policy}-20260909.json`);
