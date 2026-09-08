@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T05:22:46.950Z",
+  "builtAt": "2026-09-08T06:26:21.491Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "e0877805",
-  "currentBaseline": "trigger-scan-mapping-20260907",
+  "headCommit": "f520347d",
+  "currentBaseline": "income-blind-boundary-20260908",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,628 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "income-blind-boundary-20260908",
+      "name": "income-blind-boundary-20260908",
+      "date": "2026-09-08",
+      "baseline": "trigger-scan-mapping-20260907",
+      "head": "f520347d",
+      "commits": [
+        {
+          "hash": "bd498c3a",
+          "date": "2026-09-08",
+          "subject": "收入盲抽上报隐藏信息屏障并显式拒绝抽牌失败"
+        },
+        {
+          "hash": "f520347d",
+          "date": "2026-09-08",
+          "subject": "归档收入屏障修复的第24步真实搜索与未知牌面执行检查"
+        }
+      ],
+      "summary": "计算机收入盲抽成功时上报隐藏信息屏障，抽牌失败显式报错",
+      "diffStat": "366 files changed, 10649122 insertions(+), 100 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/audit-chong-blue-order-20260908.js",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-company-income-consumers-20260908.js",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-data-continuations-20260908.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-search-depth-repetition-20260908.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-step24-initial-state-20260908.js",
+          "insertions": 11,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-company-income-root53-20260908.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-blue161-candidates-20260908.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-blue161-candidates-fixed-20260908.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-blue161-turing-active-20260908.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-blue50-expiry-20260908.js",
+          "insertions": 60,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-blue50-no-borrow-masked-20260908.js",
+          "insertions": 99,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-blue50-physical-reexecution-20260908.js",
+          "insertions": 106,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-blue536-masked-path-20260908.js",
+          "insertions": 91,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-blue536-selector-prefix-20260908.js",
+          "insertions": 91,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-blue536-turing-20260908.js",
+          "insertions": 60,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-blue560-plan-reuse-20260908.js",
+          "insertions": 45,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-chong-blue-full-delta-20260908.js",
+          "insertions": 44,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-company-income-root53-20260908.js",
+          "insertions": 63,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-green-income-and-company-base-20260908.js",
+          "insertions": 60,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-turing-directory-delta-20260908.js",
+          "insertions": 91,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-turing-eight-effects-20260908.js",
+          "insertions": 60,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-white-r2-expiry-20260908.js",
+          "insertions": 60,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-white573-expiry-20260908.js",
+          "insertions": 65,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inventory-turing-card-consumers-20260908.js",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inventory-turing-consumer-options-20260908.js",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-full-searches-aaaed8d0-20260907.js",
+          "insertions": 25,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-turing-entry-bindings-20260908.js",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-turing-pressure-20260908.js",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/render-step24-goals-20260908.js",
+          "insertions": 101,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/reproduce-fangzhou-play-20260908.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/reproduce-quick-move-events-20260908.js",
+          "insertions": 69,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/reproduce-session-sequence-isolation-20260908.js",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/serve-fangzhou-browser-fixture-20260908.js",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-borrowed-probe-cache-full-20260908.js",
+          "insertions": 96,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-data-successors-20260908.js",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-expired-sector-full-20260908.js",
+          "insertions": 89,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-fangzhou-major-full-20260908.js",
+          "insertions": 109,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-turing-active-tech-full-20260908.js",
+          "insertions": 101,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-turing-immediate-expiry-full-20260908.js",
+          "insertions": 102,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/sync-fangzhou-evidence-20260908.js",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-blue50-no-borrow-20260908.js",
+          "insertions": 113,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-blue536-global-prefix-20260908.js",
+          "insertions": 109,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-data-choices-53-20260907.js",
+          "insertions": 46,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-data-successors-20260908.js",
+          "insertions": 51,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-step24-goal-tree-20260908.js",
+          "insertions": 51,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-white-blue-tech-supply-20260908.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-white-expiry-board-score-20260908.js",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-white-expiry-tech-marks-20260908.js",
+          "insertions": 32,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-white-purple4-access-20260908.js",
+          "insertions": 27,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-blue161-unused-borrow-20260908.js",
+          "insertions": 46,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-blue50-fangzhou-performance-20260908.js",
+          "insertions": 60,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-blue50-unused-borrow-20260908.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-blue536-old-plan-20260908.js",
+          "insertions": 36,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-chong-blue-order-20260908.js",
+          "insertions": 106,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-company-base-income-20260908.js",
+          "insertions": 96,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-data-continuation-boundary-20260908.js",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-expired-sector-goal-20260908.js",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-expired-sector-root-469-20260908.js",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-fangzhou-hidden-boundary-20260908.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-fangzhou-undo-20260908.js",
+          "insertions": 49,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "197640a3.f520347d.full.json",
+          "recordPath": "reports/research/197640a3.f520347d.full.json",
+          "mode": "full",
+          "steps": 608,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 536633,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "f520347d",
+          "createdAt": "2026-09-08T06:20:02.123Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "608步终局114/103/88/134，均109.75（基线123.75，下降14）；138721物理节点、171560输入、536633ms；战略截断28/96、控制截断9/79，规则失败0。前23步一致，第24步白方放数据改发射。仅收入屏障修复，尚未实施第五轮贪心；完整局降分归因未闭合，不冒充效果通过。生产目录相对aaaed8d0仅science-session收入修复及其测试有差异，历史中间提交不归属本版本。",
+          "scores": {
+            "player-blue": 114,
+            "player-green": 103,
+            "player-brown": 88,
+            "player-white": 134
+          },
+          "avgScore": 109.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 114,
+              "base": 70,
+              "tile": 32,
+              "card": 12,
+              "tileScoresById": {
+                "a": 5,
+                "b": 6,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 5,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 6
+                },
+                {
+                  "cardId": "dlc_31.png",
+                  "rule": {
+                    "count": 2,
+                    "kind": "planetLandingPairs",
+                    "scorePer": 6
+                  },
+                  "score": 6
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 6,
+                "cardEffectScore": 0,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 16,
+                "orbitScore": 9,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 6
+              }
+            },
+            "player-green": {
+              "total": 103,
+              "base": 65,
+              "tile": 15,
+              "card": 23,
+              "tileScoresById": {
+                "a": 15,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 0,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 0,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 14
+                },
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 9
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 15,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 11,
+                "orbitScore": 15,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 2
+              }
+            },
+            "player-brown": {
+              "total": 88,
+              "base": 62,
+              "tile": 26,
+              "card": 0,
+              "tileScoresById": {
+                "a": 16,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 11,
+                "orbitScore": 12,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 12
+              }
+            },
+            "player-white": {
+              "total": 134,
+              "base": 90,
+              "tile": 44,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 16,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 2,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 4,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 8,
+                "cardEffectScore": 10,
+                "cardQuickScore": 3,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 20,
+                "orbitScore": 0,
+                "scanScore": 10,
+                "taskCardScore": 5,
+                "techBonusScore": 8
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-income-blind-boundary-20260908-f520347d-full-v308.json",
+          "reportPath": "reports/iteration/income-blind-boundary-20260908/197640a3.f520347d.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "197640a3.f520347d.full",
+            "path": "reports/iteration/income-blind-boundary-20260908/197640a3.f520347d.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "rules-baseline-20260908",
       "name": "规则修复保留、未通过筛选撤下（基线验收）",
@@ -7599,7 +8221,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
@@ -32993,7 +33615,7 @@ const REGISTRY = {
           },
           "savePath": "seti-saves/seti-save-research-fold-multifill-0a377f88-full-v283.json",
           "reportPath": "reports/iteration/fold-chain-real/e749439d.0a377f88.full.action-log.html",
-          "reportExists": false
+          "reportExists": true
         }
       ],
       "roadmap": null,
@@ -33001,8 +33623,14 @@ const REGISTRY = {
       "completeness": {
         "record": true,
         "save": true,
-        "report": false,
-        "reportLinks": []
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "e749439d.0a377f88.full",
+            "path": "reports/iteration/fold-chain-real/e749439d.0a377f88.full.action-log.html",
+            "mode": "full"
+          }
+        ]
       }
     },
     {
@@ -36498,11 +37126,6 @@ const REGISTRY = {
       "kind": "commit-mismatch",
       "level": "warn",
       "text": "fold-chain-real 的记录 e749439d.0a377f88.full.json gitCommit=0a377f88 不在版本 commits（29e66b9b）内——运行于脏工作树或归属错误，请核对 versions.json"
-    },
-    {
-      "kind": "missing-report",
-      "level": "warn",
-      "text": "fold-chain-real 的记录 e749439d.0a377f88.full.json 有存档但缺复盘报告（node tools/robot_iterate.js build --reports 可补齐）"
     },
     {
       "kind": "missing-save",

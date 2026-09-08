@@ -1,0 +1,193 @@
+{
+  "baseline": {
+    "file": "7dfcf27e.aaaed8d0.full.json",
+    "commit": "aaaed8d0",
+    "summary": {
+      "round": 4,
+      "terminal": true,
+      "scores": {
+        "player-blue": 87,
+        "player-green": 147,
+        "player-brown": 121,
+        "player-white": 140
+      },
+      "avgScore": 123.75
+    },
+    "terminal": true,
+    "steps": 690,
+    "wallMs": 572316,
+    "nodes": 142383,
+    "inputs": 180948,
+    "failures": {},
+    "caps": {
+      "strategic": 27,
+      "control": 11
+    },
+    "counts": {
+      "control": 87,
+      "strategic": 98
+    },
+    "savePath": "seti-saves/seti-save-research-trigger-scan-mapping-20260907-aaaed8d0-full-v339.json"
+  },
+  "candidate": {
+    "file": "197640a3.f520347d.full.json",
+    "commit": "f520347d",
+    "summary": {
+      "round": 4,
+      "terminal": true,
+      "scores": {
+        "player-blue": 114,
+        "player-green": 103,
+        "player-brown": 88,
+        "player-white": 134
+      },
+      "avgScore": 109.75
+    },
+    "terminal": true,
+    "steps": 608,
+    "wallMs": 536633,
+    "nodes": 138721,
+    "inputs": 171560,
+    "failures": {},
+    "caps": {
+      "strategic": 28,
+      "control": 9
+    },
+    "counts": {
+      "control": 79,
+      "strategic": 96
+    },
+    "savePath": "seti-saves/seti-save-research-income-blind-boundary-20260908-f520347d-full-v308.json"
+  },
+  "firstDifference": {
+    "step": 24,
+    "baseline": {
+      "stepIndex": 23,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 2,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 1,
+        "c": "player-white",
+        "p": {
+          "player-blue": [
+            7,
+            6,
+            2,
+            4,
+            3,
+            0
+          ],
+          "player-green": [
+            7,
+            4,
+            3,
+            3,
+            3,
+            0
+          ],
+          "player-brown": [
+            8,
+            3,
+            2,
+            7,
+            4,
+            0
+          ],
+          "player-white": [
+            6,
+            5,
+            2,
+            4,
+            2,
+            0
+          ]
+        }
+      }
+    },
+    "candidate": {
+      "stepIndex": 23,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:c94cda79",
+        "actorId": "player-white",
+        "stateVersion": 2,
+        "decisionVersion": 0,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "发射"
+      },
+      "phase": "main",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 1,
+        "c": "player-white",
+        "p": {
+          "player-blue": [
+            7,
+            6,
+            2,
+            4,
+            3,
+            0
+          ],
+          "player-green": [
+            7,
+            4,
+            3,
+            3,
+            3,
+            0
+          ],
+          "player-brown": [
+            8,
+            3,
+            2,
+            7,
+            4,
+            0
+          ],
+          "player-white": [
+            6,
+            3,
+            2,
+            4,
+            2,
+            0
+          ]
+        }
+      }
+    }
+  },
+  "scoreDeltas": {
+    "player-blue": 27,
+    "player-green": -44,
+    "player-brown": -33,
+    "player-white": -6
+  },
+  "conclusion": "收入信息边界修复后首次行为变化为第24步放数据改发射；修复与单点屏障传播已验证，但完整局降14分的路径归因尚未闭合，不能将所有下降自动归为纠错。战略截断27/98变28/96，未达到第五轮完整性目标。",
+  "scope": "只比较既有记录；没有重跑完整局，也不根据终局差值推断单一路线因果。"
+}
