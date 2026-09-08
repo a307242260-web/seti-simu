@@ -8,8 +8,9 @@ const beam = process.argv.includes('--track-beam');
 assert.ok(!beam || track);
 assert.ok(!track || (board === 'candidate' && policy === 'candidate'));
 assert.ok(['baseline', 'candidate'].includes(board));
-assert.ok(['baseline', 'candidate'].includes(policy));
-const source = policy === 'baseline' ? root : '/private/tmp/seti-quick-turn-order-20260908';
+assert.ok(['baseline', 'candidate', 'identity'].includes(policy));
+const source = policy === 'baseline' ? root : policy === 'identity'
+  ? '/private/tmp/seti-counterfactual-identity-20260908' : '/private/tmp/seti-quick-turn-order-20260908';
 const output = path.join(root, `reports/iteration/quick-turn-white-cross-${board}-${policy}${beam ? '-beam-trace' : track ? '-old-plan-trace' : ''}-20260908.json`);
 if (fs.existsSync(output) || fs.existsSync(output + '.gz')) { console.log('已有交叉证据，跳过：' + output); process.exit(0); }
 const comparison = JSON.parse(fs.readFileSync(path.join(root, 'reports/iteration/quick-turn-full-comparison-20260908.json')));
