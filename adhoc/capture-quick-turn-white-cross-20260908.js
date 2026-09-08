@@ -10,7 +10,7 @@ const blue = process.argv.includes('--blue-identity');
 assert.ok(!(green && blue));
 assert.ok(!(green || blue) || (!track && ['candidate', 'identity'].includes(policy)));
 assert.ok(!beam || track);
-assert.ok(!track || (board === 'candidate' && policy === 'candidate'));
+assert.ok(!track || (board === 'candidate' && ['candidate', 'identity'].includes(policy)));
 assert.ok(['baseline', 'candidate'].includes(board));
 assert.ok(['baseline', 'candidate', 'identity'].includes(policy));
 const source = policy === 'baseline' ? root : policy === 'identity'
@@ -67,7 +67,8 @@ try {
   assert.equal(hits.length, 1);
   post('Debugger.enable'); post('Debugger.setBreakpointByUrl', { urlRegex: 'heuristic-decision-function\\.js$', lineNumber: hits[0] });
   if (track) {
-    const old = JSON.parse(fs.readFileSync(path.join(root, 'reports/iteration/quick-turn-white-cross-candidate-baseline-20260908.json')));
+    const old = JSON.parse(require('node:zlib').gunzipSync(fs.readFileSync(path.join(root,
+      'reports/iteration/quick-turn-white-cross-candidate-baseline-20260908.json.gz'))));
     report.trackedChain = old.captures[0].ranked.find(x => x.action.family === 'scan').leaf.actionChain;
     report.trace = [];
     const chain = JSON.stringify(report.trackedChain);
