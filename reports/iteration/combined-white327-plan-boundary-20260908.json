@@ -1,0 +1,1633 @@
+{
+  "sourceCommit": "5d17835f6d309d0d7888216b9bf056ae1176cb35",
+  "checks": [
+    {
+      "step": 328,
+      "turn": "3/3",
+      "actual": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 158,
+        "decisionVersion": 9,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "expected": {
+        "actionId": "end_turn:b2f9b29d",
+        "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:venus:planet:",
+              "sourceId": "rocket:8"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:venus:planet:",
+                "requirementId": "rocket:8:orbit:venus:planet:",
+                "sourceId": "rocket:8",
+                "rocketId": 8,
+                "movementSteps": 2,
+                "movementNextSteps": [
+                  {
+                    "family": "move",
+                    "rocketId": 8,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ],
+                "paidMovementPoints": 3,
+                "markers": 3
+              }
+            ]
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:2",
+              "ownCount": 0,
+              "maxOpponentCount": 2,
+              "openSlotCount": 2,
+              "nextSlotScore": 0,
+              "ranking": [
+                {
+                  "playerId": "player-green",
+                  "playerColor": "green",
+                  "count": 2,
+                  "latestReplacementOrder": 26
+                },
+                {
+                  "playerId": "player-brown",
+                  "playerColor": "brown",
+                  "count": 1,
+                  "latestReplacementOrder": 31
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "result": {
+        "hit": true,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:b2f9b29d",
+          "actorId": "player-white",
+          "stateVersion": 158,
+          "decisionVersion": 9,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      }
+    },
+    {
+      "step": 341,
+      "turn": "3/7",
+      "actual": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:8b5f9643",
+        "actorId": "player-white",
+        "stateVersion": 168,
+        "decisionVersion": 9,
+        "target": {
+          "cardInstanceId": "card-64-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 4
+        },
+        "decision": null,
+        "summary": "b_16.webp"
+      },
+      "expected": {
+        "actionId": "play_card:8b5f9643",
+        "actionKey": "{\"family\":\"play_card\",\"payload\":{\"cost\":{\"credits\":1},\"handIndex\":4},\"target\":{\"cardInstanceId\":\"card-64-0\"}}",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "route",
+              "id": "orbit:venus:planet:",
+              "sourceId": "rocket:8"
+            },
+            "fact": [
+              {
+                "targetId": "orbit:venus:planet:",
+                "requirementId": "rocket:8:orbit:venus:planet:",
+                "sourceId": "rocket:8",
+                "rocketId": 8,
+                "movementSteps": 2,
+                "movementNextSteps": [
+                  {
+                    "family": "move",
+                    "rocketId": 8,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ],
+                "paidMovementPoints": 3,
+                "markers": 3
+              }
+            ]
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-a"
+            },
+            "fact": {
+              "sectorId": "sector-1-a",
+              "targetId": "sector:win:sector-1-a:2",
+              "ownCount": 0,
+              "maxOpponentCount": 2,
+              "openSlotCount": 2,
+              "nextSlotScore": 0,
+              "ranking": [
+                {
+                  "playerId": "player-green",
+                  "playerColor": "green",
+                  "count": 2,
+                  "latestReplacementOrder": 26
+                },
+                {
+                  "playerId": "player-brown",
+                  "playerColor": "brown",
+                  "count": 1,
+                  "latestReplacementOrder": 31
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "result": {
+        "hit": false,
+        "reason": "next-step-affected",
+        "affected": {
+          "kind": "route",
+          "id": "orbit:venus:planet:",
+          "sourceId": "rocket:8"
+        }
+      },
+      "facts": {
+        "movementContext": {
+          "phase": "ordinary",
+          "cardRemaining": 0,
+          "companyAvailable": false,
+          "companyRemaining": 0,
+          "usedRocketIds": []
+        },
+        "movementSources": [
+          {
+            "id": 8,
+            "playerId": "player-white",
+            "surface": "solar-board",
+            "sectorX": 1,
+            "sectorY": 1,
+            "polar": null
+          },
+          {
+            "id": 9,
+            "playerId": "player-green",
+            "surface": "solar-board",
+            "sectorX": 1,
+            "sectorY": 1,
+            "polar": null
+          }
+        ],
+        "probeScanSectorLayout": {
+          "1": 3,
+          "2": 1,
+          "3": 2,
+          "4": 4
+        },
+        "probeScanSources": [
+          {
+            "id": 8,
+            "playerId": "player-white",
+            "surface": "solar-board",
+            "kind": "standard",
+            "sectorX": 1,
+            "sectorY": 1,
+            "polar": null
+          },
+          {
+            "id": 9,
+            "playerId": "player-green",
+            "surface": "solar-board",
+            "kind": "standard",
+            "sectorX": 1,
+            "sectorY": 1,
+            "polar": null
+          }
+        ],
+        "scanEarth": {
+          "sectorX": 1
+        },
+        "routes": [
+          {
+            "targetId": "orbit:uranus:planet:",
+            "requirementId": "rocket:8:orbit:uranus:planet:",
+            "sourceId": "rocket:8",
+            "rocketId": 8,
+            "movementSteps": 6,
+            "movementNextSteps": [
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": 0,
+                "deltaY": 1
+              }
+            ],
+            "paidMovementPoints": 7,
+            "markers": 0
+          },
+          {
+            "targetId": "land:uranus:planet:",
+            "requirementId": "rocket:8:land:uranus:planet:",
+            "sourceId": "rocket:8",
+            "rocketId": 8,
+            "movementSteps": 6,
+            "movementNextSteps": [
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": 0,
+                "deltaY": 1
+              }
+            ],
+            "paidMovementPoints": 7,
+            "markers": 0
+          },
+          {
+            "targetId": "land:mercury:planet:",
+            "requirementId": "rocket:8:land:mercury:planet:",
+            "sourceId": "rocket:8",
+            "rocketId": 8,
+            "movementSteps": 4,
+            "movementNextSteps": [
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": 1,
+                "deltaY": 0
+              }
+            ],
+            "paidMovementPoints": 4,
+            "markers": 0
+          },
+          {
+            "targetId": "land:neptune:planet:",
+            "requirementId": "rocket:8:land:neptune:planet:",
+            "sourceId": "rocket:8",
+            "rocketId": 8,
+            "movementSteps": 3,
+            "movementNextSteps": [
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": 0,
+                "deltaY": 1
+              }
+            ],
+            "paidMovementPoints": 5,
+            "markers": 0
+          },
+          {
+            "targetId": "orbit:neptune:planet:",
+            "requirementId": "rocket:8:orbit:neptune:planet:",
+            "sourceId": "rocket:8",
+            "rocketId": 8,
+            "movementSteps": 3,
+            "movementNextSteps": [
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": 0,
+                "deltaY": 1
+              }
+            ],
+            "paidMovementPoints": 5,
+            "markers": 0
+          },
+          {
+            "targetId": "land:jupiter:planet:",
+            "requirementId": "rocket:8:land:jupiter:planet:",
+            "sourceId": "rocket:8",
+            "rocketId": 8,
+            "movementSteps": 5,
+            "movementNextSteps": [
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": -1,
+                "deltaY": 0
+              },
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": 0,
+                "deltaY": 1
+              }
+            ],
+            "paidMovementPoints": 6,
+            "markers": 0
+          },
+          {
+            "targetId": "land:mars:planet:",
+            "requirementId": "rocket:8:land:mars:planet:",
+            "sourceId": "rocket:8",
+            "rocketId": 8,
+            "movementSteps": 5,
+            "movementNextSteps": [
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": 1,
+                "deltaY": 0
+              }
+            ],
+            "paidMovementPoints": 5,
+            "markers": 1
+          },
+          {
+            "targetId": "land:saturn:planet:",
+            "requirementId": "rocket:8:land:saturn:planet:",
+            "sourceId": "rocket:8",
+            "rocketId": 8,
+            "movementSteps": 3,
+            "movementNextSteps": [
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": 1,
+                "deltaY": 0
+              }
+            ],
+            "paidMovementPoints": 4,
+            "markers": 0
+          },
+          {
+            "targetId": "orbit:venus:planet:",
+            "requirementId": "rocket:8:orbit:venus:planet:",
+            "sourceId": "rocket:8",
+            "rocketId": 8,
+            "movementSteps": 2,
+            "movementNextSteps": [
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": -1,
+                "deltaY": 0
+              }
+            ],
+            "paidMovementPoints": 3,
+            "markers": 4
+          },
+          {
+            "targetId": "orbit:mercury:planet:",
+            "requirementId": "rocket:8:orbit:mercury:planet:",
+            "sourceId": "rocket:8",
+            "rocketId": 8,
+            "movementSteps": 4,
+            "movementNextSteps": [
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": 1,
+                "deltaY": 0
+              }
+            ],
+            "paidMovementPoints": 4,
+            "markers": 0
+          },
+          {
+            "targetId": "land:venus:planet:",
+            "requirementId": "rocket:8:land:venus:planet:",
+            "sourceId": "rocket:8",
+            "rocketId": 8,
+            "movementSteps": 2,
+            "movementNextSteps": [
+              {
+                "family": "move",
+                "rocketId": 8,
+                "deltaX": -1,
+                "deltaY": 0
+              }
+            ],
+            "paidMovementPoints": 3,
+            "markers": 1
+          }
+        ],
+        "tech": {
+          "blue1": {
+            "tileId": "blue1",
+            "techType": "blue",
+            "stackIndex": 1,
+            "bonusId": "bonus_1p",
+            "remaining": 3,
+            "firstTakeClaimedBy": "player-brown",
+            "depleted": false
+          },
+          "blue2": {
+            "tileId": "blue2",
+            "techType": "blue",
+            "stackIndex": 2,
+            "bonusId": "bonus_1c",
+            "remaining": 4,
+            "depleted": false
+          },
+          "blue3": {
+            "tileId": "blue3",
+            "techType": "blue",
+            "stackIndex": 3,
+            "bonusId": "bonus_1c",
+            "remaining": 4,
+            "depleted": false
+          },
+          "blue4": {
+            "tileId": "blue4",
+            "techType": "blue",
+            "stackIndex": 4,
+            "bonusId": "bonus_1p",
+            "remaining": 4,
+            "depleted": false
+          },
+          "orange1": {
+            "tileId": "orange1",
+            "techType": "orange",
+            "stackIndex": 1,
+            "bonusId": "bonus_1c",
+            "remaining": 4,
+            "depleted": false
+          },
+          "orange2": {
+            "tileId": "orange2",
+            "techType": "orange",
+            "stackIndex": 2,
+            "bonusId": "bonus_1c",
+            "remaining": 2,
+            "firstTakeClaimedBy": "player-blue",
+            "depleted": false
+          },
+          "orange3": {
+            "tileId": "orange3",
+            "techType": "orange",
+            "stackIndex": 3,
+            "bonusId": "bonus_1c",
+            "remaining": 2,
+            "firstTakeClaimedBy": "player-green",
+            "depleted": false
+          },
+          "orange4": {
+            "tileId": "orange4",
+            "techType": "orange",
+            "stackIndex": 4,
+            "bonusId": "bonus_1p",
+            "remaining": 4,
+            "depleted": false
+          },
+          "purple1": {
+            "tileId": "purple1",
+            "techType": "purple",
+            "stackIndex": 1,
+            "bonusId": "bonus_1m",
+            "remaining": 4,
+            "depleted": false
+          },
+          "purple2": {
+            "tileId": "purple2",
+            "techType": "purple",
+            "stackIndex": 2,
+            "bonusId": "bonus_3f",
+            "remaining": 2,
+            "firstTakeClaimedBy": "player-white",
+            "depleted": false
+          },
+          "purple3": {
+            "tileId": "purple3",
+            "techType": "purple",
+            "stackIndex": 3,
+            "bonusId": "bonus_1c",
+            "remaining": 4,
+            "depleted": false
+          },
+          "purple4": {
+            "tileId": "purple4",
+            "techType": "purple",
+            "stackIndex": 4,
+            "bonusId": "bonus_3f",
+            "remaining": 1,
+            "firstTakeClaimedBy": "player-blue",
+            "depleted": false
+          }
+        },
+        "finalTiles": {
+          "a": {
+            "tile": {
+              "id": "a",
+              "marks": [
+                {
+                  "id": "final-mark-3",
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-4",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 2,
+                  "threshold": 50,
+                  "tileId": "a"
+                },
+                {
+                  "id": "final-mark-5",
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "slot3Order": 1,
+                  "slotIndex": 3,
+                  "threshold": 25,
+                  "tileId": "a"
+                }
+              ]
+            },
+            "variant": 2
+          },
+          "b": {
+            "tile": {
+              "id": "b",
+              "marks": [
+                {
+                  "id": "final-mark-1",
+                  "playerColor": "green",
+                  "playerId": "player-green",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "b"
+                }
+              ]
+            },
+            "variant": 1
+          },
+          "c": {
+            "tile": {
+              "id": "c",
+              "marks": []
+            },
+            "variant": 1
+          },
+          "d": {
+            "tile": {
+              "id": "d",
+              "marks": [
+                {
+                  "id": "final-mark-2",
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "slot3Order": null,
+                  "slotIndex": 1,
+                  "threshold": 25,
+                  "tileId": "d"
+                }
+              ]
+            },
+            "variant": 2
+          }
+        },
+        "sectors": [
+          {
+            "sectorId": "sector-1-a",
+            "targetId": "sector:win:sector-1-a:2",
+            "ownCount": 0,
+            "maxOpponentCount": 2,
+            "openSlotCount": 2,
+            "nextSlotScore": 0,
+            "ranking": [
+              {
+                "playerId": "player-green",
+                "playerColor": "green",
+                "count": 2,
+                "latestReplacementOrder": 26
+              },
+              {
+                "playerId": "player-brown",
+                "playerColor": "brown",
+                "count": 1,
+                "latestReplacementOrder": 31
+              }
+            ]
+          },
+          {
+            "sectorId": "sector-1-b",
+            "targetId": "sector:win:sector-1-b:1",
+            "ownCount": 0,
+            "maxOpponentCount": 1,
+            "openSlotCount": 3,
+            "nextSlotScore": 2,
+            "ranking": [
+              {
+                "playerId": "player-blue",
+                "playerColor": "blue",
+                "count": 1,
+                "latestReplacementOrder": 16
+              }
+            ]
+          },
+          {
+            "sectorId": "sector-2-a",
+            "targetId": "sector:win:sector-2-a:1",
+            "ownCount": 2,
+            "maxOpponentCount": 1,
+            "openSlotCount": 3,
+            "nextSlotScore": 0,
+            "ranking": [
+              {
+                "playerId": "player-white",
+                "playerColor": "white",
+                "count": 2,
+                "latestReplacementOrder": 2
+              },
+              {
+                "playerId": "player-brown",
+                "playerColor": "brown",
+                "count": 1,
+                "latestReplacementOrder": 30
+              }
+            ]
+          },
+          {
+            "sectorId": "sector-4-a",
+            "targetId": "sector:win:sector-4-a:1",
+            "ownCount": 0,
+            "maxOpponentCount": 2,
+            "openSlotCount": 3,
+            "nextSlotScore": 0,
+            "ranking": [
+              {
+                "playerId": "player-brown",
+                "playerColor": "brown",
+                "count": 2,
+                "latestReplacementOrder": 6
+              },
+              {
+                "playerId": "player-green",
+                "playerColor": "green",
+                "count": 1,
+                "latestReplacementOrder": 25
+              }
+            ]
+          },
+          {
+            "sectorId": "sector-3-a",
+            "targetId": "sector:win:sector-3-a:2",
+            "ownCount": 1,
+            "maxOpponentCount": 0,
+            "openSlotCount": 4,
+            "nextSlotScore": 2,
+            "ranking": [
+              {
+                "playerId": "player-white",
+                "playerColor": "white",
+                "count": 1,
+                "latestReplacementOrder": 10
+              }
+            ]
+          },
+          {
+            "sectorId": "sector-3-b",
+            "targetId": "sector:win:sector-3-b:2",
+            "ownCount": 0,
+            "maxOpponentCount": 1,
+            "openSlotCount": 4,
+            "nextSlotScore": 0,
+            "ranking": [
+              {
+                "playerId": "player-green",
+                "playerColor": "green",
+                "count": 1,
+                "latestReplacementOrder": 27
+              },
+              {
+                "playerId": "player-brown",
+                "playerColor": "brown",
+                "count": 1,
+                "latestReplacementOrder": 8
+              }
+            ]
+          },
+          {
+            "sectorId": "sector-4-b",
+            "targetId": "sector:win:sector-4-b:2",
+            "ownCount": 0,
+            "maxOpponentCount": 1,
+            "openSlotCount": 4,
+            "nextSlotScore": 2,
+            "ranking": [
+              {
+                "playerId": "player-blue",
+                "playerColor": "blue",
+                "count": 1,
+                "latestReplacementOrder": 21
+              }
+            ]
+          },
+          {
+            "sectorId": "sector-2-b",
+            "targetId": "sector:win:sector-2-b:1",
+            "ownCount": 0,
+            "maxOpponentCount": 0,
+            "openSlotCount": 5,
+            "nextSlotScore": 0,
+            "ranking": []
+          }
+        ],
+        "cards": [
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_28.png"
+          },
+          {
+            "id": "card-61-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-72-0",
+            "cardId": "dlc_8.png"
+          }
+        ],
+        "aliens": [
+          {
+            "slotId": 1,
+            "revealed": true,
+            "alienId": "阿米巴",
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "white"
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "green"
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "green"
+              }
+            }
+          },
+          {
+            "slotId": 2,
+            "revealed": true,
+            "alienId": "虫",
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "brown"
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "blue"
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "blue"
+              }
+            }
+          }
+        ],
+        "data": {
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        }
+      }
+    }
+  ],
+  "scope": "327获胜计划首次失效，不代表后继重搜计划仍相同",
+  "firstMiss": {
+    "step": 341,
+    "reason": "next-step-affected",
+    "affected": {
+      "kind": "route",
+      "id": "orbit:venus:planet:",
+      "sourceId": "rocket:8"
+    }
+  },
+  "interveningActions": [
+    {
+      "stepIndex": 328,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:70d77c1b",
+        "actorId": "player-green",
+        "stateVersion": 159,
+        "decisionVersion": 9,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "发射"
+      },
+      "phase": "main",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 3,
+        "t": 4,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            28,
+            2,
+            1,
+            9,
+            2,
+            1
+          ],
+          "player-green": [
+            54,
+            4,
+            2,
+            2,
+            3,
+            2
+          ],
+          "player-brown": [
+            30,
+            4,
+            2,
+            3,
+            2,
+            0
+          ],
+          "player-white": [
+            29,
+            2,
+            3,
+            3,
+            5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 329,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:1f65daa3",
+        "actorId": "player-green",
+        "stateVersion": 160,
+        "decisionVersion": 9,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "phase": "turn_control",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 3,
+        "t": 5,
+        "c": "player-blue",
+        "p": {
+          "player-blue": [
+            28,
+            2,
+            1,
+            9,
+            2,
+            1
+          ],
+          "player-green": [
+            54,
+            4,
+            2,
+            2,
+            3,
+            2
+          ],
+          "player-brown": [
+            30,
+            4,
+            2,
+            3,
+            2,
+            0
+          ],
+          "player-white": [
+            29,
+            2,
+            3,
+            3,
+            5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 330,
+      "actorPlayerId": "player-blue",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "orbit",
+        "phase": "main",
+        "actionId": "orbit:d5e8c62c",
+        "actorId": "player-blue",
+        "stateVersion": 161,
+        "decisionVersion": 9,
+        "target": {
+          "rocketId": 7,
+          "planetId": "venus"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R7，1信用点 + 1能量）"
+      },
+      "phase": "main",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 3,
+        "t": 5,
+        "c": "player-blue",
+        "p": {
+          "player-blue": [
+            34,
+            1,
+            0,
+            9,
+            2,
+            1
+          ],
+          "player-green": [
+            54,
+            4,
+            2,
+            2,
+            3,
+            2
+          ],
+          "player-brown": [
+            30,
+            4,
+            2,
+            3,
+            2,
+            0
+          ],
+          "player-white": [
+            29,
+            2,
+            3,
+            3,
+            5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 331,
+      "actorPlayerId": "player-blue",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:272ff42d",
+        "actorId": "player-blue",
+        "stateVersion": 161,
+        "decisionVersion": 9,
+        "target": {
+          "choiceId": "income:card-68-0",
+          "cardInstanceId": "card-68-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_18.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-68-0",
+          "imageSrc": "../assets/cards/basic/split/b_18.webp",
+          "imageAlt": "b_18.webp"
+        }
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 3,
+        "t": 5,
+        "c": "player-blue",
+        "p": {
+          "player-blue": [
+            34,
+            2,
+            0,
+            9,
+            1,
+            1
+          ],
+          "player-green": [
+            54,
+            4,
+            2,
+            2,
+            3,
+            2
+          ],
+          "player-brown": [
+            30,
+            4,
+            2,
+            3,
+            2,
+            0
+          ],
+          "player-white": [
+            29,
+            2,
+            3,
+            3,
+            5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 332,
+      "actorPlayerId": "player-blue",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:320f2608",
+        "actorId": "player-blue",
+        "stateVersion": 162,
+        "decisionVersion": 9,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "phase": "turn_control",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 3,
+        "t": 6,
+        "c": "player-brown",
+        "p": {
+          "player-blue": [
+            34,
+            2,
+            0,
+            9,
+            1,
+            1
+          ],
+          "player-green": [
+            54,
+            4,
+            2,
+            2,
+            3,
+            2
+          ],
+          "player-brown": [
+            30,
+            4,
+            2,
+            3,
+            2,
+            0
+          ],
+          "player-white": [
+            29,
+            2,
+            3,
+            3,
+            5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 333,
+      "actorPlayerId": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:c45505b3",
+        "actorId": "player-brown",
+        "stateVersion": 163,
+        "decisionVersion": 9,
+        "target": {
+          "cardInstanceId": "card-28-pass-2-4"
+        },
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "b_53.webp"
+      },
+      "phase": "main",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 3,
+        "t": 6,
+        "c": "player-brown",
+        "p": {
+          "player-blue": [
+            34,
+            2,
+            0,
+            9,
+            1,
+            1
+          ],
+          "player-green": [
+            54,
+            4,
+            2,
+            2,
+            3,
+            2
+          ],
+          "player-brown": [
+            30,
+            3,
+            2,
+            3,
+            1,
+            1
+          ],
+          "player-white": [
+            29,
+            2,
+            3,
+            3,
+            5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 334,
+      "actorPlayerId": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "complete_task",
+        "phase": "quick",
+        "actionId": "complete_task:feffa16b",
+        "actorId": "player-brown",
+        "stateVersion": 164,
+        "decisionVersion": 9,
+        "target": {
+          "cardInstanceId": "card-28-pass-2-4",
+          "ruleId": "b53-distinct-signal-task"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "完成 b_53.webp"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 3,
+        "t": 6,
+        "c": "player-brown",
+        "p": {
+          "player-blue": [
+            34,
+            2,
+            0,
+            9,
+            1,
+            1
+          ],
+          "player-green": [
+            54,
+            4,
+            2,
+            2,
+            3,
+            2
+          ],
+          "player-brown": [
+            30,
+            3,
+            2,
+            5,
+            1,
+            0
+          ],
+          "player-white": [
+            29,
+            2,
+            3,
+            3,
+            5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 335,
+      "actorPlayerId": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:50a9ac16",
+        "actorId": "player-brown",
+        "stateVersion": 165,
+        "decisionVersion": 9,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 3,
+        "t": 6,
+        "c": "player-brown",
+        "p": {
+          "player-blue": [
+            34,
+            2,
+            0,
+            9,
+            1,
+            1
+          ],
+          "player-green": [
+            54,
+            4,
+            2,
+            2,
+            3,
+            2
+          ],
+          "player-brown": [
+            30,
+            3,
+            2,
+            5,
+            1,
+            0
+          ],
+          "player-white": [
+            29,
+            2,
+            3,
+            3,
+            5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 336,
+      "actorPlayerId": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:9e798bfd",
+        "actorId": "player-brown",
+        "stateVersion": 165,
+        "decisionVersion": 9,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 1"
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 3,
+        "t": 6,
+        "c": "player-brown",
+        "p": {
+          "player-blue": [
+            34,
+            2,
+            0,
+            9,
+            1,
+            1
+          ],
+          "player-green": [
+            54,
+            4,
+            2,
+            2,
+            3,
+            2
+          ],
+          "player-brown": [
+            30,
+            3,
+            2,
+            5,
+            1,
+            0
+          ],
+          "player-white": [
+            29,
+            2,
+            3,
+            3,
+            5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 337,
+      "actorPlayerId": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:50a9ac16",
+        "actorId": "player-brown",
+        "stateVersion": 166,
+        "decisionVersion": 9,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 3,
+        "t": 6,
+        "c": "player-brown",
+        "p": {
+          "player-blue": [
+            34,
+            2,
+            0,
+            9,
+            1,
+            1
+          ],
+          "player-green": [
+            54,
+            4,
+            2,
+            2,
+            3,
+            2
+          ],
+          "player-brown": [
+            30,
+            3,
+            2,
+            5,
+            1,
+            0
+          ],
+          "player-white": [
+            29,
+            2,
+            3,
+            3,
+            5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 338,
+      "actorPlayerId": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:9e798bfd",
+        "actorId": "player-brown",
+        "stateVersion": 166,
+        "decisionVersion": 9,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 2"
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 3,
+        "t": 6,
+        "c": "player-brown",
+        "p": {
+          "player-blue": [
+            34,
+            2,
+            0,
+            9,
+            1,
+            1
+          ],
+          "player-green": [
+            54,
+            4,
+            2,
+            2,
+            3,
+            2
+          ],
+          "player-brown": [
+            30,
+            3,
+            2,
+            6,
+            1,
+            0
+          ],
+          "player-white": [
+            29,
+            2,
+            3,
+            3,
+            5,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 339,
+      "actorPlayerId": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:d59ab08c",
+        "actorId": "player-brown",
+        "stateVersion": 167,
+        "decisionVersion": 9,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "phase": "turn_control",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 3,
+        "t": 7,
+        "c": "player-white",
+        "p": {
+          "player-blue": [
+            34,
+            2,
+            0,
+            9,
+            1,
+            1
+          ],
+          "player-green": [
+            54,
+            4,
+            2,
+            2,
+            3,
+            2
+          ],
+          "player-brown": [
+            30,
+            3,
+            2,
+            6,
+            1,
+            0
+          ],
+          "player-white": [
+            29,
+            2,
+            3,
+            3,
+            5,
+            1
+          ]
+        }
+      }
+    }
+  ],
+  "passed": true
+}
