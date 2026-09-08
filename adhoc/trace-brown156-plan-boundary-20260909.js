@@ -2,7 +2,7 @@
 const fs = require('node:fs'), assert = require('node:assert/strict');
 const source = '/private/tmp/seti-route-leaf-eligibility-20260909';
 const targetStep = Number(process.argv[2] || 156);
-assert.ok([156, 182, 206, 369].includes(targetStep));
+assert.ok([156, 182, 206, 294, 346, 369].includes(targetStep));
 const output = `reports/iteration/brown${targetStep}-plan-boundary-20260909-v2.json`;
 if (fs.existsSync(output)) { console.log('已有计划边界检查点：' + output); process.exit(0); }
 const capture = require(`../reports/iteration/route-leaf-brown${targetStep}-leaf-20260909.json`);
@@ -25,7 +25,7 @@ try {
   const rootPublic = capture.captures[0].snapshot.rootObservation.publicState;
   let plan = continuation.buildPlanFromSnapshot(capture.captures[0].snapshot),
     priorTurn = `${rootPublic.roundNumber}/${rootPublic.turnNumber}`;
-  for (let i = targetStep; i < (targetStep === 369 ? 410 : 245); i++) {
+  for (let i = targetStep; i < (targetStep >= 294 ? 410 : 245); i++) {
     const action = env.legalActions().find(a => a.actionId === steps[i].action.actionId);
     assert.deepEqual(action, steps[i].action);
     if (action.actorId === 'player-brown') {
