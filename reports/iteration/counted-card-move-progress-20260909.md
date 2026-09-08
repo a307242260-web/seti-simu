@@ -47,6 +47,16 @@ data:analyze≠null。未出现新增失败，不声明全量全绿。
 《突破聆听》并扫描之后。326—346有动作位置变化；347起动作重新一致，346起状态
 摘要重新一致。不是全部动作/状态一致，也不能据终局同分就宣称严格状态等价。
 基线实际没有打出b87/b98，当前存档同样未打出；本完整局不能替代两张牌的正式夹具。
+第347步完整规则状态已双路重放核对，见counted-card-move-state347-20260909.json：
+每路前347个正式输入及状态摘要均与对应存档一致，两路均无未完成事务。仅
+pieces.rockets[2].slotIndex为0/2、angleDegrees为234.9/260.1；其余完整状态均相同，
+包括该探测器sectorX/sectorY、玩家资源/手牌、牌堆、RNG、序列、科技与回合状态。
+源码核对：getRocketSectorCoordinate对格内探测器读取sectorX/sectorY；slotIndex还被
+getSectorOccupancy/findAvailableSlotIndex及旋转目的地分配读取，不可称作纯显示字段
+并据此从全局状态去重里删除。当前证据不证明任意未来下严格等价，也不证明排序根因。
+本次诊断初稿读错checkpoint.coreState.session，被断言拒绝；按实际契约改读
+coreState.compositionEnvelope.session后完成验证，未修改生产或重跑AI。
+
 局部排序差异的来源、跨回合准备顺序及动态计数信息边界仍需核对；未合dev，不宣称
 规则修复完整验收或第五轮三项指标通过，不扩展其他卡牌规则。
 

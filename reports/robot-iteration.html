@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T19:20:46.473Z",
+  "builtAt": "2026-09-08T19:27:16.803Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "2aa521d3",
+  "headCommit": "c080edd4",
   "currentBaseline": "round5-card-value-design-20260909",
   "worktreeDirty": true,
   "bestOf": {
@@ -526,7 +526,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T19:14:31.317Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": "613步正式终局74/105/115/113，均101.75与dev相同；物理节点143252、执行截断38不变，失败0，耗时565487ms。队列截断未记录，不能证明完整性改善。首次差异326白方将付1电移动延后到下一次打牌扫描之后；347起动作一致，不声称全盘逐步一致。两张数量移动牌实际未打出，其规则依据和行为由正式夹具验证。尚未合dev，继续相关顺序与信息边界核对；不重跑本版本。详见counted-card-move-progress-20260909.md及full-comparison JSON。",
+          "note": "613步正式终局74/105/115/113，均101.75与dev相同；物理节点143252、执行截断38不变，失败0，耗时565487ms。队列截断未记录，不能证明完整性改善。首次差异326白方将付1电移动延后到下一次打牌扫描之后；347起动作一致，不声称全盘逐步一致。两路正式重放到347：完整状态仅一艘探测器slotIndex/angleDegrees不同，其他域含资源、牌堆、RNG和序列一致；槽位参与占位分配，不能作为纯显示字段删除。两张数量移动牌实际未打出，其规则依据和行为由正式夹具验证。尚未合dev，继续相关顺序与信息边界核对；不重跑本版本。详见counted-card-move-progress-20260909.md、state347及full-comparison JSON。",
           "scores": {
             "player-blue": 74,
             "player-green": 105,

@@ -1,0 +1,42 @@
+{
+  "evidence": {
+    "baseline": {
+      "record": "c43c1f88.70043d34.full.json",
+      "actionsVerified": 347,
+      "stateHash": "bf40d02c5879aa2abc633cb896ea539fdd03035afb58972520f76b680aa30fba"
+    },
+    "candidate": {
+      "record": "f14a863e.4bc44eb2.full.json",
+      "actionsVerified": 347,
+      "stateHash": "0024ce2fdc173c881d211c95ae1df2ebf1273c1b851a852515b9edfff2476e64"
+    }
+  },
+  "exactStateEqual": false,
+  "differences": [
+    {
+      "path": "$.pieces.rockets.2.angleDegrees",
+      "baseline": 234.9,
+      "candidate": 260.1
+    },
+    {
+      "path": "$.pieces.rockets.2.slotIndex",
+      "baseline": 0,
+      "candidate": 2
+    }
+  ],
+  "equalDomains": [
+    "aliens",
+    "cards",
+    "data",
+    "finalScoring",
+    "match",
+    "meta",
+    "planets",
+    "players",
+    "solarSystem",
+    "tech",
+    "turn"
+  ],
+  "scope": "第347步正式状态及全部前缀输入验证；不证明规划排序原因或未来所有状态等价",
+  "passed": true
+}
