@@ -3,10 +3,12 @@ const fs = require('node:fs'), path = require('node:path'), cp = require('node:c
 const assert = require('node:assert/strict'), inspector = require('node:inspector');
 const root = path.resolve(__dirname, '..');
 const [board, policy] = process.argv.slice(2);
+const track = process.argv.includes('--track-old-plan');
+assert.ok(!track || (board === 'candidate' && policy === 'candidate'));
 assert.ok(['baseline', 'candidate'].includes(board));
 assert.ok(['baseline', 'candidate'].includes(policy));
 const source = policy === 'baseline' ? root : '/private/tmp/seti-quick-turn-order-20260908';
-const output = path.join(root, `reports/iteration/quick-turn-white-cross-${board}-${policy}-20260908.json`);
+const output = path.join(root, `reports/iteration/quick-turn-white-cross-${board}-${policy}${track ? '-old-plan-trace' : ''}-20260908.json`);
 if (fs.existsSync(output) || fs.existsSync(output + '.gz')) { console.log('已有交叉证据，跳过：' + output); process.exit(0); }
 const comparison = JSON.parse(fs.readFileSync(path.join(root, 'reports/iteration/quick-turn-full-comparison-20260908.json')));
 const save = JSON.parse(fs.readFileSync(comparison[board].savePath));
@@ -17,6 +19,7 @@ const report = { board, policy, commit: cp.execFileSync('git', ['rev-parse', 'HE
   decisionStep: board === 'baseline' ? 189 : 175, captures: [], errors: [],
   scope: '冷启动同盘面交叉；先与对应整局计划核对，不能直接外推终局差值因果。' };
 const debug = new inspector.Session(); debug.connect();
+const traceBreakpoints = new Map();
 function post(method, params = {}) {
   let done = false, error, result;
   debug.post(method, params, (e, r) => { done = true; error = e; result = r; });
@@ -24,6 +27,14 @@ function post(method, params = {}) {
 }
 debug.on('Debugger.paused', ({ params }) => {
   try {
+    const traceExpression = traceBreakpoints.get(params.hitBreakpoints?.[0]);
+    if (traceExpression) {
+      const r = post('Debugger.evaluateOnCallFrame', { callFrameId: params.callFrames[0].callFrameId,
+        expression: traceExpression, returnByValue: true });
+      assert.equal(r.exceptionDetails, undefined);
+      report.trace.push(JSON.parse(r.result.value));
+      return;
+    }
     const r = post('Debugger.evaluateOnCallFrame', { callFrameId: params.callFrames[0].callFrameId,
       expression: `JSON.stringify({chosen:action,snapshot,ranked:legalActions.map(a=>{const e=expectedScoreEvaluator.evaluateOutcome({seatId,observation,actionOutcomes},a,{});const o=actionOutcomes.find(o=>o.actionId===a.actionId);const l=o?.leaves?.find(l=>l.leafId===e.selectedLeafId);return {action:a,evaluation:e,completeness:o?.searchCompleteness,leaf:l};})})`, returnByValue: true });
     assert.equal(r.exceptionDetails, undefined); report.captures.push(JSON.parse(r.result.value));
@@ -43,6 +54,26 @@ try {
   const hits = lines.flatMap((l, i) => l.includes('const plan = planContinuation.buildPlanFromSnapshot(snapshot);') ? [i] : []);
   assert.equal(hits.length, 1);
   post('Debugger.enable'); post('Debugger.setBreakpointByUrl', { urlRegex: 'heuristic-decision-function\\.js$', lineNumber: hits[0] });
+  if (track) {
+    const old = JSON.parse(fs.readFileSync(path.join(root, 'reports/iteration/quick-turn-white-cross-candidate-baseline-20260908.json')));
+    report.trackedChain = old.captures[0].ranked.find(x => x.action.family === 'scan').leaf.actionChain;
+    report.trace = [];
+    const chain = JSON.stringify(report.trackedChain);
+    const prefix = `o=>o.chain.length>0&&o.chain.length<=${chain}.length&&o.chain.every((a,i)=>a===${chain}[i])`;
+    const ruleLines = fs.readFileSync(path.join(source, 'randomizer/game/rule-composition.js'), 'utf8').split('\n');
+    function traceAt(needle, condition, expression) {
+      const positions = ruleLines.flatMap((l, i) => l.includes(needle) ? [i] : []);
+      assert.equal(positions.length, 1, needle);
+      const bp = post('Debugger.setBreakpointByUrl', { urlRegex: 'rule-composition\\.js$', lineNumber: positions[0], condition });
+      traceBreakpoints.set(bp.breakpointId, expression);
+    }
+    traceAt('const quickBeforeTurn = !execution.awaitingDecision', `(${prefix})(origin)`,
+      'JSON.stringify({kind:"executed",chain:nextChain,routeTargetId:origin.routeTargetId,routePlanId:origin.routePlanId,quickBeforeTurn:origin.quickBeforeTurn,awaiting:execution.awaitingDecision})');
+    traceAt('markIncomplete(origins, reason);', `origins.some(${prefix})`,
+      `JSON.stringify({kind:"pruned",reason,origins:origins.filter(${prefix}).map(o=>({chain:o.chain,routeTargetId:o.routeTargetId,routePlanId:o.routePlanId}))})`);
+    traceAt('quickTurnOrderPrunedOriginCount += 1;', `(${prefix})(origin)`,
+      'JSON.stringify({kind:"order-pruned",chain:nextChain,action:route.action,routeTargetId:route.routeTargetId,routePlanId:route.routePlanId})');
+  }
   console.log(`[白方首差交叉] 盘面=${board} 搜索=${policy} · 第2轮 第4回合 · 4096节点上限`);
   assert.equal(env.runHeuristicPolicyDecision().ok, true);
   report.diagnostics = env.getCounterfactualDiagnostics();
