@@ -2,14 +2,15 @@
 const fs = require('node:fs'), path = require('node:path'), cp = require('node:child_process');
 const assert = require('node:assert/strict'), inspector = require('node:inspector');
 const root = path.resolve(__dirname, '..');
-const mode = process.argv[2]; assert.ok(['baseline', 'income-fixed'].includes(mode));
+const mode = process.argv[2]; assert.ok(['baseline', 'income-fixed', 'company-fixed'].includes(mode));
 const source = mode === 'baseline' ? '/private/tmp/seti-white-income-baseline-20260907' : root;
 const output = path.join(root, `reports/iteration/step24-winning-plans-${mode}-20260908.json`);
 if (fs.existsSync(output)) { console.log('已有获胜计划证据，跳过：' + output); process.exit(0); }
 const req = require('node:module').createRequire(path.join(source, 'adhoc/diagnostic.js'));
 const commit = cp.execFileSync('git', ['rev-parse', 'HEAD'], { cwd: source, encoding: 'utf8' }).trim();
 const config = JSON.parse(fs.readFileSync('/private/tmp/seti-trigger-scan-mapping-20260907/reports/iteration/data-root-53-aaaed8d0-20260907.json')).root.config;
-const save = JSON.parse(fs.readFileSync(path.join(root, 'seti-saves/seti-save-research-trigger-scan-mapping-20260907-aaaed8d0-full-v339.json')));
+const inputRoot = process.env.SETI_DIAGNOSTIC_INPUT_ROOT || root;
+const save = JSON.parse(fs.readFileSync(path.join(inputRoot, 'seti-saves/seti-save-research-trigger-scan-mapping-20260907-aaaed8d0-full-v339.json')));
 const report = { mode, commit, scope: '新增根动作估值与获胜叶证据，不修改生产，不运行整局', captures: [], errors: [] };
 const env = req('../randomizer/app/simulation-env').createSimulationEnv();
 const debug = new inspector.Session(); debug.connect();

@@ -63,6 +63,47 @@ const baseIncomeOnlyPlayer = player({
   income: { credits: 3, energy: 1, handSize: 1 },
 });
 const huanyuBaseIncome = { credits: 3, energy: 1, handSize: 1 };
+// 真实玩家只保存公司身份；不能依赖测试额外注入公司基础收入。
+const initialCards = require("./initial-cards");
+for (const [label, effect] of Object.entries(initialCards.INDUSTRY_EFFECTS)) {
+  const companyPlayer = player({
+    initialSelection: { industry: { id: `industry:${label}.png` } },
+    income: { ...effect.baseIncome },
+  });
+  const before = JSON.stringify(companyPlayer);
+  assert.deepEqual(endGameScoring.getPlayerCompanyBaseIncome(companyPlayer), effect.baseIncome);
+  assert.equal(endGameScoring.getFormulaBaseValue("a1", companyPlayer, {}), 0, `${label}默认收入不计a1`);
+  assert.equal(endGameScoring.getFormulaBaseValue("a2", companyPlayer, {}), 0, `${label}默认收入不计a2`);
+  assert.equal(JSON.stringify(companyPlayer), before, "计分不写玩家状态");
+  companyPlayer.income = {
+    ...effect.baseIncome,
+    credits: (effect.baseIncome.credits || 0) + 2,
+    energy: (effect.baseIncome.energy || 0) + 1,
+    handSize: (effect.baseIncome.handSize || 0) + 3,
+  };
+  assert.equal(endGameScoring.getFormulaBaseValue("a1", companyPlayer, {}), 2);
+  assert.equal(endGameScoring.getFormulaBaseValue("a2", companyPlayer, {}), 1);
+}
+const deepSpacePlayer = player({
+  initialSelection: { industry: { id: "industry:深空探测.png" } },
+  income: { credits: 4, energy: 2, handSize: 2 },
+});
+assert.equal(endGameScoring.getFormulaBaseValue("a2", deepSpacePlayer, {}), 0, "第24步不得虚增22分");
+const companyFinalState = finalScoring.createFinalScoringState();
+finalScoring.setTileVariants(companyFinalState, { a: 2, b: 1, c: 1, d: 2 });
+deepSpacePlayer.reservedCards = [{ cardId: "b_115.webp", cardTypeCode: 3 }];
+assert.equal(endGameScoring.computePlayerCardScore(deepSpacePlayer, {
+  ...tileContext, finalScoring: companyFinalState,
+}).total, 0, "终局牌的未标记板块同样扣除默认收入");
+deepSpacePlayer.resources.score = 25;
+assert.equal(markTile(companyFinalState, "a", deepSpacePlayer).ok, true);
+assert.equal(endGameScoring.computePlayerFinalScore({
+  ...tileContext, finalScoring: companyFinalState,
+}, deepSpacePlayer).tileScore, 0, "真实公司身份的正式终局a2为0");
+assert.throws(() => endGameScoring.getPlayerCompanyBaseIncome(player({
+  initialSelection: { industry: { id: "industry:不存在.png" } },
+})), /未知公司/);
+
 const baseIncomeContext = {
   ...tileContext,
   getPlayerCompanyBaseIncome: () => huanyuBaseIncome,
@@ -652,6 +693,9 @@ const browserPositionContext = { solarSystem: asteroidBoard,
 assert.throws(() => browserScoringScope.SetiEndGameScoring.computePlayerCardScore(asteroidFinalPlayer, browserPositionContext), /缺少 SetiRocketActions/);
 browserScoringScope.SetiRocketActions = rockets;
 assert.equal(browserScoringScope.SetiEndGameScoring.computePlayerCardScore(asteroidFinalPlayer, browserPositionContext).total, 13);
+assert.throws(() => browserScoringScope.SetiEndGameScoring.getPlayerCompanyBaseIncome(deepSpacePlayer), /缺少 SetiInitialCards/);
+browserScoringScope.SetiInitialCards = initialCards;
+assert.equal(browserScoringScope.SetiEndGameScoring.getFormulaBaseValue("a2", deepSpacePlayer, {}), 0);
 
 const blueBlackPlayer = player({
   reservedCards: [

@@ -97,7 +97,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/aliens/trace-placement-legality.test.js", "rules/aliens", "外星痕迹槽位、类型与 owner 合法性", "满槽、错类型或越权放置成功"),
 
     entry("randomizer/game/final-scoring.test.js", "rules/scoring", "终局计分板选择、占位与分数", "非法 tile、重复标记或错 owner 得分"),
-    entry("randomizer/game/end-game-scoring.test.js", "rules/scoring", "终局总分只汇总正式分源", "重复分源、遗漏 owner 或结束前结算"),
+    entry("randomizer/game/end-game-scoring.test.js", "rules/scoring", "终局总分汇总正式分源，按真实公司目录扣除默认收入", "重复分源、公司基数漏扣、遗漏 owner 或结束前结算"),
   ]),
   fullFlow: Object.freeze([
     entry("randomizer/full-flow/standard-flow.test.js", "full-flow/standard-flow-v1", "唯一固定流程经生产 composition 公共 Action/Decision 到版本化权威盘面", "直接 helper、第二条完整流程入口、未清 session 或 replay 不一致"),

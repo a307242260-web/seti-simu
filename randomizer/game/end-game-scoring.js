@@ -583,7 +583,23 @@
       player?.initialSelection?.industryEffect?.baseIncome,
       player?.initialSelection?.industry?.baseIncome,
     ];
-    return candidates.find((candidate) => candidate && typeof candidate === "object") || {};
+    const explicit = candidates.find((candidate) => candidate && typeof candidate === "object");
+    if (explicit) return explicit;
+    const selectedIndustry = player?.initialSelection?.industry;
+    if (!selectedIndustry) return {};
+    // 玩家只保存公司身份，基础收入取发放时使用的同一正式目录。
+    // Browser先加载计分模块，Node存在间接依赖，因此在计分调用时解析模块。
+    const initialCards = typeof globalThis !== "undefined" && globalThis.SetiInitialCards
+      ? globalThis.SetiInitialCards
+      : typeof require === "function" ? require("./initial-cards") : null;
+    if (!initialCards?.getIndustryEffect) {
+      throw new TypeError("公司收入计分缺少 SetiInitialCards");
+    }
+    const effect = initialCards.getIndustryEffect(selectedIndustry);
+    if (!effect?.baseIncome) {
+      throw new TypeError(`公司收入计分未知公司: ${JSON.stringify(selectedIndustry)}`);
+    }
+    return effect.baseIncome;
   }
 
   function getIncomeIncreaseValue(player, incomeKey, context = {}, helpers = {}) {
