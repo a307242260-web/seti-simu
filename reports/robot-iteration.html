@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T18:18:06.422Z",
+  "builtAt": "2026-09-08T18:34:02.279Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "73d2ad7e",
+  "headCommit": "ae493706",
   "currentBaseline": "round5-card-value-design-20260909",
   "worktreeDirty": true,
   "bestOf": {
@@ -207,7 +207,7 @@ const REGISTRY = {
           "subject": "复核第五轮卡牌模型并补齐参数内结算语义设计"
         }
       ],
-      "summary": "复核182张牌与48类效果模型输入，补齐8处参数内后续奖励、回手和条件语义；新增7张牌的成本与扫描敏感性算例；核对自动弃牌结算、普通选牌、移动支付和旧手牌评分的统一接入边界，见round5-card-value-contract-20260909.md、round5-card-value-examples-20260909.md及round5-payment-consumers-20260909.md。当前为设计记录，未接入生产搜索。",
+      "summary": "复核182张牌与48类效果模型输入，补齐参数内后续奖励和8类数量奖励时机；新增成本与扫描敏感性算例、支付与旧手牌评分接入矩阵；新增发射前试验数量移动的正式执行反例，见round5-card-value-contract-20260909.md、round5-payment-consumers-20260909.md及round5-counted-rewards-20260909.md。当前为设计与缺陷取证，未接入生产搜索。",
       "diffStat": "9 files changed, 562 insertions(+), 4 deletions(-)",
       "diffFiles": [
         {

@@ -1,0 +1,283 @@
+{
+  "source": "reports/iteration/blue50-expiry-baseline-20260908.json",
+  "scope": "真实存档派生的正式打牌fixture；替换手牌以隔离b98数量，不运行AI",
+  "cases": [
+    {
+      "expectedCount": 0,
+      "inputs": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:d6f8b5ef",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-40-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_98.webp"
+        }
+      ],
+      "effect": {
+        "schemaVersion": "seti-effect-session-v1",
+        "effectId": "effect-session-1:effect:4",
+        "groupId": "effect-session-1:group:4",
+        "groupKind": "spawned",
+        "type": "card_play_domain_effect:decision:card_count_hand_corner_move",
+        "kind": "decision",
+        "ownerId": "player-blue",
+        "decisionKind": "choose_target",
+        "allowQuickActions": false,
+        "payload": {
+          "cardEffect": {
+            "id": "b98-hand-move-corners",
+            "type": "card_count_hand_corner_move",
+            "label": "手牌每张移动角标：1免费移动",
+            "icon": "movement",
+            "options": {
+              "repeat": 1
+            },
+            "status": "pending"
+          },
+          "cardInstanceId": "card-40-0"
+        },
+        "source": {
+          "parentEffectId": "effect-session-1:effect:3",
+          "priority": "direct"
+        },
+        "groupIndex": 0
+      },
+      "choices": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:364997d2",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:0:1",
+            "rocketId": 3,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R3 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:8887d88c",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:1:0",
+            "rocketId": 3,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R3 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:1bc94530",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:-1:0",
+            "rocketId": 3,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R3 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:b8c6e764",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "结束移动"
+        }
+      ],
+      "allowance": 1
+    },
+    {
+      "expectedCount": 2,
+      "inputs": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:d6f8b5ef",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-40-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_98.webp"
+        }
+      ],
+      "effect": {
+        "schemaVersion": "seti-effect-session-v1",
+        "effectId": "effect-session-1:effect:4",
+        "groupId": "effect-session-1:group:4",
+        "groupKind": "spawned",
+        "type": "card_play_domain_effect:decision:card_count_hand_corner_move",
+        "kind": "decision",
+        "ownerId": "player-blue",
+        "decisionKind": "choose_target",
+        "allowQuickActions": false,
+        "payload": {
+          "cardEffect": {
+            "id": "b98-hand-move-corners",
+            "type": "card_count_hand_corner_move",
+            "label": "手牌每张移动角标：1免费移动",
+            "icon": "movement",
+            "options": {
+              "repeat": 1
+            },
+            "status": "pending"
+          },
+          "cardInstanceId": "card-40-0"
+        },
+        "source": {
+          "parentEffectId": "effect-session-1:effect:3",
+          "priority": "direct"
+        },
+        "groupIndex": 0
+      },
+      "choices": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:364997d2",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:0:1",
+            "rocketId": 3,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R3 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:8887d88c",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:1:0",
+            "rocketId": 3,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R3 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:1bc94530",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:-1:0",
+            "rocketId": 3,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R3 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:b8c6e764",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "结束移动"
+        }
+      ],
+      "allowance": 1
+    }
+  ],
+  "reproduced": true
+}
