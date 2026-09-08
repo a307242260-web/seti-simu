@@ -1,0 +1,13 @@
+{
+  "source": "reports/iteration/data-demand-pair-prototype-20260908.json",
+  "passed": true,
+  "preservedKnownCardId": "card-15-0",
+  "searchSource": "step24-data-pair-completed-search-1501ebfd-20260908.json.gz",
+  "goalCompleted": true,
+  "equalIncludingRng": false,
+  "comparisonIgnoresSamplingRng": true,
+  "surplusData": 1,
+  "discardedCardOrderPreserved": true,
+  "sessionsNull": true,
+  "boundary": "仅实例配对原型。需求外1数据与保留已知牌的取舍来自用户要求，不是严格全状态支配。没有修改生产身份、随机采样、来源或预算。"
+}

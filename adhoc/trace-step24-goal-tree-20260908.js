@@ -3,7 +3,8 @@ const base = '/Users/bilibili/code/seti-simu';
 const req = require('node:module').createRequire(process.cwd() + '/adhoc/trace24.js');
 const unbounded=process.argv.includes('--unbounded');
 const entryStates=process.argv.includes('--entry-states');
-const dataPairStates=process.argv.includes('--data-pair-states');
+const dataPairCompleted=process.argv.includes('--data-pair-completed');
+const dataPairStates=process.argv.includes('--data-pair-states') || dataPairCompleted;
 assert.ok(!dataPairStates || (!unbounded && !entryStates));
 const recordArg = process.argv.indexOf('--record');
 const recordFile = recordArg >= 0 ? process.argv[recordArg + 1] : 'reports/research/7dfcf27e.aaaed8d0.full.json';
@@ -11,7 +12,7 @@ assert.ok(recordFile, '--record需要记录路径');
 const record = JSON.parse(fs.readFileSync(base + '/' + recordFile));
 const sourceCommit = record.gitCommit;
 const compressed = process.argv.includes('--gzip');
-const output = base + '/reports/iteration/'+(unbounded?'step24-unbounded-trace-20260908':dataPairStates?`step24-data-pair-search-${sourceCommit}-20260908`:entryStates?`step24-entry-states-${sourceCommit}-20260908`:`step24-goal-trace-${sourceCommit}-20260908`)+'.json'+(compressed?'.gz':'');
+const output = base + '/reports/iteration/'+(unbounded?'step24-unbounded-trace-20260908':dataPairStates?`step24-data-pair-${dataPairCompleted?'completed-':''}search-${sourceCommit}-20260908`:entryStates?`step24-entry-states-${sourceCommit}-20260908`:`step24-goal-trace-${sourceCommit}-20260908`)+'.json'+(compressed?'.gz':'');
 if (fs.existsSync(output)) { console.log('已有追踪，跳过：' + output); process.exit(0); }
 const streamPath=output.replace(/\.json$/,'.jsonl');
 const stream=unbounded?fs.openSync(streamPath,'wx'):null;
@@ -43,7 +44,7 @@ try {
   console.log('[第24步目标追踪] 前23步正式重放一致，开始'+(unbounded?'去上限':'4096上限')+'搜索');
   const lines=fs.readFileSync(req.resolve('../randomizer/game/rule-composition'),'utf8').split('\n');
   const hits=lines.flatMap((l,i)=>l.includes('const execution = executeNode(node);')?[i+1]:[]);assert.equal(hits.length,1);
-  post('Debugger.enable');post('Debugger.setBreakpointByUrl',{urlRegex:'rule-composition\\.js$',lineNumber:hits[0],...(dataPairStates?{condition:'Boolean(secondaryAgentSearch) && (executedNodeCount === 12 || executedNodeCount === 18)'}:{})});
+  post('Debugger.enable');post('Debugger.setBreakpointByUrl',{urlRegex:'rule-composition\\.js$',lineNumber:hits[0],...(dataPairStates?{condition:dataPairCompleted?'Boolean(secondaryAgentSearch) && (executedNodeCount === 15 || executedNodeCount === 21)':'Boolean(secondaryAgentSearch) && (executedNodeCount === 12 || executedNodeCount === 18)'}:{})});
   const result=env.runHeuristicPolicyDecision();
   report.diagnostics=env.getCounterfactualDiagnostics();report.selected=result.policyDecision;
   assert.equal(result.ok,true);assert.deepEqual(report.errors,[]);
