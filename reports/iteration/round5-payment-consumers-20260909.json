@@ -1,0 +1,1136 @@
+{
+  "source": "reports/iteration/step24-goal-trace-aaaed8d0-20260908.json",
+  "sourceCommit": "aaaed8d0",
+  "step": 24,
+  "scope": "历史搜索已记录的实际提交位置；非当前dev计数，不推断未保存的选择器候选",
+  "groups": {
+    "choose_card/无kind": {
+      "physicalInputs": 617,
+      "nodeRootInputs": 617,
+      "drainedInputs": 0,
+      "examples": [
+        {
+          "ordinal": 5,
+          "inputIndex": 0,
+          "nodeAction": "choose_card:0871dfa8",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:0871dfa8",
+            "actorId": "player-white",
+            "stateVersion": 5,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "income:card-13-0",
+              "cardInstanceId": "card-13-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 b_117.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-13-0",
+              "imageSrc": "../assets/cards/basic/split/b_117.webp",
+              "imageAlt": "b_117.webp"
+            }
+          },
+          "origins": [
+            {
+              "target": "data:analyze",
+              "plan": "data:place_data",
+              "chain": [
+                "place_data:8fd12fd3"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            },
+            {
+              "target": "income:gain:4,2,0,0,1,1",
+              "plan": "income:data:computer-slot-4",
+              "chain": [
+                "place_data:8fd12fd3"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            },
+            {
+              "target": "tech:gain:blue1",
+              "plan": "tech:blue1:1",
+              "chain": [
+                "place_data:8fd12fd3"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            },
+            {
+              "target": "tech:gain:blue2",
+              "plan": "tech:blue2:1",
+              "chain": [
+                "place_data:8fd12fd3"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            },
+            {
+              "target": "tech:gain:orange3",
+              "plan": "tech:orange3:",
+              "chain": [
+                "place_data:8fd12fd3"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            }
+          ]
+        },
+        {
+          "ordinal": 16,
+          "inputIndex": 0,
+          "nodeAction": "choose_card:836ae617",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:836ae617",
+            "actorId": "player-white",
+            "stateVersion": 8,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "public:card-18-0:sector-3-a",
+              "cardInstanceId": "card-18-0",
+              "publicSlotIndex": 1,
+              "nebulaId": "sector-3-a"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "b_48.webp → 开普勒22",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-18-0",
+              "imageSrc": "../assets/cards/basic/split/b_48.webp",
+              "imageAlt": "b_48.webp"
+            }
+          },
+          "origins": [
+            {
+              "target": "data:analyze",
+              "plan": "data:scan",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f9d602d7",
+                "place_data:8fd12fd3",
+                "scan:2d21a323",
+                "choose_target:756e7901"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            },
+            {
+              "target": "data:analyze",
+              "plan": "data:scan",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f9d602d7",
+                "place_data:8fd12fd3",
+                "scan:2d21a323",
+                "choose_target:756e7901"
+              ],
+              "goalPaths": [
+                [
+                  "income:gain:4,2,0,0,1,1"
+                ]
+              ],
+              "proxyDepth": 1
+            }
+          ]
+        },
+        {
+          "ordinal": 28,
+          "inputIndex": 0,
+          "nodeAction": "choose_card:836ae617",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:836ae617",
+            "actorId": "player-white",
+            "stateVersion": 8,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "public:card-18-0:sector-3-a",
+              "cardInstanceId": "card-18-0",
+              "publicSlotIndex": 1,
+              "nebulaId": "sector-3-a"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "b_48.webp → 开普勒22",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-18-0",
+              "imageSrc": "../assets/cards/basic/split/b_48.webp",
+              "imageAlt": "b_48.webp"
+            }
+          },
+          "origins": [
+            {
+              "target": "data:analyze",
+              "plan": "data:scan",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f7279abf",
+                "place_data:8fd12fd3",
+                "scan:2d21a323",
+                "choose_target:756e7901"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            },
+            {
+              "target": "data:analyze",
+              "plan": "data:scan",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f7279abf",
+                "place_data:8fd12fd3",
+                "scan:2d21a323",
+                "choose_target:756e7901"
+              ],
+              "goalPaths": [
+                [
+                  "income:gain:4,2,0,0,1,1"
+                ]
+              ],
+              "proxyDepth": 1
+            }
+          ]
+        }
+      ]
+    },
+    "choose_payment/move-payment": {
+      "physicalInputs": 25,
+      "nodeRootInputs": 6,
+      "drainedInputs": 19,
+      "examples": [
+        {
+          "ordinal": 56,
+          "inputIndex": 1,
+          "nodeAction": "move:e0158279",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:abbb51f1",
+            "actorId": "player-white",
+            "stateVersion": 3,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            },
+            "payload": {
+              "energyCost": 1,
+              "requiredMovePoints": 1
+            },
+            "decision": null,
+            "summary": "消耗 1 能量"
+          },
+          "origins": [
+            {
+              "target": "land:mars:planet:",
+              "plan": "probe:rocket:3:land:mars:planet:",
+              "chain": [
+                "play_card:124d76d3"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            },
+            {
+              "target": "orbit:mars:planet:",
+              "plan": "probe:rocket:3:orbit:mars:planet:",
+              "chain": [
+                "play_card:124d76d3"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            }
+          ]
+        },
+        {
+          "ordinal": 79,
+          "inputIndex": 0,
+          "nodeAction": "choose_payment:abbb51f1",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:abbb51f1",
+            "actorId": "player-white",
+            "stateVersion": 3,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            },
+            "payload": {
+              "energyCost": 1,
+              "requiredMovePoints": 1
+            },
+            "decision": null,
+            "summary": "消耗 1 能量"
+          },
+          "origins": [
+            {
+              "target": "land:mars:planet:",
+              "plan": "probe:rocket:3:land:mars:planet:",
+              "chain": [
+                "launch:c94cda79",
+                "move:e0158279"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            },
+            {
+              "target": "orbit:mars:planet:",
+              "plan": "probe:rocket:3:orbit:mars:planet:",
+              "chain": [
+                "launch:c94cda79",
+                "move:e0158279"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            }
+          ]
+        },
+        {
+          "ordinal": 102,
+          "inputIndex": 0,
+          "nodeAction": "choose_payment:c85df532",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:c85df532",
+            "actorId": "player-white",
+            "stateVersion": 3,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "card-13-0",
+              "cardIds": [
+                "card-13-0"
+              ]
+            },
+            "payload": {
+              "energyCost": 0,
+              "requiredMovePoints": 1
+            },
+            "decision": null,
+            "summary": "弃 1 张移动牌"
+          },
+          "origins": [
+            {
+              "target": "land:mars:planet:",
+              "plan": "probe:rocket:3:land:mars:planet:",
+              "chain": [
+                "launch:c94cda79",
+                "move:e0158279"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            },
+            {
+              "target": "orbit:mars:planet:",
+              "plan": "probe:rocket:3:orbit:mars:planet:",
+              "chain": [
+                "launch:c94cda79",
+                "move:e0158279"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            }
+          ]
+        }
+      ]
+    },
+    "choose_card/trade-card-selection": {
+      "physicalInputs": 181,
+      "nodeRootInputs": 181,
+      "drainedInputs": 0,
+      "examples": [
+        {
+          "ordinal": 64,
+          "inputIndex": 0,
+          "nodeAction": "choose_card:53a67c0a",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:53a67c0a",
+            "actorId": "player-white",
+            "stateVersion": 5,
+            "decisionVersion": 2,
+            "target": {
+              "kind": "trade-card-selection",
+              "choiceId": "public:0",
+              "source": "public",
+              "slotIndex": 0,
+              "cardInstanceId": "card-17-0"
+            },
+            "payload": {
+              "slotIndex": 0
+            },
+            "decision": null,
+            "summary": "b_2.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-17-0",
+              "imageSrc": "../assets/cards/basic/split/b_2.webp",
+              "imageAlt": "b_2.webp"
+            }
+          },
+          "origins": [
+            {
+              "target": "land:mars:planet:",
+              "plan": "probe:rocket:3:land:mars:planet:",
+              "chain": [
+                "play_card:124d76d3",
+                "move:e0158279",
+                "quick_trade:f385e2ac",
+                "quick_trade:71814d67"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            }
+          ]
+        },
+        {
+          "ordinal": 305,
+          "inputIndex": 0,
+          "nodeAction": "choose_card:53a67c0a",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:53a67c0a",
+            "actorId": "player-white",
+            "stateVersion": 16,
+            "decisionVersion": 2,
+            "target": {
+              "kind": "trade-card-selection",
+              "choiceId": "public:0",
+              "source": "public",
+              "slotIndex": 0,
+              "cardInstanceId": "card-17-0"
+            },
+            "payload": {
+              "slotIndex": 0
+            },
+            "decision": null,
+            "summary": "b_2.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-17-0",
+              "imageSrc": "../assets/cards/basic/split/b_2.webp",
+              "imageAlt": "b_2.webp"
+            }
+          },
+          "origins": [
+            {
+              "target": "land:mars:planet:",
+              "plan": "probe:rocket:3:land:mars:planet:",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f7279abf",
+                "place_data:8fd12fd3",
+                "card_corner:f9d602d7",
+                "place_data:8fd12fd3",
+                "analyze:a5629aa3",
+                "choose_target:8f2f1c72",
+                "end_turn:b2f9b29d",
+                "launch:c94cda79",
+                "move:e0158279",
+                "quick_trade:f385e2ac",
+                "quick_trade:71814d67"
+              ],
+              "goalPaths": [
+                [
+                  "data:analyze"
+                ]
+              ],
+              "proxyDepth": 1
+            },
+            {
+              "target": "land:mars:planet:",
+              "plan": "probe:rocket:3:land:mars:planet:",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f7279abf",
+                "place_data:8fd12fd3",
+                "card_corner:f9d602d7",
+                "place_data:8fd12fd3",
+                "analyze:a5629aa3",
+                "choose_target:8f2f1c72",
+                "end_turn:b2f9b29d",
+                "launch:c94cda79",
+                "move:e0158279",
+                "quick_trade:f385e2ac",
+                "quick_trade:71814d67"
+              ],
+              "goalPaths": [
+                [
+                  "income:gain:4,2,0,0,1,1",
+                  "data:analyze"
+                ]
+              ],
+              "proxyDepth": 2
+            }
+          ]
+        },
+        {
+          "ordinal": 307,
+          "inputIndex": 0,
+          "nodeAction": "choose_card:a19eafb4",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:a19eafb4",
+            "actorId": "player-white",
+            "stateVersion": 17,
+            "decisionVersion": 3,
+            "target": {
+              "kind": "trade-card-selection",
+              "choiceId": "blind",
+              "source": "blind"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "盲抽 1 张牌"
+          },
+          "origins": [
+            {
+              "target": "land:mars:planet:",
+              "plan": "probe:rocket:3:land:mars:planet:",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f7279abf",
+                "place_data:8fd12fd3",
+                "card_corner:f9d602d7",
+                "place_data:8fd12fd3",
+                "analyze:a5629aa3",
+                "choose_target:8f2f1c72",
+                "end_turn:b2f9b29d",
+                "launch:c94cda79",
+                "move:e0158279",
+                "quick_trade:f385e2ac",
+                "quick_trade:71814d67",
+                "choose_card:53a67c0a",
+                "quick_trade:71814d67"
+              ],
+              "goalPaths": [
+                [
+                  "data:analyze"
+                ]
+              ],
+              "proxyDepth": 1
+            },
+            {
+              "target": "land:mars:planet:",
+              "plan": "probe:rocket:3:land:mars:planet:",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f7279abf",
+                "place_data:8fd12fd3",
+                "card_corner:f9d602d7",
+                "place_data:8fd12fd3",
+                "analyze:a5629aa3",
+                "choose_target:8f2f1c72",
+                "end_turn:b2f9b29d",
+                "launch:c94cda79",
+                "move:e0158279",
+                "quick_trade:f385e2ac",
+                "quick_trade:71814d67",
+                "choose_card:53a67c0a",
+                "quick_trade:71814d67"
+              ],
+              "goalPaths": [
+                [
+                  "income:gain:4,2,0,0,1,1",
+                  "data:analyze"
+                ]
+              ],
+              "proxyDepth": 2
+            }
+          ]
+        }
+      ]
+    },
+    "choose_payment/discard-hand-card": {
+      "physicalInputs": 706,
+      "nodeRootInputs": 0,
+      "drainedInputs": 706,
+      "examples": [
+        {
+          "ordinal": 65,
+          "inputIndex": 1,
+          "nodeAction": "quick_trade:a39c1a77",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:58f616b8",
+            "actorId": "player-white",
+            "stateVersion": 6,
+            "decisionVersion": 3,
+            "target": {
+              "kind": "discard-hand-card",
+              "cardInstanceId": "card-15-0",
+              "select": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "dlc_9.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-15-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_9.png",
+              "imageAlt": "dlc_9.png",
+              "selected": false
+            }
+          },
+          "origins": [
+            {
+              "target": "land:mars:planet:",
+              "plan": "probe:rocket:3:land:mars:planet:",
+              "chain": [
+                "play_card:124d76d3",
+                "move:e0158279",
+                "quick_trade:f385e2ac",
+                "quick_trade:71814d67",
+                "choose_card:53a67c0a"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            }
+          ]
+        },
+        {
+          "ordinal": 65,
+          "inputIndex": 2,
+          "nodeAction": "quick_trade:a39c1a77",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:4498939e",
+            "actorId": "player-white",
+            "stateVersion": 6,
+            "decisionVersion": 3,
+            "target": {
+              "kind": "discard-hand-card",
+              "cardInstanceId": "card-17-0",
+              "select": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "b_2.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-17-0",
+              "imageSrc": "../assets/cards/basic/split/b_2.webp",
+              "imageAlt": "b_2.webp",
+              "selected": false
+            }
+          },
+          "origins": [
+            {
+              "target": "land:mars:planet:",
+              "plan": "probe:rocket:3:land:mars:planet:",
+              "chain": [
+                "play_card:124d76d3",
+                "move:e0158279",
+                "quick_trade:f385e2ac",
+                "quick_trade:71814d67",
+                "choose_card:53a67c0a"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            }
+          ]
+        },
+        {
+          "ordinal": 86,
+          "inputIndex": 1,
+          "nodeAction": "quick_trade:a39c1a77",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:a0833e12",
+            "actorId": "player-white",
+            "stateVersion": 5,
+            "decisionVersion": 2,
+            "target": {
+              "kind": "discard-hand-card",
+              "cardInstanceId": "card-13-0",
+              "select": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "b_117.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-13-0",
+              "imageSrc": "../assets/cards/basic/split/b_117.webp",
+              "imageAlt": "b_117.webp",
+              "selected": false
+            }
+          },
+          "origins": [
+            {
+              "target": "land:mars:planet:",
+              "plan": "probe:rocket:3:land:mars:planet:",
+              "chain": [
+                "launch:c94cda79",
+                "move:e0158279",
+                "choose_payment:abbb51f1",
+                "quick_trade:f385e2ac"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            }
+          ]
+        }
+      ]
+    },
+    "choose_payment/confirm": {
+      "physicalInputs": 353,
+      "nodeRootInputs": 0,
+      "drainedInputs": 353,
+      "examples": [
+        {
+          "ordinal": 65,
+          "inputIndex": 3,
+          "nodeAction": "quick_trade:a39c1a77",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:2cdde653",
+            "actorId": "player-white",
+            "stateVersion": 6,
+            "decisionVersion": 3,
+            "target": {
+              "kind": "confirm",
+              "confirm": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "确认弃牌（2/2）"
+          },
+          "origins": [
+            {
+              "target": "land:mars:planet:",
+              "plan": "probe:rocket:3:land:mars:planet:",
+              "chain": [
+                "play_card:124d76d3",
+                "move:e0158279",
+                "quick_trade:f385e2ac",
+                "quick_trade:71814d67",
+                "choose_card:53a67c0a"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            }
+          ]
+        },
+        {
+          "ordinal": 86,
+          "inputIndex": 3,
+          "nodeAction": "quick_trade:a39c1a77",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:2cdde653",
+            "actorId": "player-white",
+            "stateVersion": 5,
+            "decisionVersion": 2,
+            "target": {
+              "kind": "confirm",
+              "confirm": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "确认弃牌（2/2）"
+          },
+          "origins": [
+            {
+              "target": "land:mars:planet:",
+              "plan": "probe:rocket:3:land:mars:planet:",
+              "chain": [
+                "launch:c94cda79",
+                "move:e0158279",
+                "choose_payment:abbb51f1",
+                "quick_trade:f385e2ac"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            }
+          ]
+        },
+        {
+          "ordinal": 124,
+          "inputIndex": 3,
+          "nodeAction": "quick_trade:a39c1a77",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:2cdde653",
+            "actorId": "player-white",
+            "stateVersion": 4,
+            "decisionVersion": 2,
+            "target": {
+              "kind": "confirm",
+              "confirm": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "确认弃牌（2/2）"
+          },
+          "origins": [
+            {
+              "target": "sector:win:sector-3-a:1",
+              "plan": "sector:standard-scan:sector-3-a",
+              "chain": [
+                "scan:2d21a323",
+                "choose_target:756e7901",
+                "choose_card:836ae617",
+                "quick_trade:f385e2ac"
+              ],
+              "goalPaths": [
+                []
+              ],
+              "proxyDepth": 0
+            }
+          ]
+        }
+      ]
+    },
+    "choose_card/residual-domain": {
+      "physicalInputs": 134,
+      "nodeRootInputs": 134,
+      "drainedInputs": 0,
+      "examples": [
+        {
+          "ordinal": 143,
+          "inputIndex": 0,
+          "nodeAction": "choose_card:f88a4f80",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:f88a4f80",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "hand:card-15-0",
+              "cardInstanceId": "card-15-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "dlc_9.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-15-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_9.png",
+              "imageAlt": "dlc_9.png"
+            }
+          },
+          "origins": [
+            {
+              "target": "decision:choose_card:f88a4f80",
+              "plan": "decision:choose_card:f88a4f80",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f7279abf",
+                "place_data:8fd12fd3",
+                "scan:2d21a323",
+                "choose_target:756e7901",
+                "choose_card:836ae617",
+                "place_data:8fd12fd3",
+                "end_turn:b2f9b29d",
+                "analyze:a5629aa3",
+                "choose_target:8f2f1c72",
+                "end_turn:b2f9b29d",
+                "industry:e887dc52"
+              ],
+              "goalPaths": [
+                [
+                  "data:analyze"
+                ]
+              ],
+              "proxyDepth": 1
+            },
+            {
+              "target": "decision:choose_card:f88a4f80",
+              "plan": "decision:choose_card:f88a4f80",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f7279abf",
+                "place_data:8fd12fd3",
+                "scan:2d21a323",
+                "choose_target:756e7901",
+                "choose_card:836ae617",
+                "place_data:8fd12fd3",
+                "end_turn:b2f9b29d",
+                "analyze:a5629aa3",
+                "choose_target:8f2f1c72",
+                "end_turn:b2f9b29d",
+                "industry:e887dc52"
+              ],
+              "goalPaths": [
+                [
+                  "income:gain:4,2,0,0,1,1",
+                  "data:analyze"
+                ]
+              ],
+              "proxyDepth": 2
+            }
+          ]
+        },
+        {
+          "ordinal": 144,
+          "inputIndex": 0,
+          "nodeAction": "choose_card:1c64ac21",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:1c64ac21",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "public:0:card-17-0",
+              "slotIndex": 0,
+              "cardInstanceId": "card-17-0"
+            },
+            "payload": {
+              "handCardInstanceId": "card-15-0"
+            },
+            "decision": null,
+            "summary": "b_2.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-17-0",
+              "imageSrc": "../assets/cards/basic/split/b_2.webp",
+              "imageAlt": "b_2.webp"
+            }
+          },
+          "origins": [
+            {
+              "target": "decision:choose_card:f88a4f80",
+              "plan": "decision:choose_card:f88a4f80",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f7279abf",
+                "place_data:8fd12fd3",
+                "scan:2d21a323",
+                "choose_target:756e7901",
+                "choose_card:836ae617",
+                "place_data:8fd12fd3",
+                "end_turn:b2f9b29d",
+                "analyze:a5629aa3",
+                "choose_target:8f2f1c72",
+                "end_turn:b2f9b29d",
+                "industry:e887dc52",
+                "choose_card:f88a4f80"
+              ],
+              "goalPaths": [
+                [
+                  "data:analyze"
+                ]
+              ],
+              "proxyDepth": 1
+            },
+            {
+              "target": "decision:choose_card:f88a4f80",
+              "plan": "decision:choose_card:f88a4f80",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f7279abf",
+                "place_data:8fd12fd3",
+                "scan:2d21a323",
+                "choose_target:756e7901",
+                "choose_card:836ae617",
+                "place_data:8fd12fd3",
+                "end_turn:b2f9b29d",
+                "analyze:a5629aa3",
+                "choose_target:8f2f1c72",
+                "end_turn:b2f9b29d",
+                "industry:e887dc52",
+                "choose_card:f88a4f80"
+              ],
+              "goalPaths": [
+                [
+                  "income:gain:4,2,0,0,1,1",
+                  "data:analyze"
+                ]
+              ],
+              "proxyDepth": 2
+            }
+          ]
+        },
+        {
+          "ordinal": 145,
+          "inputIndex": 0,
+          "nodeAction": "choose_card:8087c341",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:8087c341",
+            "actorId": "player-white",
+            "stateVersion": 15,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "public:2:card-19-0",
+              "slotIndex": 2,
+              "cardInstanceId": "card-19-0"
+            },
+            "payload": {
+              "handCardInstanceId": "card-15-0"
+            },
+            "decision": null,
+            "summary": "dlc_21.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-19-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_21.png",
+              "imageAlt": "dlc_21.png"
+            }
+          },
+          "origins": [
+            {
+              "target": "decision:choose_card:f88a4f80",
+              "plan": "decision:choose_card:f88a4f80",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f7279abf",
+                "place_data:8fd12fd3",
+                "scan:2d21a323",
+                "choose_target:756e7901",
+                "choose_card:836ae617",
+                "place_data:8fd12fd3",
+                "end_turn:b2f9b29d",
+                "analyze:a5629aa3",
+                "choose_target:8f2f1c72",
+                "end_turn:b2f9b29d",
+                "industry:e887dc52",
+                "choose_card:f88a4f80"
+              ],
+              "goalPaths": [
+                [
+                  "data:analyze"
+                ]
+              ],
+              "proxyDepth": 1
+            },
+            {
+              "target": "decision:choose_card:f88a4f80",
+              "plan": "decision:choose_card:f88a4f80",
+              "chain": [
+                "place_data:8fd12fd3",
+                "choose_card:0871dfa8",
+                "card_corner:f7279abf",
+                "place_data:8fd12fd3",
+                "scan:2d21a323",
+                "choose_target:756e7901",
+                "choose_card:836ae617",
+                "place_data:8fd12fd3",
+                "end_turn:b2f9b29d",
+                "analyze:a5629aa3",
+                "choose_target:8f2f1c72",
+                "end_turn:b2f9b29d",
+                "industry:e887dc52",
+                "choose_card:f88a4f80"
+              ],
+              "goalPaths": [
+                [
+                  "income:gain:4,2,0,0,1,1",
+                  "data:analyze"
+                ]
+              ],
+              "proxyDepth": 2
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "passed": true
+}

@@ -13,7 +13,7 @@
       "baseline": null,
       "head": "141b3077",
       "commits": ["141b3077"],
-      "summary": "复核182张牌与48类效果模型输入，补齐8处参数内后续奖励、回手和条件语义；明确估值接入边界，新增7张牌的正式成本、任务半值和扫描含数据/不含数据两套算例，见round5-card-value-contract-20260909.md及round5-card-value-examples-20260909.md。当前为设计记录，未接入生产搜索。",
+      "summary": "复核182张牌与48类效果模型输入，补齐8处参数内后续奖励、回手和条件语义；新增7张牌的成本与扫描敏感性算例；核对自动弃牌结算、普通选牌、移动支付和旧手牌评分的统一接入边界，见round5-card-value-contract-20260909.md、round5-card-value-examples-20260909.md及round5-payment-consumers-20260909.md。当前为设计记录，未接入生产搜索。",
       "records": {},
       "roadmap": null
     },
