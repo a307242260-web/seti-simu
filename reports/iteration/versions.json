@@ -7,6 +7,17 @@
   },
   "versions": [
     {
+      "id": "browser-smoke-read-path-20260909",
+      "name": "浏览器检查读取路径修正（四项通过）",
+      "date": "2026-09-09",
+      "baseline": "counted-card-reveal-20260909",
+      "head": "d2e05f6a",
+      "commits": ["d2e05f6a"],
+      "summary": "浏览器检查的五处渲染模型读取改为resident.ui.browserReadModel，保持原盘面、隐私与DOM断言；不修改游戏规则。证据见browser-smoke-read-path-20260909.json。",
+      "records": {},
+      "roadmap": null
+    },
+    {
       "id": "counted-card-reveal-20260909",
       "name": "手牌展示移动（局部通过，待全盘）",
       "date": "2026-09-09",

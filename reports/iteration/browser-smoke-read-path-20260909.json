@@ -1,0 +1,18 @@
+{
+  "date": "2026-09-09",
+  "baseCommit": "d061d4f3",
+  "scope": "仅修正浏览器检查脚本五处渲染模型读取路径；不改游戏规则或断言",
+  "oldPath": "projection.resident.browserReadModel.render",
+  "currentPath": "projection.resident.ui.browserReadModel.render",
+  "command": "node tools/run_browser_smokes.js --match production-fixed-board --match production-custom-seed --match production-browser-full-parity",
+  "exitCode": 0,
+  "passed": [
+    "production-fixed-board",
+    "production-custom-seed",
+    "production-fixed-board-free-analyze",
+    "production-browser-full-parity"
+  ],
+  "failed": [],
+  "syntaxCheck": "node --check tools/browser-smoke-inventory.js: exit 0",
+  "limitation": "通用页面检查，不是展示手牌移动专门UI证据，也不是完整AI局验收"
+}

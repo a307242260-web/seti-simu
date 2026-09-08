@@ -22,8 +22,9 @@
   执行截断仍在；见counted-card-reveal-step24-d061d4f3-20260909.json。
 - Chrome启动检查通过；固定免电盘面与full-parity检查失败，前一版4bc44eb2同样失败。
   源码确认脚本仍读取resident.browserReadModel，当前API为resident.ui.browserReadModel。
-  正确路径运行及具体展示UI仍待验收，不能用这两个失败推断新规则导致渲染缺失。
-  命令结果及对照见counted-reveal-chrome-comparison-20260909.json。
+  独立检查修复d2e05f6a仅修正五处读取路径，固定盘面、自定义seed、免电分析、full-parity
+  四项全部通过，未放宽断言。具体展示UI仍待验收。前后证据分别见
+  counted-reveal-chrome-comparison-20260909.json、browser-smoke-read-path-20260909.json。
 
 - 正式play-domain回归：0/2张展示、部分展示、重复拒绝、错误owner/version、恢复重放、
   两次移动扣减、提前结束，展示后手牌保留。
@@ -41,7 +42,7 @@
 
 ## 待完成
 
-- 修正既有Chrome验证读取路径，完成正式浏览器展示/移动验证，再按新提交登记唯一完整局。
+- Chrome验证读取路径已在独立分支修正；完成正式浏览器展示/移动验证，再登记唯一完整局。
 - 固定24和34张跨批次续接已验证；长期已知收益与完整局行动计数仍待验收。
 - 第五轮普通牌估值及三项效果门槛仍未完成。本修复不改权重、4096/256或其他卡牌策略。
 
