@@ -1,11 +1,11 @@
 // 重放B的一条真实完成路线，验证拨款补数据的规则可达性与目录是否收录。
 const fs = require('node:fs'), assert = require('node:assert/strict');
 const runSearch = process.argv.includes('--search');
-const output = `reports/iteration/grant-data-route-${runSearch ? 'search' : 'fixed'}-20260908.json`;
+const output = `reports/iteration/grant-data-route-${runSearch ? 'search-v4' : 'fixed'}-20260908.json`;
 const inputRoot = process.env.SETI_DIAGNOSTIC_INPUT_ROOT || '.';
-if (fs.existsSync(output)) { console.log('已有证据：' + output); process.exit(0); }
+if (fs.existsSync(output) || fs.existsSync(output + '.gz')) { console.log('已有证据：' + output); process.exit(0); }
 const env = require('../randomizer/app/simulation-env').createSimulationEnv(); let fork;
-const report = { scope: '仅正式输入重放，不运行AI搜索', steps: [] };
+const report = { scope: runSearch ? '正式输入重放及缺口状态单次搜索，不运行完整局' : '仅正式输入重放，不运行AI搜索', steps: [] };
 try {
   const config = JSON.parse(fs.readFileSync('/private/tmp/seti-trigger-scan-mapping-20260907/reports/iteration/data-root-53-aaaed8d0-20260907.json')).root.config;
   const save = JSON.parse(fs.readFileSync(inputRoot + '/seti-saves/seti-save-research-trigger-scan-mapping-20260907-aaaed8d0-full-v339.json'));
@@ -75,6 +75,16 @@ try {
   submit(legal().find(a => a.target?.choiceId === 'data:computer'));
   assert.equal(observe().dataAnalyzeRequirements.computerPlacedCount, 6);
   if (runSearch) {
+    fork.dispose();
+    // 执行分支禁用嵌套搜索；独立根实例恢复同一正式状态，再由其创建搜索分支。
+    fork = require('../randomizer/game/production-kernel').createSimulationRuleComposition({
+      seed: config.seed,
+      random: require('../randomizer/game/random').createSeededRandom(config.seed),
+      trustedProjectionReader: true,
+      projectCounterfactualState: (state, viewer) => require('../randomizer/app/rule-observation').buildRuleObservation(
+        state, config.seed, viewer?.playerId || null, [], { cheap: viewer?.cheap === true },
+      ),
+    }).composition;
     assert.equal(fork.lifecycle.restore(beforeGrantEnvelope).ok, true);
     const outcomeModel = require('../randomizer/game/ai/outcome-model');
     const decide = require('../randomizer/game/ai/heuristic-decision-function').createHeuristicDecisionFunction({ composition: fork });

@@ -288,7 +288,14 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 `check` 退出码 1 = 有 warn，用于 CI/提交前自查。
 
-## 8. 当前版本（2026-09-06）
+## 8. 当前版本（2026-09-08）
+
+当前dev为`grant-data-route-20260908`（合入3d42ba22，实验1501ebfd）：收入隐藏屏障、
+公司默认收入计分修复之后，补齐拨款精选数据角标准备。613步终局74/105/115/113、
+均101.75，与直接基线全部replaySteps一致；143252节点、战略执行截断30/88、控制8/84、
+规则失败0。只通过本项目录补全，三项第五轮效果门槛未达。详见
+`reports/iteration/grant-data-route-design-20260908.md`。以下保留各历史迭代当时结论；
+aaaed8d0的123.75包含已确认错误计分及信息边界，不作为当前正确成绩。
 
 2026-09-08奖励依赖提前检查`reward-plan-dependency-20260907`已同步：640步终局
 85/136/82/104、均101.75，低于直接基线111.25与108.5门槛，效果未通过。
@@ -379,7 +386,8 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 
 - 记录 `summary.scores` 为运行当时口径；有存档的终局运行由 build 从存档 finalScores
   读取完整终局分（save-final），total = base + 板块 + 卡牌。
-- `registry.currentBaseline` 按代码祖先解析；当前为`trigger-scan-mapping-20260907`，
+- `registry.currentBaseline` 按代码祖先解析；当前为`grant-data-route-20260908`。
+  以下为历史参考`trigger-scan-mapping-20260907`的当时结果：
   完整终局均123.75，实际搜索规则失败0，仍有27次策略与11次控制截断。
   前版`hidden-reward-boundary-20260907`同分同动作，但第610步反事实搜索有1次
   EFFECT_EXECUTOR_NOT_REGISTERED，已由当前baseline的正式扫描映射修复。

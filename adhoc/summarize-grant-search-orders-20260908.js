@@ -1,10 +1,10 @@
 // 只读已完成单点的保留叶，定位跨回合顺序；路线计数不冒充物理节点数。
 const fs = require('node:fs');
 const crypto = require('node:crypto');
-const source = '/private/tmp/seti-grant-data-route-20260908/reports/iteration/grant-data-route-search-v4-20260908.json';
+const source = 'reports/iteration/grant-data-route-search-v4-20260908.json.gz';
 const output = 'reports/iteration/grant-search-orders-20260908.json';
 if (fs.existsSync(output)) { console.log('已有证据：' + output); process.exit(0); }
-const raw = fs.readFileSync(source);
+const raw = require('node:zlib').gunzipSync(fs.readFileSync(source));
 const report = JSON.parse(raw);
 if (!report.passed) throw new Error('来源单点尚未通过');
 const groups = new Map();

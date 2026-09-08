@@ -7,12 +7,34 @@
   },
   "versions": [
     {
+      "id": "grant-data-route-20260908",
+      "name": "精选数据角标准备计划",
+      "date": "2026-09-08",
+      "baseline": "income-boundary-company-base-20260908",
+      "head": "3d42ba22",
+      "commits": [
+        "b30cc80f",
+        "1501ebfd",
+        "3d42ba22"
+      ],
+      "summary": "补齐精选数据角标的打牌准备计划，并将精选选择绑定到对应公共牌",
+      "records": {
+        "1a061690.1501ebfd.full.json": {
+          "note": "613步终局74/105/115/113，均101.75；与直接基线全部replaySteps一致。143252节点，182804输入，战略执行截断30/88、控制8/84，规则失败0；全盘前沿裁剪字段未保存，不能记0。单点证明拨款精选数据后分析可达；按均分不变且逻辑补全通过，未实现第五轮提分/减节点/少截断目标。生产等同1501ebfd，dev合入3d42ba22。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "income-boundary-company-base-20260908",
       "name": "收入屏障基线补回公司默认收入计分",
       "date": "2026-09-08",
       "baseline": "income-blind-boundary-20260908",
       "head": "670441bc",
-      "commits": ["670441bc", "e511d0a9"],
+      "commits": [
+        "670441bc",
+        "e511d0a9"
+      ],
       "summary": "按已选公司目录扣除A类终局计分中的默认收入，正式终局与待标记预估共用",
       "records": {
         "73d04d3a.670441bc.full.json": {
