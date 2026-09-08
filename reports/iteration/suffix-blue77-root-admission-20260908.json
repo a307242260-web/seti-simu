@@ -1,0 +1,275 @@
+{
+  "board": "3c7e0003.af937808.full.json",
+  "step": 77,
+  "action": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "play_card",
+    "phase": "main",
+    "actionId": "play_card:3b8ed751",
+    "actorId": "player-blue",
+    "stateVersion": 29,
+    "decisionVersion": 0,
+    "target": {
+      "cardInstanceId": "card-3-0"
+    },
+    "payload": {
+      "cost": {
+        "credits": 1
+      },
+      "handIndex": 0
+    },
+    "decision": null,
+    "summary": "dlc_23.png"
+  },
+  "roots": {
+    "combined": {
+      "targets": [
+        {
+          "targetId": "land:mars:planet:",
+          "planId": "probe:launch:land:mars:planet:",
+          "resultTargetIds": [
+            "land:mars:planet:"
+          ],
+          "compatibleActionIds": [
+            "launch:a4087d46"
+          ]
+        },
+        {
+          "targetId": "orbit:venus:planet:",
+          "planId": "probe:launch:orbit:venus:planet:",
+          "resultTargetIds": [
+            "income:gain:4,2,0,1,1,0",
+            "orbit:venus:planet:"
+          ],
+          "compatibleActionIds": [
+            "launch:a4087d46"
+          ]
+        },
+        {
+          "targetId": "income:gain:4,2,0,1,1,0",
+          "planId": "income:data:computer-slot-4",
+          "resultTargetIds": [
+            "income:gain:4,2,0,1,1,0"
+          ],
+          "compatibleActionIds": [
+            "scan:96a13338"
+          ]
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "planId": "sector:standard-scan:sector-3-a",
+          "resultTargetIds": [
+            "sector:win:sector-3-a:1"
+          ],
+          "compatibleActionIds": [
+            "scan:96a13338"
+          ]
+        },
+        {
+          "targetId": "tech:gain:orange2",
+          "planId": "tech:orange2:",
+          "resultTargetIds": [
+            "tech:gain:orange2"
+          ],
+          "compatibleActionIds": [
+            "card_corner:03b95fd6"
+          ]
+        },
+        {
+          "targetId": "tech:gain:orange3",
+          "planId": "tech:orange3:",
+          "resultTargetIds": [
+            "tech:gain:orange3"
+          ],
+          "compatibleActionIds": [
+            "card_corner:03b95fd6"
+          ]
+        },
+        {
+          "targetId": "tech:gain:purple2",
+          "planId": "tech:purple2:",
+          "resultTargetIds": [
+            "tech:gain:purple2"
+          ],
+          "compatibleActionIds": [
+            "card_corner:03b95fd6"
+          ]
+        }
+      ],
+      "selected": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:a4087d46",
+          "actorId": "player-blue",
+          "stateVersion": 29,
+          "decisionVersion": 0,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:96a13338",
+          "actorId": "player-blue",
+          "stateVersion": 29,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:03b95fd6",
+          "actorId": "player-blue",
+          "stateVersion": 29,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-4-0"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "b_106.webp：弃牌角标"
+        }
+      ],
+      "bindings": []
+    },
+    "suffix": {
+      "targets": [
+        {
+          "targetId": "land:mars:planet:",
+          "planId": "probe:launch:land:mars:planet:",
+          "resultTargetIds": [
+            "land:mars:planet:"
+          ],
+          "compatibleActionIds": [
+            "launch:a4087d46"
+          ]
+        },
+        {
+          "targetId": "orbit:venus:planet:",
+          "planId": "probe:launch:orbit:venus:planet:",
+          "resultTargetIds": [
+            "income:gain:4,2,0,1,1,0",
+            "orbit:venus:planet:"
+          ],
+          "compatibleActionIds": [
+            "launch:a4087d46"
+          ]
+        },
+        {
+          "targetId": "income:gain:4,2,0,1,1,0",
+          "planId": "income:data:computer-slot-4",
+          "resultTargetIds": [
+            "income:gain:4,2,0,1,1,0"
+          ],
+          "compatibleActionIds": [
+            "scan:96a13338"
+          ]
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "planId": "sector:standard-scan:sector-3-a",
+          "resultTargetIds": [
+            "sector:win:sector-3-a:1"
+          ],
+          "compatibleActionIds": [
+            "scan:96a13338"
+          ]
+        },
+        {
+          "targetId": "tech:gain:orange2",
+          "planId": "tech:orange2:",
+          "resultTargetIds": [
+            "tech:gain:orange2"
+          ],
+          "compatibleActionIds": [
+            "card_corner:03b95fd6"
+          ]
+        },
+        {
+          "targetId": "tech:gain:orange3",
+          "planId": "tech:orange3:",
+          "resultTargetIds": [
+            "tech:gain:orange3"
+          ],
+          "compatibleActionIds": [
+            "card_corner:03b95fd6"
+          ]
+        },
+        {
+          "targetId": "tech:gain:purple2",
+          "planId": "tech:purple2:",
+          "resultTargetIds": [
+            "tech:gain:purple2"
+          ],
+          "compatibleActionIds": [
+            "card_corner:03b95fd6"
+          ]
+        }
+      ],
+      "selected": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "launch",
+          "phase": "main",
+          "actionId": "launch:a4087d46",
+          "actorId": "player-blue",
+          "stateVersion": 29,
+          "decisionVersion": 0,
+          "target": null,
+          "payload": {},
+          "decision": null,
+          "summary": "发射"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "scan",
+          "phase": "main",
+          "actionId": "scan:96a13338",
+          "actorId": "player-blue",
+          "stateVersion": 29,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "扫描"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "card_corner",
+          "phase": "quick",
+          "actionId": "card_corner:03b95fd6",
+          "actorId": "player-blue",
+          "stateVersion": 29,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-4-0"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "decision": null,
+          "summary": "b_106.webp：弃牌角标"
+        }
+      ],
+      "bindings": []
+    }
+  },
+  "conclusion": "合法且需反事实的中性浮力训练未获任何根目标绑定；两版在同一盘面完全一致，因此不是本次依赖改动新增的目录遗漏，也不是94个前沿来源裁剪造成的首动作未估值。是否应增加有目的的触发牌准备需单独设计，不能据此开放全部打牌。"
+}

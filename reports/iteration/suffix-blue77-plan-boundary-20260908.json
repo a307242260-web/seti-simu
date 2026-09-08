@@ -1,0 +1,2898 @@
+{
+  "sourceCommit": "af9378085d090f0d2229254a63c3627c47d2304a",
+  "checks": [
+    {
+      "step": 78,
+      "turn": "1/7",
+      "actual": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:b5bf67f7",
+        "actorId": "player-blue",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      "expected": {
+        "actionId": "research_tech:b5bf67f7",
+        "actionKey": "{\"family\":\"research_tech\",\"payload\":{\"skipBonus\":false,\"skipCost\":false,\"skipRotate\":false},\"target\":{\"kind\":\"research-tech\"}}",
+        "actorId": "player-blue",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "purple2"
+            },
+            "fact": {
+              "tileId": "purple2",
+              "techType": "purple",
+              "stackIndex": 2,
+              "bonusId": "bonus_1m",
+              "remaining": 4,
+              "depleted": false
+            }
+          }
+        ],
+        "futureDependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:pink"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "1"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "id": "card-39-0",
+                "cardId": "dlc_38.png"
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "purple3"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "tileId": "purple3",
+                "techType": "purple",
+                "stackIndex": 3,
+                "bonusId": "bonus_1c",
+                "remaining": 4,
+                "depleted": false
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-b"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "sectorId": "sector-1-b",
+                "targetId": "sector:win:sector-1-b:1",
+                "ownCount": 0,
+                "maxOpponentCount": 0,
+                "openSlotCount": 4,
+                "nextSlotScore": 0,
+                "ranking": []
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-2-b"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "sectorId": "sector-2-b",
+                "targetId": "sector:win:sector-2-b:1",
+                "ownCount": 0,
+                "maxOpponentCount": 0,
+                "openSlotCount": 5,
+                "nextSlotScore": 0,
+                "ranking": []
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-3-a"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "sectorId": "sector-3-a",
+                "targetId": "sector:win:sector-3-a:1",
+                "ownCount": 0,
+                "maxOpponentCount": 2,
+                "openSlotCount": 2,
+                "nextSlotScore": 0,
+                "ranking": [
+                  {
+                    "playerId": "player-green",
+                    "playerColor": "green",
+                    "count": 2,
+                    "latestReplacementOrder": 4
+                  },
+                  {
+                    "playerId": "player-white",
+                    "playerColor": "white",
+                    "count": 1,
+                    "latestReplacementOrder": 10
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "computerSlots": [],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "scan-earth",
+              "id": "standard"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "sectorX": 3
+              }
+            }
+          }
+        ]
+      },
+      "result": {
+        "hit": true,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "research_tech",
+          "phase": "main",
+          "actionId": "research_tech:b5bf67f7",
+          "actorId": "player-blue",
+          "stateVersion": 30,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "research-tech"
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究科技"
+        }
+      }
+    },
+    {
+      "step": 79,
+      "turn": "1/7",
+      "actual": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:c0498ae8",
+        "actorId": "player-blue",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "tech:purple2",
+          "tileId": "purple2",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 purple2"
+      },
+      "expected": {
+        "actionId": "choose_target:c0498ae8",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"skipBonus\":false,\"skipCost\":false,\"skipRotate\":false},\"target\":{\"blueSlot\":null,\"choiceId\":\"tech:purple2\",\"tileId\":\"purple2\"}}",
+        "actorId": "player-blue",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "purple2"
+            },
+            "fact": {
+              "tileId": "purple2",
+              "techType": "purple",
+              "stackIndex": 2,
+              "bonusId": "bonus_1m",
+              "remaining": 4,
+              "depleted": false
+            }
+          }
+        ],
+        "futureDependencies": []
+      },
+      "result": {
+        "hit": true,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:c0498ae8",
+          "actorId": "player-blue",
+          "stateVersion": 30,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "tech:purple2",
+            "tileId": "purple2",
+            "blueSlot": null
+          },
+          "payload": {
+            "skipCost": false,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "decision": null,
+          "summary": "研究 purple2"
+        }
+      }
+    },
+    {
+      "step": 80,
+      "turn": "1/7",
+      "actual": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:320f2608",
+        "actorId": "player-blue",
+        "stateVersion": 31,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "expected": {
+        "actionId": "end_turn:320f2608",
+        "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "actorId": "player-blue",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [],
+        "futureDependencies": []
+      },
+      "result": {
+        "hit": true,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "end_turn",
+          "phase": "turn_control",
+          "actionId": "end_turn:320f2608",
+          "actorId": "player-blue",
+          "stateVersion": 31,
+          "decisionVersion": 0,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "结束回合"
+        }
+      }
+    },
+    {
+      "step": 99,
+      "turn": "1/11",
+      "actual": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:a4087d46",
+        "actorId": "player-blue",
+        "stateVersion": 42,
+        "decisionVersion": 0,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "发射"
+      },
+      "expected": {
+        "actionId": "industry:f3c9eca0",
+        "actionKey": "{\"family\":\"industry\",\"payload\":{},\"target\":{\"abilityId\":\"turing_borrow_tech\",\"companyId\":\"图灵系统\"}}",
+        "actorId": "player-blue",
+        "revealedCount": 0,
+        "valid": true,
+        "reason": null,
+        "dependencies": [],
+        "futureDependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "1:pink"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "1"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "id": "card-39-0",
+                "cardId": "dlc_38.png"
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "purple3"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "tileId": "purple3",
+                "techType": "purple",
+                "stackIndex": 3,
+                "bonusId": "bonus_1c",
+                "remaining": 4,
+                "depleted": false
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-1-b"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "sectorId": "sector-1-b",
+                "targetId": "sector:win:sector-1-b:1",
+                "ownCount": 0,
+                "maxOpponentCount": 0,
+                "openSlotCount": 4,
+                "nextSlotScore": 0,
+                "ranking": []
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-2-b"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "sectorId": "sector-2-b",
+                "targetId": "sector:win:sector-2-b:1",
+                "ownCount": 0,
+                "maxOpponentCount": 0,
+                "openSlotCount": 5,
+                "nextSlotScore": 0,
+                "ranking": []
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "sector",
+              "id": "sector-3-a"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "sectorId": "sector-3-a",
+                "targetId": "sector:win:sector-3-a:1",
+                "ownCount": 0,
+                "maxOpponentCount": 2,
+                "openSlotCount": 2,
+                "nextSlotScore": 0,
+                "ranking": [
+                  {
+                    "playerId": "player-green",
+                    "playerColor": "green",
+                    "count": 2,
+                    "latestReplacementOrder": 4
+                  },
+                  {
+                    "playerId": "player-white",
+                    "playerColor": "white",
+                    "count": 1,
+                    "latestReplacementOrder": 10
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "data",
+              "id": "self"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "computerSlots": [],
+                "blueBonusCount": 0,
+                "blueSlots": [],
+                "analyzeReady": false
+              }
+            }
+          },
+          {
+            "scope": {
+              "kind": "scan-earth",
+              "id": "standard"
+            },
+            "fact": {
+              "present": true,
+              "value": {
+                "sectorX": 2
+              }
+            }
+          }
+        ]
+      },
+      "result": {
+        "hit": false,
+        "reason": "future-step-affected",
+        "affected": {
+          "kind": "card-slot",
+          "id": "1"
+        }
+      },
+      "facts": {
+        "movementContext": {
+          "phase": "ordinary",
+          "cardRemaining": 0,
+          "companyAvailable": false,
+          "companyRemaining": 0,
+          "usedRocketIds": []
+        },
+        "movementSources": [],
+        "probeScanSectorLayout": {
+          "1": 3,
+          "2": 1,
+          "3": 2,
+          "4": 4
+        },
+        "probeScanSources": [],
+        "scanEarth": {
+          "sectorX": 1
+        },
+        "routes": [
+          {
+            "targetId": "orbit:uranus:planet:",
+            "requirementId": "launch:orbit:uranus:planet:",
+            "sourceId": "launch",
+            "rocketId": null,
+            "movementSteps": 6,
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "paidMovementPoints": 6,
+            "requiredCost": {
+              "credits": 3,
+              "energy": 7
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_resources",
+                  "label": "首次环绕：额外获得 3 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 8 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 8
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "draw_cards",
+                  "label": "盲抽 3 张卡牌",
+                  "icon": "blind_card",
+                  "options": {
+                    "count": 3
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                },
+                {
+                  "type": "choose_nebula_scan",
+                  "label": "织女一/绘架座β扫描",
+                  "icon": "black_scan",
+                  "needsUserChoice": true,
+                  "options": {
+                    "nebulaIds": [
+                      "sector-1-b",
+                      "sector-4-b"
+                    ]
+                  },
+                  "id": "planet-reward-3",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "credits": 1,
+                "energy": 1
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            }
+          },
+          {
+            "targetId": "land:mercury:planet:",
+            "requirementId": "launch:land:mercury:planet:",
+            "sourceId": "launch",
+            "rocketId": null,
+            "movementSteps": 4,
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "paidMovementPoints": 5,
+            "requiredCost": {
+              "credits": 2,
+              "energy": 8
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "首次登陆：额外获得 3 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 3
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 12 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 12
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 3
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            }
+          },
+          {
+            "targetId": "land:uranus:planet:",
+            "requirementId": "launch:land:uranus:planet:",
+            "sourceId": "launch",
+            "rocketId": null,
+            "movementSteps": 6,
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "paidMovementPoints": 6,
+            "requiredCost": {
+              "credits": 2,
+              "energy": 9
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "首次登陆：额外获得 3 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 3
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 9 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 9
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 3
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            }
+          },
+          {
+            "targetId": "orbit:neptune:planet:",
+            "requirementId": "launch:orbit:neptune:planet:",
+            "sourceId": "launch",
+            "rocketId": null,
+            "movementSteps": 3,
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "paidMovementPoints": 3,
+            "requiredCost": {
+              "credits": 3,
+              "energy": 4
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_resources",
+                  "label": "首次环绕：额外获得 3 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 7 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 7
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_data",
+                  "label": "获得 4 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 4
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                },
+                {
+                  "type": "choose_nebula_scan",
+                  "label": "织女一/绘架座β扫描",
+                  "icon": "black_scan",
+                  "needsUserChoice": true,
+                  "options": {
+                    "nebulaIds": [
+                      "sector-1-b",
+                      "sector-4-b"
+                    ]
+                  },
+                  "id": "planet-reward-3",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "credits": 1,
+                "energy": 1
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            }
+          },
+          {
+            "targetId": "land:neptune:planet:",
+            "requirementId": "launch:land:neptune:planet:",
+            "sourceId": "launch",
+            "rocketId": null,
+            "movementSteps": 3,
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "paidMovementPoints": 3,
+            "requiredCost": {
+              "credits": 2,
+              "energy": 6
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "首次登陆：额外获得 3 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 3
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 10 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 10
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 3
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            }
+          },
+          {
+            "targetId": "land:saturn:planet:",
+            "requirementId": "launch:land:saturn:planet:",
+            "sourceId": "launch",
+            "rocketId": null,
+            "movementSteps": 6,
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "paidMovementPoints": 6,
+            "requiredCost": {
+              "credits": 2,
+              "energy": 8
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "首次登陆：额外获得 2 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 2
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 8 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 8
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 2
+              },
+              "ownMarkers": {
+                "orbitMarkers": [
+                  {
+                    "index": 0,
+                    "marker": {
+                      "color": "blue",
+                      "playerId": "player-blue"
+                    }
+                  }
+                ],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            }
+          },
+          {
+            "targetId": "orbit:venus:planet:",
+            "requirementId": "launch:orbit:venus:planet:",
+            "sourceId": "launch",
+            "rocketId": null,
+            "movementSteps": 2,
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "paidMovementPoints": 3,
+            "requiredCost": {
+              "credits": 3,
+              "energy": 4
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_resources",
+                  "label": "首次环绕：额外获得 3 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 6 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 6
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "income",
+                  "label": "获得 1 次收入",
+                  "icon": "income",
+                  "needsUserChoice": true,
+                  "options": {
+                    "count": 1
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "credits": 1,
+                "energy": 1
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            }
+          },
+          {
+            "targetId": "orbit:mercury:planet:",
+            "requirementId": "launch:orbit:mercury:planet:",
+            "sourceId": "launch",
+            "rocketId": null,
+            "movementSteps": 4,
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "paidMovementPoints": 5,
+            "requiredCost": {
+              "credits": 3,
+              "energy": 6
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_resources",
+                  "label": "首次环绕：额外获得 3 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 3
+                    }
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "draw_cards",
+                  "label": "盲抽 1 张卡牌",
+                  "icon": "blind_card",
+                  "options": {
+                    "count": 1
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "scan_planet_sector",
+                  "label": "水星扇区扫描 1/2",
+                  "icon": "scan",
+                  "badge": "水星",
+                  "options": {
+                    "planetId": "mercury"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                },
+                {
+                  "type": "scan_planet_sector",
+                  "label": "水星扇区扫描 2/2",
+                  "icon": "scan",
+                  "badge": "水星",
+                  "options": {
+                    "planetId": "mercury"
+                  },
+                  "id": "planet-reward-3",
+                  "status": "pending"
+                },
+                {
+                  "type": "income",
+                  "label": "获得 1 次收入",
+                  "icon": "income",
+                  "needsUserChoice": true,
+                  "options": {
+                    "count": 1
+                  },
+                  "id": "planet-reward-4",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "credits": 1,
+                "energy": 1
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            }
+          },
+          {
+            "targetId": "land:jupiter:planet:",
+            "requirementId": "launch:land:jupiter:planet:",
+            "sourceId": "launch",
+            "rocketId": null,
+            "movementSteps": 2,
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "paidMovementPoints": 2,
+            "requiredCost": {
+              "credits": 2,
+              "energy": 4
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "首次登陆：额外获得 2 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 2
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 7 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 7
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 2
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            }
+          },
+          {
+            "targetId": "land:mars:planet:",
+            "requirementId": "launch:land:mars:planet:",
+            "sourceId": "launch",
+            "rocketId": null,
+            "movementSteps": 3,
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "paidMovementPoints": 3,
+            "requiredCost": {
+              "credits": 2,
+              "energy": 5
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "第二次登陆：额外获得 1 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 1
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 6 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 6
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 2
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            }
+          },
+          {
+            "targetId": "land:venus:planet:",
+            "requirementId": "launch:land:venus:planet:",
+            "sourceId": "launch",
+            "rocketId": null,
+            "movementSteps": 2,
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "paidMovementPoints": 3,
+            "requiredCost": {
+              "credits": 2,
+              "energy": 6
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "首次登陆：额外获得 2 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 2
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 5 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 5
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 3
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            }
+          }
+        ],
+        "planetMarkers": {
+          "saturn:orbit:0": {
+            "color": "blue",
+            "playerId": "player-blue"
+          }
+        },
+        "tech": {
+          "blue1": {
+            "tileId": "blue1",
+            "techType": "blue",
+            "stackIndex": 1,
+            "bonusId": "bonus_1p",
+            "remaining": 3,
+            "firstTakeClaimedBy": "player-brown",
+            "depleted": false
+          },
+          "blue2": {
+            "tileId": "blue2",
+            "techType": "blue",
+            "stackIndex": 2,
+            "bonusId": "bonus_1c",
+            "remaining": 4,
+            "depleted": false
+          },
+          "blue3": {
+            "tileId": "blue3",
+            "techType": "blue",
+            "stackIndex": 3,
+            "bonusId": "bonus_1c",
+            "remaining": 4,
+            "depleted": false
+          },
+          "blue4": {
+            "tileId": "blue4",
+            "techType": "blue",
+            "stackIndex": 4,
+            "bonusId": "bonus_1p",
+            "remaining": 4,
+            "depleted": false
+          },
+          "orange1": {
+            "tileId": "orange1",
+            "techType": "orange",
+            "stackIndex": 1,
+            "bonusId": "bonus_1c",
+            "remaining": 4,
+            "depleted": false
+          },
+          "orange2": {
+            "tileId": "orange2",
+            "techType": "orange",
+            "stackIndex": 2,
+            "bonusId": "bonus_1p",
+            "remaining": 4,
+            "depleted": false
+          },
+          "orange3": {
+            "tileId": "orange3",
+            "techType": "orange",
+            "stackIndex": 3,
+            "bonusId": "bonus_3f",
+            "remaining": 4,
+            "depleted": false
+          },
+          "orange4": {
+            "tileId": "orange4",
+            "techType": "orange",
+            "stackIndex": 4,
+            "bonusId": "bonus_1p",
+            "remaining": 4,
+            "depleted": false
+          },
+          "purple1": {
+            "tileId": "purple1",
+            "techType": "purple",
+            "stackIndex": 1,
+            "bonusId": "bonus_1m",
+            "remaining": 4,
+            "depleted": false
+          },
+          "purple2": {
+            "tileId": "purple2",
+            "techType": "purple",
+            "stackIndex": 2,
+            "bonusId": "bonus_1c",
+            "remaining": 3,
+            "firstTakeClaimedBy": "player-blue",
+            "depleted": false
+          },
+          "purple3": {
+            "tileId": "purple3",
+            "techType": "purple",
+            "stackIndex": 3,
+            "bonusId": "bonus_1c",
+            "remaining": 4,
+            "depleted": false
+          },
+          "purple4": {
+            "tileId": "purple4",
+            "techType": "purple",
+            "stackIndex": 4,
+            "bonusId": "bonus_1p",
+            "remaining": 2,
+            "firstTakeClaimedBy": "player-blue",
+            "depleted": false
+          }
+        },
+        "finalTiles": {
+          "a": {
+            "tile": {
+              "id": "a",
+              "marks": []
+            },
+            "variant": 2
+          },
+          "b": {
+            "tile": {
+              "id": "b",
+              "marks": []
+            },
+            "variant": 1
+          },
+          "c": {
+            "tile": {
+              "id": "c",
+              "marks": []
+            },
+            "variant": 1
+          },
+          "d": {
+            "tile": {
+              "id": "d",
+              "marks": []
+            },
+            "variant": 2
+          }
+        },
+        "sectors": [
+          {
+            "sectorId": "sector-3-a",
+            "targetId": "sector:win:sector-3-a:1",
+            "ownCount": 0,
+            "maxOpponentCount": 2,
+            "openSlotCount": 2,
+            "nextSlotScore": 0,
+            "ranking": [
+              {
+                "playerId": "player-green",
+                "playerColor": "green",
+                "count": 2,
+                "latestReplacementOrder": 4
+              },
+              {
+                "playerId": "player-white",
+                "playerColor": "white",
+                "count": 1,
+                "latestReplacementOrder": 10
+              }
+            ]
+          },
+          {
+            "sectorId": "sector-1-a",
+            "targetId": "sector:win:sector-1-a:1",
+            "ownCount": 0,
+            "maxOpponentCount": 1,
+            "openSlotCount": 3,
+            "nextSlotScore": 0,
+            "ranking": [
+              {
+                "playerId": "player-green",
+                "playerColor": "green",
+                "count": 1,
+                "latestReplacementOrder": 11
+              },
+              {
+                "playerId": "player-white",
+                "playerColor": "white",
+                "count": 1,
+                "latestReplacementOrder": 9
+              }
+            ]
+          },
+          {
+            "sectorId": "sector-1-b",
+            "targetId": "sector:win:sector-1-b:1",
+            "ownCount": 0,
+            "maxOpponentCount": 0,
+            "openSlotCount": 4,
+            "nextSlotScore": 0,
+            "ranking": []
+          },
+          {
+            "sectorId": "sector-2-a",
+            "targetId": "sector:win:sector-2-a:1",
+            "ownCount": 0,
+            "maxOpponentCount": 2,
+            "openSlotCount": 4,
+            "nextSlotScore": 0,
+            "ranking": [
+              {
+                "playerId": "player-white",
+                "playerColor": "white",
+                "count": 2,
+                "latestReplacementOrder": 2
+              }
+            ]
+          },
+          {
+            "sectorId": "sector-3-b",
+            "targetId": "sector:win:sector-3-b:1",
+            "ownCount": 0,
+            "maxOpponentCount": 2,
+            "openSlotCount": 4,
+            "nextSlotScore": 0,
+            "ranking": [
+              {
+                "playerId": "player-brown",
+                "playerColor": "brown",
+                "count": 2,
+                "latestReplacementOrder": 8
+              }
+            ]
+          },
+          {
+            "sectorId": "sector-4-a",
+            "targetId": "sector:win:sector-4-a:1",
+            "ownCount": 0,
+            "maxOpponentCount": 2,
+            "openSlotCount": 4,
+            "nextSlotScore": 0,
+            "ranking": [
+              {
+                "playerId": "player-brown",
+                "playerColor": "brown",
+                "count": 2,
+                "latestReplacementOrder": 6
+              }
+            ]
+          },
+          {
+            "sectorId": "sector-2-b",
+            "targetId": "sector:win:sector-2-b:1",
+            "ownCount": 0,
+            "maxOpponentCount": 0,
+            "openSlotCount": 5,
+            "nextSlotScore": 0,
+            "ranking": []
+          },
+          {
+            "sectorId": "sector-4-b",
+            "targetId": "sector:win:sector-4-b:1",
+            "ownCount": 0,
+            "maxOpponentCount": 0,
+            "openSlotCount": 5,
+            "nextSlotScore": 0,
+            "ranking": []
+          }
+        ],
+        "cards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_2.webp"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_37.png"
+          },
+          {
+            "id": "card-19-0",
+            "cardId": "dlc_21.png"
+          }
+        ],
+        "aliens": [
+          {
+            "slotId": 1,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "white"
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "green"
+              }
+            }
+          },
+          {
+            "slotId": 2,
+            "revealed": false,
+            "alienId": null,
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "brown"
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "blue"
+              }
+            }
+          }
+        ],
+        "data": {
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        }
+      }
+    }
+  ],
+  "scope": "77获胜计划首次失效，不代表后继重搜计划仍相同",
+  "firstMiss": {
+    "step": 99,
+    "reason": "future-step-affected",
+    "affected": {
+      "kind": "card-slot",
+      "id": "1"
+    }
+  },
+  "interveningActions": [
+    {
+      "stepIndex": 78,
+      "actorPlayerId": "player-blue",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:c0498ae8",
+        "actorId": "player-blue",
+        "stateVersion": 30,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "tech:purple2",
+          "tileId": "purple2",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 purple2"
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 7,
+        "c": "player-blue",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            6,
+            3,
+            0
+          ],
+          "player-brown": [
+            15,
+            2,
+            2,
+            8,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            4,
+            0,
+            6,
+            2,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 79,
+      "actorPlayerId": "player-blue",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:320f2608",
+        "actorId": "player-blue",
+        "stateVersion": 31,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "phase": "turn_control",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 8,
+        "c": "player-brown",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            6,
+            3,
+            0
+          ],
+          "player-brown": [
+            15,
+            2,
+            2,
+            8,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            4,
+            0,
+            6,
+            2,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 80,
+      "actorPlayerId": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "analyze",
+        "phase": "main",
+        "actionId": "analyze:c31ddbb9",
+        "actorId": "player-brown",
+        "stateVersion": 32,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "computer",
+          "requiredSlot": 6
+        },
+        "payload": {
+          "skipCost": false
+        },
+        "decision": null,
+        "summary": "分析"
+      },
+      "phase": "main",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 8,
+        "c": "player-brown",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            6,
+            3,
+            0
+          ],
+          "player-brown": [
+            15,
+            2,
+            1,
+            8,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            4,
+            0,
+            6,
+            2,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 81,
+      "actorPlayerId": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:0562b069",
+        "actorId": "player-brown",
+        "stateVersion": 32,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "trace:2:blue",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 2,
+          "traceType": "blue"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 2 蓝色痕迹"
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 8,
+        "c": "player-brown",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            6,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            4,
+            0,
+            6,
+            2,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 82,
+      "actorPlayerId": "player-brown",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:d59ab08c",
+        "actorId": "player-brown",
+        "stateVersion": 33,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "phase": "turn_control",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 9,
+        "c": "player-white",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            6,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            4,
+            0,
+            6,
+            2,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 83,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:8faf8ead",
+        "actorId": "player-white",
+        "stateVersion": 34,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-15-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 3
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "dlc_9.png"
+      },
+      "phase": "main",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 9,
+        "c": "player-white",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            6,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 84,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:062d2a7a",
+        "actorId": "player-white",
+        "stateVersion": 34,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "tech:purple4",
+          "tileId": "purple4",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": true,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 purple4"
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 9,
+        "c": "player-white",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            6,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            1,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 85,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:06e2d58a",
+        "actorId": "player-white",
+        "stateVersion": 34,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "pick:card-39-0",
+          "cardInstanceId": "card-39-0",
+          "publicSlotIndex": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "dlc_38.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-39-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_38.png",
+          "imageAlt": "dlc_38.png"
+        }
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 9,
+        "c": "player-white",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            6,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 86,
+      "actorPlayerId": "player-white",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 35,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "phase": "turn_control",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 10,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            6,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 87,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 36,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 10,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            6,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 88,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:52efd39a",
+        "actorId": "player-green",
+        "stateVersion": 36,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 1"
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 10,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            6,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 89,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 37,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 10,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            6,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 90,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:52efd39a",
+        "actorId": "player-green",
+        "stateVersion": 37,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 2"
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 10,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            7,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 91,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 38,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 10,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            7,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 92,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:52efd39a",
+        "actorId": "player-green",
+        "stateVersion": 38,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 3"
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 10,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            7,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 93,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 39,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 10,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            7,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 94,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:52efd39a",
+        "actorId": "player-green",
+        "stateVersion": 39,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 4"
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 10,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            7,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 95,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:6afd8cd2",
+        "actorId": "player-green",
+        "stateVersion": 39,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-5-0",
+          "cardInstanceId": "card-5-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_35.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-5-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_35.png",
+          "imageAlt": "dlc_35.png"
+        }
+      },
+      "phase": "conditional",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 10,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            4,
+            0,
+            7,
+            3,
+            0
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 96,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:edfaf2d4",
+        "actorId": "player-green",
+        "stateVersion": 40,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-6-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "b_115.webp"
+      },
+      "phase": "main",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 10,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            2,
+            0,
+            9,
+            2,
+            1
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "stepIndex": 97,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:1f65daa3",
+        "actorId": "player-green",
+        "stateVersion": 41,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "phase": "turn_control",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 1,
+        "t": 11,
+        "c": "player-blue",
+        "p": {
+          "player-blue": [
+            11,
+            3,
+            2,
+            1,
+            1,
+            1
+          ],
+          "player-green": [
+            23,
+            2,
+            0,
+            9,
+            2,
+            1
+          ],
+          "player-brown": [
+            18,
+            2,
+            1,
+            9,
+            1,
+            0
+          ],
+          "player-white": [
+            11,
+            1,
+            0,
+            6,
+            2,
+            1
+          ]
+        }
+      }
+    }
+  ],
+  "passed": true
+}
