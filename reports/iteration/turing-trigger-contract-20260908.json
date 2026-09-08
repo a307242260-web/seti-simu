@@ -1,0 +1,286 @@
+{
+  "codeHead": "954e51c0b76661ac149f18f53fb68fe5a7bd2a9e",
+  "scope": "正式collectMatchingTriggers契约检查；事件为显式测试输入，不证明其在盘面可达，不代表所有匹配可以同时领奖。没有运行完整规则事务、PASS过期顺序或AI搜索。",
+  "rows": [
+    {
+      "cardId": "b_2.webp",
+      "event": {
+        "type": "visitPlanet",
+        "planetId": "mars"
+      },
+      "negativeEvent": {
+        "type": "visitPlanet",
+        "planetId": "earth"
+      },
+      "matching": [
+        {
+          "cardInstanceId": "source:b_2.webp",
+          "ruleId": "b2-visit-planet-energy",
+          "effect": {
+            "id": "b2-energy",
+            "type": "gain_resources",
+            "label": "高级导航系统：1能量",
+            "icon": "energy",
+            "options": {
+              "gain": {
+                "energy": 1
+              }
+            },
+            "status": "pending"
+          }
+        },
+        {
+          "cardInstanceId": "source:b_2.webp",
+          "ruleId": "b2-visit-planet-data",
+          "effect": {
+            "id": "b2-data",
+            "type": "gain_data",
+            "label": "高级导航系统：1数据",
+            "icon": "data",
+            "options": {
+              "count": 1
+            },
+            "status": "pending"
+          }
+        },
+        {
+          "cardInstanceId": "source:b_2.webp",
+          "ruleId": "b2-visit-planet-move",
+          "effect": {
+            "id": "b2-free-move",
+            "type": "card_free_move",
+            "label": "高级导航系统：1免费移动",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            },
+            "status": "pending"
+          }
+        }
+      ],
+      "matchingCount": 3,
+      "afterConsumingOne": 2,
+      "withSecondInstance": 5,
+      "initializesState": true,
+      "negativeRejected": true,
+      "selfTriggerRejected": true,
+      "sourceUnchanged": true
+    },
+    {
+      "cardId": "b_20.webp",
+      "event": {
+        "type": "launch"
+      },
+      "negativeEvent": {
+        "type": "scanAction"
+      },
+      "matching": [
+        {
+          "cardInstanceId": "source:b_20.webp",
+          "ruleId": "b20-launch-move-1",
+          "effect": {
+            "id": "b20-free-move-1",
+            "type": "card_free_move",
+            "label": "卡纳维拉尔角：发射后1免费移动 1/3",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            },
+            "status": "pending"
+          }
+        },
+        {
+          "cardInstanceId": "source:b_20.webp",
+          "ruleId": "b20-launch-move-2",
+          "effect": {
+            "id": "b20-free-move-2",
+            "type": "card_free_move",
+            "label": "卡纳维拉尔角：发射后1免费移动 2/3",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            },
+            "status": "pending"
+          }
+        },
+        {
+          "cardInstanceId": "source:b_20.webp",
+          "ruleId": "b20-launch-move-3",
+          "effect": {
+            "id": "b20-free-move-3",
+            "type": "card_free_move",
+            "label": "卡纳维拉尔角：发射后1免费移动 3/3",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            },
+            "status": "pending"
+          }
+        }
+      ],
+      "matchingCount": 3,
+      "afterConsumingOne": 2,
+      "withSecondInstance": 5,
+      "initializesState": true,
+      "negativeRejected": true,
+      "selfTriggerRejected": true,
+      "sourceUnchanged": true
+    },
+    {
+      "cardId": "b_25.webp",
+      "event": {
+        "type": "signalMarked",
+        "nebulaId": "sector-4-a"
+      },
+      "negativeEvent": {
+        "type": "launch"
+      },
+      "matching": [
+        {
+          "cardInstanceId": "source:b_25.webp",
+          "ruleId": "b25-yellow-scan-move",
+          "effect": {
+            "id": "b25-yellow-scan-move-effect",
+            "type": "card_free_move",
+            "label": "扫描黄色扇区：1免费移动",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            },
+            "status": "pending"
+          }
+        }
+      ],
+      "matchingCount": 1,
+      "afterConsumingOne": 0,
+      "withSecondInstance": 1,
+      "initializesState": true,
+      "negativeRejected": true,
+      "selfTriggerRejected": true,
+      "sourceUnchanged": true
+    },
+    {
+      "cardId": "b_26.webp",
+      "event": {
+        "type": "cardCorner",
+        "cornerKind": "move"
+      },
+      "negativeEvent": {
+        "type": "cardCorner",
+        "cornerKind": "energy"
+      },
+      "matching": [
+        {
+          "cardInstanceId": "source:b_26.webp",
+          "ruleId": "b26-move-corner",
+          "effect": {
+            "id": "b26-move-corner-repeat",
+            "type": "card_move",
+            "label": "康奈尔大学：再获得一次移动角标奖励",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            },
+            "status": "pending"
+          }
+        }
+      ],
+      "matchingCount": 1,
+      "afterConsumingOne": 0,
+      "withSecondInstance": 1,
+      "initializesState": true,
+      "negativeRejected": true,
+      "selfTriggerRejected": true,
+      "sourceUnchanged": true
+    },
+    {
+      "cardId": "dlc_24.png",
+      "event": {
+        "type": "researchTech",
+        "techType": "orange"
+      },
+      "negativeEvent": {
+        "type": "researchTech",
+        "techType": "blue"
+      },
+      "matching": [
+        {
+          "cardInstanceId": "source:dlc_24.png",
+          "ruleId": "dlc24-orange-tech-launch-1",
+          "effect": {
+            "id": "dlc24-launch-1",
+            "type": "launch",
+            "label": "橙色科技：发射",
+            "icon": "launch",
+            "options": {
+              "skipCost": true,
+              "cost": {},
+              "source": "card",
+              "ignoreRocketLimit": false
+            },
+            "status": "pending"
+          }
+        },
+        {
+          "cardInstanceId": "source:dlc_24.png",
+          "ruleId": "dlc24-orange-tech-launch-2",
+          "effect": {
+            "id": "dlc24-launch-2",
+            "type": "launch",
+            "label": "橙色科技：发射",
+            "icon": "launch",
+            "options": {
+              "skipCost": true,
+              "cost": {},
+              "source": "card",
+              "ignoreRocketLimit": false
+            },
+            "status": "pending"
+          }
+        }
+      ],
+      "matchingCount": 2,
+      "afterConsumingOne": 1,
+      "withSecondInstance": 3,
+      "initializesState": true,
+      "negativeRejected": true,
+      "selfTriggerRejected": true,
+      "sourceUnchanged": true
+    },
+    {
+      "cardId": "dlc_33.png",
+      "event": {
+        "type": "pass"
+      },
+      "negativeEvent": {
+        "type": "endTurn"
+      },
+      "matching": [
+        {
+          "cardInstanceId": "source:dlc_33.png",
+          "ruleId": "dlc33-pass-launch",
+          "effect": {
+            "id": "dlc33-launch",
+            "type": "launch",
+            "label": "PASS：发射",
+            "icon": "launch",
+            "options": {
+              "skipCost": true,
+              "cost": {},
+              "source": "card",
+              "ignoreRocketLimit": false
+            },
+            "status": "pending"
+          }
+        }
+      ],
+      "matchingCount": 1,
+      "afterConsumingOne": 0,
+      "withSecondInstance": 1,
+      "initializesState": true,
+      "negativeRejected": true,
+      "selfTriggerRejected": true,
+      "sourceUnchanged": true
+    }
+  ]
+}

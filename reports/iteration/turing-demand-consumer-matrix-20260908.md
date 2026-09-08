@@ -110,6 +110,40 @@ round/turn是借用有效期而非公司额度恢复期。无待消费需求用n
 可达性与真实改善证据的精确定义。若提取必须建立第二份规则解释器，该方案应否决，
 回到正式只读能力接口设计；不得以静态73张匹配清单直接实现剪枝。
 
+## 触发匹配复用边界（正式函数行为验证）
+
+`collectMatchingTriggers`与`collectReadyTasks`均会调用`ensureCardEffectState`，
+不是可直接喂冻结observation的纯函数。`task-state`的list/refresh入口也会初始化。
+需求提取若复用这些函数，必须在私有分支数据或隔离副本上调用，不得修改共享观察，
+也不得把匹配阶段的初始化/奖励消费写回正式游戏。无需另写event条件匹配逻辑。
+
+已运行`adhoc/verify-turing-trigger-contract-20260908.js`，结果落在
+[触发契约检查点](turing-trigger-contract-20260908.json)。六张牌的相关入口为：
+
+| 卡牌 | 正式事件 | 匹配项数 | 对需求的意义 |
+| --- | --- | ---: | --- |
+| b2 | 访问非地球行星 | 3 | 能量/数据/移动择一，不能把三项同时计入准备资源 |
+| b20 | 发射 | 3 | 三个独立移动奖励槽，单次事件不是自动获得三次移动 |
+| b25 | 对应颜色signalMarked | 1 | 绑定实际扇区颜色事件，不以“存在扫描动作”代替 |
+| b26 | 移动角标cardCorner | 1 | 绑定角标事件，不是任意打牌或任意资源角标 |
+| DLC24 | 研究橙色科技 | 2 | 两个发射槽择一；借科技本身不产生研究事件 |
+| DLC33 | PASS | 1 | PASS奖励链可能含发射，不能把PASS动作名当作已经完成过期清理 |
+
+每张均验证了正例、错误事件不匹配、来源牌不能触发自身、消费一个槽后排除该槽、
+相同卡牌类型的第二个实体仍独立匹配，以及私有副本初始化不改变原输入。
+这些是正式匹配函数的契约证据，不是事件在固定盘面可达或借用收益的证明。
+
+正式调度的`residual-domain-session`把同事件的多个match装为一个
+`accept_optional_effect`选择，其source身份是cardInstanceId+ruleId。需求生成必须
+保留此互斥关系，不能将每个match视为必得奖励再合并资源下界。已发生事件与尚未
+发生事件也须分开：前者复用正式匹配，后者必须来自具名计划及实际执行证据，
+不得为了发现消费者而伪造visitPlanet/researchTech等事件输入生产匹配器。
+
+期限仍有明确待验收项：PASS_COMMIT产出pass事件，后续回合末handoff中公司清理
+排在card_trigger.turn_end前；但事件产生后的即时触发调度可能早于该handoff。
+上述匹配测试未执行这个完整事务，不能据静态队列顺序断言DLC33借橙1可用或不可用。
+下一步必须核对正式事件插队与发射读取的顺序，之后才能冻结过期消费判定。
+
 检查位置：players.js借用读取，industry/state.js与passives.js，
 effects/residual-domain-session.js公司枚举/执行，abilities/rocket.js与planet.js，
 actions/scan-effects.js全文，effects/science-session.js scanQueue/SCAN_ACTION_4及研究奖励，
