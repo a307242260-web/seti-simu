@@ -1,0 +1,373 @@
+{
+  "scope": "模型一致性与估值设计输入完整性，不是生产估值实现或效果验收",
+  "source": "round5-card-value-inputs-20260908.json",
+  "modelDigest": "93ca73fa3d2de3475254802f428ef7a771bc4dc78da6a2b8dae05b5390b94ecd",
+  "modelCount": 182,
+  "effectTypeCount": 48,
+  "counts": {
+    "card_scan_nebula": 8,
+    "gain_resources": 119,
+    "gain_data": 34,
+    "card_free_move": 7,
+    "card_scan_color_choice": 13,
+    "card_research_tech": 31,
+    "card_public_scan": 6,
+    "draw_cards": 10,
+    "card_draw_then_scan": 1,
+    "card_scan_action": 9,
+    "card_any_sector_scan": 4,
+    "card_register_event_bonus": 16,
+    "card_move": 27,
+    "card_remove_planet_marker": 2,
+    "pick_card": 13,
+    "launch": 22,
+    "card_probe_sector_scan": 8,
+    "card_discard_public_corner_rewards": 1,
+    "alien_trace": 10,
+    "card_land": 6,
+    "card_count_hand_income_resource": 1,
+    "card_count_current_income_resource": 3,
+    "card_tuck_played_card_to_income": 3,
+    "card_count_aliens_resource": 1,
+    "card_pick_card_corner_reward": 1,
+    "card_conditional_reward": 4,
+    "card_planet_sector_scan": 6,
+    "card_earth_sector_content_move": 1,
+    "card_probe_location_reward": 1,
+    "card_optional_discard_scan": 1,
+    "card_count_hand_corner_move": 1,
+    "card_income": 2,
+    "card_hand_scan": 1,
+    "card_pluto_reserve": 1,
+    "card_return_played_card_to_hand_if": 3,
+    "card_choose_hand_corner_reward": 1,
+    "card_landing_sector_scan": 1,
+    "card_pay_credits_for_reward": 1,
+    "card_discard_card_corner_repeat": 1,
+    "card_conditional_sector_scan": 2,
+    "card_count_rockets_reward": 1,
+    "card_discard_any_for_income": 1,
+    "card_return_unfinished_task_to_hand": 1,
+    "card_orbit": 1,
+    "card_count_owned_tech_reward": 1,
+    "card_discard_all_hand": 1,
+    "card_count_tech_types_reward": 1,
+    "card_probe_stack_reward": 1
+  },
+  "optionCatalog": {
+    "card_scan_nebula": [
+      "gainData",
+      "nebulaId",
+      "repeat"
+    ],
+    "gain_resources": [
+      "gain"
+    ],
+    "gain_data": [
+      "count"
+    ],
+    "card_free_move": [
+      "movementPoints"
+    ],
+    "card_scan_color_choice": [
+      "color",
+      "gainData"
+    ],
+    "card_research_tech": [
+      "afterResearchReward",
+      "requireCondition",
+      "researchedByOthersOnly",
+      "skipBonus",
+      "skipCost",
+      "skipRotate",
+      "techTypes"
+    ],
+    "card_public_scan": [
+      "repeat"
+    ],
+    "draw_cards": [
+      "count"
+    ],
+    "card_draw_then_scan": [
+      "discardDrawnOnSkip",
+      "repeat"
+    ],
+    "card_scan_action": [
+      "skipCost"
+    ],
+    "card_any_sector_scan": [
+      "gainData"
+    ],
+    "card_register_event_bonus": [
+      "bonus"
+    ],
+    "card_move": [
+      "movementPoints"
+    ],
+    "card_remove_planet_marker": [
+      "markerKinds",
+      "owner"
+    ],
+    "pick_card": [
+      "count"
+    ],
+    "launch": [
+      "cost",
+      "ignoreRocketLimit",
+      "skipCost",
+      "source"
+    ],
+    "card_probe_sector_scan": [
+      "gainData",
+      "includeAdjacent",
+      "maxTargets",
+      "owner",
+      "repeat",
+      "returnToHandIfSignalCount"
+    ],
+    "card_discard_public_corner_rewards": [
+      "count"
+    ],
+    "alien_trace": [
+      "afterTraceReward",
+      "allowedTraceTypes",
+      "requiredTraceTypes",
+      "targetRule"
+    ],
+    "card_land": [
+      "afterLandRewards",
+      "allowDuplicateLanding",
+      "allowDuplicateSatelliteLanding",
+      "allowSatelliteWithoutTech",
+      "displayLandingSlot",
+      "forceFirstLandingReward",
+      "grantRewards",
+      "referenceOffsetTokenWidths",
+      "rememberPreLandingMarker",
+      "rememberPreLandingOwnMarker",
+      "skipCost"
+    ],
+    "card_count_hand_income_resource": [
+      "incomeCode",
+      "per",
+      "resource"
+    ],
+    "card_count_current_income_resource": [
+      "incomeKey",
+      "per",
+      "resource"
+    ],
+    "card_tuck_played_card_to_income": [],
+    "card_count_aliens_resource": [
+      "gainPerAlien"
+    ],
+    "card_pick_card_corner_reward": [
+      "allowBlindDraw"
+    ],
+    "card_conditional_reward": [
+      "condition",
+      "rewards"
+    ],
+    "card_planet_sector_scan": [
+      "gainData",
+      "planetId",
+      "repeat"
+    ],
+    "card_earth_sector_content_move": [
+      "contentKinds"
+    ],
+    "card_probe_location_reward": [
+      "adjacentAsteroidData",
+      "asteroidData",
+      "owner"
+    ],
+    "card_optional_discard_scan": [
+      "count"
+    ],
+    "card_count_hand_corner_move": [],
+    "card_income": [],
+    "card_hand_scan": [],
+    "card_pluto_reserve": [],
+    "card_return_played_card_to_hand_if": [
+      "condition"
+    ],
+    "card_choose_hand_corner_reward": [],
+    "card_landing_sector_scan": [
+      "gainData",
+      "repeat"
+    ],
+    "card_pay_credits_for_reward": [
+      "reward"
+    ],
+    "card_discard_card_corner_repeat": [
+      "cornerRepeat",
+      "excludeAlienCards"
+    ],
+    "card_conditional_sector_scan": [
+      "allMatching",
+      "condition",
+      "gainData",
+      "noAutoRepeatExpansion",
+      "repeat"
+    ],
+    "card_count_rockets_reward": [
+      "includeNonStandard",
+      "includeTransportedChongFossils",
+      "location",
+      "owner",
+      "per",
+      "resource"
+    ],
+    "card_discard_any_for_income": [],
+    "card_return_unfinished_task_to_hand": [
+      "cardTypes"
+    ],
+    "card_orbit": [
+      "grantRewards",
+      "skipCost"
+    ],
+    "card_count_owned_tech_reward": [
+      "per",
+      "resource",
+      "techType"
+    ],
+    "card_discard_all_hand": [
+      "rewards"
+    ],
+    "card_count_tech_types_reward": [
+      "per",
+      "reward"
+    ],
+    "card_probe_stack_reward": [
+      "rewards"
+    ]
+  },
+  "embedded": [
+    {
+      "cardId": "b_40.webp",
+      "parentType": "card_research_tech",
+      "path": "playEffects.0.options.afterResearchReward",
+      "timing": "immediate",
+      "option": "afterResearchReward",
+      "value": {
+        "kind": "techTypeCountScore",
+        "scorePer": 2
+      }
+    },
+    {
+      "cardId": "b_93.webp",
+      "parentType": "card_research_tech",
+      "path": "playEffects.0.options.afterResearchReward",
+      "timing": "immediate",
+      "option": "afterResearchReward",
+      "value": {
+        "kind": "resourceValueScore",
+        "resource": "publicity"
+      }
+    },
+    {
+      "cardId": "b_109.webp",
+      "parentType": "card_research_tech",
+      "path": "playEffects.0.options.afterResearchReward",
+      "timing": "immediate",
+      "option": "afterResearchReward",
+      "value": {
+        "kind": "publicityIfNotFirstTake",
+        "publicity": 2
+      }
+    },
+    {
+      "cardId": "dlc_15.png",
+      "parentType": "card_research_tech",
+      "path": "playEffects.0.options.afterResearchReward",
+      "timing": "immediate",
+      "option": "afterResearchReward",
+      "value": {
+        "kind": "repeatBonus"
+      }
+    },
+    {
+      "cardId": "dlc_18.png",
+      "parentType": "card_research_tech",
+      "path": "playEffects.0.options.requireCondition",
+      "timing": "immediate",
+      "option": "requireCondition",
+      "value": {
+        "type": "resourceEquals",
+        "resource": "publicity",
+        "count": 0
+      }
+    },
+    {
+      "cardId": "b_88.webp",
+      "parentType": "card_probe_sector_scan",
+      "path": "playEffects.0.options.returnToHandIfSignalCount",
+      "timing": "immediate",
+      "option": "returnToHandIfSignalCount",
+      "value": 1
+    },
+    {
+      "cardId": "b_36.webp",
+      "parentType": "alien_trace",
+      "path": "playEffects.0.options.afterTraceReward",
+      "timing": "immediate",
+      "option": "afterTraceReward",
+      "value": {
+        "kind": "traceCountScore",
+        "scorePer": 1
+      }
+    },
+    {
+      "cardId": "b_91.webp",
+      "parentType": "card_land",
+      "path": "playEffects.0.options.afterLandRewards",
+      "timing": "immediate",
+      "option": "afterLandRewards",
+      "value": [
+        {
+          "planetIds": [
+            "mars",
+            "mercury"
+          ],
+          "includeSatellites": true,
+          "effect": {
+            "id": "b91-land-score",
+            "type": "gain_resources",
+            "label": "指定目标登陆：4分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 4
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "serializationOmissions": [
+    "b_29.webp.playEffects.0.options.afterLandRewards",
+    "b_34.webp.playEffects.0.options.displayLandingSlot",
+    "b_34.webp.playEffects.0.options.referenceOffsetTokenWidths",
+    "b_34.webp.playEffects.0.options.afterLandRewards",
+    "b_91.webp.playEffects.0.options.displayLandingSlot",
+    "b_91.webp.playEffects.0.options.referenceOffsetTokenWidths",
+    "dlc_1.png.playEffects.0.options.displayLandingSlot",
+    "dlc_1.png.playEffects.0.options.referenceOffsetTokenWidths",
+    "dlc_1.png.playEffects.0.options.afterLandRewards",
+    "dlc_6.png.playEffects.1.options.displayLandingSlot",
+    "dlc_6.png.playEffects.1.options.referenceOffsetTokenWidths",
+    "dlc_6.png.playEffects.1.options.afterLandRewards",
+    "dlc_31.png.playEffects.0.options.displayLandingSlot",
+    "dlc_31.png.playEffects.0.options.referenceOffsetTokenWidths",
+    "dlc_31.png.playEffects.0.options.afterLandRewards"
+  ],
+  "notes": [
+    "afterLandRewards内嵌effect已在48种计数中出现：应由父结算应用目标条件，只计一次，不能又独立加一遍。",
+    "afterResearchReward/afterTraceReward的kind不是独立effect.type，必须单独复用正式结算语义。",
+    "returnToHandIfSignalCount与requireCondition分别影响牌成本返还和能力可用性，不可当展示字段忽略。",
+    "182模型当前dev与ad676add活对象一致；既有checkpoint是JSON，省略的undefined属性逐项列在serializationOmissions，不把省略误报为语义变动。",
+    "最初直接用活对象与JSON深比较，b29的可选afterLandRewards=undefined导致断言失败；未生成checkpoint。已改为分别比较活对象与序列化契约，不改规则、不吞生产异常。"
+  ],
+  "passed": true
+}
