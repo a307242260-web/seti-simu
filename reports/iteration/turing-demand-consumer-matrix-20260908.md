@@ -183,12 +183,14 @@ move）。借用Decision再被通用conditional规则设为独立decision目标�
    任意conditional选择完成。
 
 方舟补充纠错：`fangzhou-card1-queue.buildFollowUpNodes`能够生成card_scan_action，
-但“生成器存在”不代表正式链已接入。追加正式play_card复现表明当前候选方舟card2
+但“生成器存在”不代表正式链已接入。追加正式play_card复现表明原候选954e51c0的方舟card2
 仅扣费弃牌，未翻高级奖励，详见[独立缺陷](fangzhou-play-missing-reward-review-20260908.md)。
-此前将它称为“正式动态入口”证据不足，现撤销该已接通表述。9种高级奖励接入须
-独立完整修复，不调整方舟槽位策略，也不能依据当前漏执行收益裁掉借用消费者。
-静态242卡清单仍只覆盖MODELS；mainActionCompleted是否能证明特定需求不可达
-仍须基于完整正式闭包，不能由此未实现奖励外推肯定或否定。
+此前将它称为“正式动态入口”证据不足，撤销该历史表述。现在独立修复4d3711c5已
+接通9种高级奖励并完成规则验收，见[独立验收](fangzhou-major-full-review-20260908.md)。
+它增加12个解锁牌模型（共254），完整扫描奖励现在是正式可达消费者；不调整方舟
+槽位策略，不依据旧版漏执行收益裁掉借用消费者。原静态242卡清单是修复前证据，
+不再代表当前全部模型。mainActionCompleted是否能证明特定需求不可达仍须基于
+完整正式闭包，不能由旧版未实现奖励外推肯定或否定。借用提取设计仍未闭合。
 
 检查位置：players.js借用读取，industry/state.js与passives.js，
 effects/residual-domain-session.js公司枚举/执行，abilities/rocket.js与planet.js，
