@@ -3,7 +3,7 @@ const fs=require("node:fs"),assert=require("node:assert/strict");
 const req=require("node:module").createRequire(process.cwd()+"/adhoc/check161.js");
 const {createSimulationEnv}=req("../randomizer/app/simulation-env");
 const evaluator=req("../randomizer/game/ai/expected-score-evaluator");
-const mode=process.argv.includes("--quick-move")?"quick-move":"fangzhou";
+const mode=process.argv.includes("--rules-baseline")?"rules-baseline":process.argv.includes("--quick-move")?"quick-move":"fangzhou";
 const output="/Users/bilibili/code/seti-simu/reports/iteration/blue50-expiry-"+mode+"-20260908.json";
 if(fs.existsSync(output)){console.log(`已有checkpoint：${output}`);process.exit(0);}
 const report={passed:false,rootStep:50,codeHead:require("node:child_process").execFileSync("git",["rev-parse","HEAD"],{encoding:"utf8"}).trim()};
