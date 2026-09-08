@@ -47,12 +47,40 @@ remaining仍允许规则分支用未知额度移动、获得资源并泄漏可�
 - 默认规则合法选择完整；AI的展示贪心属于显式、可验证的选择收敛，不改变4096/256上限或物理计数。
 - 卡面展示可能对未来预测对手有信息成本，但当前用户已排除预测对手；此处不新增该策略模型。
 
-## 实现前仍需闭合的两项
+## 接入点核对结果与实现约定
 
-1. 展示阶段的movementContext表示及所有读取者：不能预报未展示牌的额度，也不能导致
-   目标绑定把展示当作无路可走。逐项核对后冻结字段，不能在失败测试里猜接口。
-2. choose_card展示在主搜索、控制决策及自动排空三条消费路径均须使用相同的已知牌贪心；
-   需要明确现有公共选择函数的接入点，不能仅改一个selectSuccessors回调。
+1. 展示阶段采用`movementContext.phase="card-reveal"`、`cardRemaining=0`，保留来源
+   cardInstanceId。0表示尚未授予额度，不是断言手牌不能产生移动；展示结束后才切换
+   原`card`阶段。`buildTopologyBody`只读取已授予额度；不为展示阶段构建虚假免费路线。
+   `selectSecondaryAgentSuccessors`在按目的地过滤前，直接保持展示选择的既有目标绑定。
+   自动结算通常会排空整个展示阶段；即使32次排空保护结束，也保留这条绑定继续展示，
+   不用调大保护上限或把未完成展示当作完成叶。
+2. 共用贪心放在反事实模块内，作为`counterfactualPort.selectCardRevealChoices(actions)`
+   的纯选择方法：仅处理整组`choose_card/target.kind=counted-move-reveal`；优先固定
+   cardInstanceId顺序的一个展示项，无展示项才选结束；其他合法集原样返回，不影响别的选牌。
+   `heuristic-decision-function.run`先用它收敛本次候选，再拆control/strategic和构建Policy
+   输入，最终所选仍必须属于协调器提供的原合法集。这样真实条件决策不会把结束展示
+   与逐张展示重新当成竞争策略，也不会让未评估的被淘汰项重新被Policy选中。
+3. `rule-composition.executeNode`的自动结算先做现有隐藏信息过滤，再调用相同方法；
+   每次展示仍通过正式submitDecision、retainStep记账，不能直接修改selected数组。
+   后继统一过滤后也调用同一方法，覆盖排空保护后的剩余展示；不在选牌评分器里复制算法。
+   过滤未知项不能按`trade-card-selection`的数量使用例外放行。
+4. 控制路径原`maxDepth=1`不变：选中一个根展示输入后，剩余展示在同一次正式排空中
+   结算；主搜索仍沿现有目标继续。`executionStepCount`/成功输入计数必须逐次累加，
+   32次后回队列继续的部分也不能漏计。不得以宏节点数替代物理输入节省证据。
+5. `randomizer/index.html`中heuristic-decision-function在rule-composition之前加载。
+   因此通过已装配composition的counterfactualPort调用纯方法，不新增模块顶层导入，
+   不为此调整浏览器脚本顺序。端口缺失必须显式报错，不做fallback返回原选项。
+6. Browser展示选项使用已有`cards.getCardPickPresentation`和通用Decision UI；结束项
+   为明确的“结束展示”。展示事件记录牌身份但不改变手牌位置，公开展示采用独立的
+   `hand_card_shown`不可撤销标记；它不是让该玩家获得未知牌面的hidden barrier。
+   同一事务已有盲抽屏障必须保留，不能被后续展示标记覆盖后丢失搜索的隐藏信息状态。
+
+屏障源码核对：session-runtime.applyResult保存最后一次不可撤销标记；但搜索同时保留
+本节点首个提交的result.irreversibleBarrier、origin.informationMasked以及自动排空期间
+首次隐藏屏障。两个已复现入口的盲抽都在展示Decision之前返回正式提交结果，因此后续
+展示标记不应清除既有隐藏状态。回归须对两个入口均断言过滤持续到移动完成；不为此
+修改通用runtime或把hand_card_shown错误归为“自己获知了未知牌面”。
 
 ## 验收
 
@@ -61,4 +89,4 @@ remaining仍允许规则分支用未知额度移动、获得资源并泄漏可�
 节点上界按实际提交计：N张展示需要N+1次展示阶段输入，无排列爆炸。
 确认主搜索与控制路径一致后做单点性能，再标准去重唯一完整局；不复跑4bc44eb2。
 同步mechanics-reference、ai-design、rl-simulation-env及迭代中心；新增Decision需真实Chrome验证。
-上述两项未闭合前不写生产代码；不能把本设计或规则依据核对当作修复通过。
+不能把本设计或规则依据核对当作修复通过。生产代码尚未修改；按上述约定整批实现后验证。
