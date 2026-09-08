@@ -1,0 +1,813 @@
+{
+  "source": "reports/iteration/data-successors-483fc706-20260908.json",
+  "oldSource": "/private/tmp/seti-rules-baseline-20260908.ohUO6T/reports/iteration/data-pick-repeats-53-8ba9b8d8-20260907.json",
+  "capturedOriginRows": 1248,
+  "capturedPhysicalNodes": 613,
+  "continuousPhysicalNodes": 132,
+  "inputs": {
+    "data:computer": 85,
+    "data:blueBonus:2": 9,
+    "data:blueBonus:1": 33,
+    "data:blueBonus:3": 5
+  },
+  "allOriginsMatched": true,
+  "allNextNodesFound": true,
+  "allTargetsUnchanged": true,
+  "allPreviouslyMaskedWithoutNewBarrier": true,
+  "allInputsExactlyDataAndChoice": true,
+  "scope": "只证明当前132处正式后继唯一和已执行输入边界；尚不证明重排队列后的效果或融合RNG/计划等价",
+  "candidates": [
+    {
+      "nodeKey": "89d6747b:place_data:50a9ac16:15:player-brown",
+      "childKey": "f4e661c4:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "dafe1958:place_data:50a9ac16:15:player-brown",
+      "childKey": "faae80ba:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "d914f6df:place_data:50a9ac16:15:player-brown",
+      "childKey": "c3a712a6:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "7314d992:place_data:50a9ac16:15:player-brown",
+      "childKey": "b444d523:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "ecafbfc6:place_data:50a9ac16:15:player-brown",
+      "childKey": "d7b61be1:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "cc16cab6:place_data:50a9ac16:15:player-brown",
+      "childKey": "e5990d63:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "154c2d30:place_data:50a9ac16:15:player-brown",
+      "childKey": "4f48b58b:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:2"
+    },
+    {
+      "nodeKey": "299d2f31:place_data:50a9ac16:15:player-brown",
+      "childKey": "ef094460:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "617a216c:place_data:50a9ac16:15:player-brown",
+      "childKey": "23496ae4:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "7c66f2ce:place_data:50a9ac16:15:player-brown",
+      "childKey": "675c8908:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "cda5fa77:place_data:50a9ac16:15:player-brown",
+      "childKey": "4acacc13:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "ea95971b:place_data:50a9ac16:15:player-brown",
+      "childKey": "c37903b8:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "da3b02f7:place_data:50a9ac16:15:player-brown",
+      "childKey": "65c4767a:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "c9da1e4b:place_data:50a9ac16:15:player-brown",
+      "childKey": "5df7d9fa:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "fbae9ab3:place_data:50a9ac16:15:player-brown",
+      "childKey": "dea78cd9:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "b2063940:place_data:50a9ac16:15:player-brown",
+      "childKey": "02a52559:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "d9506cd7:place_data:50a9ac16:15:player-brown",
+      "childKey": "d71a81ae:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:3"
+    },
+    {
+      "nodeKey": "efdf4d76:place_data:50a9ac16:15:player-brown",
+      "childKey": "126ff983:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:2"
+    },
+    {
+      "nodeKey": "4858cf74:place_data:50a9ac16:15:player-brown",
+      "childKey": "d840d267:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "a7d40817:place_data:50a9ac16:15:player-brown",
+      "childKey": "2af91dd4:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "56a35815:place_data:50a9ac16:15:player-brown",
+      "childKey": "56dadd65:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "469d166c:place_data:50a9ac16:15:player-brown",
+      "childKey": "590f1aa6:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "a8a08eac:place_data:50a9ac16:15:player-brown",
+      "childKey": "44fe64b3:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "ae37c416:place_data:50a9ac16:15:player-brown",
+      "childKey": "a49bdb8c:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "f7842070:place_data:50a9ac16:15:player-brown",
+      "childKey": "12141aae:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "dc8e2904:place_data:50a9ac16:15:player-brown",
+      "childKey": "8a53335c:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:2"
+    },
+    {
+      "nodeKey": "7eaedd63:place_data:50a9ac16:15:player-brown",
+      "childKey": "70f090a1:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "bfd094cb:place_data:50a9ac16:15:player-brown",
+      "childKey": "47c979db:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "dbea5fee:place_data:50a9ac16:15:player-brown",
+      "childKey": "0d6b8a35:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "7e61845d:place_data:50a9ac16:15:player-brown",
+      "childKey": "0899be5c:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "f0fc6851:place_data:50a9ac16:15:player-brown",
+      "childKey": "e552d292:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "f66dc20e:place_data:50a9ac16:15:player-brown",
+      "childKey": "dda021e6:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "e3fa776d:place_data:50a9ac16:15:player-brown",
+      "childKey": "3f257c43:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "722e638c:place_data:50a9ac16:15:player-brown",
+      "childKey": "505a1e9f:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "7cf32f08:place_data:50a9ac16:15:player-brown",
+      "childKey": "ef5c6cc2:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "b799a96c:place_data:50a9ac16:15:player-brown",
+      "childKey": "89c3d522:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "7c4536dc:place_data:50a9ac16:15:player-brown",
+      "childKey": "3dc2c428:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "f72753a8:place_data:50a9ac16:15:player-brown",
+      "childKey": "5a1ce4cd:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "84de61f9:place_data:50a9ac16:15:player-brown",
+      "childKey": "371ac437:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "29702dfb:place_data:50a9ac16:15:player-brown",
+      "childKey": "48fc5a9a:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "49ffc3f7:place_data:50a9ac16:15:player-brown",
+      "childKey": "dfaeb078:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "647fd209:place_data:50a9ac16:15:player-brown",
+      "childKey": "3e53f449:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:2"
+    },
+    {
+      "nodeKey": "6599d72b:place_data:50a9ac16:15:player-brown",
+      "childKey": "bc21a810:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "662a022a:place_data:50a9ac16:15:player-brown",
+      "childKey": "dd87142f:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "527130d0:place_data:50a9ac16:15:player-brown",
+      "childKey": "e66c5f7c:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "f7c69053:place_data:50a9ac16:15:player-brown",
+      "childKey": "96f12f53:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "2f74b9cb:place_data:50a9ac16:15:player-brown",
+      "childKey": "8db97f0d:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "e45004f8:place_data:50a9ac16:15:player-brown",
+      "childKey": "6504ff9c:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "93717dbd:place_data:50a9ac16:15:player-brown",
+      "childKey": "e0f35430:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "cef67520:place_data:50a9ac16:15:player-brown",
+      "childKey": "e6aaf37f:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "1864107b:place_data:50a9ac16:15:player-brown",
+      "childKey": "544e94d0:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "902618bf:place_data:50a9ac16:15:player-brown",
+      "childKey": "79fab6ca:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:3"
+    },
+    {
+      "nodeKey": "e1c6bff7:place_data:50a9ac16:15:player-brown",
+      "childKey": "72155739:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:2"
+    },
+    {
+      "nodeKey": "49b24d03:place_data:50a9ac16:15:player-brown",
+      "childKey": "6676c1a3:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "b561e879:place_data:50a9ac16:15:player-brown",
+      "childKey": "0cd9c5ee:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:3"
+    },
+    {
+      "nodeKey": "0bcf676f:place_data:50a9ac16:15:player-brown",
+      "childKey": "9bcabff7:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:2"
+    },
+    {
+      "nodeKey": "b4544d68:place_data:50a9ac16:15:player-brown",
+      "childKey": "5d417266:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "5d5a4a12:place_data:50a9ac16:15:player-brown",
+      "childKey": "1d281359:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "940c700d:place_data:50a9ac16:15:player-brown",
+      "childKey": "3934f732:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "b5758f80:place_data:50a9ac16:15:player-brown",
+      "childKey": "cdcc9d44:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "4d36185c:place_data:50a9ac16:15:player-brown",
+      "childKey": "393cd8c3:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "89f9c0a1:place_data:50a9ac16:15:player-brown",
+      "childKey": "e0697da1:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "4c0c02fe:place_data:50a9ac16:15:player-brown",
+      "childKey": "82647fcb:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "7eef6329:place_data:50a9ac16:15:player-brown",
+      "childKey": "aded5676:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:2"
+    },
+    {
+      "nodeKey": "6339db5e:place_data:50a9ac16:15:player-brown",
+      "childKey": "805455b0:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "25c53844:place_data:50a9ac16:15:player-brown",
+      "childKey": "798a197e:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "2c078fb2:place_data:50a9ac16:15:player-brown",
+      "childKey": "377ab3c2:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "bd3e767b:place_data:50a9ac16:15:player-brown",
+      "childKey": "5c1fbb5c:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "89693825:place_data:50a9ac16:15:player-brown",
+      "childKey": "303db537:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "2ca3a37f:place_data:50a9ac16:15:player-brown",
+      "childKey": "a8c40cb9:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "6abbe6a2:place_data:50a9ac16:15:player-brown",
+      "childKey": "2410aa8b:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "eae41a03:place_data:50a9ac16:15:player-brown",
+      "childKey": "223c9414:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "f088586b:place_data:50a9ac16:15:player-brown",
+      "childKey": "1af84f88:place_data:50a9ac16:15:player-brown",
+      "origins": 3,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "e8b3c44b:place_data:50a9ac16:15:player-brown",
+      "childKey": "e4dde03e:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:3"
+    },
+    {
+      "nodeKey": "51d1fac7:place_data:50a9ac16:15:player-brown",
+      "childKey": "9ddb1e2b:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:2"
+    },
+    {
+      "nodeKey": "368da2db:place_data:50a9ac16:15:player-brown",
+      "childKey": "b50dd05a:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "13c1e99b:place_data:50a9ac16:15:player-brown",
+      "childKey": "214386ea:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "75fb2b2c:place_data:50a9ac16:15:player-brown",
+      "childKey": "5c7d3620:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "990e150b:place_data:50a9ac16:15:player-brown",
+      "childKey": "f1735e87:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "9ce33433:place_data:50a9ac16:15:player-brown",
+      "childKey": "21e348fc:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "8a804f75:place_data:50a9ac16:15:player-brown",
+      "childKey": "48e47b4b:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "c83886b7:place_data:50a9ac16:15:player-brown",
+      "childKey": "8aacfd21:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "11bd322c:place_data:50a9ac16:15:player-brown",
+      "childKey": "7d1ecfe5:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "7927d991:place_data:50a9ac16:15:player-brown",
+      "childKey": "a5301554:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "b9d432c6:place_data:50a9ac16:15:player-brown",
+      "childKey": "9c964267:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "748f76ae:place_data:50a9ac16:15:player-brown",
+      "childKey": "f66e4a19:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "c912c7e5:place_data:50a9ac16:15:player-brown",
+      "childKey": "4badc202:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "43aee75d:place_data:50a9ac16:15:player-brown",
+      "childKey": "1058f62d:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "4237ce1f:place_data:50a9ac16:15:player-brown",
+      "childKey": "823ab420:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "2e20a90b:place_data:50a9ac16:15:player-brown",
+      "childKey": "6e64078a:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "ef056c82:place_data:50a9ac16:15:player-brown",
+      "childKey": "68c4127a:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "71af6b5a:place_data:50a9ac16:15:player-brown",
+      "childKey": "35e5fa7e:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "94f2f4a2:place_data:50a9ac16:15:player-brown",
+      "childKey": "6acbccd0:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "a88f6bd7:place_data:50a9ac16:15:player-brown",
+      "childKey": "255ed9c0:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "bd74b3b8:place_data:50a9ac16:15:player-brown",
+      "childKey": "e8d8caae:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "79d4bb67:place_data:50a9ac16:15:player-brown",
+      "childKey": "00c38889:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "476b5e8a:place_data:50a9ac16:15:player-brown",
+      "childKey": "81dc183e:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "0f8dc020:place_data:50a9ac16:15:player-brown",
+      "childKey": "9909b3f7:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "b312d9f4:place_data:50a9ac16:15:player-brown",
+      "childKey": "a6d5e695:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "a37360a0:place_data:50a9ac16:15:player-brown",
+      "childKey": "effc13c1:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "5056c490:place_data:50a9ac16:15:player-brown",
+      "childKey": "f89485ee:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "d1a8857a:place_data:50a9ac16:15:player-brown",
+      "childKey": "ef829df9:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "5f250c8e:place_data:50a9ac16:15:player-brown",
+      "childKey": "2adde2c2:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "5c199cfb:place_data:50a9ac16:15:player-brown",
+      "childKey": "2a506b56:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "17ea20e3:place_data:50a9ac16:15:player-brown",
+      "childKey": "1c7a2eac:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "bfd7c78f:place_data:50a9ac16:15:player-brown",
+      "childKey": "1ee09bc5:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "c6be71d1:place_data:50a9ac16:15:player-brown",
+      "childKey": "8eba5be0:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "f609683d:place_data:50a9ac16:15:player-brown",
+      "childKey": "77c1a2c0:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "093fe2f1:place_data:50a9ac16:15:player-brown",
+      "childKey": "2624700c:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "aaae3043:place_data:50a9ac16:15:player-brown",
+      "childKey": "3debc13f:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "6b2bdf51:place_data:50a9ac16:15:player-brown",
+      "childKey": "9e22f8a7:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "c4532610:place_data:50a9ac16:15:player-brown",
+      "childKey": "94b2cbcf:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "4ef6e536:place_data:50a9ac16:15:player-brown",
+      "childKey": "9d1c23f3:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "70c32cc4:place_data:50a9ac16:15:player-brown",
+      "childKey": "bb4bbc46:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "4000d671:place_data:50a9ac16:15:player-brown",
+      "childKey": "d8cb66a2:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "bfaa2d23:place_data:50a9ac16:15:player-brown",
+      "childKey": "c073ee94:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "8e1238a0:place_data:50a9ac16:15:player-brown",
+      "childKey": "11326987:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "c6879bee:place_data:50a9ac16:15:player-brown",
+      "childKey": "f60c8c0b:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "49e4e589:place_data:50a9ac16:15:player-brown",
+      "childKey": "4775c328:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "7f3d7809:place_data:50a9ac16:15:player-brown",
+      "childKey": "10eec142:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "e92bc661:place_data:50a9ac16:15:player-brown",
+      "childKey": "227b3cec:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:2"
+    },
+    {
+      "nodeKey": "1f482835:place_data:50a9ac16:15:player-brown",
+      "childKey": "a7cddb26:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:3"
+    },
+    {
+      "nodeKey": "17557c55:place_data:50a9ac16:15:player-brown",
+      "childKey": "dcb2a61b:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "31e9c6ae:place_data:50a9ac16:15:player-brown",
+      "childKey": "0ef7b3cc:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "46c0838a:place_data:50a9ac16:15:player-brown",
+      "childKey": "932152a1:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "1f7d7eff:place_data:50a9ac16:15:player-brown",
+      "childKey": "67af56fb:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "b8cc7724:place_data:50a9ac16:15:player-brown",
+      "childKey": "2f715e60:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:blueBonus:1"
+    },
+    {
+      "nodeKey": "e1569a7e:place_data:50a9ac16:15:player-brown",
+      "childKey": "51be0498:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "8656ec00:place_data:50a9ac16:15:player-brown",
+      "childKey": "6f400ded:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "e49fff47:place_data:50a9ac16:15:player-brown",
+      "childKey": "fab6d6bc:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "8942edd7:place_data:50a9ac16:15:player-brown",
+      "childKey": "a941b8d7:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    },
+    {
+      "nodeKey": "93ccd900:place_data:50a9ac16:15:player-brown",
+      "childKey": "d8bbac6f:place_data:50a9ac16:15:player-brown",
+      "origins": 2,
+      "slot": "data:computer"
+    }
+  ]
+}
