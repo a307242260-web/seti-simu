@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T14:12:36.161Z",
+  "builtAt": "2026-09-08T14:34:56.333Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "bb4d5b3c",
+  "headCommit": "a6f3399a",
   "currentBaseline": "route-selection-error-20260908",
   "worktreeDirty": true,
   "bestOf": {
@@ -116,6 +116,434 @@
     ]
   },
   "versions": [
+    {
+      "id": "alien-pick-disabled-tech-20260908",
+      "name": "拿牌与失效科技组合（完整性未通过）",
+      "date": "2026-09-08",
+      "baseline": "disabled-tech-value-20260908",
+      "head": "5d17835f",
+      "commits": [
+        {
+          "hash": "57a360e0",
+          "date": "2026-09-08",
+          "subject": "组合拿牌贪心与失效科技事实修复，验证第186步选择"
+        },
+        {
+          "hash": "5d17835f",
+          "date": "2026-09-08",
+          "subject": "登记拿牌与失效科技组合完整局验收计划"
+        }
+      ],
+      "summary": "外星人拿牌同效选择贪心，失效科技排除未来能力收益并保留拥有计数",
+      "diffStat": "23 files changed, 359918 insertions(+), 31630 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/summarize-disabled-tech-full-20260908.js",
+          "insertions": 52,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/alien-card-pick-greedy.test.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 32,
+          "deletions": 18
+        },
+        {
+          "file": "reports/iteration/alien-pick-brown-cross-baseline-combined-20260908.json",
+          "insertions": 115506,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-pick-brown-cross-candidate-combined-20260908.json",
+          "insertions": 115511,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-pick-disabled-tech-design-20260908.md",
+          "insertions": 19,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-pick-disabled-tech-full-plan-20260908.md",
+          "insertions": 23,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-pick-disabled-tech-progress-20260908.md",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-pick-disabled-tech-single-20260908.json",
+          "insertions": 1022,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/disabled-tech-brown95-baseline-baseline-20260908.json",
+          "insertions": 31086,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/disabled-tech-brown95-baseline-fixed-20260908.json",
+          "insertions": 28687,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/disabled-tech-brown95-summary-20260908.json",
+          "insertions": 413,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/disabled-tech-value-20260908/e7bcda6c.a6812efe.full.action-log.html",
+          "insertions": 2120,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/disabled-tech-value-design-20260908.md",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/disabled-tech-value-full-comparison-20260908.json",
+          "insertions": 300,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/disabled-tech-value-progress-20260908.md",
+          "insertions": 26,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 2132,
+          "deletions": 15805
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/e7bcda6c.a6812efe.full.json",
+          "insertions": 15484,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 2132,
+          "deletions": 15805
+        },
+        {
+          "file": "seti-saves/seti-save-research-disabled-tech-value-20260908-a6812efe-full-v327.json",
+          "insertions": 45261,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "80437cef.5d17835f.full.json",
+          "recordPath": "reports/research/80437cef.5d17835f.full.json",
+          "mode": "full",
+          "steps": 688,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 595966,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "5d17835f",
+          "createdAt": "2026-09-08T14:30:08.034Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "组合完整局未通过，生产未合dev。688步终局100/124/90/121、均108.75（dev101.75、独立修复93.5）；拿牌11495→6453（−43.9%），总节点143252→149072，耗时571832→595966ms，规则失败0。战略搜索88→111，执行截断战略30→31、控制8→8；38战略前沿截断，全部截断并集46，dev前沿未知。白方节点+16578、绿+7450、蓝+2480、棕−20688。棕方相对dev仍−25待归因，均分上涨不替代检查；相对独立修复首差139绿方精选改结束回合。详见alien-pick-disabled-tech-full-progress-20260908.md与full-comparison原始对照。本版本不追认旧候选通过，普通牌估值和重复准备仍未完成。",
+          "scores": {
+            "player-blue": 100,
+            "player-green": 124,
+            "player-brown": 90,
+            "player-white": 121
+          },
+          "avgScore": 108.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 100,
+              "base": 76,
+              "tile": 22,
+              "card": 2,
+              "tileScoresById": {
+                "a": 0,
+                "b": 8,
+                "c": 0,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 0,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 0,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 4,
+                  "score": 8,
+                  "slotIndex": 3,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 1,
+                "alienTracePinkScore": 4,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 4,
+                "cardEffectScore": 3,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 8,
+                "orbitScore": 15,
+                "scanScore": 6,
+                "taskCardScore": 7,
+                "techBonusScore": 6
+              }
+            },
+            "player-green": {
+              "total": 124,
+              "base": 90,
+              "tile": 34,
+              "card": 0,
+              "tileScoresById": {
+                "a": 16,
+                "b": 8,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 0
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 11,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 17,
+                "orbitScore": 15,
+                "scanScore": 11,
+                "taskCardScore": 0,
+                "techBonusScore": 14
+              }
+            },
+            "player-brown": {
+              "total": 90,
+              "base": 59,
+              "tile": 31,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 0,
+                "c": 0,
+                "d": 9
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 9,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 6,
+                "cardEffectScore": 6,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 6,
+                "orbitScore": 12,
+                "scanScore": 7,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            },
+            "player-white": {
+              "total": 121,
+              "base": 84,
+              "tile": 37,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 18,
+                "c": 0,
+                "d": 9
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 18,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 9,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 11,
+                "alienTracePinkScore": 13,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 6,
+                "cardEffectScore": 3,
+                "cardQuickScore": 4,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 16,
+                "orbitScore": 0,
+                "scanScore": 12,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-alien-pick-disabled-tech-20260908-5d17835f-full-v339.json",
+          "reportPath": "reports/iteration/alien-pick-disabled-tech-20260908/80437cef.5d17835f.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "80437cef.5d17835f.full",
+            "path": "reports/iteration/alien-pick-disabled-tech-20260908/80437cef.5d17835f.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "disabled-tech-value-20260908",
       "name": "失效科技未来价值修复（整局降分待归因）",
