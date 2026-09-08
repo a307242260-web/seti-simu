@@ -8,7 +8,7 @@
   "versions": [
     {
       "id": "counted-card-move-20260909",
-      "name": "数量移动额度修复（待固定盘面验收）",
+      "name": "数量移动额度修复（完整局运行中）",
       "date": "2026-09-09",
       "baseline": "route-selection-error-20260908",
       "head": "4bc44eb2",
