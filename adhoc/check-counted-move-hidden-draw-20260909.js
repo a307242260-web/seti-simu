@@ -5,9 +5,14 @@ const { createSimulationRuleComposition } = require(source + '/randomizer/game/p
 const { createSeededRandom, RNG_ALGORITHM } = require(source + '/randomizer/game/random');
 const cards = require(source + '/randomizer/game/cards/deck');
 const { buildRuleObservation } = require(source + '/randomizer/app/rule-observation');
-const output = 'reports/iteration/counted-card-move-hidden-draw-20260909.json';
+const launchTrigger = process.argv.includes('--launch-trigger');
+const output = launchTrigger
+  ? 'reports/iteration/counted-card-move-launch-draw-20260909-v2.json'
+  : 'reports/iteration/counted-card-move-hidden-draw-20260909.json';
 if (fs.existsSync(output)) { console.log('已有检查点：' + output); process.exit(0); }
-const report = { sourceCommit: '4bc44eb2', scope: '两种隐藏牌面替换，仅定向执行交易盲抽→已知b98', cases: [] };
+const report = { sourceCommit: '4bc44eb2', scope: launchTrigger
+  ? '两种隐藏牌面替换，已知b98发射触发已打出DLC23盲抽'
+  : '两种隐藏牌面替换，仅定向执行交易盲抽→已知b98', cases: [] };
 for (const moveCorner of [false, true]) {
   const envelope = structuredClone(require('../reports/iteration/blue50-expiry-baseline-20260908.json').rootEnvelope);
   const root = JSON.parse(envelope.committedState), actorId = 'player-blue';
@@ -15,6 +20,11 @@ for (const moveCorner of [false, true]) {
   actor.hand = [cards.createCommittedCardInstance(root, cards.CARD_CATALOG.find(c => c.card_id === 'b_98.webp'))];
   actor.resources.handSize = 1;
   actor.resources.publicity = 3;
+  if (launchTrigger) {
+    const trigger = cards.CARD_CATALOG.find(c => c.card_id === 'dlc_23.png');
+    assert.ok(trigger);
+    actor.reservedCards.push(cards.createCommittedCardInstance(root, trigger));
+  }
   const future = cards.getAvailablePool(root.cards, root.players)
     .find(c => (c.discard_action_code === 2) === moveCorner);
   assert.ok(future); root.cards.drawPileCardIds = [future.card_id];
@@ -28,8 +38,9 @@ for (const moveCorner of [false, true]) {
     const restored = composition.lifecycle.restore(envelope, { silent: true });
     assert.equal(restored.ok, true, JSON.stringify(restored));
     const before = composition.lifecycle.save().envelope;
-    const trade = composition.inputPort.enumerateActions().find(a => a.family === 'quick_trade'
-      && a.target.tradeId === 'publicity-for-card');
+    const trade = composition.inputPort.enumerateActions().find(a => launchTrigger
+      ? a.family === 'play_card' && a.target.cardInstanceId === actor.hand[0].id
+      : a.family === 'quick_trade' && a.target.tradeId === 'publicity-for-card');
     assert.ok(trade);
     const outcomes = composition.counterfactualPort.evaluate([trade], {
       viewer: { playerId: actorId, role: 'player' }, maxNodes: 40, maxExecutionNodes: 80,
@@ -44,6 +55,11 @@ for (const moveCorner of [false, true]) {
             choices: legalSuccessors });
           const blind = legalSuccessors.find(a => a.family === 'choose_card' && a.target.source === 'blind');
           if (blind) return [blind];
+          if (launchTrigger) {
+            const trigger = legalSuccessors.find(a => a.family === 'accept_optional_effect'
+              && a.target.ruleId === 'dlc23-launch-draw');
+            if (trigger) return [trigger];
+          }
           const play = legalSuccessors.find(a => a.family === 'play_card' && a.target.cardInstanceId === actor.hand[0].id);
           if (play) return [play];
           const launch = legalSuccessors.find(a => String(a.target?.choiceId || '').startsWith('launch:'));
@@ -53,8 +69,11 @@ for (const moveCorner of [false, true]) {
     });
     evidence.rootObservation = outcomes[0]?.rootObservation;
     evidence.diagnostics = composition.counterfactualPort.getDiagnostics();
+    assert.ok(outcomes.every(o => o.status !== 'failed'), JSON.stringify(outcomes.map(o => ({ status: o.status, code: o.code }))));
     assert.deepEqual(evidence.diagnostics.failedNodeCountByCode, {});
     assert.deepEqual(composition.lifecycle.save().envelope, before);
+    if (launchTrigger) assert.ok(evidence.observations.some(o => o.after.family === 'accept_optional_effect'),
+      '必须实际接受发射抽牌触发');
     assert.ok(evidence.observations.some(o => o.after.family === 'play_card'),
       '必须实际到达b98打牌后：' + JSON.stringify({ observations: evidence.observations.map(o => ({ after: o.after.family, choices: o.choices.map(a => ({ family: a.family, target: a.target })) })),
         diagnostics: evidence.diagnostics, outcomes: outcomes.map(o => ({ status: o.status, code: o.code })) }));
