@@ -161,6 +161,33 @@ PASS期限已有完整正式事务证据：PASS_COMMIT产出pass事件后，即�
 PASS即时奖励消费必须保留；company.turn_end之后不得继续沿用该需求。仍需按八种
 消费者完成统一需求提取与改善证据，不能把这个单一事务外推成全部设计已闭合。
 
+## 入口接入位置复核
+
+复用第50步85分完整链的16个已有逐步观察/合法集，调用候选954e51c0的目标目录：
+11处可合法启用图灵，11处均没有任何compatibleActionIds绑定该入口。逐处输入
+调用前后完全一致，根选择与目录准入一致；检查点为
+[turing-entry-bindings-20260908.json](turing-entry-bindings-20260908.json)，脚本
+`adhoc/profile-turing-entry-bindings-20260908.js`。这不是新运行4096搜索，也不把11处
+机会计为全树无用节点数。
+
+源码解释：`selectSecondaryAgentRootActions`仅准入目标目录兼容的输入；树内未绑定
+后继却允许industry回补（UNTARGETED_MEANS_ONLY_FAMILIES只有quick_trade/card_corner/
+move）。借用Decision再被通用conditional规则设为独立decision目标，目标未指定
+具体能力消费者。由此确定必须成套改动的接入点：
+
+1. 根目录生成具名借用需求，把公司入口挂到真正消费者；不能只改树内选择。
+2. 树内无目标回补排除图灵入口，同时从相同需求目录补入有目标入口；不能直接删
+   所有industry，否则丢失尚未进入根目录的有效借用以及其他公司能力。
+3. 借用Decision继承需求，只允许对应tile，不登记为无用途的decision目标。
+4. 正式已开启Decision继续按恢复契约结算；目的在消费/到期边界完成，不能等同
+   任意conditional选择完成。
+
+另否决一个过早简化：不能以mainActionCompleted单字段证明紫科技无消费者。
+`fangzhou-card1-queue.buildFollowUpNodes`可把动态effect.scanAction转成正式
+card_scan_action，不在cards.MODELS静态清单中。图灵消费者提取必须覆盖这个正式
+动态入口，但不调整方舟槽位策略。此前242卡模型清点仍只证明其声明的静态范围。
+当前没有对该动态入口做可达性或完整事务测试，不外推“主行动后必可扫描”。
+
 检查位置：players.js借用读取，industry/state.js与passives.js，
 effects/residual-domain-session.js公司枚举/执行，abilities/rocket.js与planet.js，
 actions/scan-effects.js全文，effects/science-session.js scanQueue/SCAN_ACTION_4及研究奖励，

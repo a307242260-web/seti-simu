@@ -1,0 +1,475 @@
+{
+  "codeHead": "954e51c0b76661ac149f18f53fb68fe5a7bd2a9e",
+  "source": "blue50-no-borrow-masked-20260908.json",
+  "rows": [
+    {
+      "afterPhysicalStep": 2,
+      "expectedNext": "结束回合",
+      "company": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:f3c9eca0",
+        "actorId": "player-blue",
+        "stateVersion": 15,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "图灵系统",
+          "abilityId": "turing_borrow_tech"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "图灵系统 1x 行动"
+      },
+      "targetCount": 4,
+      "companyRootAdmitted": false,
+      "bindings": [],
+      "mainActionCompleted": null,
+      "targetIds": [
+        {
+          "targetId": "orbit:venus:planet:",
+          "planId": "probe:launch:orbit:venus:planet:"
+        },
+        {
+          "targetId": "tech:gain:orange2",
+          "planId": "tech:orange2:"
+        },
+        {
+          "targetId": "tech:gain:orange3",
+          "planId": "tech:orange3:"
+        },
+        {
+          "targetId": "tech:gain:purple2",
+          "planId": "tech:purple2:"
+        }
+      ]
+    },
+    {
+      "afterPhysicalStep": 3,
+      "expectedNext": "dlc_23.png",
+      "company": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:f3c9eca0",
+        "actorId": "player-blue",
+        "stateVersion": 17,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "图灵系统",
+          "abilityId": "turing_borrow_tech"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "图灵系统 1x 行动"
+      },
+      "targetCount": 7,
+      "companyRootAdmitted": false,
+      "bindings": [],
+      "mainActionCompleted": null,
+      "targetIds": [
+        {
+          "targetId": "land:mars:planet:",
+          "planId": "probe:launch:land:mars:planet:"
+        },
+        {
+          "targetId": "orbit:venus:planet:",
+          "planId": "probe:launch:orbit:venus:planet:"
+        },
+        {
+          "targetId": "income:gain:4,2,0,1,1,0",
+          "planId": "income:data:computer-slot-4"
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "planId": "sector:standard-scan:sector-3-a"
+        },
+        {
+          "targetId": "tech:gain:orange2",
+          "planId": "tech:orange2:"
+        },
+        {
+          "targetId": "tech:gain:orange3",
+          "planId": "tech:orange3:"
+        },
+        {
+          "targetId": "tech:gain:purple2",
+          "planId": "tech:purple2:"
+        }
+      ]
+    },
+    {
+      "afterPhysicalStep": 4,
+      "expectedNext": "结束回合",
+      "company": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:f3c9eca0",
+        "actorId": "player-blue",
+        "stateVersion": 18,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "图灵系统",
+          "abilityId": "turing_borrow_tech"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "图灵系统 1x 行动"
+      },
+      "targetCount": 0,
+      "companyRootAdmitted": false,
+      "bindings": [],
+      "mainActionCompleted": null,
+      "targetIds": []
+    },
+    {
+      "afterPhysicalStep": 5,
+      "expectedNext": "研究科技",
+      "company": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:f3c9eca0",
+        "actorId": "player-blue",
+        "stateVersion": 20,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "图灵系统",
+          "abilityId": "turing_borrow_tech"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "图灵系统 1x 行动"
+      },
+      "targetCount": 7,
+      "companyRootAdmitted": false,
+      "bindings": [],
+      "mainActionCompleted": null,
+      "targetIds": [
+        {
+          "targetId": "land:mars:planet:",
+          "planId": "probe:launch:land:mars:planet:"
+        },
+        {
+          "targetId": "orbit:venus:planet:",
+          "planId": "probe:launch:orbit:venus:planet:"
+        },
+        {
+          "targetId": "income:gain:4,2,0,1,1,0",
+          "planId": "income:data:computer-slot-4"
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "planId": "sector:standard-scan:sector-3-a"
+        },
+        {
+          "targetId": "tech:gain:orange2",
+          "planId": "tech:orange2:"
+        },
+        {
+          "targetId": "tech:gain:orange3",
+          "planId": "tech:orange3:"
+        },
+        {
+          "targetId": "tech:gain:purple2",
+          "planId": "tech:purple2:"
+        }
+      ]
+    },
+    {
+      "afterPhysicalStep": 7,
+      "expectedNext": "结束回合",
+      "company": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:f3c9eca0",
+        "actorId": "player-blue",
+        "stateVersion": 21,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "图灵系统",
+          "abilityId": "turing_borrow_tech"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "图灵系统 1x 行动"
+      },
+      "targetCount": 3,
+      "companyRootAdmitted": false,
+      "bindings": [],
+      "mainActionCompleted": null,
+      "targetIds": [
+        {
+          "targetId": "tech:gain:blue1",
+          "planId": "tech:blue1:1"
+        },
+        {
+          "targetId": "tech:gain:orange3",
+          "planId": "tech:orange3:"
+        },
+        {
+          "targetId": "tech:gain:purple2",
+          "planId": "tech:purple2:"
+        }
+      ]
+    },
+    {
+      "afterPhysicalStep": 8,
+      "expectedNext": "发射",
+      "company": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:f3c9eca0",
+        "actorId": "player-blue",
+        "stateVersion": 23,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "图灵系统",
+          "abilityId": "turing_borrow_tech"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "图灵系统 1x 行动"
+      },
+      "targetCount": 7,
+      "companyRootAdmitted": false,
+      "bindings": [],
+      "mainActionCompleted": null,
+      "targetIds": [
+        {
+          "targetId": "land:mars:planet:",
+          "planId": "probe:launch:land:mars:planet:"
+        },
+        {
+          "targetId": "orbit:venus:planet:",
+          "planId": "probe:launch:orbit:venus:planet:"
+        },
+        {
+          "targetId": "income:gain:4,2,0,1,1,0",
+          "planId": "income:data:computer-slot-4"
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "planId": "sector:standard-scan:sector-3-a"
+        },
+        {
+          "targetId": "tech:gain:blue1",
+          "planId": "tech:blue1:1"
+        },
+        {
+          "targetId": "tech:gain:orange3",
+          "planId": "tech:orange3:"
+        },
+        {
+          "targetId": "tech:gain:purple2",
+          "planId": "tech:purple2:"
+        }
+      ]
+    },
+    {
+      "afterPhysicalStep": 10,
+      "expectedNext": "移动探测器 3 向外",
+      "company": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:f3c9eca0",
+        "actorId": "player-blue",
+        "stateVersion": 24,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "图灵系统",
+          "abilityId": "turing_borrow_tech"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "图灵系统 1x 行动"
+      },
+      "targetCount": 6,
+      "companyRootAdmitted": false,
+      "bindings": [],
+      "mainActionCompleted": null,
+      "targetIds": [
+        {
+          "targetId": "land:mars:planet:",
+          "planId": "probe:rocket:3:land:mars:planet:"
+        },
+        {
+          "targetId": "orbit:venus:planet:",
+          "planId": "probe:rocket:3:orbit:venus:planet:"
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "planId": "sector:standard-scan:sector-3-a"
+        },
+        {
+          "targetId": "tech:gain:blue1",
+          "planId": "tech:blue1:1"
+        },
+        {
+          "targetId": "tech:gain:orange3",
+          "planId": "tech:orange3:"
+        },
+        {
+          "targetId": "tech:gain:purple2",
+          "planId": "tech:purple2:"
+        }
+      ]
+    },
+    {
+      "afterPhysicalStep": 11,
+      "expectedNext": "移动探测器 3 顺时针",
+      "company": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:f3c9eca0",
+        "actorId": "player-blue",
+        "stateVersion": 25,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "图灵系统",
+          "abilityId": "turing_borrow_tech"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "图灵系统 1x 行动"
+      },
+      "targetCount": 6,
+      "companyRootAdmitted": false,
+      "bindings": [],
+      "mainActionCompleted": null,
+      "targetIds": [
+        {
+          "targetId": "land:mars:planet:",
+          "planId": "probe:rocket:3:land:mars:planet:"
+        },
+        {
+          "targetId": "orbit:venus:planet:",
+          "planId": "probe:rocket:3:orbit:venus:planet:"
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "planId": "sector:standard-scan:sector-3-a"
+        },
+        {
+          "targetId": "tech:gain:blue1",
+          "planId": "tech:blue1:1"
+        },
+        {
+          "targetId": "tech:gain:orange3",
+          "planId": "tech:orange3:"
+        },
+        {
+          "targetId": "tech:gain:purple2",
+          "planId": "tech:purple2:"
+        }
+      ]
+    },
+    {
+      "afterPhysicalStep": 12,
+      "expectedNext": "2张牌 → 1能量",
+      "company": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:f3c9eca0",
+        "actorId": "player-blue",
+        "stateVersion": 26,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "图灵系统",
+          "abilityId": "turing_borrow_tech"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "图灵系统 1x 行动"
+      },
+      "targetCount": 4,
+      "companyRootAdmitted": false,
+      "bindings": [],
+      "mainActionCompleted": null,
+      "targetIds": [
+        {
+          "targetId": "land:mars:planet:",
+          "planId": "probe:rocket:3:land:mars:planet:"
+        },
+        {
+          "targetId": "tech:gain:blue1",
+          "planId": "tech:blue1:1"
+        },
+        {
+          "targetId": "tech:gain:orange3",
+          "planId": "tech:orange3:"
+        },
+        {
+          "targetId": "tech:gain:purple2",
+          "planId": "tech:purple2:"
+        }
+      ]
+    },
+    {
+      "afterPhysicalStep": 13,
+      "expectedNext": "结束回合",
+      "company": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:f3c9eca0",
+        "actorId": "player-blue",
+        "stateVersion": 27,
+        "decisionVersion": 1,
+        "target": {
+          "companyId": "图灵系统",
+          "abilityId": "turing_borrow_tech"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "图灵系统 1x 行动"
+      },
+      "targetCount": 0,
+      "companyRootAdmitted": false,
+      "bindings": [],
+      "mainActionCompleted": null,
+      "targetIds": []
+    },
+    {
+      "afterPhysicalStep": 14,
+      "expectedNext": "登陆",
+      "company": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:f3c9eca0",
+        "actorId": "player-blue",
+        "stateVersion": 29,
+        "decisionVersion": 1,
+        "target": {
+          "companyId": "图灵系统",
+          "abilityId": "turing_borrow_tech"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "图灵系统 1x 行动"
+      },
+      "targetCount": 1,
+      "companyRootAdmitted": false,
+      "bindings": [],
+      "mainActionCompleted": null,
+      "targetIds": [
+        {
+          "targetId": "land:mars:planet:",
+          "planId": "probe:rocket:3:land:mars:planet:"
+        }
+      ]
+    }
+  ],
+  "scope": "第50步保留85分链沿途已有观察的目标目录检查；不是全部4096节点分布，不统计无用节点，不执行新搜索。",
+  "summary": {
+    "companyLegalStates": 11,
+    "companyBoundStates": 0
+  }
+}
