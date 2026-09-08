@@ -1,0 +1,2707 @@
+{
+  "baseline": "70043d34",
+  "candidate": "aa277dac",
+  "rows": [
+    {
+      "seat": "player-blue",
+      "matchedOwnActions": 44,
+      "baselineContext": [
+        {
+          "stepIndex": 183,
+          "actorPlayerId": "player-blue",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:f1f2b012",
+            "actorId": "player-blue",
+            "stateVersion": 86,
+            "decisionVersion": 6,
+            "target": {
+              "kind": "confirm",
+              "confirm": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "确认弃牌（2/2）"
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 2,
+            "c": "player-blue",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 209,
+          "actorPlayerId": "player-blue",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "scan",
+            "phase": "main",
+            "actionId": "scan:96a13338",
+            "actorId": "player-blue",
+            "stateVersion": 99,
+            "decisionVersion": 6,
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "扫描"
+          },
+          "phase": "main",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 6,
+            "c": "player-blue",
+            "p": {
+              "player-blue": [
+                23,
+                0,
+                0,
+                1,
+                2,
+                1
+              ],
+              "player-green": [
+                39,
+                3,
+                1,
+                6,
+                2,
+                2
+              ],
+              "player-brown": [
+                24,
+                3,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                18,
+                3,
+                1,
+                6,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 210,
+          "actorPlayerId": "player-blue",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:0cfaea46",
+            "actorId": "player-blue",
+            "stateVersion": 99,
+            "decisionVersion": 6,
+            "target": {
+              "choiceId": "nebula:sector-1-a",
+              "nebulaId": "sector-1-a",
+              "sectorX": 5
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 南河三"
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 6,
+            "c": "player-blue",
+            "p": {
+              "player-blue": [
+                25,
+                0,
+                0,
+                1,
+                2,
+                1
+              ],
+              "player-green": [
+                39,
+                3,
+                1,
+                6,
+                2,
+                2
+              ],
+              "player-brown": [
+                24,
+                3,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                18,
+                3,
+                1,
+                6,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 211,
+          "actorPlayerId": "player-blue",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:219421c9",
+            "actorId": "player-blue",
+            "stateVersion": 99,
+            "decisionVersion": 6,
+            "target": {
+              "choiceId": "public:card-56-0:sector-1-a",
+              "cardInstanceId": "card-56-0",
+              "publicSlotIndex": 0,
+              "nebulaId": "sector-1-a"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "dlc_26.png → 南河三",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-56-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_26.png",
+              "imageAlt": "dlc_26.png"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 6,
+            "c": "player-blue",
+            "p": {
+              "player-blue": [
+                25,
+                0,
+                0,
+                1,
+                2,
+                1
+              ],
+              "player-green": [
+                39,
+                3,
+                1,
+                6,
+                2,
+                2
+              ],
+              "player-brown": [
+                24,
+                3,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                18,
+                3,
+                1,
+                6,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 212,
+          "actorPlayerId": "player-blue",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:01c038e2",
+            "actorId": "player-blue",
+            "stateVersion": 100,
+            "decisionVersion": 6,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "phase": "quick",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 6,
+            "c": "player-blue",
+            "p": {
+              "player-blue": [
+                25,
+                0,
+                0,
+                1,
+                2,
+                1
+              ],
+              "player-green": [
+                39,
+                3,
+                1,
+                6,
+                2,
+                2
+              ],
+              "player-brown": [
+                24,
+                3,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                18,
+                3,
+                1,
+                6,
+                4,
+                1
+              ]
+            }
+          }
+        }
+      ],
+      "candidateContext": [
+        {
+          "stepIndex": 183,
+          "actorPlayerId": "player-blue",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:f1f2b012",
+            "actorId": "player-blue",
+            "stateVersion": 86,
+            "decisionVersion": 6,
+            "target": {
+              "kind": "confirm",
+              "confirm": true
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "确认弃牌（2/2）"
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 2,
+            "c": "player-blue",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                3,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 214,
+          "actorPlayerId": "player-blue",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "scan",
+            "phase": "main",
+            "actionId": "scan:96a13338",
+            "actorId": "player-blue",
+            "stateVersion": 101,
+            "decisionVersion": 6,
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "扫描"
+          },
+          "phase": "main",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 6,
+            "c": "player-blue",
+            "p": {
+              "player-blue": [
+                23,
+                0,
+                0,
+                1,
+                2,
+                1
+              ],
+              "player-green": [
+                39,
+                3,
+                1,
+                6,
+                2,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                0,
+                6,
+                0
+              ],
+              "player-white": [
+                16,
+                3,
+                1,
+                6,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 215,
+          "actorPlayerId": "player-blue",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:1e72128d",
+            "actorId": "player-blue",
+            "stateVersion": 101,
+            "decisionVersion": 6,
+            "target": {
+              "choiceId": "nebula:sector-4-b",
+              "nebulaId": "sector-4-b",
+              "sectorX": 4
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 绘架座β"
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 6,
+            "c": "player-blue",
+            "p": {
+              "player-blue": [
+                25,
+                0,
+                0,
+                1,
+                2,
+                1
+              ],
+              "player-green": [
+                39,
+                3,
+                1,
+                6,
+                2,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                0,
+                6,
+                0
+              ],
+              "player-white": [
+                16,
+                3,
+                1,
+                6,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 216,
+          "actorPlayerId": "player-blue",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:3dd86ead",
+            "actorId": "player-blue",
+            "stateVersion": 101,
+            "decisionVersion": 6,
+            "target": {
+              "choiceId": "public:card-57-0:sector-3-b",
+              "cardInstanceId": "card-57-0",
+              "publicSlotIndex": 0,
+              "nebulaId": "sector-3-b"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "dlc_25.png → 比邻星",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-57-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_25.png",
+              "imageAlt": "dlc_25.png"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 6,
+            "c": "player-blue",
+            "p": {
+              "player-blue": [
+                25,
+                0,
+                0,
+                1,
+                2,
+                1
+              ],
+              "player-green": [
+                39,
+                3,
+                1,
+                6,
+                2,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                0,
+                6,
+                0
+              ],
+              "player-white": [
+                16,
+                3,
+                1,
+                6,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 217,
+          "actorPlayerId": "player-blue",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:01c038e2",
+            "actorId": "player-blue",
+            "stateVersion": 102,
+            "decisionVersion": 6,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "phase": "quick",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 6,
+            "c": "player-blue",
+            "p": {
+              "player-blue": [
+                25,
+                0,
+                0,
+                1,
+                2,
+                1
+              ],
+              "player-green": [
+                39,
+                3,
+                1,
+                6,
+                2,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                0,
+                6,
+                0
+              ],
+              "player-white": [
+                16,
+                3,
+                1,
+                6,
+                4,
+                1
+              ]
+            }
+          }
+        }
+      ],
+      "searchCount": [
+        34,
+        33
+      ],
+      "physicalNodes": [
+        21446,
+        24361
+      ]
+    },
+    {
+      "seat": "player-green",
+      "matchedOwnActions": 44,
+      "baselineContext": [
+        {
+          "stepIndex": 163,
+          "actorPlayerId": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:2eb6f05e",
+            "actorId": "player-green",
+            "stateVersion": 76,
+            "decisionVersion": 3,
+            "target": {
+              "kind": "pass-reserve-card",
+              "choiceId": "card-20-pass-1-1",
+              "cardId": "dlc_4.png"
+            },
+            "payload": {
+              "cardInstanceId": "card-20-pass-1-1"
+            },
+            "decision": null,
+            "summary": "dlc_4.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-20-pass-1-1",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_4.png",
+              "imageAlt": "dlc_4.png"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 1,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                23,
+                4,
+                2,
+                2,
+                2,
+                1
+              ],
+              "player-green": [
+                33,
+                6,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 164,
+          "actorPlayerId": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "launch",
+            "phase": "main",
+            "actionId": "launch:70d77c1b",
+            "actorId": "player-green",
+            "stateVersion": 77,
+            "decisionVersion": 3,
+            "target": null,
+            "payload": {},
+            "decision": null,
+            "summary": "发射"
+          },
+          "phase": "main",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 1,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                23,
+                4,
+                2,
+                2,
+                2,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 165,
+          "actorPlayerId": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "industry",
+            "phase": "quick",
+            "actionId": "industry:5bda1856",
+            "actorId": "player-green",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "寰宇动力 1x 行动"
+          },
+          "phase": "quick",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 1,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                23,
+                4,
+                2,
+                2,
+                2,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 166,
+          "actorPlayerId": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:7862de9a",
+            "actorId": "player-green",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:5:ccw",
+              "rocketId": 5,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw"
+            },
+            "decision": null,
+            "summary": "移动 5 逆时针"
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 1,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                23,
+                4,
+                2,
+                2,
+                2,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 204,
+          "actorPlayerId": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "move",
+            "phase": "quick",
+            "actionId": "move:18a49c99",
+            "actorId": "player-green",
+            "stateVersion": 96,
+            "decisionVersion": 6,
+            "target": {
+              "rocketId": 5,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw",
+              "requiredMovePoints": 1
+            },
+            "decision": null,
+            "summary": "移动探测器 5 逆时针"
+          },
+          "phase": "quick",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 5,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                1,
+                2,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                5,
+                4,
+                2
+              ],
+              "player-brown": [
+                24,
+                3,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                18,
+                3,
+                1,
+                6,
+                4,
+                1
+              ]
+            }
+          }
+        }
+      ],
+      "candidateContext": [
+        {
+          "stepIndex": 163,
+          "actorPlayerId": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:2eb6f05e",
+            "actorId": "player-green",
+            "stateVersion": 76,
+            "decisionVersion": 3,
+            "target": {
+              "kind": "pass-reserve-card",
+              "choiceId": "card-20-pass-1-1",
+              "cardId": "dlc_4.png"
+            },
+            "payload": {
+              "cardInstanceId": "card-20-pass-1-1"
+            },
+            "decision": null,
+            "summary": "dlc_4.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-20-pass-1-1",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_4.png",
+              "imageAlt": "dlc_4.png"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 1,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                23,
+                4,
+                2,
+                2,
+                2,
+                1
+              ],
+              "player-green": [
+                33,
+                6,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 164,
+          "actorPlayerId": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "launch",
+            "phase": "main",
+            "actionId": "launch:70d77c1b",
+            "actorId": "player-green",
+            "stateVersion": 77,
+            "decisionVersion": 3,
+            "target": null,
+            "payload": {},
+            "decision": null,
+            "summary": "发射"
+          },
+          "phase": "main",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 1,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                23,
+                4,
+                2,
+                2,
+                2,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 165,
+          "actorPlayerId": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "move",
+            "phase": "quick",
+            "actionId": "move:18a49c99",
+            "actorId": "player-green",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "rocketId": 5,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw",
+              "requiredMovePoints": 1
+            },
+            "decision": null,
+            "summary": "移动探测器 5 逆时针"
+          },
+          "phase": "quick",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 1,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                23,
+                4,
+                2,
+                2,
+                2,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 166,
+          "actorPlayerId": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_payment",
+            "phase": "conditional",
+            "actionId": "choose_payment:3e88a094",
+            "actorId": "player-green",
+            "stateVersion": 78,
+            "decisionVersion": 3,
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "alien-amiba-1-2",
+              "cardIds": [
+                "alien-amiba-1-2"
+              ]
+            },
+            "payload": {
+              "energyCost": 0,
+              "requiredMovePoints": 1
+            },
+            "decision": null,
+            "summary": "弃 1 张移动牌"
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 1,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                23,
+                4,
+                2,
+                2,
+                2,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                3,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 205,
+          "actorPlayerId": "player-green",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "industry",
+            "phase": "quick",
+            "actionId": "industry:5bda1856",
+            "actorId": "player-green",
+            "stateVersion": 96,
+            "decisionVersion": 6,
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "寰宇动力 1x 行动"
+          },
+          "phase": "quick",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 5,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                1,
+                2,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                5,
+                3,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                0,
+                6,
+                0
+              ],
+              "player-white": [
+                16,
+                3,
+                1,
+                6,
+                4,
+                1
+              ]
+            }
+          }
+        }
+      ],
+      "searchCount": [
+        39,
+        47
+      ],
+      "physicalNodes": [
+        30567,
+        37530
+      ]
+    },
+    {
+      "seat": "player-brown",
+      "matchedOwnActions": 36,
+      "baselineContext": [
+        {
+          "stepIndex": 151,
+          "actorPlayerId": "player-brown",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "pass",
+            "phase": "main",
+            "actionId": "pass:ac4b4ab2",
+            "actorId": "player-brown",
+            "stateVersion": 70,
+            "decisionVersion": 3,
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "PASS"
+          },
+          "phase": "main",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 1,
+            "t": 20,
+            "c": "player-brown",
+            "p": {
+              "player-blue": [
+                23,
+                0,
+                0,
+                2,
+                0,
+                1
+              ],
+              "player-green": [
+                22,
+                0,
+                1,
+                1,
+                0,
+                2
+              ],
+              "player-brown": [
+                18,
+                0,
+                0,
+                5,
+                1,
+                0
+              ],
+              "player-white": [
+                13,
+                0,
+                0,
+                4,
+                0,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 152,
+          "actorPlayerId": "player-brown",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:11fb9e5d",
+            "actorId": "player-brown",
+            "stateVersion": 70,
+            "decisionVersion": 3,
+            "target": {
+              "kind": "pass-reserve-card",
+              "choiceId": "card-21-pass-1-2",
+              "cardId": "b_24.webp"
+            },
+            "payload": {
+              "cardInstanceId": "card-21-pass-1-2"
+            },
+            "decision": null,
+            "summary": "b_24.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-21-pass-1-2",
+              "imageSrc": "../assets/cards/basic/split/b_24.webp",
+              "imageAlt": "b_24.webp"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 1,
+            "t": 21,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                23,
+                0,
+                0,
+                2,
+                0,
+                1
+              ],
+              "player-green": [
+                22,
+                0,
+                1,
+                1,
+                0,
+                2
+              ],
+              "player-brown": [
+                18,
+                0,
+                0,
+                5,
+                2,
+                0
+              ],
+              "player-white": [
+                13,
+                0,
+                0,
+                4,
+                0,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 185,
+          "actorPlayerId": "player-brown",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "orbit",
+            "phase": "main",
+            "actionId": "orbit:cbda1321",
+            "actorId": "player-brown",
+            "stateVersion": 88,
+            "decisionVersion": 6,
+            "target": {
+              "rocketId": 4,
+              "planetId": "venus"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R4，1信用点 + 1能量）"
+          },
+          "phase": "main",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 3,
+            "c": "player-brown",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                24,
+                3,
+                0,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 186,
+          "actorPlayerId": "player-brown",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:dcbabd95",
+            "actorId": "player-brown",
+            "stateVersion": 88,
+            "decisionVersion": 6,
+            "target": {
+              "choiceId": "income:card-21-pass-1-2",
+              "cardInstanceId": "card-21-pass-1-2"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 b_24.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-21-pass-1-2",
+              "imageSrc": "../assets/cards/basic/split/b_24.webp",
+              "imageAlt": "b_24.webp"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 3,
+            "c": "player-brown",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                24,
+                3,
+                1,
+                6,
+                3,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 219,
+          "actorPlayerId": "player-brown",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "play_card",
+            "phase": "main",
+            "actionId": "play_card:0e6441ee",
+            "actorId": "player-brown",
+            "stateVersion": 104,
+            "decisionVersion": 6,
+            "target": {
+              "cardInstanceId": "alien-chong-7-5"
+            },
+            "payload": {
+              "cost": {
+                "credits": 3
+              },
+              "handIndex": 3
+            },
+            "decision": null,
+            "summary": "chong_7.webp"
+          },
+          "phase": "main",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 7,
+            "c": "player-brown",
+            "p": {
+              "player-blue": [
+                25,
+                0,
+                0,
+                4,
+                0,
+                1
+              ],
+              "player-green": [
+                39,
+                3,
+                1,
+                6,
+                2,
+                2
+              ],
+              "player-brown": [
+                24,
+                0,
+                1,
+                7,
+                3,
+                1
+              ],
+              "player-white": [
+                18,
+                3,
+                1,
+                6,
+                4,
+                1
+              ]
+            }
+          }
+        }
+      ],
+      "candidateContext": [
+        {
+          "stepIndex": 145,
+          "actorPlayerId": "player-brown",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "pass",
+            "phase": "main",
+            "actionId": "pass:ac4b4ab2",
+            "actorId": "player-brown",
+            "stateVersion": 68,
+            "decisionVersion": 1,
+            "target": {
+              "kind": "pass"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "PASS"
+          },
+          "phase": "main",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 1,
+            "t": 20,
+            "c": "player-brown",
+            "p": {
+              "player-blue": [
+                23,
+                0,
+                0,
+                2,
+                0,
+                1
+              ],
+              "player-green": [
+                22,
+                0,
+                0,
+                4,
+                1,
+                2
+              ],
+              "player-brown": [
+                18,
+                0,
+                0,
+                5,
+                1,
+                0
+              ],
+              "player-white": [
+                13,
+                0,
+                0,
+                4,
+                0,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 146,
+          "actorPlayerId": "player-brown",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:11fb9e5d",
+            "actorId": "player-brown",
+            "stateVersion": 68,
+            "decisionVersion": 1,
+            "target": {
+              "kind": "pass-reserve-card",
+              "choiceId": "card-21-pass-1-2",
+              "cardId": "b_24.webp"
+            },
+            "payload": {
+              "cardInstanceId": "card-21-pass-1-2"
+            },
+            "decision": null,
+            "summary": "b_24.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-21-pass-1-2",
+              "imageSrc": "../assets/cards/basic/split/b_24.webp",
+              "imageAlt": "b_24.webp"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 1,
+            "t": 21,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                23,
+                0,
+                0,
+                2,
+                0,
+                1
+              ],
+              "player-green": [
+                22,
+                0,
+                0,
+                4,
+                1,
+                2
+              ],
+              "player-brown": [
+                18,
+                0,
+                0,
+                5,
+                2,
+                0
+              ],
+              "player-white": [
+                13,
+                0,
+                0,
+                4,
+                0,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 185,
+          "actorPlayerId": "player-brown",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "research_tech",
+            "phase": "main",
+            "actionId": "research_tech:547c8803",
+            "actorId": "player-brown",
+            "stateVersion": 88,
+            "decisionVersion": 6,
+            "target": {
+              "kind": "research-tech"
+            },
+            "payload": {
+              "skipCost": false,
+              "skipRotate": false,
+              "skipBonus": false
+            },
+            "decision": null,
+            "summary": "研究科技"
+          },
+          "phase": "main",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 3,
+            "c": "player-brown",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                3,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                6,
+                4,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 186,
+          "actorPlayerId": "player-brown",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:ad822fbc",
+            "actorId": "player-brown",
+            "stateVersion": 88,
+            "decisionVersion": 6,
+            "target": {
+              "choiceId": "tech:purple2",
+              "tileId": "purple2",
+              "blueSlot": null
+            },
+            "payload": {
+              "skipCost": false,
+              "skipRotate": false,
+              "skipBonus": false
+            },
+            "decision": null,
+            "summary": "研究 purple2"
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 3,
+            "c": "player-brown",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                3,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                0,
+                4,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 187,
+          "actorPlayerId": "player-brown",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:b7991edf",
+            "actorId": "player-brown",
+            "stateVersion": 88,
+            "decisionVersion": 6,
+            "target": {
+              "choiceId": "pick:card-55-0",
+              "cardInstanceId": "card-55-0",
+              "publicSlotIndex": 1
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "b_82.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-55-0",
+              "imageSrc": "../assets/cards/basic/split/b_82.webp",
+              "imageAlt": "b_82.webp"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 3,
+            "c": "player-brown",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                3,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                0,
+                5,
+                0
+              ],
+              "player-white": [
+                13,
+                4,
+                2,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        }
+      ],
+      "searchCount": [
+        45,
+        51
+      ],
+      "physicalNodes": [
+        41643,
+        51346
+      ]
+    },
+    {
+      "seat": "player-white",
+      "matchedOwnActions": 39,
+      "baselineContext": [
+        {
+          "stepIndex": 154,
+          "actorPlayerId": "player-white",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:29c580eb",
+            "actorId": "player-white",
+            "stateVersion": 71,
+            "decisionVersion": 3,
+            "target": {
+              "kind": "pass-reserve-card",
+              "choiceId": "card-22-pass-1-3",
+              "cardId": "b_49.webp"
+            },
+            "payload": {
+              "cardInstanceId": "card-22-pass-1-3"
+            },
+            "decision": null,
+            "summary": "b_49.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-22-pass-1-3",
+              "imageSrc": "../assets/cards/basic/split/b_49.webp",
+              "imageAlt": "b_49.webp"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 1,
+            "t": 22,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                23,
+                0,
+                0,
+                2,
+                0,
+                1
+              ],
+              "player-green": [
+                22,
+                0,
+                1,
+                1,
+                0,
+                2
+              ],
+              "player-brown": [
+                18,
+                0,
+                0,
+                5,
+                2,
+                0
+              ],
+              "player-white": [
+                13,
+                0,
+                0,
+                4,
+                1,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 188,
+          "actorPlayerId": "player-white",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "scan",
+            "phase": "main",
+            "actionId": "scan:2d21a323",
+            "actorId": "player-white",
+            "stateVersion": 90,
+            "decisionVersion": 6,
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "扫描"
+          },
+          "phase": "main",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 4,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                24,
+                3,
+                1,
+                6,
+                3,
+                0
+              ],
+              "player-white": [
+                13,
+                3,
+                0,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 189,
+          "actorPlayerId": "player-white",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:756e7901",
+            "actorId": "player-white",
+            "stateVersion": 90,
+            "decisionVersion": 6,
+            "target": {
+              "choiceId": "nebula:sector-1-a",
+              "nebulaId": "sector-1-a",
+              "sectorX": 5
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 南河三"
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 4,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                24,
+                3,
+                1,
+                6,
+                3,
+                0
+              ],
+              "player-white": [
+                13,
+                3,
+                0,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 190,
+          "actorPlayerId": "player-white",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:0c0512d3",
+            "actorId": "player-white",
+            "stateVersion": 90,
+            "decisionVersion": 6,
+            "target": {
+              "choiceId": "public:card-55-0:sector-3-a",
+              "cardInstanceId": "card-55-0",
+              "publicSlotIndex": 1,
+              "nebulaId": "sector-3-a"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "b_82.webp → 开普勒22",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-55-0",
+              "imageSrc": "../assets/cards/basic/split/b_82.webp",
+              "imageAlt": "b_82.webp"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 4,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                24,
+                3,
+                1,
+                6,
+                3,
+                0
+              ],
+              "player-white": [
+                15,
+                3,
+                0,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 191,
+          "actorPlayerId": "player-white",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:3e3941c8",
+            "actorId": "player-white",
+            "stateVersion": 90,
+            "decisionVersion": 6,
+            "target": {
+              "choiceId": "public:card-54-0:sector-3-b",
+              "cardInstanceId": "card-54-0",
+              "publicSlotIndex": 0,
+              "nebulaId": "sector-3-b"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "dlc_27.png → 比邻星",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-54-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_27.png",
+              "imageAlt": "dlc_27.png"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 4,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                4,
+                2
+              ],
+              "player-brown": [
+                24,
+                3,
+                1,
+                6,
+                3,
+                0
+              ],
+              "player-white": [
+                15,
+                3,
+                0,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        }
+      ],
+      "candidateContext": [
+        {
+          "stepIndex": 148,
+          "actorPlayerId": "player-white",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:29c580eb",
+            "actorId": "player-white",
+            "stateVersion": 69,
+            "decisionVersion": 1,
+            "target": {
+              "kind": "pass-reserve-card",
+              "choiceId": "card-22-pass-1-3",
+              "cardId": "b_49.webp"
+            },
+            "payload": {
+              "cardInstanceId": "card-22-pass-1-3"
+            },
+            "decision": null,
+            "summary": "b_49.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-22-pass-1-3",
+              "imageSrc": "../assets/cards/basic/split/b_49.webp",
+              "imageAlt": "b_49.webp"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 1,
+            "t": 22,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                23,
+                0,
+                0,
+                2,
+                0,
+                1
+              ],
+              "player-green": [
+                22,
+                0,
+                0,
+                4,
+                1,
+                2
+              ],
+              "player-brown": [
+                18,
+                0,
+                0,
+                5,
+                2,
+                0
+              ],
+              "player-white": [
+                13,
+                0,
+                0,
+                4,
+                1,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 189,
+          "actorPlayerId": "player-white",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "scan",
+            "phase": "main",
+            "actionId": "scan:2d21a323",
+            "actorId": "player-white",
+            "stateVersion": 90,
+            "decisionVersion": 6,
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "扫描"
+          },
+          "phase": "main",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 4,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                3,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                0,
+                5,
+                0
+              ],
+              "player-white": [
+                13,
+                3,
+                0,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 190,
+          "actorPlayerId": "player-white",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:96270e4a",
+            "actorId": "player-white",
+            "stateVersion": 90,
+            "decisionVersion": 6,
+            "target": {
+              "choiceId": "nebula:sector-4-b",
+              "nebulaId": "sector-4-b",
+              "sectorX": 4
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 绘架座β"
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 4,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                3,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                0,
+                5,
+                0
+              ],
+              "player-white": [
+                13,
+                3,
+                0,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 191,
+          "actorPlayerId": "player-white",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:930b3637",
+            "actorId": "player-white",
+            "stateVersion": 90,
+            "decisionVersion": 6,
+            "target": {
+              "choiceId": "public:card-56-0:sector-1-a",
+              "cardInstanceId": "card-56-0",
+              "publicSlotIndex": 1,
+              "nebulaId": "sector-1-a"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "dlc_26.png → 南河三",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-56-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_26.png",
+              "imageAlt": "dlc_26.png"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 4,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                3,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                0,
+                5,
+                0
+              ],
+              "player-white": [
+                13,
+                3,
+                0,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        },
+        {
+          "stepIndex": 192,
+          "actorPlayerId": "player-white",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:3e3941c8",
+            "actorId": "player-white",
+            "stateVersion": 90,
+            "decisionVersion": 6,
+            "target": {
+              "choiceId": "public:card-54-0:sector-3-b",
+              "cardInstanceId": "card-54-0",
+              "publicSlotIndex": 0,
+              "nebulaId": "sector-3-b"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "dlc_27.png → 比邻星",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-54-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_27.png",
+              "imageAlt": "dlc_27.png"
+            }
+          },
+          "phase": "conditional",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 2,
+            "t": 4,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                23,
+                1,
+                2,
+                0,
+                1,
+                1
+              ],
+              "player-green": [
+                33,
+                4,
+                1,
+                4,
+                3,
+                2
+              ],
+              "player-brown": [
+                18,
+                4,
+                1,
+                0,
+                5,
+                0
+              ],
+              "player-white": [
+                13,
+                3,
+                0,
+                4,
+                4,
+                1
+              ]
+            }
+          }
+        }
+      ],
+      "searchCount": [
+        54,
+        45
+      ],
+      "physicalNodes": [
+        49596,
+        40861
+      ]
+    }
+  ],
+  "boundary": "忽略stateVersion/actionId及结束回合，仅按family/phase/summary/target比较逐席输入；错位之后不作动作配对，不将首差自动视为终局降分原因。"
+}
