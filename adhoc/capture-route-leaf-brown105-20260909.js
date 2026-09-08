@@ -1,4 +1,4 @@
-// 只重放新候选前104个正式输入并冷搜索第105步；不运行完整局。
+// 重放指定盘面的正式前缀并冷搜索棕方单步；默认105/107，可指定156/182，不运行完整局。
 const fs = require('node:fs'), path = require('node:path'), cp = require('node:child_process');
 const assert = require('node:assert/strict'), inspector = require('node:inspector');
 const root = path.resolve(__dirname, '..');
@@ -6,7 +6,8 @@ const policy = process.argv[2];
 assert.ok(['suffix', 'leaf'].includes(policy));
 const board = process.argv[3] || 'candidate';
 assert.ok(['candidate', 'baseline'].includes(board));
-const targetStep = board === 'candidate' ? 105 : 107;
+const targetStep = process.argv[4] === undefined ? (board === 'candidate' ? 105 : 107) : Number(process.argv[4]);
+assert.ok(board === 'candidate' ? [105, 156, 182].includes(targetStep) : targetStep === 107);
 const boardRecord = board === 'candidate' ? '4a694948.ad676add.full.json' : '3c7e0003.af937808.full.json';
 const source = policy === 'suffix' ? '/private/tmp/seti-route-suffix-facts-20260908' : '/private/tmp/seti-route-leaf-eligibility-20260909';
 const output = path.join(root, `reports/iteration/route-leaf-brown${targetStep}-${policy}-20260909.json`);
@@ -40,6 +41,7 @@ try {
     assert.deepEqual(env.saveBrowserSave().replaySteps.at(-1).after, step.after);
   }
   report.initialState = env.saveBrowserSave();
+  assert.equal(save.replaySteps[targetStep - 1].action.actorId, report.seat);
   const lines = fs.readFileSync(path.join(source, 'randomizer/game/ai/heuristic-decision-function.js'), 'utf8').split('\n');
   const hits = lines.flatMap((line, i) => line.includes('const plan = planContinuation.buildPlanFromSnapshot(snapshot);') ? [i] : []);
   assert.equal(hits.length, 1);
