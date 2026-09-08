@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T15:57:55.857Z",
+  "builtAt": "2026-09-08T16:10:40.561Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "a069bcb7",
+  "headCommit": "e76a4e4a",
   "currentBaseline": "route-selection-error-20260908",
   "worktreeDirty": true,
   "bestOf": {
@@ -194,6 +194,78 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "route-leaf-eligibility-20260909",
+      "name": "路线停止结果可选性（完整局验证中）",
+      "date": "2026-09-09",
+      "baseline": "route-suffix-facts-20260908",
+      "head": "ad676add",
+      "commits": [
+        {
+          "hash": "ad676add",
+          "date": "2026-09-09",
+          "subject": "区分目标完成与路线不可达结果，禁止执行失败准备后缀"
+        }
+      ],
+      "summary": "正常路线停止区分目标完成与不可达，未完成非终局叶保留结果但不参与优胜计划排序",
+      "diffStat": "9 files changed, 131 insertions(+), 6 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 6,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/strategic-goal-evaluator.test.js",
+          "insertions": 23,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/search-root-attribution.test.js",
+          "insertions": 22,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 6,
+          "deletions": 3
+        },
+        {
+          "file": "reports/iteration/route-leaf-eligibility-design-20260909.md",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/route-leaf-eligibility-progress-20260909.md",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 2,
+          "deletions": 2
+        }
+      ],
+      "results": [],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": false,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
     {
       "id": "route-suffix-facts-20260908",
       "name": "等额终点与后续依赖（整局降分未通过）",

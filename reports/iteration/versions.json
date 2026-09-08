@@ -7,6 +7,19 @@
   },
   "versions": [
     {
+      "id": "route-leaf-eligibility-20260909",
+      "name": "路线停止结果可选性（完整局验证中）",
+      "date": "2026-09-09",
+      "baseline": "route-suffix-facts-20260908",
+      "head": "ad676add",
+      "commits": [
+        "ad676add"
+      ],
+      "summary": "正常路线停止区分目标完成与不可达，未完成非终局叶保留结果但不参与优胜计划排序",
+      "records": {},
+      "roadmap": null
+    },
+    {
       "id": "route-suffix-facts-20260908",
       "name": "等额终点与后续依赖（整局降分未通过）",
       "date": "2026-09-08",
