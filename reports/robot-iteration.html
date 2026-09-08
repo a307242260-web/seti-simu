@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T15:40:48.405Z",
+  "builtAt": "2026-09-08T15:48:40.204Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "c1755169",
+  "headCommit": "f5a95110",
   "currentBaseline": "route-selection-error-20260908",
   "worktreeDirty": true,
   "bestOf": {
@@ -266,7 +266,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T15:33:54.344Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": "未通过：689步，正式终局蓝63/绿121/棕106/白112，均100.5；相对直接组合均108.75下降8.25。物理节点149072→139422，执行截断39→27、执行或前沿截断并集46→41，但搜索调用201→228、耗时595966→626199ms。实际规则失败0。首个全局分歧74绿方，蓝方首个自身行动分歧77；蓝方100→63优先归因，不调权重补分、不重跑本版本、生产未合dev。详见route-suffix-facts-full-progress-20260908.md及route-suffix-facts-full-comparison-20260908.json。",
+          "note": "未通过：689步，正式终局蓝63/绿121/棕106/白112，均100.5；相对直接组合均108.75下降8.25。物理节点149072→139422，执行截断39→27、执行或前沿截断并集46→41，但搜索调用201→228、耗时595966→626199ms。实际规则失败0。首个全局分歧74绿方，蓝方首个自身行动分歧77；蓝方100→63优先归因，不调权重补分、不重跑本版本、生产未合dev。新增77归因：绿75占用计划未来黄色首位触发重搜；新研究计划尚待兑现核验，旧打牌首动作未估值，见suffix-blue77-attribution-20260908.md。详见route-suffix-facts-full-progress-20260908.md及route-suffix-facts-full-comparison-20260908.json。",
           "scores": {
             "player-blue": 63,
             "player-green": 121,
