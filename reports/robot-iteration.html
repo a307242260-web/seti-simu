@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T21:04:58.699Z",
+  "builtAt": "2026-09-08T21:13:02.113Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "3f01c416",
+  "headCommit": "cc222567",
   "currentBaseline": "round5-card-value-design-20260909",
   "worktreeDirty": true,
   "bestOf": {
@@ -1310,7 +1310,7 @@ const REGISTRY = {
           "subject": "复核第五轮卡牌模型并补齐参数内结算语义设计"
         }
       ],
-      "summary": "复核182张牌与48类效果模型输入，补齐参数内奖励和数量奖励时机；新增成本算例、支付与手牌评分接入矩阵；核对发射前试验/最佳发射窗口牌面并复现数量移动错误，补充共享额度修复设计，见round5-card-value-contract-20260909.md和counted-card-move-design-20260909.md。当前为设计与缺陷取证，未接入生产搜索。",
+      "summary": "复核182张牌与48类效果模型输入，补齐参数内奖励和数量奖励时机；新增成本算例、支付与手牌评分接入矩阵；明确持牌值取打出兑现与角标较高者、支付不重复扣本牌均值，验算既有收入窗口，见round5-payment-value-design-20260909.md。数量移动独立修复已归属对应版本；普通牌估值仍为设计，未接入生产搜索。",
       "diffStat": "9 files changed, 562 insertions(+), 4 deletions(-)",
       "diffFiles": [
         {

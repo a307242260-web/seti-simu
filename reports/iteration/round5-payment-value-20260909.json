@@ -1,0 +1,162 @@
+{
+  "baseCommit": "cc222567",
+  "scope": "七张牌的支付估值设计验算，不是生产排序/实际移动支付测试",
+  "formula": "N=G-C-6; H=max(G-C, corner); unknown=6; paymentCost=energyCost*energyUnit+sum(H)",
+  "variants": [
+    {
+      "scan7IncludesData": true,
+      "cards": [
+        {
+          "id": "b_2.webp",
+          "name": "高级导航系统",
+          "net": -6.5,
+          "playRealization": -0.5,
+          "cornerRealization": 4,
+          "heldValue": 4
+        },
+        {
+          "id": "b_3.webp",
+          "name": "阿尔冈金射电天文台",
+          "net": -12,
+          "playRealization": -6,
+          "cornerRealization": 6,
+          "heldValue": 6
+        },
+        {
+          "id": "b_9.webp",
+          "name": "阿番西博天文台",
+          "net": -3,
+          "playRealization": 3,
+          "cornerRealization": 4,
+          "heldValue": 4
+        },
+        {
+          "id": "b_16.webp",
+          "name": "突破聆听",
+          "net": -4,
+          "playRealization": 2,
+          "cornerRealization": 4,
+          "heldValue": 4
+        },
+        {
+          "id": "b_48.webp",
+          "name": "拨款",
+          "net": -4,
+          "playRealization": 2,
+          "cornerRealization": 4,
+          "heldValue": 4
+        },
+        {
+          "id": "b_69.webp",
+          "name": "低成本航天发射",
+          "net": 4,
+          "playRealization": 10,
+          "cornerRealization": 4,
+          "heldValue": 10
+        },
+        {
+          "id": "b_83.webp",
+          "name": "NASA创新先迸概念计划",
+          "net": -5,
+          "playRealization": 1,
+          "cornerRealization": 4,
+          "heldValue": 4
+        }
+      ]
+    },
+    {
+      "scan7IncludesData": false,
+      "cards": [
+        {
+          "id": "b_2.webp",
+          "name": "高级导航系统",
+          "net": -6.5,
+          "playRealization": -0.5,
+          "cornerRealization": 4,
+          "heldValue": 4
+        },
+        {
+          "id": "b_3.webp",
+          "name": "阿尔冈金射电天文台",
+          "net": 12,
+          "playRealization": 18,
+          "cornerRealization": 6,
+          "heldValue": 18
+        },
+        {
+          "id": "b_9.webp",
+          "name": "阿番西博天文台",
+          "net": 3,
+          "playRealization": 9,
+          "cornerRealization": 4,
+          "heldValue": 9
+        },
+        {
+          "id": "b_16.webp",
+          "name": "突破聆听",
+          "net": 2,
+          "playRealization": 8,
+          "cornerRealization": 4,
+          "heldValue": 8
+        },
+        {
+          "id": "b_48.webp",
+          "name": "拨款",
+          "net": -4,
+          "playRealization": 2,
+          "cornerRealization": 4,
+          "heldValue": 4
+        },
+        {
+          "id": "b_69.webp",
+          "name": "低成本航天发射",
+          "net": 4,
+          "playRealization": 10,
+          "cornerRealization": 4,
+          "heldValue": 10
+        },
+        {
+          "id": "b_83.webp",
+          "name": "NASA创新先迸概念计划",
+          "net": -5,
+          "playRealization": 1,
+          "cornerRealization": 4,
+          "heldValue": 4
+        }
+      ]
+    }
+  ],
+  "income": [
+    {
+      "round": 1,
+      "credits": 20,
+      "energy": 16,
+      "card": 18
+    },
+    {
+      "round": 2,
+      "credits": 11.666666666666668,
+      "energy": 9.333333333333334,
+      "card": 12
+    },
+    {
+      "round": 3,
+      "credits": 5,
+      "energy": 4,
+      "card": 6
+    },
+    {
+      "round": 4,
+      "credits": 0,
+      "energy": 0,
+      "card": 0
+    }
+  ],
+  "passed": true,
+  "limitations": [
+    "扫描两种解释继续并列，不用支付公式替代扫描口径确认",
+    "没有假定所有牌都能作为移动支付，真实合法集仍是先决条件",
+    "已在后状态体现的支付不再扣第二次；收入不自动加入每张持牌的价值",
+    "收入R2开始钱低于牌来自既有钱电折价，未修改曲线"
+  ]
+}
