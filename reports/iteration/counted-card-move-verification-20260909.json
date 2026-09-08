@@ -1,0 +1,244 @@
+{
+  "source": "/Users/bilibili/code/seti-simu/reports/iteration/blue50-expiry-baseline-20260908.json",
+  "scope": "正式打牌与移动生命周期，无AI全局搜索",
+  "cases": [
+    {
+      "id": "b_98.webp",
+      "hand": 0,
+      "points": 0,
+      "inputs": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:d6f8b5ef",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-40-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_98.webp"
+        }
+      ],
+      "allowances": [],
+      "restoreChecks": 0,
+      "rejectedOwner": false,
+      "passed": true
+    },
+    {
+      "id": "b_98.webp",
+      "hand": 2,
+      "points": 2,
+      "inputs": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:d6f8b5ef",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-40-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_98.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:1b891303",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:0:1",
+            "rocketId": 3,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 2
+          },
+          "decision": null,
+          "summary": "R3 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:364997d2",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:0:1",
+            "rocketId": 3,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R3 向外"
+        }
+      ],
+      "allowances": [
+        2,
+        1
+      ],
+      "restoreChecks": 2,
+      "rejectedOwner": true,
+      "passed": true
+    },
+    {
+      "id": "b_87.webp",
+      "hand": 0,
+      "points": 2,
+      "inputs": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:d6f8b5ef",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-40-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_87.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:1b891303",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:0:1",
+            "rocketId": 3,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 2
+          },
+          "decision": null,
+          "summary": "R3 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:364997d2",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:0:1",
+            "rocketId": 3,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R3 向外"
+        }
+      ],
+      "allowances": [
+        2,
+        1
+      ],
+      "restoreChecks": 2,
+      "rejectedOwner": true,
+      "passed": true
+    },
+    {
+      "id": "b_77.webp",
+      "hand": 0,
+      "points": 1,
+      "inputs": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:2d83539a",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-40-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 3
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_77.webp"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:364997d2",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:0:1",
+            "rocketId": 3,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R3 向外"
+        }
+      ],
+      "allowances": [
+        1
+      ],
+      "restoreChecks": 1,
+      "rejectedOwner": true,
+      "passed": true
+    }
+  ],
+  "passed": true
+}

@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T18:42:27.976Z",
+  "builtAt": "2026-09-08T19:00:37.451Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "1f101c7d",
+  "headCommit": "0d8fda38",
   "currentBaseline": "round5-card-value-design-20260909",
   "worktreeDirty": true,
   "bestOf": {
@@ -194,6 +194,333 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "counted-card-move-20260909",
+      "name": "数量移动额度修复（待固定盘面验收）",
+      "date": "2026-09-09",
+      "baseline": "route-selection-error-20260908",
+      "head": "4bc44eb2",
+      "commits": [
+        {
+          "hash": "4bc44eb2",
+          "date": "2026-09-09",
+          "subject": "按实际数量初始化卡牌移动额度并统一剩余点读取"
+        }
+      ],
+      "summary": "发射前试验按剩余移动角标手牌、最佳发射窗口按地球扇区其他行星和彗星初始化移动点；首次Decision冻结额度，后续只扣减，0点直接结束，正式枚举与AI需求共用读取。进度见counted-card-move-progress-20260909.md。",
+      "diffStat": "198 files changed, 4211511 insertions(+), 32 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/audit-round5-card-value-inputs-20260908.js",
+          "insertions": 87,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-round5-payment-consumers-20260909.js",
+          "insertions": 32,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-round5-valuation-closure-20260909.js",
+          "insertions": 46,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-suffix-blue77-root-admission-20260908.js",
+          "insertions": 28,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-alien-pick-brown-cross-20260908.js",
+          "insertions": 62,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-combined-brown-final284-20260908.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-combined-white327-20260908.js",
+          "insertions": 58,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-disabled-tech-brown95-20260908.js",
+          "insertions": 61,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-quick-turn-white-cross-20260908.js",
+          "insertions": 3,
+          "deletions": 2
+        },
+        {
+          "file": "adhoc/capture-route-leaf-blue99-20260909.js",
+          "insertions": 58,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-route-leaf-brown105-20260909.js",
+          "insertions": 63,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-suffix-blue77-ranking-20260908.js",
+          "insertions": 58,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-suffix-blue99-ranking-20260908.js",
+          "insertions": 58,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/check-data-global-footprint-20260908.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/check-data-scan-boundaries-20260908.js",
+          "insertions": 44,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/check-data-scan-dependencies-20260908.js",
+          "insertions": 32,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/check-quick-turn-goal-obligations-20260908.js",
+          "insertions": 36,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/check-round5-card-value-examples-20260909.js",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-data-demand-pair-20260908.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-alien-pick-first-differences-20260908.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-brown-amiba401-20260909.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/prototype-data-demand-pair-20260908.js",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/replay-brown-orange2-route-20260909.js",
+          "insertions": 62,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/reproduce-counted-card-move-20260909.js",
+          "insertions": 73,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-alien-card-pick-full-20260908.js",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-alien-pick-brown-cross-20260908.js",
+          "insertions": 53,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-alien-pick-disabled-tech-20260908.js",
+          "insertions": 35,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-alien-pick-disabled-tech-full-20260908.js",
+          "insertions": 80,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-brown-final-conditions-20260909.js",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-brown-round2-3-20260909.js",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-combined-attribution-20260908.js",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-disabled-tech-brown95-20260908.js",
+          "insertions": 36,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-disabled-tech-full-20260908.js",
+          "insertions": 52,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-route-leaf-brown-20260909.js",
+          "insertions": 52,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-route-leaf-eligibility-full-20260909.js",
+          "insertions": 81,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-route-selection-full-20260908.js",
+          "insertions": 46,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-route-suffix-facts-full-20260908.js",
+          "insertions": 80,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-white-beam-20260908.js",
+          "insertions": 6,
+          "deletions": 3
+        },
+        {
+          "file": "adhoc/summarize-white327-cross-20260908.js",
+          "insertions": 46,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-brown156-plan-boundary-20260909.js",
+          "insertions": 55,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-step24-goal-tree-20260908.js",
+          "insertions": 6,
+          "deletions": 2
+        },
+        {
+          "file": "adhoc/trace-suffix-blue49-boundary-20260908.js",
+          "insertions": 75,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-combined-white327-plan-20260908.js",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-counted-card-move-20260909.js",
+          "insertions": 76,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-suffix-blue130-state-20260908.js",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-suffix-blue77-plan-20260908.js",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-suffix-green370-20260908.js",
+          "insertions": 22,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-suffix-white327-plan-20260908.js",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 12,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.js",
+          "insertions": 47,
+          "deletions": 8
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.test.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/production-kernel.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/alien-card-pick-first-differences-20260908.json",
+          "insertions": 2707,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-card-pick-greedy-20260908/b6c44201.aa277dac.full.action-log.html",
+          "insertions": 2222,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-card-pick-greedy-design-20260908.md",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-card-pick-greedy-full-comparison-20260908.json",
+          "insertions": 932,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-card-pick-greedy-progress-20260908.md",
+          "insertions": 55,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-card-pick-greedy-single-20260908.json",
+          "insertions": 5078,
+          "deletions": 0
+        }
+      ],
+      "results": [],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": false,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
     {
       "id": "round5-card-value-design-20260909",
       "name": "第五轮普通卡牌估值（设计中，未实现）",
