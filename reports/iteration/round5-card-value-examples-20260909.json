@@ -1,0 +1,223 @@
+{
+  "scope": "设计敏感性算例，不是182牌生产估值或性能验收",
+  "assumptions": [
+    "使用第一轮名义单位；标准行动为无公司/科技减免的基础费用",
+    "拨款只针对明确公开的三牌算例取最佳角标，不读取未知牌；不是全目录平均角标模型",
+    "b83还有空手牌精选1张的任务，远期计3；首版无任务断言拒绝了漏算，补齐后再生成本检查点",
+    "扫描7是否含数据仍待用户确认，两种口径均保留；正式搜索未改"
+  ],
+  "units": {
+    "score": 1,
+    "credits": 10,
+    "energy": 8,
+    "ordinaryCard": 6,
+    "publicity": 4,
+    "availableData": 6,
+    "movement": 5,
+    "alienCard": 12,
+    "additionalPublicScan": 0
+  },
+  "standardLaunch": {
+    "credits": 2
+  },
+  "standardScan": {
+    "credits": 1,
+    "energy": 2
+  },
+  "publicFixture": [
+    {
+      "id": "b_3.webp",
+      "cornerValue": 6
+    },
+    {
+      "id": "b_16.webp",
+      "cornerValue": 4
+    },
+    {
+      "id": "b_69.webp",
+      "cornerValue": 4
+    }
+  ],
+  "bestPublicCorner": 6,
+  "variants": [
+    {
+      "scan7IncludesData": true,
+      "examples": [
+        {
+          "id": "b_2.webp",
+          "name": "高级导航系统",
+          "immediate": 0,
+          "deferred": 9.5,
+          "cost": {
+            "credits": 1
+          },
+          "resourceCost": 10,
+          "cardCost": 6,
+          "net": -6.5
+        },
+        {
+          "id": "b_3.webp",
+          "name": "阿尔冈金射电天文台",
+          "immediate": 4,
+          "deferred": 0,
+          "cost": {
+            "credits": 1
+          },
+          "resourceCost": 10,
+          "cardCost": 6,
+          "net": -12
+        },
+        {
+          "id": "b_9.webp",
+          "name": "阿番西博天文台",
+          "immediate": 33,
+          "deferred": 0,
+          "cost": {
+            "credits": 3
+          },
+          "resourceCost": 30,
+          "cardCost": 6,
+          "net": -3
+        },
+        {
+          "id": "b_16.webp",
+          "name": "突破聆听",
+          "immediate": 12,
+          "deferred": 0,
+          "cost": {
+            "credits": 1
+          },
+          "resourceCost": 10,
+          "cardCost": 6,
+          "net": -4
+        },
+        {
+          "id": "b_48.webp",
+          "name": "拨款",
+          "immediate": 12,
+          "deferred": 0,
+          "cost": {
+            "credits": 1
+          },
+          "resourceCost": 10,
+          "cardCost": 6,
+          "net": -4
+        },
+        {
+          "id": "b_69.webp",
+          "name": "低成本航天发射",
+          "immediate": 20,
+          "deferred": 0,
+          "cost": {
+            "credits": 1
+          },
+          "resourceCost": 10,
+          "cardCost": 6,
+          "net": 4
+        },
+        {
+          "id": "b_83.webp",
+          "name": "NASA创新先迸概念计划",
+          "immediate": 18,
+          "deferred": 3,
+          "cost": {
+            "credits": 2
+          },
+          "resourceCost": 20,
+          "cardCost": 6,
+          "net": -5
+        }
+      ]
+    },
+    {
+      "scan7IncludesData": false,
+      "examples": [
+        {
+          "id": "b_2.webp",
+          "name": "高级导航系统",
+          "immediate": 0,
+          "deferred": 9.5,
+          "cost": {
+            "credits": 1
+          },
+          "resourceCost": 10,
+          "cardCost": 6,
+          "net": -6.5
+        },
+        {
+          "id": "b_3.webp",
+          "name": "阿尔冈金射电天文台",
+          "immediate": 28,
+          "deferred": 0,
+          "cost": {
+            "credits": 1
+          },
+          "resourceCost": 10,
+          "cardCost": 6,
+          "net": 12
+        },
+        {
+          "id": "b_9.webp",
+          "name": "阿番西博天文台",
+          "immediate": 39,
+          "deferred": 0,
+          "cost": {
+            "credits": 3
+          },
+          "resourceCost": 30,
+          "cardCost": 6,
+          "net": 3
+        },
+        {
+          "id": "b_16.webp",
+          "name": "突破聆听",
+          "immediate": 18,
+          "deferred": 0,
+          "cost": {
+            "credits": 1
+          },
+          "resourceCost": 10,
+          "cardCost": 6,
+          "net": 2
+        },
+        {
+          "id": "b_48.webp",
+          "name": "拨款",
+          "immediate": 12,
+          "deferred": 0,
+          "cost": {
+            "credits": 1
+          },
+          "resourceCost": 10,
+          "cardCost": 6,
+          "net": -4
+        },
+        {
+          "id": "b_69.webp",
+          "name": "低成本航天发射",
+          "immediate": 20,
+          "deferred": 0,
+          "cost": {
+            "credits": 1
+          },
+          "resourceCost": 10,
+          "cardCost": 6,
+          "net": 4
+        },
+        {
+          "id": "b_83.webp",
+          "name": "NASA创新先迸概念计划",
+          "immediate": 18,
+          "deferred": 3,
+          "cost": {
+            "credits": 2
+          },
+          "resourceCost": 20,
+          "cardCost": 6,
+          "net": -5
+        }
+      ]
+    }
+  ],
+  "passed": true
+}
