@@ -6,6 +6,24 @@ const evaluator = require("./expected-score-evaluator");
 
 const seatId = "strategic-seat";
 
+// 补数据的精选角标计划绑定具体公共牌，不把其他精选当成等效数据来源。
+{
+  const play = { family: "play_card", actorId: seatId, target: { cardInstanceId: "grant" } };
+  const choices = ["data-card", "credit-card"].map(id => ({
+    family: "choose_card", phase: "conditional", actorId: seatId,
+    actionId: `pick:${id}`, target: { cardInstanceId: id }, payload: {},
+  }));
+  const input = { focalSeatId: seatId, currentAction: play,
+    rootObservation: observation({}), branchObservation: observation({}),
+    routeTargetId: "data:analyze", routePlanId: "data:card:grant:pick:data-card",
+    legalSuccessors: choices };
+  assert.deepEqual(evaluator.selectSecondaryAgentSuccessors(input).map(a => a.actionId), ["pick:data-card"]);
+  assert.deepEqual(evaluator.selectSecondaryAgentSuccessors({ ...input, legalSuccessors: [choices[1]] }), []);
+  assert.equal(evaluator.selectSecondaryAgentSuccessors({ ...input,
+    routeTargetId: "card:resolve:grant", routePlanId: "card:grant",
+  }).length, 2, "非补数据目标不受本次精选约束");
+}
+
 // 普通痕迹自下而上；特殊奖励仍搜索。根与绑定/未绑定后继使用同一候选契约。
 {
   const trace = (speciesId, position, traceType = "yellow", alienSlotId = 1) => ({

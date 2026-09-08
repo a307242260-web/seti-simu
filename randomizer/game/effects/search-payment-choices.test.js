@@ -15,7 +15,11 @@ function createComposition(hiddenCase = null) {
       players: {}, solarSystem: {}, pieces: {}, planets: {}, data: {}, cards: {}, tech: {}, aliens: {}, finalScoring: {},
     }),
     projectState: (root) => ({ energy: root.match.energy, score: root.match.score, payments: root.match.payments,
-      selfState: { hand: [{ id: "known" }] } }),
+      selfState: { hand: [{ id: "known" }] },
+      dataAnalyzeRequirements: { acquisitionPlans: ["known", "future"].map(id => ({
+        planId: `data:card:known:pick:${id}`, cardInstanceId: "known",
+        selection: { cardInstanceId: id }, dataCount: 1,
+      })) } }),
     createActionRegistry() {
       const action = { schemaVersion: "seti-standard-action-v1", actionId: "move:test", family: "move",
         phase: "main", actorId: "p1", stateVersion: 0, decisionVersion: 0, target: {}, payload: {} };
@@ -136,6 +140,10 @@ for (const { choices, allowed, effectType } of [
     searchCompleteness: { status: "incomplete", reasons: ["unrecognized-reason"] },
   })), hidden.inputPort.enumerateActions()), /searchCompleteness/);
   const payments = results.flatMap(result => result.leaves || []).map(leaf => leaf.observation.payments);
+  for (const leaf of results.flatMap(result => result.leaves || [])) {
+    assert.deepEqual(leaf.observation.dataAnalyzeRequirements.acquisitionPlans.map(p => p.selection.cardInstanceId),
+      ["known"], "已知打牌来源不允许携带未知精选牌的角标收益");
+  }
   assert.ok(results.flatMap(result => result.leaves || []).every(leaf => leaf.status !== "awaiting_input"),
     "普通主行动不能把无安全后继的未结算条件流程作为结果叶");
   assert.ok(payments.every(ids => !ids.includes("hidden-move") && !ids.includes("hidden-income")),

@@ -2691,6 +2691,15 @@
       );
     };
     if (actorId === focalSeatId) {
+      const dataPickPlanPrefix = `data:card:${input.currentAction?.target?.cardInstanceId}:pick:`;
+      if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET
+        && input.currentAction?.family === "play_card"
+        && String(input.routePlanId || "").startsWith(dataPickPlanPrefix)
+        && successors.every((action) => action.family === "choose_card" && action.phase === "conditional")) {
+        return bindRoute(successors.filter((action) => (
+          input.routePlanId === `${dataPickPlanPrefix}${action.target?.cardInstanceId}`
+        )), input.routeTargetId, input.routePlanId);
+      }
       const terminalHandIdentityChoices = !input.routeTargetId
         && successors[0]?.phase === "conditional"
         && successors.every((action) => (

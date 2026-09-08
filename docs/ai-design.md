@@ -302,7 +302,11 @@ viewer-safe 窄字段，不暴露 executor 或隐藏 root。`progress.probeRoute
 探测器的标识/坐标；候选 leaf 只额外携带 `nextActionId/family/summary`、目标行星与
 `orbit/land` outcome 引用、已兑现目标分、沿途宣传 delta、终点即时 delta、标准路线实耗、
 移动余步、主星第一奖励格是否空置和叶后钱/电。`dataAnalyzeRequirements` 只投影计算机已放置数、
-可用数据数、下一正式步骤及其信用/能源缺口；扫描费用和分析减免分别来自正式 scan effect 与公司被动。
+可用数据数、下一正式步骤及其信用/能源缺口，以及补数据acquisitionPlans；扫描费用和分析减免分别来自正式 scan effect 与公司被动。
+单一“精选并获得角标”效果的打牌补数据计划按打出实例与公共数据角标实例成对绑定：
+`data:card:<打出实例>:pick:<精选实例>`，kind仍为card，selection.cardInstanceId记录精选来源。
+隐藏信息过滤同时检查该嵌套来源；精选阶段只执行该计划绑定的实例，不能换成无数据收益的牌。
+没有数据缺口时不额外生成此类打牌准备；正式规则合法集和其他目标的精选不受影响。
 用于续算的完整 checkpoint 只存在于隔离 fork 内，投影时物理删除，不复制太阳系、星云、token
 或扫描结构。
 

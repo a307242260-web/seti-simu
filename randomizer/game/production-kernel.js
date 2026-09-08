@@ -827,7 +827,8 @@ function buildDataAnalyzeRequirements(
       });
     }
     for (const card of player.hand || []) {
-      const dataCount = (cardEffects.buildPlayEffects(card) || []).reduce((total, effect) => (
+      const playEffects = cardEffects.buildPlayEffects(card) || [];
+      const dataCount = playEffects.reduce((total, effect) => (
         total + (
           effect?.type === cardEffects.REWARD_TYPES.GAIN_DATA
             ? Math.max(0, Number(effect?.options?.count) || 0)
@@ -844,6 +845,25 @@ function buildDataAnalyzeRequirements(
           nextCost: clone(cardEffects.getCardPlayCost(card) || {}),
           resultTargetIds: ["data:analyze", `card:resolve:${card.id}`],
         });
+      }
+      if (playEffects.length === 1
+        && playEffects[0].type === cardEffects.EFFECT_TYPES.PICK_CARD_CORNER_REWARD) {
+        for (const publicCard of workingState.cards.publicCards || []) {
+          if (!publicCard) continue;
+          const pickedDataCount = Math.max(0, Number(cards.getDiscardActionRewardForCard(publicCard)?.dataCount) || 0);
+          if (pickedDataCount <= 0) continue;
+          acquisitionPlans.push({
+            planId: `data:card:${card.id}:pick:${publicCard.id}`,
+            kind: "card",
+            dataCount: pickedDataCount,
+            cardInstanceId: card.id,
+            // 来源身份不能省略：隐藏边界需同时过滤未知精选牌的角标收益。
+            selection: { cardInstanceId: publicCard.id },
+            nextStep: { family: "play_card", cardInstanceId: card.id },
+            nextCost: clone(cardEffects.getCardPlayCost(card) || {}),
+            resultTargetIds: ["data:analyze", `card:resolve:${card.id}`],
+          });
+        }
       }
       const corner = cards.getDiscardActionRewardForCard(card);
       const cornerDataCount = Math.max(0, Number(corner?.dataCount) || 0);

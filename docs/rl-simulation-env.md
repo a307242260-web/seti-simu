@@ -75,6 +75,11 @@ Composition drain，不伪装成策略动作。
 
 ## Observation
 
+`dataAnalyzeRequirements.acquisitionPlans`中的card计划可携带`selection: { cardInstanceId }`，
+表示打牌后必须精选的公共数据角标来源。计划ID为`data:card:<打出实例>:pick:<精选实例>`；
+kind、nextStep及nextCost沿用card计划契约。该嵌套引用参与反事实隐藏牌过滤，不能只保留
+未知来源的dataCount。此为只读派生计划，不写入游戏存档，不修改Action/Observation外层schema。
+
 数据能力placeData的payload及Science的placeData事件按placementKind携带互斥位置：
 computer对应placementSlot，blueBonus对应blueSlot，不写不适用的undefined属性。
 正式返回缺少对应正整数位置时显式抛错。analyze事件的clearedCount读取能力
