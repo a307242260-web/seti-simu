@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T16:24:44.206Z",
+  "builtAt": "2026-09-08T16:31:10.338Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "35cf3071",
+  "headCommit": "a4002193",
   "currentBaseline": "route-selection-error-20260908",
   "worktreeDirty": true,
   "bestOf": {
@@ -193,7 +193,7 @@
           "createdAt": "2026-09-08T16:22:10.053Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": "整体未通过：608步正式终局蓝102/绿125/棕72/白112，均102.75，直接前版100.5。节点139422→167098，执行截断27→36、执行或前沿截断并集41→49，耗时626199→740816ms；规则失败0。蓝+39但棕−34待归因；首差79研究紫2改橙2，不能把整局回升全部归因99单点保留资源。搜索228→199但棕调用50不变、节点+14635。与dev均101.75及组合108.75均有独立对照，见route-leaf-eligibility-full-progress-20260909.md及对应full-comparison.json。未合生产，不重跑本版本、不调权重补分。",
+          "note": "整体未通过：608步正式终局蓝102/绿125/棕72/白112，均102.75，直接前版100.5。节点139422→167098，执行截断27→36、执行或前沿截断并集41→49，耗时626199→740816ms；规则失败0。蓝+39但棕−34待归因；首差79研究紫2改橙2，不能把整局回升全部归因99单点保留资源。搜索228→199但棕调用50不变、节点+14635。与dev均101.75及组合108.75均有独立对照，见route-leaf-eligibility-full-progress-20260909.md及对应full-comparison.json。棕方首差四次交叉：旧107盘面两版均橙2，新105两版均紫4，均无截断；节点增长集中R2/R4，见route-leaf-brown-progress-20260909.md。未合生产，不重跑本版本、不调权重补分。",
           "scores": {
             "player-blue": 102,
             "player-green": 125,
