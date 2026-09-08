@@ -1,0 +1,525 @@
+{
+  "baseCommit": "71f382e1",
+  "scope": "正式费用折算设计证据，不是完整卡牌模型或性能验收",
+  "scenarios": [
+    {
+      "name": "普通",
+      "company": "图灵系统",
+      "costs": {
+        "launch": {
+          "credits": 2
+        },
+        "orbit": {
+          "credits": 1,
+          "energy": 1
+        },
+        "land": {
+          "energy": 3
+        },
+        "scan": {
+          "credits": 1,
+          "energy": 2
+        },
+        "research": {
+          "publicity": 6
+        },
+        "analyze": {
+          "energy": 1
+        }
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "values": {
+            "launch": 20,
+            "orbit": 18,
+            "land": 24,
+            "scan": 26,
+            "research": 24,
+            "analyze": 8
+          }
+        },
+        {
+          "round": 2,
+          "values": {
+            "launch": 16.666666666666668,
+            "orbit": 15,
+            "land": 20,
+            "scan": 21.666666666666668,
+            "research": 24,
+            "analyze": 6.666666666666667
+          }
+        },
+        {
+          "round": 3,
+          "values": {
+            "launch": 13.333333333333336,
+            "orbit": 12.000000000000002,
+            "land": 16,
+            "scan": 17.333333333333336,
+            "research": 24,
+            "analyze": 5.333333333333334
+          }
+        },
+        {
+          "round": 4,
+          "values": {
+            "launch": 10,
+            "orbit": 9,
+            "land": 12,
+            "scan": 13,
+            "research": 24,
+            "analyze": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "他人已环绕",
+      "company": "图灵系统",
+      "costs": {
+        "launch": {
+          "credits": 2
+        },
+        "orbit": {
+          "credits": 1,
+          "energy": 1
+        },
+        "land": {
+          "energy": 2
+        },
+        "scan": {
+          "credits": 1,
+          "energy": 2
+        },
+        "research": {
+          "publicity": 6
+        },
+        "analyze": {
+          "energy": 1
+        }
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "values": {
+            "launch": 20,
+            "orbit": 18,
+            "land": 16,
+            "scan": 26,
+            "research": 24,
+            "analyze": 8
+          }
+        },
+        {
+          "round": 2,
+          "values": {
+            "launch": 16.666666666666668,
+            "orbit": 15,
+            "land": 13.333333333333334,
+            "scan": 21.666666666666668,
+            "research": 24,
+            "analyze": 6.666666666666667
+          }
+        },
+        {
+          "round": 3,
+          "values": {
+            "launch": 13.333333333333336,
+            "orbit": 12.000000000000002,
+            "land": 10.666666666666668,
+            "scan": 17.333333333333336,
+            "research": 24,
+            "analyze": 5.333333333333334
+          }
+        },
+        {
+          "round": 4,
+          "values": {
+            "launch": 10,
+            "orbit": 9,
+            "land": 8,
+            "scan": 13,
+            "research": 24,
+            "analyze": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "橙3",
+      "company": "图灵系统",
+      "costs": {
+        "launch": {
+          "credits": 2
+        },
+        "orbit": {
+          "credits": 1,
+          "energy": 1
+        },
+        "land": {
+          "energy": 2
+        },
+        "scan": {
+          "credits": 1,
+          "energy": 2
+        },
+        "research": {
+          "publicity": 6
+        },
+        "analyze": {
+          "energy": 1
+        }
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "values": {
+            "launch": 20,
+            "orbit": 18,
+            "land": 16,
+            "scan": 26,
+            "research": 24,
+            "analyze": 8
+          }
+        },
+        {
+          "round": 2,
+          "values": {
+            "launch": 16.666666666666668,
+            "orbit": 15,
+            "land": 13.333333333333334,
+            "scan": 21.666666666666668,
+            "research": 24,
+            "analyze": 6.666666666666667
+          }
+        },
+        {
+          "round": 3,
+          "values": {
+            "launch": 13.333333333333336,
+            "orbit": 12.000000000000002,
+            "land": 10.666666666666668,
+            "scan": 17.333333333333336,
+            "research": 24,
+            "analyze": 5.333333333333334
+          }
+        },
+        {
+          "round": 4,
+          "values": {
+            "launch": 10,
+            "orbit": 9,
+            "land": 8,
+            "scan": 13,
+            "research": 24,
+            "analyze": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "他人环绕加橙3",
+      "company": "图灵系统",
+      "costs": {
+        "launch": {
+          "credits": 2
+        },
+        "orbit": {
+          "credits": 1,
+          "energy": 1
+        },
+        "land": {
+          "energy": 1
+        },
+        "scan": {
+          "credits": 1,
+          "energy": 2
+        },
+        "research": {
+          "publicity": 6
+        },
+        "analyze": {
+          "energy": 1
+        }
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "values": {
+            "launch": 20,
+            "orbit": 18,
+            "land": 8,
+            "scan": 26,
+            "research": 24,
+            "analyze": 8
+          }
+        },
+        {
+          "round": 2,
+          "values": {
+            "launch": 16.666666666666668,
+            "orbit": 15,
+            "land": 6.666666666666667,
+            "scan": 21.666666666666668,
+            "research": 24,
+            "analyze": 6.666666666666667
+          }
+        },
+        {
+          "round": 3,
+          "values": {
+            "launch": 13.333333333333336,
+            "orbit": 12.000000000000002,
+            "land": 5.333333333333334,
+            "scan": 17.333333333333336,
+            "research": 24,
+            "analyze": 5.333333333333334
+          }
+        },
+        {
+          "round": 4,
+          "values": {
+            "launch": 10,
+            "orbit": 9,
+            "land": 4,
+            "scan": 13,
+            "research": 24,
+            "analyze": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "深空探测",
+      "company": "深空探测",
+      "costs": {
+        "launch": {
+          "credits": 2
+        },
+        "orbit": {
+          "credits": 1,
+          "energy": 1
+        },
+        "land": {
+          "energy": 3
+        },
+        "scan": {
+          "credits": 1,
+          "energy": 2
+        },
+        "research": {
+          "publicity": 6
+        },
+        "analyze": {}
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "values": {
+            "launch": 20,
+            "orbit": 18,
+            "land": 24,
+            "scan": 26,
+            "research": 24,
+            "analyze": 0
+          }
+        },
+        {
+          "round": 2,
+          "values": {
+            "launch": 16.666666666666668,
+            "orbit": 15,
+            "land": 20,
+            "scan": 21.666666666666668,
+            "research": 24,
+            "analyze": 0
+          }
+        },
+        {
+          "round": 3,
+          "values": {
+            "launch": 13.333333333333336,
+            "orbit": 12.000000000000002,
+            "land": 16,
+            "scan": 17.333333333333336,
+            "research": 24,
+            "analyze": 0
+          }
+        },
+        {
+          "round": 4,
+          "values": {
+            "launch": 10,
+            "orbit": 9,
+            "land": 12,
+            "scan": 13,
+            "research": 24,
+            "analyze": 0
+          }
+        }
+      ]
+    },
+    {
+      "name": "芬威克",
+      "company": "芬威克研究中心",
+      "costs": {
+        "launch": {
+          "credits": 2
+        },
+        "orbit": {
+          "credits": 1,
+          "energy": 1
+        },
+        "land": {
+          "energy": 3
+        },
+        "scan": {
+          "credits": 1,
+          "energy": 2
+        },
+        "research": {
+          "publicity": 5
+        },
+        "analyze": {
+          "energy": 1
+        }
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "values": {
+            "launch": 20,
+            "orbit": 18,
+            "land": 24,
+            "scan": 26,
+            "research": 20,
+            "analyze": 8
+          }
+        },
+        {
+          "round": 2,
+          "values": {
+            "launch": 16.666666666666668,
+            "orbit": 15,
+            "land": 20,
+            "scan": 21.666666666666668,
+            "research": 20,
+            "analyze": 6.666666666666667
+          }
+        },
+        {
+          "round": 3,
+          "values": {
+            "launch": 13.333333333333336,
+            "orbit": 12.000000000000002,
+            "land": 16,
+            "scan": 17.333333333333336,
+            "research": 20,
+            "analyze": 5.333333333333334
+          }
+        },
+        {
+          "round": 4,
+          "values": {
+            "launch": 10,
+            "orbit": 9,
+            "land": 12,
+            "scan": 13,
+            "research": 20,
+            "analyze": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "异星实验室",
+      "company": "异星实验室",
+      "costs": {
+        "launch": {
+          "credits": 1
+        },
+        "orbit": {
+          "credits": 1,
+          "energy": 1
+        },
+        "land": {
+          "energy": 3
+        },
+        "scan": {
+          "energy": 2
+        },
+        "research": {
+          "publicity": 4
+        },
+        "analyze": {
+          "energy": 1
+        }
+      },
+      "rounds": [
+        {
+          "round": 1,
+          "values": {
+            "launch": 10,
+            "orbit": 18,
+            "land": 24,
+            "scan": 16,
+            "research": 16,
+            "analyze": 8
+          }
+        },
+        {
+          "round": 2,
+          "values": {
+            "launch": 8.333333333333334,
+            "orbit": 15,
+            "land": 20,
+            "scan": 13.333333333333334,
+            "research": 16,
+            "analyze": 6.666666666666667
+          }
+        },
+        {
+          "round": 3,
+          "values": {
+            "launch": 6.666666666666668,
+            "orbit": 12.000000000000002,
+            "land": 16,
+            "scan": 10.666666666666668,
+            "research": 16,
+            "analyze": 5.333333333333334
+          }
+        },
+        {
+          "round": 4,
+          "values": {
+            "launch": 5,
+            "orbit": 9,
+            "land": 12,
+            "scan": 8,
+            "research": 16,
+            "analyze": 4
+          }
+        }
+      ]
+    }
+  ],
+  "launchNet": [
+    {
+      "company": "图灵系统",
+      "gross": 20,
+      "cardResourceCost": 10,
+      "cardMean": 6,
+      "net": 4
+    },
+    {
+      "company": "异星实验室",
+      "gross": 10,
+      "cardResourceCost": 10,
+      "cardMean": 6,
+      "net": -6
+    }
+  ],
+  "ownership": "标准行动替代价值只覆盖被替代行动；同一行动的普通奖励不再另加，卡牌明确额外奖励单列",
+  "passed": true
+}

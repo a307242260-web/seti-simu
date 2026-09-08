@@ -2,6 +2,9 @@
 
 状态：2026-09-09设计中，未写生产估值器、未改变搜索候选或权重，不宣称效果通过。
 
+标准行动费用已核对正式只读来源与7种费用状态，见round5-standard-action-values-design-20260909.md。
+公司/目标减免和轮次进入参数；普通奖励不与替代费用双算，卡牌明确额外奖励单列。
+
 已打出牌归属已核对：reservedCards不是待取回手牌，90张持久牌的完整目录见
 round5-card-lifecycle-20260909.json。只计剩余触发/任务，不重新计playEffects/费用；
 终局牌分由现有scoring投影唯一计入。详见round5-card-lifecycle-design-20260909.md。

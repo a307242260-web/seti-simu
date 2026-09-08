@@ -54,7 +54,7 @@
       "baseline": null,
       "head": "141b3077",
       "commits": ["141b3077"],
-      "summary": "复核182张牌与48类效果模型输入，补齐参数内奖励和数量奖励时机；明确持牌值取打出兑现与角标较高者、支付不重复扣本牌均值，验算既有收入窗口；区分手牌与90张已打出持久牌，按剩余触发/任务估值，终局牌分复用正式投影，见round5-card-lifecycle-design-20260909.md和round5-payment-value-design-20260909.md。普通牌估值仍为设计，未接入生产搜索。",
+      "summary": "复核182张牌与48类效果；明确持牌/支付与已打出牌收益归属；标准行动统一正式费用及公司、目标减免，分开替代价值和明确额外奖励，见round5-standard-action-values-design-20260909.md、round5-card-lifecycle-design-20260909.md及round5-payment-value-design-20260909.md。普通牌估值仍为设计，未接入生产搜索。",
       "records": {},
       "roadmap": null
     },
