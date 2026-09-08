@@ -1,0 +1,211 @@
+{
+  "baseline": {
+    "file": "1a061690.1501ebfd.full.json",
+    "commit": "1501ebfd",
+    "summary": {
+      "round": 4,
+      "terminal": true,
+      "scores": {
+        "player-blue": 74,
+        "player-green": 105,
+        "player-brown": 115,
+        "player-white": 113
+      },
+      "avgScore": 101.75
+    },
+    "steps": 613,
+    "wallMs": 579822,
+    "nodes": 143252,
+    "inputs": 182804,
+    "counts": {
+      "control": 84,
+      "strategic": 88
+    },
+    "caps": {
+      "strategic": 30,
+      "control": 8
+    },
+    "failures": {},
+    "normalizedOrigins": 0,
+    "normalizedByFamily": {},
+    "beamRecorded": 0,
+    "beamCounts": null,
+    "beamOrigins": null,
+    "savePath": "/Users/bilibili/code/seti-simu/seti-saves/seti-save-research-grant-data-route-20260908-1501ebfd-full-v316.json"
+  },
+  "candidate": {
+    "file": "95016f07.438305b4.full.json",
+    "commit": "438305b4",
+    "summary": {
+      "round": 4,
+      "terminal": true,
+      "scores": {
+        "player-blue": 83,
+        "player-green": 137,
+        "player-brown": 98,
+        "player-white": 79
+      },
+      "avgScore": 99.25
+    },
+    "steps": 583,
+    "wallMs": 486150,
+    "nodes": 116318,
+    "inputs": 151370,
+    "counts": {
+      "control": 79,
+      "strategic": 92
+    },
+    "caps": {
+      "strategic": 22,
+      "control": 11
+    },
+    "failures": {},
+    "normalizedOrigins": 10989,
+    "normalizedByFamily": {
+      "place_data": 4279,
+      "quick_trade": 1389,
+      "industry": 1523,
+      "card_corner": 3423,
+      "move": 375
+    },
+    "beamRecorded": 171,
+    "beamCounts": {
+      "strategic": 31
+    },
+    "beamOrigins": 109058,
+    "savePath": "/private/tmp/seti-quick-turn-order-20260908/seti-saves/seti-save-research-quick-turn-order-20260908-438305b4-full-v300.json"
+  },
+  "firstDifference": {
+    "step": 165,
+    "baseline": {
+      "stepIndex": 164,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:70d77c1b",
+        "actorId": "player-green",
+        "stateVersion": 77,
+        "decisionVersion": 3,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "发射"
+      },
+      "phase": "main",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 2,
+        "t": 1,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            23,
+            4,
+            2,
+            2,
+            2,
+            1
+          ],
+          "player-green": [
+            33,
+            4,
+            1,
+            4,
+            4,
+            2
+          ],
+          "player-brown": [
+            18,
+            4,
+            1,
+            6,
+            4,
+            0
+          ],
+          "player-white": [
+            13,
+            4,
+            2,
+            4,
+            4,
+            1
+          ]
+        }
+      }
+    },
+    "candidate": {
+      "stepIndex": 164,
+      "actorPlayerId": "player-green",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:12343210",
+        "actorId": "player-green",
+        "stateVersion": 77,
+        "decisionVersion": 3,
+        "target": {
+          "cardInstanceId": "card-20-pass-1-1"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "dlc_4.png：弃牌角标"
+      },
+      "phase": "quick",
+      "decisionId": null,
+      "decisionVersion": null,
+      "after": {
+        "r": 2,
+        "t": 1,
+        "c": "player-green",
+        "p": {
+          "player-blue": [
+            23,
+            4,
+            2,
+            2,
+            2,
+            1
+          ],
+          "player-green": [
+            33,
+            6,
+            1,
+            5,
+            3,
+            2
+          ],
+          "player-brown": [
+            18,
+            4,
+            1,
+            6,
+            4,
+            0
+          ],
+          "player-white": [
+            13,
+            4,
+            2,
+            4,
+            4,
+            1
+          ]
+        }
+      }
+    }
+  },
+  "scoreDeltas": {
+    "player-blue": 9,
+    "player-green": 32,
+    "player-brown": -17,
+    "player-white": -34
+  },
+  "scope": "前沿记录缺失为null；来源归一数不冒充物理节省。首差仅是归因入口，不以总分变化推断因果。"
+}

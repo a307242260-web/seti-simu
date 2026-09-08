@@ -1,0 +1,5036 @@
+{
+  "sourceCommit": "1501ebfd",
+  "scope": "正式输入对照，不运行AI；弃牌来源card-15-0为第24步根时已知牌，不使用新盲抽牌效果",
+  "variants": [
+    {
+      "discard": true,
+      "steps": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 2,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [],
+              "poolTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "slotIndex": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "slotIndex": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "slotIndex": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 4,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 4,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:29b5215c",
+            "actorId": "player-white",
+            "stateVersion": 2,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 1"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "slotIndex": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "slotIndex": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 3,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 4,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 3,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "slotIndex": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "slotIndex": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 3,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 4,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:29b5215c",
+            "actorId": "player-white",
+            "stateVersion": 3,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 2"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "slotIndex": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 2,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 4,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "slotIndex": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 2,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:29b5215c",
+            "actorId": "player-white",
+            "stateVersion": 4,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 3"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 1,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 5,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 1,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:29b5215c",
+            "actorId": "player-white",
+            "stateVersion": 5,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 4"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 1,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:0871dfa8",
+            "actorId": "player-white",
+            "stateVersion": 5,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "income:card-13-0",
+              "cardInstanceId": "card-13-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 b_117.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-13-0",
+              "imageSrc": "../assets/cards/basic/split/b_117.webp",
+              "imageAlt": "b_117.webp"
+            }
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                }
+              ],
+              "poolTokens": []
+            },
+            "hand": [
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              },
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 0,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "card_corner",
+            "phase": "quick",
+            "actionId": "card_corner:f9d602d7",
+            "actorId": "player-white",
+            "stateVersion": 6,
+            "decisionVersion": 0,
+            "target": {
+              "cardInstanceId": "card-15-0"
+            },
+            "payload": {
+              "kind": "resource",
+              "multiplier": 1
+            },
+            "decision": null,
+            "summary": "dlc_9.png：弃牌角标"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-11",
+                  "index": 5,
+                  "slotIndex": 1
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 1,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 7,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-11",
+                  "index": 5,
+                  "slotIndex": 1
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 1,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:29b5215c",
+            "actorId": "player-white",
+            "stateVersion": 7,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 5"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                },
+                {
+                  "id": "data-token-11",
+                  "index": 5,
+                  "placementKind": "computer",
+                  "placementSlot": 5
+                }
+              ],
+              "poolTokens": []
+            },
+            "hand": [
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 0,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "scan",
+            "phase": "main",
+            "actionId": "scan:2d21a323",
+            "actorId": "player-white",
+            "stateVersion": 8,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "扫描"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                },
+                {
+                  "id": "data-token-11",
+                  "index": 5,
+                  "placementKind": "computer",
+                  "placementSlot": 5
+                }
+              ],
+              "poolTokens": []
+            },
+            "hand": [
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 0,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:756e7901",
+            "actorId": "player-white",
+            "stateVersion": 8,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "nebula:sector-1-a",
+              "nebulaId": "sector-1-a",
+              "sectorX": 5
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 南河三"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                },
+                {
+                  "id": "data-token-11",
+                  "index": 5,
+                  "placementKind": "computer",
+                  "placementSlot": 5
+                }
+              ],
+              "poolTokens": []
+            },
+            "hand": [
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 0,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:836ae617",
+            "actorId": "player-white",
+            "stateVersion": 8,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "public:card-18-0:sector-3-a",
+              "cardInstanceId": "card-18-0",
+              "publicSlotIndex": 1,
+              "nebulaId": "sector-3-a"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "b_48.webp → 开普勒22",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-18-0",
+              "imageSrc": "../assets/cards/basic/split/b_48.webp",
+              "imageAlt": "b_48.webp"
+            }
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                },
+                {
+                  "id": "data-token-11",
+                  "index": 5,
+                  "placementKind": "computer",
+                  "placementSlot": 5
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-12",
+                  "index": 6,
+                  "slotIndex": 1
+                },
+                {
+                  "id": "data-token-13",
+                  "index": 7,
+                  "slotIndex": 2
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "mainActionCompleted": true,
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 2,
+              "credits": 4,
+              "energy": 0,
+              "handSize": 1,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 9,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                },
+                {
+                  "id": "data-token-11",
+                  "index": 5,
+                  "placementKind": "computer",
+                  "placementSlot": 5
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-12",
+                  "index": 6,
+                  "slotIndex": 1
+                },
+                {
+                  "id": "data-token-13",
+                  "index": 7,
+                  "slotIndex": 2
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "mainActionCompleted": true,
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 2,
+              "credits": 4,
+              "energy": 0,
+              "handSize": 1,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:29b5215c",
+            "actorId": "player-white",
+            "stateVersion": 9,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 6"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                },
+                {
+                  "id": "data-token-11",
+                  "index": 5,
+                  "placementKind": "computer",
+                  "placementSlot": 5
+                },
+                {
+                  "id": "data-token-12",
+                  "index": 6,
+                  "placementKind": "computer",
+                  "placementSlot": 6
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-13",
+                  "index": 7,
+                  "slotIndex": 2
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "mainActionCompleted": true,
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 1,
+              "credits": 4,
+              "energy": 0,
+              "handSize": 1,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        }
+      ],
+      "afterIncome": {
+        "blueBonusResources": {
+          "credits": 0,
+          "energy": 0
+        },
+        "color": "white",
+        "completedTaskCount": 0,
+        "dataState": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "placementKind": "computer",
+              "placementSlot": 4
+            }
+          ],
+          "poolTokens": []
+        },
+        "hand": [
+          {
+            "cardId": "dlc_9.png",
+            "cardTypeCode": 2,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-15-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          },
+          {
+            "cardId": "dlc_40.png",
+            "cardTypeCode": 0,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-37-0",
+            "incomeCode": 0,
+            "price": 2,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "id": "player-white",
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "initialSelection": {
+          "industry": {
+            "id": "industry:深空探测.png"
+          },
+          "removedInitialCards": [
+            {
+              "id": "initial:21"
+            },
+            {
+              "id": "initial:1"
+            }
+          ]
+        },
+        "name": "白色玩家",
+        "orbitCount": 1,
+        "reservedCards": [],
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 5,
+          "score": 6
+        },
+        "scoreSources": {
+          "initialScore": 6
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        }
+      },
+      "beforeScan": {
+        "blueBonusResources": {
+          "credits": 0,
+          "energy": 0
+        },
+        "color": "white",
+        "completedTaskCount": 0,
+        "dataState": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "id": "data-token-11",
+              "index": 5,
+              "placementKind": "computer",
+              "placementSlot": 5
+            }
+          ],
+          "poolTokens": []
+        },
+        "hand": [
+          {
+            "cardId": "dlc_40.png",
+            "cardTypeCode": 0,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-37-0",
+            "incomeCode": 0,
+            "price": 2,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "id": "player-white",
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "initialSelection": {
+          "industry": {
+            "id": "industry:深空探测.png"
+          },
+          "removedInitialCards": [
+            {
+              "id": "initial:21"
+            },
+            {
+              "id": "initial:1"
+            }
+          ]
+        },
+        "name": "白色玩家",
+        "orbitCount": 1,
+        "reservedCards": [],
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 2,
+          "handSize": 1,
+          "publicity": 5,
+          "score": 6
+        },
+        "scoreSources": {
+          "initialScore": 6
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        }
+      },
+      "afterScan": {
+        "blueBonusResources": {
+          "credits": 0,
+          "energy": 0
+        },
+        "color": "white",
+        "completedTaskCount": 0,
+        "dataState": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "id": "data-token-11",
+              "index": 5,
+              "placementKind": "computer",
+              "placementSlot": 5
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-12",
+              "index": 6,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-13",
+              "index": 7,
+              "slotIndex": 2
+            }
+          ]
+        },
+        "hand": [
+          {
+            "cardId": "dlc_40.png",
+            "cardTypeCode": 0,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-37-0",
+            "incomeCode": 0,
+            "price": 2,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "id": "player-white",
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "initialSelection": {
+          "industry": {
+            "id": "industry:深空探测.png"
+          },
+          "removedInitialCards": [
+            {
+              "id": "initial:21"
+            },
+            {
+              "id": "initial:1"
+            }
+          ]
+        },
+        "mainActionCompleted": true,
+        "name": "白色玩家",
+        "orbitCount": 1,
+        "reservedCards": [],
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 2,
+          "credits": 4,
+          "energy": 0,
+          "handSize": 1,
+          "publicity": 5,
+          "score": 6
+        },
+        "scoreSources": {
+          "initialScore": 6
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        }
+      },
+      "final": {
+        "blueBonusResources": {
+          "credits": 0,
+          "energy": 0
+        },
+        "color": "white",
+        "completedTaskCount": 0,
+        "dataState": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "id": "data-token-11",
+              "index": 5,
+              "placementKind": "computer",
+              "placementSlot": 5
+            },
+            {
+              "id": "data-token-12",
+              "index": 6,
+              "placementKind": "computer",
+              "placementSlot": 6
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-13",
+              "index": 7,
+              "slotIndex": 2
+            }
+          ]
+        },
+        "hand": [
+          {
+            "cardId": "dlc_40.png",
+            "cardTypeCode": 0,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-37-0",
+            "incomeCode": 0,
+            "price": 2,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "id": "player-white",
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "initialSelection": {
+          "industry": {
+            "id": "industry:深空探测.png"
+          },
+          "removedInitialCards": [
+            {
+              "id": "initial:21"
+            },
+            {
+              "id": "initial:1"
+            }
+          ]
+        },
+        "mainActionCompleted": true,
+        "name": "白色玩家",
+        "orbitCount": 1,
+        "reservedCards": [],
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 1,
+          "credits": 4,
+          "energy": 0,
+          "handSize": 1,
+          "publicity": 5,
+          "score": 6
+        },
+        "scoreSources": {
+          "initialScore": 6
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        }
+      }
+    },
+    {
+      "discard": false,
+      "steps": [
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 2,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [],
+              "poolTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "slotIndex": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "slotIndex": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "slotIndex": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 4,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 4,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:29b5215c",
+            "actorId": "player-white",
+            "stateVersion": 2,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 1"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "slotIndex": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "slotIndex": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 3,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 4,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 3,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "slotIndex": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "slotIndex": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 3,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 4,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:29b5215c",
+            "actorId": "player-white",
+            "stateVersion": 3,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 2"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "slotIndex": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 2,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 4,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "slotIndex": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 2,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:29b5215c",
+            "actorId": "player-white",
+            "stateVersion": 4,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 3"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 1,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 5,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 1,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:29b5215c",
+            "actorId": "player-white",
+            "stateVersion": 5,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 4"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "slotIndex": 4
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "b_117.webp",
+                "cardTypeCode": 2,
+                "discardActionCode": 2,
+                "faceUp": true,
+                "id": "card-13-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 3,
+                "set": "basic"
+              },
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 1,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 1,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:0871dfa8",
+            "actorId": "player-white",
+            "stateVersion": 5,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "income:card-13-0",
+              "cardInstanceId": "card-13-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "收入 b_117.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-13-0",
+              "imageSrc": "../assets/cards/basic/split/b_117.webp",
+              "imageAlt": "b_117.webp"
+            }
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                }
+              ],
+              "poolTokens": []
+            },
+            "hand": [
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              },
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 0,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "scan",
+            "phase": "main",
+            "actionId": "scan:2d21a323",
+            "actorId": "player-white",
+            "stateVersion": 6,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "standard-scan"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "扫描"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                }
+              ],
+              "poolTokens": []
+            },
+            "hand": [
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              },
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 0,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:756e7901",
+            "actorId": "player-white",
+            "stateVersion": 6,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "nebula:sector-1-a",
+              "nebulaId": "sector-1-a",
+              "sectorX": 5
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "扫描 南河三"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                }
+              ],
+              "poolTokens": []
+            },
+            "hand": [
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              },
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 0,
+              "credits": 5,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:836ae617",
+            "actorId": "player-white",
+            "stateVersion": 6,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "public:card-18-0:sector-3-a",
+              "cardInstanceId": "card-18-0",
+              "publicSlotIndex": 1,
+              "nebulaId": "sector-3-a"
+            },
+            "payload": {
+              "gainData": true
+            },
+            "decision": null,
+            "summary": "b_48.webp → 开普勒22",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-18-0",
+              "imageSrc": "../assets/cards/basic/split/b_48.webp",
+              "imageAlt": "b_48.webp"
+            }
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-11",
+                  "index": 5,
+                  "slotIndex": 1
+                },
+                {
+                  "id": "data-token-12",
+                  "index": 6,
+                  "slotIndex": 2
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              },
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "mainActionCompleted": true,
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 2,
+              "credits": 4,
+              "energy": 0,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 7,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-11",
+                  "index": 5,
+                  "slotIndex": 1
+                },
+                {
+                  "id": "data-token-12",
+                  "index": 6,
+                  "slotIndex": 2
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              },
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "mainActionCompleted": true,
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 2,
+              "credits": 4,
+              "energy": 0,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:29b5215c",
+            "actorId": "player-white",
+            "stateVersion": 7,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 5"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                },
+                {
+                  "id": "data-token-11",
+                  "index": 5,
+                  "placementKind": "computer",
+                  "placementSlot": 5
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-12",
+                  "index": 6,
+                  "slotIndex": 2
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              },
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "mainActionCompleted": true,
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 1,
+              "credits": 4,
+              "energy": 0,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "place_data",
+            "phase": "quick",
+            "actionId": "place_data:8fd12fd3",
+            "actorId": "player-white",
+            "stateVersion": 8,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "place-data"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "放置数据"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                },
+                {
+                  "id": "data-token-11",
+                  "index": 5,
+                  "placementKind": "computer",
+                  "placementSlot": 5
+                }
+              ],
+              "poolTokens": [
+                {
+                  "id": "data-token-12",
+                  "index": 6,
+                  "slotIndex": 2
+                }
+              ]
+            },
+            "hand": [
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              },
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "mainActionCompleted": true,
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 1,
+              "credits": 4,
+              "energy": 0,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        },
+        {
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:29b5215c",
+            "actorId": "player-white",
+            "stateVersion": 8,
+            "decisionVersion": 0,
+            "target": {
+              "choiceId": "data:computer",
+              "target": "computer",
+              "blueSlot": null
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "第一排放置位 6"
+          },
+          "player": {
+            "blueBonusResources": {
+              "credits": 0,
+              "energy": 0
+            },
+            "color": "white",
+            "completedTaskCount": 0,
+            "dataState": {
+              "discardedCount": 0,
+              "placedTokens": [
+                {
+                  "id": "data-token-1",
+                  "index": 1,
+                  "placementKind": "computer",
+                  "placementSlot": 1
+                },
+                {
+                  "id": "data-token-2",
+                  "index": 2,
+                  "placementKind": "computer",
+                  "placementSlot": 2
+                },
+                {
+                  "id": "data-token-3",
+                  "index": 3,
+                  "placementKind": "computer",
+                  "placementSlot": 3
+                },
+                {
+                  "id": "data-token-4",
+                  "index": 4,
+                  "placementKind": "computer",
+                  "placementSlot": 4
+                },
+                {
+                  "id": "data-token-11",
+                  "index": 5,
+                  "placementKind": "computer",
+                  "placementSlot": 5
+                },
+                {
+                  "id": "data-token-12",
+                  "index": 6,
+                  "placementKind": "computer",
+                  "placementSlot": 6
+                }
+              ],
+              "poolTokens": []
+            },
+            "hand": [
+              {
+                "cardId": "dlc_9.png",
+                "cardTypeCode": 2,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-15-0",
+                "incomeCode": 2,
+                "price": 3,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              },
+              {
+                "cardId": "dlc_40.png",
+                "cardTypeCode": 0,
+                "discardActionCode": 1,
+                "faceUp": true,
+                "id": "card-37-0",
+                "incomeCode": 0,
+                "price": 2,
+                "scanActionCode": 2,
+                "set": "space-agency"
+              }
+            ],
+            "id": "player-white",
+            "income": {
+              "additionalPublicScan": 1,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 2,
+              "handSize": 2,
+              "publicity": 0
+            },
+            "initialSelection": {
+              "industry": {
+                "id": "industry:深空探测.png"
+              },
+              "removedInitialCards": [
+                {
+                  "id": "initial:21"
+                },
+                {
+                  "id": "initial:1"
+                }
+              ]
+            },
+            "mainActionCompleted": true,
+            "name": "白色玩家",
+            "orbitCount": 1,
+            "reservedCards": [],
+            "resources": {
+              "additionalPublicScan": 0,
+              "aomomoFossils": 0,
+              "availableData": 0,
+              "credits": 4,
+              "energy": 0,
+              "handSize": 2,
+              "publicity": 5,
+              "score": 6
+            },
+            "scoreSources": {
+              "initialScore": 6
+            },
+            "techState": {
+              "blueBoardSlots": {},
+              "disabledTiles": {},
+              "ownedTiles": {}
+            }
+          }
+        }
+      ],
+      "afterIncome": {
+        "blueBonusResources": {
+          "credits": 0,
+          "energy": 0
+        },
+        "color": "white",
+        "completedTaskCount": 0,
+        "dataState": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "placementKind": "computer",
+              "placementSlot": 4
+            }
+          ],
+          "poolTokens": []
+        },
+        "hand": [
+          {
+            "cardId": "dlc_9.png",
+            "cardTypeCode": 2,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-15-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          },
+          {
+            "cardId": "dlc_40.png",
+            "cardTypeCode": 0,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-37-0",
+            "incomeCode": 0,
+            "price": 2,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "id": "player-white",
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "initialSelection": {
+          "industry": {
+            "id": "industry:深空探测.png"
+          },
+          "removedInitialCards": [
+            {
+              "id": "initial:21"
+            },
+            {
+              "id": "initial:1"
+            }
+          ]
+        },
+        "name": "白色玩家",
+        "orbitCount": 1,
+        "reservedCards": [],
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 5,
+          "score": 6
+        },
+        "scoreSources": {
+          "initialScore": 6
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        }
+      },
+      "beforeScan": {
+        "blueBonusResources": {
+          "credits": 0,
+          "energy": 0
+        },
+        "color": "white",
+        "completedTaskCount": 0,
+        "dataState": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "placementKind": "computer",
+              "placementSlot": 4
+            }
+          ],
+          "poolTokens": []
+        },
+        "hand": [
+          {
+            "cardId": "dlc_9.png",
+            "cardTypeCode": 2,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-15-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          },
+          {
+            "cardId": "dlc_40.png",
+            "cardTypeCode": 0,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-37-0",
+            "incomeCode": 0,
+            "price": 2,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "id": "player-white",
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "initialSelection": {
+          "industry": {
+            "id": "industry:深空探测.png"
+          },
+          "removedInitialCards": [
+            {
+              "id": "initial:21"
+            },
+            {
+              "id": "initial:1"
+            }
+          ]
+        },
+        "name": "白色玩家",
+        "orbitCount": 1,
+        "reservedCards": [],
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 5,
+          "score": 6
+        },
+        "scoreSources": {
+          "initialScore": 6
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        }
+      },
+      "afterScan": {
+        "blueBonusResources": {
+          "credits": 0,
+          "energy": 0
+        },
+        "color": "white",
+        "completedTaskCount": 0,
+        "dataState": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "placementKind": "computer",
+              "placementSlot": 4
+            }
+          ],
+          "poolTokens": [
+            {
+              "id": "data-token-11",
+              "index": 5,
+              "slotIndex": 1
+            },
+            {
+              "id": "data-token-12",
+              "index": 6,
+              "slotIndex": 2
+            }
+          ]
+        },
+        "hand": [
+          {
+            "cardId": "dlc_9.png",
+            "cardTypeCode": 2,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-15-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          },
+          {
+            "cardId": "dlc_40.png",
+            "cardTypeCode": 0,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-37-0",
+            "incomeCode": 0,
+            "price": 2,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "id": "player-white",
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "initialSelection": {
+          "industry": {
+            "id": "industry:深空探测.png"
+          },
+          "removedInitialCards": [
+            {
+              "id": "initial:21"
+            },
+            {
+              "id": "initial:1"
+            }
+          ]
+        },
+        "mainActionCompleted": true,
+        "name": "白色玩家",
+        "orbitCount": 1,
+        "reservedCards": [],
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 2,
+          "credits": 4,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 5,
+          "score": 6
+        },
+        "scoreSources": {
+          "initialScore": 6
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        }
+      },
+      "final": {
+        "blueBonusResources": {
+          "credits": 0,
+          "energy": 0
+        },
+        "color": "white",
+        "completedTaskCount": 0,
+        "dataState": {
+          "discardedCount": 0,
+          "placedTokens": [
+            {
+              "id": "data-token-1",
+              "index": 1,
+              "placementKind": "computer",
+              "placementSlot": 1
+            },
+            {
+              "id": "data-token-2",
+              "index": 2,
+              "placementKind": "computer",
+              "placementSlot": 2
+            },
+            {
+              "id": "data-token-3",
+              "index": 3,
+              "placementKind": "computer",
+              "placementSlot": 3
+            },
+            {
+              "id": "data-token-4",
+              "index": 4,
+              "placementKind": "computer",
+              "placementSlot": 4
+            },
+            {
+              "id": "data-token-11",
+              "index": 5,
+              "placementKind": "computer",
+              "placementSlot": 5
+            },
+            {
+              "id": "data-token-12",
+              "index": 6,
+              "placementKind": "computer",
+              "placementSlot": 6
+            }
+          ],
+          "poolTokens": []
+        },
+        "hand": [
+          {
+            "cardId": "dlc_9.png",
+            "cardTypeCode": 2,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-15-0",
+            "incomeCode": 2,
+            "price": 3,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          },
+          {
+            "cardId": "dlc_40.png",
+            "cardTypeCode": 0,
+            "discardActionCode": 1,
+            "faceUp": true,
+            "id": "card-37-0",
+            "incomeCode": 0,
+            "price": 2,
+            "scanActionCode": 2,
+            "set": "space-agency"
+          }
+        ],
+        "id": "player-white",
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "initialSelection": {
+          "industry": {
+            "id": "industry:深空探测.png"
+          },
+          "removedInitialCards": [
+            {
+              "id": "initial:21"
+            },
+            {
+              "id": "initial:1"
+            }
+          ]
+        },
+        "mainActionCompleted": true,
+        "name": "白色玩家",
+        "orbitCount": 1,
+        "reservedCards": [],
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 0,
+          "handSize": 2,
+          "publicity": 5,
+          "score": 6
+        },
+        "scoreSources": {
+          "initialScore": 6
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        }
+      }
+    }
+  ],
+  "passed": true,
+  "conclusion": {
+    "bothComputerFull": true,
+    "dataWithDiscard": 1,
+    "dataWithoutDiscard": 0,
+    "preservedKnownCard": "card-15-0",
+    "note": "额外弃牌产生1剩余数据，但不是本次填满计算机的需求；两侧资源不完全相同，不称严格全状态支配。"
+  }
+}
