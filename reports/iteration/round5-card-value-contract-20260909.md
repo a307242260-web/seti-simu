@@ -2,6 +2,10 @@
 
 状态：2026-09-09设计中，未写生产估值器、未改变搜索候选或权重，不宣称效果通过。
 
+已打出牌归属已核对：reservedCards不是待取回手牌，90张持久牌的完整目录见
+round5-card-lifecycle-20260909.json。只计剩余触发/任务，不重新计playEffects/费用；
+终局牌分由现有scoring投影唯一计入。详见round5-card-lifecycle-design-20260909.md。
+
 数量奖励8类时机已核对，见round5-counted-rewards-20260909.md。b98数量移动通过正式
 打牌夹具复现0/2均给1，先独立核对规则和额度生命周期，不将错误执行值写成估值依据。
 

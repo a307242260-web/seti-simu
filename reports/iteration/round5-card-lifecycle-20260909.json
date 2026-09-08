@@ -1,0 +1,2636 @@
+{
+  "baseCommit": "1a069f6c",
+  "counts": {
+    "total": 182,
+    "placedAfterPlay": 90,
+    "triggerCards": 27,
+    "taskCards": 45,
+    "endGameCards": 17,
+    "persistentAbilityCards": 1
+  },
+  "navigationValues": [
+    9.5,
+    5.5,
+    2.5,
+    0
+  ],
+  "taskValues": [
+    3,
+    0
+  ],
+  "formalEndGameScore": {
+    "total": 4,
+    "cards": [
+      {
+        "cardId": "b_33.webp",
+        "rule": {
+          "kind": "techCount",
+          "techType": "blue",
+          "scorePer": 2
+        },
+        "score": 4
+      }
+    ]
+  },
+  "ownership": {
+    "hand": "H=max(G-C,corner)",
+    "playedTriggerTask": "仅未领取槽位的半值，不计打出费用或即时效果",
+    "playedEndGame": "现有securedEndGameBonus已包含正式牌分，不再加入cardValue",
+    "pluto": "已打出解锁能力，不是可弃或可再次打出的手牌；收益义务单列"
+  },
+  "catalog": [
+    {
+      "cardId": "b_1.webp",
+      "name": "观测室女座",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_scan_nebula"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b1-yellow-sector-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_2.webp",
+      "name": "高级导航系统",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b2-visit-planet-energy",
+        "b2-visit-planet-data",
+        "b2-visit-planet-move"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_3.webp",
+      "name": "阿尔冈金射电天文台",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_scan_color_choice",
+        "card_scan_color_choice",
+        "card_scan_color_choice",
+        "card_scan_color_choice"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_4.webp",
+      "name": "大型离子对撞机实验",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b4-blue-alien-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_5.webp",
+      "name": "艾伦望远锐阵",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_public_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_6.webp",
+      "name": "阿塔卡马大型亳米波阵",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_public_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_7.webp",
+      "name": "业余天文学家",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_draw_then_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_8.webp",
+      "name": "阿波罗1号任务",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b8-yellow-alien-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_9.webp",
+      "name": "阿番西博天文台",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_scan_action",
+        "card_any_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_10.webp",
+      "name": "小行星研究",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b10-visit-asteroid-data-1",
+        "b10-visit-asteroid-data-2",
+        "b10-visit-asteroid-data-3"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_11.webp",
+      "name": "飞掠小行星",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_12.webp",
+      "name": "超环面仪器",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b12-blue-trace-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_13.webp",
+      "name": "进入大气层",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_remove_planet_marker",
+        "gain_resources",
+        "gain_data",
+        "pick_card"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_14.webp",
+      "name": "观测巴纳德星",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_scan_nebula"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "sectorWinsByColor",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_15.webp",
+      "name": "观测老人增四",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_scan_nebula"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b15-black-sector-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_16.webp",
+      "name": "突破聆听",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_move",
+        "card_scan_color_choice"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_17.webp",
+      "name": "突破摄星",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_move",
+        "card_scan_color_choice"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_18.webp",
+      "name": "突破观察",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_move",
+        "card_scan_color_choice"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_19.webp",
+      "name": "加阜大氢谱线望远锐",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_any_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b19-purple-tech-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_20.webp",
+      "name": "卡纳维拉尔角太空军基地",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b20-launch-move-1",
+        "b20-launch-move-2",
+        "b20-launch-move-3"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_21.webp",
+      "name": "卡西尼号探测器",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "launch",
+        "pick_card"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b21-saturn-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_22.webp",
+      "name": "钱愆拉空间天文台",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_probe_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b22-distinct-signal-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_23.webp",
+      "name": "太空清理计划",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_discard_public_corner_rewards"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_24.webp",
+      "name": "飞掠彗星",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_25.webp",
+      "name": "控制中心",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b25-yellow-scan-move",
+        "b25-red-scan-move",
+        "b25-blue-scan-move"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_26.webp",
+      "name": "康奈尔大学",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b26-publicity-corner",
+        "b26-data-corner",
+        "b26-move-corner"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_27.webp",
+      "name": "日冕摄谱仪",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "alien_trace"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_28.webp",
+      "name": "深度巡天阵列",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_scan_action"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_29.webp",
+      "name": "蜻蜓号",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_land"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_30.webp",
+      "name": "深部地下中微子实验",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "traceCount",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_31.webp",
+      "name": "建造埃菲尔斯贝格望远锐",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "pick_card",
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_32.webp",
+      "name": "电子显微锐",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "alien_trace"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_33.webp",
+      "name": "建造欧几里得望远锐",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "techCount",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_34.webp",
+      "name": "木卫二快船",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_land"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "planetOrbitOrLand",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_35.webp",
+      "name": "百亿亿次超级计算机",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "alien_trace"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_36.webp",
+      "name": "嗜极生物研究",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "alien_trace"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_37.webp",
+      "name": "猎鹰虿型运戟火箭",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "launch",
+        "launch",
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_38.webp",
+      "name": "造500米口径球面射电望远锐",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_public_scan",
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_39.webp",
+      "name": "首张罴洞照片",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_data"
+      ],
+      "triggerSlots": [
+        "b39-blue-trace-publicity",
+        "b39-blue-trace-score"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_40.webp",
+      "name": "专项研究",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_41.webp",
+      "name": "建造燃料箱",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_count_hand_income_resource"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_42.webp",
+      "name": "聚娈反应堆",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_count_current_income_resource",
+        "card_tuck_played_card_to_income"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_43.webp",
+      "name": "未来环形对撞机",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_data",
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_44.webp",
+      "name": "伽利略号任务",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b44-venus-publicity",
+        "b44-jupiter-data"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_45.webp",
+      "name": "巨麦哲伦望远镜",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_public_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "distinctSignalSectors",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_46.webp",
+      "name": "建造大型米波射电望远锐",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b46-all-pink-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_47.webp",
+      "name": "政府资助",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_count_current_income_resource",
+        "card_tuck_played_card_to_income"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_48.webp",
+      "name": "拨款",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_pick_card_corner_reward"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_49.webp",
+      "name": "引力弹弓",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_50.webp",
+      "name": "大型轨遒天文台计划",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_probe_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_51.webp",
+      "name": "绿岸射电望远锐",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_scan_action"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b51-three-pink-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_52.webp",
+      "name": "隼鸟号",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_conditional_reward"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_53.webp",
+      "name": "赫歇尔空间天文台",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_probe_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b53-distinct-signal-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_54.webp",
+      "name": "哈勃空间望远锐",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_move",
+        "card_probe_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_55.webp",
+      "name": "国际合作",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_56.webp",
+      "name": "离子推迸系统",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_resources",
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_57.webp",
+      "name": "国际空间站",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [
+        "b57-launch-credit",
+        "b57-launch-pick",
+        "b57-launch-score"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_58.webp",
+      "name": "韦布空间望远锐",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_move",
+        "card_probe_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_59.webp",
+      "name": "约翰逊空间中心",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b59-orbit-publicity",
+        "b59-land-publicity"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_60.webp",
+      "name": "朱诺号探测器",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "launch",
+        "gain_data"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b60-jupiter-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_61.webp",
+      "name": "木星探测计划",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_planet_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b61-jupiter-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_62.webp",
+      "name": "飞掠木星",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_63.webp",
+      "name": "观测开普勒22",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_scan_nebula"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "sectorWinsByColor",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_64.webp",
+      "name": "开普勒空间望远锐",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_move",
+        "card_probe_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_65.webp",
+      "name": "大型强子对撞机",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_data",
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_66.webp",
+      "name": "光帆",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_67.webp",
+      "name": "语言学分析",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b67-three-traces-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_68.webp",
+      "name": "洛弗尔望远锐",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_data",
+        "card_scan_action"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b68-publicity-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_69.webp",
+      "name": "低成本航天发射",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "launch"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_70.webp",
+      "name": "低功耗微处理器",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_resources",
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_71.webp",
+      "name": "水手10号任务",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b71-mercury-draw",
+        "b71-venus-publicity"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_72.webp",
+      "name": "火星探测计划",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_planet_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b72-mars-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_73.webp",
+      "name": "飞掠火星",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_74.webp",
+      "name": "火星科学实验室",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources",
+        "gain_data"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "planetOrbitOrLand",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_75.webp",
+      "name": "水星探测计划",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_planet_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b75-mercury-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_76.webp",
+      "name": "飞掠水星",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_77.webp",
+      "name": "信使号探测器",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "launch",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b77-mercury-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_78.webp",
+      "name": "NASA天体生物学研究所",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [
+        "b78-pink-signal-data",
+        "b78-yellow-signal-data",
+        "b78-blue-signal-data"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_79.webp",
+      "name": "NASA每日-圈",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_resources",
+        "card_count_current_income_resource",
+        "card_tuck_played_card_to_income"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_80.webp",
+      "name": "NASA研究中心",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b80-orange-tech-energy",
+        "b80-purple-tech-publicity",
+        "b80-blue-tech-pick"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_81.webp",
+      "name": "近地小行星研究",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b81-earth-adjacent-asteroid-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_82.webp",
+      "name": "NEAR 舒梅克号探测器",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "probeLocation",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_83.webp",
+      "name": "NASA创新先迸概念计划",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "draw_cards"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b83-empty-hand-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_84.webp",
+      "name": "诺托射电天文台",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_resources",
+        "card_scan_action"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_85.webp",
+      "name": "ODINUS号任务",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b85-outer-planets-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_86.webp",
+      "name": "ala Telescope Constructior",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "traceCount",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_87.webp",
+      "name": "最佳发射窗口",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "launch",
+        "card_earth_sector_content_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_88.webp",
+      "name": "入轨拉格朗日点",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_probe_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_89.webp",
+      "name": "奥西里斯- REx号",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_probe_location_reward"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_90.webp",
+      "name": "帕克斯天文台",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_scan_action"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_91.webp",
+      "name": "毅力号火星车",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_land"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_92.webp",
+      "name": "先驱者11号任务",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b92-jupiter-data",
+        "b92-saturn-energy"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_93.webp",
+      "name": "X射线岩石化学探测行屋仪",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_94.webp",
+      "name": "行星猎手",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "draw_cards",
+        "card_optional_discard_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_95.webp",
+      "name": "行星地质测绘",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b95-same-planet-orbit-land-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_96.webp",
+      "name": "柏拉图探测器",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_probe_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_97.webp",
+      "name": "科学普及",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [
+        "b97-orange-tech-publicity",
+        "b97-purple-tech-publicity",
+        "b97-blue-tech-publicity"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_98.webp",
+      "name": "发射前试验",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "launch",
+        "card_count_hand_corner_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_99.webp",
+      "name": "新闻发言",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_100.webp",
+      "name": "观测南河",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_scan_nebula"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "sectorWinsByColor",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_101.webp",
+      "name": "\"远射\"计划",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b101-distance-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_102.webp",
+      "name": "观测比邻星",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_scan_nebula"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b102-red-sectors-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_103.webp",
+      "name": "量子计算机",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b103-score-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_104.webp",
+      "name": "罗曼空间望远锐",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b104-orbit-count-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_105.webp",
+      "name": "罗盎塔号探测器",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "launch"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b105-comet-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_106.webp",
+      "name": "采样返回",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_remove_planet_marker",
+        "alien_trace"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_107.webp",
+      "name": "土星探测计划",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_planet_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b107-saturn-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_108.webp",
+      "name": "飞掠土星",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_109.webp",
+      "name": "科学合作",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_110.webp",
+      "name": "SETI数据档案",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_data"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_111.webp",
+      "name": "SETI研究所",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [
+        "b111-scan-data",
+        "b111-scan-draw",
+        "b111-scan-score"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_112.webp",
+      "name": "SETI@Home",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_conditional_reward"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_113.webp",
+      "name": "夏洛克光谱仪",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "traceCount",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_114.webp",
+      "name": "观测天狼星A",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_scan_nebula"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b114-blue-sectors-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_115.webp",
+      "name": "案尔维会议",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "unmarkedFinalRightmost",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_116.webp",
+      "name": "太空发射系统",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "launch",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b116-landing-count-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_117.webp",
+      "name": "航天飞机",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "launch",
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b117-orbit-land-count-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_118.webp",
+      "name": "平方公里阵",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_public_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_119.webp",
+      "name": "星舰",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "launch",
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_120.webp",
+      "name": "战略规划",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b120-price1-score",
+        "b120-price2-pick",
+        "b120-price3-publicity"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_121.webp",
+      "name": "水熊虫研究",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources",
+        "gain_data",
+        "draw_cards"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b121-yellow-traces-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_122.webp",
+      "name": "望远锐现代化",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "pick_card"
+      ],
+      "triggerSlots": [
+        "b122-purple-tech-publicity",
+        "b122-scan-data"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_123.webp",
+      "name": "望远锐时间分配",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b123-scan-yellow",
+        "b123-scan-red",
+        "b123-scan-blue"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_124.webp",
+      "name": "穿越小行星带",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_125.webp",
+      "name": "轨遒修正",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_126.webp",
+      "name": "三叉戟号探测器",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "launch"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b126-neptune-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_127.webp",
+      "name": "天王星轨遒器与探测器",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "launch"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b127-uranus-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_128.webp",
+      "name": "观测织女星",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_scan_nebula"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "sectorWinsByColor",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_129.webp",
+      "name": "金星号探测器",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "launch",
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b129-venus-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_130.webp",
+      "name": "金星探测计划",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_planet_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b130-venus-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_131.webp",
+      "name": "飞掠金星",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_132.webp",
+      "name": "甚高能辐射成像望远锐",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_scan_action"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_133.webp",
+      "name": "甚大阵",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_public_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_134.webp",
+      "name": "旅行者2号任务",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b134-uranus-energy",
+        "b134-neptune-credit"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_135.webp",
+      "name": "韦断特v克综合孔径射电|远锐",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "b135-same-color-sectors-task"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_136.webp",
+      "name": "Wow!讯号",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_resources",
+        "card_planet_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_137.webp",
+      "name": "建造叶夫帕托里亚望远锐",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_resources",
+        "card_research_tech",
+        "card_hand_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_138.webp",
+      "name": "月球门户空间站",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "launch"
+      ],
+      "triggerSlots": [
+        "b138-orbit-land-launch",
+        "b138-orbit-land-energy"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "b_139.webp",
+      "name": "自2006 年起不再是行星",
+      "cardType": 0,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_pluto_reserve"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": "pluto"
+    },
+    {
+      "cardId": "b_140.webp",
+      "name": "火星轨遒门户",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "b140-mars-orbit-land-publicity",
+        "b140-mars-orbit-land-score"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_1.png",
+      "name": "可重复使用着陆器",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_land",
+        "card_return_played_card_to_hand_if"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_2.png",
+      "name": "跟踪与数据中继卫星",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_choose_hand_corner_reward"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_3.png",
+      "name": "NASA深空网络",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_4.png",
+      "name": "突破讯息",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_resources",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_5.png",
+      "name": "维护任务",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_data",
+        "card_move",
+        "card_return_played_card_to_hand_if"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_6.png",
+      "name": "现场着陆直播",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_move",
+        "card_land",
+        "card_landing_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_7.png",
+      "name": "双探测器",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "dlc7-two-planet-probes"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_8.png",
+      "name": "量子数据存储",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "remainingResource",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_9.png",
+      "name": "月坑射电望远镜",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "dlc9-three-sector-wins"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_10.png",
+      "name": "太空第一人",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "remainingResource",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_11.png",
+      "name": "八灵神星探测器",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "launch",
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "dlc11-asteroid-probe"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_12.png",
+      "name": "双行星飞越机动",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_register_event_bonus",
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_13.png",
+      "name": "詹姆斯·克拉克·麦克斯韦望远镜",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_scan_action",
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_14.png",
+      "name": "可重复使用火箭",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "launch",
+        "gain_resources",
+        "card_return_played_card_to_hand_if"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_15.png",
+      "name": "迭代工程",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_16.png",
+      "name": "宇航员训练体验",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "dlc16-zero-publicity"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_17.png",
+      "name": "付费媒体报道",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_pay_credits_for_reward"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_18.png",
+      "name": "合同研究",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_research_tech"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_19.png",
+      "name": "凌日系外行星巡天卫星",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_conditional_reward"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_20.png",
+      "name": "完美执行的项目",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_resources",
+        "card_discard_card_corner_repeat"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_21.png",
+      "name": "轨道加注",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "dlc21-orbit-visit-energy-1",
+        "dlc21-orbit-visit-energy-2"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_22.png",
+      "name": "新任务",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_conditional_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_23.png",
+      "name": "中性浮力训练",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [
+        "dlc23-launch-draw",
+        "dlc23-orbit-land-score"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_24.png",
+      "name": "太空电梯",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "dlc24-orange-tech-launch-1",
+        "dlc24-orange-tech-launch-2"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_25.png",
+      "name": "激光干涉引力波天文台",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "dlc25-purple-tech-public-scan-1",
+        "dlc25-purple-tech-public-scan-2"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_26.png",
+      "name": "新型AI模型",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [],
+      "triggerSlots": [
+        "dlc26-blue-tech-data-1",
+        "dlc26-blue-tech-data-2"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_27.png",
+      "name": "更优太阳能板",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_conditional_reward"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_28.png",
+      "name": "重组",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_discard_any_for_income"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "dlc28-empty-resources-hand"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_29.png",
+      "name": "废弃任务",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_return_unfinished_task_to_hand",
+        "gain_data"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_30.png",
+      "name": "晓号轨道器",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_orbit",
+        "card_count_owned_tech_reward"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_31.png",
+      "name": "机智号直升机",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_land"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "planetLandingPairs",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_32.png",
+      "name": "MUREP创意竞赛",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_discard_all_hand"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_33.png",
+      "name": "延期发射",
+      "cardType": 1,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [
+        "dlc33-pass-launch"
+      ],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_34.png",
+      "name": "私营部门投资",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_income",
+        "card_count_tech_types_reward"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_35.png",
+      "name": "NASA系外行星档案",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "dlc35-data-total"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_36.png",
+      "name": "大耳朵射电望远镜",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_scan_color_choice",
+        "card_scan_color_choice",
+        "card_scan_color_choice"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_37.png",
+      "name": "潘多拉卫星",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_conditional_sector_scan"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_38.png",
+      "name": "太空交会",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "gain_resources",
+        "card_move",
+        "card_probe_stack_reward"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_39.png",
+      "name": "大巡游计划",
+      "cardType": 3,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": "allOrbitOrLand",
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_40.png",
+      "name": "霍尔效应推进器",
+      "cardType": 0,
+      "placedAfterPlay": false,
+      "immediateEffects": [
+        "card_move"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_41.png",
+      "name": "系外行星巡天",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "gain_resources",
+        "gain_resources",
+        "pick_card"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "dlc41-four-color-signals"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    },
+    {
+      "cardId": "dlc_42.png",
+      "name": "低频阵列",
+      "cardType": 2,
+      "placedAfterPlay": true,
+      "immediateEffects": [
+        "card_scan_action"
+      ],
+      "triggerSlots": [],
+      "taskSlots": [
+        "dlc42-all-sectors"
+      ],
+      "endGameKind": null,
+      "persistentAbility": null
+    }
+  ],
+  "passed": true
+}
