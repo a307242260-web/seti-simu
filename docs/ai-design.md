@@ -95,6 +95,13 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   unresolved 候选不可进入排序，同值时只按稳定 actionId 决胜。
 - `game/rule-composition.js#counterfactualPort`：Host-owned 隔离反事实执行。每条分支仍使用同一
   Standard Action registry、Effect Session、Decision 与 commit 语义。
+  `selectCardRevealChoices(actions)`为手牌展示的纯贪心选择：整组counted-move-reveal
+  选择中固定顺序展示一张合格牌，无牌则结束；其他动作原样返回。真实决策根先收敛
+  再构建Policy候选；搜索自动结算和后继先过滤未知牌再用同一方法，保留目标绑定。
+  每次展示仍正式提交并计物理输入，展示顺序与子集不穷举；结束后按已展示张数移动。
+  排空在提交下一项前保存已有隐藏屏障，公开展示不能覆盖此前盲抽的信息限制。
+  展示超过自动排空批次后回原队列继续；同一展示阶段不算条件根的“下一策略决策边界”，
+  不能在未结束展示时标记搜索完成。排空保护及全局执行/队列上限均保持不变。
 - 初始选择（setup）**不跑反事实**（2026-08-21 迭代，审查清理项 1）：setup 决策
   由 heuristic-policy 的 `selectInitialSetupAction` 直接决策——固定用户开局按
   `USER_INITIAL_PICKS` 硬编码精确复刻；**插收入**（弃 1 张手牌插收入轨，牌的
@@ -532,7 +539,9 @@ incomplete、not-evaluated及原因。已有真实叶且截断仍为settled，�
 后续快速验证触发原10秒搜索超时，期限独立放宽为30秒；若仍超时须定位，不自动加码。
 
 Heuristic每次决策的`searches`只含本次实际evaluate（control/strategic各自一项），
-不进入Policy输入或计划。诊断`attemptedNodeCountByFamily`包括失败宏节点；原
+不进入Policy输入或计划。每项保留内核原始`beamPrunedOriginCount`，大于0表示该次搜索
+发生队列裁剪；与`executionLimitReached`分别统计及取并集，不把缺失字段当作零。
+诊断`attemptedNodeCountByFamily`包括失败宏节点；原
 `executedNodeCountByFamily`仍只计成功宏节点，二者差异按`failedNodeCountByFamily`
 与`failedNodeCountByCode`解释。`successfulInputSubmissionCount`计每次成功正式输入，
 包含折叠提交及其后宏步失败之前已成功的输入，不含单席位规划时钟推进。

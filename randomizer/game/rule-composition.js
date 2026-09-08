@@ -21,6 +21,21 @@
     return value == null ? value : structuredClone(value);
   }
 
+  function isCardRevealChoiceSet(actions) {
+    return actions.length > 0 && actions.every(action => action.family === "choose_card"
+      && action.target?.kind === "counted-move-reveal");
+  }
+
+  // 输入必须已通过信息边界；展示不消耗牌，固定顺序展示全部已知合格牌。
+  function selectCardRevealChoices(actions) {
+    if (!isCardRevealChoiceSet(actions)) return actions;
+    const reveals = actions.filter(action => !action.target.finish)
+      .sort((a, b) => String(a.target.cardInstanceId).localeCompare(String(b.target.cardInstanceId)));
+    const choice = reveals[0] || actions.find(action => action.target.finish);
+    if (!choice) throw new TypeError("CARD_MOVE_REVEAL_FINISH_MISSING: 展示缺少结束选择");
+    return [choice];
+  }
+
   function deepFreeze(value) {
     if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
     for (const child of Object.values(value)) deepFreeze(child);
@@ -1844,7 +1859,25 @@
           while (drainGuard < 32) {
             const drainInspection = composition.inspect();
             if (drainInspection.phase !== "awaiting_input" || !drainInspection.session?.decision) break;
-            const drainChoices = drainInspection.session.decision.choices || [];
+            // 下一项可能写入另一类不可撤销标记；先保留已发生的隐藏信息事实。
+            if (!drainHiddenBarrier && isHiddenInformationBarrier(drainInspection.session.irreversibleBarrier)) {
+              drainHiddenBarrier = clone(drainInspection.session.irreversibleBarrier);
+            }
+            let drainChoices = drainInspection.session.decision.choices || [];
+            const revealDecision = isCardRevealChoiceSet(drainChoices);
+            if (revealDecision) {
+              const masked = node.origins.some(origin => origin.informationMasked)
+                || isHiddenInformationBarrier(result.irreversibleBarrier)
+                || isHiddenInformationBarrier(drainInspection.session.irreversibleBarrier)
+                || Boolean(drainHiddenBarrier);
+              if (masked) {
+                const filtered = sanitizeHiddenInformationActions(rootObservation, drainChoices,
+                  drainInspection.session.currentEffect);
+                hiddenInformationFilteredActionCount += filtered.filteredCount;
+                drainChoices = filtered.actions;
+              }
+              drainChoices = selectCardRevealChoices(drainChoices);
+            }
             if (!drainChoices.length) break;
             // 可排空 = 正式弃牌代表路线、唯一支付/交易选牌项与计算机唯一选位。
             // 多个不同费用或牌身份的选择必须回到selector，不能在此固定取首项。
@@ -1856,7 +1889,8 @@
             // choose_card）**不折叠**——折叠会断链（协调器路径 rootObservation 缺
             // requirements，selectSuccessors 无法选最优 → 效果结算无叶 → unresolved）。
             const drainable = drainChoices.length > 0 && drainChoices.every((choice) => (
-              (choice.family === "choose_payment" && (
+              (revealDecision && choice.family === "choose_card")
+              || (choice.family === "choose_payment" && (
                 drainChoices.length === 1
                 || ["discard-hand-card", "confirm"].includes(choice.target?.kind)
               ))
@@ -2037,6 +2071,7 @@
               }
             }
           }
+          successors = selectCardRevealChoices(successors);
           const projectionStartedAt = now();
           // 中间节点观测用 cheap 模式（跳过 planets/data/solarSystem/finalScoring 克隆，
           // 只含 requirements/资源/rockets/aliens/公共牌/科技）；完整观测在叶形成时重建。
@@ -2624,6 +2659,8 @@
               secondaryAgentSearch
               && origin.rootWasConditional
               && execution.awaitingDecision
+              // 排空保护不是新策略边界；尚未结束的展示必须回队列继续。
+              && !isCardRevealChoiceSet(execution.successors)
             ) {
               addLeaf(
                 {
@@ -3332,6 +3369,7 @@
     });
     const lifecycle = Object.freeze({ newGame, save, validateRestore, restore });
     const counterfactualPort = Object.freeze({
+      selectCardRevealChoices,
       evaluate: evaluateCounterfactualOutcomes,
       getDiagnostics: () => clone(lastCounterfactualDiagnostics),
       // 暴露 fork 原语（可回退执行）：从任意 envelope 创建独立 composition 分支，

@@ -423,6 +423,10 @@ journal 统一处理。
 - **发射**：`rocket.launchProbe`——标准发射、卡牌发射、紫4、寰宇初始发射、公司发射全部走它（`playerId`/`ignoreRocketLimit`/`skipCost` 覆盖）。
 - **环绕/登陆**：`planet.orbitProbe` / `planet.landProbe`——主行动、卡牌、行星奖励共用；登陆形态统一（唯一目标直接结算、多目标 LAND_CHOICE 决策），卡牌登陆后奖励归卡牌域摘要。
 - **移动**：`rocket.moveProbe`——快速行动、卡牌移动、紫4、公司免费移动、快速交易移动全部走它（`listPlayerMoveChoices` 枚举统一）。
+  卡牌数量移动在前序效果完成后计算：《发射前试验》先通过正式choose_card逐张展示
+  移动角标手牌（不弃牌，每牌只计一次），结束展示后每张给1点；零张也需结束展示。
+  《最佳发射窗口》按地球扇区的其他行星/彗星各给1点，不计地球。额度写入当前
+  Decision的`payload.remaining`，随后只扣减；0点不产生移动选择，保存恢复不补发。
 - **往扇区放信号**：`scan.placeNebulaToken`（原语）→ `scan.scanNebula`（编排）→ 统一扫描节点 `SCAN_STEP`（science）——扫描主行动、行星奖励、7 种卡牌扫描家族、公共牌扫描全部收敛；扫描流串尾 `SCAN_FINALIZE` 统一触发扇区结算（SETTLE，P13 不逐节点）。
 - **扇区结算**：`data.settleCompletedSectors`（SETTLE executor 统一触发；多扇区按「当前玩家赢家优先」排序）。
 - **分析**：`data.analyzeData`（ability `analyzeData`）——唯一来源标准分析，深空公司免能量只改费用。

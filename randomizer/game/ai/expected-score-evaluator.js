@@ -2691,6 +2691,10 @@
       );
     };
     if (actorId === focalSeatId) {
+      if (successors.every(action => action.family === "choose_card"
+        && action.target?.kind === "counted-move-reveal")) {
+        return bindRoute(successors, input.routeTargetId, input.routePlanId);
+      }
       const dataPickPlanPrefix = `data:card:${input.currentAction?.target?.cardInstanceId}:pick:`;
       if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET
         && input.currentAction?.family === "play_card"

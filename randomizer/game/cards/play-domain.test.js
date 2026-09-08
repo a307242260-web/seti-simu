@@ -5,6 +5,7 @@ const playDomain = require("./play-domain");
 const scienceSession = require("../effects/science-session");
 const residualDomain = require("../effects/residual-domain-session");
 const cardEffects = require("./effects");
+const cards = require("./deck");
 const standardAction = require("../actions/standard-action");
 const stateStoreApi = require("../state/state-store");
 const effectRuntimeApi = require("../effects/session-runtime");
@@ -1734,6 +1735,109 @@ for (const mode of ["all", "partial", "zero", "empty"]) {
     finish();
     assert.deepEqual(composition.lifecycle.save().envelope, after,
       "重组中途恢复须保持累计资源、抽牌、实体、RNG与journal一致");
+  } finally { composition.dispose(); }
+}
+// 数量移动按正式展示一次性授予；展示不弃牌，后续Decision、恢复和skip不补额度。
+for (const count of [0, 2]) {
+  const root = createCanonicalState("b_98.webp");
+  const actor = root.players.players[0];
+  actor.hand.push(...cards.CARD_CATALOG.filter((card) => card.discard_action_code === 2)
+    .slice(0, count).map((card, index) => ({ id: `move-count:${index}`, cardId: card.card_id,
+      discardActionCode: card.discard_action_code })));
+  actor.resources.handSize = actor.hand.length;
+  const { composition } = createIntegratedComposition("b_98.webp", { state: root });
+  try {
+    let result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+    assert.equal(result.ok, true);
+    let decision = composition.inspect().session?.decision;
+    if (decision?.choices.every((choice) => String(choice.target.choiceId).startsWith("launch:"))) {
+      result = composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+        decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice: decision.choices[0] });
+      assert.equal(result.ok, true);
+    }
+    const revealStart = composition.lifecycle.save().envelope;
+    const revealAll = () => {
+      for (let index = 0; index < count; index += 1) {
+        const inspection = composition.inspect();
+        decision = inspection.session.decision;
+        assert.equal(playDomain.getMovementAllowance(inspection.session.currentEffect), 0);
+        const choice = decision.choices.find(entry => entry.target.cardInstanceId === `move-count:${index}`);
+        assert.ok(choice);
+        const saved = composition.lifecycle.save().envelope;
+        assert.equal(composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+          decisionVersion: decision.decisionVersion, ownerId: "p2", choice }).ok, false);
+        assert.deepEqual(composition.lifecycle.save().envelope, saved);
+        result = composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+          decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice });
+        assert.equal(result.ok, true);
+        const afterReveal = composition.inspect();
+        assert.ok(!afterReveal.session.decision.choices.some(entry => entry.target.cardInstanceId === choice.target.cardInstanceId));
+        assert.equal(composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+          decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice }).ok, false);
+        if (index === 0) {
+          const partial = composition.lifecycle.save().envelope;
+          const next = afterReveal.session.decision;
+          const finish = next.choices.find(entry => entry.target.finish);
+          assert.equal(composition.inputPort.submitDecision({ decisionId: next.decisionId,
+            decisionVersion: next.decisionVersion, ownerId: next.ownerId, choice: finish }).ok, true);
+          assert.equal(playDomain.getMovementAllowance(composition.inspect().session.currentEffect), 1,
+            "可结束部分展示，未展示牌不能计入额度");
+          assert.equal(composition.lifecycle.restore(partial, { silent: true }).ok, true);
+          assert.deepEqual(composition.inspect(), afterReveal);
+        }
+      }
+      decision = composition.inspect().session.decision;
+      assert.ok(decision.choices.some(entry => entry.target.finish), "零牌也必须经过结束展示");
+      result = composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+        decisionVersion: decision.decisionVersion, ownerId: decision.ownerId,
+        choice: decision.choices.find(entry => entry.target.finish) });
+      assert.equal(result.ok, true);
+      return composition.lifecycle.save().envelope;
+    };
+    const revealed = revealAll();
+    assert.equal(composition.lifecycle.restore(revealStart, { silent: true }).ok, true);
+    assert.deepEqual(revealAll(), revealed, "展示恢复重放保持完整规则状态和journal一致");
+    if (count === 0) {
+      assert.equal(result.phase, "completed", "无移动角标不得额外给1移动");
+      assert.ok(result.journal.events.some((event) => event.revealFinished && event.revealedCount === 0));
+      assert.equal(JSON.parse(revealed.committedState).players.players[0].hand.length, 0);
+      continue;
+    }
+    const initial = composition.lifecycle.save().envelope;
+    const runMoves = () => {
+      for (const expected of [2, 1]) {
+        const inspection = composition.inspect();
+        assert.equal(playDomain.getMovementAllowance(inspection.session.currentEffect), expected);
+        assert.equal(inspection.session.currentEffect.payload.remaining, expected);
+        const saved = composition.lifecycle.save().envelope;
+        decision = inspection.session.decision;
+        const choice = decision.choices.find((entry) => entry.payload.requiredMovePoints === 1 && !entry.target.skip);
+        assert.ok(choice);
+        for (const invalid of [{ ownerId: "p2" }, { decisionVersion: decision.decisionVersion + 1 }]) {
+          assert.equal(composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+            decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice, ...invalid }).ok, false);
+          assert.deepEqual(composition.lifecycle.save().envelope, saved);
+        }
+        const skip = decision.choices.find((entry) => entry.target.skip);
+        assert.ok(skip);
+        const skipped = composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+          decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice: skip });
+        assert.equal(skipped.ok, true); assert.equal(skipped.phase, "completed");
+        assert.equal(composition.lifecycle.restore(saved, { silent: true }).ok, true);
+        assert.deepEqual(composition.inspect(), inspection, "恢复不改变剩余点或合法选择");
+        result = composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+          decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice });
+        assert.equal(result.ok, true);
+      }
+      assert.equal(result.phase, "completed");
+      assert.equal(result.journal.events.filter((event) => event.type === "move").length, 2);
+      return composition.lifecycle.save().envelope;
+    };
+    const after = runMoves();
+    assert.equal(JSON.parse(after.committedState).players.players[0].hand.length, count,
+      "展示不弃牌，移动完成后展示过的手牌仍在手中");
+    assert.equal(composition.lifecycle.restore(initial, { silent: true }).ok, true);
+    assert.deepEqual(runMoves(), after, "重放保持实体、RNG、journal和正式终态一致");
   } finally { composition.dispose(); }
 }
 console.log("card play domain production composition tests passed");

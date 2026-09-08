@@ -216,7 +216,7 @@ function createHeuristicDecisionFunction(options = {}) {
       confidence: "low",
     });
     const diagnostics = composition.counterfactualPort.getDiagnostics?.();
-    const fields = ["executedNodeCount", "maxExecutionNodes", "executionLimitReached",
+    const fields = ["executedNodeCount", "maxExecutionNodes", "executionLimitReached", "beamPrunedOriginCount",
       "successfulInputSubmissionCount", "attemptedNodeCountByFamily", "failedNodeCountByFamily",
       "failedNodeCountByCode", "executedNodeCountByFamily", "executedNodeCountByDecisionKind",
       "executedNodeCountByActionSummary", "executedOriginCountByTarget",
@@ -228,7 +228,8 @@ function createHeuristicDecisionFunction(options = {}) {
 
   function run(boundary) {
     const searches = [];
-    const { seatId, legalActions, observation } = boundary;
+    const { seatId, observation } = boundary;
+    const legalActions = composition.counterfactualPort.selectCardRevealChoices(boundary.legalActions);
     const initialSetupBoundary = isInitialSetupBoundary(legalActions);
     const outcomeOptions = {
       seatId,

@@ -99,7 +99,13 @@ Standard Action身份；恢复存档时重新枚举，AI与浏览器不补写act
 `probeRouteRequirements.movementContext`描述当前普通/公司/卡牌移动阶段：
 `phase`、`cardRemaining`、`companyAvailable`、`companyRemaining`、`usedRocketIds`，
 卡牌阶段另有`cardInstanceId`。四种Card Play移动effect复用正式枚举的
-`getMovementAllowance`读取剩余点。候选`movementNextSteps`是最低付费点与移动
+`getMovementAllowance(effect, workingState)`读取剩余点；地球扇区数量在首次执行时计算。
+手牌数量移动先进入`phase=card-reveal`、`cardRemaining=0`的展示阶段；正式choose_card
+的`target.kind=counted-move-reveal`包含待展示的cardInstanceId或finish=true结束项。
+Effect payload的revealedCardInstanceIds记录已展示身份，结束后才将张数冻结为remaining。
+展示前不预读未知手牌角标；展示不弃牌，公开展示写hand_card_shown不可撤销标记。
+0点结束后不产生移动选择；后续只扣减，恢复不重新发放。
+候选`movementNextSteps`是最低付费点与移动
 次数下全部可用的原生首步，原`nextStep/path`仍描述主要空间路线；
 `required.movementPoints`为地形总点，`paidMovementPoints`为扣除可用免费点后的
 付费点，`required.energy`为付费移动与终点能量总需求。没有改变正式移动费用。

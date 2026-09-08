@@ -60,7 +60,13 @@ const current = context();
   let invalidObservation = false;
   const policyObservations = [];
   const decisionFunction = createHeuristicDecisionFunction({
-    composition: { counterfactualPort: { evaluate: () => [{
+    composition: { counterfactualPort: {
+      selectCardRevealChoices(actions) {
+        assert.ok(actions.every(entry => entry.target?.kind !== "counted-move-reveal"),
+          "本测试替身仅覆盖非展示的Policy证据传递");
+        return actions;
+      },
+      evaluate: () => [{
       schemaVersion: model.OUTCOME_SCHEMA_VERSION, actionId: root.actionId,
       status: "settled", confidence: "high", rootObservation: observation,
       leaves: [0, 1].map(index => ({ leafId: `leaf:${index}`, status: "settled",

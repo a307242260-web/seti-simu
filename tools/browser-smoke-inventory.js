@@ -89,7 +89,7 @@ module.exports = Object.freeze([
         throw new Error("等待超时: " + label);
       };
       await waitFor(() => Boolean(document.querySelector(".initial-selection-card-button")), "初始选择");
-      const render = window.SetiRandomizer.inspect().projection.resident?.browserReadModel?.render || {};
+      const render = window.SetiRandomizer.inspect().projection.resident?.ui?.browserReadModel?.render || {};
       const sectors = (render.boardChrome?.sectors || []).map((entry) => [Number(entry.slotId), Number(entry.sectorId)]);
       const publicFaces = (render.cardPanels?.publicCards || []).map((card) => String(card.imageSrc || ""));
       const expectedSectors = [[1, 3], [2, 2], [3, 4], [4, 1]];
@@ -131,7 +131,7 @@ module.exports = Object.freeze([
         throw new Error("等待超时: " + label);
       };
       await waitFor(() => Boolean(document.querySelector(".initial-selection-card-button")), "初始选择");
-      const render = window.SetiRandomizer.inspect().projection.resident?.browserReadModel?.render || {};
+      const render = window.SetiRandomizer.inspect().projection.resident?.ui?.browserReadModel?.render || {};
       const sectors = (render.boardChrome?.sectors || []).map((entry) => [Number(entry.slotId), Number(entry.sectorId)]);
       const publicFaces = (render.cardPanels?.publicCards || []).map((card) => String(card.imageSrc || ""));
       const expectedSectors = [[1, 3], [2, 4], [3, 1], [4, 2]];
@@ -172,7 +172,7 @@ module.exports = Object.freeze([
         throw new Error("等待超时: " + label);
       };
       await waitFor(() => Boolean(document.querySelector(".initial-selection-card-button")), "初始选择");
-      const render = window.SetiRandomizer.inspect().projection.resident?.browserReadModel?.render || {};
+      const render = window.SetiRandomizer.inspect().projection.resident?.ui?.browserReadModel?.render || {};
       const sectors = (render.boardChrome?.sectors || []).map((entry) => [Number(entry.slotId), Number(entry.sectorId)]);
       const publicFaces = (render.cardPanels?.publicCards || []).map((card) => String(card.imageSrc || ""));
       const expectedSectors = [[1, 3], [2, 1], [3, 2], [4, 4]];
@@ -469,7 +469,7 @@ module.exports = Object.freeze([
         controls: window.SetiRandomizer.inspect().projection.controls,
         viewer: window.SetiRandomizer.inspect().projection.viewer,
         match: window.SetiRandomizer.inspect().projection.match,
-        players: window.SetiRandomizer.inspect().projection.resident?.browserReadModel?.render
+        players: window.SetiRandomizer.inspect().projection.resident?.ui?.browserReadModel?.render
           ?.playerPanels,
       }), 20000);
       const launchButton = document.querySelector("#action-launch-button");
@@ -481,7 +481,7 @@ module.exports = Object.freeze([
           && next.input.lastResult?.kind === "action";
       }, "人类主行动进入 Standard Action input port");
       const projection = window.SetiRandomizer.inspect().projection;
-      const renderProjection = projection.resident?.browserReadModel?.render || {};
+      const renderProjection = projection.resident?.ui?.browserReadModel?.render || {};
       const serialized = JSON.stringify(projection);
       const opponents = (renderProjection.playerPanels?.players || []).filter(
         (entry) => String(entry?.id) !== String(projection.viewer?.playerId),

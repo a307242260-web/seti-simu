@@ -359,7 +359,9 @@ function readProbeMovementContext(workingState, player, session) {
   const ownedEffect = effect?.ownerId === player.id ? effect : null;
   const companyPending = ownedEffect?.payload?.abilityId === "huanyu_free_moves"
     && ownedEffect.payload.step === "free_move";
-  const allowance = cardPlayDomain.getMovementAllowance(ownedEffect);
+  const allowance = cardPlayDomain.getMovementAllowance(ownedEffect, workingState);
+  const cardReveal = ownedEffect?.payload?.cardEffect?.type === "card_count_hand_corner_move"
+    && ownedEffect.payload.remaining == null;
   const companyAllowance = companyPending ? 0 : residualSession.getCompanyMovementAllowance(workingState, player);
   const companyAvailable = companyAllowance > 0;
   if (companyPending && (!Number.isInteger(ownedEffect.payload.remaining)
@@ -367,7 +369,7 @@ function readProbeMovementContext(workingState, player, session) {
     throw new TypeError("PROBE_COMPANY_ALLOWANCE_MISSING: 公司移动缺少剩余额度或已用来源");
   }
   return {
-    phase: companyPending ? "company" : allowance != null ? "card" : "ordinary",
+    phase: companyPending ? "company" : cardReveal ? "card-reveal" : allowance != null ? "card" : "ordinary",
     cardRemaining: allowance ?? 0,
     companyAvailable,
     companyRemaining: companyPending ? ownedEffect.payload.remaining : companyAllowance,

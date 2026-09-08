@@ -31,5 +31,9 @@ node tools/run_browser_smokes.js
 
 默认 Node 输出分别报告 unit/full-flow 数量、耗时和逐 owner 计数。Chrome smoke 使用独立固定清单，不伪装成 Node unit；它覆盖页面装配、projection 隐私、人类 Action/Decision、Policy 输入与 save/recovery。
 
+Chrome smoke 从 `window.SetiRandomizer.inspect().projection.resident.ui.browserReadModel.render`
+读取页面渲染模型，与浏览器 app 使用同一读取路径；不得把旧 `resident.browserReadModel`
+路径读到的空值误报为盘面或渲染缺失。盘面内容、隐藏信息隔离与真实 DOM 断言仍须分别核对。
+
 历史测试迁移、逐文件删除清单和阶段数量不属于长期契约；需要追溯时使用 Git 历史，不在
 当前文档中维护第二份流水账。

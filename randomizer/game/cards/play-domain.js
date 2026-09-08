@@ -89,13 +89,35 @@
   ]);
 
   // 正式移动枚举与主要路线读取共用；null表示本effect不是卡牌移动阶段。
-  function getMovementAllowance(sessionEffect) {
-    if (!MOVEMENT_EFFECT_TYPES.includes(sessionEffect?.payload?.cardEffect?.type)) return null;
-    return Math.max(1, Math.round(Number(
-      sessionEffect.payload.remaining
-      ?? sessionEffect.payload.cardEffect.options?.movementPoints
-      ?? 1
-    ) || 1));
+  function getMovementAllowance(sessionEffect, root) {
+    const effect = sessionEffect?.payload?.cardEffect;
+    if (!MOVEMENT_EFFECT_TYPES.includes(effect?.type)) return null;
+    let allowance = sessionEffect.payload.remaining;
+    if (allowance == null) {
+      if (effect.type === cardEffects.EFFECT_TYPES.COUNT_HAND_CORNER_MOVE) {
+        // 展示完成之前尚未授予移动，不能从潜在（包括未知）手牌预读额度。
+        allowance = 0;
+      } else if (effect.type === cardEffects.EFFECT_TYPES.EARTH_SECTOR_CONTENT_MOVE) {
+        if (!root?.solarSystem) {
+          throw new TypeError("CARD_MOVE_COUNT_CONTEXT_MISSING: 数量移动缺少正式太阳系");
+        }
+        const snapshot = solar.createSolarSnapshot(root.solarSystem);
+        const earth = snapshot.planetLocations.find((planet) => planet.planetId === "earth");
+        if (!earth) throw new TypeError("CARD_MOVE_EARTH_MISSING: 数量移动找不到地球");
+        allowance = snapshot.visibleContents.filter((entry) => (
+          entry.x === earth.x && (
+            entry.content.kind === "comet"
+            || (entry.content.kind === "planet" && entry.content.planetId !== "earth")
+          )
+        )).length;
+      } else {
+        allowance = effect.options?.movementPoints ?? 1;
+      }
+    }
+    if (!Number.isInteger(allowance) || allowance < 0) {
+      throw new TypeError("CARD_MOVE_ALLOWANCE_INVALID: 卡牌移动额度必须为非负整数");
+    }
+    return allowance;
   }
   const EFFECT_TYPES = Object.freeze({
     PLAY: "card_play_domain_play",
@@ -1212,11 +1234,71 @@
       ));
     }
 
+    function isMoveReveal(sessionEffect) {
+      return sessionEffect.payload?.cardEffect?.type === cardEffects.EFFECT_TYPES.COUNT_HAND_CORNER_MOVE
+        && sessionEffect.payload.remaining == null;
+    }
+
+    function revealedMoveCards(sessionEffect) {
+      const selected = sessionEffect.payload.revealedCardInstanceIds;
+      if (!Array.isArray(selected) || selected.some(id => typeof id !== "string")
+        || new Set(selected).size !== selected.length) {
+        throw new TypeError("CARD_MOVE_REVEAL_STATE_INVALID: 展示牌身份必须是无重复数组");
+      }
+      return selected;
+    }
+
+    function listMoveRevealChoices(root, sessionEffect) {
+      const selected = new Set(revealedMoveCards(sessionEffect));
+      const actor = getActor(root, sessionEffect.ownerId);
+      const choices = actor.hand.filter(card => !selected.has(card.id)
+        && Number(cards.getDiscardActionMoveRewardForCard(card)?.movementPoints) > 0)
+        .map(card => ({
+          ...makeChoice("choose_card", `reveal:${card.id}`,
+            { kind: "counted-move-reveal", cardInstanceId: card.id }, {}, `展示 ${cards.getCardLabel(card)}`),
+          presentation: cards.getCardPickPresentation(card),
+        }));
+      // 即使没有合格手牌也保留相同阶段，不能通过阶段形状泄漏未知角标。
+      choices.push(makeChoice("choose_card", "finish-reveal",
+        { kind: "counted-move-reveal", finish: true }, {}, "结束展示"));
+      return choices;
+    }
+
+    function resolveMoveReveal(state, sessionEffect, choice, workingContext) {
+      const root = getWorkingRoot(state, workingContext);
+      const legal = listMoveRevealChoices(root, sessionEffect)
+        .find(entry => entry.target.choiceId === choice?.target?.choiceId);
+      if (!legal) return fail("CARD_MOVE_REVEAL_STALE", "展示牌已失效或重复展示");
+      const selected = [...revealedMoveCards(sessionEffect)];
+      if (!legal.target.finish) selected.push(legal.target.cardInstanceId);
+      const remaining = selected.length;
+      const payload = { ...clone(sessionEffect.payload), revealedCardInstanceIds: selected,
+        ...(legal.target.finish ? { remaining } : {}) };
+      const spawnedEffects = legal.target.finish && remaining === 0 ? [] : [{
+        priority: "direct",
+        effect: {
+          type: genericEffectRuntimeType(sessionEffect.payload.cardEffect.type, true),
+          kind: "decision", decisionKind: legal.target.finish ? "choose_target" : "choose_card",
+          ownerId: sessionEffect.ownerId, payload,
+        },
+      }];
+      return cardEffectResult(state, root, sessionEffect, {
+        spawnedEffects,
+        ...(!legal.target.finish ? { irreversible: {
+          code: "hand_card_shown", reason: "已向其他玩家展示手牌",
+        } } : {}),
+        event: { revealedCardInstanceId: legal.target.cardInstanceId || null,
+          revealFinished: Boolean(legal.target.finish), revealedCount: remaining },
+        historyType: "card_effect_decision", history: { choiceId: legal.target.choiceId },
+      });
+    }
+
     function listMoveChoices(root, sessionEffect) {
       const actor = getActor(root, sessionEffect.ownerId);
       if (!actor) return [];
       const context = createActionContext(root, actor.id);
-      const remaining = getMovementAllowance(sessionEffect);
+      const remaining = getMovementAllowance(sessionEffect, root);
+      if (remaining === 0) return [];
       // 统一移动入口：所有移动来源（卡牌/紫4/快速交易/probe turn/残余域）共用
       const choices = abilities.rocket.listPlayerMoveChoices(context, actor, {
         maxPoints: remaining,
@@ -1603,6 +1685,16 @@
         return fail("CARD_EFFECT_CONTEXT_STALE", "卡牌效果上下文已失效");
       }
       const descriptor = GENERIC_EFFECT_DESCRIPTORS[effect.type];
+      if (isMoveReveal(sessionEffect)) {
+        return cardEffectResult(state, root, sessionEffect, {
+          spawnedEffects: [{ priority: "direct", effect: {
+            type: genericEffectRuntimeType(effect.type, true), kind: "decision",
+            decisionKind: "choose_card", ownerId: actor.id,
+            payload: { ...clone(sessionEffect.payload), revealedCardInstanceIds: [] },
+          } }],
+          event: { awaitingReveal: true },
+        });
+      }
       if (effect.type === aliens.amiba?.EFFECT_TYPES?.RESOLVE_REGION_REWARD) {
         if (!["orange", "red", "blue"].includes(options.region)) {
           return fail("AMIBA_REGION_INVALID", "阿米巴区域奖励缺少有效颜色");
@@ -1623,6 +1715,17 @@
         });
       }
       if (descriptor.decisionKind) {
+        // 前序发射/奖励已结算；首次额度在创建Decision时冻结，后续仅扣remaining。
+        if (MOVEMENT_EFFECT_TYPES.includes(effect.type)) {
+          const remaining = getMovementAllowance(sessionEffect, root);
+          if (remaining === 0) {
+            return cardEffectResult(state, root, sessionEffect, {
+              event: { remaining: 0, reason: "zero_movement_allowance" },
+              history: { remaining: 0, reason: "zero_movement_allowance" },
+            });
+          }
+          sessionEffect = { ...sessionEffect, payload: { ...sessionEffect.payload, remaining } };
+        }
         const choices = listGenericChoices(root, sessionEffect);
         if (!choices.length) {
           return cardEffectResult(state, root, sessionEffect, {
@@ -1905,6 +2008,7 @@
         }
         return choices;
       }
+      if (isMoveReveal(sessionEffect)) return listMoveRevealChoices(root, sessionEffect);
       if (MOVEMENT_EFFECT_TYPES.includes(effect.type)) return listMoveChoices(root, sessionEffect);
       if (effect.type === cardEffects.EFFECT_TYPES.CARD_ORBIT) {
         return listPlanetChoices(root, sessionEffect, "orbit");
@@ -2186,6 +2290,7 @@
           history: { choiceId: legal.target.choiceId, region },
         });
       }
+      if (isMoveReveal(sessionEffect)) return resolveMoveReveal(state, sessionEffect, choice, workingContext);
       if (MOVEMENT_EFFECT_TYPES.includes(effect.type)) return resolveMove(state, sessionEffect, choice, workingContext);
       if (effect.type === cardEffects.EFFECT_TYPES.CARD_ORBIT) {
         return resolvePlanet(state, sessionEffect, choice, workingContext, "orbit");
