@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T16:10:40.561Z",
+  "builtAt": "2026-09-08T16:24:44.206Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "e76a4e4a",
+  "headCommit": "35cf3071",
   "currentBaseline": "route-selection-error-20260908",
   "worktreeDirty": true,
   "bestOf": {
@@ -196,7 +196,7 @@ const REGISTRY = {
   "versions": [
     {
       "id": "route-leaf-eligibility-20260909",
-      "name": "路线停止结果可选性（完整局验证中）",
+      "name": "路线停止结果可选性（性能及完整性未通过）",
       "date": "2026-09-09",
       "baseline": "route-suffix-facts-20260908",
       "head": "ad676add",
@@ -256,14 +256,286 @@ const REGISTRY = {
           "deletions": 2
         }
       ],
-      "results": [],
+      "results": [
+        {
+          "recordFile": "4a694948.ad676add.full.json",
+          "recordPath": "reports/research/4a694948.ad676add.full.json",
+          "mode": "full",
+          "steps": 608,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 740816,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "ad676add",
+          "createdAt": "2026-09-08T16:22:10.053Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "整体未通过：608步正式终局蓝102/绿125/棕72/白112，均102.75，直接前版100.5。节点139422→167098，执行截断27→36、执行或前沿截断并集41→49，耗时626199→740816ms；规则失败0。蓝+39但棕−34待归因；首差79研究紫2改橙2，不能把整局回升全部归因99单点保留资源。搜索228→199但棕调用50不变、节点+14635。与dev均101.75及组合108.75均有独立对照，见route-leaf-eligibility-full-progress-20260909.md及对应full-comparison.json。未合生产，不重跑本版本、不调权重补分。",
+          "scores": {
+            "player-blue": 102,
+            "player-green": 125,
+            "player-brown": 72,
+            "player-white": 112
+          },
+          "avgScore": 102.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 102,
+              "base": 67,
+              "tile": 29,
+              "card": 6,
+              "tileScoresById": {
+                "a": 8,
+                "b": 0,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 6
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 1,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 10,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 19,
+                "orbitScore": 9,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 11
+              }
+            },
+            "player-green": {
+              "total": 125,
+              "base": 84,
+              "tile": 35,
+              "card": 6,
+              "tileScoresById": {
+                "a": 11,
+                "b": 24,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 11,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 24,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 0,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 0,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 6
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 13,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 3,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 18,
+                "orbitScore": 3,
+                "scanScore": 8,
+                "taskCardScore": 0,
+                "techBonusScore": 11
+              }
+            },
+            "player-brown": {
+              "total": 72,
+              "base": 57,
+              "tile": 15,
+              "card": 0,
+              "tileScoresById": {
+                "a": 5,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 5,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 18,
+                "orbitScore": 6,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-white": {
+              "total": 112,
+              "base": 81,
+              "tile": 31,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 12,
+                "c": 0,
+                "d": 9
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 12,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 9,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 16,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 6,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 3,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 14,
+                "orbitScore": 6,
+                "scanScore": 7,
+                "taskCardScore": 7,
+                "techBonusScore": 4
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-route-leaf-eligibility-20260909-ad676add-full-v312.json",
+          "reportPath": "reports/iteration/route-leaf-eligibility-20260909/4a694948.ad676add.full.action-log.html",
+          "reportExists": true
+        }
+      ],
       "roadmap": null,
       "isHead": false,
       "completeness": {
-        "record": false,
-        "save": false,
-        "report": false,
-        "reportLinks": []
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "4a694948.ad676add.full",
+            "path": "reports/iteration/route-leaf-eligibility-20260909/4a694948.ad676add.full.action-log.html",
+            "mode": "full"
+          }
+        ]
       }
     },
     {
