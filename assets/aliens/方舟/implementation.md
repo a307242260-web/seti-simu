@@ -1,6 +1,7 @@
 # 方舟实现说明
 
-机制来源：`face_detail.md`。通用外星人生命周期见 `docs/alien-design.md`。
+机制来源：`rules/seti-alien-species-space-agencies-en.pdf`第1–2页ARKHOS；原引用的
+`face_detail.md`已不存在。通用外星人生命周期见 `docs/alien-design.md`。
 
 ## 已知实现缺陷（2026-09-08）
 
