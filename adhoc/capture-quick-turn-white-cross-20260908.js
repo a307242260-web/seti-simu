@@ -1,25 +1,32 @@
-// 同盘面交叉核验：只重放到白方首处分歧前，采集一次正式决策，不运行整局。
+// 同盘面交叉核验：白方顺序候选或绿方身份候选首差，采集一次正式决策，不运行整局。
 const fs = require('node:fs'), path = require('node:path'), cp = require('node:child_process');
 const assert = require('node:assert/strict'), inspector = require('node:inspector');
 const root = path.resolve(__dirname, '..');
 const [board, policy] = process.argv.slice(2);
 const track = process.argv.includes('--track-old-plan');
 const beam = process.argv.includes('--track-beam');
+const green = process.argv.includes('--green-identity');
+const blue = process.argv.includes('--blue-identity');
+assert.ok(!(green && blue));
+assert.ok(!(green || blue) || (!track && ['candidate', 'identity'].includes(policy)));
 assert.ok(!beam || track);
 assert.ok(!track || (board === 'candidate' && policy === 'candidate'));
 assert.ok(['baseline', 'candidate'].includes(board));
 assert.ok(['baseline', 'candidate', 'identity'].includes(policy));
 const source = policy === 'baseline' ? root : policy === 'identity'
   ? '/private/tmp/seti-counterfactual-identity-20260908' : '/private/tmp/seti-quick-turn-order-20260908';
-const output = path.join(root, `reports/iteration/quick-turn-white-cross-${board}-${policy}${beam ? '-beam-trace' : track ? '-old-plan-trace' : ''}-20260908.json`);
+const output = path.join(root, `reports/iteration/${blue ? 'identity-blue-cross' : green ? 'identity-green-cross' : 'quick-turn-white-cross'}-${board}-${policy}${beam ? '-beam-trace' : track ? '-old-plan-trace' : ''}-20260908.json`);
 if (fs.existsSync(output) || fs.existsSync(output + '.gz')) { console.log('已有交叉证据，跳过：' + output); process.exit(0); }
-const comparison = JSON.parse(fs.readFileSync(path.join(root, 'reports/iteration/quick-turn-full-comparison-20260908.json')));
-const save = JSON.parse(fs.readFileSync(comparison[board].savePath));
+const comparison = JSON.parse(fs.readFileSync(path.join(root, green || blue
+  ? 'reports/iteration/counterfactual-identity-full-comparison-20260908.json'
+  : 'reports/iteration/quick-turn-full-comparison-20260908.json')));
+const save = JSON.parse(fs.readFileSync(comparison[(green || blue) && board === 'baseline' ? 'directBaseline' : board].savePath));
 const config = JSON.parse(fs.readFileSync('/private/tmp/seti-trigger-scan-mapping-20260907/reports/iteration/data-root-53-aaaed8d0-20260907.json')).root.config;
 const req = require('node:module').createRequire(path.join(source, 'adhoc/diagnostic.js'));
 const env = req('../randomizer/app/simulation-env').createSimulationEnv();
 const report = { board, policy, commit: cp.execFileSync('git', ['rev-parse', 'HEAD'], { cwd: source, encoding: 'utf8' }).trim(),
-  decisionStep: board === 'baseline' ? 189 : 175, captures: [], errors: [],
+  decisionStep: blue ? 49 : green ? (board === 'baseline' ? 101 : 105) : (board === 'baseline' ? 189 : 175), captures: [], errors: [],
+  seat: blue ? 'player-blue' : green ? 'player-green' : 'player-white',
   scope: '冷启动同盘面交叉；先与对应整局计划核对，不能直接外推终局差值因果。' };
 const debug = new inspector.Session(); debug.connect();
 const traceBreakpoints = new Map();
@@ -82,7 +89,7 @@ try {
       `node.action.actionId===${JSON.stringify(report.trackedChain[20])}&&node.origins.some(o=>o.chain.length===20&&(${prefix})(o))`,
       `JSON.stringify({kind:"beam-frontier",droppedKey:node.key,maxFrontierNodes,nodes:ordered.map((n,index)=>({index,retained:retained.has(n.key),key:n.key,action:n.action,depth:n.depth,priority:n.priority,state:getTrustedState(n.envelope),origins:n.origins.map(o=>({rootActionId:o.rootAction.actionId,chain:o.chain,proxyDepth:o.proxyDepth,routeTargetId:o.routeTargetId,routePlanId:o.routePlanId,quickBeforeTurn:o.quickBeforeTurn}))}))})`);
   }
-  console.log(`[白方首差交叉] 盘面=${board} 搜索=${policy} · 第2轮 第4回合 · 4096节点上限`);
+  console.log(`[首差交叉] 席位=${report.seat} 盘面=${board} 搜索=${policy} · 决策#${report.decisionStep} · 4096节点上限`);
   assert.equal(env.runHeuristicPolicyDecision().ok, true);
   report.diagnostics = env.getCounterfactualDiagnostics();
   assert.deepEqual(report.errors, []); assert.equal(report.captures.length, 1); report.passed = true;

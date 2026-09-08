@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T09:21:26.178Z",
+  "builtAt": "2026-09-08T09:40:41.197Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "01041109",
+  "headCommit": "35022d9c",
   "currentBaseline": "grant-data-route-20260908",
   "worktreeDirty": true,
   "bestOf": {
@@ -271,7 +271,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T09:17:57.480Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": "整体未通过，未合入dev。635步终局96/89/103/110，均99.5；直接候选99.25→99.5，但低于正确基线101.75。138008节点、176619输入、659435ms；直接候选116318节点/486150ms。战略执行截断27/109、控制5/83，前沿裁剪35次；执行或前沿裁剪并集战略35+控制5=40（直接候选42），规则失败0。白方+31、绿方-48；下降及战略搜索92→109待归因，不以机制去重或分数微升宣称达成Goal。生产冻结0b01af15，运行期间仅补测试/文档。",
+          "note": "整体未通过，未合入dev。635步终局96/89/103/110，均99.5；直接候选99.25→99.5，但低于正确基线101.75。138008节点、176619输入、659435ms；直接候选116318节点/486150ms。战略执行截断27/109、控制5/83，前沿裁剪35次；执行或前沿裁剪并集战略35+控制5=40（直接候选42），规则失败0。白方+31、绿方-48；6次交叉确认绿方首差主要由盘面变化触发，旧盘面两版均填数80，新盘面两版填数均28。首次全局差来自蓝方49步计划中77步额外借科技后结束，无即时收益但新旧计划均有此冗余，不据此解释整局下降。战略搜索净增17：白+7、蓝+9、棕+4、绿-3；完整归因未完成，证据identity-attribution-20260908.json。不以机制去重或分数微升宣称达成Goal。生产冻结0b01af15，运行期间仅补测试/文档。",
           "scores": {
             "player-blue": 96,
             "player-green": 89,
