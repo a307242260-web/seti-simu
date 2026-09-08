@@ -1,0 +1,23 @@
+{
+  "source": "known-data-preparation-v2-20260908.json",
+  "passed": true,
+  "scope": "第24步已知DLC9角标至填5格的玩家完整字段；不含公共牌堆、RNG或其他玩家，不能称全状态等价",
+  "effects": {
+    "removedCard": "card-15-0",
+    "computerSlots": [
+      4,
+      5
+    ],
+    "unchangedResourcesExceptHandSize": true,
+    "remainingPlayerFieldsUnchanged": true
+  },
+  "constraints": [
+    "第5格本身没有基础资源奖励，但可解锁蓝科技附加位，其他盘面需检查相关依赖",
+    "标准扫描包含地球/公共牌等独立步骤；已无可取数据的扇区可追加标记而不获得数据，不能全局硬编码2数据"
+  ],
+  "ruleSources": [
+    "randomizer/game/data/placement.js:COMPUTER_SLOT_BONUSES/BLUE_BONUS_REQUIRED_COMPUTER_SLOT",
+    "randomizer/game/abilities/scan.js:placeNebulaToken",
+    "randomizer/game/effects/science-session.js:scanQueue/publicScanChoices"
+  ]
+}
