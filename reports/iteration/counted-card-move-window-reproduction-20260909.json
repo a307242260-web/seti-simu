@@ -1,0 +1,286 @@
+{
+  "source": "reports/iteration/blue50-expiry-baseline-20260908.json",
+  "cardId": "b_87.webp",
+  "scope": "真实存档派生的正式打牌fixture；替换手牌以隔离数量，不运行AI",
+  "cases": [
+    {
+      "expectedCount": 2,
+      "earth": {
+        "planetId": "earth",
+        "label": "地球",
+        "name": "地球",
+        "wheelId": 1,
+        "baseX": 5,
+        "x": 5,
+        "y": 1,
+        "fixedAfterSetup": false
+      },
+      "countedContents": [
+        {
+          "x": 5,
+          "y": 2,
+          "source": "wheel2",
+          "wheelId": 2,
+          "baseX": 2,
+          "content": {
+            "x": 2,
+            "y": 2,
+            "kind": "planet",
+            "planetId": "mars",
+            "label": "火星",
+            "tags": [
+              "orbit_target",
+              "landing_target"
+            ]
+          },
+          "trace": [
+            {
+              "wheelId": 1,
+              "displayX": 5,
+              "y": 2,
+              "baseX": 5,
+              "step": 0,
+              "normalizedStep": 0,
+              "cell": {
+                "x": 5,
+                "y": 2,
+                "kind": "outside_wheel",
+                "label": "不属于该板块"
+              }
+            },
+            {
+              "wheelId": 2,
+              "displayX": 5,
+              "y": 2,
+              "baseX": 2,
+              "step": -21,
+              "normalizedStep": 3,
+              "cell": {
+                "x": 2,
+                "y": 2,
+                "kind": "planet",
+                "planetId": "mars",
+                "label": "火星",
+                "tags": [
+                  "orbit_target",
+                  "landing_target"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "x": 5,
+          "y": 4,
+          "source": "wheel4",
+          "wheelId": 4,
+          "baseX": 7,
+          "content": {
+            "x": 7,
+            "y": 4,
+            "kind": "comet",
+            "label": "彗星"
+          },
+          "trace": [
+            {
+              "wheelId": 1,
+              "displayX": 5,
+              "y": 4,
+              "baseX": 5,
+              "step": 0,
+              "normalizedStep": 0,
+              "cell": {
+                "x": 5,
+                "y": 4,
+                "kind": "outside_wheel",
+                "label": "不属于该板块"
+              }
+            },
+            {
+              "wheelId": 2,
+              "displayX": 5,
+              "y": 4,
+              "baseX": 2,
+              "step": -21,
+              "normalizedStep": 3,
+              "cell": {
+                "x": 2,
+                "y": 4,
+                "kind": "outside_wheel",
+                "label": "不属于该板块"
+              }
+            },
+            {
+              "wheelId": 3,
+              "displayX": 5,
+              "y": 4,
+              "baseX": 6,
+              "step": -17,
+              "normalizedStep": 7,
+              "cell": {
+                "x": 6,
+                "y": 4,
+                "kind": "outside_wheel",
+                "label": "不属于该板块"
+              }
+            },
+            {
+              "wheelId": 4,
+              "displayX": 5,
+              "y": 4,
+              "baseX": 7,
+              "step": -10,
+              "normalizedStep": 6,
+              "cell": {
+                "x": 7,
+                "y": 4,
+                "kind": "comet",
+                "label": "彗星"
+              }
+            }
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "play_card",
+          "phase": "main",
+          "actionId": "play_card:d6f8b5ef",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "cardInstanceId": "card-40-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "handIndex": 0
+          },
+          "decision": null,
+          "summary": "b_87.webp"
+        }
+      ],
+      "effect": {
+        "schemaVersion": "seti-effect-session-v1",
+        "effectId": "effect-session-1:effect:4",
+        "groupId": "effect-session-1:group:4",
+        "groupKind": "spawned",
+        "type": "card_play_domain_effect:decision:card_earth_sector_content_move",
+        "kind": "decision",
+        "ownerId": "player-blue",
+        "decisionKind": "choose_target",
+        "allowQuickActions": false,
+        "payload": {
+          "cardEffect": {
+            "id": "b87-earth-sector-move",
+            "type": "card_earth_sector_content_move",
+            "label": "地球扇区每个行星或彗星：1移动",
+            "icon": "movement",
+            "options": {
+              "contentKinds": [
+                "planet",
+                "comet"
+              ],
+              "repeat": 1
+            },
+            "status": "pending"
+          },
+          "cardInstanceId": "card-40-0"
+        },
+        "source": {
+          "parentEffectId": "effect-session-1:effect:3",
+          "priority": "direct"
+        },
+        "groupIndex": 0
+      },
+      "choices": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:364997d2",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:0:1",
+            "rocketId": 3,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R3 向外"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:8887d88c",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:1:0",
+            "rocketId": 3,
+            "deltaX": 1,
+            "deltaY": 0
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R3 顺时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:1bc94530",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "3:-1:0",
+            "rocketId": 3,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R3 逆时针"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:b8c6e764",
+          "actorId": "player-blue",
+          "stateVersion": 14,
+          "decisionVersion": 0,
+          "target": {
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "结束移动"
+        }
+      ],
+      "allowance": 1
+    }
+  ],
+  "reproduced": true
+}
