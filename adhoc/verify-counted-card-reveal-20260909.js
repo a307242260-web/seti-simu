@@ -3,7 +3,6 @@ const fs = require('node:fs'), assert = require('node:assert/strict');
 const source = '/private/tmp/seti-counted-card-reveal-20260909';
 const { execFileSync } = require('node:child_process');
 const sourceCommit = execFileSync('git', ['-C', source, 'rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
-assert.ok(sourceCommit.startsWith('872d80c7'));
 assert.equal(execFileSync('git', ['-C', source, 'diff', 'HEAD', '--'], { encoding: 'utf8' }), '', '仅验证冻结的候选代码');
 const knownMove = process.argv.includes('--known-move');
 const { createSimulationRuleComposition } = require(source + '/randomizer/game/production-kernel');
@@ -11,7 +10,7 @@ const { createSeededRandom, RNG_ALGORITHM } = require(source + '/randomizer/game
 const cards = require(source + '/randomizer/game/cards/deck');
 const { buildRuleObservation } = require(source + '/randomizer/app/rule-observation');
 const launchTrigger = process.argv.includes('--launch-trigger');
-const output = `reports/iteration/counted-reveal-${launchTrigger ? 'trigger' : 'trade'}-${knownMove ? 'known1' : 'known0'}-872d80c7-20260909.json`;
+const output = `reports/iteration/counted-reveal-${launchTrigger ? 'trigger' : 'trade'}-${knownMove ? 'known1' : 'known0'}-${sourceCommit.slice(0, 8)}-20260909.json`;
 if (fs.existsSync(output)) { console.log('已有检查点：' + output); process.exit(0); }
 const report = { sourceCommit, source, scope: launchTrigger
   ? '两种隐藏牌面替换，已知b98发射触发已打出DLC23盲抽'

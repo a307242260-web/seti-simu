@@ -1,0 +1,38 @@
+{
+  "candidateCommit": "d061d4f3",
+  "baselineCommit": "4bc44eb2",
+  "scope": "既有Chrome检查的对照；不代表展示卡牌UI已通过",
+  "candidateSequence": {
+    "chunk_id": "cb8bb1",
+    "wall_time_seconds": 0.000002666,
+    "exit_code": 1,
+    "original_token_count": 107,
+    "output": "PASS production-start-button http://127.0.0.1:51620/randomizer/index.html\nError: production-fixed-board-free-analyze 操作异常：Uncaught (in promise) Error: 免电分析盘面扇区与 Simulation 不一致: []\n    at runInteractiveSmoke (/private/tmp/seti-counted-card-reveal-20260909/tools/run_browser_smokes.js:232:11)\n    at async main (/private/tmp/seti-counted-card-reveal-20260909/tools/run_browser_smokes.js:294:11)\n"
+  },
+  "baselineSequence": {
+    "chunk_id": "a7ea0a",
+    "wall_time_seconds": 0.000003459,
+    "exit_code": 1,
+    "original_token_count": 88,
+    "output": "Error: production-fixed-board-free-analyze 操作异常：Uncaught (in promise) Error: 免电分析盘面扇区与 Simulation 不一致: []\n    at runInteractiveSmoke (/private/tmp/seti-counted-card-move-20260909/tools/run_browser_smokes.js:232:11)\n    at async main (/private/tmp/seti-counted-card-move-20260909/tools/run_browser_smokes.js:294:11)\n"
+  },
+  "candidateParity": {
+    "chunk_id": "a41ce8",
+    "wall_time_seconds": 0.000002125,
+    "exit_code": 1,
+    "original_token_count": 90,
+    "output": "Error: production-browser-full-parity 操作异常：Uncaught (in promise) Error: 真实页面 renderer 缺失: rockets, scanData, aliens, scoring\n    at runInteractiveSmoke (/private/tmp/seti-counted-card-reveal-20260909/tools/run_browser_smokes.js:232:11)\n    at async main (/private/tmp/seti-counted-card-reveal-20260909/tools/run_browser_smokes.js:294:11)\n"
+  },
+  "baselineParity": {
+    "chunk_id": "d21739",
+    "wall_time_seconds": 6.66e-7,
+    "exit_code": 1,
+    "original_token_count": 89,
+    "output": "Error: production-browser-full-parity 操作异常：Uncaught (in promise) Error: 真实页面 renderer 缺失: rockets, scanData, aliens, scoring\n    at runInteractiveSmoke (/private/tmp/seti-counted-card-move-20260909/tools/run_browser_smokes.js:232:11)\n    at async main (/private/tmp/seti-counted-card-move-20260909/tools/run_browser_smokes.js:294:11)\n"
+  },
+  "sourceFinding": {
+    "actual": "projection.resident.ui.browserReadModel",
+    "smoke": "projection.resident.browserReadModel",
+    "status": "旧读取路径已确认；正确路径运行仍待验证"
+  }
+}

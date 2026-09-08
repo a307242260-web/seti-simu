@@ -1,0 +1,55 @@
+{
+  "sourceCommit": "872d80c7",
+  "passed": false,
+  "count": 34,
+  "submits": 33,
+  "searches": [
+    {
+      "kind": "strategic",
+      "diagnostics": {
+        "executedNodeCount": 1,
+        "maxExecutionNodes": 4096,
+        "executionLimitReached": false,
+        "successfulInputSubmissionCount": 33,
+        "attemptedNodeCountByFamily": {
+          "choose_card": 1
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "choose_card": 1
+        },
+        "executedNodeCountByDecisionKind": {
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_count_hand_corner_move/cardEffect=card_count_hand_corner_move": 1
+        },
+        "executedNodeCountByActionSummary": {
+          "choose_card:展示 b_1.webp": 1
+        },
+        "executedOriginCountByTarget": {
+          "decision:choose_card:fe0c39ef": 1
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "decision:choose_card:fe0c39ef -> choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_count_hand_corner_move/cardEffect=card_count_hand_corner_move": 1
+        },
+        "frontierOriginCountByFamily": {},
+        "totalMilliseconds": 106.51245800000001
+      }
+    }
+  ],
+  "outcomes": [
+    {
+      "actionId": "choose_card:fe0c39ef",
+      "status": "settled",
+      "code": null,
+      "completeness": {
+        "status": "complete",
+        "reasons": []
+      },
+      "leaves": [
+        {
+          "terminalReason": "root-decision-next-boundary"
+        }
+      ]
+    }
+  ]
+}

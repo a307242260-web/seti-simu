@@ -1,0 +1,53 @@
+{
+  "source": "/private/tmp/seti-counted-card-reveal-20260909",
+  "sourceCommit": "872d80c7",
+  "working": true,
+  "sourceDiffSha256": "316ac1ba07921301fcc6ffd05995881b0ab3d7603b2d25d5486246e2a3f3a19b",
+  "records": [
+    {
+      "count": 34,
+      "submits": 35,
+      "actionId": "choose_card:fe0c39ef",
+      "target": {
+        "choiceId": "reveal:card-41-0",
+        "kind": "counted-move-reveal",
+        "cardInstanceId": "card-41-0"
+      },
+      "milliseconds": 134.004125,
+      "searches": [
+        {
+          "kind": "strategic",
+          "diagnostics": {
+            "executedNodeCount": 2,
+            "maxExecutionNodes": 4096,
+            "executionLimitReached": false,
+            "successfulInputSubmissionCount": 35,
+            "attemptedNodeCountByFamily": {
+              "choose_card": 2
+            },
+            "failedNodeCountByFamily": {},
+            "failedNodeCountByCode": {},
+            "executedNodeCountByFamily": {
+              "choose_card": 2
+            },
+            "executedNodeCountByDecisionKind": {
+              "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_count_hand_corner_move/cardEffect=card_count_hand_corner_move": 2
+            },
+            "executedNodeCountByActionSummary": {
+              "choose_card:展示 b_1.webp": 1,
+              "choose_card:展示 b_134.webp": 1
+            },
+            "executedOriginCountByTarget": {
+              "decision:choose_card:fe0c39ef": 2
+            },
+            "executedOriginCountByTargetAndDecisionKind": {
+              "decision:choose_card:fe0c39ef -> choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_count_hand_corner_move/cardEffect=card_count_hand_corner_move": 2
+            },
+            "frontierOriginCountByFamily": {},
+            "totalMilliseconds": 107.639375
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T20:15:27.324Z",
+  "builtAt": "2026-09-08T20:29:43.684Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "99ffcf24",
+  "headCommit": "5dea6a77",
   "currentBaseline": "round5-card-value-design-20260909",
   "worktreeDirty": true,
   "bestOf": {
@@ -199,20 +199,25 @@ const REGISTRY = {
       "name": "手牌展示移动（局部通过，待全盘）",
       "date": "2026-09-09",
       "baseline": "counted-card-move-20260909",
-      "head": "872d80c7",
+      "head": "d061d4f3",
       "commits": [
         {
           "hash": "872d80c7",
           "date": "2026-09-09",
           "subject": "按正式展示手牌生成移动额度并隔离未知角标收益"
+        },
+        {
+          "hash": "d061d4f3",
+          "date": "2026-09-09",
+          "subject": "让跨结算批次的手牌展示继续搜索到结束"
         }
       ],
-      "summary": "发射前试验逐张展示手牌后冻结移动额度；根决策、自动结算与后继共用已知牌展示贪心；自动结算先保存盲抽屏障，公开展示不解除未知牌限制。进度见counted-card-reveal-progress-20260909.md。",
-      "diffStat": "12 files changed, 313 insertions(+), 17 deletions(-)",
+      "summary": "发射前试验逐张展示手牌后冻结移动额度；根决策、自动结算与后继共用已知牌展示贪心；自动结算先保存盲抽屏障，公开展示不解除未知牌限制；跨结算批次的同一展示阶段继续回队列搜索。进度见counted-card-reveal-progress-20260909.md。",
+      "diffStat": "12 files changed, 331 insertions(+), 17 deletions(-)",
       "diffFiles": [
         {
           "file": "docs/ai-design.md",
-          "insertions": 5,
+          "insertions": 7,
           "deletions": 0
         },
         {
@@ -257,17 +262,17 @@ const REGISTRY = {
         },
         {
           "file": "randomizer/game/rule-composition.js",
-          "insertions": 35,
+          "insertions": 40,
           "deletions": 2
         },
         {
           "file": "reports/iteration/counted-card-reveal-design-20260909.md",
-          "insertions": 94,
+          "insertions": 100,
           "deletions": 0
         },
         {
           "file": "reports/iteration/counted-card-reveal-progress-20260909.md",
-          "insertions": 35,
+          "insertions": 40,
           "deletions": 0
         }
       ],
