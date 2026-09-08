@@ -1,0 +1,24 @@
+{
+  "scope": "已有指定路径轨迹；不是全搜索执行日志，不推算全盘重复率",
+  "method": "execute事件按执行序号去重，再仅删除exactNodeKey的剩余深度分量分组",
+  "reports": [
+    {
+      "source": "reports/iteration/blue50-no-borrow-queue-trace-20260908.json",
+      "codeHead": "954e51c0b76661ac149f18f53fb68fe5a7bd2a9e",
+      "fullSearchExecutedNodes": 4096,
+      "traceRows": 992,
+      "executionOriginRows": 12,
+      "observedPhysicalExecutions": 8,
+      "repeatedKeysWithoutDepth": []
+    },
+    {
+      "source": "reports/iteration/blue536-queue-trace-20260908.json",
+      "codeHead": "84ead13fd7104b61f8a0177f2b4b314539f2ac5d",
+      "fullSearchExecutedNodes": 4071,
+      "traceRows": 864,
+      "executionOriginRows": 15,
+      "observedPhysicalExecutions": 13,
+      "repeatedKeysWithoutDepth": []
+    }
+  ]
+}
