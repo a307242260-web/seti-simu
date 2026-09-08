@@ -313,3 +313,31 @@ session保存内容、journal、实体分配或RNG的执行返回证据，并覆
 本节只收紧候选设计，不是生产改动、规则bug结论或性能收益。重复物理执行的两次
 排查已经独立留档，其中全执行断点实验因30秒超时未通过；不再为缓存假设追加同根
 实验。借科技设计仍以原先列明的入口、消费、期限及计划义务为验收范围。
+
+## 执行返回通道验证（2026-09-08）
+
+候选81ee9ed6的正式runtime验证：
+`adhoc/verify-transient-effect-result-20260908.js`；检查点
+`reports/iteration/transient-effect-result-81ee9ed6-20260908.json`。
+两个无随机、无Decision的效果分别返回一个不属于状态或日志的探针字段：
+
+| 边界 | 探针字段是否保留 |
+| --- | --- |
+| 非末尾效果的runtime.advance返回result | 是 |
+| 末尾效果执行完、转入commit的advance返回 | 否 |
+| runtime.drain整段自动排空返回 | 否 |
+| 中间正式checkpoint | 否 |
+
+单步推进与自动排空均正式完成，提交状态均为count=2；验证通过。
+该探针不是真实卡牌或科技消费者，不充当消费者覆盖率与性能证据。
+
+源码同时确认：`rule-composition.advanceSession`调用drain后重新构造公开结果，
+非终局返回projection/journal，终局由finishIfTerminal返回日志和提交状态。
+因此仅给ability或EffectResult增加字段，不会自动使搜索得到完整消费证据。
+不得按宏节点最终返回的最后一个effect推断整段能力使用。
+
+接口方案需要同时解决能力到正式effect的来源保留、每个成功效果的瞬时采集、
+一次输入多效果的顺序汇总、末尾commit、条件选择和失败后的丢弃。采集不能进入
+checkpoint或journal，也不能影响正常玩家规则执行。当前尚未定义全部能力到effect
+的传递位置，所以不新增空的通用hook或无人消费的API。此处证明返回链的缺口，
+不是发现现有游戏规则bug；现有API本来没有承诺返回这些探针字段。

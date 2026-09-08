@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "scope": "正式runtime返回通道；不是游戏规则或AI效果验收",
+  "nonterminalAdvanceReturnsEvidence": true,
+  "terminalAdvanceReturnsEvidence": false,
+  "drainReturnsEvidence": false,
+  "checkpointContainsEvidence": false,
+  "committedState": {
+    "count": 2
+  }
+}
