@@ -250,6 +250,39 @@ allowSatelliteWithoutTech=true，不构成橙4需求。b37两个LAUNCH均ignoreR
 [直接效果参数](turing-consumer-options-81ee9ed6-20260908.json)，脚本
 `adhoc/inventory-turing-consumer-options-20260908.js`。正式模型构建前后卡表不变。
 
+## 接入与消费确认补充（2026-09-08）
+
+正式双发反例已完成：从既有第50步根增加b37派生fixture，分别不借、正式借橙1后
+打牌，两条正式事务都产生同样的两次launch事件（同rocketId及source=card），
+pieces、资源、手牌和RNG完全一致。借用后的公司额度/科技字段本来不同，未声称
+完整游戏状态相同。证据：
+[正式双发对照](turing-launch-consumption-81ee9ed6-20260908.json)，脚本
+`adhoc/verify-turing-launch-consumption-20260908.js`。不运行AI，不作为历史轨迹。
+
+因此消费确认不能复用现有probeSteps.executionEvents的“出现launch/orbit/land”
+布尔判定。该流还会丢弃move和扫描事件；launch事件自身没有ignoreRocketLimit、
+cardInstanceId或原效果参数。必须在正式消费者的执行时机取得原来源/options及改善
+证据，再与当前需求匹配；不能在宏节点完成后从最后的cardPlayContext反查整批来源。
+一物理节点可包含多次正式输入；每次输入的消费前后状态须分别推进，并对所有共用
+物理执行的origin复用同一事实，不为每个需求重执行一次。
+
+落实时必须同时覆盖以下具体入口，不能只在后继对象上添加字段：
+
+1. `enumerateSecondaryAgentRootTargets.add`当前只按planId合并，需区分同计划不同
+   borrowDemand的记录；普通无借用记录与借用准备记录不能互相覆盖。
+2. `rootTargetsByActionId`到`initialFrontierByKey`的origin初始化必须保留需求。
+   物理节点仍按envelope/action/depth合并，需求进入originKey，不改变物理键。
+3. 条件/普通两处selectSuccessors调用都传入需求；两处selectedRoutes字段映射
+   显式保留需求及其清空结果，不能把缺字段和已完成都当null处理。
+4. 目标完成可清routeTargetId，但不自动结束尚未消费的借用需求。消费及正式到期
+   分别判断；PASS奖励可能早于到期，已经证明不能提交PASS就清空。
+5. 逐输入计划捕获保留当时需求，compilePlanSteps独立添加借用额度/有效期/来源
+   依赖，不受目标分段提前截断；不把新需求前缀伪装成旧route目标。
+
+以上关闭了字段传播和“事件即消费”的接口歧义，不代表完整需求生成已实现。
+仍缺消费者执行时证据的统一生产读取方案与公开来源的完整提取，禁止用宽泛launch/
+scan事件、卡牌文案或最后状态作替代。此处不引入另一套规则执行器，不增加搜索预算。
+
 检查位置：players.js借用读取，industry/state.js与passives.js，
 effects/residual-domain-session.js公司枚举/执行，abilities/rocket.js与planet.js，
 actions/scan-effects.js全文，effects/science-session.js scanQueue/SCAN_ACTION_4及研究奖励，
