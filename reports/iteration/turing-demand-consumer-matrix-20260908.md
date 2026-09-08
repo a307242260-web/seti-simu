@@ -341,3 +341,29 @@ session保存内容、journal、实体分配或RNG的执行返回证据，并覆
 checkpoint或journal，也不能影响正常玩家规则执行。当前尚未定义全部能力到effect
 的传递位置，所以不新增空的通用hook或无人消费的API。此处证明返回链的缺口，
 不是发现现有游戏规则bug；现有API本来没有承诺返回这些探针字段。
+
+## 能力公共入口覆盖核对（2026-09-08）
+
+否决仅在`abilities/index.executeAbility`采集消费证据：其函数只是分发表，不能覆盖
+以下已存在的直接调用。消费事实应产生在正式原语的成功执行位置；读取合法集、
+未成功执行或只查询能力，不记为消费。来源仍由真实调用者保留，不读显示文案。
+
+| 调用者 | 实际入口 | 需要保留的区别 |
+| --- | --- | --- |
+| probe-turn-session | executeAbility发射/登陆/移动 | 主行动、免费发射和条件移动的原options |
+| cards/play-domain | executeAbility发射/移动及动态orbit/land | 卡牌实例、原效果、免上限/免费用/卫星权限 |
+| residual-domain-session | executeAbility移动 | 公司/残余流程的具体来源与移动额度 |
+| science-session紫4 | executeAbility(scanAction4) | 跳过不执行；内部再直接调用rocket.launchProbe/moveProbe |
+| production-composition快速交易 | 直接rocketAbility.moveProbe | 不经过executeAbility；外层目前只返回quick_move事件 |
+| initial-cards | 直接rocketAbility.launchProbe | 初始结算不是回合借用消费者，不凭调用名称计入需求 |
+| science-session研究橙1奖励 | executeAbility(launchProbe) | 此时已取得永久橙1，不能把发射上限改善归给先前借用 |
+| 公转推动 | 直接settleRocketsAfterSolarRotation→applyArrivalRewards | 不是moveProbe调用；只有pushed分支结算到达奖励 |
+
+最后一项补充了原橙2矩阵的遗漏：主动移动不是唯一可能的到达奖励入口。
+`rocket.settleRocketsAfterSolarRotation`在pushed分支调用同一个applyArrivalRewards，
+后者包含橙2进入小行星宣传。原语调用链已证实，但本次没有证明某个固定根恰好能
+被推到小行星，不将它计作实际遗漏收益。公转调用者包括turn-flow、tech能力、
+卡牌、science-session和production-kernel；不得把“未发生主动move”直接判成未消费。
+
+以上仍是消费端调用闭包核对，不能替代完整用途生成与可达性证明。生产尚未改动，
+也不因需要覆盖这些入口就直接新增全局监听器、第二份规则执行器或持久事件字段。
