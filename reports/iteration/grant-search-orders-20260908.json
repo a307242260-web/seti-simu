@@ -1,0 +1,26 @@
+{
+  "source": "/private/tmp/seti-grant-data-route-20260908/reports/iteration/grant-data-route-search-v4-20260908.json",
+  "sha256": "8a293908f70e799987b7b97f65d20eea0c9bfe86e706f7df43068293bf63a9be",
+  "productionCommit": "b30cc80f",
+  "scope": "仅拨款根保留叶；截至首次分析的动作前缀。相同非结束回合动作不证明完整状态等价。",
+  "search": {
+    "nodes": 3707,
+    "inputs": 4128,
+    "wallMs": 10644.280334,
+    "executionLimitReached": false,
+    "beamPrunedOriginCount": 4083,
+    "completeness": {
+      "status": "incomplete",
+      "reasons": [
+        "beam-budget",
+        "information-barrier",
+        "representative-choice"
+      ]
+    },
+    "failures": {}
+  },
+  "retainedLeaves": 653,
+  "distinctNonEndTurnPrefixes": 2,
+  "prefixesWithMultipleEndTurnOrders": 0,
+  "duplicateOrderExamples": []
+}

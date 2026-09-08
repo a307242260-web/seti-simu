@@ -1,0 +1,110 @@
+{
+  "sourceCommit": "b30cc80f",
+  "scope": "正式输入顺序对照；全状态差异如实列出，不将资源相同视作全状态等价",
+  "fill-before-end": {
+    "actions": [
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 15,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 15,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 6"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 16,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      }
+    ],
+    "analysisAvailable": true
+  },
+  "fill-after-end": {
+    "actions": [
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:b2f9b29d",
+        "actorId": "player-white",
+        "stateVersion": 15,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 17,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:29b5215c",
+        "actorId": "player-white",
+        "stateVersion": 17,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 6"
+      }
+    ],
+    "analysisAvailable": true
+  },
+  "stateDifferences": [],
+  "passed": true
+}
