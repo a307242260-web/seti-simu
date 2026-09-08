@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T06:26:21.491Z",
+  "builtAt": "2026-09-08T06:39:40.075Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "f520347d",
+  "headCommit": "61ff9979",
   "currentBaseline": "income-blind-boundary-20260908",
   "worktreeDirty": true,
   "bestOf": {
@@ -453,7 +453,7 @@
           "createdAt": "2026-09-08T06:20:02.123Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": "608步终局114/103/88/134，均109.75（基线123.75，下降14）；138721物理节点、171560输入、536633ms；战略截断28/96、控制截断9/79，规则失败0。前23步一致，第24步白方放数据改发射。仅收入屏障修复，尚未实施第五轮贪心；完整局降分归因未闭合，不冒充效果通过。生产目录相对aaaed8d0仅science-session收入修复及其测试有差异，历史中间提交不归属本版本。",
+          "note": "608步终局114/103/88/134，均109.75（基线123.75，下降14）；138721物理节点、171560输入、536633ms；战略截断28/96、控制截断9/79，规则失败0。前23步一致，第24步白方放数据改发射。补采获胜叶确认：发射95.5包含公司默认收入未扣除造成的a2预估22分，去除此错误即低于捕获的放数据92；既有计分bug待独立修复，尚不证明整局下降全部由此导致，详见step24-income-boundary-attribution-20260908.md。仅收入屏障修复，尚未实施第五轮贪心，不冒充效果通过。生产目录相对aaaed8d0仅science-session收入修复及其测试有差异，历史中间提交不归属本版本。",
           "scores": {
             "player-blue": 114,
             "player-green": 103,

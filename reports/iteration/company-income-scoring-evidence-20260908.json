@@ -1,0 +1,941 @@
+{
+  "rootCase": {
+    "company": {
+      "id": "industry:深空探测.png"
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 2,
+      "handSize": 2,
+      "publicity": 0
+    },
+    "catalogBase": {
+      "credits": 2,
+      "energy": 2,
+      "handSize": 1,
+      "additionalPublicScan": 1
+    },
+    "currentResolvedBase": {},
+    "a2Current": 2,
+    "a2WithExplicitCatalogBase": 0
+  },
+  "records": [
+    {
+      "file": "7dfcf27e.aaaed8d0.full.json",
+      "seats": [
+        {
+          "seat": "player-blue",
+          "original": {
+            "playerId": "player-blue",
+            "baseScore": 63,
+            "tileScore": 22,
+            "cardScore": 2,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 87,
+            "totalScore": 87,
+            "tileScoresById": {
+              "a": 16,
+              "b": 0,
+              "c": 6,
+              "d": 0
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 2,
+                "baseValue": 2,
+                "multiplier": 8,
+                "score": 16
+              },
+              {
+                "tileId": "c",
+                "variant": 1,
+                "formulaId": "c1",
+                "slotIndex": 2,
+                "baseValue": 2,
+                "multiplier": 3,
+                "score": 6
+              }
+            ],
+            "cards": [
+              {
+                "cardId": "b_33.webp",
+                "rule": {
+                  "kind": "techCount",
+                  "techType": "blue",
+                  "scorePer": 2
+                },
+                "score": 2
+              }
+            ],
+            "jiuzheCards": []
+          },
+          "withExplicitCatalogBase": {
+            "playerId": "player-blue",
+            "baseScore": 63,
+            "tileScore": 14,
+            "cardScore": 2,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 79,
+            "totalScore": 79,
+            "tileScoresById": {
+              "a": 8,
+              "b": 0,
+              "c": 6,
+              "d": 0
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 2,
+                "baseValue": 1,
+                "multiplier": 8,
+                "score": 8
+              },
+              {
+                "tileId": "c",
+                "variant": 1,
+                "formulaId": "c1",
+                "slotIndex": 2,
+                "baseValue": 2,
+                "multiplier": 3,
+                "score": 6
+              }
+            ],
+            "cards": [
+              {
+                "cardId": "b_33.webp",
+                "rule": {
+                  "kind": "techCount",
+                  "techType": "blue",
+                  "scorePer": 2
+                },
+                "score": 2
+              }
+            ],
+            "jiuzheCards": []
+          }
+        },
+        {
+          "seat": "player-green",
+          "original": {
+            "playerId": "player-green",
+            "baseScore": 95,
+            "tileScore": 48,
+            "cardScore": 4,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 147,
+            "totalScore": 147,
+            "tileScoresById": {
+              "a": 22,
+              "b": 16,
+              "c": 0,
+              "d": 10
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 1,
+                "baseValue": 2,
+                "multiplier": 11,
+                "score": 22
+              },
+              {
+                "tileId": "b",
+                "variant": 1,
+                "formulaId": "b1",
+                "slotIndex": 1,
+                "baseValue": 2,
+                "multiplier": 8,
+                "score": 16
+              },
+              {
+                "tileId": "d",
+                "variant": 2,
+                "formulaId": "d2",
+                "slotIndex": 2,
+                "baseValue": 2,
+                "multiplier": 5,
+                "score": 10
+              }
+            ],
+            "cards": [
+              {
+                "cardId": "b_115.webp",
+                "rule": {
+                  "kind": "unmarkedFinalRightmost"
+                },
+                "score": 4
+              }
+            ],
+            "jiuzheCards": []
+          },
+          "withExplicitCatalogBase": {
+            "playerId": "player-green",
+            "baseScore": 95,
+            "tileScore": 37,
+            "cardScore": 4,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 136,
+            "totalScore": 136,
+            "tileScoresById": {
+              "a": 11,
+              "b": 16,
+              "c": 0,
+              "d": 10
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 1,
+                "baseValue": 1,
+                "multiplier": 11,
+                "score": 11
+              },
+              {
+                "tileId": "b",
+                "variant": 1,
+                "formulaId": "b1",
+                "slotIndex": 1,
+                "baseValue": 2,
+                "multiplier": 8,
+                "score": 16
+              },
+              {
+                "tileId": "d",
+                "variant": 2,
+                "formulaId": "d2",
+                "slotIndex": 2,
+                "baseValue": 2,
+                "multiplier": 5,
+                "score": 10
+              }
+            ],
+            "cards": [
+              {
+                "cardId": "b_115.webp",
+                "rule": {
+                  "kind": "unmarkedFinalRightmost"
+                },
+                "score": 4
+              }
+            ],
+            "jiuzheCards": []
+          }
+        },
+        {
+          "seat": "player-brown",
+          "original": {
+            "playerId": "player-brown",
+            "baseScore": 85,
+            "tileScore": 36,
+            "cardScore": 0,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 121,
+            "totalScore": 121,
+            "tileScoresById": {
+              "a": 15,
+              "b": 12,
+              "c": 0,
+              "d": 9
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 3,
+                "baseValue": 3,
+                "multiplier": 5,
+                "score": 15
+              },
+              {
+                "tileId": "b",
+                "variant": 1,
+                "formulaId": "b1",
+                "slotIndex": 2,
+                "baseValue": 2,
+                "multiplier": 6,
+                "score": 12
+              },
+              {
+                "tileId": "d",
+                "variant": 2,
+                "formulaId": "d2",
+                "slotIndex": 3,
+                "baseValue": 3,
+                "multiplier": 3,
+                "score": 9
+              }
+            ],
+            "cards": [
+              {
+                "cardId": "dlc_8.png",
+                "rule": {
+                  "kind": "remainingResource",
+                  "resource": "availableData",
+                  "scorePer": 3
+                },
+                "score": 0
+              }
+            ],
+            "jiuzheCards": []
+          },
+          "withExplicitCatalogBase": {
+            "playerId": "player-brown",
+            "baseScore": 85,
+            "tileScore": 31,
+            "cardScore": 0,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 116,
+            "totalScore": 116,
+            "tileScoresById": {
+              "a": 10,
+              "b": 12,
+              "c": 0,
+              "d": 9
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 3,
+                "baseValue": 2,
+                "multiplier": 5,
+                "score": 10
+              },
+              {
+                "tileId": "b",
+                "variant": 1,
+                "formulaId": "b1",
+                "slotIndex": 2,
+                "baseValue": 2,
+                "multiplier": 6,
+                "score": 12
+              },
+              {
+                "tileId": "d",
+                "variant": 2,
+                "formulaId": "d2",
+                "slotIndex": 3,
+                "baseValue": 3,
+                "multiplier": 3,
+                "score": 9
+              }
+            ],
+            "cards": [
+              {
+                "cardId": "dlc_8.png",
+                "rule": {
+                  "kind": "remainingResource",
+                  "resource": "availableData",
+                  "scorePer": 3
+                },
+                "score": 0
+              }
+            ],
+            "jiuzheCards": []
+          }
+        },
+        {
+          "seat": "player-white",
+          "original": {
+            "playerId": "player-white",
+            "baseScore": 103,
+            "tileScore": 37,
+            "cardScore": 0,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 140,
+            "totalScore": 140,
+            "tileScoresById": {
+              "a": 15,
+              "b": 0,
+              "c": 8,
+              "d": 14
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 3,
+                "baseValue": 3,
+                "multiplier": 5,
+                "score": 15
+              },
+              {
+                "tileId": "c",
+                "variant": 1,
+                "formulaId": "c1",
+                "slotIndex": 1,
+                "baseValue": 2,
+                "multiplier": 4,
+                "score": 8
+              },
+              {
+                "tileId": "d",
+                "variant": 2,
+                "formulaId": "d2",
+                "slotIndex": 1,
+                "baseValue": 2,
+                "multiplier": 7,
+                "score": 14
+              }
+            ],
+            "cards": [],
+            "jiuzheCards": []
+          },
+          "withExplicitCatalogBase": {
+            "playerId": "player-white",
+            "baseScore": 103,
+            "tileScore": 27,
+            "cardScore": 0,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 130,
+            "totalScore": 130,
+            "tileScoresById": {
+              "a": 5,
+              "b": 0,
+              "c": 8,
+              "d": 14
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 3,
+                "baseValue": 1,
+                "multiplier": 5,
+                "score": 5
+              },
+              {
+                "tileId": "c",
+                "variant": 1,
+                "formulaId": "c1",
+                "slotIndex": 1,
+                "baseValue": 2,
+                "multiplier": 4,
+                "score": 8
+              },
+              {
+                "tileId": "d",
+                "variant": 2,
+                "formulaId": "d2",
+                "slotIndex": 1,
+                "baseValue": 2,
+                "multiplier": 7,
+                "score": 14
+              }
+            ],
+            "cards": [],
+            "jiuzheCards": []
+          }
+        }
+      ],
+      "originalMean": 123.75,
+      "rescoredMean": 115.25
+    },
+    {
+      "file": "197640a3.f520347d.full.json",
+      "seats": [
+        {
+          "seat": "player-blue",
+          "original": {
+            "playerId": "player-blue",
+            "baseScore": 70,
+            "tileScore": 32,
+            "cardScore": 12,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 114,
+            "totalScore": 114,
+            "tileScoresById": {
+              "a": 5,
+              "b": 6,
+              "c": 0,
+              "d": 21
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 3,
+                "baseValue": 1,
+                "multiplier": 5,
+                "score": 5
+              },
+              {
+                "tileId": "b",
+                "variant": 1,
+                "formulaId": "b1",
+                "slotIndex": 2,
+                "baseValue": 1,
+                "multiplier": 6,
+                "score": 6
+              },
+              {
+                "tileId": "d",
+                "variant": 2,
+                "formulaId": "d2",
+                "slotIndex": 1,
+                "baseValue": 3,
+                "multiplier": 7,
+                "score": 21
+              }
+            ],
+            "cards": [
+              {
+                "cardId": "b_33.webp",
+                "rule": {
+                  "kind": "techCount",
+                  "techType": "blue",
+                  "scorePer": 2
+                },
+                "score": 6
+              },
+              {
+                "cardId": "dlc_31.png",
+                "rule": {
+                  "kind": "planetLandingPairs",
+                  "count": 2,
+                  "scorePer": 6
+                },
+                "score": 6
+              }
+            ],
+            "jiuzheCards": []
+          },
+          "withExplicitCatalogBase": {
+            "playerId": "player-blue",
+            "baseScore": 70,
+            "tileScore": 27,
+            "cardScore": 12,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 109,
+            "totalScore": 109,
+            "tileScoresById": {
+              "a": 0,
+              "b": 6,
+              "c": 0,
+              "d": 21
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 3,
+                "baseValue": 0,
+                "multiplier": 5,
+                "score": 0
+              },
+              {
+                "tileId": "b",
+                "variant": 1,
+                "formulaId": "b1",
+                "slotIndex": 2,
+                "baseValue": 1,
+                "multiplier": 6,
+                "score": 6
+              },
+              {
+                "tileId": "d",
+                "variant": 2,
+                "formulaId": "d2",
+                "slotIndex": 1,
+                "baseValue": 3,
+                "multiplier": 7,
+                "score": 21
+              }
+            ],
+            "cards": [
+              {
+                "cardId": "b_33.webp",
+                "rule": {
+                  "kind": "techCount",
+                  "techType": "blue",
+                  "scorePer": 2
+                },
+                "score": 6
+              },
+              {
+                "cardId": "dlc_31.png",
+                "rule": {
+                  "kind": "planetLandingPairs",
+                  "count": 2,
+                  "scorePer": 6
+                },
+                "score": 6
+              }
+            ],
+            "jiuzheCards": []
+          }
+        },
+        {
+          "seat": "player-green",
+          "original": {
+            "playerId": "player-green",
+            "baseScore": 65,
+            "tileScore": 15,
+            "cardScore": 23,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 103,
+            "totalScore": 103,
+            "tileScoresById": {
+              "a": 15,
+              "b": 0,
+              "c": 0,
+              "d": 0
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 3,
+                "baseValue": 3,
+                "multiplier": 5,
+                "score": 15
+              },
+              {
+                "tileId": "c",
+                "variant": 1,
+                "formulaId": "c1",
+                "slotIndex": 1,
+                "baseValue": 0,
+                "multiplier": 4,
+                "score": 0
+              }
+            ],
+            "cards": [
+              {
+                "cardId": "b_115.webp",
+                "rule": {
+                  "kind": "unmarkedFinalRightmost"
+                },
+                "score": 14
+              },
+              {
+                "cardId": "dlc_8.png",
+                "rule": {
+                  "kind": "remainingResource",
+                  "resource": "availableData",
+                  "scorePer": 3
+                },
+                "score": 9
+              }
+            ],
+            "jiuzheCards": []
+          },
+          "withExplicitCatalogBase": {
+            "playerId": "player-green",
+            "baseScore": 65,
+            "tileScore": 10,
+            "cardScore": 23,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 98,
+            "totalScore": 98,
+            "tileScoresById": {
+              "a": 10,
+              "b": 0,
+              "c": 0,
+              "d": 0
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 3,
+                "baseValue": 2,
+                "multiplier": 5,
+                "score": 10
+              },
+              {
+                "tileId": "c",
+                "variant": 1,
+                "formulaId": "c1",
+                "slotIndex": 1,
+                "baseValue": 0,
+                "multiplier": 4,
+                "score": 0
+              }
+            ],
+            "cards": [
+              {
+                "cardId": "b_115.webp",
+                "rule": {
+                  "kind": "unmarkedFinalRightmost"
+                },
+                "score": 14
+              },
+              {
+                "cardId": "dlc_8.png",
+                "rule": {
+                  "kind": "remainingResource",
+                  "resource": "availableData",
+                  "scorePer": 3
+                },
+                "score": 9
+              }
+            ],
+            "jiuzheCards": []
+          }
+        },
+        {
+          "seat": "player-brown",
+          "original": {
+            "playerId": "player-brown",
+            "baseScore": 62,
+            "tileScore": 26,
+            "cardScore": 0,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 88,
+            "totalScore": 88,
+            "tileScoresById": {
+              "a": 16,
+              "b": 0,
+              "c": 0,
+              "d": 10
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 2,
+                "baseValue": 2,
+                "multiplier": 8,
+                "score": 16
+              },
+              {
+                "tileId": "d",
+                "variant": 2,
+                "formulaId": "d2",
+                "slotIndex": 2,
+                "baseValue": 2,
+                "multiplier": 5,
+                "score": 10
+              }
+            ],
+            "cards": [],
+            "jiuzheCards": []
+          },
+          "withExplicitCatalogBase": {
+            "playerId": "player-brown",
+            "baseScore": 62,
+            "tileScore": 18,
+            "cardScore": 0,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 80,
+            "totalScore": 80,
+            "tileScoresById": {
+              "a": 8,
+              "b": 0,
+              "c": 0,
+              "d": 10
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 2,
+                "baseValue": 1,
+                "multiplier": 8,
+                "score": 8
+              },
+              {
+                "tileId": "d",
+                "variant": 2,
+                "formulaId": "d2",
+                "slotIndex": 2,
+                "baseValue": 2,
+                "multiplier": 5,
+                "score": 10
+              }
+            ],
+            "cards": [],
+            "jiuzheCards": []
+          }
+        },
+        {
+          "seat": "player-white",
+          "original": {
+            "playerId": "player-white",
+            "baseScore": 90,
+            "tileScore": 44,
+            "cardScore": 0,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 134,
+            "totalScore": 134,
+            "tileScoresById": {
+              "a": 22,
+              "b": 16,
+              "c": 0,
+              "d": 6
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 1,
+                "baseValue": 2,
+                "multiplier": 11,
+                "score": 22
+              },
+              {
+                "tileId": "b",
+                "variant": 1,
+                "formulaId": "b1",
+                "slotIndex": 1,
+                "baseValue": 2,
+                "multiplier": 8,
+                "score": 16
+              },
+              {
+                "tileId": "d",
+                "variant": 2,
+                "formulaId": "d2",
+                "slotIndex": 3,
+                "baseValue": 2,
+                "multiplier": 3,
+                "score": 6
+              }
+            ],
+            "cards": [],
+            "jiuzheCards": []
+          },
+          "withExplicitCatalogBase": {
+            "playerId": "player-white",
+            "baseScore": 90,
+            "tileScore": 33,
+            "cardScore": 0,
+            "jiuzheCardScore": 0,
+            "runezuSymbolScore": 0,
+            "jiuzheThreat": 0,
+            "jiuzhePenaltyApplied": false,
+            "jiuzhePenaltyScore": 0,
+            "prePenaltyTotalScore": 123,
+            "totalScore": 123,
+            "tileScoresById": {
+              "a": 11,
+              "b": 16,
+              "c": 0,
+              "d": 6
+            },
+            "tiles": [
+              {
+                "tileId": "a",
+                "variant": 2,
+                "formulaId": "a2",
+                "slotIndex": 1,
+                "baseValue": 1,
+                "multiplier": 11,
+                "score": 11
+              },
+              {
+                "tileId": "b",
+                "variant": 1,
+                "formulaId": "b1",
+                "slotIndex": 1,
+                "baseValue": 2,
+                "multiplier": 8,
+                "score": 16
+              },
+              {
+                "tileId": "d",
+                "variant": 2,
+                "formulaId": "d2",
+                "slotIndex": 3,
+                "baseValue": 2,
+                "multiplier": 3,
+                "score": 6
+              }
+            ],
+            "cards": [],
+            "jiuzheCards": []
+          }
+        }
+      ],
+      "originalMean": 109.75,
+      "rescoredMean": 102.5
+    }
+  ],
+  "scope": "反事实实验假设：仅通过已有显式resolver传入正式公司目录基数；同轨迹重计分，不是修复后AI成绩，不覆盖原记录。",
+  "finding": "默认计分resolver没有读取initialSelection.industry的正式目录，真实玩家没有冗余baseIncome字段，因此公司默认收入被计入a1/a2；影响待标记预估与正式终局。",
+  "rankingImplication": "第24步捕获的发射叶95.5含错误待标记22分，去除此项为73.5；捕获的放数据叶92未跨25分阈值、不含此项。仅比较两条已捕获叶，尚未运行修复后重新搜索。"
+}
