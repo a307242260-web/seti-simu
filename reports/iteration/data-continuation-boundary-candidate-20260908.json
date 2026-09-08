@@ -1,0 +1,3728 @@
+{
+  "scope": "完整候选方案未提交前的连续起手边界验证；断点运行不作为冷性能成绩",
+  "samples": [],
+  "errors": [],
+  "diagnostics": {
+    "successfulInputSubmissionCount": 5716,
+    "attemptedNodeCountByFamily": {
+      "analyze": 370,
+      "card_corner": 79,
+      "choose_card": 706,
+      "choose_payment": 83,
+      "choose_target": 941,
+      "end_turn": 601,
+      "industry": 2,
+      "land": 32,
+      "launch": 25,
+      "move": 93,
+      "orbit": 22,
+      "pass": 57,
+      "place_data": 598,
+      "play_card": 52,
+      "quick_trade": 223,
+      "research_tech": 58,
+      "scan": 154
+    },
+    "failedNodeCountByFamily": {},
+    "failedNodeCountByCode": {},
+    "candidateCount": 7,
+    "executedNodeCount": 4096,
+    "expandedSearchNodeCount": 0,
+    "maxNodes": 128,
+    "maxExecutionNodes": 4096,
+    "maxFrontierNodes": 256,
+    "maxMilliseconds": 30000,
+    "executionLimitReached": true,
+    "remainingFrontierNodeCount": 256,
+    "remainingFrontierOriginCountByGoalDepth": {
+      "1": 239,
+      "2": 306,
+      "3": 61,
+      "4": 6
+    },
+    "frontierOriginCountByFamily": {
+      "quick_trade": 174,
+      "end_turn": 155,
+      "choose_card": 101,
+      "card_corner": 100,
+      "place_data": 58,
+      "industry": 9,
+      "choose_target": 8,
+      "research_tech": 3,
+      "move": 1,
+      "pass": 1,
+      "play_card": 1,
+      "scan": 1
+    },
+    "frontierNodeBreakdown": [
+      {
+        "action": "choose_card:b_2.webp",
+        "originCount": 2,
+        "routeTargetId": "tech:gain:blue2",
+        "routePlanId": "tech:blue2:2",
+        "proxyDepth": 1,
+        "chainDepth": 13,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:dlc_21.png",
+        "originCount": 2,
+        "routeTargetId": "tech:gain:blue2",
+        "routePlanId": "tech:blue2:2",
+        "proxyDepth": 1,
+        "chainDepth": 13,
+        "isConditional": true
+      },
+      {
+        "action": "choose_target:研究 blue1（蓝槽 2）",
+        "originCount": 2,
+        "routeTargetId": "tech:gain:blue1",
+        "routePlanId": "tech:blue1:2",
+        "proxyDepth": 1,
+        "chainDepth": 12,
+        "isConditional": true
+      },
+      {
+        "action": "choose_target:研究 orange3",
+        "originCount": 2,
+        "routeTargetId": "tech:gain:orange3",
+        "routePlanId": "tech:orange3:",
+        "proxyDepth": 1,
+        "chainDepth": 12,
+        "isConditional": true
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:3,1,1,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:3,1,1,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:3,1,1,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 4,
+        "routeTargetId": "income:gain:3,2,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 4,
+        "routeTargetId": "income:gain:3,1,1,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 4,
+        "routeTargetId": "income:gain:3,1,1,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 4,
+        "routeTargetId": "income:gain:3,2,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 3,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:3,2,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 3,
+        "routeTargetId": "income:gain:3,2,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 4,
+        "routeTargetId": "income:gain:3,1,1,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 4,
+        "routeTargetId": "income:gain:3,1,1,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 4,
+        "routeTargetId": "income:gain:3,1,1,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 10,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 4,
+        "routeTargetId": "income:gain:3,2,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 4,
+        "routeTargetId": "income:gain:3,1,1,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 4,
+        "routeTargetId": "income:gain:3,1,1,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 4,
+        "routeTargetId": "income:gain:3,2,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 4,
+        "routeTargetId": "income:gain:3,1,1,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 9,
+        "isConditional": false
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": true
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 11,
+        "isConditional": false
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 6,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 6,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 3,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 15,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 2,
+        "routeTargetId": "income:gain:3,1,1,0,2,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 13,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 2,
+        "routeTargetId": "income:gain:3,2,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 14,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 19,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 19,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 18,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 2,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 18,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 17,
+        "isConditional": true
+      },
+      {
+        "action": "choose_card:盲抽 1 张牌",
+        "originCount": 4,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 16,
+        "isConditional": true
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 1,
+        "routeTargetId": "income:gain:3,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 4,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 1,
+        "routeTargetId": "income:gain:3,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 4,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 1,
+        "routeTargetId": "income:gain:3,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 4,
+        "isConditional": false
+      },
+      {
+        "action": "move:移动探测器 3 向外",
+        "originCount": 1,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:rocket:3:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2信用点 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 6,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_109.webp：弃牌角标",
+        "originCount": 1,
+        "routeTargetId": "data:analyze",
+        "routePlanId": "data:corner:card-9-0",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "choose_target:研究 blue1（蓝槽 1）",
+        "originCount": 1,
+        "routeTargetId": "tech:gain:blue1",
+        "routePlanId": "tech:blue1:1",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": true
+      },
+      {
+        "action": "choose_target:研究 orange3",
+        "originCount": 1,
+        "routeTargetId": "tech:gain:orange3",
+        "routePlanId": "tech:orange3:",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": true
+      },
+      {
+        "action": "choose_target:研究 blue1（蓝槽 1）",
+        "originCount": 1,
+        "routeTargetId": "tech:gain:blue1",
+        "routePlanId": "tech:blue1:1",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": true
+      },
+      {
+        "action": "scan:扫描",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 4,
+        "isConditional": false
+      },
+      {
+        "action": "choose_target:无效 orange3",
+        "originCount": 1,
+        "routeTargetId": "income:gain:3,1,1,0,1,0",
+        "routePlanId": "income:industry:helios_remove_tech_income",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": true
+      },
+      {
+        "action": "industry:赫利昂联合体 1x 行动",
+        "originCount": 1,
+        "routeTargetId": "income:gain:3,1,1,0,1,0",
+        "routePlanId": "income:industry:helios_remove_tech_income",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "pass:PASS",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 2,
+        "routeTargetId": "income:gain:3,1,1,0,1,0",
+        "routePlanId": "income:data:computer-slot-4",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "play_card:b_139.webp",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 2,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:launch:land:mars:planet:",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "research_tech:研究科技",
+        "originCount": 3,
+        "routeTargetId": "tech:gain:blue1",
+        "routePlanId": "tech:blue1:1",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 1,
+        "routeTargetId": "data:analyze",
+        "routePlanId": "data:analyze",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 1,
+        "routeTargetId": "data:analyze",
+        "routePlanId": "data:analyze",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 1,
+        "routeTargetId": "data:analyze",
+        "routePlanId": "data:analyze",
+        "proxyDepth": 1,
+        "chainDepth": 3,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 6,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 6,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 6,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 4,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 4,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 1,
+        "chainDepth": 4,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 1,
+        "routeTargetId": "data:analyze",
+        "routePlanId": "data:analyze",
+        "proxyDepth": 1,
+        "chainDepth": 4,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 1,
+        "routeTargetId": "data:analyze",
+        "routePlanId": "data:analyze",
+        "proxyDepth": 1,
+        "chainDepth": 4,
+        "isConditional": false
+      },
+      {
+        "action": "place_data:放置数据",
+        "originCount": 1,
+        "routeTargetId": "data:analyze",
+        "routePlanId": "data:analyze",
+        "proxyDepth": 1,
+        "chainDepth": 4,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_12.webp：弃牌角标",
+        "originCount": 3,
+        "routeTargetId": "tech:gain:blue1",
+        "routePlanId": "tech:blue1:2",
+        "proxyDepth": 1,
+        "chainDepth": 6,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1信用点",
+        "originCount": 1,
+        "routeTargetId": "sector:win:sector-3-a:1",
+        "routePlanId": "sector:standard-scan:sector-3-a",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_12.webp：弃牌角标",
+        "originCount": 3,
+        "routeTargetId": "tech:gain:blue2",
+        "routePlanId": "tech:blue2:2",
+        "proxyDepth": 2,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:launch:land:mars:planet:",
+        "proxyDepth": 2,
+        "chainDepth": 7,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:launch:land:mars:planet:",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_2.webp：弃牌角标",
+        "originCount": 3,
+        "routeTargetId": "tech:gain:blue1",
+        "routePlanId": "tech:blue1:2",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_12.webp：弃牌角标",
+        "originCount": 3,
+        "routeTargetId": "tech:gain:blue1",
+        "routePlanId": "tech:blue1:2",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 1,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:launch:land:mars:planet:",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "quick_trade:2张牌 → 1能量",
+        "originCount": 2,
+        "routeTargetId": "land:mars:planet:",
+        "routePlanId": "probe:launch:land:mars:planet:",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_12.webp：弃牌角标",
+        "originCount": 3,
+        "routeTargetId": "tech:gain:blue1",
+        "routePlanId": "tech:blue1:2",
+        "proxyDepth": 2,
+        "chainDepth": 8,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_2.webp：弃牌角标",
+        "originCount": 6,
+        "routeTargetId": "tech:gain:orange2",
+        "routePlanId": "tech:orange2:",
+        "proxyDepth": 2,
+        "chainDepth": 17,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_2.webp：弃牌角标",
+        "originCount": 6,
+        "routeTargetId": "tech:gain:orange2",
+        "routePlanId": "tech:orange2:",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_2.webp：弃牌角标",
+        "originCount": 6,
+        "routeTargetId": "tech:gain:orange2",
+        "routePlanId": "tech:orange2:",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "industry:赫利昂联合体 1x 行动",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:industry:helios_remove_tech_income",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "industry:赫利昂联合体 1x 行动",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:industry:helios_remove_tech_income",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "industry:赫利昂联合体 1x 行动",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:industry:helios_remove_tech_income",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "industry:赫利昂联合体 1x 行动",
+        "originCount": 2,
+        "routeTargetId": "income:gain:4,1,1,0,1,0",
+        "routePlanId": "income:industry:helios_remove_tech_income",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_2.webp：弃牌角标",
+        "originCount": 6,
+        "routeTargetId": "tech:gain:orange2",
+        "routePlanId": "tech:orange2:",
+        "proxyDepth": 2,
+        "chainDepth": 13,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 13,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 13,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_2.webp：弃牌角标",
+        "originCount": 6,
+        "routeTargetId": "tech:gain:orange2",
+        "routePlanId": "tech:orange2:",
+        "proxyDepth": 2,
+        "chainDepth": 12,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_2.webp：弃牌角标",
+        "originCount": 6,
+        "routeTargetId": "tech:gain:orange2",
+        "routePlanId": "tech:orange2:",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_2.webp：弃牌角标",
+        "originCount": 6,
+        "routeTargetId": "tech:gain:orange2",
+        "routePlanId": "tech:orange2:",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_2.webp：弃牌角标",
+        "originCount": 6,
+        "routeTargetId": "tech:gain:orange2",
+        "routePlanId": "tech:orange2:",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_2.webp：弃牌角标",
+        "originCount": 6,
+        "routeTargetId": "tech:gain:orange2",
+        "routePlanId": "tech:orange2:",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_2.webp：弃牌角标",
+        "originCount": 9,
+        "routeTargetId": "tech:gain:orange2",
+        "routePlanId": "tech:orange2:",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_12.webp：弃牌角标",
+        "originCount": 6,
+        "routeTargetId": "tech:gain:orange2",
+        "routePlanId": "tech:orange2:",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_12.webp：弃牌角标",
+        "originCount": 9,
+        "routeTargetId": "tech:gain:orange2",
+        "routePlanId": "tech:orange2:",
+        "proxyDepth": 2,
+        "chainDepth": 15,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 18,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 16,
+        "isConditional": false
+      },
+      {
+        "action": "end_turn:结束回合",
+        "originCount": 2,
+        "routeTargetId": null,
+        "routePlanId": null,
+        "proxyDepth": 2,
+        "chainDepth": 16,
+        "isConditional": false
+      },
+      {
+        "action": "card_corner:b_12.webp：弃牌角标",
+        "originCount": 6,
+        "routeTargetId": "tech:gain:blue1",
+        "routePlanId": "tech:blue1:3",
+        "proxyDepth": 2,
+        "chainDepth": 14,
+        "isConditional": false
+      }
+    ],
+    "maxDepth": 15,
+    "maxProxyDepth": 15,
+    "secondaryAgentSearch": true,
+    "rootTargetCount": 15,
+    "rolloutVersion": "secondary-agent-rollout-v21",
+    "maxFrontierPerRoot": 1,
+    "maxFrontierSize": 271,
+    "maxRetainedFrontierSize": 256,
+    "maxFrontierOriginCount": 655,
+    "transpositionHitCount": 8391,
+    "sharedPhysicalExecutionOriginCount": 4639,
+    "targetEquivalentChoicePrunedCount": 934,
+    "unreachableRouteOriginCount": 434,
+    "completedGoalTransitionCount": 1457,
+    "maxCompletedGoalDepth": 4,
+    "opponentExecutedNodeCount": 0,
+    "focalPlanningTurnAdvanceCount": 601,
+    "focalPassBoundaryLeafCount": 113,
+    "hiddenInformationFilteredActionCount": 1014,
+    "hiddenInformationBarrierCountByCode": {
+      "hidden_card_reveal": 8,
+      "tech_bonus_reveal": 90
+    },
+    "executedNodeCountByFamily": {
+      "analyze": 370,
+      "card_corner": 79,
+      "choose_card": 706,
+      "choose_payment": 83,
+      "choose_target": 941,
+      "end_turn": 601,
+      "industry": 2,
+      "land": 32,
+      "launch": 25,
+      "move": 93,
+      "orbit": 22,
+      "pass": 57,
+      "place_data": 598,
+      "play_card": 52,
+      "quick_trade": 223,
+      "research_tech": 58,
+      "scan": 154
+    },
+    "executedNodeCountByDecisionKind": {
+      "analyze:main": 370,
+      "card_corner:quick": 79,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_income": 109,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 388,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 154,
+      "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 55,
+      "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 83,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 8,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 402,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 64,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research": 160,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech": 153,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 154,
+      "end_turn:turn_control": 601,
+      "industry:quick": 2,
+      "land:main": 32,
+      "launch:main": 25,
+      "move:quick": 93,
+      "orbit:main": 22,
+      "pass:main": 57,
+      "place_data:quick": 598,
+      "play_card:main": 52,
+      "quick_trade:quick": 223,
+      "research_tech:main": 58,
+      "scan:main": 154
+    },
+    "executedNodeCountByActionSummary": {
+      "end_turn:结束回合": 601,
+      "place_data:放置数据": 598,
+      "analyze:分析": 370,
+      "choose_target:外星人 1 蓝色痕迹": 370,
+      "scan:扫描": 154,
+      "choose_card:dlc_38.png → 开普勒22": 142,
+      "choose_target:扫描 室女座61": 131,
+      "choose_card:dlc_21.png": 129,
+      "choose_card:dlc_38.png": 126,
+      "choose_card:b_2.webp": 121,
+      "quick_trade:3宣传 → 精选1张牌": 85,
+      "quick_trade:2张牌 → 1能量": 76,
+      "research_tech:研究科技": 58,
+      "pass:PASS": 57,
+      "quick_trade:2张牌 → 1信用点": 57,
+      "choose_card:盲抽 1 张牌": 55,
+      "choose_target:研究 orange3": 54,
+      "choose_target:研究 orange2": 45,
+      "choose_target:研究 purple4": 43,
+      "card_corner:b_109.webp：弃牌角标": 40,
+      "choose_payment:弃 1 张移动牌": 39,
+      "choose_payment:消耗 1 能量": 39,
+      "move:移动探测器 3 逆时针": 33,
+      "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄色痕迹": 32,
+      "land:登陆": 32,
+      "move:移动探测器 3 向外": 31,
+      "move:移动探测器 3 顺时针": 29,
+      "choose_card:收入 b_139.webp": 28,
+      "choose_target:第一排放置位 6": 28,
+      "choose_card:收入 b_12.webp": 25,
+      "launch:发射": 25,
+      "choose_target:第一排放置位 2": 24,
+      "play_card:b_139.webp": 23,
+      "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（R3，1信用点 + 1能量）": 22,
+      "choose_card:收入 b_109.webp": 20,
+      "choose_card:收入 b_65.webp": 19,
+      "choose_target:研究 blue2（蓝槽 1）": 19,
+      "choose_target:研究 blue1（蓝槽 1）": 17,
+      "card_corner:dlc_21.png：弃牌角标": 16,
+      "card_corner:dlc_38.png：弃牌角标": 16,
+      "choose_target:扫描 巴纳德": 14,
+      "choose_card:b_2.webp → 南河三": 12,
+      "choose_card:dlc_37.png": 12,
+      "choose_target:研究 blue2（蓝槽 2）": 12,
+      "choose_target:blue1 下方": 11,
+      "choose_target:研究 blue1（蓝槽 2）": 11,
+      "play_card:b_65.webp": 11,
+      "choose_target:研究 blue3（蓝槽 2）": 10,
+      "choose_target:研究 blue3（蓝槽 3）": 10,
+      "choose_target:研究 blue3（蓝槽 4）": 10,
+      "choose_target:研究 blue4（蓝槽 2）": 10,
+      "choose_target:研究 blue4（蓝槽 3）": 10,
+      "choose_target:研究 blue4（蓝槽 4）": 10,
+      "choose_target:扫描 绘架座β": 9,
+      "choose_target:研究 blue1（蓝槽 3）": 9,
+      "choose_target:研究 blue1（蓝槽 4）": 9,
+      "choose_target:研究 blue2（蓝槽 3）": 9,
+      "choose_target:研究 blue2（蓝槽 4）": 9,
+      "choose_target:研究 blue3（蓝槽 1）": 8,
+      "choose_target:研究 blue4（蓝槽 1）": 8,
+      "choose_card:收入 dlc_38.png": 7,
+      "play_card:dlc_38.png": 7,
+      "card_corner:b_12.webp：弃牌角标": 6,
+      "choose_card:收入 b_2.webp": 5,
+      "choose_card:收入 dlc_21.png": 5,
+      "choose_target:结束移动": 4,
+      "play_card:b_109.webp": 4,
+      "play_card:b_12.webp": 4,
+      "quick_trade:2信用点 → 1能量": 4,
+      "choose_payment:弃 1 张移动牌 + 1 能量": 2,
+      "choose_payment:消耗 2 能量": 2,
+      "choose_target:R3 向外": 2,
+      "industry:赫利昂联合体 1x 行动": 2,
+      "play_card:b_2.webp": 2,
+      "card_corner:b_2.webp：弃牌角标": 1,
+      "choose_payment:弃 2 张移动牌": 1,
+      "choose_target:blue2 下方": 1,
+      "choose_target:R3 逆时针": 1,
+      "choose_target:R3 顺时针": 1,
+      "play_card:dlc_37.png": 1,
+      "quick_trade:2能量 → 1信用点": 1
+    },
+    "executedNodeCountByActor": {
+      "player-brown": 4096
+    },
+    "executedOriginCountByTarget": {
+      "data:analyze": 4846,
+      "sector:win:sector-3-a:1": 834,
+      "income:gain:4,1,1,0,1,0": 608,
+      "tech:gain:purple4": 445,
+      "<unbound>": 310,
+      "income:gain:3,1,1,0,2,0": 299,
+      "land:mars:planet:": 297,
+      "tech:gain:orange3": 239,
+      "orbit:venus:planet:": 221,
+      "tech:gain:orange2": 209,
+      "tech:gain:blue2": 160,
+      "income:gain:3,1,1,0,1,0": 116,
+      "tech:gain:blue1": 76,
+      "income:gain:3,2,1,0,1,0": 56,
+      "orbit:uranus:planet:": 15,
+      "decision:choose_target:b7ba7fe8": 4
+    },
+    "executedOriginCountByTargetAndDecisionKind": {
+      "data:analyze -> place_data:quick": 1011,
+      "data:analyze -> end_turn:turn_control": 852,
+      "data:analyze -> analyze:main": 747,
+      "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 747,
+      "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 438,
+      "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech": 292,
+      "sector:win:sector-3-a:1 -> quick_trade:quick": 268,
+      "tech:gain:purple4 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 267,
+      "income:gain:4,1,1,0,1,0 -> quick_trade:quick": 185,
+      "sector:win:sector-3-a:1 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 143,
+      "sector:win:sector-3-a:1 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 143,
+      "sector:win:sector-3-a:1 -> scan:main": 143,
+      "data:analyze -> card_corner:quick": 142,
+      "<unbound> -> end_turn:turn_control": 129,
+      "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 121,
+      "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 121,
+      "data:analyze -> scan:main": 121,
+      "tech:gain:orange3 -> research_tech:main": 114,
+      "<unbound> -> pass:main": 113,
+      "tech:gain:orange3 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 108,
+      "income:gain:4,1,1,0,1,0 -> place_data:quick": 97,
+      "tech:gain:orange2 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 93,
+      "tech:gain:orange2 -> research_tech:main": 93,
+      "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 90,
+      "tech:gain:purple4 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 89,
+      "tech:gain:purple4 -> research_tech:main": 89,
+      "sector:win:sector-3-a:1 -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 84,
+      "income:gain:4,1,1,0,1,0 -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 80,
+      "tech:gain:blue2 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 80,
+      "land:mars:planet: -> move:quick": 77,
+      "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 75,
+      "income:gain:4,1,1,0,1,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 73,
+      "income:gain:4,1,1,0,1,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 73,
+      "income:gain:4,1,1,0,1,0 -> scan:main": 73,
+      "income:gain:3,1,1,0,2,0 -> quick_trade:quick": 71,
+      "data:analyze -> quick_trade:quick": 69,
+      "income:gain:3,1,1,0,1,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 66,
+      "land:mars:planet: -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 62,
+      "<unbound> -> play_card:main": 53,
+      "orbit:venus:planet: -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 53,
+      "sector:win:sector-3-a:1 -> end_turn:turn_control": 53,
+      "income:gain:3,1,1,0,2,0 -> place_data:quick": 48,
+      "income:gain:3,1,1,0,2,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 44,
+      "income:gain:3,1,1,0,2,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 44,
+      "income:gain:3,1,1,0,2,0 -> scan:main": 44,
+      "orbit:venus:planet: -> move:quick": 41,
+      "land:mars:planet: -> end_turn:turn_control": 37,
+      "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 34,
+      "income:gain:3,1,1,0,1,0 -> place_data:quick": 32,
+      "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 32,
+      "land:mars:planet: -> land:main": 32,
+      "orbit:venus:planet: -> end_turn:turn_control": 30,
+      "land:mars:planet: -> launch:main": 25,
+      "land:mars:planet: -> quick_trade:quick": 25,
+      "orbit:venus:planet: -> launch:main": 25,
+      "tech:gain:blue2 -> research_tech:main": 25,
+      "orbit:venus:planet: -> orbit:main": 22,
+      "tech:gain:blue1 -> research_tech:main": 21,
+      "tech:gain:blue2 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 21,
+      "data:analyze -> play_card:main": 20,
+      "income:gain:3,1,1,0,2,0 -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 19,
+      "income:gain:3,1,1,0,2,0 -> end_turn:turn_control": 19,
+      "income:gain:4,1,1,0,1,0 -> end_turn:turn_control": 18,
+      "income:gain:3,1,1,0,1,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 16,
+      "income:gain:3,2,1,0,1,0 -> quick_trade:quick": 16,
+      "<unbound> -> launch:main": 15,
+      "orbit:uranus:planet: -> move:quick": 15,
+      "tech:gain:blue1 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 15,
+      "income:gain:3,2,1,0,1,0 -> place_data:quick": 14,
+      "tech:gain:blue1 -> play_card:main": 13,
+      "tech:gain:blue2 -> play_card:main": 13,
+      "income:gain:3,1,1,0,2,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 10,
+      "orbit:venus:planet: -> quick_trade:quick": 10,
+      "tech:gain:orange2 -> card_corner:quick": 10,
+      "income:gain:4,1,1,0,1,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 9,
+      "tech:gain:blue1 -> card_corner:quick": 9,
+      "tech:gain:blue1 -> choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech": 7,
+      "tech:gain:blue2 -> card_corner:quick": 7,
+      "tech:gain:blue2 -> choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech": 7,
+      "income:gain:3,2,1,0,1,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 6,
+      "income:gain:3,2,1,0,1,0 -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 6,
+      "income:gain:3,2,1,0,1,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 6,
+      "income:gain:3,2,1,0,1,0 -> scan:main": 6,
+      "tech:gain:orange2 -> place_data:quick": 5,
+      "decision:choose_target:b7ba7fe8 -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 4,
+      "tech:gain:blue1 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 4,
+      "tech:gain:blue1 -> place_data:quick": 4,
+      "tech:gain:blue2 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 4,
+      "tech:gain:orange2 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 4,
+      "tech:gain:orange2 -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 4,
+      "tech:gain:orange3 -> card_corner:quick": 4,
+      "tech:gain:orange3 -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 4,
+      "tech:gain:orange3 -> place_data:quick": 4,
+      "tech:gain:orange3 -> play_card:main": 4,
+      "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 3,
+      "land:mars:planet: -> play_card:main": 3,
+      "orbit:venus:planet: -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 3,
+      "orbit:venus:planet: -> play_card:main": 3,
+      "tech:gain:blue1 -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 3,
+      "income:gain:3,1,1,0,1,0 -> industry:quick": 2,
+      "income:gain:3,2,1,0,1,0 -> end_turn:turn_control": 2,
+      "tech:gain:blue2 -> place_data:quick": 2,
+      "land:mars:planet: -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 1,
+      "tech:gain:blue2 -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 1,
+      "tech:gain:orange3 -> choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech": 1
+    },
+    "routeEntryStatsByTarget": {
+      "sector:win:sector-3-a:1": {
+        "bindingOriginCount": 974,
+        "distinctEntryStateCount": 504,
+        "maxBindingsPerEntryState": 4,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "income:gain:4,1,1,0,1,0": {
+        "bindingOriginCount": 727,
+        "distinctEntryStateCount": 353,
+        "maxBindingsPerEntryState": 4,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "tech:gain:orange2": {
+        "bindingOriginCount": 503,
+        "distinctEntryStateCount": 271,
+        "maxBindingsPerEntryState": 3,
+        "completedTransitionCount": 93,
+        "retainedCompletedTransitionCount": 93
+      },
+      "income:gain:3,1,1,0,2,0": {
+        "bindingOriginCount": 495,
+        "distinctEntryStateCount": 238,
+        "maxBindingsPerEntryState": 4,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "income:gain:3,2,1,0,1,0": {
+        "bindingOriginCount": 369,
+        "distinctEntryStateCount": 188,
+        "maxBindingsPerEntryState": 3,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "tech:gain:orange3": {
+        "bindingOriginCount": 360,
+        "distinctEntryStateCount": 195,
+        "maxBindingsPerEntryState": 3,
+        "completedTransitionCount": 109,
+        "retainedCompletedTransitionCount": 109
+      },
+      "tech:gain:purple4": {
+        "bindingOriginCount": 282,
+        "distinctEntryStateCount": 140,
+        "maxBindingsPerEntryState": 3,
+        "completedTransitionCount": 267,
+        "retainedCompletedTransitionCount": 267
+      },
+      "tech:gain:purple2": {
+        "bindingOriginCount": 270,
+        "distinctEntryStateCount": 130,
+        "maxBindingsPerEntryState": 3,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "land:mars:planet:": {
+        "bindingOriginCount": 209,
+        "distinctEntryStateCount": 118,
+        "maxBindingsPerEntryState": 3,
+        "completedTransitionCount": 32,
+        "retainedCompletedTransitionCount": 32
+      },
+      "data:analyze": {
+        "bindingOriginCount": 178,
+        "distinctEntryStateCount": 177,
+        "maxBindingsPerEntryState": 2,
+        "completedTransitionCount": 747,
+        "retainedCompletedTransitionCount": 747
+      },
+      "tech:gain:blue1": {
+        "bindingOriginCount": 139,
+        "distinctEntryStateCount": 87,
+        "maxBindingsPerEntryState": 4,
+        "completedTransitionCount": 22,
+        "retainedCompletedTransitionCount": 22
+      },
+      "tech:gain:blue2": {
+        "bindingOriginCount": 97,
+        "distinctEntryStateCount": 53,
+        "maxBindingsPerEntryState": 4,
+        "completedTransitionCount": 80,
+        "retainedCompletedTransitionCount": 80
+      },
+      "orbit:venus:planet:": {
+        "bindingOriginCount": 65,
+        "distinctEntryStateCount": 47,
+        "maxBindingsPerEntryState": 3,
+        "completedTransitionCount": 37,
+        "retainedCompletedTransitionCount": 37
+      },
+      "income:gain:3,1,1,0,1,0": {
+        "bindingOriginCount": 42,
+        "distinctEntryStateCount": 42,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 66,
+        "retainedCompletedTransitionCount": 66
+      },
+      "sector:win:sector-1-a:1": {
+        "bindingOriginCount": 10,
+        "distinctEntryStateCount": 5,
+        "maxBindingsPerEntryState": 2,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      }
+    },
+    "completedRouteGroupsByTarget": {
+      "data:analyze": [
+        {
+          "routeFamilies": [
+            "card_corner",
+            "place_data",
+            "play_card",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 88,
+          "retainedCompletedTransitionCount": 88
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "card_corner",
+            "place_data",
+            "play_card",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 88,
+          "retainedCompletedTransitionCount": 88
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "play_card",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 73,
+          "retainedCompletedTransitionCount": 73
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 60,
+          "retainedCompletedTransitionCount": 60
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "play_card",
+            "place_data",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 56,
+          "retainedCompletedTransitionCount": 56
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "place_data",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 56,
+          "retainedCompletedTransitionCount": 56
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "card_corner",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 44,
+          "retainedCompletedTransitionCount": 44
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "place_data",
+            "place_data",
+            "card_corner",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 44,
+          "retainedCompletedTransitionCount": 44
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 24,
+          "retainedCompletedTransitionCount": 24
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "place_data",
+            "place_data",
+            "quick_trade",
+            "scan",
+            "place_data",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 21,
+          "retainedCompletedTransitionCount": 21
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "quick_trade",
+            "scan",
+            "place_data",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 21,
+          "retainedCompletedTransitionCount": 21
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "play_card",
+            "place_data",
+            "card_corner",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 14,
+          "retainedCompletedTransitionCount": 14
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "place_data",
+            "place_data",
+            "play_card",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 13,
+          "retainedCompletedTransitionCount": 13
+        },
+        {
+          "routeFamilies": [
+            "card_corner",
+            "place_data",
+            "play_card",
+            "place_data",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "card_corner",
+            "place_data",
+            "play_card",
+            "place_data",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "place_data",
+            "place_data",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "place_data",
+            "place_data",
+            "play_card",
+            "place_data",
+            "card_corner",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "play_card",
+            "place_data",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 7,
+          "retainedCompletedTransitionCount": 7
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "place_data",
+            "place_data",
+            "play_card",
+            "place_data",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 5,
+          "retainedCompletedTransitionCount": 5
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 5,
+          "retainedCompletedTransitionCount": 5
+        },
+        {
+          "routeFamilies": [
+            "card_corner",
+            "place_data",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "card_corner",
+            "place_data",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "place_data",
+            "place_data",
+            "play_card",
+            "place_data",
+            "scan",
+            "place_data",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "play_card",
+            "place_data",
+            "place_data",
+            "card_corner",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "play_card",
+            "place_data",
+            "place_data",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "play_card",
+            "place_data",
+            "scan",
+            "place_data",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "place_data",
+            "place_data",
+            "card_corner",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "place_data",
+            "place_data",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "card_corner",
+            "place_data",
+            "scan",
+            "place_data",
+            "quick_trade",
+            "analyze"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "card_corner",
+            "place_data",
+            "scan",
+            "place_data",
+            "quick_trade",
+            "analyze"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "scan",
+            "place_data",
+            "quick_trade",
+            "analyze"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "scan",
+            "place_data",
+            "quick_trade",
+            "analyze"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "card_corner",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "place_data",
+            "card_corner",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "place_data",
+            "place_data",
+            "scan",
+            "place_data",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "scan",
+            "place_data",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "place_data",
+            "card_corner",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "place_data",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "scan",
+            "place_data",
+            "quick_trade",
+            "analyze"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "quick_trade",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "quick_trade",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "card_corner",
+            "place_data",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "place_data",
+            "place_data",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "place_data",
+            "scan",
+            "place_data",
+            "analyze"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "card_corner",
+            "place_data",
+            "scan",
+            "place_data",
+            "quick_trade",
+            "analyze"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        },
+        {
+          "routeFamilies": [
+            "place_data",
+            "quick_trade",
+            "scan",
+            "place_data",
+            "quick_trade",
+            "analyze"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        },
+        {
+          "routeFamilies": [
+            "quick_trade",
+            "scan",
+            "place_data",
+            "quick_trade",
+            "analyze"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "tech:gain:purple4": [
+        {
+          "routeFamilies": [
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 156,
+          "retainedCompletedTransitionCount": 156
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 99,
+          "retainedCompletedTransitionCount": 99
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        }
+      ],
+      "tech:gain:orange3": [
+        {
+          "routeFamilies": [
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 63,
+          "retainedCompletedTransitionCount": 63
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 41,
+          "retainedCompletedTransitionCount": 41
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        },
+        {
+          "routeFamilies": [
+            "play_card"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "tech:gain:orange2": [
+        {
+          "routeFamilies": [
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 54,
+          "retainedCompletedTransitionCount": 54
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 35,
+          "retainedCompletedTransitionCount": 35
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 4,
+          "retainedCompletedTransitionCount": 4
+        }
+      ],
+      "tech:gain:blue2": [
+        {
+          "routeFamilies": [
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 35,
+          "retainedCompletedTransitionCount": 35
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 24,
+          "retainedCompletedTransitionCount": 24
+        },
+        {
+          "routeFamilies": [
+            "play_card"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 21,
+          "retainedCompletedTransitionCount": 21
+        }
+      ],
+      "income:gain:3,1,1,0,1,0": [
+        {
+          "routeFamilies": [
+            "place_data",
+            "place_data",
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 55,
+          "retainedCompletedTransitionCount": 55
+        },
+        {
+          "routeFamilies": [
+            "place_data"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 11,
+          "retainedCompletedTransitionCount": 11
+        }
+      ],
+      "orbit:venus:planet:": [
+        {
+          "routeFamilies": [
+            "launch",
+            "move",
+            "move",
+            "orbit"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 23,
+          "retainedCompletedTransitionCount": 23
+        },
+        {
+          "routeFamilies": [
+            "quick_trade",
+            "launch",
+            "move",
+            "move",
+            "orbit"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 6
+        },
+        {
+          "routeFamilies": [
+            "quick_trade",
+            "quick_trade",
+            "launch",
+            "move",
+            "move",
+            "orbit"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 6
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "move",
+            "move",
+            "quick_trade",
+            "orbit"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        }
+      ],
+      "land:mars:planet:": [
+        {
+          "routeFamilies": [
+            "launch",
+            "move",
+            "move",
+            "land"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 12,
+          "retainedCompletedTransitionCount": 12
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "move",
+            "move",
+            "quick_trade",
+            "land"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 8,
+          "retainedCompletedTransitionCount": 8
+        },
+        {
+          "routeFamilies": [
+            "quick_trade",
+            "quick_trade",
+            "launch",
+            "move",
+            "move",
+            "land"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 6
+        },
+        {
+          "routeFamilies": [
+            "launch",
+            "move",
+            "move",
+            "quick_trade",
+            "quick_trade",
+            "land"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "quick_trade",
+            "quick_trade",
+            "launch",
+            "move",
+            "play_card",
+            "land"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "quick_trade",
+            "quick_trade",
+            "launch",
+            "play_card",
+            "move",
+            "land"
+          ],
+          "quickTradeCount": 2,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        },
+        {
+          "routeFamilies": [
+            "quick_trade",
+            "quick_trade",
+            "quick_trade",
+            "launch",
+            "move",
+            "move",
+            "land"
+          ],
+          "quickTradeCount": 3,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "tech:gain:blue1": [
+        {
+          "routeFamilies": [
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 9,
+          "retainedCompletedTransitionCount": 9
+        },
+        {
+          "routeFamilies": [
+            "play_card"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 7,
+          "retainedCompletedTransitionCount": 7
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 6,
+          "retainedCompletedTransitionCount": 6
+        }
+      ],
+      "decision:choose_target:b7ba7fe8": [
+        {
+          "routeFamilies": [
+            "play_card"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        },
+        {
+          "routeFamilies": [
+            "play_card",
+            "play_card"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 2,
+          "retainedCompletedTransitionCount": 2
+        }
+      ]
+    },
+    "goalClusters": [],
+    "prunedNodeCount": 2252,
+    "beamPrunedOriginCount": 5392,
+    "forkMilliseconds": 429.70335200001205,
+    "executionMilliseconds": 1618.0385899999462,
+    "projectionMilliseconds": 771.2563669999889,
+    "identityMilliseconds": 7.884209000033138,
+    "checkpointMilliseconds": 669.5306419999976,
+    "frontierMilliseconds": 317.6954140000121,
+    "orchestrationMilliseconds": 8778.38701000001,
+    "totalMilliseconds": 12592.495584
+  },
+  "passed": false,
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n... Skipped lines\n\n  {\n    committedState: '{\"aliens\":{\"aliens\":{\"1\":{\"alienId\":null,\"assignedAlienId\":null,\"revealed\":false,\"traces\":{\"blue\":{\"extraCount\":0,\"extraMarkers\":[],\"firstPlaced\":false,\"ownerPlayerColor\":null},\"pink\":{\"extraCount\":0,\"extraMarkers\":[],\"firstPlaced\":false,\"ownerPlayerColor\":null},\"yellow\":{\"extraCount\":0,\"extraMarkers\":[],\"firstPlaced\":false,\"ownerPlayerColor\":null}}},\"2\":{\"alienId\":null,\"assignedAlienId\":null,\"revealed\":false,\"traces\":{\"blue\":{\"extraCount\":0,\"extraMarkers\":[],\"firstPlaced\":false,\"ownerPlayerColor\":null},\"pink\":{\"extraCount\":0,\"extraMarkers\":[],\"firstPlaced\":false,\"ownerPlayerColor\":null},\"yellow\":{\"extraCount\":0,\"extraMarkers\":[],\"firstPlaced\":true,\"neutral\":false,\"ownerPlayerColor\":\"blue\"}}}},\"amiba\":{\"cardDeck\":[0,1,2,3,4,5,6,7,8,9],\"displayedCardIndex\":null,\"revealInitialized\":false,\"revealedByPlayerColor\":null,\"revealedByPlayerId\":null,\"revealedSlotId\":null,\"symbolSlots\":{},\"symbolsById\":{},\"traceSlotsByAlienSlotId\":{}},\"aomomo\":{\"cardDeck\":[0,1,2,3,4,5,6,7,8,9],\"displayedCardIndex\":null,\"landingMarkers\":[],\"orbitMarkers\":[],\"revealInitialized\":false,\"revealedByPlayerColor\":null,\"revealedByPlayerId\":null,\"revealedSlotId\":null,\"traceSlotsByAlienSlotId\":{}},\"banrenma\":{\"bonusSlots\":{},\"cardDeck\":[0,1,2,3,4,5,6,7,8,9],\"displayedCardIndex\":null,\"revealInitialized\":false,\"revealedByPlayerColor\":null,\"revealedByPlayerId\":null,\"revealedSlotId\":null,\"scoreMarksByPlayerId\":{},\"traceSlotsByAlienSlotId\":{}},\"chong\":{\"cardDeck\":[0,1,2,3,4,5,6,7,8,9],\"completedTransports\":[],\"displayedCardIndex\":null,\"fossilsById\":{},\"panelFossilSlots\":{},\"planetFossilIds\":{\"jupiter\":[],\"saturn\":[]},\"revealInitialized\":false,\"revealedByPlayerColor\":null,\"revealedByPlayerId\":null,\"revealedSlotId\":null,\"traceSlotsByAlienSlotId\":{},\"transportTasksByRocketId\":{},\"unlockedBluePositions\":[7,8,9]},\"fangzhou\":{\"card1Deck\":[0,1,2,3,4,5,6,7,8],\"card1Revealed\":[],\"card1RevealedSinceShuffle\":0,\"displayedCard1Index\":null,\"playerCard2ById\":{},\"revealInitialized\":false,\"revealedByPlayerColor\":null,\"revealedByPlayerId\":null,\"revealedSlotId\":null,\"traceSlotsByAlienSlotId\":{},\"unlockCountByPlayerId\":{}},\"jiuzhe\":{\"cardsDealt\":false,\"freeScoreThreshold\":null,\"paidScoreThreshold\":null,\"playerCardsById\":{},\"playerThreatByColor\":{},\"playerThreatById\":{},\"revealInitialized\":false,\"revealedByPlayerColor\":null,\"revealedByPlayerId\":null,\"revealedSlotId\":null,\"traceSlotsByAlienSlotId\":{}},\"neutralScoreTraceMarks\":{},\"revealPoolAlienIds\":[\"九折\",\"半人马\",\"奥陌陌\",\"异常点\",\"方舟\",\"符文族\",\"虫\",\"阿米巴\"],\"runezu\":{\"availableSymbols\":[],\"cardDeck\":[0,1,2,3,4,5,6,7,8,9],\"displayedCardIndex\":null,\"faceSymbolSlots\":{},\"panelSymbolSlots\":{},\"revealInitialized\":false,\"revealedByPlayerColor\":null,\"revealedByPlayerId\":null,\"revealedSlotId\":null,\"sourceSymbolSlots\":{},\"traceSlotsByAlienSlotId\":{}},\"yichangdian\":{\"anomalies\":[],\"cardDeck\":[0,1,2,3,4,5,6,7,8,9],\"displayedCardIndex\":null,\"nextAnomalySectorX\":null,\"revealEarthX\":null,\"revealInitialized\":false,\"revealedByPlayerColor\":null,\"revealedByPlayerId\":null,\"revealedSlotId\":null,\"traceSlotsByAlienSlotId\":{}}},\"cards\":{\"discardPile\":[{\"cardId\":\"dlc_40.png\",\"cardTypeCode\":0,\"discardActionCode\":1,\"faceUp\":true,\"id\":\"card-37-0\",\"incomeCode\":0,\"price\":2,\"scanActionCode\":2,\"set\":\"space-agency\"},{\"cardId\":\"b_48.webp\",\"cardTypeCode\":0,\"discardActionCode\":0,\"faceUp\":true,\"id\":\"card-18-0\",\"incomeCode\":1,\"price\":1,\"scanActionCode\":0,\"set\":\"basic\"},{\"cardId\":\"b_65.webp\",\"cardTypeCode\":0,\"discardActionCode\":2,\"faceUp\":true,\"id\":\"card-11-0\",\"incomeCode\":1,\"price\":3,\"scanActionCode\":3,\"set\":\"basic\"}],\"drawPileCardIds\":[],\"passReservePiles\":{\"1\":[{\"cardId\":\"dlc_4.png\",\"cardTypeCode\":0,\"discardActionCode\":0,\"faceUp\":true,\"id\":\"card-20-pass-1-1\",\"incomeCode\":0,\"price\":1,\"scanActionCode\":3,\"set\":\"space-agency\"},{\"cardId\":\"b_24.webp\",\"cardTypeCode\":0,\"discardActionCode\":0,\"faceUp\":true,\"id\":\"card-21-pass-1-2\",\"incomeCode\":1,\"price\":1,\"scanActionCode\":0,\"set\":\"basic\"},{\"cardId\":\"b_49.webp\",\"cardTypeCode\":0,\"discardActionCode\":0,\"faceUp\":true,\"id\":\"card-22-pass-1-3\",\"incomeCode\":0,\"price\":1,\"scanActionCode\":0,\"set\":\"basic\"},{\"cardId\":\"b_80.webp\",\"cardTypeCode\":1,\"discardActionCode\":2,\"faceUp\":true,\"id\":\"card-23-pass-1-4\",\"incomeCode\":2,\"price\":1,\"scanActionCode\":2,\"set\":\"basic\"},{\"cardId\":\"dlc_5.png\",\"cardTypeCode\":0,\"discardActionCode\":0,\"faceUp\":true,\"id\":\"card-24-pass-1-5\",\"incomeCode\":0,\"price\":1,\"scanActionCode\":2,\"set\":\"space-agency\"}],\"2\":[{\"cardId\":\"dlc_18.png\",\"cardTypeCode\":0,\"discardActionCode\":1,\"faceUp\":true,\"id\":\"card-25-pass-2-1\",\"incomeCode\":0,\"price\":2,\"scanActionCode\":1,\"set\":\"space-agency\"},{\"cardId\":\"b_78.webp\",\"cardTypeCode\":1,\"discardActionCode\":0,\"faceUp\":true,\"id\":\"card-26-pass-2-2\",\"incomeCode\":2,\"price\":1,\"scanActionCode\":0,\"set\":\"basic\"},{\"cardId\":\"b_7.webp\",\"cardTypeCode\":0,\"discardActionCode\":0,\"faceUp\":true,\"id\":\"card-27-pass-2-3\",\"incomeCode\":1,\"price\":2,\"scanActionCode\":3,\"set\":\"basic\"},{\"cardId\":\"b_53.webp\",\"cardTypeCode\":2,\"discardActionCode\":2,\"faceUp\":true,\"id\":\"card-28-pass-2-4\",\"incomeCode\":2,\"price\":1,\"scanActionCode\":1,\"set\":\"basic\"},{\"cardId\":\"b_101.webp\",\"cardTypeCode\":2,\"discardActionCode\":2,\"faceUp\":true,\"id\":\"card-29-pass-2-5\",\"incomeCode\":2,\"price\":3,\"scanActionCode\":0,\"set\":\"basic\"}],\"3\":[{\"cardId\":\"b_111.webp\",\"cardTypeCode\":1,\"discardActionCode\":1,\"faceUp\":true,\"id\":\"card-30-pass-3-1\",\"incomeCode\":1,\"price\":2,\"scanActionCode\":1,\"set\":\"basic\"},{\"cardId\":\"dlc_12.png\",\"cardTypeCode\":0,\"discardActionCode\":1,\"faceUp\":true,\"id\":\"card-31-pass-3-2\",\"incomeCode\":0,\"price\":1,\"scanActionCode\":0,\"set\":\"space-agency\"},{\"cardId\":\"b_32.webp\",\"cardTypeCode\":0,\"discardActionCode\":1,\"faceUp\":true,\"id\":\"card-32-pass-3-3\",\"incomeCode\":2,\"price\":1,\"scanActionCode\":0,\"set\":\"basic\"},{\"cardId\":\"b_55.webp\",\"cardTypeCode\":0,\"discardActionCode\":2,\"faceUp\":true,\"id\":\"card-33-pass-3-4\",\"incomeCode\":2,\"price\":2,\"scanActionCode\":0,\"set\":\"basic\"},{\"cardId\":\"b_138.webp\",\"cardTypeCode\":1,\"discardActionCode\":0,\"faceUp\":true,\"id\":\"card-34-pass-3-5\",\"incomeCode\":2,\"price\":3,\"scanActionCode\":1,\"set\":\"basic\"}]},\"publicCards\":[{\"cardId\":\"b_2.webp\",\"cardTypeCode\":1,\"discardActionCode\":0,\"faceUp\":true,\"id\":\"card-17-0\",\"incomeCode\":2,\"price\":1,\"scanActionCode\":2,\"set\":\"basic\"},{\"cardId\":\"dlc_37.png\",\"cardTypeCode\":0,\"discardActionCode\":0,\"faceUp\":true,\"id\":\"card-40-0\",\"incomeCode\":2,\"price\":0,\"scanActionCode\":0,\"set\":\"space-agency\"},{\"cardId\":\"dlc_21.png\",\"cardTypeCode\":1,\"discardActionCode\":1,\"faceUp\":true,\"id\":\"card-19-0\",\"incomeCode\":2,\"price\":0,\"scanActionCode\":2,\"set\":\"space-agency\"}],\"removedFromGameCardIds\":[\"dlc_22.png\",\"b_97.webp\",\"b_75.webp\",\"b_86.webp\",\"b_66.webp\",\"b_71.webp\",\"b_117.webp\",\"dlc_39.png\",\"b_12.webp\"]},\"data\":{\"nebulae\":{\"aomomo\":{\"tokens\":[{\"id\":\"nebula-data-43\",\"index\":43,\"nebulaId\":\"aomomo\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":1},{\"id\":\"nebula-data-44\",\"index\":44,\"nebulaId\":\"aomomo\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":2},{\"id\":\"nebula-data-45\",\"index\":45,\"nebulaId\":\"aomomo\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":3}]},\"sector-1-a\":{\"tokens\":[{\"id\":\"nebula-data-1\",\"index\":1,\"nebulaId\":\"sector-1-a\",\"replacedByPlayerColor\":\"white\",\"replacedByPlayerId\":\"player-white\",\"replacementOrder\":9,\"slotIndex\":1},{\"id\":\"nebula-data-2\",\"index\":2,\"nebulaId\":\"sector-1-a\",\"replacedByPlayerColor\":\"green\",\"replacedByPlayerId\":\"player-green\",\"replacementOrder\":11,\"slotIndex\":2},{\"id\":\"nebula-data-3\",\"index\":3,\"nebulaId\":\"sector-1-a\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":3},{\"id\":\"nebula-data-4\",\"index\":4,\"nebulaId\":\"sector-1-a\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":4},{\"id\":\"nebula-data-5\",\"index\":5,\"nebulaId\":\"sector-1-a\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":5}]},\"sector-1-b\":{\"tokens\":[{\"id\":\"nebula-data-6\",\"index\":6,\"nebulaId\":\"sector-1-b\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":1},{\"id\":\"nebula-data-7\",\"index\":7,\"nebulaId\":\"sector-1-b\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":2},{\"id\":\"nebula-data-8\",\"index\":8,\"nebulaId\":\"sector-1-b\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":3},{\"id\":\"nebula-data-9\",\"index\":9,\"nebulaId\":\"sector-1-b\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":4}]},\"sector-2-a\":{\"tokens\":[{\"id\":\"nebula-data-10\",\"index\":10,\"nebulaId\":\"sector-2-a\",\"replacedByPlayerColor\":\"white\",\"replacedByPlayerId\":\"player-white\",\"replacementOrder\":1,\"slotIndex\":1},{\"id\":\"nebula-data-11\",\"index\":11,\"nebulaId\":\"sector-2-a\",\"replacedByPlayerColor\":\"white\",\"replacedByPlayerId\":\"player-white\",\"replacementOrder\":2,\"slotIndex\":2},{\"id\":\"nebula-data-12\",\"index\":12,\"nebulaId\":\"sector-2-a\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":3},{\"id\":\"nebula-data-13\",\"index\":13,\"nebulaId\":\"sector-2-a\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":4},{\"id\":\"nebula-data-14\",\"index\":14,\"nebulaId\":\"sector-2-a\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":5},{\"id\":\"nebula-data-15\",\"index\":15,\"nebulaId\":\"sector-2-a\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":6}]},\"sector-2-b\":{\"tokens\":[{\"id\":\"nebula-data-16\",\"index\":16,\"nebulaId\":\"sector-2-b\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":1},{\"id\":\"nebula-data-17\",\"index\":17,\"nebulaId\":\"sector-2-b\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":2},{\"id\":\"nebula-data-18\",\"index\":18,\"nebulaId\":\"sector-2-b\",\"replacedByPlayerColor\":null,\"replacedByPlayerId\":null,\"replacementOrder\":null,\"slotIndex\":3},{\"id\":\"nebula-data-19\",\"index\":19,\"nebulaId\":\"sect'... 16211 more characters,\n    schemaVersion: 'seti-rule-composition-save-v1',\n    session: {\n      replayCursor: 1,\n...\n              },\n+             groupId: 'effect-session-1:group:1',\n-             groupId: 'effect-session-27:group:1',\n              groupKind: 'action',\n              quick: false,\n              revision: 0\n            }\n          ],\n...\n            {\n+             effectId: 'effect-session-1:effect:1',\n+             groupId: 'effect-session-1:group:1',\n-             effectId: 'effect-session-27:effect:1',\n-             groupId: 'effect-session-27:group:1',\n              groupKind: 'quick',\n              revision: 1,\n              type: 'science_domain_execute'\n            }\n          ],\n...\n              cursor: 0,\n+             groupId: 'effect-session-1:group:1',\n-             groupId: 'effect-session-27:group:1',\n              groupKind: 'action',\n              kind: 'action'\n            }\n          ],\n          rng: []\n...\n            decisionKind: 'choose_target',\n+           effectId: 'effect-session-1:effect:2',\n+           groupId: 'effect-session-1:group:2',\n-           effectId: 'effect-session-27:effect:2',\n-           groupId: 'effect-session-27:group:2',\n            groupIndex: 0,\n            groupKind: 'spawned',\n            kind: 'decision',\n            ownerId: 'player-brown',\n            payload: {\n...\n            source: {\n+             parentEffectId: 'effect-session-1:effect:1',\n-             parentEffectId: 'effect-session-27:effect:1',\n              priority: 'direct'\n            },\n            type: 'science_domain_place_data'\n          }\n        ],\n        revision: 1,\n        schemaVersion: 'seti-effect-session-v1',\n+       sessionId: 'effect-session-1',\n-       sessionId: 'effect-session-27',\n        undoFrames: [],\n        workingState: {\n          aliens: {\n            aliens: {\n              '1': {\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/verify-data-continuation-boundary-20260908.js:54:14)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+}
