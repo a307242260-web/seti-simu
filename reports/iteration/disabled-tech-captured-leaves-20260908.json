@@ -1,0 +1,43 @@
+{
+  "rows": [
+    {
+      "family": "orbit",
+      "oldScore": 40.833333333333336,
+      "newScore": 20.833333333333336,
+      "oldTechValue": 20,
+      "newTechValue": 0,
+      "owned": [
+        "blue1",
+        "purple2",
+        "purple4"
+      ],
+      "disabled": [
+        "purple2",
+        "purple4"
+      ]
+    },
+    {
+      "family": "research_tech",
+      "oldScore": 41.66666666666667,
+      "newScore": 21.666666666666668,
+      "oldTechValue": 20,
+      "newTechValue": 0,
+      "owned": [
+        "blue1",
+        "purple2",
+        "purple4"
+      ],
+      "disabled": [
+        "purple2",
+        "purple4"
+      ]
+    }
+  ],
+  "fixedOnlySingle": {
+    "chosen": "环绕金星 - 奖励：获得 6 分；获得 1 次收入（R4，1信用点 + 1能量）",
+    "searchMs": 14329.215000000002,
+    "nodes": 4096
+  },
+  "passed": true,
+  "boundary": "仅对已缓存两条路线重估；不代表重新搜索后最佳路线，不证明棕方完整14分归因。独立修复单点不含拿牌贪心。"
+}
