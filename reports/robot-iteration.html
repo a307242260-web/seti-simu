@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T14:34:56.333Z",
+  "builtAt": "2026-09-08T14:50:01.991Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "a6f3399a",
+  "headCommit": "80d66c84",
   "currentBaseline": "route-selection-error-20260908",
   "worktreeDirty": true,
   "bestOf": {
@@ -346,7 +346,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T14:30:08.034Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
-          "note": "组合完整局未通过，生产未合dev。688步终局100/124/90/121、均108.75（dev101.75、独立修复93.5）；拿牌11495→6453（−43.9%），总节点143252→149072，耗时571832→595966ms，规则失败0。战略搜索88→111，执行截断战略30→31、控制8→8；38战略前沿截断，全部截断并集46，dev前沿未知。白方节点+16578、绿+7450、蓝+2480、棕−20688。棕方相对dev仍−25待归因，均分上涨不替代检查；相对独立修复首差139绿方精选改结束回合。详见alien-pick-disabled-tech-full-progress-20260908.md与full-comparison原始对照。本版本不追认旧候选通过，普通牌估值和重复准备仍未完成。",
+          "note": "组合完整局未通过，生产未合dev。688步终局100/124/90/121、均108.75（dev101.75、独立修复93.5）；拿牌11495→6453（−43.9%），总节点143252→149072，耗时571832→595966ms，规则失败0。战略搜索88→111，执行截断战略30→31、控制8→8；38战略前沿截断，全部截断并集46，dev前沿未知。白方节点+16578、绿+7450、蓝+2480、棕−20688。棕方相对dev仍−25待归因，均分上涨不替代检查；相对独立修复首差139绿方精选改结束回合。详见alien-pick-disabled-tech-full-progress-20260908.md与full-comparison原始对照。本版本不追认旧候选通过，普通牌估值和重复准备仍未完成。追加归因：白方第3轮战略次数同为7而节点10188→22551；棕方284标记4选项全展开，当前A11>D5，未发现该处漏搜。详见combined-attribution-progress-20260908.md，过程分下降仍待归因。",
           "scores": {
             "player-blue": 100,
             "player-green": 124,
