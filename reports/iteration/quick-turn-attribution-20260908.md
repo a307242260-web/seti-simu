@@ -1,6 +1,6 @@
 # 跨回合顺序归一：完整局未通过及归因
 
-状态：2026-09-08，候选438305b4未合入dev，整体Goal继续。生产仍为已验收的拨款目录修复基线。
+状态：2026-09-08，候选438305b4未合入dev，整体Goal继续。生产为拨款目录基线加独立目标选择异常传播修复；完整局动作及非耗时搜索指标仍与1501ebfd一致。
 
 ## 完整局
 
@@ -47,3 +47,11 @@
 完整committedState仅将meta.rngState.state规范为0，仍保留stateVersion、回合信息、全部玩家/牌堆/资源/盘面；再按完整Action（包括Decision与stateVersion）及物理depth分组，256节点只有116组，即140个重复状态条目。具体例子：队列22、23、26、40、42、44为同一弃牌动作，状态仅随机数不同；前序都是发射→移动两次→环绕→收入，结束回合插在不同位置，移动支付顺序也有变化。来源义务仍须保留，不能把多个目标共用节点视为重复丢弃。
 
 证据white-beam-distribution-20260908.json及quick-turn-white-cross-candidate-candidate-beam-trace-20260908.json.gz；获胜计划仍35.5，与未加断点结果一致。此处是完整游戏状态层面的冗余证据，尚未证明可直接合并执行：恢复envelope的session未在此统计比较，而且branchKey依赖含RNG的envelopeHash，resetBranch又用该key重设样本。因此不能直接删RNG字段后声称所有未来严格等价。后续先核对采样身份与恢复session边界，独立设计确定性执行共享，保持来源义务及隐藏信息边界，不改正式规则/RNG或扩大预算。
+
+## 前序代表是否丢失分析目标：反例核验
+
+2026-09-08只读既有第24步两版日志，没有重跑搜索。怀疑是：前序plan为data:place_data、后序plan为data:analyze，按动作相同删除后者，是否只保留填数而丢掉继续分析。正式完成判定只看target=data:analyze及实际analyze动作，不把place_data当完成；两个plan都属于同一分析目标。
+
+机械核验21对精确前缀：21个候选前序入口全部仍有data:analyze来源、21个都实际展开到analyze、21个后序入口消失。每一对候选均保留proxyDepth=1的分析来源，与旧后序一致；另有从收入目标转入的depth=2/3来源，不能将它们误认为唯一代表。因此“只保留填数、丢分析”及“代表必然多算一层”的怀疑在这21对中被否证，不据计划名称修改生产逻辑。
+
+证据quick-turn-goal-obligations-20260908.json，生成器adhoc/check-quick-turn-goal-obligations-20260908.js。保留实际分析动作链、来源、深度与物理ordinal；不证明随机奖励后的路线逐字节相同，也不证明第175步和全局降分原因。白方已定位长链仍在beam-budget处消失，候选继续未通过。文档检查范围为本归因、顺序设计和Goal计划；生产接口/规则/运行方式没有修改，AI设计、README、AGENTS无需因这次排除性证据更新。
