@@ -1,0 +1,121 @@
+{
+  "source": "reports/iteration/known-data-preparation-v2-20260908.json",
+  "scope": "第24步正式重放的白方状态，轮1回合1；支付与扫描能力队列核验，不外推所有公司/科技/触发奖励。",
+  "checks": [
+    {
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 5,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 5,
+        "score": 6
+      },
+      "cost": {
+        "credits": 1,
+        "energy": 2
+      },
+      "affordable": true,
+      "queue": [
+        {
+          "type": "earth_sector_scan",
+          "abilityId": "scanSector",
+          "icon": "earth_scan",
+          "label": "扇区扫描",
+          "options": {},
+          "id": "scan-effect-0",
+          "status": "pending"
+        },
+        {
+          "type": "public_card_scan",
+          "abilityId": "scanPublicCard",
+          "icon": "public_card_scan",
+          "label": "公共牌区扫描",
+          "options": {},
+          "id": "scan-effect-1",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 5,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 5,
+        "score": 6
+      },
+      "cost": {
+        "credits": 1,
+        "energy": 2
+      },
+      "affordable": true,
+      "queue": [
+        {
+          "type": "earth_sector_scan",
+          "abilityId": "scanSector",
+          "icon": "earth_scan",
+          "label": "扇区扫描",
+          "options": {},
+          "id": "scan-effect-0",
+          "status": "pending"
+        },
+        {
+          "type": "public_card_scan",
+          "abilityId": "scanPublicCard",
+          "icon": "public_card_scan",
+          "label": "公共牌区扫描",
+          "options": {},
+          "id": "scan-effect-1",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 5,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 5,
+        "score": 6
+      },
+      "cost": {
+        "credits": 1,
+        "energy": 2
+      },
+      "affordable": true,
+      "queue": [
+        {
+          "type": "earth_sector_scan",
+          "abilityId": "scanSector",
+          "icon": "earth_scan",
+          "label": "扇区扫描",
+          "options": {},
+          "id": "scan-effect-0",
+          "status": "pending"
+        },
+        {
+          "type": "public_card_scan",
+          "abilityId": "scanPublicCard",
+          "icon": "public_card_scan",
+          "label": "公共牌区扫描",
+          "options": {},
+          "id": "scan-effect-1",
+          "status": "pending"
+        }
+      ]
+    }
+  ],
+  "slot5Reward": null,
+  "blueSlot3Prerequisite": 5,
+  "passed": true,
+  "conclusion": "本例在弃牌前已能支付扫描，弃牌并填5格未增加扫描能力；排除为了支付或扫描科技才先填5格的解释。蓝位解锁及任意触发依赖仍不能由本检查自动豁免。"
+}
