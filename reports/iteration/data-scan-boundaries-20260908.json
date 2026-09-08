@@ -1,0 +1,366 @@
+{
+  "source": "reports/iteration/step24-entry-states-1501ebfd-20260908.json.gz",
+  "extraScanOrdinal": 9,
+  "directScanOrdinal": 7,
+  "extraBoundaries": [
+    {
+      "ordinal": 12,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 4,
+        "energy": 0,
+        "handSize": 1,
+        "publicity": 5,
+        "score": 6
+      },
+      "dataState": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-1",
+            "index": 1,
+            "placementKind": "computer",
+            "placementSlot": 1
+          },
+          {
+            "id": "data-token-2",
+            "index": 2,
+            "placementKind": "computer",
+            "placementSlot": 2
+          },
+          {
+            "id": "data-token-3",
+            "index": 3,
+            "placementKind": "computer",
+            "placementSlot": 3
+          },
+          {
+            "id": "data-token-4",
+            "index": 4,
+            "placementKind": "computer",
+            "placementSlot": 4
+          },
+          {
+            "id": "data-token-11",
+            "index": 5,
+            "placementKind": "computer",
+            "placementSlot": 5
+          }
+        ],
+        "poolTokens": [
+          {
+            "id": "data-token-12",
+            "index": 6,
+            "slotIndex": 1
+          },
+          {
+            "id": "data-token-13",
+            "index": 7,
+            "slotIndex": 2
+          }
+        ]
+      },
+      "scanInputs": [
+        [
+          "choose_target:756e7901",
+          "choose_card:836ae617"
+        ],
+        [
+          "choose_target:756e7901",
+          "choose_card:836ae617"
+        ]
+      ]
+    }
+  ],
+  "directBoundaries": [
+    {
+      "ordinal": 18,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 7,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 4,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 5,
+        "score": 6
+      },
+      "dataState": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-1",
+            "index": 1,
+            "placementKind": "computer",
+            "placementSlot": 1
+          },
+          {
+            "id": "data-token-2",
+            "index": 2,
+            "placementKind": "computer",
+            "placementSlot": 2
+          },
+          {
+            "id": "data-token-3",
+            "index": 3,
+            "placementKind": "computer",
+            "placementSlot": 3
+          },
+          {
+            "id": "data-token-4",
+            "index": 4,
+            "placementKind": "computer",
+            "placementSlot": 4
+          }
+        ],
+        "poolTokens": [
+          {
+            "id": "data-token-11",
+            "index": 5,
+            "slotIndex": 1
+          },
+          {
+            "id": "data-token-12",
+            "index": 6,
+            "slotIndex": 2
+          }
+        ]
+      },
+      "scanInputs": [
+        [
+          "choose_target:756e7901",
+          "choose_card:836ae617"
+        ],
+        [
+          "choose_target:756e7901",
+          "choose_card:836ae617"
+        ]
+      ]
+    },
+    {
+      "ordinal": 111,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:f385e2ac",
+        "actorId": "player-white",
+        "stateVersion": 7,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "credits-for-energy"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "gain": {
+            "energy": 1
+          }
+        },
+        "decision": null,
+        "summary": "2信用点 → 1能量"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 4,
+        "energy": 0,
+        "handSize": 2,
+        "publicity": 5,
+        "score": 6
+      },
+      "dataState": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-1",
+            "index": 1,
+            "placementKind": "computer",
+            "placementSlot": 1
+          },
+          {
+            "id": "data-token-2",
+            "index": 2,
+            "placementKind": "computer",
+            "placementSlot": 2
+          },
+          {
+            "id": "data-token-3",
+            "index": 3,
+            "placementKind": "computer",
+            "placementSlot": 3
+          },
+          {
+            "id": "data-token-4",
+            "index": 4,
+            "placementKind": "computer",
+            "placementSlot": 4
+          }
+        ],
+        "poolTokens": [
+          {
+            "id": "data-token-11",
+            "index": 5,
+            "slotIndex": 1
+          },
+          {
+            "id": "data-token-12",
+            "index": 6,
+            "slotIndex": 2
+          }
+        ]
+      },
+      "scanInputs": [
+        [
+          "choose_target:756e7901",
+          "choose_card:836ae617"
+        ]
+      ]
+    }
+  ],
+  "originalGap": 2,
+  "scanDataGain": 2,
+  "postScanNodes": [
+    12,
+    13,
+    14,
+    15,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    565,
+    566,
+    567,
+    568,
+    569,
+    570,
+    571,
+    572,
+    573,
+    574,
+    575,
+    576,
+    577,
+    578,
+    579,
+    580,
+    581,
+    582,
+    583,
+    584,
+    3145,
+    3146,
+    3147,
+    3148,
+    3149,
+    3150
+  ],
+  "exclusivePostScanNodes": [
+    12,
+    13,
+    14,
+    15,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    565,
+    566,
+    567,
+    568,
+    569,
+    570,
+    571,
+    572,
+    573,
+    574,
+    575,
+    576,
+    577,
+    578,
+    579,
+    580,
+    581,
+    582,
+    583,
+    584,
+    3145,
+    3146,
+    3147,
+    3148,
+    3149,
+    3150
+  ],
+  "scope": "仅这份4096节点日志的已执行分支；扫描结算后才确认2数据。剪掉此前准备属于用户指定的需求式取舍，不是全状态等价；本记录不声称已实施或已节省这些节点。"
+}
