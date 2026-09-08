@@ -1,0 +1,184 @@
+{
+  "scope": "同一绿方第101步根，两版均4096节点且动作与已有交叉记录一致；CPU采样只用于热点定位",
+  "caveats": [
+    "含决策后估值与正式提交开销，不等于搜索totalMilliseconds",
+    "规范化是包含子调用的采样时间，复制和GC是自身时间，不能直接相加；采样抖动及搜索分支不同不能排除",
+    "不能将该单点比例外推659435ms完整局，完整局同时增加了搜索次数和物理节点"
+  ],
+  "variants": [
+    {
+      "policy": "candidate",
+      "file": "reports/iteration/identity-cpu-candidate-20260908.json.gz",
+      "commit": "438305b4ee0107ddbb0850bac8ae5c7d49d249ee",
+      "sampledMicroseconds": {
+        "total": 12335334,
+        "normalizationInclusive": 0,
+        "structuredCloneSelf": 3914143,
+        "garbageCollectionSelf": 947494
+      },
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 45,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "measuredPhases": {
+        "maxMilliseconds": 30000,
+        "forkMilliseconds": 461.64628499997525,
+        "executionMilliseconds": 1855.47796700008,
+        "projectionMilliseconds": 754.4809830000033,
+        "identityMilliseconds": 6.229520999975648,
+        "checkpointMilliseconds": 649.4226109999538,
+        "frontierMilliseconds": 46.872474000014336,
+        "orchestrationMilliseconds": 6869.341241999999,
+        "totalMilliseconds": 10643.471083
+      },
+      "topSelf": [
+        [
+          "node:internal/worker/js_transferable:112 structuredClone",
+          3707307
+        ],
+        [
+          ":0 (garbage collector)",
+          947494
+        ],
+        [
+          "file:///private/tmp/seti-quick-turn-order-20260908/randomizer/game/rule-composition.js:24 deepFreeze",
+          542286
+        ],
+        [
+          "file:///private/tmp/seti-quick-turn-order-20260908/randomizer/game/state/state-store.js:46 stableSerialize",
+          507207
+        ],
+        [
+          "file:///private/tmp/seti-quick-turn-order-20260908/randomizer/game/rule-composition.js:30 stableSerialize",
+          326757
+        ],
+        [
+          "file:///private/tmp/seti-quick-turn-order-20260908/randomizer/solar-system/core.js:173 getWheelStep",
+          318793
+        ],
+        [
+          "file:///private/tmp/seti-quick-turn-order-20260908/randomizer/game/ai/policy-port.js:50 copySerializable",
+          248710
+        ],
+        [
+          "file:///private/tmp/seti-quick-turn-order-20260908/randomizer/game/ai/heuristic-decision-function.js:108 canShare",
+          225751
+        ],
+        [
+          "file:///private/tmp/seti-quick-turn-order-20260908/randomizer/game/production-kernel.js:984 buildSectorWinRequirements",
+          212916
+        ],
+        [
+          ":0 structuredClone",
+          206836
+        ],
+        [
+          "file:///private/tmp/seti-quick-turn-order-20260908/randomizer/game/state/low-coupling-slices.js:110 visit",
+          162827
+        ],
+        [
+          "file:///private/tmp/seti-quick-turn-order-20260908/randomizer/solar-system/core.js:486 getBaseWheelCell",
+          160208
+        ]
+      ]
+    },
+    {
+      "policy": "identity",
+      "file": "reports/iteration/identity-cpu-identity-20260908.json.gz",
+      "commit": "b871c243c8c37f0b50b0a0428d1d3dd9f9e67945",
+      "sampledMicroseconds": {
+        "total": 13197500,
+        "normalizationInclusive": 581412,
+        "structuredCloneSelf": 3976163,
+        "garbageCollectionSelf": 1038789
+      },
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 45,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "measuredPhases": {
+        "maxMilliseconds": 30000,
+        "forkMilliseconds": 371.31718400001796,
+        "executionMilliseconds": 1921.9580100000305,
+        "projectionMilliseconds": 774.01982799998,
+        "identityMilliseconds": 10.456860999987839,
+        "checkpointMilliseconds": 671.9196099999829,
+        "frontierMilliseconds": 47.54520999998431,
+        "orchestrationMilliseconds": 7570.728131000018,
+        "totalMilliseconds": 11367.944834000002
+      },
+      "topSelf": [
+        [
+          "node:internal/worker/js_transferable:112 structuredClone",
+          3742252
+        ],
+        [
+          ":0 (garbage collector)",
+          1038789
+        ],
+        [
+          "file:///private/tmp/seti-counterfactual-identity-20260908/randomizer/game/rule-composition.js:30 stableSerialize",
+          566955
+        ],
+        [
+          "file:///private/tmp/seti-counterfactual-identity-20260908/randomizer/game/rule-composition.js:24 deepFreeze",
+          563785
+        ],
+        [
+          "file:///private/tmp/seti-counterfactual-identity-20260908/randomizer/game/state/state-store.js:46 stableSerialize",
+          544087
+        ],
+        [
+          "file:///private/tmp/seti-counterfactual-identity-20260908/randomizer/solar-system/core.js:173 getWheelStep",
+          421207
+        ],
+        [
+          "file:///private/tmp/seti-counterfactual-identity-20260908/randomizer/game/ai/heuristic-decision-function.js:108 canShare",
+          265292
+        ],
+        [
+          "file:///private/tmp/seti-counterfactual-identity-20260908/randomizer/game/rule-composition.js:1065 getTrustedState",
+          254963
+        ],
+        [
+          "file:///private/tmp/seti-counterfactual-identity-20260908/randomizer/game/ai/policy-port.js:50 copySerializable",
+          248626
+        ],
+        [
+          ":0 structuredClone",
+          233911
+        ],
+        [
+          "file:///private/tmp/seti-counterfactual-identity-20260908/randomizer/game/production-kernel.js:984 buildSectorWinRequirements",
+          227793
+        ],
+        [
+          "file:///private/tmp/seti-counterfactual-identity-20260908/randomizer/game/state/low-coupling-slices.js:110 visit",
+          198294
+        ]
+      ]
+    }
+  ]
+}
