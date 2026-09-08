@@ -1,0 +1,1516 @@
+{
+  "scope": "唯一旧局正式前401输入与after校验；399/400/401分数来源和外星人状态",
+  "states": [
+    {
+      "step": 399,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:501d362e",
+        "actorId": "player-brown",
+        "stateVersion": 196,
+        "decisionVersion": 19,
+        "target": {
+          "choiceId": "public:card-60-0:sector-3-a",
+          "cardInstanceId": "card-60-0",
+          "publicSlotIndex": 1,
+          "nebulaId": "sector-3-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "dlc_17.png → 开普勒22",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-60-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_17.png",
+          "imageAlt": "dlc_17.png"
+        }
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 4,
+        "score": 43
+      },
+      "scoreSources": {
+        "alienTraceBlueScore": 3,
+        "alienTraceYellowScore": 1,
+        "blueTechScore": 2,
+        "cardQuickScore": 1,
+        "initialScore": 8,
+        "landScore": 10,
+        "orbitScore": 9,
+        "techBonusScore": 9
+      },
+      "aliens": {
+        "aliens": {
+          "1": {
+            "alienId": "阿米巴",
+            "assignedAlienId": "阿米巴",
+            "revealed": true,
+            "traces": {
+              "blue": {
+                "extraCount": 1,
+                "extraMarkers": [
+                  {
+                    "ownerPlayerColor": "green"
+                  }
+                ],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "white"
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "green"
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "green"
+              }
+            }
+          },
+          "2": {
+            "alienId": "虫",
+            "assignedAlienId": "虫",
+            "revealed": true,
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "brown"
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "green"
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "blue"
+              }
+            }
+          }
+        },
+        "amiba": {
+          "cardDeck": [
+            4,
+            8,
+            7
+          ],
+          "displayedCardIndex": 6,
+          "revealInitialized": true,
+          "revealedByPlayerColor": "green",
+          "revealedByPlayerId": "player-green",
+          "revealedSlotId": 1,
+          "symbolSlots": {
+            "blue_1": "symbol_4",
+            "blue_2": "symbol_2",
+            "red_1": "symbol_5",
+            "red_2": "symbol_3",
+            "red_3": "symbol_1"
+          },
+          "symbolsById": {
+            "symbol_1": {
+              "sequence": 3,
+              "slotId": "red_3",
+              "symbolId": "symbol_1"
+            },
+            "symbol_2": {
+              "sequence": 2,
+              "slotId": "blue_2",
+              "symbolId": "symbol_2"
+            },
+            "symbol_3": {
+              "sequence": 5,
+              "slotId": "red_2",
+              "symbolId": "symbol_3"
+            },
+            "symbol_4": {
+              "sequence": 1,
+              "slotId": "blue_1",
+              "symbolId": "symbol_4"
+            },
+            "symbol_5": {
+              "sequence": 4,
+              "slotId": "red_1",
+              "symbolId": "symbol_5"
+            }
+          },
+          "traceSlotsByAlienSlotId": {
+            "1": {
+              "blue": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": {
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "position": 4,
+                  "rewardApplied": true,
+                  "sequence": 11,
+                  "traceType": "blue"
+                }
+              },
+              "pink": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": null
+              },
+              "yellow": {
+                "1": null,
+                "2": null,
+                "3": {
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "position": 3,
+                  "rewardApplied": true,
+                  "sequence": 15,
+                  "traceType": "yellow"
+                },
+                "4": {
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "position": 4,
+                  "rewardApplied": true,
+                  "sequence": 4,
+                  "traceType": "yellow"
+                }
+              }
+            }
+          }
+        },
+        "aomomo": {
+          "cardDeck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "displayedCardIndex": null,
+          "landingMarkers": [],
+          "orbitMarkers": [],
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "traceSlotsByAlienSlotId": {}
+        },
+        "banrenma": {
+          "bonusSlots": {},
+          "cardDeck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "displayedCardIndex": null,
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "scoreMarksByPlayerId": {},
+          "traceSlotsByAlienSlotId": {}
+        },
+        "chong": {
+          "cardDeck": [
+            6,
+            4,
+            8,
+            3
+          ],
+          "completedTransports": [],
+          "displayedCardIndex": 1,
+          "fossilsById": {
+            "fossil_01": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_01",
+              "location": "planet",
+              "planetId": "saturn",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_02": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_02",
+              "location": "planet",
+              "planetId": "jupiter",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_03": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_03",
+              "location": "planet",
+              "planetId": "jupiter",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_04": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_04",
+              "location": "panel",
+              "planetId": null,
+              "rocketId": null,
+              "status": "panel",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_05": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_05",
+              "location": "planet",
+              "planetId": "jupiter",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_06": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_06",
+              "location": "planet",
+              "planetId": "saturn",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_07": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_07",
+              "location": "planet",
+              "planetId": "saturn",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            }
+          },
+          "panelFossilSlots": {
+            "7": "fossil_04"
+          },
+          "planetFossilIds": {
+            "jupiter": [
+              "fossil_02",
+              "fossil_05",
+              "fossil_03"
+            ],
+            "saturn": [
+              "fossil_06",
+              "fossil_01",
+              "fossil_07"
+            ]
+          },
+          "revealInitialized": true,
+          "revealedByPlayerColor": "white",
+          "revealedByPlayerId": "player-white",
+          "revealedSlotId": 2,
+          "traceSlotsByAlienSlotId": {
+            "2": {
+              "blue": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": null,
+                "5": null,
+                "6": null,
+                "7": null,
+                "8": null,
+                "9": {
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "position": 9,
+                  "rewardApplied": true,
+                  "sequence": 9,
+                  "traceType": "blue"
+                }
+              },
+              "pink": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": null
+              },
+              "yellow": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": {
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "position": 4,
+                  "rewardApplied": true,
+                  "sequence": 13,
+                  "traceType": "yellow"
+                }
+              }
+            }
+          },
+          "transportTasksByRocketId": {},
+          "unlockedBluePositions": [
+            7,
+            8,
+            9
+          ]
+        },
+        "fangzhou": {
+          "card1Deck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "card1Revealed": [],
+          "card1RevealedSinceShuffle": 0,
+          "displayedCard1Index": null,
+          "playerCard2ById": {},
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "traceSlotsByAlienSlotId": {},
+          "unlockCountByPlayerId": {}
+        },
+        "jiuzhe": {
+          "cardsDealt": false,
+          "freeScoreThreshold": null,
+          "paidScoreThreshold": null,
+          "playerCardsById": {},
+          "playerThreatByColor": {},
+          "playerThreatById": {},
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "traceSlotsByAlienSlotId": {}
+        },
+        "neutralScoreTraceMarks": {},
+        "revealPoolAlienIds": [
+          "九折",
+          "半人马",
+          "奥陌陌",
+          "异常点",
+          "方舟",
+          "符文族",
+          "虫",
+          "阿米巴"
+        ],
+        "runezu": {
+          "availableSymbols": [],
+          "cardDeck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "displayedCardIndex": null,
+          "faceSymbolSlots": {},
+          "panelSymbolSlots": {},
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "sourceSymbolSlots": {},
+          "traceSlotsByAlienSlotId": {}
+        },
+        "yichangdian": {
+          "anomalies": [],
+          "cardDeck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "displayedCardIndex": null,
+          "nextAnomalySectorX": null,
+          "revealEarthX": null,
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "traceSlotsByAlienSlotId": {}
+        }
+      }
+    },
+    {
+      "step": 400,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:a30ebc91",
+        "actorId": "player-brown",
+        "stateVersion": 196,
+        "decisionVersion": 19,
+        "target": {
+          "choiceId": "trace:1:pink:amiba:4",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 1,
+          "traceType": "pink",
+          "speciesId": "amiba",
+          "position": 4
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 1 粉4号位（1分+外星人牌）"
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 2,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 4,
+        "score": 43
+      },
+      "scoreSources": {
+        "alienTraceBlueScore": 3,
+        "alienTraceYellowScore": 1,
+        "blueTechScore": 2,
+        "cardQuickScore": 1,
+        "initialScore": 8,
+        "landScore": 10,
+        "orbitScore": 9,
+        "techBonusScore": 9
+      },
+      "aliens": {
+        "aliens": {
+          "1": {
+            "alienId": "阿米巴",
+            "assignedAlienId": "阿米巴",
+            "revealed": true,
+            "traces": {
+              "blue": {
+                "extraCount": 1,
+                "extraMarkers": [
+                  {
+                    "ownerPlayerColor": "green"
+                  }
+                ],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "white"
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "green"
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "green"
+              }
+            }
+          },
+          "2": {
+            "alienId": "虫",
+            "assignedAlienId": "虫",
+            "revealed": true,
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "brown"
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "green"
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "blue"
+              }
+            }
+          }
+        },
+        "amiba": {
+          "cardDeck": [
+            4,
+            8,
+            7
+          ],
+          "displayedCardIndex": 6,
+          "revealInitialized": true,
+          "revealedByPlayerColor": "green",
+          "revealedByPlayerId": "player-green",
+          "revealedSlotId": 1,
+          "symbolSlots": {
+            "blue_1": "symbol_4",
+            "blue_2": "symbol_2",
+            "red_1": "symbol_5",
+            "red_2": "symbol_3",
+            "red_3": "symbol_1"
+          },
+          "symbolsById": {
+            "symbol_1": {
+              "sequence": 3,
+              "slotId": "red_3",
+              "symbolId": "symbol_1"
+            },
+            "symbol_2": {
+              "sequence": 2,
+              "slotId": "blue_2",
+              "symbolId": "symbol_2"
+            },
+            "symbol_3": {
+              "sequence": 5,
+              "slotId": "red_2",
+              "symbolId": "symbol_3"
+            },
+            "symbol_4": {
+              "sequence": 1,
+              "slotId": "blue_1",
+              "symbolId": "symbol_4"
+            },
+            "symbol_5": {
+              "sequence": 4,
+              "slotId": "red_1",
+              "symbolId": "symbol_5"
+            }
+          },
+          "traceSlotsByAlienSlotId": {
+            "1": {
+              "blue": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": {
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "position": 4,
+                  "rewardApplied": true,
+                  "sequence": 11,
+                  "traceType": "blue"
+                }
+              },
+              "pink": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": null
+              },
+              "yellow": {
+                "1": null,
+                "2": null,
+                "3": {
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "position": 3,
+                  "rewardApplied": true,
+                  "sequence": 15,
+                  "traceType": "yellow"
+                },
+                "4": {
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "position": 4,
+                  "rewardApplied": true,
+                  "sequence": 4,
+                  "traceType": "yellow"
+                }
+              }
+            }
+          }
+        },
+        "aomomo": {
+          "cardDeck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "displayedCardIndex": null,
+          "landingMarkers": [],
+          "orbitMarkers": [],
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "traceSlotsByAlienSlotId": {}
+        },
+        "banrenma": {
+          "bonusSlots": {},
+          "cardDeck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "displayedCardIndex": null,
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "scoreMarksByPlayerId": {},
+          "traceSlotsByAlienSlotId": {}
+        },
+        "chong": {
+          "cardDeck": [
+            6,
+            4,
+            8,
+            3
+          ],
+          "completedTransports": [],
+          "displayedCardIndex": 1,
+          "fossilsById": {
+            "fossil_01": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_01",
+              "location": "planet",
+              "planetId": "saturn",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_02": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_02",
+              "location": "planet",
+              "planetId": "jupiter",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_03": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_03",
+              "location": "planet",
+              "planetId": "jupiter",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_04": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_04",
+              "location": "panel",
+              "planetId": null,
+              "rocketId": null,
+              "status": "panel",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_05": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_05",
+              "location": "planet",
+              "planetId": "jupiter",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_06": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_06",
+              "location": "planet",
+              "planetId": "saturn",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_07": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_07",
+              "location": "planet",
+              "planetId": "saturn",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            }
+          },
+          "panelFossilSlots": {
+            "7": "fossil_04"
+          },
+          "planetFossilIds": {
+            "jupiter": [
+              "fossil_02",
+              "fossil_05",
+              "fossil_03"
+            ],
+            "saturn": [
+              "fossil_06",
+              "fossil_01",
+              "fossil_07"
+            ]
+          },
+          "revealInitialized": true,
+          "revealedByPlayerColor": "white",
+          "revealedByPlayerId": "player-white",
+          "revealedSlotId": 2,
+          "traceSlotsByAlienSlotId": {
+            "2": {
+              "blue": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": null,
+                "5": null,
+                "6": null,
+                "7": null,
+                "8": null,
+                "9": {
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "position": 9,
+                  "rewardApplied": true,
+                  "sequence": 9,
+                  "traceType": "blue"
+                }
+              },
+              "pink": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": null
+              },
+              "yellow": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": {
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "position": 4,
+                  "rewardApplied": true,
+                  "sequence": 13,
+                  "traceType": "yellow"
+                }
+              }
+            }
+          },
+          "transportTasksByRocketId": {},
+          "unlockedBluePositions": [
+            7,
+            8,
+            9
+          ]
+        },
+        "fangzhou": {
+          "card1Deck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "card1Revealed": [],
+          "card1RevealedSinceShuffle": 0,
+          "displayedCard1Index": null,
+          "playerCard2ById": {},
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "traceSlotsByAlienSlotId": {},
+          "unlockCountByPlayerId": {}
+        },
+        "jiuzhe": {
+          "cardsDealt": false,
+          "freeScoreThreshold": null,
+          "paidScoreThreshold": null,
+          "playerCardsById": {},
+          "playerThreatByColor": {},
+          "playerThreatById": {},
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "traceSlotsByAlienSlotId": {}
+        },
+        "neutralScoreTraceMarks": {},
+        "revealPoolAlienIds": [
+          "九折",
+          "半人马",
+          "奥陌陌",
+          "异常点",
+          "方舟",
+          "符文族",
+          "虫",
+          "阿米巴"
+        ],
+        "runezu": {
+          "availableSymbols": [],
+          "cardDeck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "displayedCardIndex": null,
+          "faceSymbolSlots": {},
+          "panelSymbolSlots": {},
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "sourceSymbolSlots": {},
+          "traceSlotsByAlienSlotId": {}
+        },
+        "yichangdian": {
+          "anomalies": [],
+          "cardDeck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "displayedCardIndex": null,
+          "nextAnomalySectorX": null,
+          "revealEarthX": null,
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "traceSlotsByAlienSlotId": {}
+        }
+      }
+    },
+    {
+      "step": 401,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:9924a10f",
+        "actorId": "player-brown",
+        "stateVersion": 196,
+        "decisionVersion": 19,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "amiba:display:6",
+          "source": "display",
+          "cardIndex": 6
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "获得展示的物理表征",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "6",
+          "imageSrc": "../assets/aliens/阿米巴/cards/6.webp",
+          "imageAlt": "物理表征"
+        }
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 2,
+        "credits": 1,
+        "energy": 0,
+        "handSize": 4,
+        "publicity": 6,
+        "score": 50
+      },
+      "scoreSources": {
+        "alienEffectScore": 6,
+        "alienTraceBlueScore": 3,
+        "alienTracePinkScore": 1,
+        "alienTraceYellowScore": 1,
+        "blueTechScore": 2,
+        "cardQuickScore": 1,
+        "initialScore": 8,
+        "landScore": 10,
+        "orbitScore": 9,
+        "techBonusScore": 9
+      },
+      "aliens": {
+        "aliens": {
+          "1": {
+            "alienId": "阿米巴",
+            "assignedAlienId": "阿米巴",
+            "revealed": true,
+            "traces": {
+              "blue": {
+                "extraCount": 1,
+                "extraMarkers": [
+                  {
+                    "ownerPlayerColor": "green"
+                  }
+                ],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "white"
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "green"
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "green"
+              }
+            }
+          },
+          "2": {
+            "alienId": "虫",
+            "assignedAlienId": "虫",
+            "revealed": true,
+            "traces": {
+              "blue": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "brown"
+              },
+              "pink": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "green"
+              },
+              "yellow": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": true,
+                "neutral": false,
+                "ownerPlayerColor": "blue"
+              }
+            }
+          }
+        },
+        "amiba": {
+          "cardDeck": [
+            8,
+            7
+          ],
+          "displayedCardIndex": 4,
+          "revealInitialized": true,
+          "revealedByPlayerColor": "green",
+          "revealedByPlayerId": "player-green",
+          "revealedSlotId": 1,
+          "symbolSlots": {
+            "blue_1": "symbol_4",
+            "blue_2": "symbol_2",
+            "blue_3": "symbol_1",
+            "orange_1": "symbol_3",
+            "red_2": "symbol_5"
+          },
+          "symbolsById": {
+            "symbol_1": {
+              "sequence": 3,
+              "slotId": "blue_3",
+              "symbolId": "symbol_1"
+            },
+            "symbol_2": {
+              "sequence": 2,
+              "slotId": "blue_2",
+              "symbolId": "symbol_2"
+            },
+            "symbol_3": {
+              "sequence": 5,
+              "slotId": "orange_1",
+              "symbolId": "symbol_3"
+            },
+            "symbol_4": {
+              "sequence": 1,
+              "slotId": "blue_1",
+              "symbolId": "symbol_4"
+            },
+            "symbol_5": {
+              "sequence": 4,
+              "slotId": "red_2",
+              "symbolId": "symbol_5"
+            }
+          },
+          "traceSlotsByAlienSlotId": {
+            "1": {
+              "blue": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": {
+                  "playerColor": "blue",
+                  "playerId": "player-blue",
+                  "position": 4,
+                  "rewardApplied": true,
+                  "sequence": 11,
+                  "traceType": "blue"
+                }
+              },
+              "pink": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": {
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "position": 4,
+                  "rewardApplied": true,
+                  "sequence": 17,
+                  "traceType": "pink"
+                }
+              },
+              "yellow": {
+                "1": null,
+                "2": null,
+                "3": {
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "position": 3,
+                  "rewardApplied": true,
+                  "sequence": 15,
+                  "traceType": "yellow"
+                },
+                "4": {
+                  "playerColor": "brown",
+                  "playerId": "player-brown",
+                  "position": 4,
+                  "rewardApplied": true,
+                  "sequence": 4,
+                  "traceType": "yellow"
+                }
+              }
+            }
+          }
+        },
+        "aomomo": {
+          "cardDeck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "displayedCardIndex": null,
+          "landingMarkers": [],
+          "orbitMarkers": [],
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "traceSlotsByAlienSlotId": {}
+        },
+        "banrenma": {
+          "bonusSlots": {},
+          "cardDeck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "displayedCardIndex": null,
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "scoreMarksByPlayerId": {},
+          "traceSlotsByAlienSlotId": {}
+        },
+        "chong": {
+          "cardDeck": [
+            6,
+            4,
+            8,
+            3
+          ],
+          "completedTransports": [],
+          "displayedCardIndex": 1,
+          "fossilsById": {
+            "fossil_01": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_01",
+              "location": "planet",
+              "planetId": "saturn",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_02": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_02",
+              "location": "planet",
+              "planetId": "jupiter",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_03": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_03",
+              "location": "planet",
+              "planetId": "jupiter",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_04": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_04",
+              "location": "panel",
+              "planetId": null,
+              "rocketId": null,
+              "status": "panel",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_05": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_05",
+              "location": "planet",
+              "planetId": "jupiter",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_06": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_06",
+              "location": "planet",
+              "planetId": "saturn",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            },
+            "fossil_07": {
+              "carriedByPlayerColor": null,
+              "carriedByPlayerId": null,
+              "destinationPlanetId": null,
+              "fossilId": "fossil_07",
+              "location": "planet",
+              "planetId": "saturn",
+              "rocketId": null,
+              "status": "available",
+              "taskCardId": null,
+              "visibleToPlayerIds": []
+            }
+          },
+          "panelFossilSlots": {
+            "7": "fossil_04"
+          },
+          "planetFossilIds": {
+            "jupiter": [
+              "fossil_02",
+              "fossil_05",
+              "fossil_03"
+            ],
+            "saturn": [
+              "fossil_06",
+              "fossil_01",
+              "fossil_07"
+            ]
+          },
+          "revealInitialized": true,
+          "revealedByPlayerColor": "white",
+          "revealedByPlayerId": "player-white",
+          "revealedSlotId": 2,
+          "traceSlotsByAlienSlotId": {
+            "2": {
+              "blue": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": null,
+                "5": null,
+                "6": null,
+                "7": null,
+                "8": null,
+                "9": {
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "position": 9,
+                  "rewardApplied": true,
+                  "sequence": 9,
+                  "traceType": "blue"
+                }
+              },
+              "pink": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": null
+              },
+              "yellow": {
+                "1": null,
+                "2": null,
+                "3": null,
+                "4": {
+                  "playerColor": "white",
+                  "playerId": "player-white",
+                  "position": 4,
+                  "rewardApplied": true,
+                  "sequence": 13,
+                  "traceType": "yellow"
+                }
+              }
+            }
+          },
+          "transportTasksByRocketId": {},
+          "unlockedBluePositions": [
+            7,
+            8,
+            9
+          ]
+        },
+        "fangzhou": {
+          "card1Deck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "card1Revealed": [],
+          "card1RevealedSinceShuffle": 0,
+          "displayedCard1Index": null,
+          "playerCard2ById": {},
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "traceSlotsByAlienSlotId": {},
+          "unlockCountByPlayerId": {}
+        },
+        "jiuzhe": {
+          "cardsDealt": false,
+          "freeScoreThreshold": null,
+          "paidScoreThreshold": null,
+          "playerCardsById": {},
+          "playerThreatByColor": {},
+          "playerThreatById": {},
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "traceSlotsByAlienSlotId": {}
+        },
+        "neutralScoreTraceMarks": {},
+        "revealPoolAlienIds": [
+          "九折",
+          "半人马",
+          "奥陌陌",
+          "异常点",
+          "方舟",
+          "符文族",
+          "虫",
+          "阿米巴"
+        ],
+        "runezu": {
+          "availableSymbols": [],
+          "cardDeck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "displayedCardIndex": null,
+          "faceSymbolSlots": {},
+          "panelSymbolSlots": {},
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "sourceSymbolSlots": {},
+          "traceSlotsByAlienSlotId": {}
+        },
+        "yichangdian": {
+          "anomalies": [],
+          "cardDeck": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+          ],
+          "displayedCardIndex": null,
+          "nextAnomalySectorX": null,
+          "revealEarthX": null,
+          "revealInitialized": false,
+          "revealedByPlayerColor": null,
+          "revealedByPlayerId": null,
+          "revealedSlotId": null,
+          "traceSlotsByAlienSlotId": {}
+        }
+      }
+    }
+  ],
+  "sourceDelta": {
+    "alienEffectScore": 6,
+    "alienTracePinkScore": 1
+  },
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n7 !== 6\n\n    at Object.<anonymous> (/Users/bilibili/code/seti-simu/adhoc/inspect-brown-amiba401-20260909.js:25:10)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)\n    at node:internal/main/run_main_module:36:49"
+}
