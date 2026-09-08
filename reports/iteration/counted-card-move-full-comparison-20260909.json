@@ -1,0 +1,912 @@
+{
+  "candidate": {
+    "file": "f14a863e.4bc44eb2.full.json",
+    "commit": "4bc44eb2",
+    "steps": 613,
+    "wallMs": 565487,
+    "scores": {
+      "player-blue": 74,
+      "player-green": 105,
+      "player-brown": 115,
+      "player-white": 113
+    },
+    "mean": 101.75,
+    "scoreSource": "save-final",
+    "nodes": 143252,
+    "alienCardNodes": 11507,
+    "counts": {
+      "control": 84,
+      "strategic": 88
+    },
+    "executionCaps": {
+      "strategic": 30,
+      "control": 8
+    },
+    "beamCaps": null,
+    "unionCaps": null,
+    "executionCapRate": 0.22093023255813954,
+    "unionCapRate": null,
+    "failures": {},
+    "families": {
+      "pass:main": 3635,
+      "analyze:main": 4062,
+      "card_corner:quick": 4059,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_pick_card_corner_reward/cardEffect=card_pick_card_corner_reward": 6,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 1230,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 2671,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_income": 4024,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 4304,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 4927,
+      "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 2004,
+      "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 1684,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 12662,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 5169,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research": 3336,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech": 317,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 7395,
+      "end_turn:turn_control": 14229,
+      "industry:quick": 2931,
+      "land:main": 2282,
+      "launch:main": 1127,
+      "move:quick": 4168,
+      "orbit:main": 1648,
+      "place_data:quick": 11918,
+      "play_card:main": 1720,
+      "quick_trade:quick": 9756,
+      "research_tech:main": 1131,
+      "scan:main": 4273,
+      "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger": 542,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 1458,
+      "choose_target:conditional/decision=choose_target/effect=probe_land_choice": 1,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 244,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker": 55,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 3024,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace": 23,
+      "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income": 1079,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income": 824,
+      "choose_target:conditional/decision=choose_target/effect=residual_final_mark": 4590,
+      "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 11507,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4": 1112,
+      "choose_card:conditional/decision=choose_card/effect=probe_turn_pass_reserve": 42,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_choose_symbol_reward/cardEffect=amiba_choose_symbol_reward": 212,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income": 1329,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card": 148,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward": 25,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_card_corner_repeat/cardEffect=card_discard_card_corner_repeat": 7,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_draw_then_scan/cardEffect=card_draw_then_scan": 14,
+      "choose_reward:conditional/decision=choose_reward/effect=card_play_domain_effect:decision:card_pay_credits_for_reward/cardEffect=card_pay_credits_for_reward": 71,
+      "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task": 40,
+      "complete_task:quick": 14,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:chong_land_for_pickup/cardEffect=chong_land_for_pickup": 20,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_choose_hand_corner_reward/cardEffect=card_choose_hand_corner_reward": 13,
+      "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_public_corner_rewards/cardEffect=card_discard_public_corner_rewards": 40,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_free_move/cardEffect=card_free_move": 150
+    },
+    "cappedSearches": [
+      {
+        "step": 24,
+        "seat": "player-white",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 41,
+        "seat": "player-green",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 49,
+        "seat": "player-blue",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 52,
+        "seat": "player-brown",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 101,
+        "seat": "player-green",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 165,
+        "seat": "player-green",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 169,
+        "seat": "player-blue",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 186,
+        "seat": "player-brown",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 189,
+        "seat": "player-white",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 205,
+        "seat": "player-green",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 217,
+        "seat": "player-blue",
+        "kind": "control",
+        "nodes": 1,
+        "executionLimitReached": true
+      },
+      {
+        "step": 218,
+        "seat": "player-blue",
+        "kind": "control",
+        "nodes": 1,
+        "executionLimitReached": true
+      },
+      {
+        "step": 220,
+        "seat": "player-brown",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 224,
+        "seat": "player-white",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 248,
+        "seat": "player-brown",
+        "kind": "control",
+        "nodes": 1,
+        "executionLimitReached": true
+      },
+      {
+        "step": 279,
+        "seat": "player-white",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 317,
+        "seat": "player-blue",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 323,
+        "seat": "player-brown",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 325,
+        "seat": "player-white",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 327,
+        "seat": "player-green",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 336,
+        "seat": "player-brown",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 348,
+        "seat": "player-green",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 362,
+        "seat": "player-brown",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 367,
+        "seat": "player-white",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 395,
+        "seat": "player-brown",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 462,
+        "seat": "player-white",
+        "kind": "control",
+        "nodes": 1,
+        "executionLimitReached": true
+      },
+      {
+        "step": 466,
+        "seat": "player-white",
+        "kind": "control",
+        "nodes": 1,
+        "executionLimitReached": true
+      },
+      {
+        "step": 476,
+        "seat": "player-brown",
+        "kind": "control",
+        "nodes": 1,
+        "executionLimitReached": true
+      },
+      {
+        "step": 479,
+        "seat": "player-brown",
+        "kind": "control",
+        "nodes": 1,
+        "executionLimitReached": true
+      },
+      {
+        "step": 485,
+        "seat": "player-brown",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 491,
+        "seat": "player-white",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 499,
+        "seat": "player-white",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 503,
+        "seat": "player-green",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 510,
+        "seat": "player-blue",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 522,
+        "seat": "player-white",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 534,
+        "seat": "player-brown",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      },
+      {
+        "step": 546,
+        "seat": "player-blue",
+        "kind": "control",
+        "nodes": 1,
+        "executionLimitReached": true
+      },
+      {
+        "step": 558,
+        "seat": "player-white",
+        "kind": "strategic",
+        "nodes": 4096,
+        "executionLimitReached": true
+      }
+    ],
+    "bySeat": {
+      "player-white": {
+        "nodes": 49596,
+        "searches": 54,
+        "alienCardNodes": 4093,
+        "executionCaps": 12,
+        "observedUnionCaps": 12
+      },
+      "player-green": {
+        "nodes": 30567,
+        "searches": 39,
+        "alienCardNodes": 3696,
+        "executionCaps": 7,
+        "observedUnionCaps": 7
+      },
+      "player-blue": {
+        "nodes": 21446,
+        "searches": 34,
+        "alienCardNodes": 1253,
+        "executionCaps": 7,
+        "observedUnionCaps": 7
+      },
+      "player-brown": {
+        "nodes": 41643,
+        "searches": 45,
+        "alienCardNodes": 2465,
+        "executionCaps": 12,
+        "observedUnionCaps": 12
+      }
+    }
+  },
+  "comparisons": {
+    "dev": {
+      "baseline": {
+        "file": "c43c1f88.70043d34.full.json",
+        "commit": "70043d34",
+        "steps": 613,
+        "wallMs": 571832,
+        "scores": {
+          "player-blue": 74,
+          "player-green": 105,
+          "player-brown": 115,
+          "player-white": 113
+        },
+        "mean": 101.75,
+        "scoreSource": "save-final",
+        "nodes": 143252,
+        "alienCardNodes": 11495,
+        "counts": {
+          "control": 84,
+          "strategic": 88
+        },
+        "executionCaps": {
+          "strategic": 30,
+          "control": 8
+        },
+        "beamCaps": null,
+        "unionCaps": null,
+        "executionCapRate": 0.22093023255813954,
+        "unionCapRate": null,
+        "failures": {},
+        "families": {
+          "pass:main": 3630,
+          "analyze:main": 4063,
+          "card_corner:quick": 4058,
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_pick_card_corner_reward/cardEffect=card_pick_card_corner_reward": 6,
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 1225,
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 2657,
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income": 4020,
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 4307,
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 4921,
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 2003,
+          "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 1678,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 12663,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 5168,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research": 3345,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research/cardEffect=card_research_tech": 317,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 7391,
+          "end_turn:turn_control": 14242,
+          "industry:quick": 2928,
+          "land:main": 2282,
+          "launch:main": 1127,
+          "move:quick": 4172,
+          "orbit:main": 1649,
+          "place_data:quick": 11922,
+          "play_card:main": 1731,
+          "quick_trade:quick": 9755,
+          "research_tech:main": 1134,
+          "scan:main": 4276,
+          "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger": 540,
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 1466,
+          "choose_target:conditional/decision=choose_target/effect=probe_land_choice": 1,
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 240,
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_remove_planet_marker/cardEffect=card_remove_planet_marker": 55,
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 3024,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace": 23,
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=income_card/ability=helios_remove_tech_income": 1079,
+          "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=helios_tech/ability=helios_remove_tech_income": 824,
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark": 4596,
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 11495,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4": 1112,
+          "choose_card:conditional/decision=choose_card/effect=probe_turn_pass_reserve": 42,
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_choose_symbol_reward/cardEffect=amiba_choose_symbol_reward": 212,
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_any_for_income/cardEffect=card_discard_any_for_income": 1329,
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card": 148,
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward": 25,
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_card_corner_repeat/cardEffect=card_discard_card_corner_repeat": 8,
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_draw_then_scan/cardEffect=card_draw_then_scan": 14,
+          "choose_reward:conditional/decision=choose_reward/effect=card_play_domain_effect:decision:card_pay_credits_for_reward/cardEffect=card_pay_credits_for_reward": 71,
+          "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=task": 40,
+          "complete_task:quick": 14,
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:chong_land_for_pickup/cardEffect=chong_land_for_pickup": 20,
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_choose_hand_corner_reward/cardEffect=card_choose_hand_corner_reward": 10,
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_discard_public_corner_rewards/cardEffect=card_discard_public_corner_rewards": 44,
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_free_move/cardEffect=card_free_move": 150
+        },
+        "cappedSearches": [
+          {
+            "step": 24,
+            "seat": "player-white",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 41,
+            "seat": "player-green",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 49,
+            "seat": "player-blue",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 52,
+            "seat": "player-brown",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 101,
+            "seat": "player-green",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 165,
+            "seat": "player-green",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 169,
+            "seat": "player-blue",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 186,
+            "seat": "player-brown",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 189,
+            "seat": "player-white",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 205,
+            "seat": "player-green",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 217,
+            "seat": "player-blue",
+            "kind": "control",
+            "nodes": 1,
+            "executionLimitReached": true
+          },
+          {
+            "step": 218,
+            "seat": "player-blue",
+            "kind": "control",
+            "nodes": 1,
+            "executionLimitReached": true
+          },
+          {
+            "step": 220,
+            "seat": "player-brown",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 224,
+            "seat": "player-white",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 248,
+            "seat": "player-brown",
+            "kind": "control",
+            "nodes": 1,
+            "executionLimitReached": true
+          },
+          {
+            "step": 279,
+            "seat": "player-white",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 317,
+            "seat": "player-blue",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 323,
+            "seat": "player-brown",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 325,
+            "seat": "player-white",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 329,
+            "seat": "player-green",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 338,
+            "seat": "player-brown",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 348,
+            "seat": "player-green",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 362,
+            "seat": "player-brown",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 367,
+            "seat": "player-white",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 395,
+            "seat": "player-brown",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 462,
+            "seat": "player-white",
+            "kind": "control",
+            "nodes": 1,
+            "executionLimitReached": true
+          },
+          {
+            "step": 466,
+            "seat": "player-white",
+            "kind": "control",
+            "nodes": 1,
+            "executionLimitReached": true
+          },
+          {
+            "step": 476,
+            "seat": "player-brown",
+            "kind": "control",
+            "nodes": 1,
+            "executionLimitReached": true
+          },
+          {
+            "step": 479,
+            "seat": "player-brown",
+            "kind": "control",
+            "nodes": 1,
+            "executionLimitReached": true
+          },
+          {
+            "step": 485,
+            "seat": "player-brown",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 491,
+            "seat": "player-white",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 499,
+            "seat": "player-white",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 503,
+            "seat": "player-green",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 510,
+            "seat": "player-blue",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 522,
+            "seat": "player-white",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 534,
+            "seat": "player-brown",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          },
+          {
+            "step": 546,
+            "seat": "player-blue",
+            "kind": "control",
+            "nodes": 1,
+            "executionLimitReached": true
+          },
+          {
+            "step": 558,
+            "seat": "player-white",
+            "kind": "strategic",
+            "nodes": 4096,
+            "executionLimitReached": true
+          }
+        ],
+        "bySeat": {
+          "player-white": {
+            "nodes": 49596,
+            "searches": 54,
+            "alienCardNodes": 4093,
+            "executionCaps": 12,
+            "observedUnionCaps": 12
+          },
+          "player-green": {
+            "nodes": 30567,
+            "searches": 39,
+            "alienCardNodes": 3684,
+            "executionCaps": 7,
+            "observedUnionCaps": 7
+          },
+          "player-blue": {
+            "nodes": 21446,
+            "searches": 34,
+            "alienCardNodes": 1253,
+            "executionCaps": 7,
+            "observedUnionCaps": 7
+          },
+          "player-brown": {
+            "nodes": 41643,
+            "searches": 45,
+            "alienCardNodes": 2465,
+            "executionCaps": 12,
+            "observedUnionCaps": 12
+          }
+        }
+      },
+      "firstDifference": {
+        "step": 326,
+        "baseline": {
+          "stepIndex": 325,
+          "actorPlayerId": "player-white",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "move",
+            "phase": "quick",
+            "actionId": "move:19b62fbb",
+            "actorId": "player-white",
+            "stateVersion": 159,
+            "decisionVersion": 10,
+            "target": {
+              "rocketId": 9,
+              "deltaX": -1,
+              "deltaY": 0
+            },
+            "payload": {
+              "direction": "ccw",
+              "requiredMovePoints": 1
+            },
+            "decision": null,
+            "summary": "移动探测器 9 逆时针"
+          },
+          "phase": "quick",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 3,
+            "t": 3,
+            "c": "player-white",
+            "p": {
+              "player-blue": [
+                25,
+                2,
+                1,
+                5,
+                2,
+                1
+              ],
+              "player-green": [
+                44,
+                7,
+                4,
+                2,
+                4,
+                2
+              ],
+              "player-brown": [
+                28,
+                2,
+                2,
+                3,
+                5,
+                1
+              ],
+              "player-white": [
+                31,
+                2,
+                3,
+                4,
+                3,
+                1
+              ]
+            }
+          }
+        },
+        "candidate": {
+          "stepIndex": 325,
+          "actorPlayerId": "player-white",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "end_turn",
+            "phase": "turn_control",
+            "actionId": "end_turn:b2f9b29d",
+            "actorId": "player-white",
+            "stateVersion": 159,
+            "decisionVersion": 10,
+            "target": {
+              "kind": "end-turn"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "结束回合"
+          },
+          "phase": "turn_control",
+          "decisionId": null,
+          "decisionVersion": null,
+          "after": {
+            "r": 3,
+            "t": 4,
+            "c": "player-green",
+            "p": {
+              "player-blue": [
+                25,
+                2,
+                1,
+                5,
+                2,
+                1
+              ],
+              "player-green": [
+                44,
+                7,
+                4,
+                2,
+                4,
+                2
+              ],
+              "player-brown": [
+                28,
+                2,
+                2,
+                3,
+                5,
+                1
+              ],
+              "player-white": [
+                31,
+                2,
+                3,
+                4,
+                3,
+                1
+              ]
+            }
+          }
+        }
+      },
+      "scoreDeltas": {
+        "player-blue": 0,
+        "player-green": 0,
+        "player-brown": 0,
+        "player-white": 0
+      },
+      "totalNodeReductionRatio": 0,
+      "strategicSearchDelta": 0,
+      "meanIncreased": false,
+      "allCapsReducedProven": false
+    }
+  },
+  "zeroRuleFailures": true,
+  "boundary": "旧dev前沿截断未知，仅以下界证明改善；分别列节点下降比例，不用任意小下降自动判定大幅减少。首差不是终局因果证明。"
+}

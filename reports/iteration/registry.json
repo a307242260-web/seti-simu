@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T19:07:29.867Z",
+  "builtAt": "2026-09-08T19:20:46.473Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "e74bf4c0",
+  "headCommit": "2aa521d3",
   "currentBaseline": "round5-card-value-design-20260909",
   "worktreeDirty": true,
   "bestOf": {
@@ -118,7 +118,7 @@
   "versions": [
     {
       "id": "counted-card-move-20260909",
-      "name": "数量移动额度修复（完整局运行中）",
+      "name": "数量移动额度修复（同分，边界待核对）",
       "date": "2026-09-09",
       "baseline": "route-selection-error-20260908",
       "head": "4bc44eb2",
@@ -433,14 +433,295 @@
           "deletions": 0
         }
       ],
-      "results": [],
+      "results": [
+        {
+          "recordFile": "f14a863e.4bc44eb2.full.json",
+          "recordPath": "reports/research/f14a863e.4bc44eb2.full.json",
+          "mode": "full",
+          "steps": 613,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 565487,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "4bc44eb2",
+          "createdAt": "2026-09-08T19:14:31.317Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "613步正式终局74/105/115/113，均101.75与dev相同；物理节点143252、执行截断38不变，失败0，耗时565487ms。队列截断未记录，不能证明完整性改善。首次差异326白方将付1电移动延后到下一次打牌扫描之后；347起动作一致，不声称全盘逐步一致。两张数量移动牌实际未打出，其规则依据和行为由正式夹具验证。尚未合dev，继续相关顺序与信息边界核对；不重跑本版本。详见counted-card-move-progress-20260909.md及full-comparison JSON。",
+          "scores": {
+            "player-blue": 74,
+            "player-green": 105,
+            "player-brown": 115,
+            "player-white": 113
+          },
+          "avgScore": 101.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 74,
+              "base": 51,
+              "tile": 21,
+              "card": 2,
+              "tileScoresById": {
+                "a": 11,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 11,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 2,
+                "cardEffectScore": 3,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 6,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            },
+            "player-green": {
+              "total": 105,
+              "base": 75,
+              "tile": 30,
+              "card": 0,
+              "tileScoresById": {
+                "a": 16,
+                "b": 8,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 0
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 9,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 12,
+                "orbitScore": 27,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-brown": {
+              "total": 115,
+              "base": 75,
+              "tile": 40,
+              "card": 0,
+              "tileScoresById": {
+                "a": 15,
+                "b": 4,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 4,
+                  "score": 4,
+                  "slotIndex": 3,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 2,
+                "blueTechScore": 10,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 11,
+                "orbitScore": 12,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 14
+              }
+            },
+            "player-white": {
+              "total": 113,
+              "base": 87,
+              "tile": 26,
+              "card": 0,
+              "tileScoresById": {
+                "a": 5,
+                "b": 12,
+                "c": 0,
+                "d": 9
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 5,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 12,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 9,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 12,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 4,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 22,
+                "orbitScore": 0,
+                "scanScore": 10,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-counted-card-move-20260909-4bc44eb2-full-v316.json",
+          "reportPath": "reports/iteration/counted-card-move-20260909/f14a863e.4bc44eb2.full.action-log.html",
+          "reportExists": true
+        }
+      ],
       "roadmap": null,
       "isHead": false,
       "completeness": {
-        "record": false,
-        "save": false,
-        "report": false,
-        "reportLinks": []
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "f14a863e.4bc44eb2.full",
+            "path": "reports/iteration/counted-card-move-20260909/f14a863e.4bc44eb2.full.action-log.html",
+            "mode": "full"
+          }
+        ]
       }
     },
     {
