@@ -43,3 +43,20 @@ checkpoint读取工作状态后复现通过，没有修改生产代码或放宽�
 
 本次仅完成复现与修复计划。已检查迭代规范；无生产或接口变更，无需改README/AGENTS/
 AI及RL接口说明。取证脚本及报告同期留档，不登记为已完成的策略版本。
+
+## 进展：非地球访问复现与独立候选
+
+后续v4将同一探测器放到地球位置，经正式energy-for-move向外访问火星。
+正式匹配器识别b2三个奖励，旧版实际无任务Decision，漏触发得到具体业务证明。
+证据：`quick-move-events-v4-81ee9ed6-20260908.json`；不是历史盘面降分归因。
+
+独立候选`c50e4f01`，分支`fix/quick-move-events-20260908`，工作树
+`/private/tmp/seti-quick-move-events-20260908.RYFIBr`（基于81ee9ed6）。
+改动：快速移动转交底层已有events，再附quick_move审计；不二次移动或发奖。
+候选已同步mechanics-reference与修复设计，未合入主目录dev、未推送远端。
+
+正式composition测试修复前move事件0≠1失败，修复后通过：火星访问出现三个互斥
+任务奖励，能量奖只领一次；错误owner、重复提交不改envelope；奖励等待中存档恢复
+后完整envelope一致。定向回归unit 7/7、full-flow 1/1，V输入审计通过。
+没有运行全量83个unit。单点性能/计划、额外到达事件类别及固定全盘仍待验收，
+没有新增终局成绩，也没有将该规则候选登记为已通过的性能版本。

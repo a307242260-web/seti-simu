@@ -4,8 +4,10 @@ const req = require("node:module").createRequire(process.cwd() + "/adhoc/quick-m
 const { createSimulationRuleComposition } = req("../randomizer/game/production-kernel");
 const { createSeededRandom, RNG_ALGORITHM } = req("../randomizer/game/random");
 const rocket = req("../randomizer/game/abilities/rocket");
+const rockets = req("../randomizer/game/rockets");
+const effects = req("../randomizer/game/cards/effects");
 const base = "/Users/bilibili/code/seti-simu/reports/iteration/";
-const output = base + "quick-move-events-v3-81ee9ed6-20260908.json";
+const output = base + "quick-move-events-v4-81ee9ed6-20260908.json";
 if (fs.existsSync(output)) { console.log(`已有checkpoint：${output}`); process.exit(0); }
 const report = { reproduced: false, cases: [], scope: "真实第50步派生正式规则fixture，不运行AI" };
 let composition;
@@ -19,6 +21,7 @@ try {
   assert.equal(root.pieces.rockets.length, 1);
   root.pieces.rockets[0].playerId = actorId;
   root.pieces.rockets[0].color = actor.color;
+  rockets.assignRocketToSlot(root.pieces.rockets[0], 5, 1, 0);
   root.pieces.playerRocketSequences = { [actorId]: [root.pieces.rockets[0].playerSequence] };
   fixture.committedState = JSON.stringify(root); report.fixture = fixture;
   const random = createSeededRandom(root.meta.seed);
@@ -46,10 +49,16 @@ try {
     assert.equal(actual.ok, true);
     const events = actual.journal.events;
     const missing = expected.events.filter(e => !events.some(a => JSON.stringify(a) === JSON.stringify(e)));
+    const matches = expected.events.flatMap(e => effects.collectMatchingTriggers(structuredClone(actor), e));
     report.cases.push({ action, expectedEvents: expected.events, actualEvents: events, missing,
+      expectedTriggerIds: matches.map(m => m.trigger.id),
       nextDecision: composition.inspect().session?.decision || null });
   }
   assert.ok(report.cases.every(c => c.missing.some(e => e.type === "move")));
+  const mars = report.cases.find(c => c.expectedEvents.some(e => e.type === "visitPlanet" && e.planetId === "mars"));
+  assert.ok(mars);
+  assert.equal(mars.expectedTriggerIds.length, 3);
+  assert.equal(mars.nextDecision, null);
   report.reproduced = true;
 } catch (error) { report.error = error.stack; process.exitCode = 1; }
 finally {
