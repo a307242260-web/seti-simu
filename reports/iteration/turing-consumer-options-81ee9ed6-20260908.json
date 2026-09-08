@@ -1,0 +1,192 @@
+{
+  "passed": true,
+  "codeHead": "81ee9ed624e0794db0e2efee18d7165b98d47342",
+  "scope": "静态正式直接效果参数，不覆盖动态奖励、触发任务或回合后继；不是完整搜索、可达性或节点收益证明",
+  "modelCount": 254,
+  "directLand": [
+    {
+      "cardId": "b_29.webp",
+      "effect": {
+        "id": "b29-land",
+        "type": "card_land",
+        "label": "登陆（可重复登陆并获得地点奖励）",
+        "icon": "land",
+        "options": {
+          "skipCost": true,
+          "allowDuplicateLanding": true,
+          "allowDuplicateSatelliteLanding": true,
+          "allowSatelliteWithoutTech": false,
+          "forceFirstLandingReward": true,
+          "displayLandingSlot": 1,
+          "referenceOffsetTokenWidths": 0.5,
+          "grantRewards": true,
+          "rememberPreLandingOwnMarker": false,
+          "rememberPreLandingMarker": false,
+          "repeat": 1
+        },
+        "status": "pending"
+      }
+    },
+    {
+      "cardId": "b_34.webp",
+      "effect": {
+        "id": "b34-land",
+        "type": "card_land",
+        "label": "登陆（可无橙色4登陆卫星）",
+        "icon": "land",
+        "options": {
+          "skipCost": true,
+          "allowDuplicateLanding": false,
+          "allowDuplicateSatelliteLanding": false,
+          "allowSatelliteWithoutTech": true,
+          "forceFirstLandingReward": false,
+          "grantRewards": true,
+          "rememberPreLandingOwnMarker": false,
+          "rememberPreLandingMarker": false,
+          "repeat": 1
+        },
+        "status": "pending"
+      }
+    },
+    {
+      "cardId": "b_91.webp",
+      "effect": {
+        "id": "b91-land",
+        "type": "card_land",
+        "label": "登陆；火星/水星/卫星奖励4分",
+        "icon": "land",
+        "options": {
+          "skipCost": true,
+          "allowDuplicateLanding": false,
+          "allowDuplicateSatelliteLanding": false,
+          "allowSatelliteWithoutTech": false,
+          "forceFirstLandingReward": false,
+          "grantRewards": true,
+          "afterLandRewards": [
+            {
+              "planetIds": [
+                "mars",
+                "mercury"
+              ],
+              "includeSatellites": true,
+              "effect": {
+                "id": "b91-land-score",
+                "type": "gain_resources",
+                "label": "指定目标登陆：4分",
+                "icon": "score",
+                "options": {
+                  "gain": {
+                    "score": 4
+                  }
+                }
+              }
+            }
+          ],
+          "rememberPreLandingOwnMarker": false,
+          "rememberPreLandingMarker": false,
+          "repeat": 1
+        },
+        "status": "pending"
+      }
+    },
+    {
+      "cardId": "dlc_1.png",
+      "effect": {
+        "id": "dlc1-land",
+        "type": "card_land",
+        "label": "登陆",
+        "icon": "land",
+        "options": {
+          "skipCost": true,
+          "allowDuplicateLanding": false,
+          "allowDuplicateSatelliteLanding": false,
+          "allowSatelliteWithoutTech": false,
+          "forceFirstLandingReward": false,
+          "grantRewards": true,
+          "rememberPreLandingOwnMarker": false,
+          "rememberPreLandingMarker": true,
+          "repeat": 1
+        },
+        "status": "pending"
+      }
+    },
+    {
+      "cardId": "dlc_6.png",
+      "effect": {
+        "id": "dlc6-land",
+        "type": "card_land",
+        "label": "登陆",
+        "icon": "land",
+        "options": {
+          "skipCost": true,
+          "allowDuplicateLanding": false,
+          "allowDuplicateSatelliteLanding": false,
+          "allowSatelliteWithoutTech": false,
+          "forceFirstLandingReward": false,
+          "grantRewards": true,
+          "rememberPreLandingOwnMarker": false,
+          "rememberPreLandingMarker": false,
+          "repeat": 1
+        },
+        "status": "pending"
+      }
+    },
+    {
+      "cardId": "dlc_31.png",
+      "effect": {
+        "id": "dlc31-land",
+        "type": "card_land",
+        "label": "登陆",
+        "icon": "land",
+        "options": {
+          "skipCost": true,
+          "allowDuplicateLanding": false,
+          "allowDuplicateSatelliteLanding": false,
+          "allowSatelliteWithoutTech": false,
+          "forceFirstLandingReward": false,
+          "grantRewards": true,
+          "rememberPreLandingOwnMarker": false,
+          "rememberPreLandingMarker": false,
+          "repeat": 1
+        },
+        "status": "pending"
+      }
+    }
+  ],
+  "limitIgnoringLaunch": [
+    {
+      "cardId": "b_37.webp",
+      "effect": {
+        "id": "b37-launch-1",
+        "type": "launch",
+        "label": "发射 1/2（忽略火箭上限）",
+        "icon": "launch",
+        "options": {
+          "skipCost": true,
+          "cost": {},
+          "source": "card",
+          "ignoreRocketLimit": true,
+          "repeat": 1
+        },
+        "status": "pending"
+      }
+    },
+    {
+      "cardId": "b_37.webp",
+      "effect": {
+        "id": "b37-launch-2",
+        "type": "launch",
+        "label": "发射 2/2（忽略火箭上限）",
+        "icon": "launch",
+        "options": {
+          "skipCost": true,
+          "cost": {},
+          "source": "card",
+          "ignoreRocketLimit": true,
+          "repeat": 1
+        },
+        "status": "pending"
+      }
+    }
+  ]
+}

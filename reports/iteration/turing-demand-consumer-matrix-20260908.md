@@ -221,6 +221,35 @@ activeRockets.length===0时加入launch来源，不能表达借橙1后的第二�
 本对照仅否决一种有反例的实现方案，不批准逐节点做八个fork，也不新增规则解释器；
 生产需求提取与绑定尚未实现，节点减少、分数及完整性仍无新结论。
 
+## 最小能力改善判定输入（2026-09-08）
+
+以下约束用于下一步需求提取设计；尚未接入搜索。改善判定与“消费者能在本回合
+执行”分别证明，不能以有改善取代资源/路线/主行动状态的可达性检查。
+
+| 能力 | 必须保留的输入 | 正向改善证据 | 明确不能算改善 |
+| --- | --- | --- | --- |
+| 橙1 | 发射来源及options、当时正式活动数量、上限、地球空位、支付资源 | 不借时仅因上限不可发射，借后该具名发射可执行 | ignoreRocketLimit=true；未达到原上限的本次发射 |
+| 橙2 | 探测器、路线具体边、来源options、当回合movementModifiers、宣传状态 | 正式移动点减少，或该边进入小行星产生实际宣传收益 | 仅因存在move就算；忽略出小行星限制也不能顺带忽略进入奖励 |
+| 橙3 | 登陆来源options、具体星球/卫星、环绕状态、当前支付成本 | 同一端点的正式cost.energy严格减少 | skipCost=true或固定自定义费用不变；只比较未覆盖options的energyCost字段 |
+| 橙4 | 卫星身份、来源options、现有占位及重复登陆权限 | 同一卫星不借无权限，借后符合正式准入 | allowSatelliteWithoutTech=true；主星登陆 |
+| 紫1 | 完整扫描来源、正式首扫描来源、具体备选扇区/槽位 | 具名扫描能够选择原先不可选的相邻扇区 | 只因队列type改变就算最终消费；最终仍选原地球扇区 |
+| 紫2 | 完整扫描来源/顺序、水星位置、建队时宣传、扫描次数 | 队列保留水星追加扫描，并实际选择执行 | 只有地理来源但建队时支付不足或后续跳过 |
+| 紫3 | 完整扫描来源/顺序、届时已知手牌实体与scan code、扫描位置 | 队列保留手牌追加扫描，并消费具名手牌选择 | 用公共牌/同类型牌替代该实体；用未知抽牌牌面生成用途 |
+| 紫4 | 完整扫描来源/顺序、具体发射或移动需求、能量/上限/路线地形 | 正式紫4Choice可执行且推进具名发射或路线 | 只有任意移动方向可用；把地形需2移动点的方向当1步免费可达 |
+
+正式复用位置：发射使用getActiveRocketCountForPlayer与getRocketLimitForPlayer；
+移动使用getRequiredMovePointsFromCoordinate及正式进入奖励；登陆使用带原options的
+listLandRequirementsAt；扫描使用buildScanEffectQueue及science.scanQueue的来源、费用
+和Choice准入，不能在AI中重写这些条件。实际公司额度仍按round，消费期限按round/turn。
+
+当前254模型的直接效果参数已核对：6张CARD_LAND（b29、b34、b91、DLC1、DLC6、
+DLC31）全部skipCost=true，故这些具体登陆步骤不构成橙3需求；b34还明确
+allowSatelliteWithoutTech=true，不构成橙4需求。b37两个LAUNCH均ignoreRocketLimit=true，
+不构成橙1需求。不能将这一步的否定外推为整张牌/整个回合没有其他能力消费者。
+动态方舟奖励、触发和任务不在该直接效果清点范围。证据：
+[直接效果参数](turing-consumer-options-81ee9ed6-20260908.json)，脚本
+`adhoc/inventory-turing-consumer-options-20260908.js`。正式模型构建前后卡表不变。
+
 检查位置：players.js借用读取，industry/state.js与passives.js，
 effects/residual-domain-session.js公司枚举/执行，abilities/rocket.js与planet.js，
 actions/scan-effects.js全文，effects/science-session.js scanQueue/SCAN_ACTION_4及研究奖励，
