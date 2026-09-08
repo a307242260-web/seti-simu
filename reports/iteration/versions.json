@@ -7,6 +7,17 @@
   },
   "versions": [
     {
+      "id": "counted-card-reveal-20260909",
+      "name": "手牌展示移动（局部通过，待全盘）",
+      "date": "2026-09-09",
+      "baseline": "counted-card-move-20260909",
+      "head": "872d80c7",
+      "commits": ["872d80c7"],
+      "summary": "发射前试验逐张展示手牌后冻结移动额度；根决策、自动结算与后继共用已知牌展示贪心；自动结算先保存盲抽屏障，公开展示不解除未知牌限制。进度见counted-card-reveal-progress-20260909.md。",
+      "records": {},
+      "roadmap": null
+    },
+    {
       "id": "counted-card-move-20260909",
       "name": "数量移动额度修复（同分，展示选择待实现）",
       "date": "2026-09-09",

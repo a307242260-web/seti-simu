@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T19:57:52.541Z",
+  "builtAt": "2026-09-08T20:15:27.324Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "674c1ced",
+  "headCommit": "99ffcf24",
   "currentBaseline": "round5-card-value-design-20260909",
   "worktreeDirty": true,
   "bestOf": {
@@ -194,6 +194,93 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "counted-card-reveal-20260909",
+      "name": "手牌展示移动（局部通过，待全盘）",
+      "date": "2026-09-09",
+      "baseline": "counted-card-move-20260909",
+      "head": "872d80c7",
+      "commits": [
+        {
+          "hash": "872d80c7",
+          "date": "2026-09-09",
+          "subject": "按正式展示手牌生成移动额度并隔离未知角标收益"
+        }
+      ],
+      "summary": "发射前试验逐张展示手牌后冻结移动额度；根决策、自动结算与后继共用已知牌展示贪心；自动结算先保存盲抽屏障，公开展示不解除未知牌限制。进度见counted-card-reveal-progress-20260909.md。",
+      "diffStat": "12 files changed, 313 insertions(+), 17 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 6,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-decision-function.js",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/policy-port.test.js",
+          "insertions": 7,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.js",
+          "insertions": 73,
+          "deletions": 7
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.test.js",
+          "insertions": 47,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/production-kernel.js",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 35,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/counted-card-reveal-design-20260909.md",
+          "insertions": 94,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/counted-card-reveal-progress-20260909.md",
+          "insertions": 35,
+          "deletions": 0
+        }
+      ],
+      "results": [],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": false,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
     {
       "id": "counted-card-move-20260909",
       "name": "数量移动额度修复（同分，展示选择待实现）",

@@ -1,6 +1,6 @@
 # 发射前试验：按正式展示选择获得移动
 
-2026-09-09，设计方案，尚未实现。用于修复4bc44eb2的两个已复现信息泄漏，
+2026-09-09，隔离候选872d80c7已实现，完整验收未完成。用于修复4bc44eb2的两个已复现信息泄漏，
 不改第五轮资源权重，不扩展成通用反事实运行时暂停机制。
 
 ## 规则依据与判断
@@ -65,8 +65,8 @@ remaining仍允许规则分支用未知额度移动、获得资源并泄漏可�
    每次展示仍通过正式submitDecision、retainStep记账，不能直接修改selected数组。
    后继统一过滤后也调用同一方法，覆盖排空保护后的剩余展示；不在选牌评分器里复制算法。
    过滤未知项不能按`trade-card-selection`的数量使用例外放行。
-4. 控制路径原`maxDepth=1`不变：选中一个根展示输入后，剩余展示在同一次正式排空中
-   结算；主搜索仍沿现有目标继续。`executionStepCount`/成功输入计数必须逐次累加，
+4. 原control/strategic分类不变，choose_card属于strategic（control只有end_turn/pass）。
+   根展示之后剩余展示在正式排空中结算；主搜索仍沿既有目标继续。`executionStepCount`/成功输入计数必须逐次累加，
    32次后回队列继续的部分也不能漏计。不得以宏节点数替代物理输入节省证据。
 5. `randomizer/index.html`中heuristic-decision-function在rule-composition之前加载。
    因此通过已装配composition的counterfactualPort调用纯方法，不新增模块顶层导入，
@@ -76,11 +76,13 @@ remaining仍允许规则分支用未知额度移动、获得资源并泄漏可�
    `hand_card_shown`不可撤销标记；它不是让该玩家获得未知牌面的hidden barrier。
    同一事务已有盲抽屏障必须保留，不能被后续展示标记覆盖后丢失搜索的隐藏信息状态。
 
-屏障源码核对：session-runtime.applyResult保存最后一次不可撤销标记；但搜索同时保留
-本节点首个提交的result.irreversibleBarrier、origin.informationMasked以及自动排空期间
-首次隐藏屏障。两个已复现入口的盲抽都在展示Decision之前返回正式提交结果，因此后续
-展示标记不应清除既有隐藏状态。回归须对两个入口均断言过滤持续到移动完成；不为此
-修改通用runtime或把hand_card_shown错误归为“自己获知了未知牌面”。
+屏障义务修订（混合手牌验证证据）：session-runtime.applyResult保存最后一次标记；
+不能假定本节点初次提交的result.irreversibleBarrier总是含盲抽标记。已有已知牌时，
+第一次展示使用会话的盲抽屏障过滤成功，但公开展示覆盖会话标记后，第二次循环会丢失
+盲抽事实。自动排空必须在提交任何下一项之前，从当前inspection捕获首次隐藏屏障到
+drainHiddenBarrier，后续只累积不清除；节点末遮蔽、计划步骤和后继过滤共用该事实。
+覆盖直接交易、接受发射触发、零/一/多张已知牌，不能只测过滤后的第一项。
+无需修改通用runtime，也不把hand_card_shown归为“自己获知了未知牌面”。
 
 ## 验收
 
@@ -89,4 +91,4 @@ remaining仍允许规则分支用未知额度移动、获得资源并泄漏可�
 节点上界按实际提交计：N张展示需要N+1次展示阶段输入，无排列爆炸。
 确认主搜索与控制路径一致后做单点性能，再标准去重唯一完整局；不复跑4bc44eb2。
 同步mechanics-reference、ai-design、rl-simulation-env及迭代中心；新增Decision需真实Chrome验证。
-不能把本设计或规则依据核对当作修复通过。生产代码尚未修改；按上述约定整批实现后验证。
+不能把本设计或规则依据核对当作修复通过。生产已在隔离候选实现，实际验收见counted-card-reveal-progress-20260909.md。
