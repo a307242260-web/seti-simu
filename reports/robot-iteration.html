@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T15:03:50.065Z",
+  "builtAt": "2026-09-08T15:24:29.916Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "6cd37d6e",
+  "headCommit": "e39b3229",
   "currentBaseline": "route-selection-error-20260908",
   "worktreeDirty": true,
   "bestOf": {
@@ -194,6 +194,73 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "route-suffix-facts-20260908",
+      "name": "等额终点与后续依赖（完整局验证中）",
+      "date": "2026-09-08",
+      "baseline": "alien-pick-disabled-tech-20260908",
+      "head": "af937808",
+      "commits": [
+        {
+          "hash": "af937808",
+          "date": "2026-09-08",
+          "subject": "按正式终点收益复用路线并提前检查剩余计划的具名事实"
+        }
+      ],
+      "summary": "路线按正式奖励成本与己方标记判定变化，自由决策提前检查剩余计划具名事实",
+      "diffStat": "8 files changed, 315 insertions(+), 14 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 11,
+          "deletions": 3
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 5,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.js",
+          "insertions": 63,
+          "deletions": 6
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.test.js",
+          "insertions": 144,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/production-kernel.js",
+          "insertions": 23,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/route-suffix-facts-design-20260908.md",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/route-suffix-facts-progress-20260908.md",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 1
+        }
+      ],
+      "results": [],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": false,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
     {
       "id": "alien-pick-disabled-tech-20260908",
       "name": "拿牌与失效科技组合（完整性未通过）",

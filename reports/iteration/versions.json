@@ -7,6 +7,19 @@
   },
   "versions": [
     {
+      "id": "route-suffix-facts-20260908",
+      "name": "等额终点与后续依赖（完整局验证中）",
+      "date": "2026-09-08",
+      "baseline": "alien-pick-disabled-tech-20260908",
+      "head": "af937808",
+      "commits": [
+        "af937808"
+      ],
+      "summary": "路线按正式奖励成本与己方标记判定变化，自由决策提前检查剩余计划具名事实",
+      "records": {},
+      "roadmap": null
+    },
+    {
       "id": "alien-pick-disabled-tech-20260908",
       "name": "拿牌与失效科技组合（完整性未通过）",
       "date": "2026-09-08",

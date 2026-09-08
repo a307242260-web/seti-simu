@@ -3,8 +3,9 @@ const fs = require('node:fs'), path = require('node:path'), cp = require('node:c
 const assert = require('node:assert/strict'), inspector = require('node:inspector');
 const root = path.resolve(__dirname, '..');
 const policy = process.argv[2];
-assert.ok(['baseline', 'combined'].includes(policy));
-const source = policy === 'baseline' ? root : '/private/tmp/seti-alien-pick-disabled-tech-20260908';
+assert.ok(['baseline', 'combined', 'suffix'].includes(policy));
+const source = policy === 'baseline' ? root : policy === 'suffix'
+  ? '/private/tmp/seti-route-suffix-facts-20260908' : '/private/tmp/seti-alien-pick-disabled-tech-20260908';
 const output = path.join(root, `reports/iteration/combined-white327-${policy}-20260908.json`);
 if (fs.existsSync(output)) { console.log('已有白方交叉证据：' + output); process.exit(0); }
 const record = JSON.parse(fs.readFileSync(path.join(root, 'reports/research/80437cef.5d17835f.full.json')));
@@ -12,7 +13,8 @@ const save = JSON.parse(fs.readFileSync(path.resolve(root, record.savePath)));
 const config = JSON.parse(fs.readFileSync('/private/tmp/seti-trigger-scan-mapping-20260907/reports/iteration/data-root-53-aaaed8d0-20260907.json')).root.config;
 const env = require(path.join(source, 'randomizer/app/simulation-env')).createSimulationEnv();
 const report = { step: 327, policy, seat: 'player-white', sourceCommit: cp.execFileSync('git', ['rev-parse', 'HEAD'],
-  { cwd: source, encoding: 'utf8' }).trim(), boardRecord: '80437cef.5d17835f.full.json', captures: [], errors: [] };
+  { cwd: source, encoding: 'utf8' }).trim(), sourceDirty: cp.execFileSync('git', ['status', '--porcelain'],
+    { cwd: source, encoding: 'utf8' }), boardRecord: '80437cef.5d17835f.full.json', captures: [], errors: [] };
 const debug = new inspector.Session(); debug.connect();
 function post(method, params = {}) {
   let error, result, done = false;
