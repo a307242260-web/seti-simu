@@ -1,0 +1,4 @@
+search root attribution tests passed
+SUMMARY unit passed=1 failed=0 total=1 time=0.06s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/effect-session tests=1

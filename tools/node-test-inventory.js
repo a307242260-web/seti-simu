@@ -55,7 +55,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/research-potential.test.js", "policy/heuristic-evaluator", "宣传预期绑定正式科技与费用；蓝科技未来奖励只计一次，标准叶/事实/V同源", "蓝科技额外叠旧固定轮次价值、研究后重复计宣传预期或标准叶与搜索事实不一致"),
     entry("randomizer/game/ai/blue-bonus-value.test.js", "policy/heuristic-evaluator", "蓝槽来源只作归因；同库存同牌面的V与叶估值不因来源改变", "分析清空丢来源、其他收入复活来源、来源资源支付被额外扣分或蓝3牌面估值被排除"),
     entry("randomizer/game/effects/search-root-attribution.test.js", "architecture/effect-session", "共享状态收益归属每个根；目标无后继或完成后继续搜索触顶仍保留实际结果", "后到根或已完成目标收益被后续截断抹掉，或未完成目标虚增收益"),
-    entry("randomizer/game/effects/search-payment-choices.test.js", "architecture/effect-session", "不同费用结果分别执行；支付未完成不能成叶，根状态不变", "固定选首项丢路线，或未结算费用的状态冒充完成目标"),
+    entry("randomizer/game/effects/search-payment-choices.test.js", "architecture/effect-session", "支付分支与根隔离；未知牌能力遮蔽、普通奖励可入手、主行动条件链必须结算", "固定选首项丢路线、未知移动能力泄露、奖励被全过滤或未结算叶参与评分"),
     entry("randomizer/game/effects/search-budget.test.js", "architecture/effect-session", "全局队列容量、根覆盖、共享来源与完整性；超时不提交真实根；尝试/失败/提交计数守恒", "逐根叶计数或摘要支配吞结果、换序改变覆盖、超时返回部分策略或漏记失败尝试"),
     entry("tools/research-search-statistics.test.js", "training/research-statistics", "逐次搜索记录与续跑只累计真实evaluate，区别满额和剩余队列截断", "计划复用重复计数、旧快速记录缺统计被冒充完整或续跑丢前缀"),
     entry("randomizer/game/ai/conditional-resolution.test.js", "policy/heuristic-evaluator", "同收益条件决策选择较少实际提交，正式收益与终局排序优先", "折叠隐藏执行长度使点选与取消同分循环，或长度奖励压过正式分"),

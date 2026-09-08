@@ -341,6 +341,117 @@
     }));
   }
 
+  // 整批扫描只在串尾结算一次；调用方保留其所在队列的优先级。
+  function chainScanFinalize(entries, ownerId, priority = "direct") {
+    const science = getScienceDomain();
+    const hasScan = (entries || []).some((entry) => (
+      entry?.effect?.type === science.EFFECT_TYPES.SCAN_STEP
+    ));
+    return hasScan ? [...entries, { ...science.scanFinalizeEffect(ownerId), priority }] : entries;
+  }
+
+  function createScienceScanEffect(effect, ownerId, cardInstanceId) {
+    if (effect.type === cardEffects.EFFECT_TYPES.PUBLIC_SCAN) {
+      const science = getScienceDomain();
+      return {
+        priority: "direct",
+        effect: {
+          type: science.EFFECT_TYPES.SCAN_STEP,
+          ownerId,
+          payload: {
+            options: {
+              mode: "public",
+              selected: 0,
+              max: Math.max(1, Number(effect.options?.repeat || effect.options?.count) || 1),
+              consumeMarkers: false,
+            },
+            cardInstanceId,
+            cardEffect: clone(effect),
+          },
+        },
+      };
+    }
+    if (effect.type === cardEffects.EFFECT_TYPES.SCAN_ACTION) {
+      const science = getScienceDomain();
+      return {
+        priority: "direct",
+        effect: {
+          type: science.EFFECT_TYPES.EXECUTE,
+          ownerId,
+          payload: {
+            action: {
+              family: "scan",
+              phase: "main",
+              actorId: ownerId,
+              target: { kind: "card-scan-action" },
+              payload: { skipCost: true },
+            },
+            cardInstanceId,
+            cardEffect: clone(effect),
+          },
+        },
+      };
+    }
+    // 扫描家族 → 统一 science SCAN_STEP（目标枚举/扫描结算/扇区结算全部收敛到
+    // science 的统一扫描节点，底层 placeNebulaToken）。
+    const scanStepOptions = (() => {
+      const e = effect;
+      switch (e.type) {
+        case cardEffects.EFFECT_TYPES.SCAN_NEBULA:
+          return { mode: "specified", nebulaIds: [e.options?.nebulaId].filter(Boolean), gainData: e.options?.gainData !== false, label: e.label };
+        case cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN:
+          return { mode: "any", gainData: e.options?.gainData !== false, label: e.label,
+            sameSectorRemaining: e.options?.repeat ?? 1 };
+        case cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE:
+          return { mode: "color", color: e.options?.color, gainData: e.options?.gainData !== false, label: e.label };
+        case cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN:
+          return { mode: "planet", planetId: e.options?.planetId, gainData: e.options?.gainData !== false, label: e.label };
+        case cardEffects.EFFECT_TYPES.LANDING_SECTOR_SCAN:
+          return { mode: "landing", gainData: e.options?.gainData !== false, label: e.label };
+        case cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN:
+          return { ...clone(e.options), mode: "probe", label: e.label, selectedRocketIds: [] };
+        case cardEffects.EFFECT_TYPES.CONDITIONAL_SECTOR_SCAN:
+          return { mode: "conditional", condition: e.options?.condition, gainData: e.options?.gainData !== false, label: e.label };
+        default:
+          return null;
+      }
+    })();
+    if (scanStepOptions) {
+      const science = getScienceDomain();
+      const afterProbeScan = effect.type === cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN
+        && Number.isInteger(effect.options?.returnToHandIfSignalCount)
+        ? {
+          priority: "direct",
+          effect: {
+            type: genericEffectRuntimeType(cardEffects.EFFECT_TYPES.RETURN_PLAYED_CARD_TO_HAND_IF),
+            ownerId,
+            payload: {
+              cardInstanceId,
+              cardEffect: {
+                id: `${effect.id}:return`, type: cardEffects.EFFECT_TYPES.RETURN_PLAYED_CARD_TO_HAND_IF,
+                options: { condition: { type: "probeScanSignalCount", count: effect.options.returnToHandIfSignalCount } },
+              },
+            },
+          },
+        }
+        : null;
+      return {
+        priority: "direct",
+        effect: {
+          type: science.EFFECT_TYPES.SCAN_STEP,
+          ownerId,
+          payload: { options: scanStepOptions, cardInstanceId, cardEffect: clone(effect),
+            ...(afterProbeScan ? { afterProbeScan } : {}) },
+        },
+      };
+    }
+    return null;
+  }
+
+  function genericEffectRuntimeType(effectType, decision = false) {
+    return `${EFFECT_TYPES.EFFECT}:${decision ? "decision" : "effect"}:${effectType}`;
+  }
+
   function createExperimentalCardPlayDomain(options = {}) {
     const runtime = options.runtime;
     const commitWorkingState = options.commitWorkingState;
@@ -349,10 +460,6 @@
     }
     if (typeof commitWorkingState !== "function") {
       throw new TypeError("Card Play domain 缺少 commitWorkingState");
-    }
-
-    function genericEffectRuntimeType(effectType, decision = false) {
-      return `${EFFECT_TYPES.EFFECT}:${decision ? "decision" : "effect"}:${effectType}`;
     }
 
     function createSpawnedCardEffect(effect, ownerId, cardInstanceId) {
@@ -378,90 +485,8 @@
           },
         };
       }
-      if (effect.type === cardEffects.EFFECT_TYPES.PUBLIC_SCAN) {
-        const science = getScienceDomain();
-        return {
-          priority: "direct",
-          effect: {
-            type: science.EFFECT_TYPES.SCAN_STEP,
-            ownerId,
-            payload: {
-              options: {
-                mode: "public",
-                selected: 0,
-                max: Math.max(1, Number(effect.options?.repeat || effect.options?.count) || 1),
-                consumeMarkers: false,
-              },
-              cardInstanceId,
-              cardEffect: clone(effect),
-            },
-          },
-        };
-      }
-      if (effect.type === cardEffects.EFFECT_TYPES.SCAN_ACTION) {
-        const science = getScienceDomain();
-        return {
-          priority: "direct",
-          effect: {
-            type: science.EFFECT_TYPES.EXECUTE,
-            ownerId,
-            payload: {
-              action: {
-                family: "scan",
-                phase: "main",
-                actorId: ownerId,
-                target: { kind: "card-scan-action" },
-                payload: { skipCost: true },
-              },
-              cardInstanceId,
-              cardEffect: clone(effect),
-            },
-          },
-        };
-      }
-      // 扫描家族 → 统一 science SCAN_STEP（目标枚举/扫描结算/扇区结算全部收敛到
-      // science 的统一扫描节点，底层 placeNebulaToken）。
-      const scanStepOptions = (() => {
-        const e = effect;
-        switch (e.type) {
-          case cardEffects.EFFECT_TYPES.SCAN_NEBULA:
-            return { mode: "specified", nebulaIds: [e.options?.nebulaId].filter(Boolean), gainData: e.options?.gainData !== false, label: e.label };
-          case cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN:
-            return { mode: "any", gainData: e.options?.gainData !== false, label: e.label,
-              sameSectorRemaining: e.options?.repeat ?? 1 };
-          case cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE:
-            return { mode: "color", color: e.options?.color, gainData: e.options?.gainData !== false, label: e.label };
-          case cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN:
-            return { mode: "planet", planetId: e.options?.planetId, gainData: e.options?.gainData !== false, label: e.label };
-          case cardEffects.EFFECT_TYPES.LANDING_SECTOR_SCAN:
-            return { mode: "landing", gainData: e.options?.gainData !== false, label: e.label };
-          case cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN:
-            return { ...clone(e.options), mode: "probe", label: e.label, selectedRocketIds: [] };
-          case cardEffects.EFFECT_TYPES.CONDITIONAL_SECTOR_SCAN:
-            return { mode: "conditional", condition: e.options?.condition, gainData: e.options?.gainData !== false, label: e.label };
-          default:
-            return null;
-        }
-      })();
-      if (scanStepOptions) {
-        const science = getScienceDomain();
-        const afterProbeScan = effect.type === cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN
-          && Number.isInteger(effect.options?.returnToHandIfSignalCount)
-          ? createSpawnedCardEffect({
-            id: `${effect.id}:return`, type: cardEffects.EFFECT_TYPES.RETURN_PLAYED_CARD_TO_HAND_IF,
-            options: { condition: { type: "probeScanSignalCount", count: effect.options.returnToHandIfSignalCount } },
-          }, ownerId, cardInstanceId)
-          : null;
-        return {
-          priority: "direct",
-          effect: {
-            type: science.EFFECT_TYPES.SCAN_STEP,
-            ownerId,
-            payload: { options: scanStepOptions, cardInstanceId, cardEffect: clone(effect),
-              ...(afterProbeScan ? { afterProbeScan } : {}) },
-          },
-        };
-      }
+      const scan = createScienceScanEffect(effect, ownerId, cardInstanceId);
+      if (scan) return scan;
       // 其余效果：直接效果 / 抽牌 / 精选 / 发射 / 通用描述符（扫描家族已全部
       // 在上方收敛到 science SCAN_STEP）。
       let type = null;
@@ -1167,18 +1192,6 @@
         payload: clone(payload),
         summary,
       };
-    }
-
-    // 卡牌扫描流串尾判定：若整条效果链包含 science SCAN_STEP，在链尾追加一个
-    // SCAN_FINALIZE 节点（整串扫描结束后统一触发一次扇区结算，P13：不逐节点
-    // 结算、同一 flow 内完成扇区不提前重置）。多条扫描（如固定扫描 2 次）同属
-    // 一个卡牌 flow，只追加一个 FINALIZE，串内所有扫描都发生在判定之前。
-    function chainScanFinalize(entries, ownerId) {
-      const science = getScienceDomain();
-      const hasScan = (entries || []).some((entry) => (
-        entry?.effect?.type === science.EFFECT_TYPES.SCAN_STEP
-      ));
-      return hasScan ? [...entries, science.scanFinalizeEffect(ownerId)] : entries;
     }
 
     function spawnCardEffects(effects, sessionEffect) {
@@ -2718,5 +2731,7 @@
     createExperimentalCardPlayDomain,
     getProbeLocationReward,
     getMovementAllowance,
+    createScienceScanEffect,
+    chainScanFinalize,
   });
 });

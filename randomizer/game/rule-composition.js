@@ -238,7 +238,7 @@
     return sanitized;
   }
 
-  function sanitizeHiddenInformationActions(rootObservation, actions) {
+  function sanitizeHiddenInformationActions(rootObservation, actions, currentEffect) {
     const knownCardIds = collectKnownCardIds(rootObservation);
     const knownAlienIds = new Set((rootObservation?.publicState?.board?.aliens?.slots || [])
       .filter((slot) => slot?.revealed && slot?.alienId)
@@ -250,9 +250,13 @@
       const unknownCard = containsUnknownCardReference(target, knownCardIds);
       const unknownAlien = target.alienId != null
         && !knownAlienIds.has(String(target.alienId));
-      const identityIndependentCardUse = action?.family === "choose_payment"
-        || target.kind === "trade-card-selection"
-        || target.kind === "discard-hand-cards";
+      // 支付族也包含依赖移动角的支付；开局 discard-hand-cards 实为插收入牌。
+      // 通用弃牌及普通精选入手只依赖牌数；正式effect区分精选与收入/扫描用牌。
+      const identityIndependentCardUse = (
+        action?.family === "choose_payment" && target.kind === "discard-hand-card"
+      ) || target.kind === "trade-card-selection" || (
+        currentEffect?.type === "science_domain_pick_card" && action?.family === "choose_card"
+      );
       if (
         (unknownCard && !identityIndependentCardUse)
         || unknownAlien
@@ -277,6 +281,7 @@
           }
         }
         descriptor.summary = "未知牌（仅按数量使用）";
+        delete descriptor.presentation;
       }
       sanitized.push(descriptor);
     }
@@ -1902,6 +1907,16 @@
             } else {
               settleChoice = drainChoices[0];
             }
+            // 唯一合法支付不代表搜索根知道支付牌的能力；自动结算与后继共用信息边界。
+            // 停止排空后由下方统一过滤/缺后继处理，不伪造支付成功。
+            const drainInformationMasked = node.origins.some((origin) => origin.informationMasked)
+              || isHiddenInformationBarrier(result.irreversibleBarrier)
+              || isHiddenInformationBarrier(drainInspection.session.irreversibleBarrier)
+              || Boolean(drainHiddenBarrier);
+            if (drainInformationMasked
+              && !sanitizeHiddenInformationActions(
+                rootObservation, [settleChoice], drainInspection.session.currentEffect,
+              ).actions.length) break;
             const settlePlanStep = captureStep(settleChoice);
             const settleResult = composition.inputPort.submitDecision({
               decisionId: drainInspection.session.decision.decisionId,
@@ -1992,7 +2007,7 @@
             );
           }
           if (informationMasked) {
-            const filtered = sanitizeHiddenInformationActions(rootObservation, successors);
+            const filtered = sanitizeHiddenInformationActions(rootObservation, successors, nextInspection.session?.currentEffect);
             successors = filtered.actions;
             hiddenInformationFilteredActionCount += filtered.filteredCount;
           }
@@ -2016,7 +2031,7 @@
                 ? (nextInspection.session?.decision?.choices || [])
                 : composition.inputPort.enumerateActions({});
               if (informationMasked) {
-                const filtered = sanitizeHiddenInformationActions(rootObservation, successors);
+                const filtered = sanitizeHiddenInformationActions(rootObservation, successors, nextInspection.session?.currentEffect);
                 successors = filtered.actions;
                 hiddenInformationFilteredActionCount += filtered.filteredCount;
               }
@@ -2664,6 +2679,12 @@
                 execution.nextInspection,
                 origin.checkpoints,
               );
+              continue;
+            }
+            // 以上显式条件根/PASS交接之外，安全后继为空也不代表正式条件链已结算。
+            // 保留此前完整叶，不把此处工作态的奖励变成可评分终点。
+            if (execution.awaitingDecision && !execution.successors.length) {
+              markPruned([origin], "conditional-no-successor");
               continue;
             }
             if (execution.awaitingDecision && execution.successors.length) {

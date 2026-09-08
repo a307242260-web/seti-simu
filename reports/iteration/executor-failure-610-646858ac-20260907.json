@@ -1,0 +1,9 @@
+{
+  "source": "646858ac",
+  "status": "diagnostic-postprocessing-failed",
+  "scope": "610冷搜索已执行，汇总脚本读取可选reasonCodes时报错；搜索结果未保存，不重复冷搜索",
+  "checkpoint": "executor-root-610-20260907.json",
+  "error": "Cannot read properties of undefined (reading 'includes')",
+  "alternativeEvidence": "b123-trigger-formal-v2-20260907.json",
+  "note": "本文件仅记录诊断失败，不包含或伪造冷搜索统计；替代证据为正式动作复现"
+}

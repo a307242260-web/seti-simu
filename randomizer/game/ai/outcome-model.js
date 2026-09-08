@@ -18,7 +18,7 @@
   const SEARCH_INCOMPLETE_REASONS = new Set([
     "node-budget", "beam-budget", "leaf-budget", "conditional-depth", "goal-depth",
     "untargeted-depth", "representative-choice", "information-barrier", "branch-failed",
-    "not-evaluated",
+    "not-evaluated", "conditional-no-successor",
   ]);
   const ASSET_PATHS = Object.freeze({
     credits: "outcomeProjection.assets.credits",
