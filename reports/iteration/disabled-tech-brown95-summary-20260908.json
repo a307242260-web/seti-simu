@@ -1,0 +1,413 @@
+{
+  "baseline": {
+    "score": 45.5,
+    "actual": 0,
+    "techValue": 29.999999999999996,
+    "incomeValue": 18,
+    "publicityValue": -2.5,
+    "steps": [
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:547c8803",
+        "actorId": "player-brown",
+        "stateVersion": 41,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:70241330",
+        "actorId": "player-brown",
+        "stateVersion": 41,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "tech:purple4",
+          "tileId": "purple4",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 purple4"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:d59ab08c",
+        "actorId": "player-brown",
+        "stateVersion": 42,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:2259bbe0",
+        "actorId": "player-brown",
+        "stateVersion": 44,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "赫利昂联合体",
+          "abilityId": "helios_remove_tech_income"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "赫利昂联合体 1x 行动"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:d61e7376",
+        "actorId": "player-brown",
+        "stateVersion": 44,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "tech:purple4",
+          "tileId": "purple4"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "无效 purple4"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:0b4d20ab",
+        "actorId": "player-brown",
+        "stateVersion": 44,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "hand:card-12-0",
+          "cardInstanceId": "card-12-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "b_139.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-12-0",
+          "imageSrc": "../assets/cards/basic/split/b_139.webp",
+          "imageAlt": "b_139.webp"
+        }
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:c1616852",
+        "actorId": "player-brown",
+        "stateVersion": 45,
+        "decisionVersion": 0,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "发射"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "move",
+        "phase": "quick",
+        "actionId": "move:f5eb5b40",
+        "actorId": "player-brown",
+        "stateVersion": 46,
+        "decisionVersion": 0,
+        "target": {
+          "rocketId": 3,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw",
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动探测器 3 逆时针"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:f893f500",
+        "actorId": "player-brown",
+        "stateVersion": 46,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "move-payment",
+          "choiceId": "energy",
+          "cardIds": []
+        },
+        "payload": {
+          "energyCost": 1,
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "消耗 1 能量"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "move",
+        "phase": "quick",
+        "actionId": "move:f5eb5b40",
+        "actorId": "player-brown",
+        "stateVersion": 47,
+        "decisionVersion": 0,
+        "target": {
+          "rocketId": 3,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw",
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动探测器 3 逆时针"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:f893f500",
+        "actorId": "player-brown",
+        "stateVersion": 47,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "move-payment",
+          "choiceId": "energy",
+          "cardIds": []
+        },
+        "payload": {
+          "energyCost": 1,
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "消耗 1 能量"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:d59ab08c",
+        "actorId": "player-brown",
+        "stateVersion": 48,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      }
+    ],
+    "disabled": {
+      "purple4": true
+    }
+  },
+  "fixed": {
+    "score": 27.499999999999996,
+    "actual": 0,
+    "techValue": 29.999999999999996,
+    "incomeValue": 0,
+    "publicityValue": -2.5,
+    "steps": [
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "research_tech",
+        "phase": "main",
+        "actionId": "research_tech:547c8803",
+        "actorId": "player-brown",
+        "stateVersion": 41,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "research-tech"
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究科技"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:70241330",
+        "actorId": "player-brown",
+        "stateVersion": 41,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "tech:purple4",
+          "tileId": "purple4",
+          "blueSlot": null
+        },
+        "payload": {
+          "skipCost": false,
+          "skipRotate": false,
+          "skipBonus": false
+        },
+        "decision": null,
+        "summary": "研究 purple4"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:d59ab08c",
+        "actorId": "player-brown",
+        "stateVersion": 42,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:c1616852",
+        "actorId": "player-brown",
+        "stateVersion": 44,
+        "decisionVersion": 0,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "发射"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "move",
+        "phase": "quick",
+        "actionId": "move:f5eb5b40",
+        "actorId": "player-brown",
+        "stateVersion": 45,
+        "decisionVersion": 0,
+        "target": {
+          "rocketId": 3,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw",
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动探测器 3 逆时针"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:6df8ad2f",
+        "actorId": "player-brown",
+        "stateVersion": 45,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "move-payment",
+          "choiceId": "card-12-0",
+          "cardIds": [
+            "card-12-0"
+          ]
+        },
+        "payload": {
+          "energyCost": 0,
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "弃 1 张移动牌"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "move",
+        "phase": "quick",
+        "actionId": "move:f5eb5b40",
+        "actorId": "player-brown",
+        "stateVersion": 46,
+        "decisionVersion": 0,
+        "target": {
+          "rocketId": 3,
+          "deltaX": -1,
+          "deltaY": 0
+        },
+        "payload": {
+          "direction": "ccw",
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "移动探测器 3 逆时针"
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_payment",
+        "phase": "conditional",
+        "actionId": "choose_payment:f893f500",
+        "actorId": "player-brown",
+        "stateVersion": 46,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "move-payment",
+          "choiceId": "energy",
+          "cardIds": []
+        },
+        "payload": {
+          "energyCost": 1,
+          "requiredMovePoints": 1
+        },
+        "decision": null,
+        "summary": "消耗 1 能量"
+      }
+    ],
+    "disabled": {}
+  },
+  "oldPlanRescored": {
+    "score": 15.5,
+    "techValue": 0,
+    "incomeValue": 18,
+    "actual": 0
+  },
+  "samePhysicalClassification": true,
+  "nodes": [
+    239,
+    239
+  ],
+  "executionCaps": [
+    false,
+    false
+  ],
+  "beam": [
+    0,
+    0
+  ],
+  "conclusion": "旧计划紫4失效仍同时计30科技+18收入−2.5宣传机会=45.5；修复后该计划15.5，保留紫4计划27.5更高。第127步不换收入符合修复排序预期，不是预算截断。此单点不证明全局33分下降因果，也不证明每轮科技估值10合理。"
+}
