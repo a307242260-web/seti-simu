@@ -4,11 +4,13 @@ const assert = require('node:assert/strict'), inspector = require('node:inspecto
 const root = path.resolve(__dirname, '..');
 const [board, policy] = process.argv.slice(2);
 const track = process.argv.includes('--track-old-plan');
+const beam = process.argv.includes('--track-beam');
+assert.ok(!beam || track);
 assert.ok(!track || (board === 'candidate' && policy === 'candidate'));
 assert.ok(['baseline', 'candidate'].includes(board));
 assert.ok(['baseline', 'candidate'].includes(policy));
 const source = policy === 'baseline' ? root : '/private/tmp/seti-quick-turn-order-20260908';
-const output = path.join(root, `reports/iteration/quick-turn-white-cross-${board}-${policy}${track ? '-old-plan-trace' : ''}-20260908.json`);
+const output = path.join(root, `reports/iteration/quick-turn-white-cross-${board}-${policy}${beam ? '-beam-trace' : track ? '-old-plan-trace' : ''}-20260908.json`);
 if (fs.existsSync(output) || fs.existsSync(output + '.gz')) { console.log('已有交叉证据，跳过：' + output); process.exit(0); }
 const comparison = JSON.parse(fs.readFileSync(path.join(root, 'reports/iteration/quick-turn-full-comparison-20260908.json')));
 const save = JSON.parse(fs.readFileSync(comparison[board].savePath));
@@ -32,7 +34,9 @@ debug.on('Debugger.paused', ({ params }) => {
       const r = post('Debugger.evaluateOnCallFrame', { callFrameId: params.callFrames[0].callFrameId,
         expression: traceExpression, returnByValue: true });
       assert.equal(r.exceptionDetails, undefined);
-      report.trace.push(JSON.parse(r.result.value));
+      const event = JSON.parse(r.result.value);
+      report.trace.push(event);
+      if (event.kind === 'beam-frontier') post('Debugger.removeBreakpoint', { breakpointId: params.hitBreakpoints[0] });
       return;
     }
     const r = post('Debugger.evaluateOnCallFrame', { callFrameId: params.callFrames[0].callFrameId,
@@ -73,11 +77,15 @@ try {
       `JSON.stringify({kind:"pruned",reason,origins:origins.filter(${prefix}).map(o=>({chain:o.chain,routeTargetId:o.routeTargetId,routePlanId:o.routePlanId}))})`);
     traceAt('quickTurnOrderPrunedOriginCount += 1;', `(${prefix})(origin)`,
       'JSON.stringify({kind:"order-pruned",chain:nextChain,action:route.action,routeTargetId:route.routeTargetId,routePlanId:route.routePlanId})');
+    if (beam) traceAt('markPruned(node.origins, "beam-budget");',
+      `node.action.actionId===${JSON.stringify(report.trackedChain[20])}&&node.origins.some(o=>o.chain.length===20&&(${prefix})(o))`,
+      `JSON.stringify({kind:"beam-frontier",droppedKey:node.key,maxFrontierNodes,nodes:ordered.map((n,index)=>({index,retained:retained.has(n.key),key:n.key,action:n.action,depth:n.depth,priority:n.priority,state:getTrustedState(n.envelope),origins:n.origins.map(o=>({rootActionId:o.rootAction.actionId,chain:o.chain,proxyDepth:o.proxyDepth,routeTargetId:o.routeTargetId,routePlanId:o.routePlanId,quickBeforeTurn:o.quickBeforeTurn}))}))})`);
   }
   console.log(`[白方首差交叉] 盘面=${board} 搜索=${policy} · 第2轮 第4回合 · 4096节点上限`);
   assert.equal(env.runHeuristicPolicyDecision().ok, true);
   report.diagnostics = env.getCounterfactualDiagnostics();
   assert.deepEqual(report.errors, []); assert.equal(report.captures.length, 1); report.passed = true;
+  if (beam) assert.equal(report.trace.filter(e => e.kind === 'beam-frontier').length, 1);
 } catch (error) { report.error = error.stack; process.exitCode = 1; }
 finally {
   post('Debugger.disable'); debug.disconnect(); env.dispose(); report.wallMs = performance.now() - started;
