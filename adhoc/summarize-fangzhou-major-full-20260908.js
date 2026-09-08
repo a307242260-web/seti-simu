@@ -5,18 +5,21 @@ const req = require("node:module").createRequire(process.cwd() + "/adhoc/expiry-
 req("../randomizer/game/initial-cards");
 const scoring = req("../randomizer/game/end-game-scoring");
 const cardEffects = req("../randomizer/game/cards/effects");
-const output = "reports/iteration/fangzhou-major-full-review-20260908.json";
+const quickMove = process.argv.includes("--quick-move");
+const output = quickMove ? "reports/iteration/quick-move-full-review-20260908.json"
+  : "reports/iteration/fangzhou-major-full-review-20260908.json";
 if (fs.existsSync(output)) {
   console.log(`已有 checkpoint：${output}`);
   process.exit(0);
 }
-const baselineFile = "reports/research/cb456d23.04648dd1.full.json";
-const files = fs.readdirSync("reports/research").filter(f => f.endsWith(".4d3711c5.full.json"));
+const baselineFile = quickMove ? "reports/research/b58e392b.4d3711c5.full.json"
+  : "reports/research/cb456d23.04648dd1.full.json";
+const files = fs.readdirSync("reports/research").filter(f => f.endsWith(quickMove ? ".c50e4f01.full.json" : ".4d3711c5.full.json"));
 assert.equal(files.length, 1, "等待唯一完整局落盘，不重复运行 AI");
 const candidateFile = `reports/research/${files[0]}`;
 const read = p => JSON.parse(fs.readFileSync(p, "utf8"));
 const baseline = read(baselineFile), candidate = read(candidateFile);
-assert.equal(candidate.name, "fangzhou-major-reward-20260908");
+assert.equal(candidate.name, quickMove ? "quick-move-events-20260908" : "fangzhou-major-reward-20260908");
 assert.equal(candidate.terminal, true);
 const merge = (into, values) => {
   for (const [key, value] of Object.entries(values)) into[key] = (into[key] || 0) + value;

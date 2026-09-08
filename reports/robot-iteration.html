@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T01:08:53.567Z",
+  "builtAt": "2026-09-08T02:34:19.304Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "bacb8ce2",
+  "headCommit": "cbe502bd",
   "currentBaseline": "reorganization-resources-20260907",
   "worktreeDirty": true,
   "bestOf": {
@@ -194,6 +194,366 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "quick-move-events-20260908",
+      "name": "快速移动事件修复（规则通过，性能未完成）",
+      "date": "2026-09-08",
+      "baseline": "fangzhou-major-reward-20260908",
+      "head": "c50e4f01",
+      "commits": [
+        {
+          "hash": "81ee9ed6",
+          "date": "2026-09-08",
+          "subject": "归档方舟高级奖励修复的完整局及正式验收结论"
+        },
+        {
+          "hash": "c50e4f01",
+          "date": "2026-09-08",
+          "subject": "修复快速移动丢失移动与到达事件导致任务不触发"
+        }
+      ],
+      "summary": "快速移动保留底层移动与到达事件，恢复任务及本回合访问奖励触发",
+      "diffStat": "13 files changed, 110950 insertions(+), 40702 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/production-composition.js",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/training/simulation-standard-action-composition.test.js",
+          "insertions": 65,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/fangzhou-major-full-review-20260908.json",
+          "insertions": 24579,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/fangzhou-major-reward-20260908/b58e392b.4d3711c5.full.action-log.html",
+          "insertions": 2188,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/fangzhou-major-reward-design-20260908.md",
+          "insertions": 4,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/fangzhou-major-reward-progress-20260908.md",
+          "insertions": 27,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/quick-move-event-fix-design-20260908.md",
+          "insertions": 35,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 12829,
+          "deletions": 20348
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/b58e392b.4d3711c5.full.json",
+          "insertions": 14760,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 12829,
+          "deletions": 20348
+        },
+        {
+          "file": "seti-saves/seti-save-research-fangzhou-major-reward-20260908-4d3711c5-full-v317.json",
+          "insertions": 43613,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "ab2586b3.c50e4f01.full.json",
+          "recordPath": "reports/research/ab2586b3.c50e4f01.full.json",
+          "mode": "full",
+          "steps": 622,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 545330,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "c50e4f01",
+          "createdAt": "2026-09-08T02:31:10.003Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "622步终局56/134/88/104，均95.5；动作、逐步摘要与最终状态均与父版一致。115070物理节点、156142输入、545330ms，22战略及7控制截断，规则失败0。正式快速移动任务、事件资源一次性、错误提交及存档恢复通过；固定局未选择快速交易移动，本局只证明无连带回归。独立规则修复通过，性能Goal未完成，不合入父版未通过策略。",
+          "scores": {
+            "player-blue": 56,
+            "player-green": 134,
+            "player-brown": 88,
+            "player-white": 104
+          },
+          "avgScore": 95.5,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 56,
+              "base": 46,
+              "tile": 8,
+              "card": 2,
+              "tileScoresById": {
+                "a": 8,
+                "b": 0,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 13,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 4
+              }
+            },
+            "player-green": {
+              "total": 134,
+              "base": 88,
+              "tile": 44,
+              "card": 2,
+              "tileScoresById": {
+                "a": 22,
+                "b": 12,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 12,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 7,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 34,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 3,
+                "techBonusScore": 2
+              }
+            },
+            "player-brown": {
+              "total": 88,
+              "base": 67,
+              "tile": 21,
+              "card": 0,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 0,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 0,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 4,
+                "cardEffectScore": 4,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 18,
+                "orbitScore": 6,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 14
+              }
+            },
+            "player-white": {
+              "total": 104,
+              "base": 78,
+              "tile": 26,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 8,
+                "c": 8,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 4,
+                  "score": 8,
+                  "slotIndex": 3,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 6,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 11,
+                "orbitScore": 12,
+                "scanScore": 9,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-quick-move-events-20260908-c50e4f01-full-v317.json",
+          "reportPath": "reports/iteration/quick-move-events-20260908/ab2586b3.c50e4f01.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "ab2586b3.c50e4f01.full",
+            "path": "reports/iteration/quick-move-events-20260908/ab2586b3.c50e4f01.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "fangzhou-major-reward-20260908",
       "name": "方舟高级奖励修复（规则通过，性能未完成）",
