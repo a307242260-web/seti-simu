@@ -6,9 +6,11 @@ const domain = require("./standard-action-session");
 const { createRuleComposition } = require("../rule-composition");
 
 // 两个根到同一真实状态，再有三条不同终点。检验全局队列与共享来源，不模拟完整游戏。
-function createComposition(metadataKind = null) {
+function createComposition(metadataKind = null, reuseCounterfactualFork = false, createdForks = [], cleanupError = null) {
   return createRuleComposition({
     stateStoreApi, effectRuntimeApi,
+    reuseCounterfactualFork,
+    allowTrustedForkLifecycle: true,
     createInitialState: () => stateStoreApi.createCommittedGameState({
       gameId: "search-budget", rulesetVersion: "test-v1", seed: 19,
       rngState: { state: 1 }, sequences: { rocket: 1 },
@@ -57,6 +59,11 @@ function createComposition(metadataKind = null) {
     createCounterfactualFork(envelope) {
       const fork = createComposition(metadataKind);
       assert.equal(fork.lifecycle.restore(envelope).ok, true);
+      const notifications = [];
+      fork.subscribe(event => notifications.push(event));
+      createdForks.push({ fork, notifications });
+      // 显式故障端口仅用于验证“选择失败+释放失败”两种错误都保留；不改真实fork对象。
+      if (cleanupError) return { composition: { ...fork, dispose() { fork.dispose(); throw cleanupError; } } };
       return fork;
     },
   });
@@ -124,6 +131,39 @@ for (const metadataKind of ["rng", "sequence"]) {
   assert.equal(sum(d.attemptedNodeCountByFamily), d.executedNodeCount);
   assert.equal(sum(d.executedNodeCountByFamily) + sum(d.failedNodeCountByFamily), d.executedNodeCount);
   assert.equal(d.successfulInputSubmissionCount, sum(d.executedNodeCountByFamily));
+  assert.deepEqual(failing.lifecycle.save().envelope, root);
+  failing.dispose();
+}
+for (const reuse of [false, true]) {
+  const forks = [], failing = createComposition(null, reuse, forks);
+  const root = failing.lifecycle.save().envelope;
+  const error = new Error("目标选择失败，不能继续无目标搜索");
+  assert.throws(() => failing.counterfactualPort.evaluate(failing.inputPort.enumerateActions(), {
+    ...options, maxFrontierNodes: 8,
+    secondaryAgentSearch: { ...options.secondaryAgentSearch, selectRouteTarget() { throw error; } },
+  }), observed => observed === error, "必须向调用方暴露原始选择错误");
+  assert.deepEqual(failing.lifecycle.save().envelope, root, "回调错误不得修改正式root");
+  assert.equal(failing.counterfactualPort.getDiagnostics(), null, "错误搜索不返回成功诊断");
+  assert.ok(forks.length > 0);
+  for (const { fork, notifications } of forks) {
+    const count = notifications.length;
+    const action = fork.inputPort.enumerateActions()[0];
+    assert.ok(action);
+    assert.equal(fork.inputPort.submitAction(action).ok, true);
+    assert.equal(notifications.length, count, "dispose必须清除fork订阅，不再通知旧监听器");
+  }
+  failing.dispose();
+}
+{
+  const selectionError = new Error("selection failed"), cleanupError = new Error("cleanup failed");
+  const failing = createComposition(null, true, [], cleanupError);
+  const root = failing.lifecycle.save().envelope;
+  assert.throws(() => failing.counterfactualPort.evaluate(failing.inputPort.enumerateActions(), {
+    ...options, maxFrontierNodes: 8,
+    secondaryAgentSearch: { ...options.secondaryAgentSearch, selectRouteTarget() { throw selectionError; } },
+  }), error => error instanceof AggregateError
+    && error.errors[0] === selectionError && error.errors[1] === cleanupError,
+  "释放失败也不能覆盖目标选择的原始错误");
   assert.deepEqual(failing.lifecycle.save().envelope, root);
   failing.dispose();
 }

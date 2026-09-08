@@ -2499,9 +2499,18 @@
                 routePlanId = typeof selectedRoute === "string"
                   ? selectedRoute
                   : selectedRoute?.planId || routeTargetId;
-              } catch (_error) {
-                routeTargetId = origin.routeTargetId || null;
-                routePlanId = origin.routePlanId || null;
+              } catch (error) {
+                // null是合法的未选目标；回调抛错则必须终止搜索，不能退回旧目标。
+                // 非复用fork已由executeNode释放，此处只释放跨节点持有的池。
+                try {
+                  (reusableFork?.composition || reusableFork)?.dispose?.();
+                } catch (cleanupError) {
+                  throw new AggregateError([error, cleanupError],
+                    "COUNTERFACTUAL_ROUTE_SELECTION_AND_CLEANUP_FAILED");
+                } finally {
+                  reusableFork = null;
+                }
+                throw error;
               }
             }
             const nextQuickTradeCount = Number(origin.quickTradeCount || 0) + (

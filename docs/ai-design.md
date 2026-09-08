@@ -263,6 +263,9 @@ Policy 输出只包含版本化 provenance、所选 `actionId` 与诊断。Polic
 `unresolved`、`failed` 或 `stale`；`confidence` 为 `high`、`low` 或 `none`；
 `rootObservation` 是当前 viewer 边界内的根观察；`leaves[]` 只包含真实到达的叶观察、
 完整 `actionChain` 与 `legalSuccessors`；`code/reasonCodes` 解释失败、分支上限或随机样本。
+未绑定目标分支的`selectRouteTarget`可正常返回null，但抛错必须终止本次搜索并向调用方
+保留原始错误，不能静默退回旧目标继续形成叶。该错误边界释放复用fork，正式root不变；
+若释放同时失败，用AggregateError保留两个错误。不改变正常目标解析、排序或预算。
 
 Decision 链只通过 active Effect Session 暴露的标准 choice 继续。主 Action 产生的必要 Decision
 必须沿同一生产提交链结算到下一稳定策略边界；`awaiting_decision` 不是 leaf，不进入估值。
