@@ -52,9 +52,9 @@
       "name": "第五轮普通卡牌估值（设计中，未实现）",
       "date": "2026-09-09",
       "baseline": null,
-      "head": "141b3077",
-      "commits": ["141b3077"],
-      "summary": "复核182张牌与48类效果；明确持牌/支付与已打出牌收益归属；标准行动统一正式费用及公司、目标减免，分开替代价值和明确额外奖励，见round5-standard-action-values-design-20260909.md、round5-card-lifecycle-design-20260909.md及round5-payment-value-design-20260909.md。普通牌估值仍为设计，未接入生产搜索。",
+      "head": "d5687c48",
+      "commits": ["141b3077", "1a069f6c", "71f382e1", "d5687c48"],
+      "summary": "整理第五轮持牌/支付、已打出牌和标准行动费用计算；增加条件、重复次数与数量奖励表及审计：区分一次领取、不同地点和数量阈值事件，复用十类正式终局公式并隔离计分输入。见round5-reward-formulas-design-20260909.md及对应JSON。普通牌估值仍为设计，未接入生产搜索。",
       "records": {},
       "roadmap": null
     },

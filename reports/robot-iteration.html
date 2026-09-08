@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T21:26:52.605Z",
+  "builtAt": "2026-09-08T21:41:49.845Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "71f382e1",
+  "headCommit": "d5687c48",
   "currentBaseline": "round5-card-value-design-20260909",
   "worktreeDirty": true,
   "bestOf": {
@@ -1302,20 +1302,35 @@ const REGISTRY = {
       "name": "第五轮普通卡牌估值（设计中，未实现）",
       "date": "2026-09-09",
       "baseline": null,
-      "head": "141b3077",
+      "head": "d5687c48",
       "commits": [
         {
           "hash": "141b3077",
           "date": "2026-09-09",
           "subject": "复核第五轮卡牌模型并补齐参数内结算语义设计"
+        },
+        {
+          "hash": "1a069f6c",
+          "date": "2026-09-09",
+          "subject": "明确第五轮持牌支付估值并归档收入窗口验算"
+        },
+        {
+          "hash": "71f382e1",
+          "date": "2026-09-09",
+          "subject": "区分第五轮手牌与已打出牌收益并核对消费状态"
+        },
+        {
+          "hash": "d5687c48",
+          "date": "2026-09-09",
+          "subject": "核对第五轮标准行动替代价值与公司目标减免"
         }
       ],
-      "summary": "复核182张牌与48类效果；明确持牌/支付与已打出牌收益归属；标准行动统一正式费用及公司、目标减免，分开替代价值和明确额外奖励，见round5-standard-action-values-design-20260909.md、round5-card-lifecycle-design-20260909.md及round5-payment-value-design-20260909.md。普通牌估值仍为设计，未接入生产搜索。",
-      "diffStat": "9 files changed, 562 insertions(+), 4 deletions(-)",
+      "summary": "整理第五轮持牌/支付、已打出牌和标准行动费用计算；增加条件、重复次数与数量奖励表及审计：区分一次领取、不同地点和数量阈值事件，复用十类正式终局公式并隔离计分输入。见round5-reward-formulas-design-20260909.md及对应JSON。普通牌估值仍为设计，未接入生产搜索。",
+      "diffStat": "9 files changed, 646 insertions(+), 7 deletions(-)",
       "diffFiles": [
         {
-          "file": "adhoc/audit-round5-valuation-closure-20260909.js",
-          "insertions": 46,
+          "file": "adhoc/check-round5-standard-action-values-20260909.js",
+          "insertions": 53,
           "deletions": 0
         },
         {
@@ -1325,17 +1340,12 @@ const REGISTRY = {
         },
         {
           "file": "reports/iteration/registry.json",
-          "insertions": 22,
-          "deletions": 2
+          "insertions": 3,
+          "deletions": 3
         },
         {
           "file": "reports/iteration/round5-card-value-contract-20260909.md",
-          "insertions": 77,
-          "deletions": 0
-        },
-        {
-          "file": "reports/iteration/round5-card-value-design-20260908.md",
-          "insertions": 4,
+          "insertions": 3,
           "deletions": 0
         },
         {
@@ -1344,19 +1354,24 @@ const REGISTRY = {
           "deletions": 0
         },
         {
-          "file": "reports/iteration/round5-valuation-closure-20260909.json",
-          "insertions": 373,
+          "file": "reports/iteration/round5-standard-action-values-20260909.json",
+          "insertions": 525,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/round5-standard-action-values-design-20260909.md",
+          "insertions": 51,
           "deletions": 0
         },
         {
           "file": "reports/iteration/versions.json",
-          "insertions": 11,
-          "deletions": 0
+          "insertions": 1,
+          "deletions": 1
         },
         {
           "file": "reports/robot-iteration.html",
-          "insertions": 22,
-          "deletions": 2
+          "insertions": 3,
+          "deletions": 3
         }
       ],
       "results": [],

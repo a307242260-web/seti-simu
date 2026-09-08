@@ -1,0 +1,7684 @@
+{
+  "baseCommit": "d5687c48",
+  "sourceSave": "seti-saves/seti-save-research-counted-card-reveal-20260909-a402ca99-full-v316.json",
+  "counts": {
+    "cards": 182,
+    "immediateEffects": 244,
+    "deferredCards": 72,
+    "taskConditionTypes": 25,
+    "triggerSlots": 65,
+    "taskSlots": 45,
+    "temporaryCards": 3,
+    "eventBonuses": 16,
+    "endGameCards": 17,
+    "endGameKinds": 10,
+    "endGameEvaluations": 68
+  },
+  "multiplicity": [
+    {
+      "cardId": "b_1.webp",
+      "name": "观测室女座",
+      "effectId": "b1-virgo-scan",
+      "type": "card_scan_nebula",
+      "modelRepeat": 2,
+      "builtNodes": 2,
+      "runtimeRepeat": 2,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_3.webp",
+      "name": "阿尔冈金射电天文台",
+      "effectId": "b3-yellow",
+      "type": "card_scan_color_choice",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_3.webp",
+      "name": "阿尔冈金射电天文台",
+      "effectId": "b3-red",
+      "type": "card_scan_color_choice",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_3.webp",
+      "name": "阿尔冈金射电天文台",
+      "effectId": "b3-blue",
+      "type": "card_scan_color_choice",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_3.webp",
+      "name": "阿尔冈金射电天文台",
+      "effectId": "b3-black",
+      "type": "card_scan_color_choice",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_4.webp",
+      "name": "大型离子对撞机实验",
+      "effectId": "b4-blue-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_5.webp",
+      "name": "艾伦望远锐阵",
+      "effectId": "b5-public-scan",
+      "type": "card_public_scan",
+      "modelRepeat": 2,
+      "builtNodes": 1,
+      "runtimeRepeat": 2,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_6.webp",
+      "name": "阿塔卡马大型亳米波阵",
+      "effectId": "b6-public-scan",
+      "type": "card_public_scan",
+      "modelRepeat": 2,
+      "builtNodes": 1,
+      "runtimeRepeat": 2,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_7.webp",
+      "name": "业余天文学家",
+      "effectId": "b7-draw-scan",
+      "type": "card_draw_then_scan",
+      "modelRepeat": 3,
+      "builtNodes": 3,
+      "runtimeRepeat": 3,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_8.webp",
+      "name": "阿波罗1号任务",
+      "effectId": "b8-orange-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_9.webp",
+      "name": "阿番西博天文台",
+      "effectId": "b9-scan-action",
+      "type": "card_scan_action",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_9.webp",
+      "name": "阿番西博天文台",
+      "effectId": "b9-any-sector-scan",
+      "type": "card_any_sector_scan",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_11.webp",
+      "name": "飞掠小行星",
+      "effectId": "b11-turn-asteroid-data",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_11.webp",
+      "name": "飞掠小行星",
+      "effectId": "b11-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_12.webp",
+      "name": "超环面仪器",
+      "effectId": "b12-blue-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_13.webp",
+      "name": "进入大气层",
+      "effectId": "b13-remove-marker",
+      "type": "card_remove_planet_marker",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_13.webp",
+      "name": "进入大气层",
+      "effectId": "b13-score",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_13.webp",
+      "name": "进入大气层",
+      "effectId": "b13-data",
+      "type": "gain_data",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_13.webp",
+      "name": "进入大气层",
+      "effectId": "b13-pick",
+      "type": "pick_card",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_14.webp",
+      "name": "观测巴纳德星",
+      "effectId": "b14-barnard-scan",
+      "type": "card_scan_nebula",
+      "modelRepeat": 2,
+      "builtNodes": 2,
+      "runtimeRepeat": 2,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_15.webp",
+      "name": "观测老人增四",
+      "effectId": "b15-beta-pictoris-scan",
+      "type": "card_scan_nebula",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_16.webp",
+      "name": "突破聆听",
+      "effectId": "b16-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_16.webp",
+      "name": "突破聆听",
+      "effectId": "b16-blue-scan",
+      "type": "card_scan_color_choice",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_17.webp",
+      "name": "突破摄星",
+      "effectId": "b17-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_17.webp",
+      "name": "突破摄星",
+      "effectId": "b17-red-scan",
+      "type": "card_scan_color_choice",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_18.webp",
+      "name": "突破观察",
+      "effectId": "b18-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_18.webp",
+      "name": "突破观察",
+      "effectId": "b18-yellow-scan",
+      "type": "card_scan_color_choice",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_19.webp",
+      "name": "加阜大氢谱线望远锐",
+      "effectId": "b19-any-sector-scan",
+      "type": "card_any_sector_scan",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_21.webp",
+      "name": "卡西尼号探测器",
+      "effectId": "b21-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_21.webp",
+      "name": "卡西尼号探测器",
+      "effectId": "b21-pick-card",
+      "type": "pick_card",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_22.webp",
+      "name": "钱愆拉空间天文台",
+      "effectId": "b22-probe-sector-scan",
+      "type": "card_probe_sector_scan",
+      "modelRepeat": 2,
+      "builtNodes": 1,
+      "runtimeRepeat": 2,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_23.webp",
+      "name": "太空清理计划",
+      "effectId": "b23-public-corners",
+      "type": "card_discard_public_corner_rewards",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_24.webp",
+      "name": "飞掠彗星",
+      "effectId": "b24-turn-comet-score",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_24.webp",
+      "name": "飞掠彗星",
+      "effectId": "b24-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_27.webp",
+      "name": "日冕摄谱仪",
+      "effectId": "b27-pink-trace",
+      "type": "alien_trace",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_28.webp",
+      "name": "深度巡天阵列",
+      "effectId": "b28-yellow-signal-bonus",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_28.webp",
+      "name": "深度巡天阵列",
+      "effectId": "b28-scan-action",
+      "type": "card_scan_action",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_29.webp",
+      "name": "蜻蜓号",
+      "effectId": "b29-land",
+      "type": "card_land",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_30.webp",
+      "name": "深部地下中微子实验",
+      "effectId": "b30-blue-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_31.webp",
+      "name": "建造埃菲尔斯贝格望远锐",
+      "effectId": "b31-pick-card",
+      "type": "pick_card",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_31.webp",
+      "name": "建造埃菲尔斯贝格望远锐",
+      "effectId": "b31-purple-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_32.webp",
+      "name": "电子显微锐",
+      "effectId": "b32-yellow-trace",
+      "type": "alien_trace",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_33.webp",
+      "name": "建造欧几里得望远锐",
+      "effectId": "b33-orange-or-purple-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_34.webp",
+      "name": "木卫二快船",
+      "effectId": "b34-land",
+      "type": "card_land",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_35.webp",
+      "name": "百亿亿次超级计算机",
+      "effectId": "b35-blue-trace",
+      "type": "alien_trace",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_36.webp",
+      "name": "嗜极生物研究",
+      "effectId": "b36-any-trace",
+      "type": "alien_trace",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_37.webp",
+      "name": "猎鹰虿型运戟火箭",
+      "effectId": "b37-launch-1",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_37.webp",
+      "name": "猎鹰虿型运戟火箭",
+      "effectId": "b37-launch-2",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_37.webp",
+      "name": "猎鹰虿型运戟火箭",
+      "effectId": "b37-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_38.webp",
+      "name": "造500米口径球面射电望远锐",
+      "effectId": "b38-public-scan",
+      "type": "card_public_scan",
+      "modelRepeat": 2,
+      "builtNodes": 1,
+      "runtimeRepeat": 2,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_38.webp",
+      "name": "造500米口径球面射电望远锐",
+      "effectId": "b38-purple-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_39.webp",
+      "name": "首张罴洞照片",
+      "effectId": "b39-data",
+      "type": "gain_data",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_40.webp",
+      "name": "专项研究",
+      "effectId": "b40-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_41.webp",
+      "name": "建造燃料箱",
+      "effectId": "b41-energy-by-hand-income",
+      "type": "card_count_hand_income_resource",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_42.webp",
+      "name": "聚娈反应堆",
+      "effectId": "b42-energy-by-income",
+      "type": "card_count_current_income_resource",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_42.webp",
+      "name": "聚娈反应堆",
+      "effectId": "b42-tuck-income",
+      "type": "card_tuck_played_card_to_income",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_43.webp",
+      "name": "未来环形对撞机",
+      "effectId": "b43-data",
+      "type": "gain_data",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_43.webp",
+      "name": "未来环形对撞机",
+      "effectId": "b43-blue-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_45.webp",
+      "name": "巨麦哲伦望远镜",
+      "effectId": "b45-public-scan",
+      "type": "card_public_scan",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_46.webp",
+      "name": "建造大型米波射电望远锐",
+      "effectId": "b46-pink-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_47.webp",
+      "name": "政府资助",
+      "effectId": "b47-score-by-income",
+      "type": "card_count_current_income_resource",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_47.webp",
+      "name": "政府资助",
+      "effectId": "b47-tuck-income",
+      "type": "card_tuck_played_card_to_income",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_48.webp",
+      "name": "拨款",
+      "effectId": "b48-pick-corner",
+      "type": "card_pick_card_corner_reward",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_49.webp",
+      "name": "引力弹弓",
+      "effectId": "b49-visit-publicity-move-followup",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_49.webp",
+      "name": "引力弹弓",
+      "effectId": "b49-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_50.webp",
+      "name": "大型轨遒天文台计划",
+      "effectId": "b50-probe-sector-scan",
+      "type": "card_probe_sector_scan",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_51.webp",
+      "name": "绿岸射电望远锐",
+      "effectId": "b51-scan-action",
+      "type": "card_scan_action",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_52.webp",
+      "name": "隼鸟号",
+      "effectId": "b52-asteroid-probe-trace",
+      "type": "card_conditional_reward",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_53.webp",
+      "name": "赫歇尔空间天文台",
+      "effectId": "b53-probe-sector-scan",
+      "type": "card_probe_sector_scan",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_54.webp",
+      "name": "哈勃空间望远锐",
+      "effectId": "b54-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_54.webp",
+      "name": "哈勃空间望远锐",
+      "effectId": "b54-probe-sector-scan",
+      "type": "card_probe_sector_scan",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_55.webp",
+      "name": "国际合作",
+      "effectId": "b55-shared-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_56.webp",
+      "name": "离子推迸系统",
+      "effectId": "b56-energy",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_56.webp",
+      "name": "离子推迸系统",
+      "effectId": "b56-orange-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_57.webp",
+      "name": "国际空间站",
+      "effectId": "b57-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_58.webp",
+      "name": "韦布空间望远锐",
+      "effectId": "b58-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_58.webp",
+      "name": "韦布空间望远锐",
+      "effectId": "b58-probe-adjacent-scan",
+      "type": "card_probe_sector_scan",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_60.webp",
+      "name": "朱诺号探测器",
+      "effectId": "b60-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_60.webp",
+      "name": "朱诺号探测器",
+      "effectId": "b60-data",
+      "type": "gain_data",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_61.webp",
+      "name": "木星探测计划",
+      "effectId": "b61-jupiter-scan",
+      "type": "card_planet_sector_scan",
+      "modelRepeat": 2,
+      "builtNodes": 2,
+      "runtimeRepeat": 2,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_62.webp",
+      "name": "飞掠木星",
+      "effectId": "b62-turn-jupiter-score",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_62.webp",
+      "name": "飞掠木星",
+      "effectId": "b62-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_63.webp",
+      "name": "观测开普勒22",
+      "effectId": "b63-kepler22-scan",
+      "type": "card_scan_nebula",
+      "modelRepeat": 2,
+      "builtNodes": 2,
+      "runtimeRepeat": 2,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_64.webp",
+      "name": "开普勒空间望远锐",
+      "effectId": "b64-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_64.webp",
+      "name": "开普勒空间望远锐",
+      "effectId": "b64-probe-sector-scan",
+      "type": "card_probe_sector_scan",
+      "modelRepeat": 2,
+      "builtNodes": 1,
+      "runtimeRepeat": 2,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_65.webp",
+      "name": "大型强子对撞机",
+      "effectId": "b65-data",
+      "type": "gain_data",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_65.webp",
+      "name": "大型强子对撞机",
+      "effectId": "b65-blue-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_66.webp",
+      "name": "光帆",
+      "effectId": "b66-distinct-planet-score",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_66.webp",
+      "name": "光帆",
+      "effectId": "b66-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_67.webp",
+      "name": "语言学分析",
+      "effectId": "b67-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_68.webp",
+      "name": "洛弗尔望远锐",
+      "effectId": "b68-data",
+      "type": "gain_data",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_68.webp",
+      "name": "洛弗尔望远锐",
+      "effectId": "b68-scan-action",
+      "type": "card_scan_action",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_69.webp",
+      "name": "低成本航天发射",
+      "effectId": "b69-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_70.webp",
+      "name": "低功耗微处理器",
+      "effectId": "b70-energy",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_70.webp",
+      "name": "低功耗微处理器",
+      "effectId": "b70-blue-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_72.webp",
+      "name": "火星探测计划",
+      "effectId": "b72-mars-scan",
+      "type": "card_planet_sector_scan",
+      "modelRepeat": 2,
+      "builtNodes": 2,
+      "runtimeRepeat": 2,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_73.webp",
+      "name": "飞掠火星",
+      "effectId": "b73-turn-mars-score",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_73.webp",
+      "name": "飞掠火星",
+      "effectId": "b73-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_74.webp",
+      "name": "火星科学实验室",
+      "effectId": "b74-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_74.webp",
+      "name": "火星科学实验室",
+      "effectId": "b74-data",
+      "type": "gain_data",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_75.webp",
+      "name": "水星探测计划",
+      "effectId": "b75-mercury-scan",
+      "type": "card_planet_sector_scan",
+      "modelRepeat": 2,
+      "builtNodes": 2,
+      "runtimeRepeat": 2,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_76.webp",
+      "name": "飞掠水星",
+      "effectId": "b76-turn-mercury-score",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_76.webp",
+      "name": "飞掠水星",
+      "effectId": "b76-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_77.webp",
+      "name": "信使号探测器",
+      "effectId": "b77-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_77.webp",
+      "name": "信使号探测器",
+      "effectId": "b77-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_78.webp",
+      "name": "NASA天体生物学研究所",
+      "effectId": "b78-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_79.webp",
+      "name": "NASA每日-圈",
+      "effectId": "b79-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_79.webp",
+      "name": "NASA每日-圈",
+      "effectId": "b79-blind-income-publicity",
+      "type": "card_count_current_income_resource",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_79.webp",
+      "name": "NASA每日-圈",
+      "effectId": "b79-income",
+      "type": "card_tuck_played_card_to_income",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_81.webp",
+      "name": "近地小行星研究",
+      "effectId": "b81-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_82.webp",
+      "name": "NEAR 舒梅克号探测器",
+      "effectId": "b82-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_83.webp",
+      "name": "NASA创新先迸概念计划",
+      "effectId": "b83-draw",
+      "type": "draw_cards",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_84.webp",
+      "name": "诺托射电天文台",
+      "effectId": "b84-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_84.webp",
+      "name": "诺托射电天文台",
+      "effectId": "b84-scan-action",
+      "type": "card_scan_action",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_85.webp",
+      "name": "ODINUS号任务",
+      "effectId": "b85-orange-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_86.webp",
+      "name": "ala Telescope Constructior",
+      "effectId": "b86-purple-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_87.webp",
+      "name": "最佳发射窗口",
+      "effectId": "b87-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_87.webp",
+      "name": "最佳发射窗口",
+      "effectId": "b87-earth-sector-move",
+      "type": "card_earth_sector_content_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_88.webp",
+      "name": "入轨拉格朗日点",
+      "effectId": "b88-probe-sector-scan",
+      "type": "card_probe_sector_scan",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_89.webp",
+      "name": "奥西里斯- REx号",
+      "effectId": "b89-probe-asteroid-data",
+      "type": "card_probe_location_reward",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_90.webp",
+      "name": "帕克斯天文台",
+      "effectId": "b90-red-signal-score",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_90.webp",
+      "name": "帕克斯天文台",
+      "effectId": "b90-scan-action",
+      "type": "card_scan_action",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_91.webp",
+      "name": "毅力号火星车",
+      "effectId": "b91-land",
+      "type": "card_land",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_93.webp",
+      "name": "X射线岩石化学探测行屋仪",
+      "effectId": "b93-blue-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_94.webp",
+      "name": "行星猎手",
+      "effectId": "b94-draw",
+      "type": "draw_cards",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_94.webp",
+      "name": "行星猎手",
+      "effectId": "b94-optional-scans",
+      "type": "card_optional_discard_scan",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_95.webp",
+      "name": "行星地质测绘",
+      "effectId": "b95-orange-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_96.webp",
+      "name": "柏拉图探测器",
+      "effectId": "b96-probe-sector-scan",
+      "type": "card_probe_sector_scan",
+      "modelRepeat": 3,
+      "builtNodes": 1,
+      "runtimeRepeat": 3,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_97.webp",
+      "name": "科学普及",
+      "effectId": "b97-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_98.webp",
+      "name": "发射前试验",
+      "effectId": "b98-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_98.webp",
+      "name": "发射前试验",
+      "effectId": "b98-hand-move-corners",
+      "type": "card_count_hand_corner_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_99.webp",
+      "name": "新闻发言",
+      "effectId": "b99-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_100.webp",
+      "name": "观测南河",
+      "effectId": "b100-procyon-scan",
+      "type": "card_scan_nebula",
+      "modelRepeat": 2,
+      "builtNodes": 2,
+      "runtimeRepeat": 2,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_101.webp",
+      "name": "\"远射\"计划",
+      "effectId": "b101-orange-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_102.webp",
+      "name": "观测比邻星",
+      "effectId": "b102-proxima-scan",
+      "type": "card_scan_nebula",
+      "modelRepeat": 2,
+      "builtNodes": 2,
+      "runtimeRepeat": 2,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_103.webp",
+      "name": "量子计算机",
+      "effectId": "b103-blue-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_104.webp",
+      "name": "罗曼空间望远锐",
+      "effectId": "b104-purple-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_105.webp",
+      "name": "罗盎塔号探测器",
+      "effectId": "b105-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_106.webp",
+      "name": "采样返回",
+      "effectId": "b106-remove-lander",
+      "type": "card_remove_planet_marker",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_106.webp",
+      "name": "采样返回",
+      "effectId": "b106-yellow-trace",
+      "type": "alien_trace",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_107.webp",
+      "name": "土星探测计划",
+      "effectId": "b107-saturn-scan",
+      "type": "card_planet_sector_scan",
+      "modelRepeat": 2,
+      "builtNodes": 2,
+      "runtimeRepeat": 2,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_108.webp",
+      "name": "飞掠土星",
+      "effectId": "b108-turn-saturn-score",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_108.webp",
+      "name": "飞掠土星",
+      "effectId": "b108-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_109.webp",
+      "name": "科学合作",
+      "effectId": "b109-any-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_110.webp",
+      "name": "SETI数据档案",
+      "effectId": "b110-data",
+      "type": "gain_data",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_111.webp",
+      "name": "SETI研究所",
+      "effectId": "b111-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_112.webp",
+      "name": "SETI@Home",
+      "effectId": "b112-publicity-trace",
+      "type": "card_conditional_reward",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_113.webp",
+      "name": "夏洛克光谱仪",
+      "effectId": "b113-orange-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_114.webp",
+      "name": "观测天狼星A",
+      "effectId": "b114-sirius-scan",
+      "type": "card_scan_nebula",
+      "modelRepeat": 2,
+      "builtNodes": 2,
+      "runtimeRepeat": 2,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_115.webp",
+      "name": "案尔维会议",
+      "effectId": "b115-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_116.webp",
+      "name": "太空发射系统",
+      "effectId": "b116-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_116.webp",
+      "name": "太空发射系统",
+      "effectId": "b116-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_117.webp",
+      "name": "航天飞机",
+      "effectId": "b117-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_117.webp",
+      "name": "航天飞机",
+      "effectId": "b117-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_118.webp",
+      "name": "平方公里阵",
+      "effectId": "b118-distinct-scan-sector-score",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_118.webp",
+      "name": "平方公里阵",
+      "effectId": "b118-public-scan",
+      "type": "card_public_scan",
+      "modelRepeat": 3,
+      "builtNodes": 1,
+      "runtimeRepeat": 3,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_119.webp",
+      "name": "星舰",
+      "effectId": "b119-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_119.webp",
+      "name": "星舰",
+      "effectId": "b119-orange-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_121.webp",
+      "name": "水熊虫研究",
+      "effectId": "b121-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_121.webp",
+      "name": "水熊虫研究",
+      "effectId": "b121-data",
+      "type": "gain_data",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_121.webp",
+      "name": "水熊虫研究",
+      "effectId": "b121-draw",
+      "type": "draw_cards",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_122.webp",
+      "name": "望远锐现代化",
+      "effectId": "b122-pick",
+      "type": "pick_card",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_124.webp",
+      "name": "穿越小行星带",
+      "effectId": "b124-turn-ignore-asteroid",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_124.webp",
+      "name": "穿越小行星带",
+      "effectId": "b124-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_125.webp",
+      "name": "轨遒修正",
+      "effectId": "b125-turn-same-ring-reward",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_125.webp",
+      "name": "轨遒修正",
+      "effectId": "b125-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_126.webp",
+      "name": "三叉戟号探测器",
+      "effectId": "b126-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_127.webp",
+      "name": "天王星轨遒器与探测器",
+      "effectId": "b127-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_128.webp",
+      "name": "观测织女星",
+      "effectId": "b128-vega-scan",
+      "type": "card_scan_nebula",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_129.webp",
+      "name": "金星号探测器",
+      "effectId": "b129-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_129.webp",
+      "name": "金星号探测器",
+      "effectId": "b129-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_130.webp",
+      "name": "金星探测计划",
+      "effectId": "b130-venus-scan",
+      "type": "card_planet_sector_scan",
+      "modelRepeat": 2,
+      "builtNodes": 2,
+      "runtimeRepeat": 2,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_131.webp",
+      "name": "飞掠金星",
+      "effectId": "b131-turn-venus-score",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_131.webp",
+      "name": "飞掠金星",
+      "effectId": "b131-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_132.webp",
+      "name": "甚高能辐射成像望远锐",
+      "effectId": "b132-blue-signal-score",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_132.webp",
+      "name": "甚高能辐射成像望远锐",
+      "effectId": "b132-scan-action",
+      "type": "card_scan_action",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_133.webp",
+      "name": "甚大阵",
+      "effectId": "b133-public-scan",
+      "type": "card_public_scan",
+      "modelRepeat": 2,
+      "builtNodes": 1,
+      "runtimeRepeat": 2,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "b_135.webp",
+      "name": "韦断特v克综合孔径射电|远锐",
+      "effectId": "b135-purple-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_136.webp",
+      "name": "Wow!讯号",
+      "effectId": "b136-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_136.webp",
+      "name": "Wow!讯号",
+      "effectId": "b136-earth-sector-scan",
+      "type": "card_planet_sector_scan",
+      "modelRepeat": 2,
+      "builtNodes": 2,
+      "runtimeRepeat": 2,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_137.webp",
+      "name": "建造叶夫帕托里亚望远锐",
+      "effectId": "b137-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_137.webp",
+      "name": "建造叶夫帕托里亚望远锐",
+      "effectId": "b137-purple-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_137.webp",
+      "name": "建造叶夫帕托里亚望远锐",
+      "effectId": "b137-hand-scan",
+      "type": "card_hand_scan",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_138.webp",
+      "name": "月球门户空间站",
+      "effectId": "b138-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "b_139.webp",
+      "name": "自2006 年起不再是行星",
+      "effectId": "b139-pluto-reserve",
+      "type": "card_pluto_reserve",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_1.png",
+      "name": "可重复使用着陆器",
+      "effectId": "dlc1-land",
+      "type": "card_land",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_1.png",
+      "name": "可重复使用着陆器",
+      "effectId": "dlc1-return",
+      "type": "card_return_played_card_to_hand_if",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_2.png",
+      "name": "跟踪与数据中继卫星",
+      "effectId": "dlc2-hand-corner",
+      "type": "card_choose_hand_corner_reward",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_3.png",
+      "name": "NASA深空网络",
+      "effectId": "dlc3-public-scan-markers",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_4.png",
+      "name": "突破讯息",
+      "effectId": "dlc4-public-scan-marker",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_4.png",
+      "name": "突破讯息",
+      "effectId": "dlc4-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_5.png",
+      "name": "维护任务",
+      "effectId": "dlc5-data",
+      "type": "gain_data",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_5.png",
+      "name": "维护任务",
+      "effectId": "dlc5-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_5.png",
+      "name": "维护任务",
+      "effectId": "dlc5-return",
+      "type": "card_return_played_card_to_hand_if",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_6.png",
+      "name": "现场着陆直播",
+      "effectId": "dlc6-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_6.png",
+      "name": "现场着陆直播",
+      "effectId": "dlc6-land",
+      "type": "card_land",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_6.png",
+      "name": "现场着陆直播",
+      "effectId": "dlc6-landing-sector-scan",
+      "type": "card_landing_sector_scan",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_7.png",
+      "name": "双探测器",
+      "effectId": "dlc7-orange-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_8.png",
+      "name": "量子数据存储",
+      "effectId": "dlc8-blue-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_9.png",
+      "name": "月坑射电望远镜",
+      "effectId": "dlc9-purple-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_10.png",
+      "name": "太空第一人",
+      "effectId": "dlc10-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_11.png",
+      "name": "八灵神星探测器",
+      "effectId": "dlc11-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_11.png",
+      "name": "八灵神星探测器",
+      "effectId": "dlc11-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_12.png",
+      "name": "双行星飞越机动",
+      "effectId": "dlc12-turn-distinct-planets",
+      "type": "card_register_event_bonus",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_12.png",
+      "name": "双行星飞越机动",
+      "effectId": "dlc12-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_13.png",
+      "name": "詹姆斯·克拉克·麦克斯韦望远镜",
+      "effectId": "dlc13-scan-action",
+      "type": "card_scan_action",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_13.png",
+      "name": "詹姆斯·克拉克·麦克斯韦望远镜",
+      "effectId": "dlc13-public-scan-marker",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_14.png",
+      "name": "可重复使用火箭",
+      "effectId": "dlc14-launch",
+      "type": "launch",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_14.png",
+      "name": "可重复使用火箭",
+      "effectId": "dlc14-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_14.png",
+      "name": "可重复使用火箭",
+      "effectId": "dlc14-return",
+      "type": "card_return_played_card_to_hand_if",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_15.png",
+      "name": "迭代工程",
+      "effectId": "dlc15-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_16.png",
+      "name": "宇航员训练体验",
+      "effectId": "dlc16-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_17.png",
+      "name": "付费媒体报道",
+      "effectId": "dlc17-pay-credits",
+      "type": "card_pay_credits_for_reward",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_18.png",
+      "name": "合同研究",
+      "effectId": "dlc18-shared-tech",
+      "type": "card_research_tech",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_19.png",
+      "name": "凌日系外行星巡天卫星",
+      "effectId": "dlc19-signals",
+      "type": "card_conditional_reward",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_20.png",
+      "name": "完美执行的项目",
+      "effectId": "dlc20-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_20.png",
+      "name": "完美执行的项目",
+      "effectId": "dlc20-repeat-corner",
+      "type": "card_discard_card_corner_repeat",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_22.png",
+      "name": "新任务",
+      "effectId": "dlc22-owned-signal-sector-scan",
+      "type": "card_conditional_sector_scan",
+      "modelRepeat": 2,
+      "builtNodes": 1,
+      "runtimeRepeat": 2,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "dlc_23.png",
+      "name": "中性浮力训练",
+      "effectId": "dlc23-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_27.png",
+      "name": "更优太阳能板",
+      "effectId": "dlc27-zero-energy",
+      "type": "card_conditional_reward",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_28.png",
+      "name": "重组",
+      "effectId": "dlc28-discard-income",
+      "type": "card_discard_any_for_income",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_29.png",
+      "name": "废弃任务",
+      "effectId": "dlc29-task-return",
+      "type": "card_return_unfinished_task_to_hand",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_29.png",
+      "name": "废弃任务",
+      "effectId": "dlc29-data",
+      "type": "gain_data",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_30.png",
+      "name": "晓号轨道器",
+      "effectId": "dlc30-orbit",
+      "type": "card_orbit",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_30.png",
+      "name": "晓号轨道器",
+      "effectId": "dlc30-blue-tech-data",
+      "type": "card_count_owned_tech_reward",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_31.png",
+      "name": "机智号直升机",
+      "effectId": "dlc31-land",
+      "type": "card_land",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_32.png",
+      "name": "MUREP创意竞赛",
+      "effectId": "dlc32-discard-all",
+      "type": "card_discard_all_hand",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_33.png",
+      "name": "延期发射",
+      "effectId": "dlc33-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_34.png",
+      "name": "私营部门投资",
+      "effectId": "dlc34-income",
+      "type": "card_income",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_34.png",
+      "name": "私营部门投资",
+      "effectId": "dlc34-max-tech-draw",
+      "type": "card_count_tech_types_reward",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_35.png",
+      "name": "NASA系外行星档案",
+      "effectId": "dlc35-public-scan-marker",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_36.png",
+      "name": "大耳朵射电望远镜",
+      "effectId": "dlc36-yellow-scan",
+      "type": "card_scan_color_choice",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_36.png",
+      "name": "大耳朵射电望远镜",
+      "effectId": "dlc36-red-scan",
+      "type": "card_scan_color_choice",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_36.png",
+      "name": "大耳朵射电望远镜",
+      "effectId": "dlc36-blue-scan",
+      "type": "card_scan_color_choice",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_37.png",
+      "name": "潘多拉卫星",
+      "effectId": "dlc37-all-owned-signal-sectors",
+      "type": "card_conditional_sector_scan",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "handler"
+    },
+    {
+      "cardId": "dlc_38.png",
+      "name": "太空交会",
+      "effectId": "dlc38-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_38.png",
+      "name": "太空交会",
+      "effectId": "dlc38-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_38.png",
+      "name": "太空交会",
+      "effectId": "dlc38-stack-score",
+      "type": "card_probe_stack_reward",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_39.png",
+      "name": "大巡游计划",
+      "effectId": "dlc39-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_40.png",
+      "name": "霍尔效应推进器",
+      "effectId": "dlc40-move",
+      "type": "card_move",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_41.png",
+      "name": "系外行星巡天",
+      "effectId": "dlc41-public-scan-marker",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_41.png",
+      "name": "系外行星巡天",
+      "effectId": "dlc41-publicity",
+      "type": "gain_resources",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_41.png",
+      "name": "系外行星巡天",
+      "effectId": "dlc41-pick",
+      "type": "pick_card",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    },
+    {
+      "cardId": "dlc_42.png",
+      "name": "低频阵列",
+      "effectId": "dlc42-scan-action",
+      "type": "card_scan_action",
+      "modelRepeat": 1,
+      "builtNodes": 1,
+      "runtimeRepeat": 1,
+      "repeatOwner": "buildPlayEffects"
+    }
+  ],
+  "deferred": [
+    {
+      "cardId": "b_1.webp",
+      "name": "观测室女座",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b1-yellow-sector-task",
+          "condition": {
+            "type": "completedSectorsByColor",
+            "color": "yellow",
+            "count": 2
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b1-yellow-sector-reward",
+              "type": "gain_resources",
+              "label": "完成2个黄色扇区：4分，1宣传",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4,
+                  "publicity": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_2.webp",
+      "name": "高级导航系统",
+      "triggers": [
+        {
+          "id": "b2-visit-planet-energy",
+          "event": {
+            "type": "visitPlanet",
+            "excludePlanetIds": [
+              "earth"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b2-energy",
+            "type": "gain_resources",
+            "label": "高级导航系统：1能量",
+            "icon": "energy",
+            "options": {
+              "gain": {
+                "energy": 1
+              }
+            }
+          }
+        },
+        {
+          "id": "b2-visit-planet-data",
+          "event": {
+            "type": "visitPlanet",
+            "excludePlanetIds": [
+              "earth"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b2-data",
+            "type": "gain_data",
+            "label": "高级导航系统：1数据",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "id": "b2-visit-planet-move",
+          "event": {
+            "type": "visitPlanet",
+            "excludePlanetIds": [
+              "earth"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b2-free-move",
+            "type": "card_free_move",
+            "label": "高级导航系统：1免费移动",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_4.webp",
+      "name": "大型离子对撞机实验",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b4-blue-alien-task",
+          "condition": {
+            "type": "allAliensHavePlayerTrace",
+            "traceType": "blue"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b4-blue-alien-reward",
+              "type": "gain_data",
+              "label": "2个外星人均有蓝色痕迹：2数据",
+              "icon": "data",
+              "options": {
+                "count": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_8.webp",
+      "name": "阿波罗1号任务",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b8-yellow-alien-task",
+          "condition": {
+            "type": "allAliensHavePlayerTrace",
+            "traceType": "yellow"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b8-yellow-alien-score",
+              "type": "gain_resources",
+              "label": "2个外星人均有黄色痕迹：2分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 2
+                }
+              }
+            },
+            {
+              "id": "b8-yellow-alien-draw",
+              "type": "draw_cards",
+              "label": "2个外星人均有黄色痕迹：1盲抽",
+              "icon": "blind_card",
+              "options": {
+                "count": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_10.webp",
+      "name": "小行星研究",
+      "triggers": [
+        {
+          "id": "b10-visit-asteroid-data-1",
+          "event": {
+            "type": "visitAsteroid"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b10-data-1",
+            "type": "gain_data",
+            "label": "小行星研究：1数据 1/3",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "id": "b10-visit-asteroid-data-2",
+          "event": {
+            "type": "visitAsteroid"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b10-data-2",
+            "type": "gain_data",
+            "label": "小行星研究：1数据 2/3",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "id": "b10-visit-asteroid-data-3",
+          "event": {
+            "type": "visitAsteroid"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b10-data-3",
+            "type": "gain_data",
+            "label": "小行星研究：1数据 3/3",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_12.webp",
+      "name": "超环面仪器",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b12-blue-trace-task",
+          "condition": {
+            "type": "traceCount",
+            "traceType": "blue",
+            "count": 3
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b12-blue-trace-score",
+              "type": "gain_resources",
+              "label": "拥有3个蓝色外星人标记：3分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              }
+            },
+            {
+              "id": "b12-blue-trace-data",
+              "type": "gain_data",
+              "label": "拥有3个蓝色外星人标记：1数据",
+              "icon": "data",
+              "options": {
+                "count": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_15.webp",
+      "name": "观测老人增四",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b15-black-sector-task",
+          "condition": {
+            "type": "completedSectorsByColor",
+            "color": "black",
+            "count": 1
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b15-black-sector-reward",
+              "type": "gain_resources",
+              "label": "完成1个黑色扇区：2分，1宣传",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 2,
+                  "publicity": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_19.webp",
+      "name": "加阜大氢谱线望远锐",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b19-purple-tech-task",
+          "condition": {
+            "type": "techCount",
+            "techType": "purple",
+            "count": 3
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b19-purple-tech-data",
+              "type": "gain_data",
+              "label": "拥有3个紫色科技：1数据",
+              "icon": "data",
+              "options": {
+                "count": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_20.webp",
+      "name": "卡纳维拉尔角太空军基地",
+      "triggers": [
+        {
+          "id": "b20-launch-move-1",
+          "event": {
+            "type": "launch"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b20-free-move-1",
+            "type": "card_free_move",
+            "label": "卡纳维拉尔角：发射后1免费移动 1/3",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            }
+          }
+        },
+        {
+          "id": "b20-launch-move-2",
+          "event": {
+            "type": "launch"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b20-free-move-2",
+            "type": "card_free_move",
+            "label": "卡纳维拉尔角：发射后1免费移动 2/3",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            }
+          }
+        },
+        {
+          "id": "b20-launch-move-3",
+          "event": {
+            "type": "launch"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b20-free-move-3",
+            "type": "card_free_move",
+            "label": "卡纳维拉尔角：发射后1免费移动 3/3",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_21.webp",
+      "name": "卡西尼号探测器",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b21-saturn-task",
+          "condition": {
+            "type": "planetOrbitOrLand",
+            "planetId": "saturn",
+            "count": 1
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b21-saturn-reward",
+              "type": "gain_resources",
+              "label": "在土星存在环绕或登陆：6分，1宣传",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 6,
+                  "publicity": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_22.webp",
+      "name": "钱愆拉空间天文台",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b22-distinct-signal-task",
+          "condition": {
+            "type": "distinctSignalSectors",
+            "count": 4
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b22-distinct-signal-reward",
+              "type": "gain_resources",
+              "label": "4个不同扇区有信号：2宣传",
+              "icon": "publicity",
+              "options": {
+                "gain": {
+                  "publicity": 2
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_25.webp",
+      "name": "控制中心",
+      "triggers": [
+        {
+          "id": "b25-yellow-scan-move",
+          "event": {
+            "type": "signalMarked",
+            "color": "yellow"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b25-yellow-scan-move-effect",
+            "type": "card_free_move",
+            "label": "扫描黄色扇区：1免费移动",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            }
+          }
+        },
+        {
+          "id": "b25-red-scan-move",
+          "event": {
+            "type": "signalMarked",
+            "color": "red"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b25-red-scan-move-effect",
+            "type": "card_free_move",
+            "label": "扫描红色扇区：1免费移动",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            }
+          }
+        },
+        {
+          "id": "b25-blue-scan-move",
+          "event": {
+            "type": "signalMarked",
+            "color": "blue"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b25-blue-scan-move-effect",
+            "type": "card_free_move",
+            "label": "扫描蓝色扇区：1免费移动",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_26.webp",
+      "name": "康奈尔大学",
+      "triggers": [
+        {
+          "id": "b26-publicity-corner",
+          "event": {
+            "type": "cardCorner",
+            "cornerKind": "publicity"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b26-publicity-corner-repeat",
+            "type": "gain_resources",
+            "label": "康奈尔大学：再获得一次宣传角标奖励",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 1
+              }
+            }
+          }
+        },
+        {
+          "id": "b26-data-corner",
+          "event": {
+            "type": "cardCorner",
+            "cornerKind": "data"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b26-data-corner-repeat",
+            "type": "gain_data",
+            "label": "康奈尔大学：再获得一次数据角标奖励",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "id": "b26-move-corner",
+          "event": {
+            "type": "cardCorner",
+            "cornerKind": "move"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b26-move-corner-repeat",
+            "type": "card_move",
+            "label": "康奈尔大学：再获得一次移动角标奖励",
+            "icon": "movement",
+            "options": {
+              "movementPoints": 1
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_39.webp",
+      "name": "首张罴洞照片",
+      "triggers": [
+        {
+          "id": "b39-blue-trace-publicity",
+          "event": {
+            "type": "alienTrace",
+            "traceType": "blue"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b39-blue-trace-publicity-effect",
+            "type": "gain_resources",
+            "label": "获得蓝色痕迹：2宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 2
+              }
+            }
+          }
+        },
+        {
+          "id": "b39-blue-trace-score",
+          "event": {
+            "type": "alienTrace",
+            "traceType": "blue"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b39-blue-trace-score-effect",
+            "type": "gain_resources",
+            "label": "获得蓝色痕迹：4分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 4
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_44.webp",
+      "name": "伽利略号任务",
+      "triggers": [
+        {
+          "id": "b44-venus-publicity",
+          "event": {
+            "type": "visitPlanet",
+            "includePlanetIds": [
+              "venus"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b44-venus-publicity-effect",
+            "type": "gain_resources",
+            "label": "访问金星：1宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 1
+              }
+            }
+          }
+        },
+        {
+          "id": "b44-jupiter-data",
+          "event": {
+            "type": "visitPlanet",
+            "includePlanetIds": [
+              "jupiter"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b44-jupiter-data-effect",
+            "type": "gain_data",
+            "label": "访问木星：1数据",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_46.webp",
+      "name": "建造大型米波射电望远锐",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b46-all-pink-task",
+          "condition": {
+            "type": "allAliensHavePlayerTrace",
+            "traceType": "pink"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b46-all-pink-reward",
+              "type": "card_count_aliens_resource",
+              "label": "每个外星人：2分+1能量",
+              "icon": "alien_trace",
+              "options": {
+                "gainPerAlien": {
+                  "score": 2,
+                  "energy": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_51.webp",
+      "name": "绿岸射电望远锐",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b51-three-pink-task",
+          "condition": {
+            "type": "traceCount",
+            "traceType": "pink",
+            "count": 3
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b51-pink-trace-reward",
+              "type": "alien_trace",
+              "label": "3个粉色痕迹：获得1粉色痕迹",
+              "icon": "alien_pink",
+              "options": {
+                "allowedTraceTypes": [
+                  "pink"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_53.webp",
+      "name": "赫歇尔空间天文台",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b53-distinct-signal-task",
+          "condition": {
+            "type": "distinctSignalSectors",
+            "count": 4
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b53-distinct-signal-reward",
+              "type": "gain_resources",
+              "label": "4个不同扇区有信号：2宣传",
+              "icon": "publicity",
+              "options": {
+                "gain": {
+                  "publicity": 2
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_57.webp",
+      "name": "国际空间站",
+      "triggers": [
+        {
+          "id": "b57-launch-credit",
+          "event": {
+            "type": "launch"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b57-launch-credit-effect",
+            "type": "gain_resources",
+            "label": "发射：1信用",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "credits": 1
+              }
+            }
+          }
+        },
+        {
+          "id": "b57-launch-pick",
+          "event": {
+            "type": "launch"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b57-launch-pick-effect",
+            "type": "pick_card",
+            "label": "发射：精选1张牌",
+            "icon": "pick_card",
+            "options": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "id": "b57-launch-score",
+          "event": {
+            "type": "launch"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b57-launch-score-effect",
+            "type": "gain_resources",
+            "label": "发射：5分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 5
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_59.webp",
+      "name": "约翰逊空间中心",
+      "triggers": [
+        {
+          "id": "b59-orbit-publicity",
+          "event": {
+            "type": "orbit"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b59-orbit-publicity-effect",
+            "type": "gain_resources",
+            "label": "环绕：2宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 2
+              }
+            }
+          }
+        },
+        {
+          "id": "b59-land-publicity",
+          "event": {
+            "type": "land"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b59-land-publicity-effect",
+            "type": "gain_resources",
+            "label": "登陆：2宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 2
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_60.webp",
+      "name": "朱诺号探测器",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b60-jupiter-task",
+          "condition": {
+            "type": "planetOrbitOrLand",
+            "planetId": "jupiter"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b60-jupiter-reward",
+              "type": "gain_resources",
+              "label": "木星环绕/登陆：7分+1宣传",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 7,
+                  "publicity": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_61.webp",
+      "name": "木星探测计划",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b61-jupiter-task",
+          "condition": {
+            "type": "planetOrbitOrLand",
+            "planetId": "jupiter"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b61-jupiter-reward",
+              "type": "gain_resources",
+              "label": "木星环绕/登陆：4分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_67.webp",
+      "name": "语言学分析",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b67-three-traces-task",
+          "condition": {
+            "type": "singleAlienTraceSet",
+            "traceTypes": [
+              "pink",
+              "yellow",
+              "blue"
+            ]
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b67-any-trace-reward",
+              "type": "alien_trace",
+              "label": "同一外星人三色痕迹齐全：在该外星人获得任意痕迹",
+              "icon": "alien_trace",
+              "options": {
+                "targetRule": "singleAlienTraceSet",
+                "requiredTraceTypes": [
+                  "pink",
+                  "yellow",
+                  "blue"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_68.webp",
+      "name": "洛弗尔望远锐",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b68-publicity-task",
+          "condition": {
+            "type": "resourceThreshold",
+            "resource": "publicity",
+            "count": 8
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b68-publicity-score",
+              "type": "gain_resources",
+              "label": "宣传达到8：3分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              }
+            },
+            {
+              "id": "b68-publicity-pick",
+              "type": "pick_card",
+              "label": "宣传达到8：精选1张牌",
+              "icon": "pick_card",
+              "options": {
+                "count": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_71.webp",
+      "name": "水手10号任务",
+      "triggers": [
+        {
+          "id": "b71-mercury-draw",
+          "event": {
+            "type": "visitPlanet",
+            "planetIds": [
+              "mercury"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b71-mercury-draw-effect",
+            "type": "draw_cards",
+            "label": "访问水星：1盲抽",
+            "icon": "blind_card",
+            "options": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "id": "b71-venus-publicity",
+          "event": {
+            "type": "visitPlanet",
+            "planetIds": [
+              "venus"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b71-venus-publicity-effect",
+            "type": "gain_resources",
+            "label": "访问金星：1宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 1
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_72.webp",
+      "name": "火星探测计划",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b72-mars-task",
+          "condition": {
+            "type": "planetOrbitOrLand",
+            "planetId": "mars"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b72-mars-score",
+              "type": "gain_resources",
+              "label": "火星环绕/登陆：4分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_75.webp",
+      "name": "水星探测计划",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b75-mercury-task",
+          "condition": {
+            "type": "planetOrbitOrLand",
+            "planetId": "mercury"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b75-mercury-score",
+              "type": "gain_resources",
+              "label": "水星环绕/登陆：4分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_77.webp",
+      "name": "信使号探测器",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b77-mercury-task",
+          "condition": {
+            "type": "planetOrbitOrLand",
+            "planetId": "mercury"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b77-mercury-reward",
+              "type": "gain_resources",
+              "label": "水星环绕/登陆：7分+1宣传",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 7,
+                  "publicity": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_78.webp",
+      "name": "NASA天体生物学研究所",
+      "triggers": [
+        {
+          "id": "b78-pink-signal-data",
+          "event": {
+            "type": "signalMarked",
+            "color": "pink"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b78-pink-signal-data-effect",
+            "type": "gain_data",
+            "label": "标记信号：1数据",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "id": "b78-yellow-signal-data",
+          "event": {
+            "type": "signalMarked",
+            "color": "yellow"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b78-yellow-signal-data-effect",
+            "type": "gain_data",
+            "label": "标记信号：1数据",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "id": "b78-blue-signal-data",
+          "event": {
+            "type": "signalMarked",
+            "color": "blue"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b78-blue-signal-data-effect",
+            "type": "gain_data",
+            "label": "标记信号：1数据",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_80.webp",
+      "name": "NASA研究中心",
+      "triggers": [
+        {
+          "id": "b80-orange-tech-energy",
+          "event": {
+            "type": "researchTech",
+            "techType": "orange"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b80-orange-tech-energy-effect",
+            "type": "gain_resources",
+            "label": "橙色科技：1能量",
+            "icon": "energy",
+            "options": {
+              "gain": {
+                "energy": 1
+              }
+            }
+          }
+        },
+        {
+          "id": "b80-purple-tech-publicity",
+          "event": {
+            "type": "researchTech",
+            "techType": "purple"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b80-purple-tech-publicity-effect",
+            "type": "gain_resources",
+            "label": "紫色科技：1宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 1
+              }
+            }
+          }
+        },
+        {
+          "id": "b80-blue-tech-pick",
+          "event": {
+            "type": "researchTech",
+            "techType": "blue"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b80-blue-tech-pick-effect",
+            "type": "pick_card",
+            "label": "蓝色科技：精选1张牌",
+            "icon": "pick_card",
+            "options": {
+              "count": 1
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_81.webp",
+      "name": "近地小行星研究",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b81-earth-adjacent-asteroid-task",
+          "condition": {
+            "type": "probeAdjacentEarthAsteroid"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b81-score",
+              "type": "gain_resources",
+              "label": "地球相邻小行星探测器：5分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 5
+                }
+              }
+            },
+            {
+              "id": "b81-pick",
+              "type": "pick_card",
+              "label": "地球相邻小行星探测器：精选1张牌",
+              "icon": "pick_card",
+              "options": {
+                "count": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_83.webp",
+      "name": "NASA创新先迸概念计划",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b83-empty-hand-task",
+          "condition": {
+            "type": "handEmpty"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b83-pick",
+              "type": "pick_card",
+              "label": "空手牌：精选1张牌",
+              "icon": "pick_card",
+              "options": {
+                "count": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_85.webp",
+      "name": "ODINUS号任务",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b85-outer-planets-task",
+          "condition": {
+            "type": "planetOrbitOrLandAll",
+            "planetIds": [
+              "neptune",
+              "uranus"
+            ]
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b85-score",
+              "type": "gain_resources",
+              "label": "海王星和天王星环绕/登陆：5分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 5
+                }
+              }
+            },
+            {
+              "id": "b85-pick",
+              "type": "pick_card",
+              "label": "海王星和天王星环绕/登陆：精选1张牌",
+              "icon": "pick_card",
+              "options": {
+                "count": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_92.webp",
+      "name": "先驱者11号任务",
+      "triggers": [
+        {
+          "id": "b92-jupiter-data",
+          "event": {
+            "type": "visitPlanet",
+            "planetIds": [
+              "jupiter"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b92-jupiter-data-effect",
+            "type": "gain_data",
+            "label": "访问木星：1数据",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "id": "b92-saturn-energy",
+          "event": {
+            "type": "visitPlanet",
+            "planetIds": [
+              "saturn"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b92-saturn-energy-effect",
+            "type": "gain_resources",
+            "label": "访问土星：1能量",
+            "icon": "energy",
+            "options": {
+              "gain": {
+                "energy": 1
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_95.webp",
+      "name": "行星地质测绘",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b95-same-planet-orbit-land-task",
+          "condition": {
+            "type": "samePlanetOrbitAndLand"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b95-score",
+              "type": "gain_resources",
+              "label": "同星球环绕且登陆：3分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              }
+            },
+            {
+              "id": "b95-data",
+              "type": "gain_data",
+              "label": "同星球环绕且登陆：1数据",
+              "icon": "data",
+              "options": {
+                "count": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_97.webp",
+      "name": "科学普及",
+      "triggers": [
+        {
+          "id": "b97-orange-tech-publicity",
+          "event": {
+            "type": "researchTech",
+            "techType": "orange"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b97-orange-tech-publicity-effect",
+            "type": "gain_resources",
+            "label": "获得科技：2宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 2
+              }
+            }
+          }
+        },
+        {
+          "id": "b97-purple-tech-publicity",
+          "event": {
+            "type": "researchTech",
+            "techType": "purple"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b97-purple-tech-publicity-effect",
+            "type": "gain_resources",
+            "label": "获得科技：2宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 2
+              }
+            }
+          }
+        },
+        {
+          "id": "b97-blue-tech-publicity",
+          "event": {
+            "type": "researchTech",
+            "techType": "blue"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b97-blue-tech-publicity-effect",
+            "type": "gain_resources",
+            "label": "获得科技：2宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 2
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_101.webp",
+      "name": "\"远射\"计划",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b101-distance-task",
+          "condition": {
+            "type": "probeDistanceFromEarth",
+            "minDistance": 5
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b101-score-energy",
+              "type": "gain_resources",
+              "label": "远离地球探测器：3分+1能量",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3,
+                  "energy": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_102.webp",
+      "name": "观测比邻星",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b102-red-sectors-task",
+          "condition": {
+            "type": "completedSectorsByColor",
+            "color": "red",
+            "count": 2
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b102-score-publicity",
+              "type": "gain_resources",
+              "label": "完成2个红色扇区：4分+1宣传",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4,
+                  "publicity": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_103.webp",
+      "name": "量子计算机",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b103-score-task",
+          "condition": {
+            "type": "resourceThreshold",
+            "resource": "score",
+            "count": 50
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b103-income",
+              "type": "card_income",
+              "label": "至少50分：收入",
+              "icon": "income",
+              "options": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_104.webp",
+      "name": "罗曼空间望远锐",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b104-orbit-count-task",
+          "condition": {
+            "type": "orbitCount",
+            "count": 2
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b104-data",
+              "type": "gain_data",
+              "label": "2个环绕：2数据",
+              "icon": "data",
+              "options": {
+                "count": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_105.webp",
+      "name": "罗盎塔号探测器",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b105-comet-task",
+          "condition": {
+            "type": "probeLocation",
+            "locationType": "comet"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b105-score",
+              "type": "gain_resources",
+              "label": "彗星探测器：3分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              }
+            },
+            {
+              "id": "b105-data",
+              "type": "gain_data",
+              "label": "彗星探测器：1数据",
+              "icon": "data",
+              "options": {
+                "count": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_107.webp",
+      "name": "土星探测计划",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b107-saturn-task",
+          "condition": {
+            "type": "planetOrbitOrLand",
+            "planetId": "saturn"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b107-score",
+              "type": "gain_resources",
+              "label": "土星环绕/登陆：4分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_111.webp",
+      "name": "SETI研究所",
+      "triggers": [
+        {
+          "id": "b111-scan-data",
+          "event": {
+            "type": "scanAction"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b111-scan-data-effect",
+            "type": "gain_data",
+            "label": "扫描行动：2数据",
+            "icon": "data",
+            "options": {
+              "count": 2
+            }
+          }
+        },
+        {
+          "id": "b111-scan-draw",
+          "event": {
+            "type": "scanAction"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b111-scan-draw-effect",
+            "type": "draw_cards",
+            "label": "扫描行动：1盲抽",
+            "icon": "blind_card",
+            "options": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "id": "b111-scan-score",
+          "event": {
+            "type": "scanAction"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b111-scan-score-effect",
+            "type": "gain_resources",
+            "label": "扫描行动：4分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 4
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_114.webp",
+      "name": "观测天狼星A",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b114-blue-sectors-task",
+          "condition": {
+            "type": "completedSectorsByColor",
+            "color": "blue",
+            "count": 2
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b114-score-publicity",
+              "type": "gain_resources",
+              "label": "完成2个蓝色扇区：4分+1宣传",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4,
+                  "publicity": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_116.webp",
+      "name": "太空发射系统",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b116-landing-count-task",
+          "condition": {
+            "type": "landingCount",
+            "count": 3
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b116-credit",
+              "type": "gain_resources",
+              "label": "3个登陆：1信用",
+              "icon": "publicity",
+              "options": {
+                "gain": {
+                  "credits": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_117.webp",
+      "name": "航天飞机",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b117-orbit-land-count-task",
+          "condition": {
+            "type": "orbitOrLandCount",
+            "count": 5
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b117-score-credit",
+              "type": "gain_resources",
+              "label": "5个环绕/登陆：3分+1信用",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3,
+                  "credits": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_120.webp",
+      "name": "战略规划",
+      "triggers": [
+        {
+          "id": "b120-price1-score",
+          "event": {
+            "type": "playCard",
+            "timing": "after_play_card",
+            "price": 1
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b120-price1-score-effect",
+            "type": "gain_resources",
+            "label": "打出1费牌：2分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 2
+              }
+            }
+          }
+        },
+        {
+          "id": "b120-price2-pick",
+          "event": {
+            "type": "playCard",
+            "timing": "after_play_card",
+            "price": 2
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b120-price2-pick-effect",
+            "type": "pick_card",
+            "label": "打出2费牌：精选1张牌",
+            "icon": "pick_card",
+            "options": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "id": "b120-price3-publicity",
+          "event": {
+            "type": "playCard",
+            "timing": "after_play_card",
+            "price": 3
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b120-price3-publicity-effect",
+            "type": "gain_resources",
+            "label": "打出3费牌：2宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 2
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_121.webp",
+      "name": "水熊虫研究",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b121-yellow-traces-task",
+          "condition": {
+            "type": "traceCount",
+            "traceType": "yellow",
+            "count": 3
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b121-yellow-trace",
+              "type": "alien_trace",
+              "label": "获得黄色外星人痕迹",
+              "icon": "alien_yellow",
+              "options": {
+                "allowedTraceTypes": [
+                  "yellow"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_122.webp",
+      "name": "望远锐现代化",
+      "triggers": [
+        {
+          "id": "b122-purple-tech-publicity",
+          "event": {
+            "type": "researchTech",
+            "techType": "purple"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b122-purple-tech-publicity-effect",
+            "type": "gain_resources",
+            "label": "紫色科技：1宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 1
+              }
+            }
+          }
+        },
+        {
+          "id": "b122-scan-data",
+          "event": {
+            "type": "scanAction"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b122-scan-data-effect",
+            "type": "gain_data",
+            "label": "扫描行动：1数据",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_123.webp",
+      "name": "望远锐时间分配",
+      "triggers": [
+        {
+          "id": "b123-scan-yellow",
+          "event": {
+            "type": "scanAction"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b123-yellow-scan-effect",
+            "type": "card_scan_color_choice",
+            "label": "扫描行动：黄色扇区扫描",
+            "icon": "yellow_scan",
+            "options": {
+              "color": "yellow",
+              "gainData": true
+            }
+          }
+        },
+        {
+          "id": "b123-scan-red",
+          "event": {
+            "type": "scanAction"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b123-red-scan-effect",
+            "type": "card_scan_color_choice",
+            "label": "扫描行动：红色扇区扫描",
+            "icon": "red_scan",
+            "options": {
+              "color": "red",
+              "gainData": true
+            }
+          }
+        },
+        {
+          "id": "b123-scan-blue",
+          "event": {
+            "type": "scanAction"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b123-blue-scan-effect",
+            "type": "card_scan_color_choice",
+            "label": "扫描行动：蓝色扇区扫描",
+            "icon": "blue_scan",
+            "options": {
+              "color": "blue",
+              "gainData": true
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_126.webp",
+      "name": "三叉戟号探测器",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b126-neptune-task",
+          "condition": {
+            "type": "planetOrbitOrLand",
+            "planetId": "neptune"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b126-score",
+              "type": "gain_resources",
+              "label": "海王星环绕/登陆：4分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4
+                }
+              }
+            },
+            {
+              "id": "b126-data",
+              "type": "gain_data",
+              "label": "海王星环绕/登陆：1数据",
+              "icon": "data",
+              "options": {
+                "count": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_127.webp",
+      "name": "天王星轨遒器与探测器",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b127-uranus-task",
+          "condition": {
+            "type": "planetOrbitOrLand",
+            "planetId": "uranus"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b127-score",
+              "type": "gain_resources",
+              "label": "天王星环绕/登陆：3分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3
+                }
+              }
+            },
+            {
+              "id": "b127-draw",
+              "type": "draw_cards",
+              "label": "天王星环绕/登陆：1盲抽",
+              "icon": "blind_card",
+              "options": {
+                "count": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_129.webp",
+      "name": "金星号探测器",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b129-venus-task",
+          "condition": {
+            "type": "planetOrbitOrLand",
+            "planetId": "venus"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b129-venus-reward",
+              "type": "gain_resources",
+              "label": "金星环绕/登陆：7分+1宣传",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 7,
+                  "publicity": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_130.webp",
+      "name": "金星探测计划",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b130-venus-task",
+          "condition": {
+            "type": "planetOrbitOrLand",
+            "planetId": "venus"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b130-score",
+              "type": "gain_resources",
+              "label": "金星环绕/登陆：4分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_134.webp",
+      "name": "旅行者2号任务",
+      "triggers": [
+        {
+          "id": "b134-uranus-energy",
+          "event": {
+            "type": "visitPlanet",
+            "planetIds": [
+              "uranus"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b134-energy",
+            "type": "gain_resources",
+            "label": "访问天王星：1能量",
+            "icon": "energy",
+            "options": {
+              "gain": {
+                "energy": 1
+              }
+            }
+          }
+        },
+        {
+          "id": "b134-neptune-credit",
+          "event": {
+            "type": "visitPlanet",
+            "planetIds": [
+              "neptune"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b134-credit",
+            "type": "gain_resources",
+            "label": "访问海王星：1信用",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "credits": 1
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_135.webp",
+      "name": "韦断特v克综合孔径射电|远锐",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "b135-same-color-sectors-task",
+          "condition": {
+            "type": "completedSameSectorColor",
+            "count": 2
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "b135-score",
+              "type": "gain_resources",
+              "label": "完成2个同色扇区：9分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 9
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_138.webp",
+      "name": "月球门户空间站",
+      "triggers": [
+        {
+          "id": "b138-orbit-land-launch",
+          "event": {
+            "types": [
+              "orbit",
+              "land"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b138-trigger-launch",
+            "type": "launch",
+            "label": "环绕或登陆：发射",
+            "icon": "launch",
+            "options": {
+              "skipCost": true,
+              "cost": {},
+              "source": "card",
+              "ignoreRocketLimit": false
+            }
+          }
+        },
+        {
+          "id": "b138-orbit-land-energy",
+          "event": {
+            "types": [
+              "orbit",
+              "land"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b138-energy",
+            "type": "gain_resources",
+            "label": "环绕或登陆：1能量",
+            "icon": "energy",
+            "options": {
+              "gain": {
+                "energy": 1
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "b_140.webp",
+      "name": "火星轨遒门户",
+      "triggers": [
+        {
+          "id": "b140-mars-orbit-land-publicity",
+          "event": {
+            "types": [
+              "orbit",
+              "land",
+              "playCard"
+            ],
+            "planetIds": [
+              "mars"
+            ],
+            "cardIds": [
+              "b_72.webp",
+              "b_73.webp",
+              "b_74.webp",
+              "b_91.webp"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b140-publicity",
+            "type": "gain_resources",
+            "label": "火星环绕/登陆或打出火星相关牌：2宣传",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "publicity": 2
+              }
+            }
+          }
+        },
+        {
+          "id": "b140-mars-orbit-land-score",
+          "event": {
+            "types": [
+              "orbit",
+              "land",
+              "playCard"
+            ],
+            "planetIds": [
+              "mars"
+            ],
+            "cardIds": [
+              "b_72.webp",
+              "b_73.webp",
+              "b_74.webp",
+              "b_91.webp"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "b140-score",
+            "type": "gain_resources",
+            "label": "火星环绕/登陆或打出火星相关牌：5分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 5
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "dlc_7.png",
+      "name": "双探测器",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "dlc7-two-planet-probes",
+          "condition": {
+            "type": "probesOnDifferentPlanets",
+            "count": 2,
+            "excludePlanetIds": [
+              "earth"
+            ]
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "dlc7-credits",
+              "type": "gain_resources",
+              "label": "两个非地球行星探测器：2信用",
+              "icon": "publicity",
+              "options": {
+                "gain": {
+                  "credits": 2
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_9.png",
+      "name": "月坑射电望远镜",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "dlc9-three-sector-wins",
+          "condition": {
+            "type": "completedSectors",
+            "count": 3
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "dlc9-publicity",
+              "type": "gain_resources",
+              "label": "完成3个扇区：3宣传",
+              "icon": "publicity",
+              "options": {
+                "gain": {
+                  "publicity": 3
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_11.png",
+      "name": "八灵神星探测器",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "dlc11-asteroid-probe",
+          "condition": {
+            "type": "probeLocation",
+            "locationType": "asteroid"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "dlc11-score-energy",
+              "type": "gain_resources",
+              "label": "小行星探测器：3分+2能量",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 3,
+                  "energy": 2
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_16.png",
+      "name": "宇航员训练体验",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "dlc16-zero-publicity",
+          "condition": {
+            "type": "resourceEquals",
+            "resource": "publicity",
+            "count": 0
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "dlc16-score-publicity",
+              "type": "gain_resources",
+              "label": "0宣传：2分+1宣传",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 2,
+                  "publicity": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_21.png",
+      "name": "轨道加注",
+      "triggers": [
+        {
+          "id": "dlc21-orbit-visit-energy-1",
+          "event": {
+            "type": "visitPlanet",
+            "requiresOwnOrbit": true
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "dlc21-energy-1",
+            "type": "gain_resources",
+            "label": "访问有自己环绕的星球：1能量",
+            "icon": "energy",
+            "options": {
+              "gain": {
+                "energy": 1
+              }
+            }
+          }
+        },
+        {
+          "id": "dlc21-orbit-visit-energy-2",
+          "event": {
+            "type": "visitPlanet",
+            "requiresOwnOrbit": true
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "dlc21-energy-2",
+            "type": "gain_resources",
+            "label": "访问有自己环绕的星球：1能量",
+            "icon": "energy",
+            "options": {
+              "gain": {
+                "energy": 1
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "dlc_23.png",
+      "name": "中性浮力训练",
+      "triggers": [
+        {
+          "id": "dlc23-launch-draw",
+          "event": {
+            "type": "launch"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "dlc23-draw",
+            "type": "draw_cards",
+            "label": "发射：1盲抽",
+            "icon": "blind_card",
+            "options": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "id": "dlc23-orbit-land-score",
+          "event": {
+            "types": [
+              "orbit",
+              "land"
+            ]
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "dlc23-score",
+            "type": "gain_resources",
+            "label": "环绕或登陆：3分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 3
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "dlc_24.png",
+      "name": "太空电梯",
+      "triggers": [
+        {
+          "id": "dlc24-orange-tech-launch-1",
+          "event": {
+            "type": "researchTech",
+            "techType": "orange"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "dlc24-launch-1",
+            "type": "launch",
+            "label": "橙色科技：发射",
+            "icon": "launch",
+            "options": {
+              "skipCost": true,
+              "cost": {},
+              "source": "card",
+              "ignoreRocketLimit": false
+            }
+          }
+        },
+        {
+          "id": "dlc24-orange-tech-launch-2",
+          "event": {
+            "type": "researchTech",
+            "techType": "orange"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "dlc24-launch-2",
+            "type": "launch",
+            "label": "橙色科技：发射",
+            "icon": "launch",
+            "options": {
+              "skipCost": true,
+              "cost": {},
+              "source": "card",
+              "ignoreRocketLimit": false
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "dlc_25.png",
+      "name": "激光干涉引力波天文台",
+      "triggers": [
+        {
+          "id": "dlc25-purple-tech-public-scan-1",
+          "event": {
+            "type": "researchTech",
+            "techType": "purple"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "dlc25-public-scan-marker-1",
+            "type": "gain_resources",
+            "label": "紫色科技：1个公共牌区扫描标记",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "additionalPublicScan": 1
+              }
+            }
+          }
+        },
+        {
+          "id": "dlc25-purple-tech-public-scan-2",
+          "event": {
+            "type": "researchTech",
+            "techType": "purple"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "dlc25-public-scan-marker-2",
+            "type": "gain_resources",
+            "label": "紫色科技：1个公共牌区扫描标记",
+            "icon": "publicity",
+            "options": {
+              "gain": {
+                "additionalPublicScan": 1
+              }
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "dlc_26.png",
+      "name": "新型AI模型",
+      "triggers": [
+        {
+          "id": "dlc26-blue-tech-data-1",
+          "event": {
+            "type": "researchTech",
+            "techType": "blue"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "dlc26-data-1",
+            "type": "gain_data",
+            "label": "蓝色科技：1数据",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        },
+        {
+          "id": "dlc26-blue-tech-data-2",
+          "event": {
+            "type": "researchTech",
+            "techType": "blue"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "dlc26-data-2",
+            "type": "gain_data",
+            "label": "蓝色科技：1数据",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "dlc_28.png",
+      "name": "重组",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "dlc28-empty-resources-hand",
+          "condition": {
+            "type": "resourcesAndHandEmpty",
+            "resources": [
+              "credits",
+              "energy"
+            ]
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "dlc28-publicity",
+              "type": "gain_resources",
+              "label": "0信用0能量0手牌：2宣传",
+              "icon": "publicity",
+              "options": {
+                "gain": {
+                  "publicity": 2
+                }
+              }
+            },
+            {
+              "id": "dlc28-pick",
+              "type": "pick_card",
+              "label": "0信用0能量0手牌：精选1张牌",
+              "icon": "pick_card",
+              "options": {
+                "count": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_33.png",
+      "name": "延期发射",
+      "triggers": [
+        {
+          "id": "dlc33-pass-launch",
+          "event": {
+            "type": "pass"
+          },
+          "maxClaims": 1,
+          "effect": {
+            "id": "dlc33-launch",
+            "type": "launch",
+            "label": "PASS：发射",
+            "icon": "launch",
+            "options": {
+              "skipCost": true,
+              "cost": {},
+              "source": "card",
+              "ignoreRocketLimit": false
+            }
+          }
+        }
+      ],
+      "tasks": []
+    },
+    {
+      "cardId": "dlc_35.png",
+      "name": "NASA系外行星档案",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "dlc35-data-total",
+          "condition": {
+            "type": "dataTotal",
+            "count": 12
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "dlc35-energy",
+              "type": "gain_resources",
+              "label": "未分析与可用数据至少12：1能量",
+              "icon": "energy",
+              "options": {
+                "gain": {
+                  "energy": 1
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_41.png",
+      "name": "系外行星巡天",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "dlc41-four-color-signals",
+          "condition": {
+            "type": "signalsInAllColors"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "dlc41-score",
+              "type": "gain_resources",
+              "label": "四种颜色均有信号：4分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 4
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_42.png",
+      "name": "低频阵列",
+      "triggers": [],
+      "tasks": [
+        {
+          "id": "dlc42-all-sectors",
+          "condition": {
+            "type": "signalsOrWinsInAllSectors"
+          },
+          "maxClaims": 1,
+          "rewards": [
+            {
+              "id": "dlc42-score",
+              "type": "gain_resources",
+              "label": "8个扇区都有信号或胜利标记：8分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 8
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "conditions": {
+    "completedSectorsByColor": [
+      {
+        "cardId": "b_1.webp",
+        "taskId": "b1-yellow-sector-task",
+        "condition": {
+          "type": "completedSectorsByColor",
+          "color": "yellow",
+          "count": 2
+        }
+      },
+      {
+        "cardId": "b_15.webp",
+        "taskId": "b15-black-sector-task",
+        "condition": {
+          "type": "completedSectorsByColor",
+          "color": "black",
+          "count": 1
+        }
+      },
+      {
+        "cardId": "b_102.webp",
+        "taskId": "b102-red-sectors-task",
+        "condition": {
+          "type": "completedSectorsByColor",
+          "color": "red",
+          "count": 2
+        }
+      },
+      {
+        "cardId": "b_114.webp",
+        "taskId": "b114-blue-sectors-task",
+        "condition": {
+          "type": "completedSectorsByColor",
+          "color": "blue",
+          "count": 2
+        }
+      }
+    ],
+    "allAliensHavePlayerTrace": [
+      {
+        "cardId": "b_4.webp",
+        "taskId": "b4-blue-alien-task",
+        "condition": {
+          "type": "allAliensHavePlayerTrace",
+          "traceType": "blue"
+        }
+      },
+      {
+        "cardId": "b_8.webp",
+        "taskId": "b8-yellow-alien-task",
+        "condition": {
+          "type": "allAliensHavePlayerTrace",
+          "traceType": "yellow"
+        }
+      },
+      {
+        "cardId": "b_46.webp",
+        "taskId": "b46-all-pink-task",
+        "condition": {
+          "type": "allAliensHavePlayerTrace",
+          "traceType": "pink"
+        }
+      }
+    ],
+    "traceCount": [
+      {
+        "cardId": "b_12.webp",
+        "taskId": "b12-blue-trace-task",
+        "condition": {
+          "type": "traceCount",
+          "traceType": "blue",
+          "count": 3
+        }
+      },
+      {
+        "cardId": "b_51.webp",
+        "taskId": "b51-three-pink-task",
+        "condition": {
+          "type": "traceCount",
+          "traceType": "pink",
+          "count": 3
+        }
+      },
+      {
+        "cardId": "b_121.webp",
+        "taskId": "b121-yellow-traces-task",
+        "condition": {
+          "type": "traceCount",
+          "traceType": "yellow",
+          "count": 3
+        }
+      }
+    ],
+    "techCount": [
+      {
+        "cardId": "b_19.webp",
+        "taskId": "b19-purple-tech-task",
+        "condition": {
+          "type": "techCount",
+          "techType": "purple",
+          "count": 3
+        }
+      }
+    ],
+    "planetOrbitOrLand": [
+      {
+        "cardId": "b_21.webp",
+        "taskId": "b21-saturn-task",
+        "condition": {
+          "type": "planetOrbitOrLand",
+          "planetId": "saturn",
+          "count": 1
+        }
+      },
+      {
+        "cardId": "b_60.webp",
+        "taskId": "b60-jupiter-task",
+        "condition": {
+          "type": "planetOrbitOrLand",
+          "planetId": "jupiter"
+        }
+      },
+      {
+        "cardId": "b_61.webp",
+        "taskId": "b61-jupiter-task",
+        "condition": {
+          "type": "planetOrbitOrLand",
+          "planetId": "jupiter"
+        }
+      },
+      {
+        "cardId": "b_72.webp",
+        "taskId": "b72-mars-task",
+        "condition": {
+          "type": "planetOrbitOrLand",
+          "planetId": "mars"
+        }
+      },
+      {
+        "cardId": "b_75.webp",
+        "taskId": "b75-mercury-task",
+        "condition": {
+          "type": "planetOrbitOrLand",
+          "planetId": "mercury"
+        }
+      },
+      {
+        "cardId": "b_77.webp",
+        "taskId": "b77-mercury-task",
+        "condition": {
+          "type": "planetOrbitOrLand",
+          "planetId": "mercury"
+        }
+      },
+      {
+        "cardId": "b_107.webp",
+        "taskId": "b107-saturn-task",
+        "condition": {
+          "type": "planetOrbitOrLand",
+          "planetId": "saturn"
+        }
+      },
+      {
+        "cardId": "b_126.webp",
+        "taskId": "b126-neptune-task",
+        "condition": {
+          "type": "planetOrbitOrLand",
+          "planetId": "neptune"
+        }
+      },
+      {
+        "cardId": "b_127.webp",
+        "taskId": "b127-uranus-task",
+        "condition": {
+          "type": "planetOrbitOrLand",
+          "planetId": "uranus"
+        }
+      },
+      {
+        "cardId": "b_129.webp",
+        "taskId": "b129-venus-task",
+        "condition": {
+          "type": "planetOrbitOrLand",
+          "planetId": "venus"
+        }
+      },
+      {
+        "cardId": "b_130.webp",
+        "taskId": "b130-venus-task",
+        "condition": {
+          "type": "planetOrbitOrLand",
+          "planetId": "venus"
+        }
+      }
+    ],
+    "distinctSignalSectors": [
+      {
+        "cardId": "b_22.webp",
+        "taskId": "b22-distinct-signal-task",
+        "condition": {
+          "type": "distinctSignalSectors",
+          "count": 4
+        }
+      },
+      {
+        "cardId": "b_53.webp",
+        "taskId": "b53-distinct-signal-task",
+        "condition": {
+          "type": "distinctSignalSectors",
+          "count": 4
+        }
+      }
+    ],
+    "singleAlienTraceSet": [
+      {
+        "cardId": "b_67.webp",
+        "taskId": "b67-three-traces-task",
+        "condition": {
+          "type": "singleAlienTraceSet",
+          "traceTypes": [
+            "pink",
+            "yellow",
+            "blue"
+          ]
+        }
+      }
+    ],
+    "resourceThreshold": [
+      {
+        "cardId": "b_68.webp",
+        "taskId": "b68-publicity-task",
+        "condition": {
+          "type": "resourceThreshold",
+          "resource": "publicity",
+          "count": 8
+        }
+      },
+      {
+        "cardId": "b_103.webp",
+        "taskId": "b103-score-task",
+        "condition": {
+          "type": "resourceThreshold",
+          "resource": "score",
+          "count": 50
+        }
+      }
+    ],
+    "probeAdjacentEarthAsteroid": [
+      {
+        "cardId": "b_81.webp",
+        "taskId": "b81-earth-adjacent-asteroid-task",
+        "condition": {
+          "type": "probeAdjacentEarthAsteroid"
+        }
+      }
+    ],
+    "handEmpty": [
+      {
+        "cardId": "b_83.webp",
+        "taskId": "b83-empty-hand-task",
+        "condition": {
+          "type": "handEmpty"
+        }
+      }
+    ],
+    "planetOrbitOrLandAll": [
+      {
+        "cardId": "b_85.webp",
+        "taskId": "b85-outer-planets-task",
+        "condition": {
+          "type": "planetOrbitOrLandAll",
+          "planetIds": [
+            "neptune",
+            "uranus"
+          ]
+        }
+      }
+    ],
+    "samePlanetOrbitAndLand": [
+      {
+        "cardId": "b_95.webp",
+        "taskId": "b95-same-planet-orbit-land-task",
+        "condition": {
+          "type": "samePlanetOrbitAndLand"
+        }
+      }
+    ],
+    "probeDistanceFromEarth": [
+      {
+        "cardId": "b_101.webp",
+        "taskId": "b101-distance-task",
+        "condition": {
+          "type": "probeDistanceFromEarth",
+          "minDistance": 5
+        }
+      }
+    ],
+    "orbitCount": [
+      {
+        "cardId": "b_104.webp",
+        "taskId": "b104-orbit-count-task",
+        "condition": {
+          "type": "orbitCount",
+          "count": 2
+        }
+      }
+    ],
+    "probeLocation": [
+      {
+        "cardId": "b_105.webp",
+        "taskId": "b105-comet-task",
+        "condition": {
+          "type": "probeLocation",
+          "locationType": "comet"
+        }
+      },
+      {
+        "cardId": "dlc_11.png",
+        "taskId": "dlc11-asteroid-probe",
+        "condition": {
+          "type": "probeLocation",
+          "locationType": "asteroid"
+        }
+      }
+    ],
+    "landingCount": [
+      {
+        "cardId": "b_116.webp",
+        "taskId": "b116-landing-count-task",
+        "condition": {
+          "type": "landingCount",
+          "count": 3
+        }
+      }
+    ],
+    "orbitOrLandCount": [
+      {
+        "cardId": "b_117.webp",
+        "taskId": "b117-orbit-land-count-task",
+        "condition": {
+          "type": "orbitOrLandCount",
+          "count": 5
+        }
+      }
+    ],
+    "completedSameSectorColor": [
+      {
+        "cardId": "b_135.webp",
+        "taskId": "b135-same-color-sectors-task",
+        "condition": {
+          "type": "completedSameSectorColor",
+          "count": 2
+        }
+      }
+    ],
+    "probesOnDifferentPlanets": [
+      {
+        "cardId": "dlc_7.png",
+        "taskId": "dlc7-two-planet-probes",
+        "condition": {
+          "type": "probesOnDifferentPlanets",
+          "count": 2,
+          "excludePlanetIds": [
+            "earth"
+          ]
+        }
+      }
+    ],
+    "completedSectors": [
+      {
+        "cardId": "dlc_9.png",
+        "taskId": "dlc9-three-sector-wins",
+        "condition": {
+          "type": "completedSectors",
+          "count": 3
+        }
+      }
+    ],
+    "resourceEquals": [
+      {
+        "cardId": "dlc_16.png",
+        "taskId": "dlc16-zero-publicity",
+        "condition": {
+          "type": "resourceEquals",
+          "resource": "publicity",
+          "count": 0
+        }
+      }
+    ],
+    "resourcesAndHandEmpty": [
+      {
+        "cardId": "dlc_28.png",
+        "taskId": "dlc28-empty-resources-hand",
+        "condition": {
+          "type": "resourcesAndHandEmpty",
+          "resources": [
+            "credits",
+            "energy"
+          ]
+        }
+      }
+    ],
+    "dataTotal": [
+      {
+        "cardId": "dlc_35.png",
+        "taskId": "dlc35-data-total",
+        "condition": {
+          "type": "dataTotal",
+          "count": 12
+        }
+      }
+    ],
+    "signalsInAllColors": [
+      {
+        "cardId": "dlc_41.png",
+        "taskId": "dlc41-four-color-signals",
+        "condition": {
+          "type": "signalsInAllColors"
+        }
+      }
+    ],
+    "signalsOrWinsInAllSectors": [
+      {
+        "cardId": "dlc_42.png",
+        "taskId": "dlc42-all-sectors",
+        "condition": {
+          "type": "signalsOrWinsInAllSectors"
+        }
+      }
+    ]
+  },
+  "temporary": [
+    {
+      "cardId": "b_5.webp",
+      "name": "艾伦望远锐阵",
+      "claims": [
+        {
+          "settlements": 0,
+          "rewards": []
+        },
+        {
+          "settlements": 1,
+          "rewards": [
+            {
+              "id": "b5-complete-sector-reward",
+              "type": "gain_resources",
+              "label": "完成扇区：1能量",
+              "icon": "energy",
+              "options": {
+                "gain": {
+                  "energy": 1
+                },
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "settlements": 2,
+          "rewards": [
+            {
+              "id": "b5-complete-sector-reward",
+              "type": "gain_resources",
+              "label": "完成扇区：1能量",
+              "icon": "energy",
+              "options": {
+                "gain": {
+                  "energy": 1
+                },
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "settlements": 8,
+          "rewards": [
+            {
+              "id": "b5-complete-sector-reward",
+              "type": "gain_resources",
+              "label": "完成扇区：1能量",
+              "icon": "energy",
+              "options": {
+                "gain": {
+                  "energy": 1
+                },
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_6.webp",
+      "name": "阿塔卡马大型亳米波阵",
+      "claims": [
+        {
+          "settlements": 0,
+          "rewards": []
+        },
+        {
+          "settlements": 1,
+          "rewards": [
+            {
+              "id": "b6-complete-sector-reward",
+              "type": "draw_cards",
+              "label": "完成扇区：1盲抽",
+              "icon": "blind_card",
+              "options": {
+                "count": 1,
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "settlements": 2,
+          "rewards": [
+            {
+              "id": "b6-complete-sector-reward",
+              "type": "draw_cards",
+              "label": "完成扇区：1盲抽",
+              "icon": "blind_card",
+              "options": {
+                "count": 1,
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "settlements": 8,
+          "rewards": [
+            {
+              "id": "b6-complete-sector-reward",
+              "type": "draw_cards",
+              "label": "完成扇区：1盲抽",
+              "icon": "blind_card",
+              "options": {
+                "count": 1,
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cardId": "b_133.webp",
+      "name": "甚大阵",
+      "claims": [
+        {
+          "settlements": 0,
+          "rewards": []
+        },
+        {
+          "settlements": 1,
+          "rewards": [
+            {
+              "id": "b133-data",
+              "type": "gain_data",
+              "label": "完成扇区：1数据",
+              "icon": "data",
+              "options": {
+                "count": 1,
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "settlements": 2,
+          "rewards": [
+            {
+              "id": "b133-data",
+              "type": "gain_data",
+              "label": "完成扇区：1数据",
+              "icon": "data",
+              "options": {
+                "count": 1,
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        },
+        {
+          "settlements": 8,
+          "rewards": [
+            {
+              "id": "b133-data",
+              "type": "gain_data",
+              "label": "完成扇区：1数据",
+              "icon": "data",
+              "options": {
+                "count": 1,
+                "repeat": 1
+              },
+              "status": "pending"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "bonuses": [
+    {
+      "cardId": "b_11.webp",
+      "effectId": "b11-turn-asteroid-data",
+      "spec": {
+        "duration": "turn",
+        "eventType": "visitAsteroid",
+        "onceKey": "b11-asteroid-data",
+        "icon": "data",
+        "rewards": [
+          {
+            "id": "b11-asteroid-data",
+            "type": "gain_data",
+            "label": "小行星飞掠：访问小行星获得1数据",
+            "icon": "data",
+            "options": {
+              "count": 1
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "visitAsteroid",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward",
+            "claimKey": "b11-asteroid-data"
+          }
+        },
+        {
+          "event": {
+            "type": "visitAsteroid",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b11-asteroid-data"
+          }
+        },
+        {
+          "event": {
+            "type": "visitAsteroid",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b11-asteroid-data"
+          }
+        },
+        {
+          "event": {
+            "type": "visitAsteroid",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b11-asteroid-data"
+          }
+        }
+      ],
+      "claims": 1,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_24.webp",
+      "effectId": "b24-turn-comet-score",
+      "spec": {
+        "duration": "turn",
+        "eventType": "visitComet",
+        "onceKey": "b24-comet-score",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b24-comet-score",
+            "type": "gain_resources",
+            "label": "彗星遭遇：访问彗星获得4分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 4
+              }
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "visitComet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward",
+            "claimKey": "b24-comet-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitComet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b24-comet-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitComet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b24-comet-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitComet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b24-comet-score"
+          }
+        }
+      ],
+      "claims": 1,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_28.webp",
+      "effectId": "b28-yellow-signal-bonus",
+      "spec": {
+        "duration": "flow",
+        "eventType": "signalMarked",
+        "color": "yellow",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b28-yellow-score",
+            "type": "gain_resources",
+            "label": "黄色扇区信号：2分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 2
+              }
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        }
+      ],
+      "claims": 4,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_49.webp",
+      "effectId": "b49-visit-publicity-move-followup",
+      "spec": {
+        "duration": "turn",
+        "eventType": "visitPlanet",
+        "excludePlanetIds": [
+          "earth"
+        ],
+        "publicityToMoveFollowup": true,
+        "icon": "movement",
+        "rewards": []
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        }
+      ],
+      "claims": 4,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_62.webp",
+      "effectId": "b62-turn-jupiter-score",
+      "spec": {
+        "duration": "turn",
+        "eventType": "visitPlanet",
+        "includePlanetIds": [
+          "jupiter"
+        ],
+        "onceKey": "b62-jupiter-score",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b62-jupiter-score",
+            "type": "gain_resources",
+            "label": "访问木星：4分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 4
+              }
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "jupiter",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward",
+            "claimKey": "b62-jupiter-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "jupiter",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b62-jupiter-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "jupiter",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b62-jupiter-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "jupiter",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b62-jupiter-score"
+          }
+        }
+      ],
+      "claims": 1,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_66.webp",
+      "effectId": "b66-distinct-planet-score",
+      "spec": {
+        "duration": "turn",
+        "eventType": "visitPlanet",
+        "distinctBy": "planetId",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b66-planet-score",
+            "type": "gain_resources",
+            "label": "访问不同星球：1分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 1
+              }
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward",
+            "usedKey": "mars"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "repeated"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "saturn",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward",
+            "usedKey": "saturn"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "saturn",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "repeated"
+          }
+        }
+      ],
+      "claims": 2,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_73.webp",
+      "effectId": "b73-turn-mars-score",
+      "spec": {
+        "duration": "turn",
+        "eventType": "visitPlanet",
+        "includePlanetIds": [
+          "mars"
+        ],
+        "onceKey": "b73-mars-score",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b73-mars-score",
+            "type": "gain_resources",
+            "label": "访问火星：4分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 4
+              }
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward",
+            "claimKey": "b73-mars-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b73-mars-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b73-mars-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b73-mars-score"
+          }
+        }
+      ],
+      "claims": 1,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_76.webp",
+      "effectId": "b76-turn-mercury-score",
+      "spec": {
+        "duration": "turn",
+        "eventType": "visitPlanet",
+        "includePlanetIds": [
+          "mercury"
+        ],
+        "onceKey": "b76-mercury-score",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b76-mercury-score",
+            "type": "gain_resources",
+            "label": "访问水星：4分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 4
+              }
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mercury",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward",
+            "claimKey": "b76-mercury-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mercury",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b76-mercury-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mercury",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b76-mercury-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mercury",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b76-mercury-score"
+          }
+        }
+      ],
+      "claims": 1,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_90.webp",
+      "effectId": "b90-red-signal-score",
+      "spec": {
+        "duration": "flow",
+        "eventType": "signalMarked",
+        "color": "red",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b90-red-signal-score-effect",
+            "type": "gain_resources",
+            "label": "红色信号：2分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 2
+              }
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-2-b",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-2-b",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-2-b",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-2-b",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        }
+      ],
+      "claims": 4,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_108.webp",
+      "effectId": "b108-turn-saturn-score",
+      "spec": {
+        "duration": "turn",
+        "eventType": "visitPlanet",
+        "includePlanetIds": [
+          "saturn"
+        ],
+        "onceKey": "b108-saturn-score",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b108-score",
+            "type": "gain_resources",
+            "label": "访问土星：6分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 6
+              }
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "saturn",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward",
+            "claimKey": "b108-saturn-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "saturn",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b108-saturn-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "saturn",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b108-saturn-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "saturn",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b108-saturn-score"
+          }
+        }
+      ],
+      "claims": 1,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_118.webp",
+      "effectId": "b118-distinct-scan-sector-score",
+      "spec": {
+        "duration": "flow",
+        "eventType": "signalMarked",
+        "distinctBy": "sectorX",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b118-sector-score",
+            "type": "gain_resources",
+            "label": "不同扫描扇区：2分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 2
+              }
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward",
+            "usedKey": "1"
+          }
+        },
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "repeated"
+          }
+        },
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 2,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward",
+            "usedKey": "2"
+          }
+        },
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 2,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "repeated"
+          }
+        }
+      ],
+      "claims": 2,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_124.webp",
+      "effectId": "b124-turn-ignore-asteroid",
+      "spec": {
+        "duration": "turn",
+        "eventType": "move",
+        "icon": "movement",
+        "movementModifiers": {
+          "ignoreAsteroidRestriction": true
+        },
+        "rewards": []
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "move",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "move",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "move",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "move",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        }
+      ],
+      "claims": 4,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_125.webp",
+      "effectId": "b125-turn-same-ring-reward",
+      "spec": {
+        "duration": "turn",
+        "eventType": "move",
+        "sameRingOnly": true,
+        "onceKey": "b125-same-ring-reward",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b125-same-ring-reward",
+            "type": "gain_resources",
+            "label": "同环移动：3分+1宣传",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 3,
+                "publicity": 1
+              }
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "move",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward",
+            "claimKey": "b125-same-ring-reward"
+          }
+        },
+        {
+          "event": {
+            "type": "move",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b125-same-ring-reward"
+          }
+        },
+        {
+          "event": {
+            "type": "move",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b125-same-ring-reward"
+          }
+        },
+        {
+          "event": {
+            "type": "move",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b125-same-ring-reward"
+          }
+        }
+      ],
+      "claims": 1,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_131.webp",
+      "effectId": "b131-turn-venus-score",
+      "spec": {
+        "duration": "turn",
+        "eventType": "visitPlanet",
+        "includePlanetIds": [
+          "venus"
+        ],
+        "onceKey": "b131-venus-score",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b131-score",
+            "type": "gain_resources",
+            "label": "访问金星：3分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 3
+              }
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "venus",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward",
+            "claimKey": "b131-venus-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "venus",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b131-venus-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "venus",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b131-venus-score"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "venus",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "claimed",
+            "claimKey": "b131-venus-score"
+          }
+        }
+      ],
+      "claims": 1,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "b_132.webp",
+      "effectId": "b132-blue-signal-score",
+      "spec": {
+        "duration": "flow",
+        "eventType": "signalMarked",
+        "color": "blue",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "b132-score",
+            "type": "gain_resources",
+            "label": "蓝色信号：2分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 2
+              }
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-2-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-2-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-2-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        },
+        {
+          "event": {
+            "type": "signalMarked",
+            "planetId": "mars",
+            "nebulaId": "sector-2-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward"
+          }
+        }
+      ],
+      "claims": 4,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    },
+    {
+      "cardId": "dlc_12.png",
+      "effectId": "dlc12-turn-distinct-planets",
+      "spec": {
+        "duration": "turn",
+        "eventType": "visitPlanet",
+        "distinctBy": "planetId",
+        "minCount": 2,
+        "onceKey": "dlc12-two-planets",
+        "icon": "score",
+        "rewards": [
+          {
+            "id": "dlc12-score",
+            "type": "gain_resources",
+            "label": "访问2个不同行星：3分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 3
+              }
+            }
+          }
+        ]
+      },
+      "trace": [
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "progress",
+            "usedKey": "mars",
+            "claimKey": "dlc12-two-planets"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "mars",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "repeated"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "saturn",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "reward",
+            "usedKey": "saturn",
+            "claimKey": "dlc12-two-planets"
+          }
+        },
+        {
+          "event": {
+            "type": "visitPlanet",
+            "planetId": "saturn",
+            "nebulaId": "sector-4-a",
+            "sectorX": 1,
+            "sameRing": true,
+            "publicityReward": 1
+          },
+          "progress": {
+            "status": "repeated"
+          }
+        }
+      ],
+      "claims": 1,
+      "boundary": "资格不是奖励数：空rewards的移动修正和支付followup需按实际节省/成本估值"
+    }
+  ],
+  "endGame": [
+    {
+      "cardId": "b_14.webp",
+      "name": "观测巴纳德星",
+      "rule": {
+        "kind": "sectorWinsByColor",
+        "color": "red",
+        "scorePer": 3
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 3,
+          "proposedHandExpectation": 1.5
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        }
+      ]
+    },
+    {
+      "cardId": "b_30.webp",
+      "name": "深部地下中微子实验",
+      "rule": {
+        "kind": "traceCount",
+        "traceType": "blue",
+        "scorePer": 2
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 2,
+          "proposedHandExpectation": 1
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 2,
+          "proposedHandExpectation": 1
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 4,
+          "proposedHandExpectation": 2
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 8,
+          "proposedHandExpectation": 4
+        }
+      ]
+    },
+    {
+      "cardId": "b_33.webp",
+      "name": "建造欧几里得望远锐",
+      "rule": {
+        "kind": "techCount",
+        "techType": "blue",
+        "scorePer": 2
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 2,
+          "proposedHandExpectation": 1
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 2,
+          "proposedHandExpectation": 1
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 6,
+          "proposedHandExpectation": 3
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 4,
+          "proposedHandExpectation": 2
+        }
+      ]
+    },
+    {
+      "cardId": "b_34.webp",
+      "name": "木卫二快船",
+      "rule": {
+        "kind": "planetOrbitOrLand",
+        "planetId": "jupiter",
+        "scorePer": 3
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 3,
+          "proposedHandExpectation": 1.5
+        }
+      ]
+    },
+    {
+      "cardId": "b_45.webp",
+      "name": "巨麦哲伦望远镜",
+      "rule": {
+        "kind": "distinctSignalSectors",
+        "scorePer": 1
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 2,
+          "proposedHandExpectation": 1
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 5,
+          "proposedHandExpectation": 2.5
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 3,
+          "proposedHandExpectation": 1.5
+        }
+      ]
+    },
+    {
+      "cardId": "b_63.webp",
+      "name": "观测开普勒22",
+      "rule": {
+        "kind": "sectorWinsByColor",
+        "color": "yellow",
+        "scorePer": 3
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 3,
+          "proposedHandExpectation": 1.5
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 3,
+          "proposedHandExpectation": 1.5
+        }
+      ]
+    },
+    {
+      "cardId": "b_74.webp",
+      "name": "火星科学实验室",
+      "rule": {
+        "kind": "planetOrbitOrLand",
+        "planetId": "mars",
+        "scorePer": 4
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 4,
+          "proposedHandExpectation": 2
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 12,
+          "proposedHandExpectation": 6
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 4,
+          "proposedHandExpectation": 2
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 8,
+          "proposedHandExpectation": 4
+        }
+      ]
+    },
+    {
+      "cardId": "b_82.webp",
+      "name": "NEAR 舒梅克号探测器",
+      "rule": {
+        "kind": "probeLocation",
+        "locationType": "asteroid",
+        "score": 13
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        }
+      ]
+    },
+    {
+      "cardId": "b_86.webp",
+      "name": "ala Telescope Constructior",
+      "rule": {
+        "kind": "traceCount",
+        "traceType": "pink",
+        "scorePer": 2
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 2,
+          "proposedHandExpectation": 1
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 2,
+          "proposedHandExpectation": 1
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 4,
+          "proposedHandExpectation": 2
+        }
+      ]
+    },
+    {
+      "cardId": "b_100.webp",
+      "name": "观测南河",
+      "rule": {
+        "kind": "sectorWinsByColor",
+        "color": "blue",
+        "scorePer": 3
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 9,
+          "proposedHandExpectation": 4.5
+        }
+      ]
+    },
+    {
+      "cardId": "b_113.webp",
+      "name": "夏洛克光谱仪",
+      "rule": {
+        "kind": "traceCount",
+        "traceType": "yellow",
+        "scorePer": 2
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 4,
+          "proposedHandExpectation": 2
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 4,
+          "proposedHandExpectation": 2
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 4,
+          "proposedHandExpectation": 2
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 8,
+          "proposedHandExpectation": 4
+        }
+      ]
+    },
+    {
+      "cardId": "b_115.webp",
+      "name": "案尔维会议",
+      "rule": {
+        "kind": "unmarkedFinalRightmost"
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 2,
+          "proposedHandExpectation": 1
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 2,
+          "proposedHandExpectation": 1
+        }
+      ]
+    },
+    {
+      "cardId": "b_128.webp",
+      "name": "观测织女星",
+      "rule": {
+        "kind": "sectorWinsByColor",
+        "color": "black",
+        "scorePer": 3
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_8.png",
+      "name": "量子数据存储",
+      "rule": {
+        "kind": "remainingResource",
+        "resource": "availableData",
+        "scorePer": 3
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_10.png",
+      "name": "太空第一人",
+      "rule": {
+        "kind": "remainingResource",
+        "resource": "publicity",
+        "scorePer": 1
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 5,
+          "proposedHandExpectation": 2.5
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 1,
+          "proposedHandExpectation": 0.5
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 2,
+          "proposedHandExpectation": 1
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 1,
+          "proposedHandExpectation": 0.5
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_31.png",
+      "name": "机智号直升机",
+      "rule": {
+        "kind": "planetLandingPairs",
+        "count": 2,
+        "scorePer": 6
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 6,
+          "proposedHandExpectation": 3
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 0,
+          "proposedHandExpectation": 0
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 12,
+          "proposedHandExpectation": 6
+        }
+      ]
+    },
+    {
+      "cardId": "dlc_39.png",
+      "name": "大巡游计划",
+      "rule": {
+        "kind": "allOrbitOrLand",
+        "scorePer": 2
+      },
+      "values": [
+        {
+          "playerId": "player-blue",
+          "currentPublicFormulaScore": 8,
+          "proposedHandExpectation": 4
+        },
+        {
+          "playerId": "player-green",
+          "currentPublicFormulaScore": 14,
+          "proposedHandExpectation": 7
+        },
+        {
+          "playerId": "player-brown",
+          "currentPublicFormulaScore": 8,
+          "proposedHandExpectation": 4
+        },
+        {
+          "playerId": "player-white",
+          "currentPublicFormulaScore": 10,
+          "proposedHandExpectation": 5
+        }
+      ]
+    }
+  ],
+  "boundary": "正式次数与公式证据，不是完整牌估值实现；当前数量折半仍为提案，不是未来数量预测或用户确认",
+  "passed": true
+}
