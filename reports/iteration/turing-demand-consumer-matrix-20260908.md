@@ -182,11 +182,13 @@ move）。借用Decision再被通用conditional规则设为独立decision目标�
 4. 正式已开启Decision继续按恢复契约结算；目的在消费/到期边界完成，不能等同
    任意conditional选择完成。
 
-另否决一个过早简化：不能以mainActionCompleted单字段证明紫科技无消费者。
-`fangzhou-card1-queue.buildFollowUpNodes`可把动态effect.scanAction转成正式
-card_scan_action，不在cards.MODELS静态清单中。图灵消费者提取必须覆盖这个正式
-动态入口，但不调整方舟槽位策略。此前242卡模型清点仍只证明其声明的静态范围。
-当前没有对该动态入口做可达性或完整事务测试，不外推“主行动后必可扫描”。
+方舟补充纠错：`fangzhou-card1-queue.buildFollowUpNodes`能够生成card_scan_action，
+但“生成器存在”不代表正式链已接入。追加正式play_card复现表明当前候选方舟card2
+仅扣费弃牌，未翻高级奖励，详见[独立缺陷](fangzhou-play-missing-reward-review-20260908.md)。
+此前将它称为“正式动态入口”证据不足，现撤销该已接通表述。9种高级奖励接入须
+独立完整修复，不调整方舟槽位策略，也不能依据当前漏执行收益裁掉借用消费者。
+静态242卡清单仍只覆盖MODELS；mainActionCompleted是否能证明特定需求不可达
+仍须基于完整正式闭包，不能由此未实现奖励外推肯定或否定。
 
 检查位置：players.js借用读取，industry/state.js与passives.js，
 effects/residual-domain-session.js公司枚举/执行，abilities/rocket.js与planet.js，

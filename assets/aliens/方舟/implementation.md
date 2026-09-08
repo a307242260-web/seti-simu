@@ -2,6 +2,14 @@
 
 机制来源：`face_detail.md`。通用外星人生命周期见 `docs/alien-design.md`。
 
+## 已知实现缺陷（2026-09-08）
+
+候选内核954e51c0的正式打牌复现确认：card2会扣2钱并消耗主行动，但未翻高级
+奖励牌，未执行高级奖励。下文高级奖励与不可逆屏障描述为应实现的规则，不代表
+该候选已通过行为验证。根因是正式打牌只读取MODELS，方舟card2没有对应效果模型，
+旧奖励队列生成器未接入。独立修复尚未实施，证据与范围见
+`reports/iteration/fangzhou-play-missing-reward-review-20260908.md`。
+
 ## 机制入口
 
 - 代码入口：`randomizer/game/aliens/fangzhou.js`。
