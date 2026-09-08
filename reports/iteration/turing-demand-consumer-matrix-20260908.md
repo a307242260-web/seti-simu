@@ -288,3 +288,28 @@ effects/residual-domain-session.js公司枚举/执行，abilities/rocket.js与pl
 actions/scan-effects.js全文，effects/science-session.js scanQueue/SCAN_ACTION_4及研究奖励，
 abilities/scan.js scanAction4。当前仅源代码契约证据，不能充当全闭包行为验证。
 生产未改；进度报告同步。无API/schema/运行方式变更，README/AGENTS与AI/RL设计无需修改。
+
+## 消费证据不得改变分支身份（2026-09-08）
+
+对候选81ee9ed6进一步核对后，否决“往正式journal补一条借用消费事件，搜索再读取”
+作为纯诊断方案。`session-runtime.applyEffectResult`把result.events写入session.journal；
+`rule-composition.sessionKeyHash`仅排除baseState/committedState/commitResult，保留journal。
+`envelopeHash`包含该sessionHash，`branchKey`又包含envelopeHash；复用fork时按branchKey
+重置分支随机源。因此新增正式事件可能改变条件链后续分支身份和随机结果，即使
+游戏资源、动作规则与评分公式没有变化。不能声称这类改动天然保持RNG不变。
+
+扫描来源的缺失也得到具体定位：`science-session.scanQueue`将紫1/2转为通用
+SCAN_STEP的specified模式，紫3转为hand模式，紫4转为独立SCAN_ACTION_4；映射不完整
+保留原entry.type及扫描来源身份。不能靠label文案、同一sectorX或最终一次signal事件
+反推来源。火箭move结果payload含requiredMovePoints，但普通move事件不含该成本；
+launch事件也不保留ignoreRocketLimit，已有b37反例继续有效。
+
+消费证据设计新增硬边界：若需从正式执行器传出事实，只能使用不进入游戏状态、
+session保存内容、journal、实体分配或RNG的执行返回证据，并覆盖自动排空内的每个
+实际效果。搜索需求匹配留在搜索层；不得让正式规则根据AI目标产生不同结果。
+是否已有能完整传递这种证据的返回通道仍待核对，尚未批准新增观察hook或通用事件系统。
+这项源码结论不能代替实施后的固定输入动作/状态/RNG/计划一致性验证。
+
+本节只收紧候选设计，不是生产改动、规则bug结论或性能收益。重复物理执行的两次
+排查已经独立留档，其中全执行断点实验因30秒超时未通过；不再为缓存假设追加同根
+实验。借科技设计仍以原先列明的入口、消费、期限及计划义务为验收范围。
