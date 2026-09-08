@@ -1,0 +1,169 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "direction": "out",
+      "events": [
+        {
+          "type": "quick_trade",
+          "tradeId": "energy-for-move",
+          "playerId": "player-blue",
+          "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+        },
+        {
+          "type": "move",
+          "rocketId": 2,
+          "playerId": "player-blue",
+          "source": "quick_move",
+          "from": {
+            "x": 5,
+            "y": 2
+          },
+          "to": {
+            "x": 5,
+            "y": 3
+          },
+          "sameRing": false
+        },
+        {
+          "type": "visitAsteroid",
+          "rocketId": 2,
+          "tokenKind": "standard",
+          "fossilId": null,
+          "playerId": "player-blue",
+          "source": "quick_move"
+        },
+        {
+          "type": "quick_move",
+          "tradeId": "energy-for-move",
+          "playerId": "player-blue",
+          "rocketId": 2,
+          "direction": "out"
+        }
+      ],
+      "coordinatesAndResourcesEqual": true
+    },
+    {
+      "direction": "cw",
+      "events": [
+        {
+          "type": "quick_trade",
+          "tradeId": "energy-for-move",
+          "playerId": "player-blue",
+          "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+        },
+        {
+          "type": "move",
+          "rocketId": 2,
+          "playerId": "player-blue",
+          "source": "quick_move",
+          "from": {
+            "x": 5,
+            "y": 2
+          },
+          "to": {
+            "x": 6,
+            "y": 2
+          },
+          "sameRing": true
+        },
+        {
+          "type": "visitAsteroid",
+          "rocketId": 2,
+          "tokenKind": "standard",
+          "fossilId": null,
+          "playerId": "player-blue",
+          "source": "quick_move"
+        },
+        {
+          "type": "quick_move",
+          "tradeId": "energy-for-move",
+          "playerId": "player-blue",
+          "rocketId": 2,
+          "direction": "cw"
+        }
+      ],
+      "coordinatesAndResourcesEqual": true
+    },
+    {
+      "direction": "ccw",
+      "events": [
+        {
+          "type": "quick_trade",
+          "tradeId": "energy-for-move",
+          "playerId": "player-blue",
+          "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+        },
+        {
+          "type": "move",
+          "rocketId": 2,
+          "playerId": "player-blue",
+          "source": "quick_move",
+          "from": {
+            "x": 5,
+            "y": 2
+          },
+          "to": {
+            "x": 4,
+            "y": 2
+          },
+          "sameRing": true
+        },
+        {
+          "type": "quick_move",
+          "tradeId": "energy-for-move",
+          "playerId": "player-blue",
+          "rocketId": 2,
+          "direction": "ccw"
+        }
+      ],
+      "coordinatesAndResourcesEqual": true
+    },
+    {
+      "direction": "in",
+      "events": [
+        {
+          "type": "quick_trade",
+          "tradeId": "energy-for-move",
+          "playerId": "player-blue",
+          "executorId": "seti-production-domain-pack-v1:quick_trade:executor"
+        },
+        {
+          "type": "move",
+          "rocketId": 2,
+          "playerId": "player-blue",
+          "source": "quick_move",
+          "from": {
+            "x": 5,
+            "y": 2
+          },
+          "to": {
+            "x": 5,
+            "y": 1
+          },
+          "sameRing": false
+        },
+        {
+          "type": "visitPlanet",
+          "planetId": "earth",
+          "rocketId": 2,
+          "tokenKind": "standard",
+          "fossilId": null,
+          "playerId": "player-blue",
+          "source": "quick_move",
+          "publicityReward": 0,
+          "publicityGained": 0,
+          "hasOwnOrbit": false
+        },
+        {
+          "type": "quick_move",
+          "tradeId": "energy-for-move",
+          "playerId": "player-blue",
+          "rocketId": 2,
+          "direction": "in"
+        }
+      ],
+      "coordinatesAndResourcesEqual": true
+    }
+  ]
+}
