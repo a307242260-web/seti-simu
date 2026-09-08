@@ -6,20 +6,24 @@ req("../randomizer/game/initial-cards");
 const scoring = req("../randomizer/game/end-game-scoring");
 const cardEffects = req("../randomizer/game/cards/effects");
 const quickMove = process.argv.includes("--quick-move");
-const output = quickMove ? "reports/iteration/quick-move-full-review-20260908.json"
+const rulesBaseline = process.argv.includes("--rules-baseline");
+assert.ok(!(quickMove && rulesBaseline), "一次只核对一个版本");
+const output = rulesBaseline ? "reports/iteration/rules-baseline-full-review-20260908.json"
+  : quickMove ? "reports/iteration/quick-move-full-review-20260908.json"
   : "reports/iteration/fangzhou-major-full-review-20260908.json";
 if (fs.existsSync(output)) {
   console.log(`已有 checkpoint：${output}`);
   process.exit(0);
 }
-const baselineFile = quickMove ? "reports/research/b58e392b.4d3711c5.full.json"
+const baselineFile = rulesBaseline ? "reports/research/1969fccc.addcef7f.full.json"
+  : quickMove ? "reports/research/b58e392b.4d3711c5.full.json"
   : "reports/research/cb456d23.04648dd1.full.json";
-const files = fs.readdirSync("reports/research").filter(f => f.endsWith(quickMove ? ".c50e4f01.full.json" : ".4d3711c5.full.json"));
+const files = fs.readdirSync("reports/research").filter(f => f.endsWith(rulesBaseline ? ".ee3ea52f.full.json" : quickMove ? ".c50e4f01.full.json" : ".4d3711c5.full.json"));
 assert.equal(files.length, 1, "等待唯一完整局落盘，不重复运行 AI");
 const candidateFile = `reports/research/${files[0]}`;
 const read = p => JSON.parse(fs.readFileSync(p, "utf8"));
 const baseline = read(baselineFile), candidate = read(candidateFile);
-assert.equal(candidate.name, quickMove ? "quick-move-events-20260908" : "fangzhou-major-reward-20260908");
+assert.equal(candidate.name, rulesBaseline ? "rules-baseline-20260908" : quickMove ? "quick-move-events-20260908" : "fangzhou-major-reward-20260908");
 assert.equal(candidate.terminal, true);
 const merge = (into, values) => {
   for (const [key, value] of Object.entries(values)) into[key] = (into[key] || 0) + value;

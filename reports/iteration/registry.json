@@ -1,25 +1,25 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T02:34:19.304Z",
+  "builtAt": "2026-09-08T02:58:29.771Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "cbe502bd",
+  "headCommit": "d3b2b669",
   "currentBaseline": "reorganization-resources-20260907",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
       "value": 152,
-      "versionId": "borrowed-probe-cache-20260908",
-      "name": "临时科技探测缓存修复（均111，仍33次截断）",
-      "runKey": "1969fccc.addcef7f.full",
+      "versionId": "rules-baseline-20260908",
+      "name": "规则修复保留、未通过筛选撤下（基线验收）",
+      "runKey": "6e4b4248.ee3ea52f.full",
       "provenance": "save-final",
       "steps": 666,
-      "wallMs": 672876,
+      "wallMs": 672750,
       "msPerStep": 1010,
-      "scoreSourceNote": "666步，正式终局82/120/90/152，均111；四席较父版+5/+6/+3/+3，正式重算与完整明细一致。140614物理节点、190403输入、672876ms；28次战略4096截断、5次控制截断，实际规则失败0。冷/热缓存、借用切换与到期unit、正式输入回归、唯一full-flow、V输入审计通过；161单点17.53秒，4096节点，优胜27步及正式终态不变。前559步动作/摘要一致，560蓝方痕迹改选；新版本复用536计划，未逐叶归因该首差。不改评分与预算。缓存修复验证通过，整体Goal未完成，需求式借科技尚未实施。运行期间仅新增只读汇总脚本。详见borrowed-probe-cache-full-review-20260908.md。"
+      "scoreSourceNote": "666步终局82/120/90/152，均111；全部动作、逐步摘要与终局状态同addcef7f。140614物理节点、190403输入、672750ms，28战略及5控制截断，规则失败0。单点b33价值85与正式计划一致，独立规则修复及公开观察保留。新组合达到108.5分门槛，但未提速、未消除截断；白方历史下降因果未全部闭合。"
     },
     "bestAvg": {
       "value": 123.75,
@@ -35,14 +35,14 @@
     "bestPlayer": {
       "value": 152,
       "playerColor": "白",
-      "versionId": "borrowed-probe-cache-20260908",
-      "name": "临时科技探测缓存修复（均111，仍33次截断）",
-      "runKey": "1969fccc.addcef7f.full",
+      "versionId": "rules-baseline-20260908",
+      "name": "规则修复保留、未通过筛选撤下（基线验收）",
+      "runKey": "6e4b4248.ee3ea52f.full",
       "provenance": "save-final",
       "steps": 666,
-      "wallMs": 672876,
+      "wallMs": 672750,
       "msPerStep": 1010,
-      "scoreSourceNote": "666步，正式终局82/120/90/152，均111；四席较父版+5/+6/+3/+3，正式重算与完整明细一致。140614物理节点、190403输入、672876ms；28次战略4096截断、5次控制截断，实际规则失败0。冷/热缓存、借用切换与到期unit、正式输入回归、唯一full-flow、V输入审计通过；161单点17.53秒，4096节点，优胜27步及正式终态不变。前559步动作/摘要一致，560蓝方痕迹改选；新版本复用536计划，未逐叶归因该首差。不改评分与预算。缓存修复验证通过，整体Goal未完成，需求式借科技尚未实施。运行期间仅新增只读汇总脚本。详见borrowed-probe-cache-full-review-20260908.md。"
+      "scoreSourceNote": "666步终局82/120/90/152，均111；全部动作、逐步摘要与终局状态同addcef7f。140614物理节点、190403输入、672750ms，28战略及5控制截断，规则失败0。单点b33价值85与正式计划一致，独立规则修复及公开观察保留。新组合达到108.5分门槛，但未提速、未消除截断；白方历史下降因果未全部闭合。"
     },
     "fastestWall": {
       "versionId": "probe-source-r3p1-20260906",
@@ -116,6 +116,624 @@
     ]
   },
   "versions": [
+    {
+      "id": "rules-baseline-20260908",
+      "name": "规则修复保留、未通过筛选撤下（基线验收）",
+      "date": "2026-09-08",
+      "baseline": "borrowed-probe-cache-20260908",
+      "head": "ee3ea52f",
+      "commits": [
+        {
+          "hash": "ee3ea52f",
+          "date": "2026-09-08",
+          "subject": "撤下未通过的图灵借用筛选并保留独立规则修复与观察字段"
+        }
+      ],
+      "summary": "撤下重复科技与借后立即结束的图灵筛选，保留缓存、方舟、快速移动规则修复及公开观察字段",
+      "diffStat": "66 files changed, 1482273 insertions(+), 39798 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/fangzhou-node-regression-20260908.log",
+          "insertions": 165,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-blue161-turing-active-20260908.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-blue536-turing-20260908.js",
+          "insertions": 60,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-borrowed-probe-cache-full-20260908.js",
+          "insertions": 96,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-turing-active-tech-full-20260908.js",
+          "insertions": 101,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-turing-immediate-expiry-full-20260908.js",
+          "insertions": 102,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-blue536-global-prefix-20260908.js",
+          "insertions": 109,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-blue536-old-plan-20260908.js",
+          "insertions": 36,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-turing-immediate-expiry-20260908.js",
+          "insertions": 65,
+          "deletions": 0
+        },
+        {
+          "file": "assets/aliens/方舟/implementation.md",
+          "insertions": 10,
+          "deletions": 1
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "docs/card-modeling-dsl-spec.md",
+          "insertions": 6,
+          "deletions": 0
+        },
+        {
+          "file": "docs/mechanics-reference.md",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/app/simulation-contract.js",
+          "insertions": 2,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/aliens/fangzhou-card1-queue.js",
+          "insertions": 4,
+          "deletions": 9
+        },
+        {
+          "file": "randomizer/game/cards/effects.js",
+          "insertions": 13,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.js",
+          "insertions": 23,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.test.js",
+          "insertions": 122,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/production-composition.js",
+          "insertions": 2,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/training/simulation-rule-composition.test.js",
+          "insertions": 22,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/training/simulation-standard-action-composition.test.js",
+          "insertions": 69,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue161-borrowed-cache-fixed-20260908.json",
+          "insertions": 222291,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue161-turing-active-20260908.json",
+          "insertions": 217457,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue536-old-plan-on-turing-20260908.json",
+          "insertions": 30,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue536-queue-trace-20260908.json",
+          "insertions": 37888,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue536-turing-baseline-20260908.json",
+          "insertions": 173303,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue536-turing-candidate-20260908.json",
+          "insertions": 184489,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue536-turing-expiry-20260908.json",
+          "insertions": 180924,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/borrowed-probe-cache-20260908/1969fccc.addcef7f.full.action-log.html",
+          "insertions": 2222,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/borrowed-probe-cache-full-review-20260908.json",
+          "insertions": 28513,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/borrowed-probe-cache-full-review-20260908.md",
+          "insertions": 76,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/borrowed-probe-cache-validation-20260908.md",
+          "insertions": 9,
+          "deletions": 3
+        },
+        {
+          "file": "reports/iteration/fangzhou-major-full-review-20260908.json",
+          "insertions": 24579,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/fangzhou-major-reward-20260908/b58e392b.4d3711c5.full.action-log.html",
+          "insertions": 2188,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/fangzhou-major-reward-design-20260908.md",
+          "insertions": 85,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/fangzhou-major-reward-progress-20260908.md",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-move-event-fix-design-20260908.md",
+          "insertions": 43,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-move-events-20260908/ab2586b3.c50e4f01.full.action-log.html",
+          "insertions": 2188,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-move-full-review-20260908.json",
+          "insertions": 24579,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 12731,
+          "deletions": 19890
+        },
+        {
+          "file": "reports/iteration/rules-baseline-design-20260908.md",
+          "insertions": 29,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/search-path-trace-design-20260908.md",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-active-tech-20260908/b7968542.cbf7966f.full.action-log.html",
+          "insertions": 2205,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-active-tech-design-20260908.md",
+          "insertions": 29,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-active-tech-full-review-20260908.json",
+          "insertions": 28019,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-active-tech-full-review-20260908.md",
+          "insertions": 98,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-immediate-expiry-20260908.json",
+          "insertions": 136,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-immediate-expiry-20260908/cb456d23.04648dd1.full.action-log.html",
+          "insertions": 2188,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-immediate-expiry-design-20260908.md",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-immediate-expiry-full-review-20260908.json",
+          "insertions": 21404,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turing-immediate-expiry-full-review-20260908.md",
+          "insertions": 83,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 92,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1969fccc.addcef7f.full.json",
+          "insertions": 16310,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/ab2586b3.c50e4f01.full.json",
+          "insertions": 14760,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/b58e392b.4d3711c5.full.json",
+          "insertions": 14760,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/b7968542.cbf7966f.full.json",
+          "insertions": 16840,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/cb456d23.04648dd1.full.json",
+          "insertions": 14760,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 12731,
+          "deletions": 19890
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "6e4b4248.ee3ea52f.full.json",
+          "recordPath": "reports/research/6e4b4248.ee3ea52f.full.json",
+          "mode": "full",
+          "steps": 666,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 672750,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "ee3ea52f",
+          "createdAt": "2026-09-08T02:54:44.323Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "666步终局82/120/90/152，均111；全部动作、逐步摘要与终局状态同addcef7f。140614物理节点、190403输入、672750ms，28战略及5控制截断，规则失败0。单点b33价值85与正式计划一致，独立规则修复及公开观察保留。新组合达到108.5分门槛，但未提速、未消除截断；白方历史下降因果未全部闭合。",
+          "scores": {
+            "player-blue": 82,
+            "player-green": 120,
+            "player-brown": 90,
+            "player-white": 152
+          },
+          "avgScore": 111,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 82,
+              "base": 54,
+              "tile": 21,
+              "card": 7,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 0,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 0,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                },
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 3
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 0,
+                "cardEffectScore": 3,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 12,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-green": {
+              "total": 120,
+              "base": 84,
+              "tile": 26,
+              "card": 10,
+              "tileScoresById": {
+                "a": 0,
+                "b": 8,
+                "c": 8,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 10
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 12,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 11,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 24,
+                "orbitScore": 15,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 90,
+              "base": 58,
+              "tile": 22,
+              "card": 10,
+              "tileScoresById": {
+                "a": 16,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_10.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "publicity",
+                    "scorePer": 1
+                  },
+                  "score": 10
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 6,
+                "orbitScore": 18,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 5
+              }
+            },
+            "player-white": {
+              "total": 152,
+              "base": 103,
+              "tile": 49,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 18,
+                "c": 0,
+                "d": 9
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 18,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 9,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 15,
+                "alienTracePinkScore": 11,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 23,
+                "orbitScore": 0,
+                "scanScore": 12,
+                "taskCardScore": 0,
+                "techBonusScore": 17
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-rules-baseline-20260908-ee3ea52f-full-v328.json",
+          "reportPath": "reports/iteration/rules-baseline-20260908/6e4b4248.ee3ea52f.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "6e4b4248.ee3ea52f.full",
+            "path": "reports/iteration/rules-baseline-20260908/6e4b4248.ee3ea52f.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "quick-move-events-20260908",
       "name": "快速移动事件修复（规则通过，性能未完成）",
