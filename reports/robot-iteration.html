@@ -78,13 +78,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T20:39:48.101Z",
+  "builtAt": "2026-09-08T20:54:12.970Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "7e2bb99a",
+  "headCommit": "417409d6",
   "currentBaseline": "round5-card-value-design-20260909",
   "worktreeDirty": true,
   "bestOf": {
@@ -208,22 +208,47 @@ const REGISTRY = {
         }
       ],
       "summary": "浏览器检查的五处渲染模型读取改为resident.ui.browserReadModel，保持原盘面、隐私与DOM断言；不修改游戏规则。证据见browser-smoke-read-path-20260909.json。",
-      "diffStat": "3 files changed, 27 insertions(+), 5 deletions(-)",
+      "diffStat": "8 files changed, 2 insertions(+), 85356 deletions(-)",
       "diffFiles": [
         {
-          "file": "docs/node-testing.md",
-          "insertions": 4,
-          "deletions": 0
+          "file": "adhoc/check-counted-reveal-diagnostic-forwarding-20260909.js",
+          "insertions": 0,
+          "deletions": 54
         },
         {
-          "file": "reports/iteration/browser-smoke-read-path-20260909.json",
-          "insertions": 18,
-          "deletions": 0
+          "file": "adhoc/counted-reveal-ui-inventory-20260909.js",
+          "insertions": 0,
+          "deletions": 106
         },
         {
-          "file": "tools/browser-smoke-inventory.js",
-          "insertions": 5,
-          "deletions": 5
+          "file": "adhoc/run-counted-reveal-ui-20260909.js",
+          "insertions": 0,
+          "deletions": 317
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 1,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/ai/heuristic-decision-function.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/counted-reveal-diagnostic-forwarding-20260909.json",
+          "insertions": 0,
+          "deletions": 94
+        },
+        {
+          "file": "reports/iteration/counted-reveal-ui-d2e05f6a-20260909.json",
+          "insertions": 0,
+          "deletions": 84761
+        },
+        {
+          "file": "reports/iteration/counted-reveal-ui-progress-20260909.md",
+          "insertions": 0,
+          "deletions": 20
         }
       ],
       "results": [],
@@ -241,7 +266,7 @@ const REGISTRY = {
       "name": "手牌展示移动（局部通过，待全盘）",
       "date": "2026-09-09",
       "baseline": "counted-card-move-20260909",
-      "head": "d061d4f3",
+      "head": "a402ca99",
       "commits": [
         {
           "hash": "872d80c7",
@@ -252,20 +277,50 @@ const REGISTRY = {
           "hash": "d061d4f3",
           "date": "2026-09-09",
           "subject": "让跨结算批次的手牌展示继续搜索到结束"
+        },
+        {
+          "hash": "d2e05f6a",
+          "date": "2026-09-09",
+          "subject": "修正浏览器检查的渲染模型读取路径并记录四项验收"
+        },
+        {
+          "hash": "a402ca99",
+          "date": "2026-09-09",
+          "subject": "补齐搜索队列裁剪记录并归档展示移动真实界面验收"
         }
       ],
       "summary": "发射前试验逐张展示手牌后冻结移动额度；根决策、自动结算与后继共用已知牌展示贪心；自动结算先保存盲抽屏障，公开展示不解除未知牌限制；跨结算批次的同一展示阶段继续回队列搜索。进度见counted-card-reveal-progress-20260909.md。",
-      "diffStat": "12 files changed, 331 insertions(+), 17 deletions(-)",
+      "diffStat": "21 files changed, 85714 insertions(+), 24 deletions(-)",
       "diffFiles": [
         {
-          "file": "docs/ai-design.md",
-          "insertions": 7,
+          "file": "adhoc/check-counted-reveal-diagnostic-forwarding-20260909.js",
+          "insertions": 54,
           "deletions": 0
+        },
+        {
+          "file": "adhoc/counted-reveal-ui-inventory-20260909.js",
+          "insertions": 106,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/run-counted-reveal-ui-20260909.js",
+          "insertions": 317,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 10,
+          "deletions": 1
         },
         {
           "file": "docs/mechanics-reference.md",
           "insertions": 2,
           "deletions": 1
+        },
+        {
+          "file": "docs/node-testing.md",
+          "insertions": 4,
+          "deletions": 0
         },
         {
           "file": "docs/rl-simulation-env.md",
@@ -279,8 +334,8 @@ const REGISTRY = {
         },
         {
           "file": "randomizer/game/ai/heuristic-decision-function.js",
-          "insertions": 2,
-          "deletions": 1
+          "insertions": 3,
+          "deletions": 2
         },
         {
           "file": "randomizer/game/ai/policy-port.test.js",
@@ -308,6 +363,11 @@ const REGISTRY = {
           "deletions": 2
         },
         {
+          "file": "reports/iteration/browser-smoke-read-path-20260909.json",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
           "file": "reports/iteration/counted-card-reveal-design-20260909.md",
           "insertions": 100,
           "deletions": 0
@@ -316,6 +376,26 @@ const REGISTRY = {
           "file": "reports/iteration/counted-card-reveal-progress-20260909.md",
           "insertions": 40,
           "deletions": 0
+        },
+        {
+          "file": "reports/iteration/counted-reveal-diagnostic-forwarding-20260909.json",
+          "insertions": 94,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/counted-reveal-ui-d2e05f6a-20260909.json",
+          "insertions": 84761,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/counted-reveal-ui-progress-20260909.md",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "tools/browser-smoke-inventory.js",
+          "insertions": 5,
+          "deletions": 5
         }
       ],
       "results": [],

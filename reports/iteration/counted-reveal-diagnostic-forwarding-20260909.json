@@ -1,0 +1,94 @@
+{
+  "source": "/private/tmp/seti-browser-smoke-read-path-20260909",
+  "sourceState": "d2e05f6a0077250dc056715a15e57b32210eece2+diagnostic-only-working-change",
+  "records": [
+    {
+      "count": 0,
+      "actionId": "choose_card:9b086f4e",
+      "target": {
+        "choiceId": "finish-reveal",
+        "kind": "counted-move-reveal",
+        "finish": true
+      },
+      "milliseconds": 37.701042,
+      "searches": [
+        {
+          "kind": "strategic",
+          "diagnostics": {
+            "executedNodeCount": 1,
+            "maxExecutionNodes": 4096,
+            "executionLimitReached": false,
+            "beamPrunedOriginCount": 0,
+            "successfulInputSubmissionCount": 1,
+            "attemptedNodeCountByFamily": {
+              "choose_card": 1
+            },
+            "failedNodeCountByFamily": {},
+            "failedNodeCountByCode": {},
+            "executedNodeCountByFamily": {
+              "choose_card": 1
+            },
+            "executedNodeCountByDecisionKind": {
+              "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_count_hand_corner_move/cardEffect=card_count_hand_corner_move": 1
+            },
+            "executedNodeCountByActionSummary": {
+              "choose_card:结束展示": 1
+            },
+            "executedOriginCountByTarget": {
+              "decision:choose_card:9b086f4e": 1
+            },
+            "executedOriginCountByTargetAndDecisionKind": {
+              "decision:choose_card:9b086f4e -> choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_count_hand_corner_move/cardEffect=card_count_hand_corner_move": 1
+            },
+            "frontierOriginCountByFamily": {},
+            "totalMilliseconds": 18.19916599999999
+          }
+        }
+      ]
+    },
+    {
+      "count": 2,
+      "actionId": "choose_card:fe0c39ef",
+      "target": {
+        "choiceId": "reveal:card-41-0",
+        "kind": "counted-move-reveal",
+        "cardInstanceId": "card-41-0"
+      },
+      "milliseconds": 30.200583999999992,
+      "searches": [
+        {
+          "kind": "strategic",
+          "diagnostics": {
+            "executedNodeCount": 1,
+            "maxExecutionNodes": 4096,
+            "executionLimitReached": false,
+            "beamPrunedOriginCount": 0,
+            "successfulInputSubmissionCount": 3,
+            "attemptedNodeCountByFamily": {
+              "choose_card": 1
+            },
+            "failedNodeCountByFamily": {},
+            "failedNodeCountByCode": {},
+            "executedNodeCountByFamily": {
+              "choose_card": 1
+            },
+            "executedNodeCountByDecisionKind": {
+              "choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_count_hand_corner_move/cardEffect=card_count_hand_corner_move": 1
+            },
+            "executedNodeCountByActionSummary": {
+              "choose_card:展示 b_1.webp": 1
+            },
+            "executedOriginCountByTarget": {
+              "decision:choose_card:fe0c39ef": 1
+            },
+            "executedOriginCountByTargetAndDecisionKind": {
+              "decision:choose_card:fe0c39ef -> choose_card:conditional/decision=choose_card/effect=card_play_domain_effect:decision:card_count_hand_corner_move/cardEffect=card_count_hand_corner_move": 1
+            },
+            "frontierOriginCountByFamily": {},
+            "totalMilliseconds": 16.853499999999997
+          }
+        }
+      ]
+    }
+  ]
+}
