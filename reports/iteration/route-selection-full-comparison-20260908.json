@@ -1,0 +1,62 @@
+{
+  "baseline": {
+    "file": "1a061690.1501ebfd.full.json",
+    "savePath": "/Users/bilibili/code/seti-simu/seti-saves/seti-save-research-grant-data-route-20260908-1501ebfd-full-v316.json",
+    "commit": "1501ebfd",
+    "steps": 613,
+    "terminal": true,
+    "scores": {
+      "player-blue": 74,
+      "player-green": 105,
+      "player-brown": 115,
+      "player-white": 113
+    },
+    "mean": 101.75,
+    "wallMs": 579822,
+    "nodes": 143252,
+    "inputs": 182804,
+    "counts": {
+      "control": 84,
+      "strategic": 88
+    },
+    "executionCaps": {
+      "strategic": 30,
+      "control": 8
+    },
+    "beamCaps": null,
+    "failures": {}
+  },
+  "candidate": {
+    "file": "c43c1f88.70043d34.full.json",
+    "savePath": "/private/tmp/seti-route-selection-error-20260908/seti-saves/seti-save-research-route-selection-error-20260908-70043d34-full-v316.json",
+    "commit": "70043d34",
+    "steps": 613,
+    "terminal": true,
+    "scores": {
+      "player-blue": 74,
+      "player-green": 105,
+      "player-brown": 115,
+      "player-white": 113
+    },
+    "mean": 101.75,
+    "wallMs": 571832,
+    "nodes": 143252,
+    "inputs": 182804,
+    "counts": {
+      "control": 84,
+      "strategic": 88
+    },
+    "executionCaps": {
+      "strategic": 30,
+      "control": 8
+    },
+    "beamCaps": null,
+    "failures": {}
+  },
+  "allReplayStepsEqual": true,
+  "firstReplayDifference": null,
+  "searchMetricsEqual": true,
+  "finalScoresEqual": true,
+  "boundary": "只验收异常传播修复；无错误正常路径应保持决策和节点不变，不要求或宣称本修复实现第五轮提分降节点。旧前沿字段缺失保留null。",
+  "passed": true
+}

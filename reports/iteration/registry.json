@@ -1,13 +1,13 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-08T09:56:47.839Z",
+  "builtAt": "2026-09-08T10:38:54.748Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "3cb48c7d",
-  "currentBaseline": "grant-data-route-20260908",
+  "headCommit": "7b4ce37f",
+  "currentBaseline": "route-selection-error-20260908",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -116,6 +116,619 @@
     ]
   },
   "versions": [
+    {
+      "id": "route-selection-error-20260908",
+      "name": "目标选择异常传播",
+      "date": "2026-09-08",
+      "baseline": "grant-data-route-20260908",
+      "head": "7b4ce37f",
+      "commits": [
+        {
+          "hash": "70043d34",
+          "date": "2026-09-08",
+          "subject": "目标选择异常立即上抛并清理隔离搜索状态"
+        },
+        {
+          "hash": "7b4ce37f",
+          "date": "2026-09-08",
+          "subject": "目标选择异常立即上抛并清理隔离搜索状态"
+        }
+      ],
+      "summary": "目标选择回调异常立即上抛，清理复用搜索状态并保留释放失败",
+      "diffStat": "75 files changed, 53925 insertions(+), 29 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/capture-quick-turn-white-cross-20260908.js",
+          "insertions": 103,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/check-data-preparation-footprint-20260908.js",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/count-data-preparation-descendants-20260908.js",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-identity-search-20260908.js",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/replay-green-plan-boundary-20260908.js",
+          "insertions": 50,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-grant-full-20260908.js",
+          "insertions": 46,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-grant-search-orders-20260908.js",
+          "insertions": 2,
+          "deletions": 2
+        },
+        {
+          "file": "adhoc/summarize-identity-attribution-20260908.js",
+          "insertions": 53,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-identity-cpu-20260908.js",
+          "insertions": 29,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-identity-full-20260908.js",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-quick-turn-full-20260908.js",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-step24-quick-duplicates-20260908.js",
+          "insertions": 46,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-white-beam-20260908.js",
+          "insertions": 36,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/trace-step24-goal-tree-20260908.js",
+          "insertions": 9,
+          "deletions": 4
+        },
+        {
+          "file": "adhoc/verify-blue-borrow-expiry-20260908.js",
+          "insertions": 61,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-blue-plan-reuse-boundary-20260908.js",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-data-source-reselection-20260908.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-grant-data-route-20260908.js",
+          "insertions": 13,
+          "deletions": 3
+        },
+        {
+          "file": "adhoc/verify-known-data-preparation-20260908.js",
+          "insertions": 61,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-route-selection-normal-20260908.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-step24-endturn-closure-20260908.js",
+          "insertions": 53,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 10,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/effects/search-budget.test.js",
+          "insertions": 41,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 12,
+          "deletions": 3
+        },
+        {
+          "file": "reports/iteration/blue-borrow-expiry-20260908.json",
+          "insertions": 3811,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/blue-plan-reuse-boundary-20260908.json",
+          "insertions": 2279,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/counterfactual-identity-20260908/362fa7f3.0b01af15.full.action-log.html",
+          "insertions": 2120,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/counterfactual-identity-full-comparison-20260908.json",
+          "insertions": 128,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/counterfactual-identity-progress-20260908.md",
+          "insertions": 68,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-demand-source-review-20260908.md",
+          "insertions": 52,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-preparation-descendants-20260908.json",
+          "insertions": 151,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-preparation-footprint-20260908.json",
+          "insertions": 23,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/data-source-reselection-20260908.json",
+          "insertions": 492,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/grant-data-route-20260908/1a061690.1501ebfd.full.action-log.html",
+          "insertions": 2188,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/grant-data-route-design-20260908.md",
+          "insertions": 12,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/grant-data-route-search-v4-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/grant-full-comparison-v2-20260908.json",
+          "insertions": 227,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/green-plan-boundary-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/identity-attribution-20260908.json",
+          "insertions": 12456,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/identity-blue-cross-baseline-candidate-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/identity-blue-cross-baseline-identity-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/identity-cpu-candidate-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/identity-cpu-identity-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/identity-cpu-summary-20260908.json",
+          "insertions": 184,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/identity-green-cross-baseline-candidate-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/identity-green-cross-baseline-identity-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/identity-green-cross-candidate-candidate-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/identity-green-cross-candidate-identity-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/known-data-preparation-20260908.json",
+          "insertions": 986,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/known-data-preparation-v2-20260908.json",
+          "insertions": 5036,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-turn-attribution-20260908.md",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-turn-full-comparison-20260908.json",
+          "insertions": 211,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-turn-order-20260908/95016f07.438305b4.full.action-log.html",
+          "insertions": 2052,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-turn-order-design-20260908.md",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-turn-white-cross-baseline-baseline-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/quick-turn-white-cross-baseline-candidate-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/quick-turn-white-cross-candidate-baseline-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/quick-turn-white-cross-candidate-candidate-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "reports/iteration/quick-turn-white-cross-candidate-candidate-beam-trace-20260908.json.gz",
+          "insertions": null,
+          "deletions": null
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "c43c1f88.70043d34.full.json",
+          "recordPath": "reports/research/c43c1f88.70043d34.full.json",
+          "mode": "full",
+          "steps": 613,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 571832,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "70043d34",
+          "createdAt": "2026-09-08T10:36:02.067Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "异常传播独立验收通过，实验70043d34合入本地dev 7b4ce37f。613步终局74/105/115/113，均101.75；全部replaySteps和逐次非耗时搜索统计与正确基线相同。143252节点、182804输入、战略执行截断30/88、控制8/84、规则失败0，前沿字段未保存不记为0。耗时579822→571832ms不据单次差异宣称提速。故障注入、5项搜索回归、唯一完整流程及第24步正常路径通过。证据route-selection-full-comparison-20260908.json；不包含未通过的顺序/身份候选，不代表第五轮三项效果门槛通过。",
+          "scores": {
+            "player-blue": 74,
+            "player-green": 105,
+            "player-brown": 115,
+            "player-white": 113
+          },
+          "avgScore": 101.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 74,
+              "base": 51,
+              "tile": 21,
+              "card": 2,
+              "tileScoresById": {
+                "a": 11,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 11,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 2,
+                "cardEffectScore": 3,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 6,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            },
+            "player-green": {
+              "total": 105,
+              "base": 75,
+              "tile": 30,
+              "card": 0,
+              "tileScoresById": {
+                "a": 16,
+                "b": 8,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 0
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 9,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 12,
+                "orbitScore": 27,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-brown": {
+              "total": 115,
+              "base": 75,
+              "tile": 40,
+              "card": 0,
+              "tileScoresById": {
+                "a": 15,
+                "b": 4,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 4,
+                  "score": 4,
+                  "slotIndex": 3,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 2,
+                "blueTechScore": 10,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 11,
+                "orbitScore": 12,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 14
+              }
+            },
+            "player-white": {
+              "total": 113,
+              "base": 87,
+              "tile": 26,
+              "card": 0,
+              "tileScoresById": {
+                "a": 5,
+                "b": 12,
+                "c": 0,
+                "d": 9
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 5,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 12,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 9,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 12,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 4,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 22,
+                "orbitScore": 0,
+                "scanScore": 10,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-route-selection-error-20260908-70043d34-full-v316.json",
+          "reportPath": "reports/iteration/route-selection-error-20260908/c43c1f88.70043d34.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "c43c1f88.70043d34.full",
+            "path": "reports/iteration/route-selection-error-20260908/c43c1f88.70043d34.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "counterfactual-identity-20260908",
       "name": "已结算反事实采样身份统一",
@@ -1359,7 +1972,7 @@
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
