@@ -3,9 +3,10 @@ const fs = require('node:fs'), path = require('node:path'), cp = require('node:c
 const assert = require('node:assert/strict'), inspector = require('node:inspector');
 const root = path.resolve(__dirname, '..'), [board, policy] = process.argv.slice(2);
 assert.ok(['baseline', 'candidate'].includes(board));
-assert.ok(['baseline', 'candidate', 'fixed'].includes(policy));
+assert.ok(['baseline', 'candidate', 'fixed', 'combined'].includes(policy));
 const source = policy === 'baseline' ? root : policy === 'fixed'
-  ? '/private/tmp/seti-disabled-tech-value-20260908' : '/private/tmp/seti-alien-card-pick-greedy-20260908';
+  ? '/private/tmp/seti-disabled-tech-value-20260908' : policy === 'combined'
+    ? '/private/tmp/seti-alien-pick-disabled-tech-20260908' : '/private/tmp/seti-alien-card-pick-greedy-20260908';
 const output = path.join(root, `reports/iteration/alien-pick-brown-cross-${board}-${policy}-20260908.json`);
 if (fs.existsSync(output)) { console.log('已有交叉证据：' + output); process.exit(0); }
 const file = board === 'baseline' ? 'c43c1f88.70043d34.full.json' : 'b6c44201.aa277dac.full.json';

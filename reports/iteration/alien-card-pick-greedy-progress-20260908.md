@@ -42,6 +42,10 @@
 active真→假，评分V完全不变，独立缺陷已复现；不直接宣称解释棕方全部14分下降。
 证据alien-pick-brown-cross-summary-20260908.json；独立修复矩阵disabled-tech-value-design-20260908.md。
 
+后续组合单点57a360e0在两盘面均改选环绕37.8333、研究30，拿牌节点保持151（原310）；
+新优胜链紫2有效，不再选择已证实虚增科技价值的路线。全部4096仍截断，没有组合完整局
+成绩，不将本单点当作棕方14分已恢复。详见alien-pick-disabled-tech-progress-20260908.md。
+
 全量79/81 unit、1/1 full-flow；两项历史失败原样存在：simulation-counterfactual-outcome
 要求beam=0（实际10674），strategic-goal-evaluator要求分析提交即释放目标（实际data:analyze）。
 本次未修改这两项既有行为。新增拿牌单测、支付信息边界、扫描奖励、V输入审计、语法检查通过。
