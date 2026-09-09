@@ -7,12 +7,32 @@
   },
   "versions": [
     {
+      "id": "round5-correctness-base-20260909",
+      "name": "round5-correctness-base-20260909",
+      "date": "2026-09-09",
+      "baseline": "round5-card-value-design-20260909",
+      "head": "f607c6e5",
+      "commits": [
+        "0ad3ff7d",
+        "feb1d4a2",
+        "30dfdb20",
+        "f607c6e5"
+      ],
+      "summary": "合并已确认的规则正确性、信息边界与无损搜索语义修复，策略启发式独立归档；作为第五轮剪枝与搜索完整性工作的统一基线。",
+      "records": {
+        "cc9eb28a.f607c6e5.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "browser-smoke-read-path-20260909",
       "name": "浏览器检查读取路径修正（四项通过）",
       "date": "2026-09-09",
       "baseline": "counted-card-reveal-20260909",
       "head": "d2e05f6a",
-      "commits": ["d2e05f6a"],
+      "commits": [
+        "d2e05f6a"
+      ],
       "summary": "浏览器检查的五处渲染模型读取改为resident.ui.browserReadModel，保持原盘面、隐私与DOM断言；不修改游戏规则。证据见browser-smoke-read-path-20260909.json。",
       "records": {},
       "roadmap": null
@@ -23,7 +43,12 @@
       "date": "2026-09-09",
       "baseline": "counted-card-move-20260909",
       "head": "a402ca99",
-      "commits": ["872d80c7", "d061d4f3", "d2e05f6a", "a402ca99"],
+      "commits": [
+        "872d80c7",
+        "d061d4f3",
+        "d2e05f6a",
+        "a402ca99"
+      ],
       "summary": "发射前试验逐张展示手牌后冻结移动额度；根决策、自动结算与后继共用已知牌展示贪心；自动结算先保存盲抽屏障，公开展示不解除未知牌限制；跨结算批次的同一展示阶段继续回队列搜索。进度见counted-card-reveal-progress-20260909.md。",
       "records": {
         "f0ec0eb8.a402ca99.full.json": {
@@ -38,7 +63,9 @@
       "date": "2026-09-09",
       "baseline": "route-selection-error-20260908",
       "head": "4bc44eb2",
-      "commits": ["4bc44eb2"],
+      "commits": [
+        "4bc44eb2"
+      ],
       "summary": "发射前试验按剩余移动角标手牌、最佳发射窗口按地球扇区其他行星和彗星初始化移动点；首次Decision冻结额度，后续只扣减，0点直接结束，正式枚举与AI需求共用读取。进度见counted-card-move-progress-20260909.md。",
       "records": {
         "f14a863e.4bc44eb2.full.json": {
@@ -53,7 +80,12 @@
       "date": "2026-09-09",
       "baseline": null,
       "head": "d5687c48",
-      "commits": ["141b3077", "1a069f6c", "71f382e1", "d5687c48"],
+      "commits": [
+        "141b3077",
+        "1a069f6c",
+        "71f382e1",
+        "d5687c48"
+      ],
       "summary": "整理第五轮持牌/支付、已打出牌和标准行动费用计算；增加条件、重复次数与数量奖励表及审计：区分一次领取、不同地点和数量阈值事件，复用十类正式终局公式并隔离计分输入。见round5-reward-formulas-design-20260909.md及对应JSON。普通牌估值仍为设计，未接入生产搜索。",
       "records": {},
       "roadmap": null
