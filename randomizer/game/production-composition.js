@@ -439,7 +439,8 @@
         ok: true,
         progressed: true,
         message: "快速移动完成",
-        events: [{
+        // 移动及到达事件交由共享后继处理器触发任务/本回合奖励，不能只留下交易审计。
+        events: [...result.events, {
           type: "quick_move",
           tradeId: pending.tradeId,
           playerId: player.id,

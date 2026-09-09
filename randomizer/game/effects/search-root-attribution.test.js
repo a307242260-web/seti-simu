@@ -90,6 +90,28 @@ for (const result of stopped) {
 }
 assert.deepEqual(composition.lifecycle.save().envelope, before);
 const continuing = createComposition(true);
+// 完成后选择器无后继，与未完成停止必须区分；默认无合法后继出口同样区分。
+for (const hasSuccessors of [false, true]) {
+  const endpoint = createComposition(hasSuccessors);
+  for (const completes of [false, true]) {
+    const [result] = endpoint.counterfactualPort.evaluate(
+      endpoint.inputPort.enumerateActions().filter(a => a.family === "launch"), {
+        viewer: { playerId: "p1", role: "player" }, maxExecutionNodes: 8, maxFrontierNodes: 8,
+        secondaryAgentSearch: {
+          focalSeatId: "p1", maxProxyDepth: 3,
+          selectRouteTarget: () => "score:3",
+          completesRouteTarget: ({ action }) => completes && action.family === "analyze",
+          selectSuccessors: ({ branchObservation, legalSuccessors }) =>
+            branchObservation.score === 3 ? [] : legalSuccessors,
+        },
+      },
+    );
+    const leaf = result.leaves.find(l => l.observation.score === 3);
+    assert.ok(leaf, "实际终点状态不得丢失");
+    assert.equal(leaf.terminalReason, completes ? "goal-completed" : "route-unreachable");
+  }
+  endpoint.dispose();
+}
 const continuingBefore = continuing.lifecycle.save().envelope;
 const launch = continuing.inputPort.enumerateActions().filter((action) => action.family === "launch");
 const [budgeted] = continuing.counterfactualPort.evaluate(launch, {

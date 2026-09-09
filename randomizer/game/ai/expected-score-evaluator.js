@@ -188,6 +188,7 @@
   function infrastructureFrom(parts = {}) {
     return {
       ownedTechIds: [...(parts.ownedTechIds || [])].sort(),
+      disabledTechIds: [...(parts.disabledTechIds || [])].sort(),
       income: { ...(parts.income || {}) },
       researchOptions: (parts.researchOptions || []).map((option) => ({ ...option })),
       blueBonusAssets: { ...(parts.blueBonusAssets || {}) },
@@ -211,6 +212,7 @@
   function infrastructureOf(projection) {
     return infrastructureFrom({
       ownedTechIds: projection.progress?.ownedTechIds,
+      disabledTechIds: projection.progress?.disabledTechIds,
       income: projection.progress?.income,
       researchOptions: projection.progress?.researchOptions,
       blueBonusAssets: projection.progress?.blueBonusAssets,
@@ -595,7 +597,10 @@
     if (value.terminal) return 0;
     const infra = value.infrastructure;
     const rounds = Math.max(0, infra.finalRoundNumber - infra.roundNumber);
-    return infra.ownedTechIds.reduce((total, tileId) => total + techFutureValue(tileId, rounds, infra.finalRoundNumber), 0);
+    // 失效片仍算已拥有，但不再提供未来能力；不能连带删掉数量计分或允许重复研究。
+    return infra.ownedTechIds.reduce((total, tileId) => total + (
+      infra.disabledTechIds.includes(tileId) ? 0 : techFutureValue(tileId, rounds, infra.finalRoundNumber)
+    ), 0);
   }
 
   function researchPotential(value) {
@@ -750,6 +755,7 @@
       resourceFacts: resourceFactsFrom(facts.resourceFacts),
       infrastructure: infrastructureFrom({
         ownedTechIds: facts.ownedTechIds,
+        disabledTechIds: facts.disabledTechIds,
         income: facts.income,
         researchOptions: facts.researchOptions,
         blueBonusAssets: facts.blueBonusAssets,
@@ -839,6 +845,9 @@
           executionStepCount: Number(leaf.executionStepCount ?? leaf.actionChain?.length ?? 0),
         };
       })
+      // 动作已结算不等于目标已达成。保留原outcome用于诊断，排序只选可兑现计划；
+      // 正式终局不再要求完成规划目标，仍按正式终局分比较。
+      .filter((entry) => entry.leaf.terminalReason !== "route-unreachable" || entry.leafStateValue.terminal)
       .sort((left, right) => (
         right.strategicValue.primaryValue - left.strategicValue.primaryValue
         || (vEnabled ? (right.vDelta - left.vDelta) : 0)
@@ -851,7 +860,9 @@
         || String(left.leaf.leafId || "").localeCompare(String(right.leaf.leafId || ""))
       ));
     const best = evaluatedLeaves[0] || null;
-    if (!best) return unavailable(outcome, "strategic-goal-leaf-missing");
+    if (!best) return unavailable(outcome, (outcome.leaves || []).some(
+      (leaf) => leaf.terminalReason === "route-unreachable",
+    ) ? "route-target-not-completed" : "strategic-goal-leaf-missing");
     let bestLeafValue = best.strategicValue;
     const bestVD = best.vDelta || 0;
     const tradePurpose = quickTradePurpose(context, action, best.leaf);
@@ -1780,7 +1791,8 @@
   }
 
   function enumerateSecondaryAgentRootTargets(input = {}) {
-    const legalActions = selectGreedyAlienTracePositions(input.rootObservation, input.legalActions || [])
+    const legalActions = selectNonredundantTuringActions(input.rootObservation,
+      selectGreedyAlienTracePositions(input.rootObservation, input.legalActions || []))
       .sort((left, right) => String(left.actionId).localeCompare(String(right.actionId)));
     const legalIds = new Set(legalActions.map((action) => action.actionId));
     const targets = new Map();
@@ -2651,8 +2663,43 @@
     });
   }
 
+  function selectNonredundantTuringActions(observation, actions, currentAction = null) {
+    const abilityId = "turing_borrow_tech";
+    const isTile = (tileId) => /^(orange|purple)[1-4]$/.test(String(tileId));
+    const playerOf = (action) => publicPlayerOf(observation, action.actorId);
+    const active = (player, tileId) => {
+      if (!player?.techState?.ownedTiles || !player.techState.disabledTiles) {
+        throw new TypeError("TURING_TECH_STATE_MISSING: 借科技筛选缺少当分支科技状态");
+      }
+      return Boolean(player.techState.ownedTiles[tileId]) && !player.techState.disabledTiles[tileId];
+    };
+    const isBorrow = (action) => action.family === "choose_target" && action.phase === "conditional"
+      && action.target?.kind === "residual-domain" && isTile(action.target.tileId)
+      && action.target.choiceId === `tech:${action.target.tileId}`
+      && playerOf(action)?.industryAbilityId === abilityId;
+    const selected = actions.filter((action) => {
+      // 借用仅本回合有效；刚借完立即end_turn没有使用能力，只消耗公司额度。
+      // 仅筛搜索后继，不改正式合法集；PASS及穿插过其他行动的路径保留。
+      if (currentAction && isBorrow(currentAction) && action.family === "end_turn"
+        && action.actorId === currentAction.actorId) return false;
+      if (isBorrow(action)) return !active(playerOf(action), action.target.tileId);
+      if (action.family !== "industry" || action.target?.abilityId !== abilityId) return true;
+      const stacks = observation?.publicState?.board?.techSupply?.stacks;
+      if (!stacks) throw new TypeError("TURING_TECH_SUPPLY_MISSING: 借科技筛选缺少正式供应");
+      return Object.entries(stacks).some(([tileId, stack]) => isTile(tileId)
+        && !stack.depleted && stack.remaining > 0 && !active(playerOf(action), tileId));
+    });
+    // 人类或旧计划可能已经启用公司：全部重复仍须结算，不能制造空Decision。
+    // AI自行开启前已在上方禁止这种启用；这里仅保留一个正式选项，不伪造skip。
+    if (!selected.length && actions.length && actions.every(isBorrow)) {
+      return [[...actions].sort((a, b) => String(a.actionId).localeCompare(String(b.actionId)))[0]];
+    }
+    return selected;
+  }
+
   function selectSecondaryAgentSuccessors(input = {}) {
-    const successors = selectGreedyAlienTracePositions(input.branchObservation, input.legalSuccessors || [])
+    const successors = selectNonredundantTuringActions(input.branchObservation,
+      selectGreedyAlienTracePositions(input.branchObservation, input.legalSuccessors || []), input.currentAction)
       .sort((left, right) => String(left.actionId).localeCompare(String(right.actionId)));
     if (!successors.length) return [];
     const bindRoute = (
@@ -3306,6 +3353,12 @@
       if (String(input.routeTargetId || "").startsWith("sector:win:")) {
         if (!String(input.routePlanId || "").startsWith("sector:standard-scan:")) return [];
         const requirements = rawSectorWinRequirements(input.branchObservation);
+        if (!Array.isArray(requirements?.candidates)) {
+          throw new TypeError("SECTOR_GOAL_REQUIREMENTS_MISSING: 扇区目标缺少正式候选目录");
+        }
+        // 结算序号是目标身份的一部分。当前流程及奖励已排空，旧结算不能靠再次扫描补赢。
+        // 条件/奖励分支在上方完成，不因满槽或目录换代而被此处中断。
+        if (!requirements.candidates.some((candidate) => candidate.targetId === input.routeTargetId)) return [];
         const scan = successors.find((action) => action.family === "scan");
         if (scan) return bindRoute([scan], input.routeTargetId, input.routePlanId);
         const preparation = selectMinimumCostResourcePreparation(

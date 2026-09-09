@@ -462,6 +462,10 @@
     }
 
     players.incrementPlayerOrbitCount(context.players, currentPlayer.id);
+    // 面板实体 sequence 是全局编号；奖励次数只计该星球的环绕标记。
+    const markerSequence = isAomomoPlanet
+      ? aomomoApi.countOrbitMarkers(context.aliens)
+      : markerResult.marker.sequence;
 
     const message = `环绕 ${placement.planet.name}，消耗 ${players.formatResourceCost(cost)}，移除火箭，${formatMarkerDisplayNote("环绕", markerResult.marker)}`;
     return {
@@ -474,7 +478,7 @@
         removedRocketId: placement.rocket.id,
         planetId: placement.planet.planetId,
         markerKind: isAomomoPlanet ? "aomomo-orbit" : "orbit",
-        markerSequence: markerResult.marker.sequence,
+        markerSequence,
       },
       events: [{
         type: "orbit",
@@ -487,7 +491,7 @@
       removedRocketId: placement.rocket.id,
       planetId: placement.planet.planetId,
       markerKind: isAomomoPlanet ? "aomomo-orbit" : "orbit",
-      markerSequence: markerResult.marker.sequence,
+      markerSequence,
     };
   }
 
@@ -585,7 +589,8 @@
         sequence: stateSequences.take(context.state, "alienEntity"),
       });
       markerKind = "aomomo-land";
-      markerSequence = markerResult.marker?.sequence || null;
+      // 登陆奖励次数与环绕、外星人牌等共用的实体编号无关。
+      markerSequence = aomomoApi.countLandingMarkers(context.aliens);
       rewardMarkerSequence = getLandRewardMarkerSequence(target, markerSequence, options);
     } else {
       const landingPositionOccupied = isPlanetLandingDisplaySlotOccupied(

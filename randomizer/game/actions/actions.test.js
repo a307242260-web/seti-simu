@@ -28,6 +28,7 @@ const planetStats = require("../planet-stats");
 const aomomo = require("../aliens/aomomo");
 const abilities = require("../abilities");
 const researchTech = require("./research-tech");
+const planetRewards = require("./planet-rewards");
 
 function drawBasicCardToHand(hand) {
   const existing = new Set(hand.map((card) => card.cardId));
@@ -256,6 +257,72 @@ const aomomoLandResult = abilities.executeAbility("landProbe", aomomoLandContext
 assert.equal(aomomoLandResult.ok, true, aomomoLandResult.message);
 assert.equal(aomomoLandResult.markerKind, "aomomo-land");
 assert.equal(aomomo.countLandingMarkers(aomomoLandContext.aliens), 1);
+
+// 实体编号与奖励次数独立：不同玩家、两类标记交错，恢复后继续累计。
+{
+  const context = createAomomoVisibleContextWithStalePlanetList();
+  context.meta.sequences.alienEntity = 17;
+  const player = players.getCurrentPlayer(context.players);
+  player.resources.credits = 30;
+  player.resources.energy = 30;
+  const location = solar.createSolarSnapshot(context.solarSystem).planetLocations
+    .find((entry) => entry.planetId === aomomo.PLANET_ID);
+  const counts = { orbit: 0, land: 0 };
+  for (const [index, family] of ["orbit", "land", "orbit", "land", "land", "land", "land"].entries()) {
+    if (index > 0) {
+      assert.equal(rockets.launchRocketAtSector(context.pieces, location, {
+        playerId: player.id, color: player.color, root: context,
+      }).ok, true);
+    }
+    const options = { source: "test", forceFirstLandingReward: index === 6 };
+    const available = family === "orbit"
+      ? abilities.planet.getOrbitOptions(context, options)
+      : abilities.planet.getLandOptions(context, options);
+    assert.equal(available.ok, true, available.message);
+    const ordinal = ++counts[family];
+    assert.equal(available.choices[0].markerSequence, ordinal);
+    const result = abilities.executeAbility(`${family}Probe`, context, options);
+    assert.equal(result.ok, true, result.message);
+    assert.equal(result.markerSequence, ordinal);
+    assert.equal(result.payload.markerSequence, ordinal);
+    const markers = family === "orbit"
+      ? context.aliens.aomomo.orbitMarkers : context.aliens.aomomo.landingMarkers;
+    const marker = markers.at(-1);
+    assert.equal(marker.sequence, 17 + index);
+    assert.equal(marker.id, `aomomo-${family === "orbit" ? "orbit" : "landing"}-${17 + index}`);
+    assert.equal(marker.playerId, player.id);
+    assert.equal(context.meta.sequences.alienEntity, 18 + index);
+    const rewardOrdinal = options.forceFirstLandingReward ? 1 : ordinal;
+    if (family === "land") {
+      assert.equal(result.rewardMarkerSequence, rewardOrdinal);
+      assert.equal(result.payload.rewardMarkerSequence, rewardOrdinal);
+    }
+    const expected = family === "orbit"
+      ? planetRewards.buildOrbitRewardEffects("aomomo", ordinal)
+      : planetRewards.buildPlanetLandRewardEffects("aomomo", rewardOrdinal);
+    assert.deepEqual(planetRewards.buildRewardEffectsForAction(family, result), expected.map((effect) => ({
+      ...effect, options: { ...effect.options, targetPlayerId: player.id, targetPlayerColor: player.color },
+    })));
+    // 奖励按全体玩家标记计数；旧标记换成另一玩家，不得恢复首次奖励。
+    marker.playerId = "player-brown";
+    marker.playerColor = "brown";
+    context.aliens = JSON.parse(JSON.stringify(context.aliens));
+    context.meta = JSON.parse(JSON.stringify(context.meta));
+  }
+}
+
+for (const family of ["orbit", "land"]) {
+  const context = createAomomoVisibleContextWithStalePlanetList();
+  context.meta.sequences.alienEntity = 17;
+  const player = players.getCurrentPlayer(context.players);
+  player.resources.credits = 0;
+  player.resources.energy = 0;
+  const before = JSON.stringify([context.meta, context.aliens, context.pieces, player]);
+  const result = abilities.executeAbility(`${family}Probe`, context, { source: "test" });
+  assert.equal(result.ok, false);
+  assert.match(result.message, /资源不足/);
+  assert.equal(JSON.stringify([context.meta, context.aliens, context.pieces, player]), before);
+}
 
 const discountedLandContext = createContext();
 launchToPlanet(discountedLandContext, "jupiter");

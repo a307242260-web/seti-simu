@@ -187,4 +187,52 @@ assert.deepEqual(
   "资源规划必须按最终资源向量归并等成本排列，并用稳定首步表示同一方案",
 );
 
+// 开普勒22第三次结算已经结束：第四次仍可扫描，不代表第三次目标仍可完成。
+const sectorGoal = "sector:win:sector-3-a:3";
+const sectorInput = {
+  focalSeatId: "p1", routeTargetId: sectorGoal, routePlanId: "sector:standard-scan:sector-3-a",
+  branchObservation: { ...targetObservation, sectorWinRequirements: {
+    candidates: [{ targetId: "sector:win:sector-3-a:4", sectorId: "sector-3-a", nextSettlementNumber: 4 }],
+    standardScanCost: { credits: 1, energy: 2 }, wins: [],
+  } },
+};
+const scanAction = { actionId: "scan-expired", family: "scan", phase: "main", actorId: "p1" };
+const endAction = { actionId: "end-expired", family: "end_turn", phase: "turn_control", actorId: "p1" };
+const energyTrade = { actionId: "trade-expired", family: "quick_trade", phase: "quick", actorId: "p1",
+  target: { tradeId: "credits-for-energy" }, payload: { cost: { credits: 2 }, gain: { energy: 1 } } };
+const selectSector = (input, actions) => expectedScore.selectSecondaryAgentSuccessors({
+  ...input, legalSuccessors: actions,
+});
+const sectorBefore = structuredClone(sectorInput);
+for (const action of [scanAction, endAction, energyTrade]) {
+  assert.deepEqual(selectSector(sectorInput, [action]), [], "过期结算不得继续扫描、等待或交易");
+}
+const validSectorInput = structuredClone(sectorInput);
+validSectorInput.branchObservation.sectorWinRequirements.candidates[0].targetId = sectorGoal;
+validSectorInput.branchObservation.sectorWinRequirements.candidates[0].nextSettlementNumber = 3;
+for (const action of [scanAction, endAction]) {
+  assert.deepEqual(selectSector(validSectorInput, [action]).map(a => a.actionId), [action.actionId]);
+}
+validSectorInput.branchObservation.outcomeProjection = {
+  assets: { credits: 4, energy: 1, ordinaryCards: 0 },
+};
+assert.deepEqual(selectSector(validSectorInput, [energyTrade]).map(a => a.actionId), [energyTrade.actionId]);
+const pendingReward = { actionId: "confirm-expired", family: "accept_optional_effect", phase: "conditional",
+  actorId: "p1", target: { kind: "residual-domain", choiceId: "confirm:reward" } };
+assert.deepEqual(selectSector(sectorInput, [pendingReward]).map(a => a.actionId), [pendingReward.actionId],
+  "结算期间不能因下一次目录变化截断当前奖励");
+const wonInput = structuredClone(sectorInput);
+wonInput.branchObservation.sectorWinRequirements.wins.push({ sectorId: "sector-3-a", settlementNumber: 3 });
+assert.equal(expectedScore.completesSecondaryAgentRouteTarget({
+  ...wonInput, action: scanAction, targetId: sectorGoal,
+}), true);
+assert.equal(expectedScore.completesSecondaryAgentRouteTarget({
+  ...sectorInput, action: scanAction, targetId: sectorGoal,
+}), false);
+const missingSector = structuredClone(sectorInput);
+delete missingSector.branchObservation.sectorWinRequirements;
+assert.throws(() => selectSector(missingSector, [scanAction]), /SECTOR_GOAL_REQUIREMENTS_MISSING/);
+assert.throws(() => selectSector(sectorInput, [{ ...scanAction, actorId: "p2" }]), /opponent action/);
+assert.deepEqual(sectorInput, sectorBefore);
+
 console.log("heuristic evaluator outcome behavior tests passed");

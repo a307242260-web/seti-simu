@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const planContinuation = require("./plan-continuation");
+const planetRewards = require("../actions/planet-rewards");
 
 // ---------------------------------------------------------------------------
 // 最小观测 fixture：只含诊断读取的路径（board 结构事实 + progress 目录）。
@@ -332,6 +333,10 @@ function planObservation() {
   }];
   Object.assign(observation.outcomeProjection.progress.probeGoalRequirements.candidates[0], {
     sourceId: "rocket:r1", rocketId: "r1",
+    required: { credits: 1, energy: 3 },
+    endpointFacts: { rewards: planetRewards.buildOrbitRewardEffects("mars", 1),
+      cost: { credits: 1, energy: 1 },
+      ownMarkers: { orbitMarkers: [], landingMarkers: [], satelliteLandings: [] } },
   });
   observation.publicState.board.techSupply = { stacks: {
     blue1: { tileId: "blue1", remaining: 4, depleted: false },
@@ -345,6 +350,39 @@ function planObservation() {
       maxOpponentCount: 1, openSlotCount: 3, nextSlotScore: 0, ranking: [] },
   ];
   return observation;
+}
+
+{
+  const { sanitizePublicPlayer } = require("../../app/simulation-contract");
+  const player = { id: "player-white", resources: {}, techState: {
+    ownedTiles: { blue1: true, blue2: true }, disabledTiles: {},
+    blueBoardSlots: { blue2: 1, blue1: 2 },
+  }, dataState: { placedTokens: [1, 2, 3, 4].map(placementSlot => (
+    { placementKind: "computer", placementSlot }
+  )) } };
+  const beforePlayer = structuredClone(player);
+  const reordered = structuredClone(player);
+  reordered.techState.blueBoardSlots = { blue1: 2, blue2: 1 };
+  const observe = p => ({ ...planObservation(), publicState: {
+    ...planObservation().publicState, players: [sanitizePublicPlayer(p)],
+  } });
+  const a = observe(player), b = observe(reordered);
+  const action = planAction("data-choice", "choose_target",
+    { choiceId: "data:blueBonus:1", target: "blueBonus", blueSlot: 1 });
+  const plan = storedSteps([stepEvidence(action, a, "data:analyze")]);
+  assert.deepEqual(a.publicState.players[0].dataProgress, b.publicState.players[0].dataProgress,
+    "同一蓝槽布局不得因科技对象插入顺序而改变公共数据事实");
+  assert.equal(planContinuation.planReuseCheck(plan, b, [action], { sameTurn: true }).hit, true);
+  assert.deepEqual(player, beforePlayer, "公共观察不得改变正式玩家状态");
+  for (const change of [
+    p => p.dataState.placedTokens.push({ placementKind: "blueBonus", blueSlot: 1 }),
+    p => { p.techState.blueBoardSlots = { blue1: 1, blue2: 2 }; },
+    p => { p.dataState.placedTokens = p.dataState.placedTokens.filter(t => t.placementSlot !== 3); },
+  ]) {
+    const changed = structuredClone(player); change(changed);
+    assert.equal(planContinuation.planReuseCheck(plan, observe(changed), [action], { sameTurn: true }).reason,
+      "next-step-affected", "占用、科技位置和解锁变化仍必须使计划失效");
+  }
 }
 
 function stepEvidence(action, observation, routeTargetId = null, goalDepth = 0, routePlanId = null) {
@@ -394,6 +432,8 @@ function planAction(id, family = "move", target = {}) {
 
   const occupied = structuredClone(before);
   occupied.publicState.board.planets.planets.mars.orbitMarkers.push({ playerId: "other" });
+  occupied.outcomeProjection.progress.probeGoalRequirements.candidates[0].endpointFacts.rewards
+    = planetRewards.buildOrbitRewardEffects("mars", 2);
   assert.equal(planContinuation.planReuseCheck(plan, occupied, [move]).reason, "next-step-affected");
   assert.equal(planContinuation.planReuseCheck(plan, before, []).reason, "step-not-legal");
   assert.equal(planContinuation.planReuseCheck(plan, before, [{ ...move, actorId: "other" }]).reason,
@@ -406,11 +446,11 @@ function planAction(id, family = "move", target = {}) {
   const missing = structuredClone(plan);
   missing.steps[0].revealedCount = null;
   assert.equal(planContinuation.planReuseCheck(missing, before, [move]).reason, "no-reveal-count");
-  delete before.publicState.board.planets.planets.mars;
+  delete before.outcomeProjection.progress.probeGoalRequirements.candidates[0].endpointFacts;
   const absent = storedSteps([stepEvidence(move, before, "orbit:mars")]);
   assert.equal(absent.steps[0].valid, false);
   assert.equal(planContinuation.planReuseCheck(absent, before, [move]).reason, "plan-dependency-fact-missing",
-    "两份缺失行星事实不能被认为未变化");
+    "两份缺失终点事实不能被认为未变化");
 }
 
 {
@@ -669,6 +709,270 @@ for (const tileId of ["a", "b", "c", "d"]) {
   const wrongSource = storedSteps([{ ...evidence,
     movementPreparation: { ...evidence.movementPreparation, rocketId: "r1" } }]);
   assert.equal(wrongSource.steps[0].reason, "plan-movement-preparation-source-missing");
+}
+
+// 同一分析目标跨取数据方式，提前检查后续扫描；事实仍来自各步执行前。
+{
+  const before = planObservation();
+  before.publicState.board.publicCards = [{ id: "scan-card", cardId: "c1" }];
+  const after = structuredClone(before);
+  after.publicState.players[0].dataProgress.computerDataSlots.push(1);
+  const corner = planAction("data-corner", "card_corner", { cardInstanceId: "owned-card" });
+  const scan = planAction("data-scan", "scan");
+  const choose = planAction("scan-card", "choose_card", { publicSlotIndex: 0, nebulaId: "sector-a" });
+  const evidence = [
+    stepEvidence(corner, before, "data:analyze", 2, "data:corner:owned-card"),
+    stepEvidence(scan, after, "data:analyze", 2, "data:scan"),
+    stepEvidence(choose, after, "data:analyze", 2, "data:scan"),
+  ];
+  const frozen = structuredClone(evidence), plan = storedSteps(evidence);
+  assert.equal(planContinuation.planReuseCheck(plan, before, [corner]).hit, true);
+  for (const change of ["card", "earth", "sector"]) {
+    const changed = structuredClone(before);
+    if (change === "card") changed.publicState.board.publicCards[0].id = "replacement";
+    if (change === "earth") changed.outcomeProjection.progress.sectorWinRequirements.standardScanEarthSource.sectorX += 1;
+    if (change === "sector") changed.outcomeProjection.progress.sectorWinRequirements.candidates[0].ownCount += 1;
+    assert.equal(planContinuation.planReuseCheck(plan, changed, [corner]).reason, "next-step-affected",
+      `同分析目标切换资源取得方式后，必须在弃牌前发现${change}变化`);
+  }
+  const unrelated = structuredClone(before);
+  unrelated.outcomeProjection.progress.sectorWinRequirements.candidates[1].ownCount += 1;
+  assert.equal(planContinuation.planReuseCheck(plan, unrelated, [corner]).hit, true);
+  assert.equal(planContinuation.planReuseCheck(planContinuation.advancePlan(plan), after, [scan]).hit, true,
+    "未来自身放数据不污染早期基线，推进后仍按对应步骤事实复用");
+  assert.deepEqual(evidence, frozen);
+  for (const change of ["depth", "target"]) {
+    const separated = structuredClone(evidence);
+    for (const step of separated.slice(1)) {
+      if (change === "depth") step.goalDepth += 1;
+      if (change === "target") step.routeTargetId = "decision:reward";
+    }
+    const changed = structuredClone(before);
+    changed.publicState.board.publicCards[0].id = "replacement";
+    assert.equal(planContinuation.planReuseCheck(storedSteps(separated), changed, [corner]).reason,
+      "future-step-affected", `${change}边界不扩大当前目标依赖，但自由步骤仍检查真实后缀`);
+  }
+}
+
+// 同目标不同来源：后续火箭不能替换当前具名路线的来源。
+{
+  const before = planObservation();
+  const routes = before.outcomeProjection.progress.probeGoalRequirements.candidates;
+  routes.push({ ...structuredClone(routes[0]), requirementId: "c2", sourceId: "rocket:r2", rocketId: "r2" });
+  const prepare = planAction("prepare-route", "quick_trade");
+  const move = planAction("next-source", "move", { rocketId: "r2" });
+  const plan = storedSteps([
+    stepEvidence(prepare, before, "orbit:mars", 0, "probe:c1"),
+    stepEvidence(move, before, "orbit:mars", 0, "probe:c2"),
+  ]);
+  const changed = structuredClone(before);
+  changed.outcomeProjection.progress.probeGoalRequirements.candidates[1].gap.movementSteps += 1;
+  assert.equal(planContinuation.planReuseCheck(plan, changed, [prepare]).reason, "future-step-affected",
+    "后续来源不能替换当前路线身份，但自由准备仍提前检查后缀路线");
+  assert.equal(planContinuation.planReuseCheck(planContinuation.advancePlan(plan), changed, [move]).reason,
+    "next-step-affected");
+  changed.outcomeProjection.progress.probeGoalRequirements.candidates[0].gap.movementSteps += 1;
+  assert.equal(planContinuation.planReuseCheck(plan, changed, [prepare]).reason, "next-step-affected");
+}
+
+// 同目标奖励依赖向前覆盖投入；领奖阶段不重新继承已完成目标。
+for (const [targetId, family, target, planId] of [
+  ["tech:gain:blue1", "research_tech", {}, "tech:blue1"],
+  ["data:analyze", "analyze", {}, "data:scan"],
+  ["land:mars", "land", { rocketId: "r1" }, "probe:c1"],
+]) {
+  const before = planObservation();
+  before.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId = "land:mars";
+  before.publicState.board.publicCards = [{ id: "reward-card", cardId: "c1" }];
+  const after = structuredClone(before);
+  after.publicState.board.techSupply.stacks.blue1.remaining -= 1;
+  after.publicState.players[0].dataProgress.computerDataSlots = [];
+  after.outcomeProjection.progress.probeGoalRequirements.candidates = [];
+  const commit = planAction("commit", family, target);
+  const trace = planAction("reward-trace", "choose_target", { alienSlotId: 1, traceType: "blue" });
+  const card = planAction("reward-card", "choose_card",
+    { publicSlotIndex: 0, cardInstanceId: "reward-card" });
+  const evidence = [stepEvidence(commit, before, targetId, 0, planId),
+    ...[trace, card].map(action => ({ ...stepEvidence(action, after, targetId, 0, planId),
+      goalCompletionPending: true }))];
+  const frozen = structuredClone(evidence), plan = storedSteps(evidence);
+  assert.equal(planContinuation.planReuseCheck(plan, before, [commit]).hit, true);
+  for (const reward of ["card", "trace"]) {
+    const changed = structuredClone(before);
+    if (reward === "card") changed.publicState.board.publicCards[0].id = "replacement";
+    else changed.publicState.board.aliens.slots[0].traces.blue.firstPlaced = true;
+    assert.equal(planContinuation.planReuseCheck(plan, changed, [commit]).reason, "next-step-affected",
+      `${targetId}投入前必须检查${reward}奖励变化`);
+  }
+  const rewardPlan = planContinuation.advancePlan(plan);
+  assert.equal(planContinuation.planReuseCheck(rewardPlan, after, [trace]).hit, true,
+    "目标完成后不因旧科技/路线/数据准备事实改变而失效");
+  const afterTrace = structuredClone(after);
+  afterTrace.publicState.board.aliens.slots[0].traces.blue.firstPlaced = true;
+  const cardPlan = planContinuation.advancePlan(rewardPlan);
+  assert.equal(planContinuation.planReuseCheck(cardPlan, afterTrace, [card]).hit, true,
+    "消耗的前一奖励不重新进入后续奖励依赖");
+  afterTrace.publicState.board.publicCards[0].id = "replacement";
+  assert.equal(planContinuation.planReuseCheck(cardPlan, afterTrace, [card]).reason, "next-step-affected");
+  assert.deepEqual(evidence, frozen);
+  const nextGoal = stepEvidence(planAction("next-goal", "choose_target", { tileId: "blue2" }),
+    after, targetId, 0, planId);
+  const separated = storedSteps([...evidence, nextGoal]);
+  const unrelated = structuredClone(before);
+  unrelated.publicState.board.techSupply.stacks.blue2.remaining -= 1;
+  assert.equal(planContinuation.planReuseCheck(separated, unrelated, [commit]).hit, true,
+    "即使目标和深度相同，完成后重新开始的投入不能继承到旧目标");
+  const absent = structuredClone(evidence);
+  absent[0].facts.cards = [];
+  assert.equal(storedSteps(absent).steps[0].reason, "plan-dependency-fact-missing",
+    "未来奖励牌事实不能倒灌填补当前缺失事实");
+  const blind = planAction("blind", "choose_card", { source: "deck" });
+  const blindPlan = storedSteps([evidence[0], { ...stepEvidence(blind, after, targetId, 0, planId),
+    goalCompletionPending: true }]);
+  assert.equal(blindPlan.steps[0].dependencies.some(d => d.scope.kind.startsWith("card")), false,
+    "盲抽没有公开牌面，不虚构牌面依赖");
+}
+
+// 等额奖励下的他人标记变化不重搜；真实奖励变化仍拒绝复用。
+for (const family of ["orbit", "land"]) {
+  for (const planetId of Object.keys(family === "orbit"
+    ? planetRewards.ORBIT_REWARDS : planetRewards.PLANET_LAND_REWARDS)) {
+    const reward = n => family === "orbit" ? planetRewards.buildOrbitRewardEffects(planetId, n)
+      : planetRewards.buildPlanetLandRewardEffects(planetId, n);
+    for (let prior = 0; prior < 5; prior++) {
+      const before = planObservation();
+      const route = before.outcomeProjection.progress.probeGoalRequirements.candidates[0];
+      const target = `${family}:${planetId}:planet:`;
+      route.targetId = target;
+      route.endpointFacts.rewards = reward(prior + 1);
+      const action = planAction("route", "move", { rocketId: "r1" });
+      const plan = storedSteps([stepEvidence(action, before, target)]);
+      const changed = structuredClone(before);
+      changed.outcomeProjection.progress.probeGoalRequirements.candidates[0].endpointFacts.rewards = reward(prior + 2);
+      const equal = JSON.stringify(reward(prior + 1)) === JSON.stringify(reward(prior + 2));
+      assert.equal(planContinuation.planReuseCheck(plan, changed, [action]).hit, equal,
+        `${target}已有${prior}→${prior + 1}按实际奖励区分`);
+    }
+  }
+}
+
+{
+  const before = planObservation();
+  const action = planAction("route", "move", { rocketId: "r1" });
+  const plan = storedSteps([stepEvidence(action, before, "orbit:mars")]);
+  for (const change of ["cost", "required", "own", "source", "missing", "gone"]) {
+    const changed = structuredClone(before);
+    const requirements = changed.outcomeProjection.progress.probeGoalRequirements;
+    const route = requirements.candidates[0];
+    if (change === "cost") route.endpointFacts.cost.energy += 1;
+    if (change === "required") route.required.credits += 1;
+    if (change === "own") route.endpointFacts.ownMarkers.orbitMarkers.push(
+      { index: 1, marker: { playerId: "player-white" } });
+    if (change === "source") route.sourceId = "rocket:r2";
+    if (change === "missing") delete route.endpointFacts;
+    if (change === "gone") requirements.candidates = [];
+    assert.equal(planContinuation.planReuseCheck(plan, changed, [action]).hit, false, change);
+  }
+  assert.equal(planContinuation.planReuseCheck({ ...plan, schemaVersion: "seti-action-plan-v2" },
+    before, [action]).hit, false);
+  const satellite = structuredClone(before);
+  satellite.outcomeProjection.progress.probeGoalRequirements.candidates[0].targetId
+    = "land:jupiter:satellite:io";
+  const satellitePlan = storedSteps([stepEvidence(action, satellite, "land:jupiter:satellite:io")]);
+  const changed = structuredClone(satellite);
+  changed.publicState.board.planets.planets.jupiter = {
+    satelliteLandings: [{ satelliteId: "europa", playerId: "other" }],
+  };
+  assert.equal(planContinuation.planReuseCheck(satellitePlan, changed, [action]).hit, true);
+}
+
+// 后续移除标记必须在投入前检查原位置；不能只确认届时还有同名合法动作。
+{
+  const before = planObservation();
+  before.publicState.board.planets.planets.mars.orbitMarkers = [
+    { playerId: "other" }, { playerId: "player-white", color: "white" },
+  ];
+  const prepare = planAction("prepare", "card_corner");
+  const remove = planAction("remove", "choose_target", { planetId: "mars", kind: "orbit", index: 1 });
+  const plan = storedSteps([stepEvidence(prepare, before), stepEvidence(remove, before)]);
+  assert.equal(planContinuation.planReuseCheck(plan, before, [prepare]).hit, true);
+  const unrelated = structuredClone(before);
+  unrelated.publicState.board.planets.planets.mars.orbitMarkers.push({ playerId: "other" });
+  assert.equal(planContinuation.planReuseCheck(plan, unrelated, [prepare]).hit, true);
+  unrelated.publicState.board.planets.planets.mars.orbitMarkers.shift();
+  assert.equal(planContinuation.planReuseCheck(plan, unrelated, [prepare]).hit, false);
+  const absent = structuredClone(before);
+  absent.publicState.board.planets.planets.mars.orbitMarkers[1].playerId = "other";
+  assert.equal(planContinuation.planReuseCheck(plan, absent, [prepare]).hit, false);
+}
+
+// 后续目标的具名公共事实应提前检查；未来自身状态不能回填当前基线。
+{
+  const before = planObservation();
+  before.publicState.board.publicCards = [{ id: "future-card", cardId: "c1" }];
+  const prepare = planAction("prepare", "play_card");
+  const pick = planAction("future-pick", "choose_card", { publicSlotIndex: 0 });
+  pick.phase = "conditional";
+  const evidence = [stepEvidence(prepare, before, "card:resolve:prepare", 0),
+    stepEvidence(pick, before, "decision:future-pick", 1)];
+  const plan = storedSteps(evidence);
+  assert.equal(planContinuation.planReuseCheck(plan, before, [prepare]).hit, true);
+  const changed = structuredClone(before);
+  changed.publicState.board.publicCards[0] = { id: "other-card", cardId: "c2" };
+  const miss = planContinuation.planReuseCheck(plan, changed, [prepare]);
+  assert.equal(miss.reason, "future-step-affected");
+  assert.deepEqual(miss.affected, { kind: "card-slot", id: "0" });
+  const later = structuredClone(before);
+  later.publicState.board.publicCards[0] = { id: "own-future-card", cardId: "c3" };
+  const ownChange = storedSteps([evidence[0], stepEvidence(pick, later, "decision:future-pick", 1)]);
+  assert.equal(planContinuation.planReuseCheck(ownChange, before, [prepare]).hit, true,
+    "当前比较当前预期，不把自己将补出的未来卡当成当前缺失");
+  assert.equal(planContinuation.planReuseCheck(planContinuation.advancePlan(ownChange), later, [pick]).hit, true);
+  const reward = { ...prepare, family: "choose_reward", phase: "conditional" };
+  const rewardPlan = storedSteps([stepEvidence(reward, before, "card:resolve:prepare", 0), evidence[1]]);
+  assert.equal(planContinuation.planReuseCheck(rewardPlan, changed, [reward]).hit, true,
+    "不可因后续目标变化打断已进入的强制奖励");
+  const pending = storedSteps([{ ...evidence[0], goalCompletionPending: true }, evidence[1]]);
+  assert.equal(planContinuation.planReuseCheck(pending, changed, [prepare]).hit, true);
+  assert.equal(planContinuation.planReuseCheck({ ...plan, schemaVersion: "seti-action-plan-v3" },
+    before, [prepare]).hit, false);
+}
+
+{
+  const before = planObservation();
+  const first = planAction("before-launch", "play_card");
+  const move = planAction("future-rocket", "move", { rocketId: "new" });
+  const later = structuredClone(before);
+  const route = later.outcomeProjection.progress.probeGoalRequirements.candidates[0];
+  route.rocketId = "new"; route.sourceId = "rocket:new"; route.requirementId = "new-route";
+  const plan = storedSteps([stepEvidence(first, before, "card:resolve:launch", 0),
+    stepEvidence(move, later, "orbit:mars", 1)]);
+  assert.equal(plan.steps[0].valid, true);
+  assert.deepEqual(plan.steps[0].futureDependencies[0].fact, { present: false });
+  assert.equal(planContinuation.planReuseCheck(plan, before, [first]).hit, true);
+  assert.equal(planContinuation.planReuseCheck(planContinuation.advancePlan(plan), later, [move]).hit, true);
+}
+
+for (const kind of ["sector", "tech", "data", "alien", "final-tile"]) {
+  const before = planObservation();
+  before.publicState.board.finalScoring = require("../final-scoring").createFinalScoringState();
+  const prepare = planAction("prepare", "play_card");
+  const target = kind === "sector" ? { nebulaId: "sector-a" }
+    : kind === "tech" ? { tileId: "blue1" }
+      : kind === "alien" ? { alienSlotId: 1, traceType: "blue" }
+        : kind === "final-tile" ? { choiceId: "final:a", tileId: "a" } : { target: "computer" };
+  const next = planAction("next", "choose_target", target);
+  const plan = storedSteps([stepEvidence(prepare, before, "card:resolve:prepare", 0),
+    stepEvidence(next, before, "decision:next", 1)]);
+  assert.equal(planContinuation.planReuseCheck(plan, before, [prepare]).hit, true, kind);
+  const changed = structuredClone(before);
+  if (kind === "sector") changed.outcomeProjection.progress.sectorWinRequirements.candidates[0].ownCount++;
+  if (kind === "tech") changed.publicState.board.techSupply.stacks.blue1.remaining--;
+  if (kind === "data") changed.publicState.players[0].dataProgress.computerDataSlots.push(1);
+  if (kind === "alien") changed.publicState.board.aliens.slots[0].traces.blue.firstPlaced = true;
+  if (kind === "final-tile") changed.publicState.board.finalScoring.tiles.a.marks.push({ playerId: "other" });
+  assert.equal(planContinuation.planReuseCheck(plan, changed, [prepare]).reason,
+    "future-step-affected", kind);
 }
 
 process.stdout.write("plan-continuation.test.js ok\n");

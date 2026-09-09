@@ -21,6 +21,11 @@
 - `orbitMarkers`：外星人面板上的环绕标记（槽位无限，无容量上限）。
 - `landingMarkers`：外星人面板上的登陆标记（槽位无限，无容量上限）。
 
+面板标记的 `sequence` / `id` 使用全局 `meta.sequences.alienEntity`，只表示实体身份。
+能力结果及其 `payload.markerSequence` 表示本次新增后对应环绕或登陆标记的总数，
+不按玩家分别计数，也不使用实体编号；登陆 `rewardMarkerSequence` 再应用卡牌的
+强制首次奖励规则。两类标记分别计数，存档恢复不需要额外的奖励计数器。
+
 玩家专属资源为 `resources.aomomoFossils`，显示图标为 `assets/aliens/奥陌陌/fossil.webp`。资源获得、消耗、日志、撤销快照和卡牌效果都使用该字段。
 
 ## 揭示副作用
@@ -94,4 +99,5 @@
 
 - `randomizer/game/aliens/aomomo.test.js`：揭示状态、化石消耗痕迹、环绕/登陆槽位无限、牌效果模型。
 - `randomizer/game/data/nebula.test.js`：奥陌陌 3 槽容量、弧形空档盘面坐标随轮盘旋转、1/3 号槽得分。
-- `randomizer/game/aliens/aomomo.test.js` 同时覆盖奥陌陌星球环绕和登陆写入外星人面板状态。
+- `randomizer/game/actions/actions.test.js`：正式环绕和登陆写入外星人面板；非 1 实体起点、
+  交错标记与不同玩家、序列化恢复、首次及后续奖励、强制首次登陆奖励、资源不足不改状态。

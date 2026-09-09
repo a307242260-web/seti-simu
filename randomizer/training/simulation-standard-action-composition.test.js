@@ -228,6 +228,74 @@ const config = {
   activePlayerCount: 4,
   aiDifficulty: "weak_start",
 };
+{
+  // 快速交易移动须完整传递正式访问事件，触发任务仍由共享残余域结算。
+  const moving = createSimulationRuleComposition({ ...config, random: createSeededRandom(config.seed) });
+  assert.equal(moving.newGame(config).ok, true);
+  finishOpening(moving);
+  const rocketAbility = require("../game/abilities/rocket");
+  const rockets = require("../game/rockets");
+  let direction;
+  const scenario = restoreScenario(moving, (state, player) => {
+    removeCardDefinitions(state, ["b_2.webp"]);
+    player.reservedCards.push(createCard("b_2.webp"));
+    player.resources.energy = 8;
+    const mars = solar.createSolarSnapshot(state.solarSystem).planetLocations
+      .find(p => p.planetId === "mars");
+    const probe = { id: 9500, playerId: player.id, color: player.color,
+      playerSequence: 9500, surface: "solar-board" };
+    state.pieces.rockets.push(probe);
+    state.pieces.playerRocketSequences[player.id] = [
+      ...(state.pieces.playerRocketSequences[player.id] || []), 9500,
+    ];
+    state.meta.sequences.rocket = 9501;
+    for (const [x, y] of [[mars.x, mars.y - 1], [mars.x, mars.y + 1], [(mars.x + 1) % 8, mars.y]]) {
+      rockets.assignRocketToSlot(probe, x, y, 5);
+      const move = rocketAbility.listPlayerMoveChoices(state, player, { maxPoints: 1 }).find(m =>
+        m.rocketId === probe.id && (x + m.deltaX + 8) % 8 === mars.x && y + m.deltaY === mars.y);
+      if (move) { direction = move.directionId; break; }
+    }
+    assert.ok(direction, "fixture必须存在正式一步可达火星的移动");
+  });
+  const composition = moving.composition;
+  const trade = composition.inputPort.enumerateActions().find(a => a.target?.tradeId === "energy-for-move");
+  assert.ok(trade);
+  assert.equal(composition.inputPort.submitAction(trade).ok, true);
+  const moveDecision = composition.inspect().session.decision;
+  const move = moveDecision.choices.find(a => a.target.rocketId === 9500 && a.target.direction === direction);
+  assert.ok(move);
+  const submission = { decisionId: moveDecision.decisionId, decisionVersion: moveDecision.decisionVersion,
+    ownerId: moveDecision.ownerId, choice: move };
+  const before = composition.lifecycle.save().envelope;
+  assert.equal(composition.inputPort.submitDecision({ ...submission, ownerId: "wrong-owner" }).ok, false);
+  assert.deepEqual(composition.lifecycle.save().envelope, before);
+  const submitted = composition.inputPort.submitDecision(submission);
+  assert.equal(submitted.ok, true);
+  assert.equal(submitted.journal.events.filter(e => e.type === "move" && e.rocketId === 9500).length, 1);
+  assert.equal(submitted.journal.events.filter(e => e.type === "visitPlanet" && e.planetId === "mars").length, 1);
+  assert.equal(submitted.journal.events.filter(e => e.type === "quick_move").length, 1);
+  const reward = composition.inspect().session.decision;
+  assert.equal(reward.ownerId, scenario.turn.currentPlayerId);
+  assert.equal(reward.choices.filter(a => String(a.target?.ruleId).startsWith("b2-")).length, 3);
+  const pending = composition.lifecycle.save().envelope;
+  assert.equal(composition.inputPort.submitDecision(submission).ok, false);
+  assert.deepEqual(composition.lifecycle.save().envelope, pending);
+  const choice = reward.choices.find(a => a.target?.ruleId === "b2-visit-planet-energy");
+  const claim = { decisionId: reward.decisionId, decisionVersion: reward.decisionVersion,
+    ownerId: reward.ownerId, choice };
+  assert.equal(composition.inputPort.submitDecision(claim).ok, true);
+  const completed = composition.lifecycle.save().envelope;
+  const actor = JSON.parse(completed.committedState).players.players.find(p => p.id === reward.ownerId);
+  assert.equal(actor.resources.energy, 8, "仅支付一次移动能量、领取一次任务能量");
+  assert.deepEqual(actor.reservedCards.find(c => c.cardId === "b_2.webp").cardEffectState.consumedTriggerIds,
+    ["b2-visit-planet-energy"]);
+  assert.equal(composition.inputPort.submitDecision(claim).ok, false);
+  assert.deepEqual(composition.lifecycle.save().envelope, completed);
+  assert.equal(composition.lifecycle.restore(pending).ok, true);
+  assert.equal(composition.inputPort.submitDecision(claim).ok, true);
+  assert.deepEqual(composition.lifecycle.save().envelope, completed);
+  composition.dispose();
+}
 const kernel = createSimulationRuleComposition({
   ...config,
   random: createSeededRandom(config.seed),

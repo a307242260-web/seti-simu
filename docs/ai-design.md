@@ -33,7 +33,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 
 - **决策方案**（decision scheme）是一个可插拔接口：输入当前 viewer-safe observation
   与完整 legalActions，输出**至少下一步 `actionId`**；有完整计划时附带
-  `plan = { schemaVersion: "seti-action-plan-v2", nextActionId, steps[] }`
+  `plan = { schemaVersion: "seti-action-plan-v4", nextActionId, steps[] }`
   （`plan-continuation.js#buildPlanFromSnapshot`），供 simulation 复用判断。
   当前实现：`heuristic-decision-function.js`（反事实搜索 + 直调启发式 Policy，
   从 winning leaf 构建 plan）；Learned Policy 实现同一输出契约即可参与复用。
@@ -134,7 +134,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 - simulation 只依赖方案的输出契约，不关心方案内部（启发式搜索 / learned policy
   可插拔）；
 - 方案输出**至少包含下一步 `actionId`**；若有完整计划（winning leaf 链条 ≥ 2 步），
-  附带 `plan = { schemaVersion: "seti-action-plan-v2", nextActionId, steps[] }`
+  附带 `plan = { schemaVersion: "seti-action-plan-v4", nextActionId, steps[] }`
   （`plan-continuation.js#buildPlanFromSnapshot`），供复用判断；
 - 当前方案：`heuristic-decision-function.js`（统一反事实搜索——目标引导 + 需求引导
   单一路径 + 直调启发式 Policy + 从 winning leaf 构建 plan）；协调器
@@ -155,7 +155,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   - **控制动作特例（control-step-redecide）**：下一步是 `end_turn`/`pass` → 无条件重新决策，不盲从计划。主行动选择是每次决策最核心的评估，而 end_turn/pass 评估最便宜（control 路径 maxDepth=1）——winning leaf 链穿过回合边界（end_turn）rollout 时，新回合计划下一步为 end_turn 被盲目复用会跳过当前盘面上更有价值的主行动（同状态搜索选 place_data，fast-path 直接 end_turn，白方掉分）。48f0af3e 曾移除该特例（实测免电盘面 219 决策即终局、均分暴跌 AVG 27.3），已恢复 1d063418 口径。**注意区分**：本回合内（回合门控分支）end_turn 仍按计划正常推进；特例只作用于新回合的 `planReuseCheck`。
   - **① 揭示外星人**：已揭示槽位数 > 计划假设值 → 无条件重新决策（隐藏信息揭示）；
   - **② 计划依赖环节变化**（计划依赖的具体盘面事实变了）→ 重新决策：
-    - 路线：目标奖励格被占（终点行星标记数变化，不局限第一格，如奥陌陌登陆 3 格）/ 路线变长（移动步数增加）；
+    - 路线：正式终点奖励、费用、己方标记或移动路线变化；他人追加标记但这些事实相同不重搜；
     - 科技：计划要拿的科技 tile 被拿走（供应 remaining/bonus 变化）；
     - 扇区：目标扇区标记状态变化（赢不了了）；
     - 外星槽：目标外星痕迹槽被占；
@@ -165,23 +165,38 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 - 逐步证据：搜索在 current、折叠 settleChoice、连续 nextPlaceData 三类正式输入前，
   读取当前 fork 的完整同 viewer 观察，立即按信息屏障遮蔽并提取事实；成功提交后才
   加入 `leaf.planSteps`。既有 actionChain 和 executionStepCount 不改含义。
-- 依赖按每个 origin 当时的目标深度、routeTargetId、routePlanId 分段；每步取当前
+- 数据布局的blueSlots由公共观察生产者按物理slot排序，保存恢复造成的对象键序
+  变化不算布局变化；占用、解锁和科技位置变化仍触发依赖失效。
+- 公共依赖按每个 origin 当时的目标深度、routeTargetId及完成阶段的单向边界分段；
+  未完成步骤继承同目标后续明确奖励选择依赖，避免投入后才发现奖励变化；
+  已进入goalCompletionPending奖励阶段后，遇到未完成步骤即切断，不跨入下一次投入。
+  同目标切换routePlanId（如分析目标从卡牌取数据转为扫描）不切断公共依赖，但路线
+  来源仍限制在当前routePlanId子段。每步事实取该步执行前观察；每步取当前
   目标及该段后继具名选择所需事实的并集，包括路线、科技、扇区、数据布局、公共牌、
   外星痕迹、终局计分板块。`tileId`不是科技类型标记：正式`final:<tile>`选择依赖
   具名终局板块的占位与变体，科技选择依赖公共科技目录；未知身份或缺失事实显式miss。
   终局选择的依赖同样传递到同段前置end_turn，其他板块变化不使它失效。
+  自由决策（main/quick且非goalCompletionPending）另存`futureDependencies`：
+  从剩余真实步骤汇集具名scope，但每项事实取当前步骤开始时的预测状态，而非未来状态。
+  当前尚不存在的未来来源显式记录`present:false`；当前存在则记录`present:true,value`。
+  相关后续事实变化报`future-step-affected`；自己推进使用下一步的新基线。
+  conditional和目标完成后的强制奖励不扩大到后续目标；奖励排空后开始的下一次投入
+  也不倒灌旧目标。后续无效步骤使当前自由决策计划显式无效；旧v2/v3计划拒绝。
   探测器扫描来源选择（target.probeScanSource）还依赖实际所选探测器的位置、
   owner、存在性及扇区布局；可选择对手探测器的牌同样检查其变化。无关探测器
   移动不使该计划失效。这些事实不替代后续正式合法集与Decision版本检查。
   不能用整叶根目标或最终观察代替下一步状态。外星痕迹按 `slotId` 与
   `traces[traceType]` 定位，不按物种名称或数组下标定位。
 - 路线限定终点与正式sourceId（launch或具名rocket）；来源取当前/同目标最近probe、
-  同段后继原生动作或具名requirement，不比较同终点无关探测器。搜索标记
-  `goalCompletionPending` 后进入独立奖励段：已达成目标不再作为依赖，奖励选择仍检查。
+  当前routePlanId子段的后继原生动作或具名requirement，不由后续另一来源覆盖当前来源。
+  搜索标记`goalCompletionPending` 后当前步释放已达成目标依赖，只检查剩余奖励；
+  这不阻止完成前的步骤提前检查同目标奖励。
   公司第二艘的`movementPreparation`单独绑定其目标、planId和sourceId，不覆盖主路线。
-  当前移动输入还检查正式来源位置和移动阶段；路线依赖包含等成本首步及付费点，
+  当前移动输入还检查正式来源位置和移动阶段；路线依赖包含等成本首步、付费点与总资源成本，
   避免公司额度用尽或路线费用改变后误复用。条件后继保留每个origin的绑定，不能以
   actionId字典覆盖同一正式动作的不同目的；物理节点仍共享。
+  路线目录的`endpointFacts`来自正式奖励构建器、能力成本与终点己方标记及其位置；
+  奥陌陌读取自身面板。后续`REMOVE_PLANET_MARKER`还按planetId/kind/index建立具名依赖。
 - 多步消费：`advancePlan` 同时推进动作、依赖与揭示基线；旧结构、缺失事实或语义
   不对应显式 miss。计划只驻留协调器，reset/load 清空，失败提交不消费。
 - 探测来源（rollout v18）：`probe:<requirementId>`在根、后继、选靶及资源下界中精确
@@ -460,6 +475,10 @@ Primary(leaf)
 这些折扣是预期实现概率，不是第二套资源单价。非蓝科技每个剩余轮次的价值为：橙2=7，
 橙3=5，紫2/紫4=10；橙1/橙4/紫1/紫3=0。蓝科技只用下述正式奖励公式，
 TECH_UNIT_VALUES中的蓝1至4固定项为0，不再额外叠加旧每轮10/10/5/5。
+科技未来能力仅计未失效的已拥有板块：完整projection与轻量strategicFacts从公共
+techState同源提供disabledTechIds，经infrastructure传给共享科技potential，因此
+V、叶评分与搜索优先级都扣除失效能力。ownedTechIds、科技数量、已研究目标完成及
+正式计分仍按所有权处理；失效片不能重新研究同编号。
 
 宣传研究预期不再使用固定6宣传门槛与60价值。`outcome-model` 从同viewer的正式
 `techGainRequirements` 派生 `progress.researchOptions`（科技标识、正式宣传费用），轻量
@@ -567,16 +586,31 @@ Production的地球坐标、探测路线context及正式Action context直接读�
 忽略小行星限制），枚举、提交与路线预读共用`ignoresAsteroidRestriction`判定。
 探测拓扑缓存键包含该判定，开启或清除修正时结构缓存同步失效，不能沿用旧移动费用。
 
+探测候选结构键除永久techState外，还包含正式登陆费用读取者的有效橙3、请求玩家
+的有效橙4，均按正式回合上下文读取。临时借用建立、替换、清除或到期后，不得沿用
+旧登陆费用或旧卫星目录；无需清空拓扑缓存，钱电资源缺口仍在结构缓存外重算。
+
+图灵借科技的根目录和树内后继按当分支公开techState排除已拥有且未失效的橙/紫科技。
+供应中全是重复能力时不启用公司；已进入强制借用Decision且全重复时保留一个正式选择。
+刚完成借科技选择时不搜索同席立即`end_turn`的分支；正式合法集、人类操作、PASS及
+穿插行动后的结束不变。这两项是搜索支配剪枝，不是牌效偏好或完整用途绑定。
+
 扇区目录缓存按完整data、玩家id/color及每次正式计算的扫描来源/基础费用建立键，
 不再仅按data/tech/hand复用整个目录。旋转、公共牌、借用科技时点和公司费用变化
 都会反映到目录。水星来源从正式行星数组查找；accessSources表示潜在能力，不等于
 即时合法动作或免费收益，紫2追加宣传仍由正式扫描队列收费/跳过。基础费用是下界，
 不是包含所有可选科技追加支付的总价。
 
+标准扫描的绑定目标以完整`sector:win:扇区:结算序号`验证仍在正式候选目录中。
+当前行动及奖励排空后，过期目标不再生成扫描、资源准备或等待下一回合的后继；
+不能在旧来源中偷换成下一次结算。当前条件/奖励链仍完整执行，缺失候选目录显式报错。
+
 已处理来源与frontier合并共用完整originKey，包括根行动、根目标/路线、当前目标/路线、
 目标深度、PASS、待结算完成与信息遮蔽状态；不能因另一个根先到同一物理节点而删除后到
 根的收益归属。正常行动边界无选中后继时保留已结算实际状态，并以`route-unreachable`
 标明目标路线停止，不增加目标深度或未兑现收益；条件决策未完成时不使用此结束方式。
+目标已完成但没有后继统一标为`goal-completed`。`route-unreachable`非终局叶只保留实际
+结果，不参与优胜计划排序；全为不可用路线时返回`route-target-not-completed`。
 
 已完成目标且附带Decision全部排空后，如果还要继续搜索下一目标，先把该真实状态
 保存为`goal-completed`叶，再按原顺序展开。未完成目标仍只保存frontier诊断，不能冒充

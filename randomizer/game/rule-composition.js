@@ -2957,8 +2957,8 @@
                   .filter((route) => Boolean(route.action));
                 if (!selectedRoutes.length) {
                   unreachableRouteOriginCount += 1;
-                  // 当前动作已经完整结算；目标无法继续不应抹掉实际结果。
-                  // 条件决策分支仍不走此路径，未支付/未选完的状态不能冒充已结算叶。
+                  // 保留实际结果，但区分已完成终点与无法完成的准备路线；
+                  // 后者只用于诊断，不能因途中收益成为可执行计划。
                   addLeaf(
                     {
                       ...origin,
@@ -2966,7 +2966,7 @@
                       proxyDepth: nextProxyDepth,
                       quickTradeCount: nextQuickTradeCount,
                       routeActions: nextRouteActions,
-                      terminalReason: "route-unreachable",
+                      terminalReason: completedGoal ? "goal-completed" : "route-unreachable",
                     },
                     execution.leafObservation,
                     execution.successors,
@@ -3077,6 +3077,9 @@
                 quickTradeCount: nextQuickTradeCount,
                 routeActions: nextRouteActions,
                 focalPassStarted,
+                ...(secondaryAgentSearch ? {
+                  terminalReason: completedGoal ? "goal-completed" : "route-unreachable",
+                } : {}),
               },
               execution.leafObservation,
               execution.successors,

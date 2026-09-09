@@ -600,16 +600,20 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null, ses
   return finalizeProbeRequirements(player, structure, context.probeMovement);
 }
 
-// 探测候选结构缓存键：拓扑键（火箭/旋转/orange2/火箭上限）+ 行星标记 + 玩家科技 +
+// 探测候选结构缓存键：拓扑键（火箭/旋转/orange2/火箭上限）+ 行星标记 + 玩家科技/有效登陆能力 +
 // alien 痕迹（rewardEquivalentValue 的黄色痕迹来源）。玩家资源不入键——只影响
 // resourceGap，由 finalizeProbeRequirements 每节点便宜地重算。
 function probeStructureKey(workingState, player, context, sources) {
   const topologyKey = probeRouteTopologyKey(workingState, player, sources, context);
+  // 与正式登陆费用及卫星准入使用同一能力、同一回合上下文；借用字段不在techState内。
+  const currentPlayer = players.getCurrentPlayer(context.players, context.turn.currentPlayerId);
+  const landDiscount = players.playerOwnsTech(currentPlayer, "orange3", context) ? 1 : 0;
+  const satelliteAccess = players.playerOwnsTech(player, "orange4", context) ? 1 : 0;
   // 缓存键只需确定性相等（同内容→同键），stableSerialize 的键排序在每投影都
     // 全量重排（实测占采样 ~2.5%）；JSON.stringify 保留插入顺序且状态构建路径
     // 确定（parse→clone→mutate），同逻辑内容→同字符串。键格式是内部 Map 键，
     // 不外泄；即使顺序在极端路径下不同也只会缓存 miss（重算，结果正确）。
-    return `${topologyKey}|P${JSON.stringify(workingState.planets)}|T${JSON.stringify(player.techState)}|A${JSON.stringify(workingState.aliens)}`;
+    return `${topologyKey}|P${JSON.stringify(workingState.planets)}|T${JSON.stringify(player.techState)}|L${landDiscount},${satelliteAccess}|A${JSON.stringify(workingState.aliens)}`;
 }
 
 function buildProbeCandidateStructures(workingState, player, context, topology, sources) {
@@ -676,6 +680,11 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
           planetId: choice.planetId,
           endpointFamily: choice.actionType,
           endpointTarget: choice.target || { type: "planet" },
+          endpointFacts: {
+            rewards: structuredClone(effects),
+            cost: { ...endpointCost },
+            ownMarkers: probeEndpointOwnMarkers(workingState, player, choice.planetId),
+          },
           firstRewardSlotOpen: choice.target?.type !== "satellite"
             && Number(choice.markerSequence) === 1,
           targetBenefit: {
@@ -713,6 +722,23 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
     }
   }
   return candidates;
+}
+
+function probeEndpointOwnMarkers(state, player, planetId) {
+  const isAomomo = planetId === aliens.aomomo.PLANET_ID;
+  const record = isAomomo ? state.aliens.aomomo : state.planets.planets[planetId];
+  if (!record) throw new TypeError(`PROBE_ENDPOINT_MARKERS_MISSING: ${planetId}`);
+  const result = {};
+  for (const kind of ["orbitMarkers", "landingMarkers", "satelliteLandings"]) {
+    // 奥陌陌面板没有卫星，其余标记数组必须来自正式状态。
+    const markers = isAomomo && kind === "satelliteLandings" ? [] : record[kind];
+    if (!Array.isArray(markers)) throw new TypeError(`PROBE_ENDPOINT_MARKERS_MISSING: ${planetId}/${kind}`);
+    result[kind] = markers.flatMap((marker, index) => (
+      marker.playerId === player.id || marker.playerColor === player.color || marker.color === player.color
+        ? [{ index, marker: structuredClone(marker) }] : []
+    ));
+  }
+  return result;
 }
 
 function finalizeProbeRequirements(player, structureCandidates, movementContext) {
@@ -757,7 +783,7 @@ function finalizeProbeRequirements(player, structureCandidates, movementContext)
     || String(left.requirementId).localeCompare(String(right.requirementId))
   ));
   return {
-    schemaVersion: "seti-probe-route-requirements-v2",
+    schemaVersion: "seti-probe-route-requirements-v3",
     playerId: player.id,
     movementContext,
     candidates: ranked,

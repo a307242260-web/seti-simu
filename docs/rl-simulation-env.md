@@ -41,9 +41,11 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
   玩家切换不能沿用另一费用状态；Action、Observation与checkpoint外层schema不变。
 - `dispose()`：释放单局环境。
 
-机器玩家计划使用 `seti-action-plan-v2`：`steps` 逐项携带动作身份、执行前揭示基线和
+机器玩家计划使用 `seti-action-plan-v4`：`steps` 逐项携带动作身份、执行前揭示基线和
 具名依赖。搜索的折叠支付/连续数据提交也各有证据；同回合与跨回合均校验，只有控制
 动作的重决策例外受回合边界控制。计划不写入 checkpoint，恢复时清空。详见 AI 设计 §3。
+自由main/quick步骤还带`futureDependencies`，保存剩余具名scope在当前步骤的预期
+存在性与事实；强制奖励与完成后的下一次投入不跨边界。旧v2/v3计划显式拒绝。
 
 环境没有 pending inventory、resolver、recover、skip、DOM callback 或第二套规则 executor。
 未知 family、非法 descriptor、stale、wrong-owner 和版本不匹配都零副作用失败，失败输入不进入
@@ -55,6 +57,10 @@ confirmed replay。
 的收入不重复发放。本修复不追补旧错误存档已遗漏的历史收入，效果验证须新版本开局。
 
 ## Action 与 Decision
+
+公共玩家的`industryAbilityId`由正式`initialSelection.industry`经IndustryCatalog读取，
+未选公司或无主动能力时为null。它是公开公司身份，不包含手牌或公司私有状态；
+AI据此区分图灵借科技与其他公司科技选择，不改变actionId或存档schema。
 
 Simulation 决策路径使用共享 `inputPort` 的原生 Action（`seti-standard-action-v1`，
 零转换，Browser/Simulation 同一实现，见 docs/ai-design.md §1）；训练记录在协调器
@@ -95,6 +101,10 @@ snapshot；cheap仅供内部即时只读，不作为可跨执行持有的完整�
 
 卡牌效果的插收入选择与精选选择均在play-domain经共享`formalizeChoices`输出完整
 Standard Action身份；恢复存档时重新枚举，AI与浏览器不补写actionId/actorId。
+
+`probeRouteRequirements`目录为`seti-probe-route-requirements-v3`；候选的`endpointFacts`
+包含正式终点`rewards`、`cost`与`ownMarkers`，由正式奖励/成本来源生成。计划比较该事实
+和路线总资源成本，不按原始标记总数猜奖励；奥陌陌取自身面板。
 
 `probeRouteRequirements.movementContext`描述当前普通/公司/卡牌移动阶段：
 `phase`、`cardRemaining`、`companyAvailable`、`companyRemaining`、`usedRocketIds`，
@@ -170,6 +180,9 @@ Production地球坐标及探测/正式行动context通过共享太阳系内核�
 `{tileId, publicityCost}[]`，与轻量`strategicFacts.researchOptions`同源；只来自正式
 `techGainRequirements`，不推测隐藏奖励。该派生字段不写入Production状态或checkpoint。
 研究预期的状态差分与V分项见`docs/ai-design.md`。
+同一派生边界提供`outcomeProjection.progress.disabledTechIds`和
+`strategicFacts.disabledTechIds`，取公共techState中已拥有且失效的科技ID（无失效为[]）。
+它只影响能力未来估值；ownedTechIds、科技数量和正式计分不变，不写入Production状态。
 
 反事实叶可携带`executionStepCount`：实际成功提交的Action/Decision总数，包含节点内
 折叠步骤，不等于搜索节点数。Production搜索输出该计数；未提供此字段的非折叠叶以
@@ -191,6 +204,8 @@ usedKeys/claimedKeys、不发奖励或生成Decision；正式owner仍按原顺�
 下一目标；这是已执行路径的真实结果，不是尚待执行的frontier。后续触顶时仍可用于
 评估，outcome的pruned/低置信度标记保留。次级搜索已取消结束叶饱和计数；此叶不改变
 规则执行或正式存档schema。
+`route-unreachable`表示目标未完成；非终局时保留outcome供诊断，但不参与启发式优胜
+排序。全部叶仅为未完成路线时明确返回`route-target-not-completed`；正式终局仍按正式分。
 
 rollout v20沿用4096物理节点、256全局队列容量及30000ms搜索期限；根首步优先，
 队列为每个仍有frontier的根保留最优节点，再按统一优先级填充。去重保留完整状态、
@@ -230,7 +245,8 @@ rollout v18的搜索内部`executionEvents`只包含当前宏步成功提交新�
 蓝槽派生事实同样在Browser/Simulation共用的sanitize和outcome-model生成：
 `publicState.players[].blueBonusAssets`及`outcomeProjection.progress.blueBonusAssets`
 含`credits/energy/ordinaryCards`来源留存数量，不暴露对手牌身份；`dataProgress.blueSlots`
-含`tileId/slot/occupied/unlocked`，槽位前置条件来自正式data placement表。
+含`tileId/slot/occupied/unlocked`，按物理`slot`升序输出，不受科技对象插入顺序影响；
+槽位前置条件来自正式data placement表。
 轻量strategicFacts携带同样两项；原`blueBonusCount`只是当前占用数，不再用于奖励归因。
 自身可见卡的`blueBonusOwnerId`为来源标记，未知身份遮蔽仍移除整张卡身份及附加字段。
 来源字段仅供归因，不直接改变Primary或V的资源估值。

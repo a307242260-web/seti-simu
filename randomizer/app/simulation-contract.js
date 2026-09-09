@@ -1,6 +1,7 @@
 "use strict";
 
 const dataPlacement = require("../game/data/placement");
+const industryCatalog = require("../game/industry/catalog");
 
 const OBSERVATION_SCHEMA_VERSION = "seti-rl-observation-v1";
 
@@ -69,6 +70,7 @@ function sanitizePublicPlayer(player, finalScoreSummary) {
     : { totalScore: finalScoreSummary };
   return {
     playerId: player?.id || null,
+    industryAbilityId: industryCatalog.getIndustryDefinition(player?.initialSelection?.industry)?.activeAbilityId ?? null,
     color: player?.color || null,
     playerLabel: player?.colorLabel || player?.name || player?.id || null,
     score: Number(resources.score) || 0,
@@ -96,7 +98,7 @@ function sanitizePublicPlayer(player, finalScoreSummary) {
           tileId, slot: Number(slot),
           occupied: placedData.some((token) => token.placementKind === "blueBonus" && Number(token.blueSlot) === Number(slot)),
           unlocked: computerDataSlots.includes(dataPlacement.BLUE_BONUS_REQUIRED_COMPUTER_SLOT[slot]),
-        })),
+        })).sort((left, right) => left.slot - right.slot),
       analyzeReady: computerDataSlots.includes(6),
     },
     techState: clone(player?.techState || {}),

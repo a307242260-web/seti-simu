@@ -6,6 +6,29 @@ const evaluator = require("./expected-score-evaluator");
 
 const seatId = "strategic-seat";
 
+// 路线停止结果仍可诊断，但不能靠途中收益压过真实完成的前缀。
+{
+  const candidate = action("launch:purpose", "launch");
+  const complete = { leafId: "complete", terminalReason: "goal-completed",
+    status: "settled", actionChain: [candidate.actionId], observation: observation({ score: 3 }) };
+  const incomplete = { ...complete, leafId: "incomplete", terminalReason: "route-unreachable",
+    observation: observation({ score: 20 }) };
+  const outcome = { schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION,
+    actionId: candidate.actionId, status: "settled", rootObservation: observation(),
+    leaves: [incomplete, complete] };
+  const decide = (leaves) => evaluator.evaluateOutcome({ seatId,
+    actionOutcomes: [{ ...outcome, leaves }] }, candidate);
+  const before = JSON.stringify(outcome);
+  assert.equal(decide(outcome.leaves).selectedLeafId, "complete");
+  assert.equal(decide([incomplete]).selectable, false);
+  assert.ok(decide([incomplete]).reasonCodes.includes("route-target-not-completed"));
+  const terminal = structuredClone(incomplete);
+  terminal.observation.outcomeProjection.terminal = true;
+  terminal.observation.outcomeProjection.scoring.officialTerminalScore = 20;
+  assert.equal(decide([terminal]).selectable, true, "正式终局按正式分，不受规划目标限制");
+  assert.equal(JSON.stringify(outcome), before, "不可选叶仍完整保留，不能修改输入");
+}
+
 // 补数据的精选角标计划绑定具体公共牌，不把其他精选当成等效数据来源。
 {
   const play = { family: "play_card", actorId: seatId, target: { cardInstanceId: "grant" } };

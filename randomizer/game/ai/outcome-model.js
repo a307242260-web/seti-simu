@@ -150,6 +150,12 @@
       .sort();
   }
 
+  function disabledTechIds(publicPlayer) {
+    return ownedTechIds(publicPlayer).filter((tileId) => (
+      Boolean(publicPlayer?.techState?.disabledTiles?.[tileId])
+    ));
+  }
+
   function incomeFacts(publicPlayer) {
     const income = publicPlayer?.income || {};
     return {
@@ -211,6 +217,7 @@
         : realizedScore,
       securedEndGameBonus,
       ownedTechIds: ownedTechIds(publicPlayer),
+      disabledTechIds: disabledTechIds(publicPlayer),
       income: incomeFacts(publicPlayer),
       researchOptions: researchOptions(source, seatId),
       blueBonusAssets: clone(publicPlayer?.blueBonusAssets || {}),
@@ -399,6 +406,7 @@
         techCount: countTech(publicPlayer),
         orangeTechCount: countOrangeTech(publicPlayer),
         ownedTechIds: ownedTechIds(publicPlayer),
+        disabledTechIds: disabledTechIds(publicPlayer),
         income: incomeFacts(publicPlayer),
         researchOptions: researchOptions(source, seatId),
         blueBonusAssets: clone(publicPlayer?.blueBonusAssets || {}),

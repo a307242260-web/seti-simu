@@ -533,8 +533,8 @@ function publicCardIdsOf(observation) {
 }
 
 // 终点行星对应类型的标记数（环绕=orbitMarkers 数，登陆=landingMarkers 数，
-// 卫星=卫星登陆数）。标记数决定计划实际会拿到的奖励槽位——不局限第一格
-// （如奥陌陌登陆 3 个奖励格），标记数变化 = 目标奖励格被占/变化 = 依赖变化。
+// 卫星=卫星登陆数）。仅用于历史单依赖诊断；生产复用比较正式 endpointFacts，
+// 不将等额奖励下的他人新增标记误判为需要重新搜索。
 function endpointMarkerCount(observation, endpointTargetId) {
   const parts = String(endpointTargetId || "").split(":");
   const family = parts[0];
@@ -712,7 +712,7 @@ function countRevealedAliens(observation) {
 
 // 从 winning leaf 的真实提交证据构建版本化逐步计划；不使用宏节点 actionChain
 // 猜测折叠步骤，也不把整叶的单一依赖或最终观察当成下一步的执行前状态。
-const PLAN_SCHEMA_VERSION = "seti-action-plan-v2";
+const PLAN_SCHEMA_VERSION = "seti-action-plan-v4";
 
 // 只在正式提交前读取同viewer完整观察；立即复制小型事实，不跨步骤持有观察。
 function capturePlanStep({ observation, action }) {
@@ -749,8 +749,18 @@ function capturePlanStep({ observation, action }) {
       movementSteps: candidate.gap?.movementSteps ?? candidate.required?.movementSteps ?? null,
       movementNextSteps: structuredClone(candidate.movementNextSteps || [candidate.nextStep]),
       paidMovementPoints: candidate.required?.paidMovementPoints ?? null,
-      markers: endpointMarkerCount(observation, candidate.targetId),
+      requiredCost: candidate.required ? {
+        credits: candidate.required.credits, energy: candidate.required.energy,
+      } : null,
+      endpointFacts: structuredClone(candidate.endpointFacts ?? null),
     })),
+    planetMarkers: Object.fromEntries(Object.entries(board.planets.planets || {}).flatMap(([planetId, record]) => (
+      ["orbit", "land"].flatMap(kind => (record[kind === "orbit" ? "orbitMarkers" : "landingMarkers"] || [])
+        .flatMap((marker, index) => (
+          marker.playerId === actorId || (self.color != null && (marker.color === self.color || marker.playerColor === self.color))
+            ? [[`${planetId}:${kind}:${index}`, structuredClone(marker)]] : []
+        )))
+    ))),
     tech: structuredClone(board.techSupply.stacks || {}),
     finalTiles: Object.fromEntries(Object.entries(board.finalScoring?.tiles || {}).map(([id, tile]) => [id, {
       tile: structuredClone(tile), variant: board.finalScoring?.tileVariants?.[id],
@@ -771,7 +781,12 @@ function stepScopes(step, segment) {
   const add = (kind, id) => scopes.set(`${kind}:${id}`, { kind, id: String(id) });
   function addRoute(targetId) {
     const candidates = step.facts.routes.filter((route) => route.targetId === targetId);
-    const actions = [step.action, step.probeAction, ...segment.map((item) => item.action)];
+    // 公共选择依赖覆盖同一目标；路线身份仍只在当前来源子段内寻找。
+    const actions = [step.action, step.probeAction];
+    for (const item of segment) {
+      if (item.routePlanId !== step.routePlanId) break;
+      actions.push(item.action);
+    }
     let route = null;
     for (const action of actions) {
       if (!["move", "orbit", "land"].includes(action?.family) || action.target?.rocketId == null) continue;
@@ -838,6 +853,9 @@ function stepScopes(step, segment) {
   for (const item of segment) {
     if (item.action.family === "scan") add("scan-earth", "standard");
     const target = item.action.target || {};
+    if (target.planetId && ["orbit", "land"].includes(target.kind) && Number.isInteger(target.index)) {
+      add("planet-marker", `${target.planetId}:${target.kind}:${target.index}`);
+    }
     if (target.probeScanSource === true) add("probe-scan-source", target.rocketId);
     if (target.tileId) {
       const choiceId = String(target.choiceId || "");
@@ -876,9 +894,13 @@ function scopedFact(facts, scope) {
   if (scope.kind === "route") {
     const routes = facts.routes.filter((item) => item.targetId === scope.id && item.sourceId === scope.sourceId)
       .sort((a, b) => String(a.requirementId).localeCompare(String(b.requirementId)));
-    return routes.length && routes.every((item) => item.markers != null && item.movementSteps != null)
+    return routes.length && routes.every((item) => item.endpointFacts?.rewards != null
+      && item.endpointFacts.cost != null && item.endpointFacts.ownMarkers != null
+      && Number.isFinite(item.requiredCost?.credits) && Number.isFinite(item.requiredCost?.energy)
+      && item.movementSteps != null)
       ? routes : undefined;
   }
+  if (scope.kind === "planet-marker") return facts.planetMarkers?.[scope.id];
   if (scope.kind === "tech") return facts.tech[scope.id];
   if (scope.kind === "final-tile") {
     const fact = facts.finalTiles?.[scope.id];
@@ -897,13 +919,14 @@ function scopedFact(facts, scope) {
 }
 
 function compilePlanSteps(steps) {
-  return steps.map((step, index) => {
+  const compiled = steps.map((step, index) => {
     const segment = [];
     for (let next = index; next < steps.length; next += 1) {
       const item = steps[next];
       if (item.goalDepth !== step.goalDepth || item.routeTargetId !== step.routeTargetId
-        || item.routePlanId !== step.routePlanId
-        || Boolean(item.goalCompletionPending) !== Boolean(step.goalCompletionPending)) break;
+        || (segment.at(-1)?.goalCompletionPending === true && item.goalCompletionPending !== true)) break;
+      // 未完成目标需要提前检查其奖励；已进入奖励后不能跨回下一次目标投入。
+      // stepScopes仍按当前步完成状态释放旧目标，事实仍取当前步提交前观察。
       segment.push(item);
     }
     const selected = stepScopes(step, segment);
@@ -917,6 +940,44 @@ function compilePlanSteps(steps) {
       reason: selected.reason || (missing ? "plan-dependency-fact-missing" : null),
       dependencies };
   });
+  // 后续目标只借用scope身份；其预期事实必须取当前步骤，不能取未来步骤。
+  const suffixScopes = new Map();
+  let suffixValid = true;
+  for (let index = steps.length - 1; index >= 0; index -= 1) {
+    const step = steps[index], result = compiled[index];
+    // 目标奖励排空后开始的下一次投入不属于旧目标后缀；反向扫描在该单向边界
+    // 清空下一目标事实，再收集当前奖励，供更早的本次投入检查。
+    if (step.goalCompletionPending === true && steps[index + 1]?.goalCompletionPending !== true) {
+      suffixScopes.clear();
+      suffixValid = true;
+    }
+    const freeDecision = ["main", "quick"].includes(step.action.phase)
+      && step.goalCompletionPending !== true;
+    const currentScopes = new Set(result.dependencies.map(d => stableSerialize(d.scope)));
+    result.futureDependencies = freeDecision ? [...suffixScopes.entries()]
+      .filter(([key]) => !currentScopes.has(key))
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([, scope]) => ({ scope, fact: scopedPresence(step.facts, scope) })) : [];
+    if (freeDecision && !suffixValid && result.valid) {
+      result.valid = false;
+      result.reason = "plan-future-step-invalid";
+    }
+    suffixValid = suffixValid && result.valid;
+    for (const dependency of result.dependencies) {
+      suffixScopes.set(stableSerialize(dependency.scope), dependency.scope);
+    }
+  }
+  return compiled;
+}
+
+// 后续目标当前可能尚不存在（例如计划稍后发射的第二艘），显式区分缺席与事实内容。
+function scopedPresence(facts, scope) {
+  const value = scopedFact(facts, scope);
+  if (value === undefined && scope.kind === "route"
+    && facts.routes.some(item => item.targetId === scope.id && item.sourceId === scope.sourceId)) {
+    throw new TypeError("PLAN_FUTURE_ROUTE_FACT_INCOMPLETE: 已存在的后续路线缺少正式事实");
+  }
+  return value === undefined ? { present: false } : { present: true, value: structuredClone(value) };
 }
 
 function planFromSteps(steps) {
@@ -999,6 +1060,14 @@ function planReuseCheck(plan, currentObservation, legalActions, options = {}) {
     }
     if (stableSerialize(currentFact) !== stableSerialize(dependency.fact)) {
       return Object.freeze({ hit: false, reason: "next-step-affected", affected: dependency.scope });
+    }
+  }
+  if (!Array.isArray(step.futureDependencies)) {
+    return Object.freeze({ hit: false, reason: "plan-future-evidence-missing" });
+  }
+  for (const dependency of step.futureDependencies) {
+    if (stableSerialize(scopedPresence(facts, dependency.scope)) !== stableSerialize(dependency.fact)) {
+      return Object.freeze({ hit: false, reason: "future-step-affected", affected: dependency.scope });
     }
   }
   return Object.freeze({ hit: true, action: current, nextPlan: advancePlan(plan) });
