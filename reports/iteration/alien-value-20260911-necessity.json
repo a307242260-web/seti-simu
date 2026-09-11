@@ -1,0 +1,87 @@
+{
+  "kind": "synthetic-valuation-diagnostic",
+  "date": "2026-09-11",
+  "codeCommit": "a41129fa255fd431efc8c0e2aad73f0d7872d11d",
+  "results": [
+    {
+      "name": "首痕迹：正式即时5分与终局2分已投影",
+      "actualScoreDelta": 7,
+      "primaryValue": 18.5,
+      "vDelta": 16.5,
+      "rootTraces": 0,
+      "leafTraces": 1,
+      "leafSlot": {
+        "slotId": 1,
+        "revealed": false,
+        "alienId": null,
+        "ownFirstTraces": 1,
+        "ownExtraMarks": 0,
+        "firstTracesComplete": false
+      }
+    },
+    {
+      "name": "他人追加痕迹不改变我方任何收益",
+      "actualScoreDelta": 0,
+      "primaryValue": 10,
+      "vDelta": 0,
+      "rootTraces": 1,
+      "leafTraces": 1,
+      "leafSlot": {
+        "slotId": 1,
+        "revealed": true,
+        "alienId": "chong",
+        "ownFirstTraces": 1,
+        "ownExtraMarks": 1,
+        "firstTracesComplete": false
+      }
+    },
+    {
+      "name": "我在他人首痕迹下追加：正式3分",
+      "actualScoreDelta": 3,
+      "primaryValue": 3,
+      "vDelta": 3,
+      "rootTraces": 0,
+      "leafTraces": 0,
+      "leafSlot": {
+        "slotId": 1,
+        "revealed": true,
+        "alienId": "chong",
+        "ownFirstTraces": 0,
+        "ownExtraMarks": 0,
+        "firstTracesComplete": false
+      }
+    },
+    {
+      "name": "仅揭示公共身份，我方无首痕迹与奖励",
+      "actualScoreDelta": 0,
+      "primaryValue": 21,
+      "vDelta": 6,
+      "rootTraces": 0,
+      "leafTraces": 0,
+      "leafSlot": {
+        "slotId": 1,
+        "revealed": true,
+        "alienId": "chong",
+        "ownFirstTraces": 0,
+        "ownExtraMarks": 0,
+        "firstTracesComplete": false
+      }
+    },
+    {
+      "name": "混合归属三色齐",
+      "actualScoreDelta": 0,
+      "primaryValue": 11.5,
+      "vDelta": 9.5,
+      "rootTraces": 0,
+      "leafTraces": 1,
+      "leafSlot": {
+        "slotId": 1,
+        "revealed": false,
+        "alienId": null,
+        "ownFirstTraces": 1,
+        "ownExtraMarks": 0,
+        "firstTracesComplete": false
+      }
+    }
+  ]
+}
