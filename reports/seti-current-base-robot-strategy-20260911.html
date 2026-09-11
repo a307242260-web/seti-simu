@@ -298,7 +298,7 @@
         <tbody>
           <tr data-kind="goal"><td>探测：环绕/登陆</td><td>先删资源不可达与同目标 Pareto 劣势路线；主星各取最近环绕、最近登陆；卫星只保留木星/土星，末轮再含天王星/海王星。</td><td>路线比较移动点、移动步数、钱电成本、目标等价收益与沿途宣传；第一奖励格被占不直接删目标，交真实叶估值判断。</td><td><span class="tag live">目标策略</span></td></tr>
           <tr data-kind="goal"><td>探测：准备</td><td>下一步可由正式 launch/move/orbit/land、免费发射牌、移动牌或最小损失资源交易推进。</td><td>普通移动方向只在具名探测目标下准入；寰宇公司移动也不能作为无目标移动补回。</td><td><span class="tag live">需求驱动</span></td></tr>
-          <tr data-kind="goal"><td>数据与分析</td><td><code>data:analyze</code> 从 place_data / acquire_data / analyze 连成同一目标。数据不足时只考虑正式扫描、数据牌或数据角标牌。</td><td>放置选位优先资源缺口：钱≤1→蓝1，电≤1→蓝2，手牌≤1→蓝3，宣传≤1→蓝4；数据池满则先放计算机，否则目标内默认推进计算机槽。</td><td><span class="tag live">目标策略</span></td></tr>
+          <tr data-kind="goal approx"><td>数据与分析</td><td><code>data:analyze</code> 从 place_data / acquire_data / analyze 连成同一目标。数据不足时只考虑正式扫描、数据牌或数据角标牌。</td><td>当前放置选位按固定阈值和顺序选择：钱≤1→蓝1，电≤1→蓝2，手牌≤1→蓝3，宣传≤1→蓝4；数据池满则先放计算机，否则目标内默认推进计算机槽。<p class="amber">待改进 · 2026-09-11 用户认为上述固定阈值与优先级策略不好，已列入 <a href="iteration/strategy-todo-20260911.md">迭代 TODO · DATA-PLACEMENT-01</a>。替代方案待设计，当前实现仍生效。</p></td><td><span class="tag approx">待迭代</span></td></tr>
           <tr data-kind="goal"><td>扇区结算</td><td>从正式扫描/卡牌 access source 中，为可达扇区选择所需己方标记更少、空槽更少的候选。</td><td>目标 ID 带结算序号；旧结算已过期就停止扫描、交易或跨回合等待，不偷换成下一次结算。</td><td><span class="tag live">目标策略</span></td></tr>
           <tr data-kind="goal"><td>收入</td><td>收入目标可由卡牌、公司、探测路线或计算机第 4 格完成；资源不足时接最小损失交易。</td><td>只奖励真实收入增量的未来发放窗口；公司初始收入是终局公式基数，不算“新增”。</td><td><span class="tag live">目标策略</span></td></tr>
           <tr data-kind="goal approx"><td>科技</td><td>对正式可研究科技做未来效用预筛，每次只让 Top 3 计划进搜索；研究行动、免费研究牌或宣传准备可作为入口。</td><td>背面奖励、研究即时分和 6 宣传支付由真实反事实结算，不在预筛中猜；失效科技仍算拥有/计分，但未来能力为 0。</td><td><span class="tag approx">候选近似</span></td></tr>
@@ -455,6 +455,7 @@
         <li><a href="../randomizer/game/rule-composition.js">rule-composition.js</a>：隔离反事实执行、frontier、预算、叶与诊断。</li>
       </ul></details>
       <details><summary>版本、文档与完整局</summary><ul>
+        <li><a href="iteration/strategy-todo-20260911.md">机器人策略迭代 TODO</a>：策略审阅中的待改进项与验收方向。</li>
         <li><a href="../docs/ai-design.md">docs/ai-design.md</a>：机器玩家设计参考；本报告的具体策略以所标注提交的生产源码为准。</li>
         <li><a href="research/cc9eb28a.f607c6e5.full.json">完整局研究记录</a>：572 步、搜索诊断、动作计数与运行元数据。</li>
         <li><a href="iteration/round5-correctness-base-20260909/cc9eb28a.f607c6e5.full.action-log.html">逐步行动复盘</a>：按玩家回合聚合的可视化回放。</li>
