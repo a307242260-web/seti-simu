@@ -370,10 +370,11 @@
         </tbody>
       </table></div>
       <h3>外星目的价值</h3>
+      <p class="amber">P0 · 最高优先级待办 · <a href="iteration/strategy-todo-20260911.md">ALIEN-VALUE-01</a>：用户认为当前外星估值逻辑缺乏合理依据，优先核对额外痕迹的真实归属，并重审固定未来估值及重复计分。下列为当前实现，不代表已认可的策略；尚未修复。</p>
       <div class="grid grid-3">
         <div class="card metric"><strong>5</strong><span>每个新增痕迹的未来价值；即时分另由真实分差捕获</span></div>
         <div class="card metric"><strong>15</strong><span>三色齐揭示的期望价值</span></div>
-        <div class="card metric"><strong>3 / 轮 + 4</strong><span>已揭示时，每个新增位置标记统一估值为 3 × max(1, 剩余轮数) + 4；未逐位置区分奖励</span></div>
+        <div class="card metric"><strong>3 / 轮 + 4</strong><span>前后均已揭示时，ownExtraMarks 每增加 1，估值增加 3 × max(1, 剩余轮数) + 4；计数取自本席首痕迹所在类别的 extraCount，未逐个核对额外标记主人，不是新增奖励格</span></div>
       </div>
     </section>
 
