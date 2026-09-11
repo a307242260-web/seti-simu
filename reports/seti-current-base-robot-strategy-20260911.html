@@ -327,6 +327,7 @@
       </div>
       <p class="amber">待迭代 · <a href="iteration/strategy-todo-20260911.md">ROUND-PLAN-01</a>：尽量提前规划整轮内的多个主行动与资源安排；end_turn 后继续考虑自己下一次行动，PASS 才结束自己的本轮行动规划。执行中根据局势变化调整剩余计划。此为迭代方向，尚未实现。</p>
       <h3>树内未绑定动作</h3>
+      <p class="amber">待迭代 · <a href="iteration/strategy-todo-20260911.md">GOAL-ONLY-01</a>：没有目标可以不尝试，不必按固定动作优先级展开普通未绑定后继；目标完成后可先寻找下一目标。必需结算与合法的结束/退出流程保留。此为迭代方向，尚未实现。</p>
       <p>目标完成后或未绑定阶段允许继续形成新目标。普通未绑定后继按 family 基础顺序加净资源收益排序：<code>orbit/land 9</code>、<code>launch 8</code>、<code>research 7</code>、<code>move/scan/analyze/place_data 6</code>、<code>play_card 5</code>、<code>industry 3</code>、<code>quick_trade 2</code>、<code>card_corner/complete_task 1</code>。但 <strong>move、quick_trade、card_corner 实际从未绑定后继排除</strong>，只能经目标绑定进入。</p>
       <div class="callout warn"><strong>完整性不是穷举。</strong> max depth、未绑定深度、beam 与节点预算都是显式有损边界；已有真实叶即使遭裁剪仍可保持 settled，但 searchCompleteness 必须标 incomplete。没有叶时为 unresolved，frontier 不能冒充收益。</div>
       <h3>隐藏信息与失败</h3>
