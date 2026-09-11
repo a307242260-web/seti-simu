@@ -25,6 +25,18 @@
       "quick_trade"
     ]
   },
+  "forkBoundary": {
+    "actor": "player-white",
+    "families": [
+      "scan",
+      "play_card",
+      "pass",
+      "move",
+      "quick_trade",
+      "card_corner",
+      "place_data"
+    ]
+  },
   "nextOwnTurn": {
     "round": 1,
     "turn": 5,
@@ -42,6 +54,43 @@
   "endReuse": {
     "hit": false,
     "reason": "step-not-legal"
+  },
+  "passAfterNewOpportunity": {
+    "hit": true,
+    "resources": {
+      "credits": 2,
+      "energy": 1,
+      "publicity": 2
+    },
+    "addedActions": [
+      "{\"family\":\"move\",\"payload\":{\"direction\":\"cw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":1,\"deltaY\":0,\"rocketId\":3}}",
+      "{\"family\":\"move\",\"payload\":{\"direction\":\"ccw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":-1,\"deltaY\":0,\"rocketId\":3}}",
+      "{\"family\":\"move\",\"payload\":{\"direction\":\"out\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":0,\"deltaY\":1,\"rocketId\":3}}",
+      "{\"family\":\"quick_trade\",\"payload\":{\"cost\":{\"energy\":1},\"gain\":{}},\"target\":{\"tradeId\":\"energy-for-move\"}}"
+    ]
+  },
+  "passAfterUnplannedTrade": {
+    "hit": true,
+    "selfBefore": {
+      "credits": 3,
+      "energy": 2,
+      "publicity": 2
+    },
+    "selfAfter": {
+      "credits": 4,
+      "energy": 0,
+      "publicity": 2
+    },
+    "removedActions": [
+      "{\"family\":\"move\",\"payload\":{\"direction\":\"cw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":1,\"deltaY\":0,\"rocketId\":3}}",
+      "{\"family\":\"move\",\"payload\":{\"direction\":\"ccw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":-1,\"deltaY\":0,\"rocketId\":3}}",
+      "{\"family\":\"move\",\"payload\":{\"direction\":\"out\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":0,\"deltaY\":1,\"rocketId\":3}}",
+      "{\"family\":\"quick_trade\",\"payload\":{\"cost\":{\"energy\":2},\"gain\":{\"handSize\":1}},\"target\":{\"tradeId\":\"energy-for-card\"}}",
+      "{\"family\":\"quick_trade\",\"payload\":{\"cost\":{\"energy\":1},\"gain\":{}},\"target\":{\"tradeId\":\"energy-for-move\"}}",
+      "{\"family\":\"quick_trade\",\"payload\":{\"cost\":{\"energy\":2},\"gain\":{\"credits\":1}},\"target\":{\"tradeId\":\"energy-for-credit\"}}",
+      "{\"family\":\"scan\",\"payload\":{},\"target\":{\"kind\":\"standard-scan\"}}"
+    ],
+    "addedActions": []
   },
   "passDependencies": [],
   "passFutureDependencies": [],
@@ -223,6 +272,14 @@
     {
       "actor": "player-brown",
       "family": "choose_card"
+    },
+    {
+      "actor": "player-white",
+      "family": "quick_trade"
+    },
+    {
+      "actor": "player-white",
+      "family": "quick_trade"
     }
   ]
 }

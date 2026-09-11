@@ -18,6 +18,10 @@ function boundary() {
   return { round: observation.publicState.roundNumber, turn: observation.publicState.turnNumber,
     actor: env.legalActions()[0]?.actorId, families: [...new Set(env.legalActions().map(a => a.family))] };
 }
+function resourcesFor(playerId) {
+  const player = env.observe().publicState.players.find(p => p.playerId === playerId);
+  return {credits:player.credits,energy:player.energy,publicity:player.publicity};
+}
 try {
   env.reset(fixture.config);
   const progress = new Map();
@@ -47,6 +51,20 @@ try {
   const end = env.legalActions().find(a => a.family === "end_turn");
   const endSteps = plans.compilePlanSteps([{ ...plans.capturePlanStep({action:end, observation:env.observe()}), goalDepth:0 }]);
   const endPlan = {schemaVersion:plans.PLAN_SCHEMA_VERSION, nextActionId:end.actionId, steps:endSteps};
+  const fork = env.createCounterfactualFork(null, {branchKey:"turn-boundary-proof"});
+  const comp = fork.composition || fork;
+  let forkBoundary;
+  try {
+    const forkEnd = comp.inputPort.enumerateActions({}).find(a => a.family === "end_turn");
+    assert.equal(comp.inputPort.submitAction(forkEnd).ok, true);
+    assert.equal(comp.counterfactualPort.advanceFocalPlanningTurn(focal).ok, true);
+    const actions = comp.inputPort.enumerateActions({});
+    assert.equal(actions[0].actorId, focal);
+    assert(!actions.some(a => a.family === "end_turn"));
+    assert(actions.some(a => a.family === "pass"));
+    forkBoundary = {actor:actions[0].actorId, families:[...new Set(actions.map(a => a.family))]};
+  } finally { comp.dispose(); }
+  assert.deepEqual(boundary(), afterMain, "隔离fork不得修改正式根状态");
   submit(end);
   for (let guard = 0; env.legalActions()[0]?.actorId !== focal; guard++) {
     assert(guard < 40);
@@ -62,10 +80,30 @@ try {
   const pass = env.legalActions().find(a => a.family === "pass");
   const passSteps = plans.compilePlanSteps([{...plans.capturePlanStep({action:pass,observation:env.observe()}),goalDepth:0}]);
   const passPlan = {schemaVersion:plans.PLAN_SCHEMA_VERSION,nextActionId:pass.actionId,steps:passSteps};
-  console.log(JSON.stringify({before,afterMain,nextOwnTurn,endReuse,
+  const unchangedPassSameTurn = plans.planReuseCheck(passPlan,env.observe(),env.legalActions(),{sameTurn:true}).hit;
+  const unchangedPassNewTurn = plans.planReuseCheck(passPlan,env.observe(),env.legalActions(),{sameTurn:false});
+  const resourcesBefore = resourcesFor(focal);
+  const legalBefore = env.legalActions().map(plans.actionSemanticKey);
+  submit(env.legalActions().find(a => a.family === "quick_trade" && a.target.tradeId === "energy-for-credit"));
+  const resourcesAfter = resourcesFor(focal);
+  assert.notDeepEqual(resourcesAfter, resourcesBefore, "真实交易必须改变本席资源");
+  const legalAfter = env.legalActions().map(plans.actionSemanticKey);
+  const changedPassReuse = plans.planReuseCheck(passPlan,env.observe(),env.legalActions(),{sameTurn:true});
+  assert.equal(changedPassReuse.hit, true, "复现：空依赖PASS没有发现真实交易带来的变化");
+  const lowEnergyPass = env.legalActions().find(a => a.family === "pass");
+  const lowEnergySteps = plans.compilePlanSteps([{...plans.capturePlanStep({action:lowEnergyPass,observation:env.observe()}),goalDepth:0}]);
+  const lowEnergyPlan = {schemaVersion:plans.PLAN_SCHEMA_VERSION,nextActionId:lowEnergyPass.actionId,steps:lowEnergySteps};
+  submit(env.legalActions().find(a => a.family === "quick_trade" && a.target.tradeId === "credits-for-energy"));
+  const gainedActions = env.legalActions().map(plans.actionSemanticKey).filter(k => !legalAfter.includes(k));
+  assert(gainedActions.length > 0, "增加能量须恢复真实行动机会");
+  const regainedPassReuse = plans.planReuseCheck(lowEnergyPlan,env.observe(),env.legalActions(),{sameTurn:true});
+  assert.equal(regainedPassReuse.hit, true, "复现：出现新机会，旧PASS仍命中");
+  console.log(JSON.stringify({before,afterMain,forkBoundary,nextOwnTurn,endReuse,
+    passAfterNewOpportunity:{hit:regainedPassReuse.hit,resources:resourcesFor(focal),addedActions:gainedActions},
+    passAfterUnplannedTrade:{hit:changedPassReuse.hit, selfBefore:resourcesBefore,selfAfter:resourcesAfter,
+      removedActions:legalBefore.filter(k => !legalAfter.includes(k)),addedActions:legalAfter.filter(k => !legalBefore.includes(k))},
     passDependencies:passSteps[0].dependencies,
     passFutureDependencies:passSteps[0].futureDependencies,
-    unchangedPassSameTurn:plans.planReuseCheck(passPlan,env.observe(),env.legalActions(),{sameTurn:true}).hit,
-    unchangedPassNewTurn:plans.planReuseCheck(passPlan,env.observe(),env.legalActions(),{sameTurn:false}),
+    unchangedPassSameTurn, unchangedPassNewTurn,
     inputs}, null, 2));
 } finally { env.dispose(); }
