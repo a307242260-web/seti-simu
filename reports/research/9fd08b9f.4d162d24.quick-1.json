@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "seti-research-validation-record-v1",
+  "name": "alien-facts-20260911",
+  "fingerprint": "9fd08b9f297085186b2fa59f9b13f7b8107fd5c0e2e92378984af5a8eb10ad66",
+  "mode": "quick-1",
+  "seed": "seti-free-analyze-v1",
+  "activePlayerCount": 4,
+  "aiDifficulty": "laughable",
+  "policyVersion": "seti-heuristic-policy-v0",
+  "flags": {},
+  "createdAt": "2026-09-11T09:24:45.201Z",
+  "gitCommit": "4d162d24",
+  "steps": 1,
+  "stepsLimit": 1,
+  "terminal": false,
+  "wallMs": 62,
+  "resumedFrom": null,
+  "resumeStep": 0,
+  "savePath": "seti-saves/seti-save-research-alien-facts-20260911-4d162d24-quick-1-v1.json",
+  "summary": {
+    "round": 1,
+    "terminal": false,
+    "scores": {
+      "player-blue": 0,
+      "player-green": 0,
+      "player-brown": 0,
+      "player-white": 0
+    },
+    "avgScore": 0
+  },
+  "metrics": {
+    "famsBySeat": {
+      "player-white": {
+        "choose_card": 1
+      }
+    },
+    "whiteQuickTrade": 0,
+    "whiteResearchSteps": [],
+    "traceEvents": [],
+    "revealEvents": [],
+    "budgetHits": [],
+    "searches": []
+  }
+}

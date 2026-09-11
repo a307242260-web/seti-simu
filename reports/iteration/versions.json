@@ -7,6 +7,27 @@
   },
   "versions": [
     {
+      "id": "alien-facts-20260911",
+      "name": "alien-facts-20260911",
+      "date": "2026-09-11",
+      "baseline": "round5-correctness-base-20260909",
+      "head": "4d162d24",
+      "commits": [
+        "9210f173",
+        "4d162d24"
+      ],
+      "summary": "复用正式痕迹计数，纠正额外标记归属、混合三色齐和槽位标识；估值公式保持不变",
+      "records": {
+        "9fd08b9f.4d162d24.full.json": {
+          "note": "ALIEN-FACTS-01 插入式归属修复：从 a41129fa 开工，598步自然终局，98/130/73/78，均94.75，654.9秒；159次搜索，执行截断35、frontier截断36、规则失败节点0。unit82通过/2项已确认基线失败，fullFlow通过。只修事实归属，固定外星溢价尚未修复；完整矩阵见 alien-value-20260911-design.md。比较基线f607c6e5与开工点之间含诊断和文档变更，不将提交区间全部计为本项贡献。"
+        },
+        "9fd08b9f.4d162d24.quick-1.json": {
+          "note": "1步开局检查；完整局从该存档续跑，不重复前缀。该记录不是完整局或战略搜索性能验收。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "round5-correctness-base-20260909",
       "name": "round5-correctness-base-20260909",
       "date": "2026-09-09",
