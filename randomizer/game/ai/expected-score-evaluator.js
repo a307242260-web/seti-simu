@@ -282,7 +282,6 @@
   // 权重全部校准自用户 405 档（v-state-design 第 3 节）。
   // =====================================================================
   const V_INCOME_MULTIPLIER = 1.4; // 收入复利放大（收入→更多行动→更多分）
-  const UNREVEALED_FIRST_TRACE_VALUE = 5; // 未来揭示奖励的保守预期，不是即时分或终局分。
   const V_CARD_EFFECT_VALUE = 6; // 手牌可打效果期望（科技/收入/移动/登陆链）
 
   function evaluateStateValue(observation, seatId) {
@@ -331,11 +330,8 @@
     // 与Primary同源的科技未来窗口；当轮用途由正式后继路线体现。
     const techEfficiencyValue = infrastructureTechPotential(stateValue);
 
-    // 尚未兑现的首痕迹奖励；揭示后交给正式奖励与已有手牌估值，不再附加位置收益。
-    const alienSlots = projection.progress?.alienSlots || [];
-    const alienValue = alienSlots.reduce((total, slot) => total + (
-      slot?.revealed ? 0 : Math.max(0, finite(slot?.ownFirstTraces)) * UNREVEALED_FIRST_TRACE_VALUE
-    ), 0);
+    // 待获得与已持有外星牌使用同一单价；揭示仅转换权益，不重复计入。
+    const alienValue = alienCardPotential(stateValue);
 
     // 准备类：手牌/保留牌可打效果期望（2026-08-18 修复根因 2——卡价值与获取路径
     // 绑定）。手牌价值 = 可打效果链期望（按卡面效果估算），不是固定 +6/张：
@@ -352,6 +348,7 @@
     const handCards = (selfState?.hand || selfPublic?.hand || []).filter(Boolean);
     const reservedCards = (selfState?.reservedCards || []).filter(Boolean);
     const handEffectValue = (cards) => cards.reduce((total, card) => {
+      if (outcomeModel.isAlienCard(card)) return total; // 已在alienValue按统一牌价值计入。
       const effects = cardEffects?.buildPlayEffects?.(card) || [];
       let value = 0;
       for (const effect of effects) {
@@ -630,11 +627,7 @@
     const incomeValue = incomeFutureValue(
       incomeDelta, leafInfrastructure.roundNumber, leafInfrastructure.finalRoundNumber,
     );
-    // 即时分和已有终局计分已包含在正式分差中，只补新增、仍未揭示的首痕迹权益。
-    const alienPurposeValue = alienPurposeDelta(
-      rootInfrastructure.alienSlots || [],
-      leafInfrastructure.alienSlots || [],
-    );
+    const alienPurposeValue = alienCardPotential(leafValue) - alienCardPotential(rootValue);
     return {
       total: techValue + incomeValue + alienPurposeValue,
       remainingRounds,
@@ -646,12 +639,12 @@
     };
   }
 
-  function alienPurposeDelta(rootSlots, leafSlots) {
-    const roots = new Map(rootSlots.map(slot => [slot.slotId, slot]));
-    return leafSlots.reduce((total, leaf) => total + (leaf.revealed ? 0 : (
-      positiveDelta(leaf.ownFirstTraces, roots.get(leaf.slotId)?.ownFirstTraces)
-      * UNREVEALED_FIRST_TRACE_VALUE
-    )), 0);
+  function alienCardPotential(value) {
+    if (value.terminal) return 0;
+    const pendingCards = value.infrastructure.alienSlots.reduce((total, slot) => total + (
+      slot.revealed ? 0 : Math.max(0, finite(slot.ownFirstTraces))
+    ), 0);
+    return (pendingCards + value.resourceFacts.alienCards) * resourceUnitValue("alienCard");
   }
 
   function leafValue(rootValue, leafValueState, parameters) {

@@ -52,7 +52,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/heuristic-policy.test.js", "policy/heuristic-policy", "启发式策略确定性选择且只返回 legal actionId", "空集、畸形配置、未知或 disabled action 未 fail-closed"),
     entry("randomizer/game/ai/strategic-goal-evaluator.test.js", "policy/heuristic-policy", "战略目标读取标准叶收益；未完成路线不可选，完成前缀及正式终局保留", "资源库存、未兑现路线或途中收益让失败准备压过完成目标"),
     entry("randomizer/game/ai/heuristic-evaluator.test.js", "policy/heuristic-evaluator", "估值稳定排序且不修改 observation/descriptors", "tie-break 漂移、条件选择漏惩罚或输入被改写"),
-    entry("randomizer/game/ai/terminal-value.test.js", "policy/heuristic-evaluator", "终局正式分唯一决定叶价值；非终局外星项仅补新增未揭示首痕迹奖励预期", "正式分重复计入、公共揭示或额外痕迹获得虚构收益、轻量优先级与叶不一致"),
+    entry("randomizer/game/ai/terminal-value.test.js", "policy/heuristic-evaluator", "终局正式分唯一决定叶价值；外星牌待获得、持有、使用共用12分且正确交接", "揭示发牌时重复或丢失牌价值、持牌与效果重算、公共揭示或额外痕迹虚构收益"),
     entry("randomizer/game/ai/score-corner-target.test.js", "policy/heuristic-evaluator", "正式得分角标按实例准入并完成，非得分角标不无条件放行", "得分角标在PASS前被漏评或其他实例离手误判完成"),
     entry("randomizer/game/ai/disabled-tech-value.test.js", "policy/heuristic-evaluator", "科技失效保留所有权和计数，但V/叶排序/搜索未来能力价值归零", "赫利昂将新紫2失效换收入仍获得20点未来科技价值"),
     entry("randomizer/game/ai/resource-value.test.js", "policy/heuristic-evaluator", "Policy、标准叶、轻量事实与V共用资源单价和真实未来收入窗口", "钱电单价颠倒、折价方向反转、末轮虚构收入或非钱电被错误折价"),
@@ -97,7 +97,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/aliens/jiuzhe.test.js", "rules/aliens", "九折物种机会队列与卡牌规则", "跳序、重复机会或未知卡牌执行"),
     entry("randomizer/game/aliens/runezu.test.js", "rules/aliens", "符文族 symbol 与分支规则", "未知 symbol 或已消费分支重放"),
     entry("randomizer/game/aliens/yichangdian.test.js", "rules/aliens", "异常点物种奖励与推进规则", "不足条件或重复推进成功"),
-    entry("randomizer/game/aliens/reveal-card-grants.test.js", "rules/aliens", "外星揭示卡奖励按 owner 唯一发放", "非参与者或重复揭示获得奖励"),
+    entry("randomizer/game/aliens/reveal-card-grants.test.js", "rules/aliens", "外星揭示卡奖励按owner唯一发放，六种真实发牌均进入统一持牌估值", "非参与者获奖、正式观察漏掉已获牌或牌价值重复"),
     entry("randomizer/game/aliens/trace-placement-legality.test.js", "rules/aliens", "外星痕迹槽位、类型与 owner 合法性", "满槽、错类型或越权放置成功"),
 
     entry("randomizer/game/final-scoring.test.js", "rules/scoring", "终局计分板选择、占位与分数", "非法 tile、重复标记或错 owner 得分"),

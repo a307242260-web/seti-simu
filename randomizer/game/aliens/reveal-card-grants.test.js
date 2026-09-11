@@ -9,6 +9,9 @@ const chong = require("./chong");
 const amiba = require("./amiba");
 const aomomo = require("./aomomo");
 const runezu = require("./runezu");
+const contract = require("../../app/simulation-contract");
+const outcomeModel = require("../ai/outcome-model");
+const evaluator = require("../ai/expected-score-evaluator");
 
 let alienSequence = 1;
 const takeSequence = () => alienSequence++;
@@ -80,6 +83,19 @@ for (const module of [yichangdian, banrenma, chong, amiba, aomomo, runezu]) {
   assert.equal(players[2].hand.length, 0, `${module.ALIEN_ID} white should receive no cards`);
   assert.equal(players[0].resources.handSize, 2, `${module.ALIEN_ID} red handSize should sync`);
   assert.equal(players[1].resources.handSize, 1, `${module.ALIEN_ID} blue handSize should sync`);
+  // 使用真实发到手中的牌及正式sanitize路径，验证六种发牌奖励都进入同一12分资产。
+  for (const player of players) {
+    const observation = outcomeModel.createDecisionObservation({
+      publicState: { players: players.map(p => contract.sanitizePublicPlayer(p)),
+        board: { aliens: contract.sanitizeAlienPublicState(alienState) } },
+      selfState: contract.sanitizeSelfPlayer(player),
+    }, { seatId: player.id });
+    const expected = player.hand.length * 12;
+    assert.equal(observation.outcomeProjection.assets.alienCards, player.hand.length);
+    assert.equal(evaluator.evaluateStateValue(observation, player.id).components.alienValue, expected);
+    assert.equal(evaluator.evaluateStateValue(observation, player.id).components.cardValue, 0,
+      `${module.ALIEN_ID} 的真实外星牌不可再计第二次牌面效果价值`);
+  }
 }
 
 console.log("aliens/reveal-card-grants.test.js ok");

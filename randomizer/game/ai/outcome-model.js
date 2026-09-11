@@ -664,6 +664,7 @@
     REWARD_SCHEMA_VERSION,
     VALUE_SCHEMA_VERSION,
     ASSET_PATHS,
+    isAlienCard,
     createStrategicFacts,
     createOutcomeProjection,
     createDecisionObservation,

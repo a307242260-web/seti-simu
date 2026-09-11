@@ -131,7 +131,7 @@ for (const vStateValueEnabled of [false, true]) {
 // 外星估值：已有正式分只计一次，只有新增未揭示首痕迹补未来奖励预期。
 {
   function alienObservation({ first = 0, extra = 0, revealed = false, round = 1,
-    score = 0, secured = 0, reverse = false } = {}) {
+    score = 0, secured = 0, reverse = false, alienCards = 0 } = {}) {
     const slots = [{ slotId: 1, revealed, traces: Object.fromEntries(
       ["yellow", "pink", "blue"].map((color, index) => [color, {
         firstPlaced: index < first, ownerPlayerColor: index < first ? "red" : null,
@@ -142,7 +142,9 @@ for (const vStateValueEnabled of [false, true]) {
     return outcomeModel.createDecisionObservation({ publicState: { roundNumber: round,
       players: [{ id: seatId, color: "red", resources: { score }, securedEndGameBonus: secured }],
       board: { aliens: { slots: reverse ? slots.reverse() : slots } } },
-      selfState: { id: seatId, hand: [] } }, { seatId });
+      selfState: { id: seatId, hand: Array.from({ length: alienCards }, (_, index) => ({
+        id: `alien-${index}`, kind: "alien", cardId: "b_117.webp",
+      })) } }, { seatId });
   }
   function value(rootObs, leafObs) {
     const action = { actionId: "trace", family: "choose_target", phase: "conditional" };
@@ -159,16 +161,22 @@ for (const vStateValueEnabled of [false, true]) {
   for (const round of [1, 2, 4]) {
     const rootObs = alienObservation({ round });
     const firstObs = alienObservation({ round, first: 1, score: 5, secured: 2 });
-    assert.equal(value(rootObs, firstObs), 12, "即时5+锁定2+未揭示首痕迹预期5");
+    assert.equal(value(rootObs, firstObs), 19, "正式收益7+一张待获得外星牌12");
     assert.equal(value(firstObs, firstObs), 0, "已有首痕迹不能重复加预期");
     assert.equal(value(firstObs, alienObservation({ round, first: 1, score: 8, secured: 2, extra: 1 })), 3);
     assert.equal(value(rootObs, alienObservation({ round, revealed: true })), 0, "公共揭示不发个人分");
-    assert.equal(value(firstObs, alienObservation({ round, first: 1, score: 5, secured: 2, revealed: true })), 0,
-      "已有首痕迹揭示不另加分，也不凭既有预期消失惩罚主评分");
+    const delivered = alienObservation({ round, first: 1, score: 5, secured: 2, revealed: true, alienCards: 1 });
+    assert.equal(value(firstObs, delivered), 0, "揭示：待获得减1、持有加1，价值连续");
+    assert.equal(expectedScore.evaluateStateValue(delivered, seatId).total,
+      expectedScore.evaluateStateValue(firstObs, seatId).total, "V中的揭示转换也不加分或丢分");
+    assert.equal(expectedScore.evaluateStateValue(delivered, seatId).components.cardValue, 0,
+      "外星牌不再按牌面效果第二次计入V");
+    assert.equal(value(delivered, alienObservation({ round, first: 1, revealed: true, score: 25, secured: 2 })), 8,
+      "用牌获得20正式分，扣回12持牌预期，净变化8");
     for (const first of [1, 2, 3]) {
       const leaf = alienObservation({ round, first, reverse: true });
-      assert.equal(value(rootObs, leaf), first * 5, "按slotId匹配且凑齐没有额外溢价");
-      assert.equal(expectedScore.evaluateStateValue(leaf, seatId).components.alienValue, first * 5);
+      assert.equal(value(rootObs, leaf), first * 12, "槽位重排不影响待获得牌数量，凑齐无额外溢价");
+      assert.equal(expectedScore.evaluateStateValue(leaf, seatId).components.alienValue, first * 12);
       const revealed = alienObservation({ round, first, revealed: true, score: 9 });
       assert.equal(value(rootObs, revealed), 9, "已兑现叶只按正式收益，不保留未揭示预期");
       assert.equal(expectedScore.evaluateStateValue(revealed, seatId).components.alienValue, 0);

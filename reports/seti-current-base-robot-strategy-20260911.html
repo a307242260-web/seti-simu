@@ -213,7 +213,7 @@
       </div>
       <div class="grid grid-3" style="margin-top:16px">
         <div class="card"><h3>策略范式</h3><p>目标引导 + 需求引导。探测、分析、扇区、收入、科技先形成具名目标，再绑定主动作和资源准备动作。</p></div>
-        <div class="card"><h3>价值范式</h3><p>以真实叶的已兑现分为主，加科技未来效用、收入窗口、新增未揭示首痕迹奖励预期与宣传研究机会；不为 action family 固定送分。</p></div>
+        <div class="card"><h3>价值范式</h3><p>以真实叶的已兑现分为主，加科技未来效用、收入窗口、外星人牌价值变化与宣传研究机会；不为 action family 固定送分。</p></div>
         <div class="card"><h3>执行范式</h3><p>Browser 与 Simulation 共用协调器、决策函数和规则内核。计划命中时直接复用；非法、过期、缺 owner 或执行失败全部显式失败。</p></div>
       </div>
     </section>
@@ -342,7 +342,7 @@
     <section id="value">
       <div class="section-kicker">07 / VALUE MODEL</div>
       <h2>叶到底值多少</h2>
-      <div class="formula"><strong>Primary(leaf)</strong> = Δ(已兑现分 + 已锁定终局分) + Δ科技未来效用 + 新增收入的未来发放价值 + 新增未揭示首痕迹奖励预期 + Δ宣传研究机会</div>
+      <div class="formula"><strong>Primary(leaf)</strong> = Δ(已兑现分 + 已锁定终局分) + Δ科技未来效用 + 新增收入的未来发放价值 + Δ外星人牌价值 + Δ宣传研究机会</div>
       <p>这是对<strong>真实执行后叶状态</strong>的评价，不是动作标签分。一个 launch、move 或 play_card 本身没有固定奖励；只有当整条真实行动链兑现分数、能力、收入或目标进度时才有价值。</p>
       <div class="grid grid-2">
         <div class="card"><h3>统一资源单位表</h3><div class="table-wrap"><table>
@@ -370,9 +370,9 @@
         </tbody>
       </table></div>
       <h3>外星目的价值</h3>
-      <p><a href="iteration/alien-expectation-20260911-design.md">ALIEN-VALUE-01</a>：仅保留未揭示首痕迹的未来奖励预期。事实归属已修复；本次估值修正的验收进度见迭代记录。</p>
+      <p><a href="iteration/alien-expectation-20260911-design.md">ALIEN-VALUE-01</a>：未揭示首痕迹代表一张待获得外星牌，与持有牌统一按12计值；揭示只转换权益，使用时扣回持牌预期再计真实效果。参数调优留给后续。</p>
       <div class="grid grid-3">
-        <div class="card metric"><strong>5 / 首痕迹</strong><span>本搜索新增、到叶仍未揭示的我方首痕迹奖励预期；沿用估值参数，不是规则得分</span></div>
+        <div class="card metric"><strong>12 / 外星牌</strong><span>价值=(待获得牌数+持有牌数)×12；主评分取状态差，V只计一次，终局仅保留正式分</span></div>
         <div class="card metric"><strong>正式收益</strong><span>即时分与已锁定终局分只计一次；公共揭示和额外痕迹没有独立固定溢价</span></div>
         <div class="card metric"><strong>按实际归属</strong><span>额外标记逐个按主人计数；三色齐允许不同主人，不因别人追加而增加我方预期</span></div>
       </div>
