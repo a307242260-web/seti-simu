@@ -1,0 +1,100 @@
+{
+  "source": "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-full-v276.json",
+  "terminal": true,
+  "scans": [
+    {
+      "step": 33,
+      "actor": "player-white",
+      "poolBefore": 0,
+      "discardedBefore": 0,
+      "poolAfter": 2,
+      "discardedAfter": 0
+    },
+    {
+      "step": 129,
+      "actor": "player-green",
+      "poolBefore": 0,
+      "discardedBefore": 0,
+      "poolAfter": 2,
+      "discardedAfter": 0
+    },
+    {
+      "step": 147,
+      "actor": "player-green",
+      "poolBefore": 0,
+      "discardedBefore": 0,
+      "poolAfter": 2,
+      "discardedAfter": 0
+    },
+    {
+      "step": 186,
+      "actor": "player-white",
+      "poolBefore": 0,
+      "discardedBefore": 0,
+      "poolAfter": 4,
+      "discardedAfter": 0
+    },
+    {
+      "step": 207,
+      "actor": "player-green",
+      "poolBefore": 0,
+      "discardedBefore": 0,
+      "poolAfter": 2,
+      "discardedAfter": 0
+    },
+    {
+      "step": 361,
+      "actor": "player-white",
+      "poolBefore": 0,
+      "discardedBefore": 0,
+      "poolAfter": 4,
+      "discardedAfter": 0
+    },
+    {
+      "step": 381,
+      "actor": "player-brown",
+      "poolBefore": 0,
+      "discardedBefore": 0,
+      "poolAfter": 3,
+      "discardedAfter": 0
+    },
+    {
+      "step": 412,
+      "actor": "player-brown",
+      "poolBefore": 0,
+      "discardedBefore": 0,
+      "poolAfter": 3,
+      "discardedAfter": 0
+    },
+    {
+      "step": 436,
+      "actor": "player-white",
+      "poolBefore": 0,
+      "discardedBefore": 0,
+      "poolAfter": 3,
+      "discardedAfter": 0
+    },
+    {
+      "step": 469,
+      "actor": "player-white",
+      "poolBefore": 0,
+      "discardedBefore": 0,
+      "poolAfter": 3,
+      "discardedAfter": 0
+    }
+  ],
+  "deferred": [
+    {
+      "step": 36,
+      "pool": 2,
+      "nextTurnPlaceDataLegal": true,
+      "scope": "正式end_turn加不模拟对手的可信focal推进；不推断对手抢占或被动收益"
+    },
+    {
+      "step": 38,
+      "pool": 1,
+      "nextTurnPlaceDataLegal": true,
+      "scope": "正式end_turn加不模拟对手的可信focal推进；不推断对手抢占或被动收益"
+    }
+  ]
+}
