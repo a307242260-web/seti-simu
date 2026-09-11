@@ -237,13 +237,13 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 已废弃）。**搜索机制为单一路径**：去掉 bounded 分桶与 `unifiedSearch`
 开关，off 分桶语义（strategic/bounded/control 三桶 + 目标门控）删除，以下行为恒生效：
 
-- `expected-score-evaluator#requiresRootCounterfactual`：quick_trade 需求门控
-  （prepares*：为当前资源缺口补资源才评估）；
-- `expected-score-evaluator#selectSecondaryAgentRootActions`：返回**目标绑定动作 +
-  需求放行的目的型动作**（`UNIFIED_PURPOSE_FAMILIES` = quick_trade/card_corner/
-  industry，凭需求进搜索，不平铺全部候选）；
-- `rule-composition#evaluate`：`allowUntargetedRootActions` 恒 true，需求动作以
-  targetId=null 进初始 frontier（L4a 放开）；未绑定 origin 展开 ≤3 层
+- `expected-score-evaluator#requiresRootCounterfactual`：仅区分 control 与非 control；
+  end_turn/pass 返回 false，其他动作返回 true，不在此按资源缺口筛选；
+- `expected-score-evaluator#selectSecondaryAgentRootActions`：仅返回**目标目录
+  compatibleActionIds 绑定的合法动作**。quick_trade/card_corner/industry 同样必须
+  经目标准入，资源准备由目标目录负责，不存在按 UNIFIED_PURPOSE_FAMILIES 额外放行；
+- `rule-composition#evaluate`：`allowUntargetedRootActions` 恒 true，但不绕过上述
+  调用方根准入；内核对传入动作绑定目录目标，未绑定 origin 展开 ≤3 层
   （`MAX_UNTARGETED_DEPTH`）即收束 pruned（浅尝，防无限深挖）；
 - `expected-score-evaluator#selectSecondaryAgentSuccessors`：`!routeTargetId` 分支
   返回 targeted + 合格未绑定后继（按 family 基础价值 + 净资源收益排序）+ controls，
@@ -254,9 +254,10 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   扩展覆盖探测行动目标（orbit:/land:/move: 前缀），card:/decision: 卡牌身份目标
   仍保留全部 choice；弃牌会话延续层（actionChain 末尾已是 choose_payment）直接
   收束（toggle 振荡防死）；
-- **quick 根截断**（`QUICK_ROOT_FAMILIES` = move/quick_trade/industry/card_corner/
-  runezu_face_symbol/complete_task）：目的型/铺垫型 quick 根未绑定时，下一个主行动
-  决策只给 control（end_turn/pass）→ 叶 = 立即效果，不搭后续主行动便车
+- **quick 根截断**（`QUICK_ROOT_FAMILIES` = quick_trade/card_corner/industry/place_data/
+  runezu_face_symbol/complete_task，不含 move）：在未绑定后继分支，根动作属于该集合、
+  到达主行动决策且没有 targeted 后继时，只返回 control（end_turn/pass），
+  不继续展开后续主行动
   （leafValue 是整链价值，不按动作分摊；全放行时 quick_trade 87/card_corner 65
   虚高导致乱做）；
 - **bounded 桶已删除**：play_card 经目标绑定进入搜索（income:card 收入牌 /

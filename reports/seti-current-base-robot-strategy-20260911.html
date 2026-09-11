@@ -441,6 +441,7 @@
         </tbody>
       </table></div>
       <h3>当前最值得做的三件事</h3>
+      <p>文档口径已核对：requiresRootCounterfactual() 仅排除 end_turn/pass，其他动作返回 true；实际根准入由目标目录 compatibleActionIds 完成。QUICK_ROOT_FAMILIES 包含 place_data、不含 move，设计文档与相关源码注释已同步；本次未改变策略行为。</p>
       <div class="grid grid-3">
         <div class="card"><h3>1 · 先打长尾</h3><p>围绕 27 个 4096 节点战略搜索和 32 个 beam 裁剪点，找不可能完成、无收益或仅非语义差异造成的分支；不调启发式权重补分。</p></div>
         <div class="card"><h3>2 · 核验有效方案</h3><p>按目标准入、路线推进、奖励排空和计划执行逐项检查，确认搜索保留的方案能够完成目标并兑现收益。</p></div>

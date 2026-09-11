@@ -37,9 +37,8 @@
   // docs/project-progress/unified-search-design-20260817.md §3 项 9）。
   // 统一搜索的"需求放行"family：目的型动作——本身没有独立价值，价值来自
   // "满足当前需求"（quick_trade 补资源缺口 / card_corner 弃牌角标收益 /
-  // industry 公司能力）。unified 下这些动作凭需求进搜索（requiresRootCounterfactual
-  // 已按缺口过滤 quick_trade），叶价值由 quick 根截断限制为立即效果；其余未绑定
-  // 动作保持目标绑定评估（不平铺进搜索树）。
+  // industry 公司能力）。根准入由目标目录的 compatibleActionIds 负责；
+  // requiresRootCounterfactual 仅排除 control，本集合不参与根动作额外放行。
   const UNIFIED_PURPOSE_FAMILIES = Object.freeze(new Set([
     "quick_trade", "card_corner", "industry",
   ]));
@@ -450,9 +449,8 @@
     });
   }
 
-  // 共享缺口判定（审查清理项 7）：quick_trade 是否缩小探测目标缺口——入口门控
-  // （requiresRootCounterfactual）与出口目的检查（quickTradePurpose）共用同一实现，
-  // 避免同一判定写两遍（缺口口径变更时只需改一处）。
+  // quickTradePurpose 的出口目的检查：quick_trade 是否缩小探测目标缺口。
+  // 根准入由目标目录负责，requiresRootCounterfactual 不调用此判定。
   function quickTradeReducesProbeGap(observation, action, seatId) {
     return (rawProbeRequirements(observation)?.candidates || [])
       .some((goal) => {
