@@ -1,0 +1,222 @@
+{
+  "capacity": 6,
+  "scope": "只证明获得给定数量数据前腾容量的必要性，不证明扫描实际获得数量或策略已支持",
+  "cases": [
+    {
+      "pool": 3,
+      "incoming": 1,
+      "immediate": {
+        "prepared": 0,
+        "received": 1,
+        "poolAfter": 4,
+        "placed": 0,
+        "discarded": 0
+      },
+      "prepared": {
+        "prepared": 0,
+        "received": 1,
+        "poolAfter": 4,
+        "placed": 0,
+        "discarded": 0
+      }
+    },
+    {
+      "pool": 3,
+      "incoming": 2,
+      "immediate": {
+        "prepared": 0,
+        "received": 2,
+        "poolAfter": 5,
+        "placed": 0,
+        "discarded": 0
+      },
+      "prepared": {
+        "prepared": 0,
+        "received": 2,
+        "poolAfter": 5,
+        "placed": 0,
+        "discarded": 0
+      }
+    },
+    {
+      "pool": 3,
+      "incoming": 3,
+      "immediate": {
+        "prepared": 0,
+        "received": 3,
+        "poolAfter": 6,
+        "placed": 0,
+        "discarded": 0
+      },
+      "prepared": {
+        "prepared": 0,
+        "received": 3,
+        "poolAfter": 6,
+        "placed": 0,
+        "discarded": 0
+      }
+    },
+    {
+      "pool": 4,
+      "incoming": 1,
+      "immediate": {
+        "prepared": 0,
+        "received": 1,
+        "poolAfter": 5,
+        "placed": 0,
+        "discarded": 0
+      },
+      "prepared": {
+        "prepared": 0,
+        "received": 1,
+        "poolAfter": 5,
+        "placed": 0,
+        "discarded": 0
+      }
+    },
+    {
+      "pool": 4,
+      "incoming": 2,
+      "immediate": {
+        "prepared": 0,
+        "received": 2,
+        "poolAfter": 6,
+        "placed": 0,
+        "discarded": 0
+      },
+      "prepared": {
+        "prepared": 0,
+        "received": 2,
+        "poolAfter": 6,
+        "placed": 0,
+        "discarded": 0
+      }
+    },
+    {
+      "pool": 4,
+      "incoming": 3,
+      "immediate": {
+        "prepared": 0,
+        "received": 2,
+        "poolAfter": 6,
+        "placed": 0,
+        "discarded": 1
+      },
+      "prepared": {
+        "prepared": 1,
+        "received": 3,
+        "poolAfter": 6,
+        "placed": 1,
+        "discarded": 0
+      }
+    },
+    {
+      "pool": 5,
+      "incoming": 1,
+      "immediate": {
+        "prepared": 0,
+        "received": 1,
+        "poolAfter": 6,
+        "placed": 0,
+        "discarded": 0
+      },
+      "prepared": {
+        "prepared": 0,
+        "received": 1,
+        "poolAfter": 6,
+        "placed": 0,
+        "discarded": 0
+      }
+    },
+    {
+      "pool": 5,
+      "incoming": 2,
+      "immediate": {
+        "prepared": 0,
+        "received": 1,
+        "poolAfter": 6,
+        "placed": 0,
+        "discarded": 1
+      },
+      "prepared": {
+        "prepared": 1,
+        "received": 2,
+        "poolAfter": 6,
+        "placed": 1,
+        "discarded": 0
+      }
+    },
+    {
+      "pool": 5,
+      "incoming": 3,
+      "immediate": {
+        "prepared": 0,
+        "received": 1,
+        "poolAfter": 6,
+        "placed": 0,
+        "discarded": 2
+      },
+      "prepared": {
+        "prepared": 2,
+        "received": 3,
+        "poolAfter": 6,
+        "placed": 2,
+        "discarded": 0
+      }
+    },
+    {
+      "pool": 6,
+      "incoming": 1,
+      "immediate": {
+        "prepared": 0,
+        "received": 0,
+        "poolAfter": 6,
+        "placed": 0,
+        "discarded": 1
+      },
+      "prepared": {
+        "prepared": 1,
+        "received": 1,
+        "poolAfter": 6,
+        "placed": 1,
+        "discarded": 0
+      }
+    },
+    {
+      "pool": 6,
+      "incoming": 2,
+      "immediate": {
+        "prepared": 0,
+        "received": 0,
+        "poolAfter": 6,
+        "placed": 0,
+        "discarded": 2
+      },
+      "prepared": {
+        "prepared": 2,
+        "received": 2,
+        "poolAfter": 6,
+        "placed": 2,
+        "discarded": 0
+      }
+    },
+    {
+      "pool": 6,
+      "incoming": 3,
+      "immediate": {
+        "prepared": 0,
+        "received": 0,
+        "poolAfter": 6,
+        "placed": 0,
+        "discarded": 3
+      },
+      "prepared": {
+        "prepared": 3,
+        "received": 3,
+        "poolAfter": 6,
+        "placed": 3,
+        "discarded": 0
+      }
+    }
+  ]
+}
