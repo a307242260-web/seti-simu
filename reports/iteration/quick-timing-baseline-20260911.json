@@ -1,0 +1,996 @@
+{
+  "source": "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-full-v276.json",
+  "productionCommit": "31a2e43b",
+  "steps": 541,
+  "method": "按正式action.phase和输入前round/turn/actor归组；条件选择不算独立快速行动；不据动作名称推断是否限时",
+  "counts": {
+    "before-main:place_data": 21,
+    "after-main:place_data": 40,
+    "before-main:industry": 3,
+    "after-main:card_corner": 4,
+    "after-main:move": 12,
+    "after-main:quick_trade": 14,
+    "before-main:card_corner": 9,
+    "before-main:quick_trade": 2,
+    "before-main:move": 6,
+    "after-main:industry": 3
+  },
+  "late": [
+    {
+      "step": 36,
+      "turn": "1:1:player-white",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 38,
+      "turn": "1:1:player-white",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 63,
+      "turn": "1:4:player-brown",
+      "main": "play_card",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 65,
+      "turn": "1:4:player-brown",
+      "main": "play_card",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 67,
+      "turn": "1:4:player-brown",
+      "main": "play_card",
+      "family": "card_corner",
+      "target": {
+        "cardInstanceId": "card-9-0"
+      },
+      "payload": {
+        "kind": "resource",
+        "multiplier": 1
+      },
+      "summary": "b_109.webp：弃牌角标"
+    },
+    {
+      "step": 68,
+      "turn": "1:4:player-brown",
+      "main": "play_card",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 78,
+      "turn": "1:7:player-blue",
+      "main": "launch",
+      "family": "move",
+      "target": {
+        "rocketId": 3,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "payload": {
+        "direction": "cw",
+        "requiredMovePoints": 1
+      },
+      "summary": "移动探测器 3 顺时针"
+    },
+    {
+      "step": 80,
+      "turn": "1:7:player-blue",
+      "main": "launch",
+      "family": "move",
+      "target": {
+        "rocketId": 3,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payload": {
+        "direction": "out",
+        "requiredMovePoints": 1
+      },
+      "summary": "移动探测器 3 向外"
+    },
+    {
+      "step": 111,
+      "turn": "1:14:player-green",
+      "main": "research_tech",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 113,
+      "turn": "1:14:player-green",
+      "main": "research_tech",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "cards-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2张牌 → 1能量"
+    },
+    {
+      "step": 132,
+      "turn": "1:18:player-green",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 134,
+      "turn": "1:18:player-green",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 136,
+      "turn": "1:18:player-green",
+      "main": "scan",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "step": 151,
+      "turn": "2:1:player-green",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 153,
+      "turn": "2:1:player-green",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 165,
+      "turn": "2:5:player-green",
+      "main": "research_tech",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "cards-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2张牌 → 1能量"
+    },
+    {
+      "step": 169,
+      "turn": "2:5:player-green",
+      "main": "research_tech",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "step": 180,
+      "turn": "2:7:player-brown",
+      "main": "orbit",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "cards-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2张牌 → 1能量"
+    },
+    {
+      "step": 192,
+      "turn": "2:8:player-white",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 194,
+      "turn": "2:8:player-white",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 196,
+      "turn": "2:8:player-white",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 198,
+      "turn": "2:8:player-white",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 201,
+      "turn": "2:8:player-white",
+      "main": "scan",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "step": 202,
+      "turn": "2:8:player-white",
+      "main": "scan",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "cards-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2张牌 → 1能量"
+    },
+    {
+      "step": 211,
+      "turn": "2:9:player-green",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 213,
+      "turn": "2:9:player-green",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 230,
+      "turn": "2:12:player-white",
+      "main": "research_tech",
+      "family": "move",
+      "target": {
+        "rocketId": 6,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payload": {
+        "direction": "out",
+        "requiredMovePoints": 1
+      },
+      "summary": "移动探测器 6 向外"
+    },
+    {
+      "step": 232,
+      "turn": "2:12:player-white",
+      "main": "research_tech",
+      "family": "move",
+      "target": {
+        "rocketId": 6,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payload": {
+        "direction": "ccw",
+        "requiredMovePoints": 1
+      },
+      "summary": "移动探测器 6 逆时针"
+    },
+    {
+      "step": 250,
+      "turn": "2:14:player-blue",
+      "main": "play_card",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 254,
+      "turn": "2:15:player-brown",
+      "main": "launch",
+      "family": "move",
+      "target": {
+        "rocketId": 7,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payload": {
+        "direction": "ccw",
+        "requiredMovePoints": 1
+      },
+      "summary": "移动探测器 7 逆时针"
+    },
+    {
+      "step": 256,
+      "turn": "2:15:player-brown",
+      "main": "launch",
+      "family": "move",
+      "target": {
+        "rocketId": 7,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payload": {
+        "direction": "ccw",
+        "requiredMovePoints": 1
+      },
+      "summary": "移动探测器 7 逆时针"
+    },
+    {
+      "step": 262,
+      "turn": "2:16:player-white",
+      "main": "land",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 264,
+      "turn": "2:16:player-white",
+      "main": "land",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 292,
+      "turn": "3:4:player-green",
+      "main": "launch",
+      "family": "industry",
+      "target": {
+        "companyId": "寰宇动力",
+        "abilityId": "huanyu_free_moves"
+      },
+      "payload": {},
+      "summary": "寰宇动力 1x 行动"
+    },
+    {
+      "step": 306,
+      "turn": "3:6:player-brown",
+      "main": "play_card",
+      "family": "move",
+      "target": {
+        "rocketId": 9,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payload": {
+        "direction": "ccw",
+        "requiredMovePoints": 1
+      },
+      "summary": "移动探测器 9 逆时针"
+    },
+    {
+      "step": 311,
+      "turn": "3:7:player-white",
+      "main": "play_card",
+      "family": "move",
+      "target": {
+        "rocketId": 10,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payload": {
+        "direction": "ccw",
+        "requiredMovePoints": 2
+      },
+      "summary": "移动探测器 10 逆时针"
+    },
+    {
+      "step": 326,
+      "turn": "3:11:player-white",
+      "main": "orbit",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 328,
+      "turn": "3:11:player-white",
+      "main": "orbit",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "step": 333,
+      "turn": "3:12:player-green",
+      "main": "play_card",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 335,
+      "turn": "3:12:player-green",
+      "main": "play_card",
+      "family": "card_corner",
+      "target": {
+        "cardInstanceId": "card-19-0"
+      },
+      "payload": {
+        "kind": "resource",
+        "multiplier": 1
+      },
+      "summary": "dlc_21.png：弃牌角标"
+    },
+    {
+      "step": 336,
+      "turn": "3:12:player-green",
+      "main": "play_card",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 338,
+      "turn": "3:12:player-green",
+      "main": "play_card",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "step": 348,
+      "turn": "3:14:player-brown",
+      "main": "research_tech",
+      "family": "industry",
+      "target": {
+        "companyId": "赫利昂联合体",
+        "abilityId": "helios_remove_tech_income"
+      },
+      "payload": {},
+      "summary": "赫利昂联合体 1x 行动"
+    },
+    {
+      "step": 351,
+      "turn": "3:14:player-brown",
+      "main": "research_tech",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 353,
+      "turn": "3:14:player-brown",
+      "main": "research_tech",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "cards-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2张牌 → 1能量"
+    },
+    {
+      "step": 368,
+      "turn": "3:15:player-white",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 370,
+      "turn": "3:15:player-white",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 385,
+      "turn": "3:18:player-brown",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 387,
+      "turn": "3:18:player-brown",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 389,
+      "turn": "3:18:player-brown",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 418,
+      "turn": "4:1:player-brown",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 431,
+      "turn": "4:4:player-blue",
+      "main": "play_card",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "step": 441,
+      "turn": "4:6:player-white",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 443,
+      "turn": "4:6:player-white",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 445,
+      "turn": "4:6:player-white",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 447,
+      "turn": "4:6:player-white",
+      "main": "scan",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "step": 448,
+      "turn": "4:6:player-white",
+      "main": "scan",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "step": 453,
+      "turn": "4:7:player-green",
+      "main": "play_card",
+      "family": "move",
+      "target": {
+        "rocketId": 12,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payload": {
+        "direction": "ccw",
+        "requiredMovePoints": 1
+      },
+      "summary": "移动探测器 12 逆时针"
+    },
+    {
+      "step": 455,
+      "turn": "4:7:player-green",
+      "main": "play_card",
+      "family": "industry",
+      "target": {
+        "companyId": "寰宇动力",
+        "abilityId": "huanyu_free_moves"
+      },
+      "payload": {},
+      "summary": "寰宇动力 1x 行动"
+    },
+    {
+      "step": 459,
+      "turn": "4:8:player-blue",
+      "main": "launch",
+      "family": "move",
+      "target": {
+        "rocketId": 14,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payload": {
+        "direction": "out",
+        "requiredMovePoints": 1
+      },
+      "summary": "移动探测器 14 向外"
+    },
+    {
+      "step": 461,
+      "turn": "4:8:player-blue",
+      "main": "launch",
+      "family": "move",
+      "target": {
+        "rocketId": 14,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payload": {
+        "direction": "out",
+        "requiredMovePoints": 1
+      },
+      "summary": "移动探测器 14 向外"
+    },
+    {
+      "step": 474,
+      "turn": "4:10:player-white",
+      "main": "scan",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 477,
+      "turn": "4:10:player-white",
+      "main": "scan",
+      "family": "move",
+      "target": {
+        "rocketId": 13,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payload": {
+        "direction": "out",
+        "requiredMovePoints": 1
+      },
+      "summary": "移动探测器 13 向外"
+    },
+    {
+      "step": 485,
+      "turn": "4:12:player-blue",
+      "main": "land",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 487,
+      "turn": "4:12:player-blue",
+      "main": "land",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 489,
+      "turn": "4:12:player-blue",
+      "main": "land",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 491,
+      "turn": "4:12:player-blue",
+      "main": "land",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 493,
+      "turn": "4:12:player-blue",
+      "main": "land",
+      "family": "card_corner",
+      "target": {
+        "cardInstanceId": "card-77-0"
+      },
+      "payload": {
+        "kind": "resource",
+        "multiplier": 1
+      },
+      "summary": "b_20.webp：弃牌角标"
+    },
+    {
+      "step": 494,
+      "turn": "4:12:player-blue",
+      "main": "land",
+      "family": "card_corner",
+      "target": {
+        "cardInstanceId": "card-54-0"
+      },
+      "payload": {
+        "kind": "resource",
+        "multiplier": 1
+      },
+      "summary": "dlc_26.png：弃牌角标"
+    },
+    {
+      "step": 500,
+      "turn": "4:13:player-brown",
+      "main": "play_card",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "summary": "2信用点 → 1能量"
+    },
+    {
+      "step": 505,
+      "turn": "4:14:player-white",
+      "main": "land",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 507,
+      "turn": "4:14:player-white",
+      "main": "land",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    },
+    {
+      "step": 509,
+      "turn": "4:14:player-white",
+      "main": "land",
+      "family": "place_data",
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "summary": "放置数据"
+    }
+  ]
+}
