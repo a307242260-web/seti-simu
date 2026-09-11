@@ -182,7 +182,7 @@
       <a href="#value">估值模型</a>
       <a href="#plan">计划复用</a>
       <a href="#run">完整局表现</a>
-      <a href="#boundaries">边界与未纳入项</a>
+      <a href="#boundaries">当前能力边界</a>
       <a href="#sources">证据索引</a>
     </nav>
     <div class="aside-note">离线单文件报告<br>快照日期 2026-09-11<br>点击目录可定位；支持打印。</div>
@@ -192,7 +192,7 @@
     <header class="hero">
       <div class="eyebrow">Committed baseline · Strategy map · Evidence</div>
       <h1>当前 Base 机器人策略<br>全景报告</h1>
-      <p class="lede">这不是“权重清单”，而是一条从可见状态、目标准入、反事实执行、叶估值、稳定决胜到计划复用的完整生产链。当前 base 的核心选择是：<strong>先确定值得完成的目标，再只搜索能推进目标的动作</strong>；规则正确性优先于历史高分。</p>
+      <p class="lede">从可见状态、目标准入、反事实执行、叶估值、稳定决胜到计划复用，本报告说明当前机器人的完整决策流程。核心策略是：<strong>先确定值得完成的目标，再搜索能推进目标的动作</strong>。</p>
       <div class="stamp-row">
         <span class="stamp good">Base: round5-correctness-base-20260909</span>
         <span class="stamp">Policy: seti-heuristic-policy-v0</span>
@@ -204,7 +204,7 @@
     <section id="summary">
       <div class="section-kicker">01 / EXECUTIVE SUMMARY</div>
       <h2>一句话判断</h2>
-      <div class="callout"><strong>当前 base 是“正确性共同起点”，不是历史最高分策略。</strong> 它把规则、信息边界、计划依赖、状态恢复与可证明的候选支配剪枝合在一起；牌序偏好、普通卡完整估值和未经完整验收的搜索候选没有混入。</div>
+      <div class="callout"><strong>当前 base 采用目标引导与需求驱动的启发式策略。</strong> 机器人在共享规则内核中执行反事实路线，按真实结果与未来收益估值，并通过逐步依赖检查复用计划；搜索受固定节点、队列和深度预算约束。</div>
       <div class="grid grid-4" style="margin-top:16px">
         <div class="card metric"><strong class="accent">91.75</strong><span>固定盘面完整终局均分</span></div>
         <div class="card metric"><strong>572</strong><span>自然终局正式输入步数</span></div>
@@ -226,8 +226,8 @@
           <thead><tr><th>层次</th><th>标识</th><th>含义</th></tr></thead>
           <tbody>
             <tr><td>版本登记</td><td class="mono">round5-correctness-base-20260909</td><td>第五轮后续剪枝与策略比较的统一正确性基线。</td></tr>
-            <tr><td>生产行为快照</td><td class="mono">f607c6e5</td><td>完整局记录绑定的代码提交；当前 HEAD 后续只登记实验产物，未再改变生产策略代码。</td></tr>
-            <tr><td>当前 HEAD</td><td class="mono">e19e945d</td><td>登记该 base 的唯一完整局、存档和逐步复盘。</td></tr>
+            <tr><td>生产行为快照</td><td class="mono">f607c6e5</td><td>本报告描述的策略代码提交，也是完整局记录绑定的代码版本。</td></tr>
+            <tr><td>完整局登记提交</td><td class="mono">e19e945d</td><td>登记该 base 的唯一完整局、存档和逐步复盘。</td></tr>
             <tr><td>Policy provenance</td><td class="mono">heuristic / v0 / laughable</td><td><code>laughable</code> 当前只进入 provenance/config checksum，生产策略中没有按难度分叉。</td></tr>
             <tr><td>实验盘面</td><td class="mono">seti-free-analyze-v1</td><td>4 席固定盘面，flags 为空，完整自然终局。</td></tr>
           </tbody>
@@ -250,7 +250,7 @@
       </div>
       <div class="grid grid-2" style="margin-top:18px">
         <div class="card"><h3>共用的东西</h3><ul><li>同一个 Machine Player Coordinator</li><li>同一个 Heuristic Decision Function</li><li>同一个 Standard Action / Decision / Effect 执行链</li><li>同一个反事实 fork 与 viewer-safe 观察</li></ul></div>
-        <div class="card"><h3>刻意不存在的东西</h3><ul><li>Browser 专属候选/selector/pending 自动化旁路</li><li>Policy 直接读 DOM、canonical root 或对手隐藏信息</li><li>失败后“选第一个继续”的静默降级</li><li>按 family 配置的第二套 strategy weights</li></ul></div>
+        <div class="card"><h3>模块职责</h3><ul><li>Browser：展示盘面、调度机器席位、报告执行结果</li><li>协调器：读取决策边界、检查计划、调用策略并提交</li><li>策略：根据本席可见信息和合法动作选择下一步</li><li>规则内核：校验输入、执行动作并结算条件选择</li></ul></div>
       </div>
       <h3>动作语义覆盖</h3>
       <div class="chip-row">
@@ -361,7 +361,7 @@
         <tbody>
           <tr><td>一次性解锁</td><td>只算一次解锁价值 × 场景权重</td><td>橙1 = 15；橙4 = 可达卫星数 × 8 × 权重</td></tr>
           <tr><td>持续收益</td><td>单次效用 × 每轮期望次数 × 剩余轮次 × 场景权重</td><td>橙2=6/次，橙3=当轮能源单价，紫2=7/次，紫4=6/次</td></tr>
-          <tr><td>蓝科技</td><td>读取正式蓝槽奖励，再按未来每轮 4/3 次名义使用 × 0.5 兑现率</td><td>蓝1钱、蓝2电、蓝3选牌、蓝4宣传；不叠加旧固定轮次分</td></tr>
+          <tr><td>蓝科技</td><td>读取正式蓝槽奖励，再按未来每轮 4/3 次名义使用 × 0.5 兑现率</td><td>蓝1钱、蓝2电、蓝3选牌、蓝4宣传</td></tr>
           <tr><td>失效科技</td><td>保留拥有数量和正式计分，未来能力贡献归零</td><td>不会允许重复研究同编号</td></tr>
           <tr><td>研究机会</td><td><code>0.5 × max(F(科技) × min(宣传/正式费用, 1))</code></td><td>只算最好一次机会，叶减根，可为负值</td></tr>
         </tbody>
@@ -380,7 +380,7 @@
       <p>winning leaf 若含至少两步真实输入，会编译成 <code>seti-action-plan-v4</code>。协调器只保存尚未执行的后续步骤；每次提交前重新检查，而不是盲放整条宏指令。</p>
       <div class="grid grid-2">
         <div class="card"><h3>命中必须全部成立</h3><ul><li>下一 actionId 仍合法，actor 和动作语义未变</li><li>计划步骤证据完整且版本为 v4</li><li>外星揭示数量没有增加</li><li>当前步骤依赖事实与记录一致</li><li>自由决策的后续具名事实存在性/内容一致</li></ul></div>
-        <div class="card"><h3>会触发重搜</h3><ul><li>路线奖励、费用、己方标记、来源或移动阶段变化</li><li>目标科技、扇区、外星痕迹、公牌、数据布局、终局板块变化</li><li>后续计划依赖提前发生变化</li><li>新回合计划下一步是 end_turn / pass</li><li>缺证据、旧 schema、动作失效或观察不完整</li></ul></div>
+        <div class="card"><h3>会触发重搜</h3><ul><li>路线奖励、费用、己方标记、来源或移动阶段变化</li><li>目标科技、扇区、外星痕迹、公牌、数据布局、终局板块变化</li><li>后续计划依赖提前发生变化</li><li>新回合计划下一步是 end_turn / pass</li><li>缺证据、schema 不匹配、动作失效或观察不完整</li></ul></div>
       </div>
       <div class="callout"><strong>它不是“状态完全相等才复用”。</strong> 对手资源变化、无关扇区变化、无探测器移动的旋转等不影响具名目标事实时可以复用；相关事实变化则立即 miss。计划只驻留协调器，reset/load 会清空，不写入存档。</div>
     </section>
@@ -425,24 +425,21 @@
 
     <section id="boundaries">
       <div class="section-kicker">10 / SCOPE &amp; RISKS</div>
-      <h2>已生效、未启用、未纳入</h2>
+      <h2>当前能力边界</h2>
       <div class="table-wrap"><table>
         <thead><tr><th>事项</th><th>当前状态</th><th>解释</th></tr></thead>
         <tbody>
-          <tr><td>规则/信息边界/计划 v4</td><td><span class="tag live">已进 base</span></td><td>蓝槽顺序、路线事实、过期扇区、快速移动事件、借科技缓存、失效科技事实、路线不可达叶资格等。</td></tr>
-          <tr><td>V(state) 引导</td><td><span class="tag off">默认关闭</span></td><td>模块存在，但 base flags 为空、<code>vStateValueEnabled=false</code>；不得把 V 的库存/准备价值当作当前决策已启用。</td></tr>
-          <tr><td>普通卡完整估值</td><td><span class="tag off">设计未接入</span></td><td>奖励公式与消费状态已有研究，尚未成为生产搜索。当前打牌依赖目标绑定，不能声称已完整理解所有牌效。</td></tr>
-          <tr><td>外星拿牌均值贪心</td><td><span class="tag off">未纳入</span></td><td>历史候选完整性未通过；只归档，不能当作 base 的选牌规则。</td></tr>
-          <tr><td>跨回合快速行动归一 / 状态身份合并</td><td><span class="tag off">未纳入</span></td><td>局部省节点但全局无损性或性能未验收。</td></tr>
-          <tr><td>会话 identity isolation</td><td><span class="tag off">待独立修复</span></td><td>已发现同快照恢复可能出现不同会话身份，但缺跨版本、真实 Chrome、冷搜索和唯一完整局验收。</td></tr>
-          <tr><td>方舟 / 符文族后续问题</td><td><span class="tag off">暂缓</span></td><td>当前固定盘调研只留档，不新增实现或完整局；已完成修复不回滚。</td></tr>
+          <tr><td>搜索完整性</td><td><span class="tag approx">受预算约束</span></td><td>节点、队列和深度截断会省略部分方案；结果可用性与搜索完整性分别记录。</td></tr>
+          <tr><td>卡牌覆盖</td><td><span class="tag approx">目标绑定</span></td><td>当前打牌按已支持的具名目标准入，尚未覆盖所有普通卡牌用途的完整估值。</td></tr>
+          <tr><td>结算选择</td><td><span class="tag approx">部分贪心</span></td><td>外星普通位置、可替代资源支付和触发奖励时机使用代表选择，具有相应策略近似。</td></tr>
+          <tr><td>表现证据</td><td><span class="tag live">固定盘完整局</span></td><td>本报告的成绩与性能来自指定四席盘面；其他盘面和物种组合需要对应验证。</td></tr>
         </tbody>
       </table></div>
       <h3>当前最值得做的三件事</h3>
       <div class="grid grid-3">
         <div class="card"><h3>1 · 先打长尾</h3><p>围绕 27 个 4096 节点战略搜索和 32 个 beam 裁剪点，找不可能完成、无收益或仅非语义差异造成的分支；不调启发式权重补分。</p></div>
-        <div class="card"><h3>2 · 修正文档漂移</h3><p>源码中 <code>requiresRootCounterfactual()</code> 已恒 true，根准入实际由目标目录完成；<code>QUICK_ROOT_FAMILIES</code> 当前不含 move、但包含 place_data。设计文档仍保留旧描述。</p></div>
-        <div class="card"><h3>3 · 策略后置</h3><p>在搜索正确性与性能稳定后，再以同一 base、预算和价值模型重验普通卡估值、外星拿牌与其他历史策略候选。</p></div>
+        <div class="card"><h3>2 · 核验有效方案</h3><p>按目标准入、路线推进、奖励排空和计划执行逐项检查，确认搜索保留的方案能够完成目标并兑现收益。</p></div>
+        <div class="card"><h3>3 · 扩展策略覆盖</h3><p>在搜索正确性与性能稳定后，以同一 base、预算和价值模型评估普通卡牌用途与选牌质量。</p></div>
       </div>
     </section>
 
@@ -458,8 +455,7 @@
         <li><a href="../randomizer/game/rule-composition.js">rule-composition.js</a>：隔离反事实执行、frontier、预算、叶与诊断。</li>
       </ul></details>
       <details><summary>版本、文档与完整局</summary><ul>
-        <li><a href="../docs/ai-design.md">docs/ai-design.md</a>：当前机器玩家设计（报告已按源码校正两处滞后文字）。</li>
-        <li><a href="iteration/round5-base-fold-design-20260909.md">第五轮新 base 合并与策略分档</a>：纳入/排除矩阵与 base 验收。</li>
+        <li><a href="../docs/ai-design.md">docs/ai-design.md</a>：机器玩家设计参考；本报告的具体策略以所标注提交的生产源码为准。</li>
         <li><a href="research/cc9eb28a.f607c6e5.full.json">完整局研究记录</a>：572 步、搜索诊断、动作计数与运行元数据。</li>
         <li><a href="iteration/round5-correctness-base-20260909/cc9eb28a.f607c6e5.full.action-log.html">逐步行动复盘</a>：按玩家回合聚合的可视化回放。</li>
         <li><a href="../seti-saves/seti-save-research-round5-correctness-base-20260909-f607c6e5-full-v287.json">完整局存档</a>：正式终局分及拆分来源。</li>
