@@ -592,6 +592,7 @@ function buildSearchTrace(actionOutcomes, rankedEvaluations, diagnostics, select
     transpositionHitCount: Number(diagnostics?.transpositionHitCount) || 0,
     maxFrontierOriginCount: Number(diagnostics?.maxFrontierOriginCount) || 0,
     maxFrontierNodes: diagnostics?.maxFrontierNodes ?? null,
+    budgetLimits: diagnostics?.budgetLimits ? Object.freeze(structuredClone(diagnostics.budgetLimits)) : null,
     maxRetainedFrontierSize: diagnostics?.maxRetainedFrontierSize ?? null,
     beamPrunedOriginCount: diagnostics?.beamPrunedOriginCount ?? null,
     completedGoalTransitionCount: Number(diagnostics?.completedGoalTransitionCount) || 0,
@@ -1125,6 +1126,10 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
+function formatBudgetLimitMetrics(limits) {
+  return limits ? Object.entries(limits).map(([key, limit]) => `<span><small>${escapeHtml({ leaves: "每根叶数", frontier: "队列节点", execution: "执行节点" }[key] || key)}上限 ${escapeHtml(limit.limit)}</small><strong>${!limit.enabled ? "未启用" : limit.truncated ? "发生截断" : limit.reached ? "触顶但未截断" : "未触顶"}</strong></span>`).join("") : '<span><small>三类触限统计</small><strong>未记录</strong></span>';
+}
+
 function formatGoalName(evaluation) {
   const routeTargetId = evaluation?.routeTargetId;
   if (routeTargetId === "data:analyze") return "数据：推进至分析";
@@ -1230,6 +1235,7 @@ function renderSearchTrace(trace) {
         <span><small>状态共享命中</small><strong>${trace.transpositionHitCount}</strong></span>
         <span><small>全局队列峰值 / 容量</small><strong>${trace.maxRetainedFrontierSize ?? "—"} / ${trace.maxFrontierNodes ?? "—"}</strong></span>
         <span><small>beam 淘汰来源</small><strong>${trace.beamPrunedOriginCount ?? "—"}</strong></span>
+        ${formatBudgetLimitMetrics(trace.budgetLimits)}
         <span><small>旧版完成态支配删除</small><strong>${trace.completionDominatedOriginCount}</strong></span>
         <span><small>等价 choice 省略</small><strong>${trace.targetEquivalentChoicePrunedCount}</strong></span>
         <span><small>旧版后续目标调度省略</small><strong>${trace.targetSchedulerPrunedCount}</strong></span>
@@ -1941,6 +1947,7 @@ function formatDecisionSearchTraceHtml(report, decisionNumber) {
 </style></head><body><main class="page"><span class="eyebrow">SETI · 单节点次级目标搜索</span><h1>${escapeHtml(playerLabel)} #${decisionNumber}</h1>
 <p class="intro">只呈现公司、起始卡和收入选择完成后的这一次决策。一级列表按目标簇实际首次展开顺序排列；展开任一目标，可以看到目标内部完成路线、最终保留路线，以及完成后进入的下一层目标。内部 actionId 与哈希均已隐藏。</p>
 <section class="decision-card"><span><small>当前选择</small><strong>${escapeHtml(action.text)}</strong></span><span><small>当前分数</small><strong>${action.scoreBefore}</strong></span><span><small>当前资源</small><strong>钱 ${action.resourcesBefore.credits} · 电 ${action.resourcesBefore.energy} · 宣传 ${action.resourcesBefore.publicity} · 数据 ${action.resourcesBefore.availableData}</strong></span><span><small>完成目标深度</small><strong>${trace.maxCompletedGoalDepth} / 15</strong></span><span><small>搜索耗时</small><strong>${escapeHtml(formatNumber(action.timing.totalMilliseconds))} ms</strong></span></section>
+<section class="decision-card">${formatBudgetLimitMetrics(trace.budgetLimits)}</section>
 ${renderDecisionContext(action.decisionContext, playerLabel)}
 ${renderWinningState(action.decisionContext, selected?.winningState, selectedGoalNames, selected)}
 <section class="selected-goal-chain"><h2>最终采用路线的次级目标顺序</h2><div class="human-route">${selectedGoalNames.map((name) => `<span>${escapeHtml(name)}</span>`).join('<b aria-hidden="true">→</b>')}</div></section>

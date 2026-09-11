@@ -59,6 +59,11 @@ const rankedEvaluations = [
   },
 ];
 const diagnostics = {
+  budgetLimits: {
+    leaves: { enabled: false, limit: 8, reached: false, truncated: false },
+    frontier: { enabled: true, limit: 256, reached: true, truncated: true },
+    execution: { enabled: true, limit: 4096, reached: true, truncated: false },
+  },
   candidateCount: 1,
   rootTargetCount: 2,
   executedNodeCount: 9,
@@ -125,6 +130,7 @@ const trace = buildSearchTrace(
 );
 
 assert.equal(trace.legalActionCount, 2);
+assert.deepEqual(trace.budgetLimits, diagnostics.budgetLimits);
 assert.deepEqual(trace.rootCandidates[0].searchCompleteness,
   { status: "incomplete", reasons: ["beam-budget"] });
 assert.equal(trace.beamPrunedOriginCount, 7);
@@ -239,6 +245,9 @@ const html = formatDecisionSearchTraceHtml({
   }],
 }, 28);
 assert.match(html, /第 1 层 · 本层第 1 个目标/);
+assert.match(html, /未启用/);
+assert.match(html, /发生截断/);
+assert.match(html, /触顶但未截断/);
 assert.match(html, /最终采用路线的次级目标顺序/);
 assert.match(html, /打出卡牌：离子推迸系统/);
 assert.match(html, /决策现场/);

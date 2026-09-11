@@ -1194,6 +1194,8 @@
       let transpositionHitCount = 0;
       let prunedNodeCount = 0;
       let beamPrunedOriginCount = 0;
+      let frontierTrimCount = 0;
+      let leafPrunedOriginCount = 0;
       let sharedPhysicalExecutionOriginCount = 0;
       let targetEquivalentChoicePrunedCount = 0;
       let unreachableRouteOriginCount = 0;
@@ -1579,6 +1581,7 @@
         const leafCount = leafCountByVirtualRoot.get(rootKey) || 0;
         if (!state || (!secondaryAgentSearch && leafCount >= maxLeaves)) {
           if (state) {
+            leafPrunedOriginCount += 1;
             state.pruned = true;
             state.incompleteReasons.add("leaf-budget");
           }
@@ -2293,6 +2296,7 @@
       }
       function trimSecondaryFrontier() {
         if (frontier.length <= maxFrontierNodes) return;
+        frontierTrimCount += 1;
         const ordered = [...frontier].sort(compareNodes);
         const retained = new Set();
         const coveredRoots = new Set();
@@ -2347,6 +2351,7 @@
               (leafCountByVirtualRoot.get(virtualRootKey(origin)) || 0) >= maxLeaves
             ));
             markPruned(saturated, "leaf-budget");
+            leafPrunedOriginCount += saturated.length;
             node.origins = node.origins.filter((origin) => !saturated.includes(origin));
           }
           if (!node.origins.length) continue;
@@ -3209,6 +3214,32 @@
         maxFrontierNodes: secondaryAgentSearch ? maxFrontierNodes : null,
         maxMilliseconds: secondaryAgentSearch ? maxMilliseconds : null,
         executionLimitReached,
+        budgetLimits: {
+          leaves: {
+            enabled: !secondaryAgentSearch,
+            limit: maxLeaves,
+            reached: !secondaryAgentSearch
+              && [...leafCountByVirtualRoot.values()].some((count) => count >= maxLeaves),
+            truncated: leafPrunedOriginCount > 0,
+            prunedOriginCount: leafPrunedOriginCount,
+          },
+          frontier: {
+            enabled: Boolean(secondaryAgentSearch),
+            limit: maxFrontierNodes,
+            peak: maxRetainedFrontierSize,
+            reached: Boolean(secondaryAgentSearch) && maxRetainedFrontierSize >= maxFrontierNodes,
+            truncated: frontierTrimCount > 0,
+            trimCount: frontierTrimCount,
+          },
+          execution: {
+            enabled: true,
+            limit: maxExecutionNodes,
+            used: executedNodeCount,
+            reached: executedNodeCount >= maxExecutionNodes,
+            truncated: executionLimitReached,
+            remainingFrontierNodeCount,
+          },
+        },
         remainingFrontierNodeCount,
         remainingFrontierOriginCountByGoalDepth,
         frontierOriginCountByFamily: Object.fromEntries(

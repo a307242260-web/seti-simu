@@ -215,6 +215,12 @@ function collectBudgetHits(collector, stepIndex, result) {
     const identity = { step: stepIndex, searchIndex: index,
       seat: String(pd.seatId || "?"), action: String(pd.actionId || "") };
     collector.searches.push({ ...identity, ...structuredClone(search) });
+    for (const [name, limit] of Object.entries(diag.budgetLimits || {})) {
+      if (limit.enabled && (limit.reached || limit.truncated)) {
+        console.log(`[搜索触限] 步${stepIndex} ${identity.seat} ${search.kind} #${index}`
+          + ` ${name}=${JSON.stringify(limit)} action=${identity.action}`);
+      }
+    }
     if (diag.executionLimitReached === true) collector.budgetHits.push({
       ...identity, kind: search.kind,
       executedNodeCount: diag.executedNodeCount,

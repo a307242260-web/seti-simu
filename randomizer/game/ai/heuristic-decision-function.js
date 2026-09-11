@@ -216,7 +216,7 @@ function createHeuristicDecisionFunction(options = {}) {
       confidence: "low",
     });
     const diagnostics = composition.counterfactualPort.getDiagnostics?.();
-    const fields = ["executedNodeCount", "maxExecutionNodes", "executionLimitReached", "beamPrunedOriginCount",
+    const fields = ["budgetLimits", "executedNodeCount", "maxExecutionNodes", "executionLimitReached", "beamPrunedOriginCount",
       "successfulInputSubmissionCount", "attemptedNodeCountByFamily", "failedNodeCountByFamily",
       "failedNodeCountByCode", "executedNodeCountByFamily", "executedNodeCountByDecisionKind",
       "executedNodeCountByActionSummary", "executedOriginCountByTarget",

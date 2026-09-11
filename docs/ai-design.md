@@ -540,6 +540,13 @@ S1提交`e80ca9e7`固定盘面终局均98.5，较修复前提高16.75，仍低�
 一个节点，再按统一顺序填满容量，共享节点只占一格且保留全部origin。淘汰来源明确
 记为beam-budget，不伪称无损剪枝。普通control浅评估的独立预算不变。
 
+2026-09-11：每次搜索诊断增加 `budgetLimits`，分 `leaves/frontier/execution` 记录
+`enabled/limit/reached/truncated`。战略搜索虽传入 maxLeaves=8，但叶限制未启用；
+control 按实际叶上限记数。队列另记保留峰值 `peak` 与实际裁剪次数 `trimCount`，
+叶限制另记丢弃来源次数 `prunedOriginCount`，执行预算另记 `used` 与
+`remainingFrontierNodeCount`。触顶与截断分开：自然满额但没有剩余工作不算截断。
+字段经决策函数 `searches[].diagnostics` 进入调研日志和复盘报告；不改变搜索或评分。
+
 次级maxLeaves饱和、资源/完成评分摘要支配、只留最便宜下一目标和未绑定top-4均已
 删除。资源下界只用于准入目标排序，全部准入后继交给全局beam；已有“手段需要
 目标”和未绑定quick根不借主行动收益的边界保留。目标/条件深度与未绑定深度边界

@@ -81,6 +81,12 @@ const options = {
 };
 const outcomes = composition.counterfactualPort.evaluate(actions, options);
 const diagnostics = composition.counterfactualPort.getDiagnostics();
+assert.equal(diagnostics.budgetLimits.leaves.enabled, false);
+assert.equal(diagnostics.budgetLimits.leaves.reached, false);
+assert.equal(diagnostics.budgetLimits.frontier.reached, true);
+assert.equal(diagnostics.budgetLimits.frontier.truncated, true);
+assert.ok(diagnostics.budgetLimits.frontier.trimCount > 0);
+assert.equal(diagnostics.budgetLimits.execution.reached, false);
 assert.equal(Object.values(diagnostics.attemptedNodeCountByFamily).reduce((a, b) => a + b, 0), diagnostics.executedNodeCount);
 assert.deepEqual(diagnostics.failedNodeCountByCode, {});
 assert.equal(diagnostics.successfulInputSubmissionCount, diagnostics.executedNodeCount,
@@ -101,6 +107,7 @@ for (const outcome of outcomes) {
 assert.deepEqual(composition.counterfactualPort.evaluate([...actions].reverse(), options), outcomes,
   "换序不能改变根覆盖、叶或完整性");
 const complete = composition.counterfactualPort.evaluate(actions, { ...options, maxFrontierNodes: 8 });
+assert.equal(composition.counterfactualPort.getDiagnostics().budgetLimits.frontier.truncated, false);
 for (const outcome of complete) {
   assert.deepEqual(outcome.leaves.map((leaf) => leaf.observation.score).sort(), [1, 2, 3]);
   assert.deepEqual(outcome.searchCompleteness, { status: "complete", reasons: [] });
@@ -108,6 +115,21 @@ for (const outcome of complete) {
 assert.throws(() => composition.counterfactualPort.evaluate(actions, { ...options, maxFrontierNodes: 1 }), /BUDGET_INVALID/);
 assert.throws(() => composition.counterfactualPort.evaluate(actions, { ...options, maxMilliseconds: Number.EPSILON }), /SEARCH_TIMEOUT/);
 assert.deepEqual(composition.lifecycle.save().envelope, before, "包括超时路径在内不得提交真实根");
+composition.counterfactualPort.evaluate(actions, { ...options, maxNodes: 2, maxExecutionNodes: 2 });
+const capped = composition.counterfactualPort.getDiagnostics().budgetLimits;
+assert.equal(capped.execution.reached, true);
+assert.equal(capped.execution.truncated, true);
+assert.ok(capped.execution.remainingFrontierNodeCount > 0);
+const noLeafCap = composition.counterfactualPort.evaluate(actions, { ...options, maxLeaves: 1, maxFrontierNodes: 8 });
+assert.ok(noLeafCap.every(outcome => outcome.leaves.length > 1), "战略搜索的叶参数不能被误报为生效限制");
+assert.equal(composition.counterfactualPort.getDiagnostics().budgetLimits.leaves.enabled, false);
+composition.counterfactualPort.evaluate(actions, { maxDepth: 1, maxLeaves: 1, maxNodes: 2 });
+const exact = composition.counterfactualPort.getDiagnostics().budgetLimits;
+assert.equal(exact.execution.reached, true);
+assert.equal(exact.execution.truncated, false, "自然完成且满额，不等于截断");
+assert.equal(exact.leaves.enabled, true);
+assert.equal(exact.leaves.reached, true);
+assert.equal(exact.leaves.truncated, false);
 composition.dispose();
 for (const metadataKind of ["rng", "sequence"]) {
   const distinct = createComposition(metadataKind);

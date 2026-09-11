@@ -31,6 +31,15 @@ seti-saves/*.json（存档，可选）    │      └→ reports/iteration/regi
 
 ## 2. 标准迭代入口
 
+搜索触限记录（2026-09-11）：每次真实搜索的 `metrics.searches[].diagnostics.budgetLimits`
+保留 leaves/frontier/execution 三类实际上限及 enabled/reached/truncated 状态；调研终端
+逐次输出启用且触顶或截断的限制，不只保留 Top 20。action-log 报告读取关联调研记录，
+列出全部搜索明细；决策搜索报告也展示三类状态。战略 8 叶限制未启用，不能记为未触发。
+旧记录缺字段显示“未记录”，不补造零次、不重跑已有实验；计划复用不重复记数。
+已有 `budgetHits` 仍专指执行预算耗尽且剩余队列非空，不能用于代替三类触限统计。
+已有报告需用 `node tools/robot_iterate.js build --reports --force-reports` 重建展示；只读记录并重放
+存档，不重跑 AI，也不能补回运行时没有记录的字段。
+
 ### 2.1 迭代逻辑与验收标准（2026-09-05用户明确要求）
 
 每轮必须同时确认**实现符合预期**与**固定盘面效果达标**，不得用均分提升替代正确性。

@@ -215,6 +215,10 @@ RNG/序号和Decision；资源/完成摘要不再支配删除后继。全部准�
 不再单独阻止全盘验证；快速验证触发原10秒搜索超时后，期限独立放宽为30秒，
 不增加节点预算，整局耗时另行实测报告。再次超时须定位，不自动继续加码。
 
+逐次搜索通过 `searches[].diagnostics.budgetLimits` 记录叶数、队列和执行节点
+三类限制的启用、实际上限、触顶及截断状态（字段详见 `ai-design.md` 搜索预算段）。
+它属于诊断，不写入正式游戏存档；计划复用返回空 searches，不重复计数。
+
 action outcome新增可选searchCompleteness元数据：`{status, reasons}`。生产输出必须
 提供；旧外部v1输入缺失不推断为complete。status为complete/incomplete/not-evaluated，
 reasons为去重排序字符串数组，校验失败显式抛错。原因包括node-budget、beam-budget、

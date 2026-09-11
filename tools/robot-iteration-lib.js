@@ -798,6 +798,22 @@ function fmtDelta(delta) {
 }
 
 // 逐步复盘报告：纯重放存档 replaySteps（无 AI 搜索，绝不重跑）。
+function renderSearchBudgetReport(searches) {
+  if (!Array.isArray(searches)) return '<section class="panel"><h2>搜索触限记录</h2><p>未记录逐次搜索统计，不能推断为零次触限。</p></section>';
+  const rows = [];
+  let missing = 0;
+  for (const search of searches) {
+    const limits = search.diagnostics?.budgetLimits;
+    if (!limits) { missing += 1; continue; }
+    for (const [key, label] of [["leaves", "每根叶数"], ["frontier", "队列节点"], ["execution", "执行节点"]]) {
+      const value = limits[key];
+      if (!value) throw new Error(`SEARCH_BUDGET_RECORD_INVALID: 缺少 ${key}`);
+      rows.push(`<tr><td>${escapeHtml(search.step)}</td><td>${escapeHtml(search.seat)}</td><td>${escapeHtml(search.kind)} #${escapeHtml(search.searchIndex)}</td><td>${label}</td><td>${escapeHtml(value.limit)}</td><td>${!value.enabled ? "未启用" : value.truncated ? "发生截断" : value.reached ? "触顶但未截断" : "未触顶"}</td><td><code>${escapeHtml(JSON.stringify(value))}</code></td><td>${escapeHtml(search.action)}</td></tr>`);
+    }
+  }
+  return `<section class="panel"><h2>搜索触限记录</h2><p>共 ${searches.length} 次搜索；${missing} 次缺少触限字段（未记录，不等于零次）。每次搜索分开记录叶数、队列及执行预算；计划复用不重复记数。未启用的限制不计触顶。</p><details><summary>展开全部搜索与触限明细</summary><table><thead><tr><th>步</th><th>席位</th><th>搜索</th><th>限制</th><th>上限</th><th>状态</th><th>实际计数</th><th>所选动作</th></tr></thead><tbody>${rows.join("")}</tbody></table></details></section>`;
+}
+
 // opts: { savePath, versionId, versionName, runKey, recordFile, recordRelPath,
 //         gitCommit, policyVersion, flags, wallMs, mode }
 function buildActionLogReport(opts) {
@@ -808,6 +824,9 @@ function buildActionLogReport(opts) {
   const lastAfter = steps.length ? steps[steps.length - 1].after : null;
   // 内核重放增强：研究科技（哪张科技+背面 bonus）与收入插牌（2026-08-21 用户口径）
   const enrichMap = replaySaveEnriched(opts.savePath);
+  const relRecord = opts.recordRelPath || (opts.recordFile ? relRecordPath(opts.recordFile) : null);
+  const research = relRecord ? readJson(path.join(REPO_ROOT, relRecord)) : null;
+  const searchBudgetSection = renderSearchBudgetReport(research?.metrics?.searches);
 
   // 逐玩家前序资源，计算每步分数/资源变化
   const prev = {};
@@ -1130,8 +1149,6 @@ function buildActionLogReport(opts) {
     .map(([fam, count]) => `<tr><td>${escapeHtml(FAMILY_LABELS[fam] || fam)}</td><td class="num">${count}</td></tr>`)
     .join("");
 
-  const relRecord = opts.recordRelPath || (opts.recordFile ? relRecordPath(opts.recordFile) : null);
-
   return `<!doctype html>
 <html lang="zh-CN">
 <head>
@@ -1179,6 +1196,7 @@ code{background:#f0f2f6;padding:1px 4px;border-radius:3px;font-size:12px}
   <div class="meta">seed=${escapeHtml(save.seed || "?")} · gitCommit=${escapeHtml(opts.gitCommit || "?")} · policy=${escapeHtml(opts.policyVersion || "?")} · flags=${escapeHtml(flagsText(opts.flags))} · 模式=${escapeHtml(opts.mode || "?")} · 步数 ${steps.length} · 耗时 ${fmtMs(opts.wallMs)}</div>
   <div class="links">${relRecord ? `记录: <a href="../${escapeHtml(path.posix.relative(path.posix.join("reports","iteration",opts.versionId), relRecord))}">${escapeHtml(opts.recordFile)}</a>` : ""} · 存档: <code>${escapeHtml(opts.savePath)}</code></div>
   ${finalSection}
+  ${searchBudgetSection}
   ${playerSections}
   <section class="panel">
     <h2>全程依次复盘（${turnGroups.length} 个玩家回合 · ${steps.length} 步）</h2>
@@ -1407,6 +1425,7 @@ module.exports = {
   computeBestOf,
   auditRegistry,
   buildActionLogReport,
+  renderSearchBudgetReport,
   replaySaveEnriched,
   TECH_BONUS_LABELS,
   renderPage,
