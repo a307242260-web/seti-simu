@@ -117,7 +117,7 @@ function createMachinePlayerCoordinator(options = {}) {
   //   - 本回合（turn，玩家每一次主要行动圈）内无新信息 → 按计划逐步骤执行，不重新搜索；
   //   - 新回合：盘面无新信息变化 → 复用上回合决策链（planReuseCheck 的依赖/揭示基线判定），
   //     有新信息 → 重新搜索；
-  //   - 回合内同样检查逐步依赖与揭示；sameTurn 只允许控制动作继续复用。
+  //   - 回合内同样检查逐步依赖与揭示；PASS另检查退出时的资源与机会事实。
   // 搜索只发生在：无计划 / 计划耗尽 / 下一步证据或合法性检查未命中。
   function turnOf(observation) {
     const publicState = observation?.publicState || {};
@@ -151,7 +151,6 @@ function createMachinePlayerCoordinator(options = {}) {
             stored.plan,
             boundary.observation,
             boundary.legalActions,
-            { sameTurn },
           );
           if (reuse.hit) {
             action = reuse.action;

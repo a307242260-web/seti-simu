@@ -64,7 +64,7 @@ module.exports = Object.freeze({
     entry("tools/research-search-statistics.test.js", "training/research-statistics", "逐次搜索记录与续跑只累计真实evaluate，区别满额和剩余队列截断", "计划复用重复计数、旧快速记录缺统计被冒充完整或续跑丢前缀"),
     entry("randomizer/game/ai/conditional-resolution.test.js", "policy/heuristic-evaluator", "同收益条件决策选择较少实际提交，正式收益与终局排序优先", "折叠隐藏执行长度使点选与取消同分循环，或长度奖励压过正式分"),
     entry("randomizer/game/ai/machine-player-coordinator.test.js", "policy/machine-player-coordinator", "共享协调器逐步复用：同回合/跨回合检查揭示与依赖，解析后的 seat 持有计划，成功提交才消费", "同回合只检查合法性漏掉新信息、旧证据继续执行、失败提交消费计划或缓存跨 owner"),
-    entry("randomizer/game/ai/plan-continuation.test.js", "policy/plan-continuation", "逐步动作与具名依赖：正式等额终点可复用，后续目标用当前步事实检查，自己推进和强制奖励边界保持；只读诊断可复算", "标记数变化误触发重搜、后续公共牌变化漏检、未来事实回填当前、缺失事实冒充未变或强制奖励被后续目标打断"),
+    entry("randomizer/game/ai/plan-continuation.test.js", "policy/plan-continuation", "逐步动作与具名依赖：正式等额终点可复用，后续目标用当前步事实检查，自己推进和强制奖励边界保持；PASS检查退出资源与机会，未变可复用", "标记数变化误触发重搜、后续公共牌变化漏检、未来事实回填当前、PASS空依赖忽略新机会或强制奖励被后续目标打断"),
     entry("randomizer/training/heuristic-policy-turn-report.test.js", "policy/heuristic-policy", "固定盘面报告保留根行动、目标路线与剪枝漏斗", "报告只展示赢家和前三备选而无法解释节点内部搜索"),
 
     entry("randomizer/game/actions/standard-action.test.js", "rules/actions", "Standard Action registry 的 identity、phase、validate/execute 协议", "未知、stale、越权 descriptor 到达 handler"),

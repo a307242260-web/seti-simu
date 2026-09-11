@@ -5,6 +5,7 @@ const assert = require("node:assert/strict");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const fixture = require("../randomizer/full-flow/standard-flow-v1.fixture");
 const plans = require("../randomizer/game/ai/plan-continuation");
+const { createMachinePlayerCoordinator } = require("../randomizer/game/ai/machine-player-coordinator");
 const env = createSimulationEnv();
 const inputs = [];
 function submit(action) {
@@ -54,6 +55,7 @@ try {
   const fork = env.createCounterfactualFork(null, {branchKey:"turn-boundary-proof"});
   const comp = fork.composition || fork;
   let forkBoundary;
+  let predictedPassPlan;
   try {
     const forkEnd = comp.inputPort.enumerateActions({}).find(a => a.family === "end_turn");
     assert.equal(comp.inputPort.submitAction(forkEnd).ok, true);
@@ -63,8 +65,37 @@ try {
     assert(!actions.some(a => a.family === "end_turn"));
     assert(actions.some(a => a.family === "pass"));
     forkBoundary = {actor:actions[0].actorId, families:[...new Set(actions.map(a => a.family))]};
+    const predictedPass = actions.find(a => a.family === "pass");
+    const viewer = {viewerId:`machine:${focal}`,playerId:focal,role:"player"};
+    const passEvidence = plans.capturePlanStep({action:predictedPass,observation:comp.projection(viewer).state});
+    const predictedSteps = plans.compilePlanSteps([{...passEvidence,goalDepth:0}]);
+    predictedPassPlan = {schemaVersion:plans.PLAN_SCHEMA_VERSION,nextActionId:predictedPass.actionId,steps:predictedSteps};
   } finally { comp.dispose(); }
   assert.deepEqual(boundary(), afterMain, "隔离fork不得修改正式根状态");
+  const coordinatorFork = env.createCounterfactualFork(null,{branchKey:"turn-boundary-coordinator"});
+  const coordinatorComp = coordinatorFork.composition || coordinatorFork;
+  let coordinatorEvidence;
+  try {
+    let calls = 0;
+    const coordinator = createMachinePlayerCoordinator({composition:coordinatorComp,execute(action) {
+      const result = coordinatorComp.inputPort.submitAction(action);
+      assert.equal(result.ok,true);
+      if (action.family === "end_turn") assert.equal(coordinatorComp.counterfactualPort.advanceFocalPlanningTurn(focal).ok,true);
+      return result;
+    }});
+    coordinator.registerSeat(focal,ctx => {
+      calls++;
+      return {actionId:ctx.legalActions.find(a => a.family === "end_turn").actionId,plan:predictedPassPlan};
+    });
+    const first = coordinator.runDecision(focal);
+    const second = coordinator.runDecision(focal);
+    assert.equal(first.source,"scheme");
+    assert.equal(second.source,"plan-reuse");
+    assert.equal(second.action.family,"pass");
+    assert.equal(second.plan.nextActionId,null);
+    assert.equal(calls,1,"跨turn退出条件相同不能重新调用决策函数");
+    coordinatorEvidence = {sources:[first.source,second.source],actions:[first.action.family,second.action.family],calls,remainingSteps:second.plan.steps.length};
+  } finally { coordinatorComp.dispose(); }
   submit(end);
   for (let guard = 0; env.legalActions()[0]?.actorId !== focal; guard++) {
     assert(guard < 40);
@@ -89,7 +120,7 @@ try {
   assert.notDeepEqual(resourcesAfter, resourcesBefore, "真实交易必须改变本席资源");
   const legalAfter = env.legalActions().map(plans.actionSemanticKey);
   const changedPassReuse = plans.planReuseCheck(passPlan,env.observe(),env.legalActions(),{sameTurn:true});
-  assert.equal(changedPassReuse.hit, true, "复现：空依赖PASS没有发现真实交易带来的变化");
+  assert.equal(changedPassReuse.reason, "next-step-affected", "PASS必须发现真实交易带来的变化");
   const lowEnergyPass = env.legalActions().find(a => a.family === "pass");
   const lowEnergySteps = plans.compilePlanSteps([{...plans.capturePlanStep({action:lowEnergyPass,observation:env.observe()}),goalDepth:0}]);
   const lowEnergyPlan = {schemaVersion:plans.PLAN_SCHEMA_VERSION,nextActionId:lowEnergyPass.actionId,steps:lowEnergySteps};
@@ -97,8 +128,8 @@ try {
   const gainedActions = env.legalActions().map(plans.actionSemanticKey).filter(k => !legalAfter.includes(k));
   assert(gainedActions.length > 0, "增加能量须恢复真实行动机会");
   const regainedPassReuse = plans.planReuseCheck(lowEnergyPlan,env.observe(),env.legalActions(),{sameTurn:true});
-  assert.equal(regainedPassReuse.hit, true, "复现：出现新机会，旧PASS仍命中");
-  console.log(JSON.stringify({before,afterMain,forkBoundary,nextOwnTurn,endReuse,
+  assert.equal(regainedPassReuse.reason, "next-step-affected", "出现新机会，旧PASS必须失效");
+  console.log(JSON.stringify({before,afterMain,forkBoundary,coordinatorEvidence,nextOwnTurn,endReuse,
     passAfterNewOpportunity:{hit:regainedPassReuse.hit,resources:resourcesFor(focal),addedActions:gainedActions},
     passAfterUnplannedTrade:{hit:changedPassReuse.hit, selfBefore:resourcesBefore,selfAfter:resourcesAfter,
       removedActions:legalBefore.filter(k => !legalAfter.includes(k)),addedActions:legalAfter.filter(k => !legalBefore.includes(k))},

@@ -149,10 +149,10 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 
 **搜索时机机制**：无计划、计划耗尽或下一步检查未命中时搜索；有有效计划时，同回合与新回合均检查对应步骤的执行前证据。揭示和具名依赖变化在同回合也会触发重新决策。
 
-- **本回合内**（计划记录的 round/turn == 当前决策的 round/turn）：调用 `planReuseCheck(..., {sameTurn:true})`；合法性、actor、动作语义、揭示与依赖全部通过后复用。`end_turn`/`pass` 同样检查，但不因控制动作身份单独重搜。
+- **本回合内**：调用 `planReuseCheck(plan, observation, legalActions)`；合法性、actor、动作语义、揭示与依赖全部通过后复用。`end_turn`/`pass` 不因动作身份单独重搜。
 - **新回合**：使用同一检查——**新信息只有两类**，无新信息则复用上回合决策链：
   - 开关 `planNewTurnReuse`（sim 经 `resetConfig.planNewTurnReuse`，默认开；`false` 关闭后新回合一律重新搜索，用于 A/B 评估"忽略非依赖变化而复用"的影响）。
-  - **控制动作特例（control-step-redecide）**：下一步是 `end_turn`/`pass` → 无条件重新决策，不盲从计划。主行动选择是每次决策最核心的评估，而 end_turn/pass 评估最便宜（control 路径 maxDepth=1）——winning leaf 链穿过回合边界（end_turn）rollout 时，新回合计划下一步为 end_turn 被盲目复用会跳过当前盘面上更有价值的主行动（同状态搜索选 place_data，fast-path 直接 end_turn，白方掉分）。48f0af3e 曾移除该特例（实测免电盘面 219 决策即终局、均分暴跌 AVG 27.3），已恢复 1d063418 口径。**注意区分**：本回合内（回合门控分支）end_turn 仍按计划正常推进；特例只作用于新回合的 `planReuseCheck`。
+  - **结束与退出**：正式新turn尚未完成主行动时，`end_turn`不合法，旧步骤先由合法性拒绝；不以强制重搜掩盖回合错位。PASS检查独立`pass-decision`依赖：本席公开/私有状态、轮次、已有逐步机会事实和五类完整目标要求（保留资源缺口）。不比较对手资源、turnNumber或全局版本。事实变化即重搜，缺退出证据返回`pass-decision-evidence-missing`。退出证据不向前传播至普通动作，其他具名依赖规则不变。
   - **① 揭示外星人**：已揭示槽位数 > 计划假设值 → 无条件重新决策（隐藏信息揭示）；
   - **② 计划依赖环节变化**（计划依赖的具体盘面事实变了）→ 重新决策：
     - 路线：正式终点奖励、费用、己方标记或移动路线变化；他人追加标记但这些事实相同不重搜；

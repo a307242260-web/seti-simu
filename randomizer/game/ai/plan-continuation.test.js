@@ -372,7 +372,7 @@ function planObservation() {
   const plan = storedSteps([stepEvidence(action, a, "data:analyze")]);
   assert.deepEqual(a.publicState.players[0].dataProgress, b.publicState.players[0].dataProgress,
     "同一蓝槽布局不得因科技对象插入顺序而改变公共数据事实");
-  assert.equal(planContinuation.planReuseCheck(plan, b, [action], { sameTurn: true }).hit, true);
+  assert.equal(planContinuation.planReuseCheck(plan, b, [action]).hit, true);
   assert.deepEqual(player, beforePlayer, "公共观察不得改变正式玩家状态");
   for (const change of [
     p => p.dataState.placedTokens.push({ placementKind: "blueBonus", blueSlot: 1 }),
@@ -380,7 +380,7 @@ function planObservation() {
     p => { p.dataState.placedTokens = p.dataState.placedTokens.filter(t => t.placementSlot !== 3); },
   ]) {
     const changed = structuredClone(player); change(changed);
-    assert.equal(planContinuation.planReuseCheck(plan, observe(changed), [action], { sameTurn: true }).reason,
+    assert.equal(planContinuation.planReuseCheck(plan, observe(changed), [action]).reason,
       "next-step-affected", "占用、科技位置和解锁变化仍必须使计划失效");
   }
 }
@@ -551,14 +551,40 @@ function planAction(id, family = "move", target = {}) {
 
 for (const family of ["end_turn", "pass"]) {
   const before = planObservation();
+  before.selfState = {playerId:"player-white",hand:[]};
   const action = planAction(family, family);
   const plan = storedSteps([stepEvidence(action, before)]);
-  assert.equal(planContinuation.planReuseCheck(plan, before, [action]).reason, "control-step-redecide");
-  assert.equal(planContinuation.planReuseCheck(plan, before, [action], { sameTurn: true }).hit, true);
+  assert.equal(planContinuation.planReuseCheck(plan, before, [action]).hit, true);
+  assert.equal(planContinuation.planReuseCheck(plan, before, [action]).hit, true);
   const revealed = structuredClone(before);
   revealed.publicState.board.aliens.slots[0].revealed = true;
-  assert.equal(planContinuation.planReuseCheck(plan, revealed, [action], { sameTurn: true }).reason,
+  assert.equal(planContinuation.planReuseCheck(plan, revealed, [action]).reason,
     "alien-revealed", "同回合控制动作也不能绕过新揭示检查");
+}
+
+// PASS复用依赖退出时的全部机会；回合号及对手无关资源不是退出条件。
+{
+  const before = planObservation();
+  before.selfState = {playerId:"player-white",hand:[]};
+  const action = planAction("pass", "pass");
+  const plan = storedSteps([stepEvidence(action, before)]);
+  const unchanged = structuredClone(before);
+  unchanged.publicState.turnNumber = 99;
+  unchanged.publicState.players.push({playerId:"opponent",credits:99});
+  assert.equal(planContinuation.planReuseCheck(plan, unchanged, [action]).hit, true);
+  for (const mutate of [
+    obs => { obs.publicState.players[0].credits = 99; },
+    obs => { obs.selfState.hand.push({id:"new-card",cardId:"new-card"}); },
+    obs => { obs.publicState.board.techSupply.stacks.blue1.remaining = 0; },
+    obs => { obs.publicState.roundNumber = 4; },
+  ]) {
+    const changed = structuredClone(before);
+    mutate(changed);
+    assert.equal(planContinuation.planReuseCheck(plan, changed, [action]).reason, "next-step-affected");
+  }
+  const old = structuredClone(plan);
+  old.steps[0].dependencies = [];
+  assert.equal(planContinuation.planReuseCheck(old, before, [action]).reason, "pass-decision-evidence-missing");
 }
 
 // 环绕已完成后的选牌只检查奖励依赖；同一个选择在目标未完成时不能跳过路线证据。
@@ -616,20 +642,20 @@ for (const tileId of ["a", "b", "c", "d"]) {
     const plan = storedSteps([stepEvidence(end, before), stepEvidence(mark, before)]);
     assert.equal(plan.steps.every((step) => step.valid), true);
     assert.deepEqual(plan.steps[0].dependencies.map((item) => item.scope), [{ kind: "final-tile", id: tileId }]);
-    const first = planContinuation.planReuseCheck(plan, before, [end], { sameTurn: true });
+    const first = planContinuation.planReuseCheck(plan, before, [end]);
     assert.equal(first.hit, true);
     assert.equal(planContinuation.planReuseCheck(first.nextPlan, before, [mark]).hit, true);
     const unrelated = structuredClone(before);
     unrelated.publicState.board.finalScoring.tiles[tileId === "a" ? "b" : "a"].marks.push({ playerId: "other", slotIndex: 1 });
     unrelated.publicState.board.techSupply.stacks.blue1.remaining = 2;
-    assert.equal(planContinuation.planReuseCheck(plan, unrelated, [end], { sameTurn: true }).hit, true);
+    assert.equal(planContinuation.planReuseCheck(plan, unrelated, [end]).hit, true);
     for (const change of ["marks", "variant", "missing"]) {
       const changed = structuredClone(before);
       const state = changed.publicState.board.finalScoring;
       if (change === "marks") state.tiles[tileId].marks.push({ playerId: "other", slotIndex: 1 });
       if (change === "variant") state.tileVariants[tileId] = 3 - variant;
       if (change === "missing") delete state.tiles[tileId];
-      assert.equal(planContinuation.planReuseCheck(plan, changed, [end], { sameTurn: true }).hit, false);
+      assert.equal(planContinuation.planReuseCheck(plan, changed, [end]).hit, false);
     }
     const unknown = planAction("unknown", "choose_target", { tileId: "unknown", choiceId: "other:unknown" });
     assert.equal(storedSteps([stepEvidence(unknown, before)]).steps[0].reason, "plan-tile-scope-unknown");

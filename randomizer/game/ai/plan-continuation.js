@@ -773,12 +773,34 @@ function capturePlanStep({ observation, action }) {
     aliens: structuredClone(board.aliens.slots || []),
     data: structuredClone(self.dataProgress || null),
   };
+  if (action.family === "pass") {
+    if (String(observation.selfState?.playerId || "") !== actorId) {
+      throw new TypeError("PLAN_PASS_VIEWER_MISMATCH: PASS证据需要本席私有观察");
+    }
+    const { playerLabel, ...ownState } = self;
+    const progress = observation.outcomeProjection?.progress || {};
+    // 退出放弃所有当前机会，不能只检查最后一个已完成目标，也不能剥离资源缺口。
+    facts.passDecision = structuredClone({
+      round: observation.publicState.roundNumber,
+      ownState,
+      privateState: observation.selfState,
+      opportunities: { ...facts },
+      requirements: {
+        probe: observation.probeRouteRequirements || progress.probeGoalRequirements || null,
+        data: observation.dataAnalyzeRequirements || progress.dataAnalyzeRequirements || null,
+        sector: observation.sectorWinRequirements || progress.sectorWinRequirements || null,
+        income: observation.incomeGainRequirements || progress.incomeGainRequirements || null,
+        tech: observation.techGainRequirements || progress.techGainRequirements || null,
+      },
+    });
+  }
   return { action: structuredClone(action), facts, revealedCount: countRevealedAliens(observation) };
 }
 
 function stepScopes(step, segment) {
   const scopes = new Map();
   const add = (kind, id) => scopes.set(`${kind}:${id}`, { kind, id: String(id) });
+  if (step.action.family === "pass") add("pass-decision", "self");
   function addRoute(targetId) {
     const candidates = step.facts.routes.filter((route) => route.targetId === targetId);
     // 公共选择依赖覆盖同一目标；路线身份仍只在当前来源子段内寻找。
@@ -882,6 +904,7 @@ function stepScopes(step, segment) {
 }
 
 function scopedFact(facts, scope) {
+  if (scope.kind === "pass-decision") return facts.passDecision;
   if (scope.kind === "movement-context") return facts.movementContext ?? undefined;
   if (scope.kind === "movement-source") {
     return facts.movementSources?.find((rocket) => String(rocket.id) === scope.id);
@@ -964,6 +987,8 @@ function compilePlanSteps(steps) {
     }
     suffixValid = suffixValid && result.valid;
     for (const dependency of result.dependencies) {
+      // 退出证据属于退出时状态，不传播到较早的普通动作。
+      if (dependency.scope.kind === "pass-decision") continue;
       suffixScopes.set(stableSerialize(dependency.scope), dependency.scope);
     }
   }
@@ -1003,15 +1028,9 @@ function advancePlan(plan) {
 //      计划要拿的科技被拿走 / 目标扇区赢不了 / 目标外星槽被占 / 目标公共牌被买走）。
 //   其余（对手移动/资源变化、无关扇区、无探测器移动的旋转、计划内自己的推进）
 //   不算新信息 → 复用。
-//   控制动作特例：下一步是 end_turn/pass → 无条件重新决策。主行动选择是每次决策
-//   最核心的评估，而 end_turn/pass 评估最便宜（control 路径 maxDepth=1），不能靠
-//   计划复用跳过——winning leaf 链穿过回合边界（end_turn）rollout 时，新回合计划
-//   下一步为 end_turn 被盲目复用会跳过当前盘面上更有价值的主行动（同状态搜索选
-//   place_data，fast-path 直接 end_turn，白方掉分）。48f0af3e 移除该特例后免电
-//   分析盘面 219 决策即终局（旧记录 520+）、均分暴跌（AVG 27.3），恢复 1d063418
-//   口径。同回合内（协调器回合门控）end_turn 仍按计划正常推进（回合自然结束）。
+//   PASS独立检查退出时的资源与机会事实；end_turn由合法性和具名依赖约束。
 // 命中返回 { hit: true, action, nextPlan }；miss 返回 { hit: false, reason }。
-function planReuseCheck(plan, currentObservation, legalActions, options = {}) {
+function planReuseCheck(plan, currentObservation, legalActions) {
   if (!plan || !plan.nextActionId) return Object.freeze({ hit: false, reason: "no-plan" });
   if (plan.schemaVersion !== PLAN_SCHEMA_VERSION || !plan.steps?.length) {
     return Object.freeze({ hit: false, reason: "plan-step-evidence-missing" });
@@ -1026,10 +1045,6 @@ function planReuseCheck(plan, currentObservation, legalActions, options = {}) {
   if (!current) return Object.freeze({ hit: false, reason: "step-not-legal" });
   if (String(current.actorId) !== String(step.actorId) || actionSemanticKey(current) !== step.actionKey) {
     return Object.freeze({ hit: false, reason: "plan-step-identity-changed" });
-  }
-  // 控制动作不盲从计划（见上：end_turn/pass 必须每次重新决策主行动）
-  if (options.sameTurn !== true && ["end_turn", "pass"].includes(current.family)) {
-    return Object.freeze({ hit: false, reason: "control-step-redecide", family: current.family });
   }
   if (step.revealedCount == null) {
     return Object.freeze({ hit: false, reason: "no-reveal-count" });
@@ -1047,6 +1062,9 @@ function planReuseCheck(plan, currentObservation, legalActions, options = {}) {
   }
   if (!Array.isArray(step.dependencies)) {
     return Object.freeze({ hit: false, reason: "no-dependency" });
+  }
+  if (current.family === "pass" && !step.dependencies.some(d => d.scope.kind === "pass-decision")) {
+    return Object.freeze({ hit: false, reason: "pass-decision-evidence-missing" });
   }
   let facts;
   try { facts = capturePlanStep({ observation: currentObservation, action: current }).facts; }
