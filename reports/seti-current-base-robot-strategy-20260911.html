@@ -381,6 +381,7 @@
     <section id="plan">
       <div class="section-kicker">08 / PLAN CONTINUATION</div>
       <h2>什么时候复用上次搜索出的路线</h2>
+      <p class="amber">待迭代 · <a href="iteration/strategy-todo-20260911.md">TURN-BOUNDARY-01</a>：新 turn 尚未做主行动时不应直接 end_turn。下列跨回合控制动作重搜分支的真实可达性待核验；检查回合状态、计划推进与已执行步骤消费，不能用重搜掩盖错位。PASS 的复核必要性单独审查。</p>
       <p>winning leaf 若含至少两步真实输入，会编译成 <code>seti-action-plan-v4</code>。协调器只保存尚未执行的后续步骤；每次提交前重新检查，而不是盲放整条宏指令。</p>
       <div class="grid grid-2">
         <div class="card"><h3>命中必须全部成立</h3><ul><li>下一 actionId 仍合法，actor 和动作语义未变</li><li>计划步骤证据完整且版本为 v4</li><li>外星揭示数量没有增加</li><li>当前步骤依赖事实与记录一致</li><li>自由决策的后续具名事实存在性/内容一致</li></ul></div>
