@@ -106,7 +106,7 @@ function makeCoordinator(legalActions, execute = () => ({ ok: true })) {
   assert.equal(recorded.every((entry) => entry.ok === true && entry.seatId === "p1"), true);
 }
 
-// 回合门控只控制 end_turn/PASS 特例；两种回合都检查逐步证据。
+// 同回合/跨回合都检查逐步证据；回合门控只控制跨回合复用实验开关。
 {
   const makeTurnCoordinator = (projection, execute = () => ({ ok: true })) => (
     createMachinePlayerCoordinator({
