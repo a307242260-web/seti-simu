@@ -4,6 +4,9 @@
 关联：[当前 Base 策略报告](../seti-current-base-robot-strategy-20260911.html)。
 迭代验收遵循 [机器人迭代规范](../../docs/robot-iteration-registry.md)。
 
+手打 405 与 base 对比提出的收益提升假设单列于
+[策略效果迭代 TODO](strategy-effect-todo-20260911.md)，包含公司资源循环、卡牌用途、整轮资源安排和终局收益协同；关联本清单已有条目，不改变 ALIEN-VALUE-01 的最高优先级。
+
 ## ALIEN-VALUE-01：核对外星痕迹归属并重审外星收益估值（P0，最高优先级）
 
 - [ ] 待迭代（2026-09-11，用户明确要求最高优先级；优先于本清单其他待办）
