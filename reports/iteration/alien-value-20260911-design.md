@@ -79,3 +79,28 @@ PASS 证据：正式 state primitive 构造的多主人、neutral、混合三色
 投影与轻量 strategicFacts 一致；验证计划依赖和优先级消费者，独立记录行为影响。
 实施前需确定复用的正式计数 primitive 与只读边界，不另复制物种计分实现。
 本缺陷已复现，插入修复；固定溢价删除仍归 ALIEN-VALUE-01，不混算 bug 修复贡献。
+
+### ALIEN-FACTS-01 实施冻结
+
+- 唯一规则 owner 为 aliens/state；复用 countFirstTracesForPlayerOnSlot、
+  countTraceMarkersForPlayerOnSlot、countPlacedFirstTraces。不复制归属规则。
+- outcome-model 将公开槽位的痕迹复制为局部 state 形状再调用计数函数：正式额外标记
+  读取会归一化数组，必须隔离此写入，不能修改冻结的公开观察。
+- 完整投影和轻量事实共用同一槽位统计；保留真实 slotId，三色齐统计全体首标记。
+- 仅派生字段改变；规则状态、得分、奖励、RNG、sequence、Decision owner、提交事务、
+  checkpoint 与隐藏身份边界不变。浏览器已在 outcome-model 前装载 aliens/state。
+- 删除 outcome-model 内两套自行计数逻辑；不涉及物种正面格位。验证归属、neutral、
+  混合三色齐、揭示身份、输入不变与轻量／完整一致。
+- 2026-09-11 用户再次确认：未揭示首痕迹需保留未来奖励预期；其他已指出的错误按 bug
+  修复。未来奖励的估值调整归后续 ALIEN-VALUE-01，不混入本次事实修复。
+
+### ALIEN-FACTS-01 实现验证（尚未整局验收）
+
+正式计数复用已实现；先运行新增反例在修改前失败，修改后通过。红蓝额外标记数量
+故意不相等，避免交换归属后总数碰巧相同掩盖错误。计划续用 unit、V 输入审计通过。
+全量 Node：unit 82/84，通过唯一 fullFlow 1/1；两个失败分别仍为已确认基线问题
+“次级目标搜索不得恢复 beam”与“分析提交后数据目标应释放”。没有新增失败。
+日志：`/tmp/seti-alien-facts-20260911-tests.log`。此次未修改搜索预算、估值公式或正式奖励。
+文档检查覆盖 AI 设计、RL observation 契约、Node 测试清单与迭代设计；更新派生字段契约和
+测试义务。README／AGENTS 的入口和运行方式不变，无需调整导航。完整终局与报告登记待做，
+本节不代表小迭代 PASS，也不代表已合回主目录。

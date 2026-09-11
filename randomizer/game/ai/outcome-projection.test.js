@@ -39,4 +39,39 @@ for (const searchCompleteness of [
   { status: "incomplete", reasons: ["unknown"] },
   { status: "not-evaluated", reasons: ["not-evaluated"] },
 ]) assert.throws(() => model.assertOutcomeSet([{ ...valid, searchCompleteness }], [{ actionId: "root" }]), /searchCompleteness/);
+// 正式 state 构造不同主人的首／额外标记；只读投影不能把额外标记送给首标记主人。
+{
+  const state = require("../aliens/state");
+  const aliens = state.createDefaultAlienState();
+  state.placeFirstTrace(aliens, 2, "yellow", "red");
+  state.addExtraTrace(aliens, 2, "yellow", "blue");
+  state.addExtraTrace(aliens, 2, "yellow", "blue");
+  state.placeFirstTrace(aliens, 2, "pink", "blue");
+  state.addExtraTrace(aliens, 2, "pink", "red");
+  state.placeFirstTrace(aliens, 2, "blue", "green");
+  aliens.aliens[2].traces.blue.neutral = true;
+  aliens.aliens[2].assignedAlienId = "chong";
+  for (const revealed of [false, true]) {
+    const slot = { ...structuredClone(aliens.aliens[2]), slotId: 2, revealed };
+    for (const [color, expectedFirst, expectedExtra] of [["red", 1, 1], ["blue", 1, 2], ["green", 0, 0]]) {
+      const source = { publicState: { players: [{ playerId: color, color, resources: { score: 0 } }],
+        board: { aliens: { slots: [slot] } } }, selfState: { playerId: color, hand: [] } };
+      const snapshot = structuredClone(source);
+      const freeze = value => { if (value && typeof value === "object") {
+        Object.values(value).forEach(freeze); Object.freeze(value);
+      } };
+      freeze(source);
+      const projection = model.createDecisionObservation(source, { seatId: color }).outcomeProjection;
+      const facts = projection.progress.alienSlots[0];
+      assert.equal(facts.slotId, 2);
+      assert.equal(facts.ownFirstTraces, expectedFirst);
+      assert.equal(facts.ownExtraMarks, expectedExtra);
+      assert.equal(facts.firstTracesComplete, true, "凑齐不要求同一玩家，neutral 也占首格");
+      assert.equal(facts.alienId, revealed ? "chong" : null);
+      assert.equal(projection.progress.traceCount, expectedFirst + expectedExtra);
+      assert.equal(model.createStrategicFacts(source, color).traceCount, expectedFirst + expectedExtra);
+      assert.deepEqual(source, snapshot, "正式计数的归一化不能修改公开观察");
+    }
+  }
+}
 console.log("outcome projection tests passed");

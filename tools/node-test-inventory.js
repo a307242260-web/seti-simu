@@ -47,7 +47,7 @@ module.exports = Object.freeze({
     entry("randomizer/app/browser-host/trajectory-recording.test.js", "architecture/browser-host", "Browser 轨迹录制只读 projection 与标准输入链，撤销后与确认 replay 对齐", "录制改写规则状态、失败提交入轨迹或 undo 后轨迹与已确认输入不一致"),
 
     entry("randomizer/game/ai/policy-port.test.js", "architecture/policy-host", "Policy校验隔离、同批冻结叶观察共享、输入不重复携带续用证据且完整计划仍可提取", "非法值被有效观察覆盖、跨请求共享或误删计划证据"),
-    entry("randomizer/game/ai/outcome-projection.test.js", "architecture/policy-host", "标准结果投影保留逐步证据与元数据，重建观察且不污染来源", "复制优化丢字段、复用可变输入、冻结调用者对象或共享事实被外部改写"),
+    entry("randomizer/game/ai/outcome-projection.test.js", "architecture/policy-host", "标准结果投影保留逐步证据与元数据，痕迹归属与正式规则一致且不污染来源", "额外标记错归首标记主人、混合三色漏判、复制丢字段或修改冻结观察"),
     entry("randomizer/app/ai/browser-machine-player.test.js", "architecture/policy-host", "Browser 机器席位经同一协调器装配（协调器读边界/决策函数注册/execute 提交/失败转 fail 结果）", "浏览器 AI 绕过公共 input port 直接执行规则或残留内联搜索拷贝"),
     entry("randomizer/game/ai/heuristic-policy.test.js", "policy/heuristic-policy", "启发式策略确定性选择且只返回 legal actionId", "空集、畸形配置、未知或 disabled action 未 fail-closed"),
     entry("randomizer/game/ai/strategic-goal-evaluator.test.js", "policy/heuristic-policy", "战略目标读取标准叶收益；未完成路线不可选，完成前缀及正式终局保留", "资源库存、未兑现路线或途中收益让失败准备压过完成目标"),

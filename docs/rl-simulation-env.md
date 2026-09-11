@@ -184,6 +184,12 @@ Production地球坐标及探测/正式行动context通过共享太阳系内核�
 `strategicFacts.disabledTechIds`，取公共techState中已拥有且失效的科技ID（无失效为[]）。
 它只影响能力未来估值；ownedTechIds、科技数量和正式计分不变，不写入Production状态。
 
+`outcomeProjection.progress.alienSlots`只表示公开 state 面的首痕迹、额外标记及揭示状态，
+不表示物种正面奖励格。`ownExtraMarks`逐个按标记实际主人统计，`firstTracesComplete`
+表示全体三色首格已占用（含 neutral），不要求同一玩家。槽位保留正式 slotId，未揭示
+身份仍为 null。`traceCount`与轻量`strategicFacts.traceCount`从同一槽位统计汇总，
+复用 aliens/state 正式计数函数；其数组归一化仅作用于私有复制，不修改公开观察。
+
 反事实叶可携带`executionStepCount`：实际成功提交的Action/Decision总数，包含节点内
 折叠步骤，不等于搜索节点数。Production搜索输出该计数；未提供此字段的非折叠叶以
 actionChain长度表示提交数。非终局条件决策的同价值排序使用该计数，终局不使用；它不

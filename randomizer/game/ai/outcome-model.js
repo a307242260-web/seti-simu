@@ -1,9 +1,11 @@
 (function (root, factory) {
   "use strict";
 
-  const api = factory();
+  const alienState = typeof module === "object" && module.exports
+    ? require("../aliens/state") : root.SetiAlienState;
+  const api = factory(alienState);
   if (typeof module === "object" && module.exports) module.exports = api;
-  if (typeof module === "undefined") root.SetiOutcomeModel = api;})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+    if (typeof module === "undefined") root.SetiOutcomeModel = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (alienState) {
   "use strict";
 
   const OBSERVATION_SCHEMA_VERSION = "seti-decision-observation-v2";
@@ -282,82 +284,37 @@
   }
 
   function countPlayerTraces(source, seatId, publicPlayer = null) {
-    const aliens = source?.publicState?.board?.aliens
-      ?? source?.publicState?.aliens
-      ?? source?.aliens
-      ?? {};
-    const slots = Array.isArray(aliens?.slots)
-      ? aliens.slots
-      : Object.values(aliens?.slots || aliens?.aliens || {});
-    let traceCount = 0;
-    let alienContacts = 0;
-    const color = playerColor(publicPlayer);
-    for (const slot of slots) {
-      const traces = slot?.traces || {};
-      const own = Array.isArray(traces)
-        ? traces.filter((trace) => (
-          String(trace?.playerId ?? trace?.ownerId) === String(seatId)
-          || (color && trace?.ownerPlayerColor === color)
-        )).length
-        : Object.values(traces).reduce((total, trace) => {
-          if (finiteOrNull(trace) != null) return total + (finiteOrNull(trace) || 0);
-          const owned = String(trace?.playerId ?? trace?.ownerId ?? "") === String(seatId)
-            || (color && trace?.ownerPlayerColor === color);
-          const extra = Array.isArray(trace?.extraMarkers)
-            ? trace.extraMarkers.filter((marker) => (
-              String(marker?.playerId ?? marker?.ownerId ?? "") === String(seatId)
-              || (color && marker?.playerColor === color)
-            )).length
-            : 0;
-          return total + (owned && trace?.firstPlaced !== false ? 1 : 0) + extra;
-        }, 0);
-      traceCount += own;
-      if (own > 0 && slot?.revealed !== false) alienContacts += 1;
-    }
-    return { traceCount, alienContacts };
+    const slots = alienSlotFacts(source, seatId, publicPlayer);
+    return {
+      traceCount: slots.reduce((total, slot) => total + slot.ownFirstTraces + slot.ownExtraMarks, 0),
+      alienContacts: slots.filter(slot => slot.revealed && slot.ownFirstTraces + slot.ownExtraMarks > 0).length,
+      slots,
+    };
   }
 
-  // 外星槽位级进度事实（V 状态价值用）：每个槽位的揭示状态、我方首痕迹数/额外标记、
-  // 三色齐判定。来源 publicState.board.aliens.slots（sanitize 后形状：{revealed,
-  // alienId, traces:{yellow/pink/blue:{firstPlaced,ownerPlayerColor,extraCount}}}）。
+  // 仅统计公开 state 面；归属与三色齐复用正式规则，不把额外标记算给首标记主人。
   function alienSlotFacts(source, seatId, publicPlayer = null) {
     const aliens = source?.publicState?.board?.aliens
       ?? source?.publicState?.aliens
       ?? source?.aliens
       ?? {};
-    const slots = Array.isArray(aliens?.slots)
-      ? aliens.slots
-      : Object.values(aliens?.slots || aliens?.aliens || {});
-    const color = playerColor(publicPlayer);
-    const owned = (trace) => (
-      trace?.firstPlaced
-      && !trace?.neutral
-      && (
-        String(trace?.playerId ?? trace?.ownerId ?? "") === String(seatId)
-        || (color && (
-          String(trace?.ownerPlayerColor ?? trace?.playerColor ?? "") === String(color)
-        ))
-      )
-    );
-    return slots.map((slot, index) => {
-      const traces = slot?.traces || {};
-      let ownFirstTraces = 0;
-      let ownExtraMarks = 0;
-      for (const traceType of ["yellow", "pink", "blue"]) {
-        const trace = traces[traceType];
-        if (!trace) continue;
-        if (owned(trace)) {
-          ownFirstTraces += 1;
-          ownExtraMarks += Math.max(0, finiteOrNull(trace.extraCount) ?? 0);
-        }
-      }
+    const sourceSlots = aliens?.slots || aliens?.aliens || {};
+    const player = { id: seatId, color: playerColor(publicPlayer) };
+    return Object.entries(sourceSlots).map(([key, slot]) => {
+      const slotId = slot?.slotId ?? (Array.isArray(sourceSlots) ? Number(key) + 1 : Number(key));
+      // 正式额外标记计数会归一化数组；只在私有复制上调用，禁止写入冻结的观察。
+      const localSlot = { traces: clone(slot?.traces || {}) };
+      const localState = { aliens: { [slotId]: localSlot } };
+      const ownFirstTraces = alienState.countFirstTracesForPlayerOnSlot(localState, slotId, player);
+      const ownExtraMarks = alienState.countTraceMarkersForPlayerOnSlot(localState, slotId, player)
+        - ownFirstTraces;
       return {
-        slotId: index + 1,
+        slotId,
         revealed: Boolean(slot?.revealed),
         alienId: slot?.revealed ? (slot?.alienId || slot?.assignedAlienId || null) : null,
         ownFirstTraces,
         ownExtraMarks,
-        firstTracesComplete: ownFirstTraces >= 3,
+        firstTracesComplete: alienState.countPlacedFirstTraces(localSlot) === 3,
       };
     });
   }
@@ -419,9 +376,9 @@
         traceCount: traces.traceCount,
         dataProgress: dataProgressFacts(publicPlayer),
         alienContacts: traces.alienContacts,
-        // 外星槽位级进度（V 状态价值：首痕迹归属/揭示/位置进度）
+        // 公开 state 面的首痕迹与额外标记，不含物种正面奖励格。
         // 每个槽位: { slotId, revealed, alienId, ownFirstTraces, ownExtraMarks }
-        alienSlots: alienSlotFacts(source, seatId, publicPlayer),
+        alienSlots: traces.slots,
         probeRoute: createProbeRoute(source, seatId, options.probeRouteSummary),
         probeGoalRequirements: String(source?.probeRouteRequirements?.playerId) === String(seatId)
           ? clone(source.probeRouteRequirements)
