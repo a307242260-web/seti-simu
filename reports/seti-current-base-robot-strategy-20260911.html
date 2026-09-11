@@ -323,7 +323,7 @@
       </div>
       <div class="grid grid-2" style="margin-top:16px">
         <div class="card"><h3>战略搜索</h3><ul><li>根候选：只取目标目录绑定动作。</li><li>每个 origin 最多保留 8 叶；根动作优先执行。</li><li>共享全局精确最小堆 frontier；先为每个仍存活根保留一个最优节点，再填满 256。</li><li>未绑定后继最多展开 3 层；深度/beam/node/time 截断都显式记不完整。</li></ul></div>
-        <div class="card"><h3>Control 浅评估</h3><ul><li><code>end_turn</code> / <code>pass</code> 与战略候选分开。</li><li>最大深度 1、每根 1 叶，节点数等于 control 动作数。</li><li>在 pass decision boundary 停止，不执行对手回合。</li><li>其价值主要作为稳定控制候选与无收益时的退出。</li></ul></div>
+        <div class="card"><h3>结束与退出的评估</h3><ul><li>未做主行动时，以 <code>pass</code> 退出本轮；已做主行动时，以 <code>end_turn</code> 结束回合。</li><li>两者在各自合法阶段接受短模拟评估：最大深度 1、每根 1 叶，节点预算等于控制动作数。</li><li>模拟在 PASS 决策边界停止，不执行对手回合。</li></ul><p class="amber">待迭代 · <a href="iteration/strategy-todo-20260911.md">QUICK-TIMING-01</a>：用户明确快速行动一般在主行动前补资源、满足前置或防溢出；主行动后主要兑现限时移动、精选等会过期的机会。具体实现待核对与设计。</p></div>
       </div>
       <h3>树内未绑定动作</h3>
       <p>目标完成后或未绑定阶段允许继续形成新目标。普通未绑定后继按 family 基础顺序加净资源收益排序：<code>orbit/land 9</code>、<code>launch 8</code>、<code>research 7</code>、<code>move/scan/analyze/place_data 6</code>、<code>play_card 5</code>、<code>industry 3</code>、<code>quick_trade 2</code>、<code>card_corner/complete_task 1</code>。但 <strong>move、quick_trade、card_corner 实际从未绑定后继排除</strong>，只能经目标绑定进入。</p>
