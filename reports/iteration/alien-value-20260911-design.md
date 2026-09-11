@@ -118,3 +118,14 @@ PASS 证据：正式 state primitive 构造的多主人、neutral、混合三色
 日志 `/tmp/seti-alien-facts-20260911-full.log`；生成的逐步报告位于
 `reports/iteration/alien-facts-20260911/`。临时克隆缺部分未入库的历史记录，构建告警
 须与本次文件完整性分开核验，不通过重跑历史实验消除告警。
+
+### ALIEN-FACTS-01 合回完成
+
+主目录 dev 已从 a41129fa 快进到5b6f776e，保留9210f173、4d162d24与5b6f776e的
+原始提交；使用私有 index，不包含共享暂存区的过期快照。主目录重跑 Node 回归仍为
+unit82通过/同两项基线失败、fullFlow1通过，日志
+`/tmp/seti-alien-facts-20260911-main-tests.log`。源文件与已验收提交一致。
+主目录报告中心已重建：本版本 record/save/report 均为true，无本版本完整性告警，
+分数来源为 save-final，正式均分94.75；历史无存档提示保留，不伪造补齐。
+本插入式修复的开发、自然终局、文档同步、合回与报告登记已完成。
+后续恢复 ALIEN-VALUE-01，仍需删除错误溢价并保留未揭示首痕迹未来奖励预期。

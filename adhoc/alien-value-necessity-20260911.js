@@ -3,6 +3,7 @@
 // 必要性审查：合成公开事实，仅调用正式投影与评估；不是完整局实验。
 const model = require("../randomizer/game/ai/outcome-model");
 const evaluator = require("../randomizer/game/ai/expected-score-evaluator");
+const { execFileSync } = require("node:child_process");
 const seatId = "red";
 function observe({ revealed = false, first = null, extra = [], score = 0,
   securedEndGameBonus = 0, roundNumber = 2, mixed = false } = {}) {
@@ -43,4 +44,5 @@ const results = [
   compare("混合归属三色齐", observe(), observe({ first: "red", mixed: true })),
 ];
 console.log(JSON.stringify({ kind: "synthetic-valuation-diagnostic", date: "2026-09-11",
-  codeCommit: "a41129fa255fd431efc8c0e2aad73f0d7872d11d", results }, null, 2));
+  codeCommit: execFileSync("git", ["rev-parse", "HEAD"], { cwd: __dirname, encoding: "utf8" }).trim(),
+  results }, null, 2));
