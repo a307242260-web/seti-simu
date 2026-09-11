@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-11T09:40:47.447Z",
+  "builtAt": "2026-09-11T10:22:16.471Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "5b6f776e",
-  "currentBaseline": "alien-facts-20260911",
+  "headCommit": "0d47f501",
+  "currentBaseline": "alien-card12-20260911",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,609 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "alien-card12-20260911",
+      "name": "alien-card12-20260911",
+      "date": "2026-09-11",
+      "baseline": "alien-facts-20260911",
+      "head": "ea32d6e8",
+      "commits": [
+        {
+          "hash": "cf4f69f3",
+          "date": "2026-09-11",
+          "subject": "[ALIEN-VALUE-01] 删除外星虚构溢价并仅保留未揭示首痕迹预期"
+        },
+        {
+          "hash": "ea32d6e8",
+          "date": "2026-09-11",
+          "subject": "[ALIEN-VALUE-01] 按统一12分实现外星牌权益与持牌价值交接"
+        }
+      ],
+      "summary": "删除重复痕迹及揭示溢价；待获得和持有外星牌统一12分，揭示交接不重算，使用扣回持牌预期",
+      "diffStat": "22 files changed, 73984 insertions(+), 117 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/alien-value-necessity-20260911.js",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 9,
+          "deletions": 1
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 16,
+          "deletions": 93
+        },
+        {
+          "file": "randomizer/game/ai/outcome-model.js",
+          "insertions": 4,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/terminal-value.test.js",
+          "insertions": 55,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/aliens/reveal-card-grants.test.js",
+          "insertions": 16,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-expectation-20260911-design.md",
+          "insertions": 52,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-facts-20260911/9fd08b9f.4d162d24.full.action-log.html",
+          "insertions": 2070,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-facts-20260911/9fd08b9f.4d162d24.quick-1.action-log.html",
+          "insertions": 107,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-value-20260911-design.md",
+          "insertions": 25,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 487,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/strategy-todo-20260911.md",
+          "insertions": 5,
+          "deletions": 5
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/9fd08b9f.4d162d24.full.json",
+          "insertions": 19944,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/9fd08b9f.4d162d24.quick-1.json",
+          "insertions": 44,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 487,
+          "deletions": 4
+        },
+        {
+          "file": "reports/seti-current-base-robot-strategy-20260911.html",
+          "insertions": 6,
+          "deletions": 6
+        },
+        {
+          "file": "seti-saves/seti-save-research-alien-facts-20260911-4d162d24-full-v303.json",
+          "insertions": 42157,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-alien-facts-20260911-4d162d24-quick-1-v1.json",
+          "insertions": 8468,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 2,
+          "deletions": 2
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "3522c43c.ea32d6e8.full.json",
+          "recordPath": "reports/research/3522c43c.ea32d6e8.full.json",
+          "mode": "full",
+          "steps": 541,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 840851,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "ea32d6e8",
+          "createdAt": "2026-09-11T10:12:47.821Z",
+          "resumeStep": 24,
+          "seed": "seti-free-analyze-v1",
+          "note": "ALIEN-VALUE-01：用户确认统一外星牌12分，数值调优不在本阶段。541步自然终局77/96/91/93，均89.25；前缀14.2秒+续跑840.9秒；178次搜索、196042节点，执行截断42、frontier截断54，规则失败节点0。较归属修复版均分-5.5，节点增加51269，保留性能退化证据供后续预算专项；不以涨分替代框架验收。unit82通过/两项已确认基线失败、fullFlow通过；六种真实发牌及待获得/持有/使用交接测试通过。",
+          "scores": {
+            "player-blue": 77,
+            "player-green": 96,
+            "player-brown": 91,
+            "player-white": 93
+          },
+          "avgScore": 89.25,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 77,
+              "base": 59,
+              "tile": 14,
+              "card": 4,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 0,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 0,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 12,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 18,
+                "orbitScore": 6,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 96,
+              "base": 67,
+              "tile": 25,
+              "card": 4,
+              "tileScoresById": {
+                "a": 22,
+                "b": 0,
+                "c": 0,
+                "d": 3
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 3,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_115.webp",
+                  "rule": {
+                    "kind": "unmarkedFinalRightmost"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 2,
+                "cardEffectScore": 6,
+                "cardQuickScore": 3,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 6,
+                "orbitScore": 15,
+                "scanScore": 4,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 91,
+              "base": 67,
+              "tile": 24,
+              "card": 0,
+              "tileScoresById": {
+                "a": 16,
+                "b": 8,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 4,
+                "cardEffectScore": 4,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 12,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 5
+              }
+            },
+            "player-white": {
+              "total": 93,
+              "base": 72,
+              "tile": 21,
+              "card": 0,
+              "tileScoresById": {
+                "a": 5,
+                "b": 6,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 5,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 12,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 15,
+                "orbitScore": 6,
+                "scanScore": 11,
+                "taskCardScore": 0,
+                "techBonusScore": 6
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-alien-card12-20260911-ea32d6e8-full-v276.json",
+          "reportPath": "reports/iteration/alien-card12-20260911/3522c43c.ea32d6e8.full.action-log.html",
+          "reportExists": true
+        },
+        {
+          "recordFile": "3522c43c.ea32d6e8.quick-24.json",
+          "recordPath": "reports/research/3522c43c.ea32d6e8.quick-24.json",
+          "mode": "quick-24",
+          "steps": 24,
+          "stepsLimit": 24,
+          "terminal": false,
+          "wallMs": 14204,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "ea32d6e8",
+          "createdAt": "2026-09-11T09:58:34.800Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "24步前缀包含真实4096节点搜索，14.2秒，无执行异常；完整局由存档续跑，不重复前缀。",
+          "scores": {
+            "player-blue": 7,
+            "player-green": 7,
+            "player-brown": 8,
+            "player-white": 6
+          },
+          "avgScore": 7,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-alien-card12-20260911-ea32d6e8-quick-24-v2.json",
+          "reportPath": "reports/iteration/alien-card12-20260911/3522c43c.ea32d6e8.quick-24.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "3522c43c.ea32d6e8.full",
+            "path": "reports/iteration/alien-card12-20260911/3522c43c.ea32d6e8.full.action-log.html",
+            "mode": "full"
+          },
+          {
+            "runKey": "3522c43c.ea32d6e8.quick-24",
+            "path": "reports/iteration/alien-card12-20260911/3522c43c.ea32d6e8.quick-24.action-log.html",
+            "mode": "quick-24"
+          }
+        ]
+      }
+    },
+    {
+      "id": "alien-expectation-superseded-20260911",
+      "name": "首痕迹独立参数方案（已被用户纠正，不验收）",
+      "date": "2026-09-11",
+      "baseline": "alien-facts-20260911",
+      "head": "cf4f69f3",
+      "commits": [
+        {
+          "hash": "cf4f69f3",
+          "date": "2026-09-11",
+          "subject": "[ALIEN-VALUE-01] 删除外星虚构溢价并仅保留未揭示首痕迹预期"
+        }
+      ],
+      "summary": "必要性审查未通过，改用用户确认的统一外星牌价值框架；保留实验记录，不继续全盘。",
+      "diffStat": "21 files changed, 73954 insertions(+), 111 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/alien-value-necessity-20260911.js",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 8,
+          "deletions": 1
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 2,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 18,
+          "deletions": 88
+        },
+        {
+          "file": "randomizer/game/ai/outcome-model.js",
+          "insertions": 3,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/terminal-value.test.js",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-expectation-20260911-design.md",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-facts-20260911/9fd08b9f.4d162d24.full.action-log.html",
+          "insertions": 2070,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-facts-20260911/9fd08b9f.4d162d24.quick-1.action-log.html",
+          "insertions": 107,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/alien-value-20260911-design.md",
+          "insertions": 25,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 487,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/strategy-todo-20260911.md",
+          "insertions": 5,
+          "deletions": 5
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/9fd08b9f.4d162d24.full.json",
+          "insertions": 19944,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/9fd08b9f.4d162d24.quick-1.json",
+          "insertions": 44,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 487,
+          "deletions": 4
+        },
+        {
+          "file": "reports/seti-current-base-robot-strategy-20260911.html",
+          "insertions": 6,
+          "deletions": 6
+        },
+        {
+          "file": "seti-saves/seti-save-research-alien-facts-20260911-4d162d24-full-v303.json",
+          "insertions": 42157,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-alien-facts-20260911-4d162d24-quick-1-v1.json",
+          "insertions": 8468,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 1
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "410a479a.cf4f69f3.quick-24.json",
+          "recordPath": "reports/research/410a479a.cf4f69f3.quick-24.json",
+          "mode": "quick-24",
+          "steps": 24,
+          "stepsLimit": 24,
+          "terminal": false,
+          "wallMs": 14210,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "cf4f69f3",
+          "createdAt": "2026-09-11T09:49:47.170Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "已被统一12分方案替代，不作为通过版本或最终策略；仅24步前缀，未运行完整局。",
+          "scores": {
+            "player-blue": 7,
+            "player-green": 7,
+            "player-brown": 8,
+            "player-white": 6
+          },
+          "avgScore": 7,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-alien-expectation-20260911-cf4f69f3-quick-24-v2.json",
+          "reportPath": "reports/iteration/alien-expectation-superseded-20260911/410a479a.cf4f69f3.quick-24.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "410a479a.cf4f69f3.quick-24",
+            "path": "reports/iteration/alien-expectation-superseded-20260911/410a479a.cf4f69f3.quick-24.action-log.html",
+            "mode": "quick-24"
+          }
+        ]
+      }
+    },
     {
       "id": "alien-facts-20260911",
       "name": "alien-facts-20260911",
@@ -658,7 +1261,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
