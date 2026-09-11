@@ -1,0 +1,228 @@
+{
+  "before": {
+    "round": 1,
+    "turn": 1,
+    "actor": "player-white",
+    "families": [
+      "card_corner",
+      "launch",
+      "pass",
+      "place_data",
+      "play_card",
+      "quick_trade",
+      "scan"
+    ]
+  },
+  "afterMain": {
+    "round": 1,
+    "turn": 1,
+    "actor": "player-white",
+    "families": [
+      "card_corner",
+      "end_turn",
+      "move",
+      "place_data",
+      "quick_trade"
+    ]
+  },
+  "nextOwnTurn": {
+    "round": 1,
+    "turn": 5,
+    "actor": "player-white",
+    "families": [
+      "card_corner",
+      "move",
+      "pass",
+      "place_data",
+      "play_card",
+      "quick_trade",
+      "scan"
+    ]
+  },
+  "endReuse": {
+    "hit": false,
+    "reason": "step-not-legal"
+  },
+  "passDependencies": [],
+  "passFutureDependencies": [],
+  "unchangedPassSameTurn": true,
+  "unchangedPassNewTurn": {
+    "hit": false,
+    "reason": "control-step-redecide",
+    "family": "pass"
+  },
+  "inputs": [
+    {
+      "actor": "player-white",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-white",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-white",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-white",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-white",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-green",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-green",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-green",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-green",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-blue",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-blue",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-blue",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-blue",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-brown",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-brown",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-brown",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-brown",
+      "family": "choose_card"
+    },
+    {
+      "actor": "player-white",
+      "family": "choose_payment"
+    },
+    {
+      "actor": "player-white",
+      "family": "choose_payment"
+    },
+    {
+      "actor": "player-white",
+      "family": "choose_payment"
+    },
+    {
+      "actor": "player-green",
+      "family": "choose_payment"
+    },
+    {
+      "actor": "player-green",
+      "family": "choose_payment"
+    },
+    {
+      "actor": "player-green",
+      "family": "choose_payment"
+    },
+    {
+      "actor": "player-brown",
+      "family": "choose_payment"
+    },
+    {
+      "actor": "player-brown",
+      "family": "choose_payment"
+    },
+    {
+      "actor": "player-white",
+      "family": "launch"
+    },
+    {
+      "actor": "player-white",
+      "family": "end_turn"
+    },
+    {
+      "actor": "player-green",
+      "family": "launch"
+    },
+    {
+      "actor": "player-green",
+      "family": "end_turn"
+    },
+    {
+      "actor": "player-blue",
+      "family": "launch"
+    },
+    {
+      "actor": "player-blue",
+      "family": "end_turn"
+    },
+    {
+      "actor": "player-brown",
+      "family": "card_corner"
+    },
+    {
+      "actor": "player-brown",
+      "family": "card_corner"
+    },
+    {
+      "actor": "player-brown",
+      "family": "card_corner"
+    },
+    {
+      "actor": "player-brown",
+      "family": "industry"
+    },
+    {
+      "actor": "player-brown",
+      "family": "choose_target"
+    },
+    {
+      "actor": "player-brown",
+      "family": "choose_target"
+    },
+    {
+      "actor": "player-brown",
+      "family": "move"
+    },
+    {
+      "actor": "player-brown",
+      "family": "choose_payment"
+    },
+    {
+      "actor": "player-brown",
+      "family": "move"
+    },
+    {
+      "actor": "player-brown",
+      "family": "choose_payment"
+    },
+    {
+      "actor": "player-brown",
+      "family": "pass"
+    },
+    {
+      "actor": "player-brown",
+      "family": "choose_card"
+    }
+  ]
+}
