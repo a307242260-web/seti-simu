@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>SETI 当前 Base 机器人策略全景报告</title>
+  <style>
+    :root {
+      --bg: #071017;
+      --panel: #0d1a24;
+      --panel-2: #112331;
+      --line: #203744;
+      --ink: #eef6f7;
+      --muted: #91aab3;
+      --cyan: #63d9dd;
+      --cyan-2: #1f8590;
+      --amber: #f0b65b;
+      --green: #73d49d;
+      --red: #f08b82;
+      --blue: #63aee8;
+      --white: #dce8ee;
+      --brown: #d29b74;
+      --shadow: 0 22px 70px rgba(0, 0, 0, .28);
+      --radius: 18px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 4%, rgba(41, 149, 159, .19), transparent 26rem),
+        radial-gradient(circle at 92% 14%, rgba(240, 182, 91, .09), transparent 24rem),
+        var(--bg);
+      line-height: 1.62;
+    }
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    code, .mono {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-size: .92em;
+    }
+    .shell { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 100vh; }
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 20px;
+      border-right: 1px solid var(--line);
+      background: rgba(7, 16, 23, .92);
+      backdrop-filter: blur(18px);
+      overflow: auto;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+    .mark {
+      width: 40px; height: 40px; border: 1px solid var(--cyan-2); border-radius: 50%;
+      display: grid; place-items: center; color: var(--cyan); font-weight: 800;
+      box-shadow: inset 0 0 18px rgba(99, 217, 221, .12);
+    }
+    .brand strong { display: block; letter-spacing: .08em; }
+    .brand small { color: var(--muted); }
+    nav a {
+      display: block; padding: 8px 10px; margin: 2px 0; color: var(--muted);
+      border-left: 2px solid transparent; border-radius: 0 8px 8px 0; font-size: 14px;
+    }
+    nav a.active, nav a:hover { color: var(--ink); border-left-color: var(--cyan); background: rgba(99,217,221,.06); text-decoration: none; }
+    .aside-note { margin-top: 28px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; color: var(--muted); font-size: 12px; }
+    main { min-width: 0; padding: 0 44px 90px; }
+    .hero { max-width: 1180px; padding: 76px 0 44px; }
+    .eyebrow { color: var(--cyan); letter-spacing: .16em; text-transform: uppercase; font-size: 12px; font-weight: 800; }
+    h1 { margin: 10px 0 18px; font-size: clamp(38px, 6vw, 72px); line-height: 1.02; letter-spacing: -.045em; max-width: 920px; }
+    .lede { max-width: 860px; color: #b8cbd1; font-size: 19px; }
+    .stamp-row, .chip-row { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 24px; }
+    .stamp, .chip { border: 1px solid var(--line); background: rgba(17,35,49,.7); color: #c4d5da; border-radius: 999px; padding: 6px 11px; font-size: 12px; }
+    .stamp.good { border-color: rgba(115,212,157,.5); color: var(--green); }
+    .stamp.warn { border-color: rgba(240,182,91,.5); color: var(--amber); }
+    section { max-width: 1180px; margin: 0 0 78px; scroll-margin-top: 22px; }
+    .section-kicker { color: var(--cyan); font: 700 12px/1.3 "SFMono-Regular", monospace; letter-spacing: .14em; }
+    h2 { margin: 8px 0 22px; font-size: clamp(28px, 4vw, 44px); line-height: 1.12; letter-spacing: -.025em; }
+    h3 { margin: 26px 0 12px; font-size: 20px; }
+    p { margin: 8px 0 15px; }
+    .muted { color: var(--muted); }
+    .grid { display: grid; gap: 16px; }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .card { background: linear-gradient(155deg, rgba(17,35,49,.95), rgba(10,25,34,.95)); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+    .card h3 { margin-top: 0; }
+    .metric strong { display: block; font-size: 31px; line-height: 1.05; letter-spacing: -.035em; }
+    .metric span { display: block; margin-top: 9px; color: var(--muted); font-size: 13px; }
+    .accent { color: var(--cyan); }
+    .amber { color: var(--amber); }
+    .green { color: var(--green); }
+    .callout { border-left: 3px solid var(--cyan); padding: 15px 18px; background: rgba(99,217,221,.055); border-radius: 0 12px 12px 0; }
+    .callout.warn { border-color: var(--amber); background: rgba(240,182,91,.055); }
+    .callout.danger { border-color: var(--red); background: rgba(240,139,130,.055); }
+    .flow { display: grid; grid-template-columns: repeat(7, minmax(115px, 1fr)); gap: 9px; align-items: stretch; }
+    .flow .node { position: relative; min-height: 120px; padding: 14px; border: 1px solid var(--line); border-radius: 13px; background: var(--panel); }
+    .flow .node:not(:last-child)::after { content: "→"; position: absolute; right: -9px; top: 42%; z-index: 2; color: var(--cyan); font-weight: 900; }
+    .node b { display: block; color: var(--cyan); margin-bottom: 8px; }
+    .node small { color: var(--muted); }
+    .decision-stack { display: grid; gap: 10px; }
+    .decision-row { display: grid; grid-template-columns: 54px 190px minmax(0, 1fr); gap: 14px; align-items: start; padding: 15px 17px; background: var(--panel); border: 1px solid var(--line); border-radius: 13px; }
+    .num { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: rgba(99,217,221,.12); color: var(--cyan); font-weight: 800; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 12px 13px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--muted); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    .table-wrap { overflow: auto; border: 1px solid var(--line); border-radius: 15px; background: rgba(13,26,36,.82); }
+    .tag { display: inline-block; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--line); color: #c9d9dd; font-size: 11px; white-space: nowrap; }
+    .tag.live { color: var(--green); border-color: rgba(115,212,157,.4); }
+    .tag.approx { color: var(--amber); border-color: rgba(240,182,91,.4); }
+    .tag.off { color: var(--red); border-color: rgba(240,139,130,.4); }
+    .formula { padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: #08141c; color: #d9eff0; overflow-x: auto; }
+    .formula strong { color: var(--cyan); }
+    .bar-list { display: grid; gap: 10px; }
+    .bar-row { display: grid; grid-template-columns: 120px 1fr 56px; align-items: center; gap: 10px; }
+    .bar-track { height: 9px; background: #081219; border-radius: 99px; overflow: hidden; }
+    .bar-fill { height: 100%; width: var(--w); border-radius: inherit; background: linear-gradient(90deg, var(--cyan-2), var(--cyan)); }
+    .score-strip { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+    .score { padding: 19px; background: var(--panel); border-right: 1px solid var(--line); }
+    .score:last-child { border-right: 0; }
+    .score .total { font-size: 36px; line-height: 1; font-weight: 800; }
+    .score .parts { color: var(--muted); font-size: 12px; margin-top: 8px; }
+    .blue-dot, .green-dot, .brown-dot, .white-dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; }
+    .blue-dot { background: var(--blue); } .green-dot { background: var(--green); }
+    .brown-dot { background: var(--brown); } .white-dot { background: var(--white); }
+    .filters { display:flex; flex-wrap:wrap; gap:8px; margin: 0 0 14px; }
+    button { color: var(--muted); background: var(--panel); border:1px solid var(--line); border-radius:999px; padding:7px 11px; cursor:pointer; }
+    button.active, button:hover { color:var(--ink); border-color:var(--cyan-2); }
+    details { border: 1px solid var(--line); border-radius: 13px; background: var(--panel); padding: 13px 16px; margin: 10px 0; }
+    summary { cursor: pointer; font-weight: 700; }
+    ul { padding-left: 20px; }
+    li { margin: 6px 0; }
+    footer { max-width:1180px; color:var(--muted); border-top:1px solid var(--line); padding-top:24px; }
+    @media (max-width: 1050px) {
+      .shell { grid-template-columns: 1fr; }
+      aside { position: relative; height: auto; border-right:0; border-bottom:1px solid var(--line); }
+      nav { display:flex; flex-wrap:wrap; gap:4px; }
+      nav a { border-left:0; border-bottom:2px solid transparent; }
+      nav a.active { border-bottom-color:var(--cyan); }
+      .aside-note { display:none; }
+      main { padding: 0 24px 70px; }
+      .flow { grid-template-columns: repeat(2, 1fr); }
+      .flow .node::after { display:none; }
+      .grid-4, .grid-3 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 680px) {
+      .hero { padding-top:48px; }
+      .grid-4, .grid-3, .grid-2, .score-strip { grid-template-columns: 1fr; }
+      .score { border-right:0; border-bottom:1px solid var(--line); }
+      .decision-row { grid-template-columns: 42px 1fr; }
+      .decision-row > div:last-child { grid-column:2; }
+      .bar-row { grid-template-columns: 92px 1fr 42px; }
+    }
+    @media print {
+      body { background:#fff; color:#111; }
+      .shell { display:block; }
+      aside { display:none; }
+      main { padding:0; }
+      section { break-inside:avoid; margin-bottom:36px; }
+      .card, .table-wrap, .node, details { box-shadow:none; background:#fff; border-color:#bbb; }
+      .muted, th, .metric span, .node small, .parts { color:#555 !important; }
+      a { color:#12636b; }
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+  <aside>
+    <div class="brand"><div class="mark">S</div><div><strong>SETI / AI</strong><small>Base strategy report</small></div></div>
+    <nav aria-label="报告目录">
+      <a href="#summary">结论摘要</a>
+      <a href="#baseline">Base 身份</a>
+      <a href="#architecture">生产决策链</a>
+      <a href="#priority">选择优先级</a>
+      <a href="#goals">目标与行动策略</a>
+      <a href="#search">搜索空间与预算</a>
+      <a href="#value">估值模型</a>
+      <a href="#plan">计划复用</a>
+      <a href="#run">完整局表现</a>
+      <a href="#boundaries">边界与未纳入项</a>
+      <a href="#sources">证据索引</a>
+    </nav>
+    <div class="aside-note">离线单文件报告<br>快照日期 2026-09-11<br>点击目录可定位；支持打印。</div>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">Committed baseline · Strategy map · Evidence</div>
+      <h1>当前 Base 机器人策略<br>全景报告</h1>
+      <p class="lede">这不是“权重清单”，而是一条从可见状态、目标准入、反事实执行、叶估值、稳定决胜到计划复用的完整生产链。当前 base 的核心选择是：<strong>先确定值得完成的目标，再只搜索能推进目标的动作</strong>；规则正确性优先于历史高分。</p>
+      <div class="stamp-row">
+        <span class="stamp good">Base: round5-correctness-base-20260909</span>
+        <span class="stamp">Policy: seti-heuristic-policy-v0</span>
+        <span class="stamp">Rollout: secondary-agent-rollout-v21</span>
+        <span class="stamp warn">下一瓶颈：预算触顶与 beam 裁剪</span>
+      </div>
+    </header>
+
+    <section id="summary">
+      <div class="section-kicker">01 / EXECUTIVE SUMMARY</div>
+      <h2>一句话判断</h2>
+      <div class="callout"><strong>当前 base 是“正确性共同起点”，不是历史最高分策略。</strong> 它把规则、信息边界、计划依赖、状态恢复与可证明的候选支配剪枝合在一起；牌序偏好、普通卡完整估值和未经完整验收的搜索候选没有混入。</div>
+      <div class="grid grid-4" style="margin-top:16px">
+        <div class="card metric"><strong class="accent">91.75</strong><span>固定盘面完整终局均分</span></div>
+        <div class="card metric"><strong>572</strong><span>自然终局正式输入步数</span></div>
+        <div class="card metric"><strong class="amber">27</strong><span>战略搜索达到 4096 节点上限</span></div>
+        <div class="card metric"><strong>645.8s</strong><span>完整局墙钟时间</span></div>
+      </div>
+      <div class="grid grid-3" style="margin-top:16px">
+        <div class="card"><h3>策略范式</h3><p>目标引导 + 需求引导。探测、分析、扇区、收入、科技先形成具名目标，再绑定主动作和资源准备动作。</p></div>
+        <div class="card"><h3>价值范式</h3><p>以真实叶的已兑现分为主，加科技未来效用、收入窗口、痕迹/揭示进度与宣传研究机会；不为 action family 固定送分。</p></div>
+        <div class="card"><h3>执行范式</h3><p>Browser 与 Simulation 共用协调器、决策函数和规则内核。计划命中时直接复用；非法、过期、缺 owner 或执行失败全部显式失败。</p></div>
+      </div>
+    </section>
+
+    <section id="baseline">
+      <div class="section-kicker">02 / PROVENANCE</div>
+      <h2>“当前 base”到底指什么</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>层次</th><th>标识</th><th>含义</th></tr></thead>
+          <tbody>
+            <tr><td>版本登记</td><td class="mono">round5-correctness-base-20260909</td><td>第五轮后续剪枝与策略比较的统一正确性基线。</td></tr>
+            <tr><td>生产行为快照</td><td class="mono">f607c6e5</td><td>完整局记录绑定的代码提交；当前 HEAD 后续只登记实验产物，未再改变生产策略代码。</td></tr>
+            <tr><td>当前 HEAD</td><td class="mono">e19e945d</td><td>登记该 base 的唯一完整局、存档和逐步复盘。</td></tr>
+            <tr><td>Policy provenance</td><td class="mono">heuristic / v0 / laughable</td><td><code>laughable</code> 当前只进入 provenance/config checksum，生产策略中没有按难度分叉。</td></tr>
+            <tr><td>实验盘面</td><td class="mono">seti-free-analyze-v1</td><td>4 席固定盘面，flags 为空，完整自然终局。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">本报告按已提交快照整理。生成时工作树存在尚未提交的后续研究与改动，它们不属于 base，也不作为本报告事实来源。</p>
+    </section>
+
+    <section id="architecture">
+      <div class="section-kicker">03 / PRODUCTION PIPELINE</div>
+      <h2>唯一生产决策链</h2>
+      <div class="flow" aria-label="机器人决策流程">
+        <div class="node"><b>1 · 读边界</b><small>共享 composition 读取合法集、当前 owner 与 viewer-safe projection。</small></div>
+        <div class="node"><b>2 · 建观察</b><small>统一生成 Decision Observation v2；只见公开状态与本席私有状态。</small></div>
+        <div class="node"><b>3 · 试复用</b><small>校验上次计划的下一动作、语义、揭示基线和具名依赖。</small></div>
+        <div class="node"><b>4 · 反事实</b><small>复用未命中时，在隔离 fork 中以正式规则执行候选路线。</small></div>
+        <div class="node"><b>5 · 估值</b><small>仅 settled 且可选的叶进入排序；目标未完成叶不冒充收益。</small></div>
+        <div class="node"><b>6 · 提交</b><small>actionId 直交共享 inputPort，再验 seat/version/authority/legal set。</small></div>
+        <div class="node"><b>7 · 记账</b><small>Simulation 记录 replay/reward；Browser 空操作。提交成功才推进计划。</small></div>
+      </div>
+      <div class="grid grid-2" style="margin-top:18px">
+        <div class="card"><h3>共用的东西</h3><ul><li>同一个 Machine Player Coordinator</li><li>同一个 Heuristic Decision Function</li><li>同一个 Standard Action / Decision / Effect 执行链</li><li>同一个反事实 fork 与 viewer-safe 观察</li></ul></div>
+        <div class="card"><h3>刻意不存在的东西</h3><ul><li>Browser 专属候选/selector/pending 自动化旁路</li><li>Policy 直接读 DOM、canonical root 或对手隐藏信息</li><li>失败后“选第一个继续”的静默降级</li><li>按 family 配置的第二套 strategy weights</li></ul></div>
+      </div>
+      <h3>动作语义覆盖</h3>
+      <div class="chip-row">
+        <span class="chip">Main · launch / orbit / land / scan / analyze / research_tech / play_card / pass</span>
+        <span class="chip">Quick · move / quick_trade / industry / card_corner / place_data / runezu_face_symbol / complete_task</span>
+        <span class="chip">Turn control · end_turn</span>
+        <span class="chip">Conditional · choose_card / choose_target / choose_payment / choose_reward / choose_branch / choose_final_scoring / accept_optional_effect</span>
+      </div>
+    </section>
+
+    <section id="priority">
+      <div class="section-kicker">04 / DECISION ORDER</div>
+      <h2>一次决策按什么顺序做</h2>
+      <div class="decision-stack">
+        <div class="decision-row"><div class="num">1</div><strong>初始设置特例</strong><div>不跑反事实。固定四席优先复刻已登记高分开局；非固定席位按正式初始效果与统一资源价值评分。插收入按该牌的 income code 选择未来价值最高的收入轨。</div></div>
+        <div class="decision-row"><div class="num">2</div><strong>终局标记特例</strong><div>当合法集全是 a/b/c/d 终局板块时，直接用正式板块公式计算 <code>baseValue × 下一空槽倍率</code>，选即时终局分最高项。</div></div>
+        <div class="decision-row"><div class="num">3</div><strong>标准策略选择</strong><div>生成每个准入根动作的真实 outcome；只有 <code>status=settled</code>、存在合法叶且 <code>selectable=true</code> 的候选进入池。</div></div>
+        <div class="decision-row"><div class="num">4</div><strong>稳定排序</strong><div>先按战略主价值，再按可选 V 增量、总价值、真实得分、少交易、浅目标、条件流程更少正式提交，最后按稳定 ID 决胜。</div></div>
+        <div class="decision-row"><div class="num">5</div><strong>受控兜底</strong><div>优先已结算的条件/控制动作；没有选择空间时允许唯一合法动作。除此之外选不出动作会抛错，不回退到任意业务动作。</div></div>
+      </div>
+      <h3>固定四席开局</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>席位</th><th>公司</th><th>两张初始牌</th><th>策略意图</th></tr></thead>
+        <tbody>
+          <tr><td><span class="white-dot"></span>白</td><td>深空探测</td><td class="mono">initial:21 / initial:1</td><td>数据 + 扫描起步，支撑后续放数据与分析链。</td></tr>
+          <tr><td><span class="blue-dot"></span>蓝</td><td>图灵系统</td><td class="mono">initial:10 / initial:5</td><td>借科技与探测路线。</td></tr>
+          <tr><td><span class="green-dot"></span>绿</td><td>寰宇动力</td><td class="mono">initial:14 / initial:20</td><td>公司免费移动与探测扩展。</td></tr>
+          <tr><td><span class="brown-dot"></span>棕</td><td>赫利昂联合体</td><td class="mono">initial:17 / initial:19</td><td>科技牺牲/收入能力起步。</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="goals">
+      <div class="section-kicker">05 / GOAL CATALOG</div>
+      <h2>目标如何生成，动作如何准入</h2>
+      <p>生产根动作不是“把所有合法动作都试一遍”。先从正式 requirements 建立目标目录，再把能直接推进目标、执行指定卡牌/公司能力或以最小代价补资源缺口的动作绑定进去。</p>
+      <div class="filters" aria-label="策略表筛选">
+        <button class="active" data-filter="all">全部</button>
+        <button data-filter="goal">目标</button>
+        <button data-filter="settle">结算</button>
+        <button data-filter="approx">近似</button>
+      </div>
+      <div class="table-wrap"><table id="strategy-table">
+        <thead><tr><th>领域</th><th>当前策略</th><th>关键收敛 / 取舍</th><th>性质</th></tr></thead>
+        <tbody>
+          <tr data-kind="goal"><td>探测：环绕/登陆</td><td>先删资源不可达与同目标 Pareto 劣势路线；主星各取最近环绕、最近登陆；卫星只保留木星/土星，末轮再含天王星/海王星。</td><td>路线比较移动点、移动步数、钱电成本、目标等价收益与沿途宣传；第一奖励格被占不直接删目标，交真实叶估值判断。</td><td><span class="tag live">目标策略</span></td></tr>
+          <tr data-kind="goal"><td>探测：准备</td><td>下一步可由正式 launch/move/orbit/land、免费发射牌、移动牌或最小损失资源交易推进。</td><td>普通移动方向只在具名探测目标下准入；寰宇公司移动也不能作为无目标移动补回。</td><td><span class="tag live">需求驱动</span></td></tr>
+          <tr data-kind="goal"><td>数据与分析</td><td><code>data:analyze</code> 从 place_data / acquire_data / analyze 连成同一目标。数据不足时只考虑正式扫描、数据牌或数据角标牌。</td><td>放置选位优先资源缺口：钱≤1→蓝1，电≤1→蓝2，手牌≤1→蓝3，宣传≤1→蓝4；数据池满则先放计算机，否则目标内默认推进计算机槽。</td><td><span class="tag live">目标策略</span></td></tr>
+          <tr data-kind="goal"><td>扇区结算</td><td>从正式扫描/卡牌 access source 中，为可达扇区选择所需己方标记更少、空槽更少的候选。</td><td>目标 ID 带结算序号；旧结算已过期就停止扫描、交易或跨回合等待，不偷换成下一次结算。</td><td><span class="tag live">目标策略</span></td></tr>
+          <tr data-kind="goal"><td>收入</td><td>收入目标可由卡牌、公司、探测路线或计算机第 4 格完成；资源不足时接最小损失交易。</td><td>只奖励真实收入增量的未来发放窗口；公司初始收入是终局公式基数，不算“新增”。</td><td><span class="tag live">目标策略</span></td></tr>
+          <tr data-kind="goal approx"><td>科技</td><td>对正式可研究科技做未来效用预筛，每次只让 Top 3 计划进搜索；研究行动、免费研究牌或宣传准备可作为入口。</td><td>背面奖励、研究即时分和 6 宣传支付由真实反事实结算，不在预筛中猜；失效科技仍算拥有/计分，但未来能力为 0。</td><td><span class="tag approx">候选近似</span></td></tr>
+          <tr data-kind="goal approx"><td>打牌</td><td>只在牌能推进收入、科技、免费发射探测、扇区、数据等具名目标时进入战略根。</td><td>不平铺全部手牌；普通卡完整价值尚未接入。得分卡角标可建立 <code>card:resolve</code> 目标。</td><td><span class="tag approx">目标门控</span></td></tr>
+          <tr data-kind="goal"><td>快速交易 / 卡角</td><td>只作为具名目标的资源准备或已确认得分角标出现；交易序列取满足目标的最小总损失、最少步数。</td><td>无目标的 quick_trade/card_corner 不进入树内未绑定后继；避免它们借后续主行动收益虚高。</td><td><span class="tag live">需求驱动</span></td></tr>
+          <tr data-kind="settle"><td>条件 Decision</td><td>全部通过 active Effect Session 的标准合法 choice；条件根本身成为结构目标。</td><td>未绑定支付/交易选牌视为纯结算收束；绑定可替代资源的弃牌只留代表，卡牌身份敏感目标保留全部。</td><td><span class="tag live">正式结算</span></td></tr>
+          <tr data-kind="approx"><td>外星痕迹</td><td>未揭示槽按正式即时奖励做支配剪枝；会区分槽位的未完成任务则保留相关选择。</td><td>揭示后普通位置按物种保留更下面的选择；付费换分位、虫族蓝位、符文符号位等保留。它是授权近似，不是等价去重。</td><td><span class="tag approx">策略近似</span></td></tr>
+          <tr data-kind="approx"><td>卡牌触发奖励</td><td>已触发且只剩“立即结算/跳过”的 residual card settlement 稳定选择立即结算。</td><td>可能错过资源将满时延后领取的时机；保留近似用于阻止 trigger 指数重复分支。</td><td><span class="tag approx">策略近似</span></td></tr>
+          <tr data-kind="settle"><td>终局板块</td><td>直接读正式 a/b/c/d 公式和下一空槽倍率，选择实际终局分最高项。</td><td>终局叶只比较正式终局分；剩余资源、未来科技/收入/外星期望全部归零。</td><td><span class="tag live">确定性选择</span></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="search">
+      <div class="section-kicker">06 / COUNTERFACTUAL SEARCH</div>
+      <h2>搜索的完整边界</h2>
+      <div class="grid grid-4">
+        <div class="card metric"><strong>15</strong><span>战略最大深度 / 目标代理深度</span></div>
+        <div class="card metric"><strong>4,096</strong><span>战略最大物理执行节点</span></div>
+        <div class="card metric"><strong>256</strong><span>全局 frontier 最大物理节点</span></div>
+        <div class="card metric"><strong>30s</strong><span>单次战略搜索期限</span></div>
+      </div>
+      <div class="grid grid-2" style="margin-top:16px">
+        <div class="card"><h3>战略搜索</h3><ul><li>根候选：只取目标目录绑定动作。</li><li>每个 origin 最多保留 8 叶；根动作优先执行。</li><li>共享全局精确最小堆 frontier；先为每个仍存活根保留一个最优节点，再填满 256。</li><li>未绑定后继最多展开 3 层；深度/beam/node/time 截断都显式记不完整。</li></ul></div>
+        <div class="card"><h3>Control 浅评估</h3><ul><li><code>end_turn</code> / <code>pass</code> 与战略候选分开。</li><li>最大深度 1、每根 1 叶，节点数等于 control 动作数。</li><li>在 pass decision boundary 停止，不执行对手回合。</li><li>其价值主要作为稳定控制候选与无收益时的退出。</li></ul></div>
+      </div>
+      <h3>树内未绑定动作</h3>
+      <p>目标完成后或未绑定阶段允许继续形成新目标。普通未绑定后继按 family 基础顺序加净资源收益排序：<code>orbit/land 9</code>、<code>launch 8</code>、<code>research 7</code>、<code>move/scan/analyze/place_data 6</code>、<code>play_card 5</code>、<code>industry 3</code>、<code>quick_trade 2</code>、<code>card_corner/complete_task 1</code>。但 <strong>move、quick_trade、card_corner 实际从未绑定后继排除</strong>，只能经目标绑定进入。</p>
+      <div class="callout warn"><strong>完整性不是穷举。</strong> max depth、未绑定深度、beam 与节点预算都是显式有损边界；已有真实叶即使遭裁剪仍可保持 settled，但 searchCompleteness 必须标 incomplete。没有叶时为 unresolved，frontier 不能冒充收益。</div>
+      <h3>隐藏信息与失败</h3>
+      <div class="grid grid-3">
+        <div class="card"><h3>信息屏障</h3><p>随机补牌、盲抽、外星揭示后，未知身份继续保持 opaque。可以用数量做通用支付，不能用未知牌面规划打牌、卡角或定向能力。</p></div>
+        <div class="card"><h3>随机分支</h3><p>分支 RNG 从 root identity + actionId 派生，保证复现；消费随机后 outcome 标 low confidence，不代表 Policy 可预知未来。</p></div>
+        <div class="card"><h3>失败语义</h3><p>规则执行异常、目标选择异常、缺叶、过期动作、非法 owner 都显式失败。fork 清理也失败时保留聚合错误。</p></div>
+      </div>
+    </section>
+
+    <section id="value">
+      <div class="section-kicker">07 / VALUE MODEL</div>
+      <h2>叶到底值多少</h2>
+      <div class="formula"><strong>Primary(leaf)</strong> = Δ(已兑现分 + 已锁定终局分) + Δ科技未来效用 + 新增收入的未来发放价值 + 痕迹/揭示期望 + Δ宣传研究机会</div>
+      <p>这是对<strong>真实执行后叶状态</strong>的评价，不是动作标签分。一个 launch、move 或 play_card 本身没有固定奖励；只有当整条真实行动链兑现分数、能力、收入或目标进度时才有价值。</p>
+      <div class="grid grid-2">
+        <div class="card"><h3>统一资源单位表</h3><div class="table-wrap"><table>
+          <thead><tr><th>资源</th><th>单位值</th><th>当前用途</th></tr></thead>
+          <tbody>
+            <tr><td>分数</td><td>1</td><td>真实分差</td></tr>
+            <tr><td>信用 / 能源</td><td>10 / 8</td><td>开局、收入与科技效用；R1→R4 线性贬至 50%</td></tr>
+            <tr><td>普通牌 / 可用数据</td><td>6 / 6</td><td>开局、收入、蓝槽和准备价值</td></tr>
+            <tr><td>宣传</td><td>4</td><td>收入及研究机会</td></tr>
+            <tr><td>移动 / 外星牌</td><td>5 / 12</td><td>特定开局与能力效用</td></tr>
+            <tr><td>额外公共扫描</td><td>0</td><td>手段，不直接送价值</td></tr>
+          </tbody>
+        </table></div></div>
+        <div class="card"><h3>重要限定</h3><ul><li>非终局叶不会把所有剩余库存直接计分；钱电等主要通过未来收入、研究机会或后继真实执行兑现。</li><li>终局叶只保留正式终局总分差；未来科技、收入、资源、痕迹和外星期望全部归零。</li><li><code>vStateValueEnabled</code> 默认关闭；当前 base 不是 V-guided 模式。</li><li>同分依次偏好少 quick trade、浅目标、条件流程少提交，再用稳定 ID。</li></ul></div>
+      </div>
+      <h3>科技未来效用</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>类型</th><th>建模方式</th><th>代表参数</th></tr></thead>
+        <tbody>
+          <tr><td>一次性解锁</td><td>只算一次解锁价值 × 场景权重</td><td>橙1 = 15；橙4 = 可达卫星数 × 8 × 权重</td></tr>
+          <tr><td>持续收益</td><td>单次效用 × 每轮期望次数 × 剩余轮次 × 场景权重</td><td>橙2=6/次，橙3=当轮能源单价，紫2=7/次，紫4=6/次</td></tr>
+          <tr><td>蓝科技</td><td>读取正式蓝槽奖励，再按未来每轮 4/3 次名义使用 × 0.5 兑现率</td><td>蓝1钱、蓝2电、蓝3选牌、蓝4宣传；不叠加旧固定轮次分</td></tr>
+          <tr><td>失效科技</td><td>保留拥有数量和正式计分，未来能力贡献归零</td><td>不会允许重复研究同编号</td></tr>
+          <tr><td>研究机会</td><td><code>0.5 × max(F(科技) × min(宣传/正式费用, 1))</code></td><td>只算最好一次机会，叶减根，可为负值</td></tr>
+        </tbody>
+      </table></div>
+      <h3>外星目的价值</h3>
+      <div class="grid grid-3">
+        <div class="card metric"><strong>5</strong><span>每个新增痕迹的未来价值；即时分另由真实分差捕获</span></div>
+        <div class="card metric"><strong>15</strong><span>三色齐揭示的期望价值</span></div>
+        <div class="card metric"><strong>3 / 轮</strong><span>揭示后每个位置的基础期望，部分位置另加牌期望 4</span></div>
+      </div>
+    </section>
+
+    <section id="plan">
+      <div class="section-kicker">08 / PLAN CONTINUATION</div>
+      <h2>什么时候复用上次搜索出的路线</h2>
+      <p>winning leaf 若含至少两步真实输入，会编译成 <code>seti-action-plan-v4</code>。协调器只保存尚未执行的后续步骤；每次提交前重新检查，而不是盲放整条宏指令。</p>
+      <div class="grid grid-2">
+        <div class="card"><h3>命中必须全部成立</h3><ul><li>下一 actionId 仍合法，actor 和动作语义未变</li><li>计划步骤证据完整且版本为 v4</li><li>外星揭示数量没有增加</li><li>当前步骤依赖事实与记录一致</li><li>自由决策的后续具名事实存在性/内容一致</li></ul></div>
+        <div class="card"><h3>会触发重搜</h3><ul><li>路线奖励、费用、己方标记、来源或移动阶段变化</li><li>目标科技、扇区、外星痕迹、公牌、数据布局、终局板块变化</li><li>后续计划依赖提前发生变化</li><li>新回合计划下一步是 end_turn / pass</li><li>缺证据、旧 schema、动作失效或观察不完整</li></ul></div>
+      </div>
+      <div class="callout"><strong>它不是“状态完全相等才复用”。</strong> 对手资源变化、无关扇区变化、无探测器移动的旋转等不影响具名目标事实时可以复用；相关事实变化则立即 miss。计划只驻留协调器，reset/load 会清空，不写入存档。</div>
+    </section>
+
+    <section id="run">
+      <div class="section-kicker">09 / FULL-GAME EVIDENCE</div>
+      <h2>唯一完整局告诉了我们什么</h2>
+      <div class="score-strip">
+        <div class="score"><span><span class="blue-dot"></span>蓝</span><div class="total">69</div><div class="parts">base 53 · 板块 14 · 卡牌 2</div></div>
+        <div class="score"><span><span class="green-dot"></span>绿</span><div class="total">114</div><div class="parts">base 85 · 板块 29 · 卡牌 0</div></div>
+        <div class="score"><span><span class="brown-dot"></span>棕</span><div class="total">105</div><div class="parts">base 71 · 板块 30 · 卡牌 4</div></div>
+        <div class="score"><span><span class="white-dot"></span>白</span><div class="total">79</div><div class="parts">base 65 · 板块 14 · 卡牌 0</div></div>
+      </div>
+      <div class="grid grid-2" style="margin-top:16px">
+        <div class="card"><h3>战略搜索负载</h3><div class="table-wrap"><table>
+          <tbody>
+            <tr><td>战略搜索次数</td><td>97</td></tr>
+            <tr><td>累计执行节点</td><td>129,806</td></tr>
+            <tr><td>节点数中位 / P90</td><td>10 / 4,096</td></tr>
+            <tr><td>平均节点</td><td>1,338.2</td></tr>
+            <tr><td>触发 beam 裁剪</td><td>32 次</td></tr>
+            <tr><td>达到 4,096 上限</td><td>27 次</td></tr>
+            <tr><td>战略搜索累计耗时</td><td>468.9s（墙钟 72.6%）</td></tr>
+          </tbody>
+        </table></div></div>
+        <div class="card"><h3>正式动作构成（Top 10）</h3><div class="bar-list">
+          <div class="bar-row"><span>choose_target</span><div class="bar-track"><div class="bar-fill" style="--w:100%"></div></div><b>151</b></div>
+          <div class="bar-row"><span>choose_card</span><div class="bar-track"><div class="bar-fill" style="--w:55.6%"></div></div><b>84</b></div>
+          <div class="bar-row"><span>end_turn</span><div class="bar-track"><div class="bar-fill" style="--w:49%"></div></div><b>74</b></div>
+          <div class="bar-row"><span>place_data</span><div class="bar-track"><div class="bar-fill" style="--w:41.7%"></div></div><b>63</b></div>
+          <div class="bar-row"><span>choose_payment</span><div class="bar-track"><div class="bar-fill" style="--w:33.1%"></div></div><b>50</b></div>
+          <div class="bar-row"><span>quick_trade</span><div class="bar-track"><div class="bar-fill" style="--w:13.9%"></div></div><b>21</b></div>
+          <div class="bar-row"><span>move</span><div class="bar-track"><div class="bar-fill" style="--w:11.3%"></div></div><b>17</b></div>
+          <div class="bar-row"><span>pass</span><div class="bar-track"><div class="bar-fill" style="--w:10.6%"></div></div><b>16</b></div>
+          <div class="bar-row"><span>play / research</span><div class="bar-track"><div class="bar-fill" style="--w:9.3%"></div></div><b>14</b></div>
+          <div class="bar-row"><span>scan</span><div class="bar-track"><div class="bar-fill" style="--w:8.6%"></div></div><b>13</b></div>
+        </div></div>
+      </div>
+      <div class="callout warn" style="margin-top:16px"><strong>原始记录口径澄清：</strong> <code>metrics.budgetHits=36</code> 中，27 次是战略搜索达到 4096 节点，另 9 次是 control 浅评估达到其 1 节点配置上限。若讨论第五轮“4096 触顶”瓶颈，应使用 27；36 不能全部表述为 4096 节点耗尽。</div>
+      <p>结果说明两件事：其一，base 能以统一内核自然完成整局且反事实失败码为 0；其二，长尾搜索仍然很重——中位数只有 10 节点，但 P90 已顶到 4096，性能和完整性问题集中在少数复杂决策，而不是平均决策。</p>
+    </section>
+
+    <section id="boundaries">
+      <div class="section-kicker">10 / SCOPE &amp; RISKS</div>
+      <h2>已生效、未启用、未纳入</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>事项</th><th>当前状态</th><th>解释</th></tr></thead>
+        <tbody>
+          <tr><td>规则/信息边界/计划 v4</td><td><span class="tag live">已进 base</span></td><td>蓝槽顺序、路线事实、过期扇区、快速移动事件、借科技缓存、失效科技事实、路线不可达叶资格等。</td></tr>
+          <tr><td>V(state) 引导</td><td><span class="tag off">默认关闭</span></td><td>模块存在，但 base flags 为空、<code>vStateValueEnabled=false</code>；不得把 V 的库存/准备价值当作当前决策已启用。</td></tr>
+          <tr><td>普通卡完整估值</td><td><span class="tag off">设计未接入</span></td><td>奖励公式与消费状态已有研究，尚未成为生产搜索。当前打牌依赖目标绑定，不能声称已完整理解所有牌效。</td></tr>
+          <tr><td>外星拿牌均值贪心</td><td><span class="tag off">未纳入</span></td><td>历史候选完整性未通过；只归档，不能当作 base 的选牌规则。</td></tr>
+          <tr><td>跨回合快速行动归一 / 状态身份合并</td><td><span class="tag off">未纳入</span></td><td>局部省节点但全局无损性或性能未验收。</td></tr>
+          <tr><td>会话 identity isolation</td><td><span class="tag off">待独立修复</span></td><td>已发现同快照恢复可能出现不同会话身份，但缺跨版本、真实 Chrome、冷搜索和唯一完整局验收。</td></tr>
+          <tr><td>方舟 / 符文族后续问题</td><td><span class="tag off">暂缓</span></td><td>当前固定盘调研只留档，不新增实现或完整局；已完成修复不回滚。</td></tr>
+        </tbody>
+      </table></div>
+      <h3>当前最值得做的三件事</h3>
+      <div class="grid grid-3">
+        <div class="card"><h3>1 · 先打长尾</h3><p>围绕 27 个 4096 节点战略搜索和 32 个 beam 裁剪点，找不可能完成、无收益或仅非语义差异造成的分支；不调启发式权重补分。</p></div>
+        <div class="card"><h3>2 · 修正文档漂移</h3><p>源码中 <code>requiresRootCounterfactual()</code> 已恒 true，根准入实际由目标目录完成；<code>QUICK_ROOT_FAMILIES</code> 当前不含 move、但包含 place_data。设计文档仍保留旧描述。</p></div>
+        <div class="card"><h3>3 · 策略后置</h3><p>在搜索正确性与性能稳定后，再以同一 base、预算和价值模型重验普通卡估值、外星拿牌与其他历史策略候选。</p></div>
+      </div>
+    </section>
+
+    <section id="sources">
+      <div class="section-kicker">11 / EVIDENCE INDEX</div>
+      <h2>可追溯证据</h2>
+      <details open><summary>生产策略与架构</summary><ul>
+        <li><a href="../randomizer/game/ai/machine-player-coordinator.js">machine-player-coordinator.js</a>：边界读取、计划复用、决策调用、提交与记账。</li>
+        <li><a href="../randomizer/game/ai/heuristic-decision-function.js">heuristic-decision-function.js</a>：搜索配置、outcome 对齐、Policy 调用与 plan 提取。</li>
+        <li><a href="../randomizer/game/ai/heuristic-policy.js">heuristic-policy.js</a>：开局、终局板块、标准选择与受控兜底。</li>
+        <li><a href="../randomizer/game/ai/expected-score-evaluator.js">expected-score-evaluator.js</a>：目标目录、后继选择、科技策略、叶估值与搜索优先级。</li>
+        <li><a href="../randomizer/game/ai/plan-continuation.js">plan-continuation.js</a>：v4 计划证据、依赖编译与复用判定。</li>
+        <li><a href="../randomizer/game/rule-composition.js">rule-composition.js</a>：隔离反事实执行、frontier、预算、叶与诊断。</li>
+      </ul></details>
+      <details><summary>版本、文档与完整局</summary><ul>
+        <li><a href="../docs/ai-design.md">docs/ai-design.md</a>：当前机器玩家设计（报告已按源码校正两处滞后文字）。</li>
+        <li><a href="iteration/round5-base-fold-design-20260909.md">第五轮新 base 合并与策略分档</a>：纳入/排除矩阵与 base 验收。</li>
+        <li><a href="research/cc9eb28a.f607c6e5.full.json">完整局研究记录</a>：572 步、搜索诊断、动作计数与运行元数据。</li>
+        <li><a href="iteration/round5-correctness-base-20260909/cc9eb28a.f607c6e5.full.action-log.html">逐步行动复盘</a>：按玩家回合聚合的可视化回放。</li>
+        <li><a href="../seti-saves/seti-save-research-round5-correctness-base-20260909-f607c6e5-full-v287.json">完整局存档</a>：正式终局分及拆分来源。</li>
+      </ul></details>
+      <div class="callout"><strong>证据优先级：</strong> 生产源码与版本化实验记录优先于叙述性文档；报告中所有“当前已生效”判断均按提交快照逐项核对。</div>
+    </section>
+
+    <footer>
+      <p>SETI 当前 Base 机器人策略全景报告 · 生成于 2026-09-11 · 单文件离线 HTML</p>
+      <p>范围：机器人决策与搜索策略。未重复展开完整游戏规则、所有卡牌 DSL 或外星物种实现细节。</p>
+    </footer>
+  </main>
+</div>
+<script>
+  (() => {
+    const links = [...document.querySelectorAll('nav a')];
+    const sections = links.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+    const observer = new IntersectionObserver(entries => {
+      const visible = entries.filter(entry => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+      if (!visible) return;
+      links.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${visible.target.id}`));
+    }, { rootMargin: '-18% 0px -68% 0px', threshold: [0, .2, .6] });
+    sections.forEach(section => observer.observe(section));
+
+    const buttons = [...document.querySelectorAll('[data-filter]')];
+    const rows = [...document.querySelectorAll('#strategy-table tbody tr')];
+    buttons.forEach(button => button.addEventListener('click', () => {
+      buttons.forEach(item => item.classList.toggle('active', item === button));
+      const filter = button.dataset.filter;
+      rows.forEach(row => {
+        const kinds = row.dataset.kind.split(/\s+/);
+        row.hidden = filter !== 'all' && !kinds.includes(filter);
+      });
+    }));
+  })();
+</script>
+</body>
+</html>
