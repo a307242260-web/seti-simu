@@ -52,7 +52,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/heuristic-policy.test.js", "policy/heuristic-policy", "启发式策略确定性选择且只返回 legal actionId", "空集、畸形配置、未知或 disabled action 未 fail-closed"),
     entry("randomizer/game/ai/strategic-goal-evaluator.test.js", "policy/heuristic-policy", "战略目标读取标准叶收益；未完成路线不可选，完成前缀及正式终局保留", "资源库存、未兑现路线或途中收益让失败准备压过完成目标"),
     entry("randomizer/game/ai/heuristic-evaluator.test.js", "policy/heuristic-evaluator", "估值稳定排序且不修改 observation/descriptors", "tie-break 漂移、条件选择漏惩罚或输入被改写"),
-    entry("randomizer/game/ai/terminal-value.test.js", "policy/heuristic-evaluator", "终局正式分唯一决定叶价值、V、搜索优先级和计划优胜路径", "宣传门槛、资源库存或未来收益使低正式分终局叶胜出"),
+    entry("randomizer/game/ai/terminal-value.test.js", "policy/heuristic-evaluator", "终局正式分唯一决定叶价值；非终局外星项仅补新增未揭示首痕迹奖励预期", "正式分重复计入、公共揭示或额外痕迹获得虚构收益、轻量优先级与叶不一致"),
     entry("randomizer/game/ai/score-corner-target.test.js", "policy/heuristic-evaluator", "正式得分角标按实例准入并完成，非得分角标不无条件放行", "得分角标在PASS前被漏评或其他实例离手误判完成"),
     entry("randomizer/game/ai/disabled-tech-value.test.js", "policy/heuristic-evaluator", "科技失效保留所有权和计数，但V/叶排序/搜索未来能力价值归零", "赫利昂将新紫2失效换收入仍获得20点未来科技价值"),
     entry("randomizer/game/ai/resource-value.test.js", "policy/heuristic-evaluator", "Policy、标准叶、轻量事实与V共用资源单价和真实未来收入窗口", "钱电单价颠倒、折价方向反转、末轮虚构收入或非钱电被错误折价"),

@@ -128,4 +128,51 @@ for (const vStateValueEnabled of [false, true]) {
     assert.equal(result.selectedLeafId, "a-sparse", "同正式分叶不按库存打破平局，V 开关与枚举顺序不影响结果");
   }
 }
+// 外星估值：已有正式分只计一次，只有新增未揭示首痕迹补未来奖励预期。
+{
+  function alienObservation({ first = 0, extra = 0, revealed = false, round = 1,
+    score = 0, secured = 0, reverse = false } = {}) {
+    const slots = [{ slotId: 1, revealed, traces: Object.fromEntries(
+      ["yellow", "pink", "blue"].map((color, index) => [color, {
+        firstPlaced: index < first, ownerPlayerColor: index < first ? "red" : null,
+        extraCount: index === 0 ? extra : 0,
+        extraMarkers: index === 0 ? Array.from({ length: extra }, () => ({ ownerPlayerColor: "red" })) : [],
+      }]),
+    ) }, { slotId: 2, revealed: false, traces: {} }];
+    return outcomeModel.createDecisionObservation({ publicState: { roundNumber: round,
+      players: [{ id: seatId, color: "red", resources: { score }, securedEndGameBonus: secured }],
+      board: { aliens: { slots: reverse ? slots.reverse() : slots } } },
+      selfState: { id: seatId, hand: [] } }, { seatId });
+  }
+  function value(rootObs, leafObs) {
+    const action = { actionId: "trace", family: "choose_target", phase: "conditional" };
+    const result = expectedScore.evaluateOutcome({ seatId, actionOutcomes: [{
+      schemaVersion: outcomeModel.OUTCOME_SCHEMA_VERSION, actionId: action.actionId, status: "settled",
+      rootObservation: rootObs, leaves: [{ leafId: "leaf", status: "settled", observation: leafObs }],
+    }] }, action);
+    const priority = expectedScore.evaluateStrategicFactsBreakdown(
+      outcomeModel.createStrategicFacts(rootObs, seatId), outcomeModel.createStrategicFacts(leafObs, seatId),
+    );
+    assert.equal(result.primaryValue, priority.primaryValue, "完整叶与轻量优先级使用同一外星预期");
+    return result.primaryValue;
+  }
+  for (const round of [1, 2, 4]) {
+    const rootObs = alienObservation({ round });
+    const firstObs = alienObservation({ round, first: 1, score: 5, secured: 2 });
+    assert.equal(value(rootObs, firstObs), 12, "即时5+锁定2+未揭示首痕迹预期5");
+    assert.equal(value(firstObs, firstObs), 0, "已有首痕迹不能重复加预期");
+    assert.equal(value(firstObs, alienObservation({ round, first: 1, score: 8, secured: 2, extra: 1 })), 3);
+    assert.equal(value(rootObs, alienObservation({ round, revealed: true })), 0, "公共揭示不发个人分");
+    assert.equal(value(firstObs, alienObservation({ round, first: 1, score: 5, secured: 2, revealed: true })), 0,
+      "已有首痕迹揭示不另加分，也不凭既有预期消失惩罚主评分");
+    for (const first of [1, 2, 3]) {
+      const leaf = alienObservation({ round, first, reverse: true });
+      assert.equal(value(rootObs, leaf), first * 5, "按slotId匹配且凑齐没有额外溢价");
+      assert.equal(expectedScore.evaluateStateValue(leaf, seatId).components.alienValue, first * 5);
+      const revealed = alienObservation({ round, first, revealed: true, score: 9 });
+      assert.equal(value(rootObs, revealed), 9, "已兑现叶只按正式收益，不保留未揭示预期");
+      assert.equal(expectedScore.evaluateStateValue(revealed, seatId).components.alienValue, 0);
+    }
+  }
+}
 console.log("terminal value tests passed");

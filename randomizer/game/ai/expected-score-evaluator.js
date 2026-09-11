@@ -170,9 +170,8 @@
   // ---- value 形状统一构造（审查清理项 9）----
   // evaluateState（完整 outcomeProjection 源）与 valueFromStrategicFacts
   // （轻量 strategicFacts 源）产出同一 value 形状（resourceFacts/infrastructure），
-  // 统一由 resourceFactsFrom/infrastructureFrom 组装。strategicFacts 源不投影
-  // alienSlots（createStrategicFacts 无槽位级数据）——分支优先级（getBranchPriority
-  // 热路径）因此不感知外星进度增量，与统一前一致。
+  // 统一由 resourceFactsFrom/infrastructureFrom 组装；轻量与完整事实均包含alienSlots，
+  // 未揭示首痕迹预期在分支优先级与最终叶中使用同一函数。
   function resourceFactsFrom(parts = {}) {
     return {
       credits: finite(parts.credits),
@@ -283,9 +282,7 @@
   // 权重全部校准自用户 405 档（v-state-design 第 3 节）。
   // =====================================================================
   const V_INCOME_MULTIPLIER = 1.4; // 收入复利放大（收入→更多行动→更多分）
-  const V_TRACE_FIRST_VALUE = 5; // 首痕迹价值（slot1 5分+1宣、slot2 3分+1宣）
-  const V_ALIEN_REVEAL_BONUS = 15; // 三色齐→揭示的期望（位置分+外星牌链）
-  const V_ALIEN_SLOT_POSITION_VALUE = 3; // 揭示后每个位置期望分（3-5 分/位置）
+  const UNREVEALED_FIRST_TRACE_VALUE = 5; // 未来揭示奖励的保守预期，不是即时分或终局分。
   const V_CARD_EFFECT_VALUE = 6; // 手牌可打效果期望（科技/收入/移动/登陆链）
 
   function evaluateStateValue(observation, seatId) {
@@ -334,23 +331,11 @@
     // 与Primary同源的科技未来窗口；当轮用途由正式后继路线体现。
     const techEfficiencyValue = infrastructureTechPotential(stateValue);
 
-    // 准备类：外星进度（首痕迹 + 揭示期望 + 位置期望）
+    // 尚未兑现的首痕迹奖励；揭示后交给正式奖励与已有手牌估值，不再附加位置收益。
     const alienSlots = projection.progress?.alienSlots || [];
-    let alienValue = 0;
-    for (const slot of alienSlots) {
-      if (!slot) continue;
-      // 已放置的我方首痕迹：即时分（slot1 5 / slot2 3，近似 5）
-      alienValue += slot.ownFirstTraces * V_TRACE_FIRST_VALUE;
-      if (slot.revealed) {
-        // 已揭示：位置期望（3-5 分/位置 × 剩余轮次）
-        alienValue += V_ALIEN_SLOT_POSITION_VALUE * Math.max(0, finalRoundNumber - roundNumber);
-      } else if (slot.ownFirstTraces >= 2) {
-        // 差 1 个首痕迹齐三色：揭示奖励期望
-        alienValue += V_ALIEN_REVEAL_BONUS;
-      } else if (slot.ownFirstTraces > 0) {
-        alienValue += V_ALIEN_REVEAL_BONUS * 0.3; // 有首痕迹但远未齐：部分期望
-      }
-    }
+    const alienValue = alienSlots.reduce((total, slot) => total + (
+      slot?.revealed ? 0 : Math.max(0, finite(slot?.ownFirstTraces)) * UNREVEALED_FIRST_TRACE_VALUE
+    ), 0);
 
     // 准备类：手牌/保留牌可打效果期望（2026-08-18 修复根因 2——卡价值与获取路径
     // 绑定）。手牌价值 = 可打效果链期望（按卡面效果估算），不是固定 +6/张：
@@ -572,7 +557,6 @@
   // 外星人 trace 价值：每个 trace 标记（第一放置 3-5 分即时 + 终局 trace 卡 2分/个
   // + 外星人牌：开牌即可继续获得外星人牌/终局计分/机制收益）。用户高分档首回合
   // 就抢第一放置、全盘 5 痕迹占满（阿米巴3+虫2）——痕迹是稳定大分源，估值提高。
-  const TRACE_UNIT_VALUE = 5;
   function blueRewardUnit(tileId, roundNumber, finalRoundNumber) {
     const reward = dataPlacement.getBlueTileDataBonus(tileId);
     if (!reward) return 0;
@@ -627,8 +611,7 @@
         techValue: 0,
         incomeDelta: Object.fromEntries(Object.keys(INCOME_UNIT_VALUES).map((key) => [key, 0])),
         incomeValue: 0,
-        traceDelta: 0,
-        traceValue: 0,
+        alienPurposeValue: 0,
       };
     }
     const remainingRounds = Math.max(
@@ -647,79 +630,28 @@
     const incomeValue = incomeFutureValue(
       incomeDelta, leafInfrastructure.roundNumber, leafInfrastructure.finalRoundNumber,
     );
-    // 外星人标记价值：新增 trace 标记 → 即时分 + 终局 trace 分 + 外星人牌。
-    // traceValue 保持"每痕迹 5 分"（终局 trace 分近似）；另加 alienPurposeValue：
-    // 放首痕迹的"揭示进度"期望（学习用户 405 档：R1-R2 放首痕迹 → R3 三色齐揭示 →
-    // 位置分 + 外星牌链爆发）。首痕迹即时分（slot1 5分+1宣 / slot2 3分+1宣）由
-    // actualScoreDelta 捕获（反事实真实结算），此处只计未来期望避免重复计分。
-    const traceDelta = Math.max(
-      0,
-      finite(leafInfrastructure.traceCount) - finite(rootInfrastructure.traceCount),
-    );
-    const traceValue = traceDelta * TRACE_UNIT_VALUE;
+    // 即时分和已有终局计分已包含在正式分差中，只补新增、仍未揭示的首痕迹权益。
     const alienPurposeValue = alienPurposeDelta(
       rootInfrastructure.alienSlots || [],
       leafInfrastructure.alienSlots || [],
-      remainingRounds,
     );
     return {
-      total: techValue + incomeValue + traceValue + alienPurposeValue,
+      total: techValue + incomeValue + alienPurposeValue,
       remainingRounds,
       gainedTechIds,
       techValue,
       incomeDelta,
       incomeValue,
-      traceDelta,
-      traceValue,
       alienPurposeValue,
     };
   }
 
-  // 外星目的价值（"放首痕迹→三色齐→揭示→位置分+外星牌"链的期望，delta 版）：
-  // - 新揭示（leaf revealed 而 root 未）：位置分期望（3-5 分/位置 × 剩余轮）+ 外星牌链
-  // - 未揭示但抢到首痕迹（ownFirstTraces 增加）：**首痕迹价值 = 首痕迹分（即时分由
-  //   actualScoreDelta 捕获）+ 一张外星人牌（用户规则：未揭示前只有首痕迹有价值，
-  //   非首痕迹少一张外星人牌且分低）** + 接近三色齐的揭示期望
-  // - 揭示后（两边 revealed）：**优先覆盖高收益位置（用户规则：开了外星人优先覆盖
-  //   下两行高收益、有外星人牌的位置）**——extraMarks 增加 = 放位置标记，每个位置
-  //   ≈ 位置分（3-5/位置 × 剩余轮）+ 外星牌期望
-  const ALIEN_CARD_VALUE = 5;         // 放首痕迹给一张外星人牌（效果链价值；10 实测让分桶 AI 疯狂抢外星忽略其他，off 白色 86→35，取 5 平衡）
-  const ALIEN_REVEAL_EXPECTATION = 15; // 三色齐揭示的期望（位置分 + 外星牌链，对齐 V 权重）
-  const ALIEN_POSITION_UNIT = 3;       // 揭示后每位置每轮期望（3-5 分/位置，对齐 V）
-  const ALIEN_POSITION_CARD_EXPECTATION = 4; // 高收益行给外星人牌的期望（部分位置）
-  function alienPurposeDelta(rootSlots, leafSlots, remainingRounds) {
-    let value = 0;
-    const length = Math.max(rootSlots.length, leafSlots.length);
-    for (let index = 0; index < length; index += 1) {
-      const root = rootSlots[index] || { revealed: false, ownFirstTraces: 0, ownExtraMarks: 0 };
-      const leaf = leafSlots[index] || { revealed: false, ownFirstTraces: 0, ownExtraMarks: 0 };
-      if (leaf.revealed && !root.revealed) {
-        value += ALIEN_REVEAL_EXPECTATION
-          + ALIEN_POSITION_UNIT * Math.max(0, remainingRounds);
-      } else if (leaf.revealed && root.revealed) {
-        // 揭示后位置覆盖（高收益行优先：位置分 + 外星牌期望）
-        const gainedMarks = Math.max(0, finite(leaf.ownExtraMarks))
-          - Math.max(0, finite(root.ownExtraMarks));
-        value += gainedMarks * (
-          ALIEN_POSITION_UNIT * Math.max(1, remainingRounds)
-          + ALIEN_POSITION_CARD_EXPECTATION
-        );
-      } else if (!leaf.revealed) {
-        const rootTraces = Math.max(0, finite(root.ownFirstTraces));
-        const leafTraces = Math.max(0, finite(leaf.ownFirstTraces));
-        if (leafTraces > rootTraces) {
-          const gainedFirstTraces = leafTraces - rootTraces;
-          // 抢到首痕迹：外星人牌价值（每张首痕迹一张牌）+ 揭示进度期望
-          value += ALIEN_CARD_VALUE * gainedFirstTraces;
-          value += leafTraces >= 3
-            ? ALIEN_REVEAL_EXPECTATION
-            : leafTraces >= 2
-              ? ALIEN_REVEAL_EXPECTATION * 0.3
-              : ALIEN_REVEAL_EXPECTATION * 0.1;
-        }
-      }
-    }
-    return value;
+  function alienPurposeDelta(rootSlots, leafSlots) {
+    const roots = new Map(rootSlots.map(slot => [slot.slotId, slot]));
+    return leafSlots.reduce((total, leaf) => total + (leaf.revealed ? 0 : (
+      positiveDelta(leaf.ownFirstTraces, roots.get(leaf.slotId)?.ownFirstTraces)
+      * UNREVEALED_FIRST_TRACE_VALUE
+    )), 0);
   }
 
   function leafValue(rootValue, leafValueState, parameters) {
@@ -743,9 +675,7 @@
   }
 
   function valueFromStrategicFacts(facts) {
-    // 轻量 strategicFacts 源（getBranchPriority 热路径）：不投影 alienSlots
-    // （createStrategicFacts 无槽位级数据），外星进度增量不参与分支优先级；
-    // 最终叶排序走 evaluateState（完整 projection 源）。
+    // 轻量与完整投影使用同一估值形状，避免分支优先级漏掉首痕迹奖励预期。
     return {
       terminal: Boolean(facts.terminal),
       realizedScore: finite(facts.realizedScore),
@@ -760,6 +690,7 @@
         roundNumber: facts.roundNumber,
         finalRoundNumber: facts.finalRoundNumber,
         traceCount: facts.traceCount,
+        alienSlots: facts.alienSlots,
         sectorWinRequirements: facts.sectorWinRequirements,
         dataProgress: facts.dataProgress,
       }),
@@ -2400,7 +2331,6 @@
         strategicValue.primaryValue,
         finite(matchedRoot?.targetBenefit?.score),
         gapReduction,
-        Math.max(0, finite(branchFacts.traceCount) - finite(rootFacts.traceCount)),
         Math.max(0, rootDataGap - branchDataGap),
         Math.max(0, branchPlaced - rootPlaced),
         Number(Boolean(branchFacts.dataProgress?.analyzeReady)

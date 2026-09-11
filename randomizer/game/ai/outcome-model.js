@@ -211,6 +211,7 @@
     const securedEndGameBonus = terminal
       ? 0
       : (finiteOrNull(publicPlayer?.securedEndGameBonus) ?? 0);
+    const traces = countPlayerTraces(source, seatId, publicPlayer);
     return {
       viewerSeatId: String(seatId),
       terminal,
@@ -224,7 +225,8 @@
       researchOptions: researchOptions(source, seatId),
       blueBonusAssets: clone(publicPlayer?.blueBonusAssets || {}),
       dataProgress: dataProgressFacts(publicPlayer),
-      traceCount: countPlayerTraces(source, seatId, publicPlayer).traceCount,
+      traceCount: traces.traceCount,
+      alienSlots: traces.slots,
       resourceFacts: {
         credits: finiteOrNull(resources.credits) ?? 0,
         energy: finiteOrNull(resources.energy) ?? 0,

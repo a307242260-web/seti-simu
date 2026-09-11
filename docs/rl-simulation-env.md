@@ -189,6 +189,8 @@ Production地球坐标及探测/正式行动context通过共享太阳系内核�
 表示全体三色首格已占用（含 neutral），不要求同一玩家。槽位保留正式 slotId，未揭示
 身份仍为 null。`traceCount`与轻量`strategicFacts.traceCount`从同一槽位统计汇总，
 复用 aliens/state 正式计数函数；其数组归一化仅作用于私有复制，不修改公开观察。
+轻量`strategicFacts.alienSlots`复用该次计数结果，字段与完整投影一致，供搜索优先级
+计算新增未揭示首痕迹预期，不重新计数、不写入正式状态。
 
 反事实叶可携带`executionStepCount`：实际成功提交的Action/Decision总数，包含节点内
 折叠步骤，不等于搜索节点数。Production搜索输出该计数；未提供此字段的非折叠叶以
