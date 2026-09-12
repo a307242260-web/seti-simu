@@ -99,6 +99,24 @@ const seatId = "strategic-seat";
     slots: [{ slotId: 1, revealed: true, alienId: "方舟", traces: { yellow: { firstPlaced: true } } }],
   } } } };
   selectAllPaths([...amiba, overflow], [amiba[1], overflow], arkObservation);
+  const chongSlots = [{ slotId: 1, revealed: true, alienId: "虫", traces: {} }];
+  const chongObs = observation({ alienSlots: chongSlots });
+  const pink = trace("chong", 2, "pink");
+  const yellow = trace("chong", 2, "yellow");
+  const yellowLow = trace("chong", 1, "yellow");
+  const yellowCard = trace("chong", 3, "yellow");
+  selectAllPaths([pink, yellow], [pink], chongObs);
+  selectAllPaths([yellow, pink], [pink], chongObs);
+  selectAllPaths([pink, yellowLow], [pink], chongObs);
+  selectAllPaths([pink, yellowCard, blue[6]], [pink, yellowCard, blue[6]], chongObs);
+  selectAllPaths([pink, yellow], [pink, yellow], observation({ alienSlots: chongSlots,
+    reservedCards: [{ id: "task-b67", cardId: "b_67.webp", cardEffectState: { completedTaskIds: [] } }] }));
+  selectAllPaths([pink, yellow], [pink, yellow], observation({ alienSlots: chongSlots,
+    reservedCards: [{ id: "alien-chong-7-1", kind: "alien" }] }));
+  selectAllPaths([pink, yellow], [pink, yellow], observation({
+    alienSlots: [{ ...chongSlots[0], revealed: false }],
+  }));
+  console.log("虫族跨颜色纯分数贪心、正式奖励、任务与特殊奖励边界通过");
   console.log("外星人普通槽位贪心：根/绑定/未绑定、末轮、特殊位置及方舟边界通过");
 }
 

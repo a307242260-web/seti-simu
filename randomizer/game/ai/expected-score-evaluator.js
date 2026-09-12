@@ -5,6 +5,7 @@
   let quickTrades = root.SetiQuickTrades;
   let cardEffects = root.SetiCardEffects;
   let alienState = root.SetiAlienState;
+  let alienChong = root.SetiAlienChong;
   let dataPlacement = root.SetiDataPlacement;
   let cards = root.SetiCards;
   if (typeof require === "function") {
@@ -12,10 +13,11 @@
     quickTrades = quickTrades || require("../actions/quick-trades");
     cardEffects = cardEffects || require("../cards/effects");
     alienState = alienState || require("../aliens/state");
+    alienChong = alienChong || require("../aliens/chong");
     dataPlacement = dataPlacement || require("../data/placement");
     cards = cards || require("../cards/deck");
   }
-  const api = factory(outcomeModel, quickTrades, cardEffects, alienState, dataPlacement, cards);
+  const api = factory(outcomeModel, quickTrades, cardEffects, alienState, dataPlacement, cards, alienChong);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiExpectedScoreEvaluator = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   outcomeModel,
@@ -24,6 +26,7 @@
   alienState,
   dataPlacement,
   cards,
+  alienChong,
 ) {
   "use strict";
 
@@ -2705,10 +2708,41 @@
         || (Number(action.target.position) === Number(previous.target.position)
           && String(action.actionId).localeCompare(String(previous.actionId)) < 0)) best.set(key, action);
     }
-    return withoutOverflow.filter(action => {
+    const positioned = withoutOverflow.filter(action => {
       const key = ordinaryKey(action);
       return key == null || best.get(key) === action;
     });
+    // 局部即时分贪心，不是颜色/未来状态等价；已打任务和外星牌保留颜色选择。
+    const taskSensitive = (observation?.selfState?.reservedCards || []).some(card => {
+      if (card?.kind === "alien" || String(card?.id || "").startsWith("alien-")) return true;
+      const completed = new Set(card?.cardEffectState?.completedTaskIds || []);
+      return (cardEffects.getCardModel(card)?.tasks || []).some(task => !completed.has(task.id));
+    });
+    if (taskSensitive) return positioned;
+    const pureScores = new Map();
+    for (const action of positioned) {
+      const target = action.target;
+      if (!isFace(action) || target.speciesId !== "chong"
+        || !["pink", "yellow"].includes(target.traceType)
+        || action.actorId !== observation?.viewer?.seatId) continue;
+      const slot = slots.find(item => Number(item.slotId) === Number(target.alienSlotId));
+      if (!slot?.revealed || slot.alienId !== "虫") continue;
+      const reward = alienChong.getTraceReward(null, target.traceType, target.position);
+      if (!reward || reward.pickAlienCard || reward.pickCard || reward.drawCards || reward.dataCount
+        || reward.fossilPanel || reward.chooseFossilRewardOnly
+        || Object.keys(reward.gain).some(key => key !== "score" && reward.gain[key])) continue;
+      pureScores.set(action, { key: JSON.stringify([action.actorId, target.alienSlotId]), score: finite(reward.gain.score) });
+    }
+    const bestScores = new Map();
+    for (const [action, { key, score }] of pureScores) {
+      const previous = bestScores.get(key);
+      if (!previous || score > previous.score || (score === previous.score
+        && String(action.actionId).localeCompare(String(previous.action.actionId)) < 0)) {
+        bestScores.set(key, { action, score });
+      }
+    }
+    return positioned.filter(action => !pureScores.has(action)
+      || bestScores.get(pureScores.get(action).key).action === action);
   }
 
   function selectNonredundantTuringActions(observation, actions, currentAction = null) {
