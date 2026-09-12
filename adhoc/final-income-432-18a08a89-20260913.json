@@ -1,0 +1,358 @@
+{
+  "commit": "18a08a890f574063cb442ecc3311e90d0d6e5ea9",
+  "sources": [
+    {
+      "file": "/tmp/seti-income432-audit-20260913.TPxMg7/adhoc/income432-input-20260913.json",
+      "sha256": "05ebdceb84cd7645ab761cf127542cae411486651caf5a2e3cce4436ad4b035c"
+    },
+    {
+      "file": "/tmp/seti-income432-audit-20260913.TPxMg7/adhoc/income432-distribution-20260913.json",
+      "sha256": "24de2731a8796f4ace46ee410448101c19984545f634dcd94bcbd3e39110e1b6"
+    }
+  ],
+  "wallMs": 25116.867,
+  "action": "move:dd59ea16",
+  "searches": [
+    {
+      "kind": "control",
+      "diagnostics": {
+        "budgetLimits": {
+          "leaves": {
+            "enabled": true,
+            "limit": 1,
+            "reached": true,
+            "truncated": false,
+            "prunedOriginCount": 0
+          },
+          "frontier": {
+            "enabled": false,
+            "limit": 256,
+            "peak": 1,
+            "reached": false,
+            "truncated": false,
+            "trimCount": 0
+          },
+          "execution": {
+            "enabled": true,
+            "limit": 1,
+            "used": 1,
+            "reached": true,
+            "truncated": false,
+            "remainingFrontierNodeCount": 0
+          }
+        },
+        "executedNodeCount": 1,
+        "maxExecutionNodes": 1,
+        "executionLimitReached": false,
+        "beamPrunedOriginCount": 0,
+        "successfulInputSubmissionCount": 1,
+        "attemptedNodeCountByFamily": {
+          "pass": 1
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "pass": 1
+        },
+        "executedNodeCountByDecisionKind": {
+          "pass:main": 1
+        },
+        "executedNodeCountByActionSummary": {
+          "pass:PASS": 1
+        },
+        "executedOriginCountByTarget": {
+          "<unbound>": 1
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "<unbound> -> pass:main": 1
+        },
+        "frontierOriginCountByFamily": {},
+        "totalMilliseconds": 14.594040999999976
+      }
+    },
+    {
+      "kind": "strategic",
+      "diagnostics": {
+        "budgetLimits": {
+          "leaves": {
+            "enabled": false,
+            "limit": 8,
+            "reached": false,
+            "truncated": false,
+            "prunedOriginCount": 0
+          },
+          "frontier": {
+            "enabled": true,
+            "limit": 256,
+            "peak": 256,
+            "reached": true,
+            "truncated": true,
+            "trimCount": 1098
+          },
+          "execution": {
+            "enabled": true,
+            "limit": 4096,
+            "used": 4096,
+            "reached": true,
+            "truncated": true,
+            "remainingFrontierNodeCount": 256
+          }
+        },
+        "executedNodeCount": 4096,
+        "maxExecutionNodes": 4096,
+        "executionLimitReached": true,
+        "beamPrunedOriginCount": 5388,
+        "successfulInputSubmissionCount": 5050,
+        "attemptedNodeCountByFamily": {
+          "card_corner": 31,
+          "choose_card": 1115,
+          "choose_payment": 148,
+          "choose_target": 1238,
+          "end_turn": 208,
+          "land": 226,
+          "launch": 36,
+          "move": 257,
+          "orbit": 226,
+          "pass": 29,
+          "place_data": 58,
+          "play_card": 116,
+          "quick_trade": 293,
+          "research_tech": 11,
+          "runezu_face_symbol": 20,
+          "scan": 84
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "card_corner": 31,
+          "choose_card": 1115,
+          "choose_payment": 148,
+          "choose_target": 1238,
+          "end_turn": 208,
+          "land": 226,
+          "launch": 36,
+          "move": 257,
+          "orbit": 226,
+          "pass": 29,
+          "place_data": 58,
+          "play_card": 116,
+          "quick_trade": 293,
+          "research_tech": 11,
+          "runezu_face_symbol": 20,
+          "scan": 84
+        },
+        "executedNodeCountByDecisionKind": {
+          "card_corner:quick": 31,
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 282,
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income": 749,
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 84,
+          "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 148,
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 88,
+          "choose_target:conditional/decision=choose_target/effect=residual_final_mark": 259,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 678,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace": 8,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research": 33,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 172,
+          "end_turn:turn_control": 208,
+          "land:main": 226,
+          "launch:main": 36,
+          "move:quick": 257,
+          "orbit:main": 226,
+          "pass:main": 29,
+          "place_data:quick": 58,
+          "play_card:main": 116,
+          "quick_trade:quick": 293,
+          "research_tech:main": 11,
+          "runezu_face_symbol:quick": 20,
+          "scan:main": 84
+        },
+        "executedNodeCountByActionSummary": {
+          "move:移动探测器 14 逆时针": 239,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄1号位": 226,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄2号位": 226,
+          "land:登陆": 226,
+          "orbit:环绕金星 - 奖励：获得 6 分；获得 1 次收入（R14，1信用点 + 1能量）": 226,
+          "end_turn:结束回合": 208,
+          "choose_card:获得展示的6": 188,
+          "choose_card:收入 runezu_9.webp": 179,
+          "choose_card:收入 dlc_14.png": 166,
+          "quick_trade:2张牌 → 1信用点": 145,
+          "choose_card:收入 runezu_4.webp": 119,
+          "choose_card:收入 b_32.webp": 118,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄3号位（外星人牌）": 118,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄2号位（1分）": 108,
+          "choose_card:收入 b_18.webp": 107,
+          "choose_target:扫描 开普勒22": 88,
+          "quick_trade:2张牌 → 1能量": 88,
+          "choose_target:标记 D": 87,
+          "choose_card:获得展示的物理表征": 86,
+          "choose_target:标记 B": 86,
+          "choose_target:标记 C": 86,
+          "choose_card:b_132.webp → 比邻星": 84,
+          "choose_target:扫描 绘架座β": 84,
+          "scan:扫描": 84,
+          "play_card:b_18.webp": 80,
+          "place_data:放置数据": 58,
+          "choose_target:结束移动": 55,
+          "choose_card:收入 b_134.webp": 52,
+          "choose_payment:弃 1 张移动牌 + 1 能量": 52,
+          "choose_payment:消耗 2 能量": 52,
+          "quick_trade:2能量 → 1信用点": 47,
+          "launch:发射": 36,
+          "choose_target:R14 逆时针": 33,
+          "card_corner:b_18.webp：弃牌角标": 30,
+          "pass:PASS": 29,
+          "choose_payment:弃 1 张移动牌": 22,
+          "choose_payment:消耗 1 能量": 22,
+          "move:移动探测器 16 逆时针": 18,
+          "quick_trade:2信用点 → 1能量": 13,
+          "choose_target:研究 blue2（蓝槽 1）": 11,
+          "choose_target:研究 purple2": 11,
+          "choose_target:研究 purple4": 11,
+          "research_tech:研究科技": 11,
+          "choose_card:收入 amiba_2.webp": 8,
+          "choose_card:盲抽阿米巴牌": 8,
+          "choose_target:在已有黄色痕迹的外星人上再放1个黄色痕迹 → 外星人 1 黄3号位（外星人牌）": 8,
+          "play_card:b_32.webp": 8,
+          "play_card:b_134.webp": 7,
+          "play_card:dlc_14.png": 7,
+          "play_card:runezu_4.webp": 7,
+          "play_card:runezu_9.webp": 7,
+          "runezu_face_symbol:符文2 → 4": 5,
+          "runezu_face_symbol:符文2 → 5": 5,
+          "runezu_face_symbol:符文2 → 6": 5,
+          "runezu_face_symbol:符文2 → 7": 5,
+          "card_corner:amiba_2.webp：弃牌角标": 1
+        },
+        "executedOriginCountByTarget": {
+          "land:venus:planet:": 4590,
+          "orbit:venus:planet:": 4140,
+          "sector:win:sector-4-b:1": 266,
+          "<unbound>": 177,
+          "income:gain:4,4,1,0,2,0": 162,
+          "decision:choose_target:48a67af4": 82,
+          "decision:choose_target:50e87600": 81,
+          "decision:choose_target:f0cfda88": 81,
+          "tech:gain:blue2": 66,
+          "tech:gain:purple2": 66,
+          "tech:gain:purple4": 66,
+          "sector:win:sector-3-a:2": 49,
+          "decision:choose_target:aa997a97": 24,
+          "card:resolve:alien-amiba-2-16": 1
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 1398,
+          "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 1376,
+          "land:venus:planet: -> move:quick": 516,
+          "orbit:venus:planet: -> move:quick": 516,
+          "land:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 505,
+          "land:venus:planet: -> land:main": 466,
+          "orbit:venus:planet: -> orbit:main": 466,
+          "land:venus:planet: -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 304,
+          "orbit:venus:planet: -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 304,
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=residual_final_mark": 281,
+          "orbit:venus:planet: -> choose_target:conditional/decision=choose_target/effect=residual_final_mark": 281,
+          "land:venus:planet: -> end_turn:turn_control": 270,
+          "orbit:venus:planet: -> end_turn:turn_control": 270,
+          "orbit:venus:planet: -> quick_trade:quick": 269,
+          "land:venus:planet: -> quick_trade:quick": 200,
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 190,
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 190,
+          "land:venus:planet: -> play_card:main": 190,
+          "orbit:venus:planet: -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 190,
+          "orbit:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 190,
+          "orbit:venus:planet: -> play_card:main": 190,
+          "<unbound> -> end_turn:turn_control": 92,
+          "decision:choose_target:48a67af4 -> choose_target:conditional/decision=choose_target/effect=residual_final_mark": 82,
+          "decision:choose_target:50e87600 -> choose_target:conditional/decision=choose_target/effect=residual_final_mark": 81,
+          "decision:choose_target:f0cfda88 -> choose_target:conditional/decision=choose_target/effect=residual_final_mark": 81,
+          "land:venus:planet: -> launch:main": 72,
+          "orbit:venus:planet: -> launch:main": 72,
+          "sector:win:sector-4-b:1 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 64,
+          "sector:win:sector-4-b:1 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 64,
+          "sector:win:sector-4-b:1 -> scan:main": 64,
+          "income:gain:4,4,1,0,2,0 -> quick_trade:quick": 40,
+          "sector:win:sector-4-b:1 -> place_data:quick": 38,
+          "<unbound> -> play_card:main": 36,
+          "sector:win:sector-4-b:1 -> quick_trade:quick": 36,
+          "sector:win:sector-3-a:2 -> play_card:main": 33,
+          "income:gain:4,4,1,0,2,0 -> place_data:quick": 32,
+          "income:gain:4,4,1,0,2,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 30,
+          "income:gain:4,4,1,0,2,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 30,
+          "income:gain:4,4,1,0,2,0 -> scan:main": 30,
+          "tech:gain:blue2 -> card_corner:quick": 30,
+          "tech:gain:purple2 -> card_corner:quick": 30,
+          "tech:gain:purple4 -> card_corner:quick": 30,
+          "<unbound> -> pass:main": 29,
+          "<unbound> -> runezu_face_symbol:quick": 20,
+          "decision:choose_target:aa997a97 -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 16,
+          "tech:gain:blue2 -> place_data:quick": 14,
+          "tech:gain:purple2 -> place_data:quick": 14,
+          "tech:gain:purple4 -> place_data:quick": 14,
+          "tech:gain:blue2 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 11,
+          "tech:gain:blue2 -> research_tech:main": 11,
+          "tech:gain:purple2 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 11,
+          "tech:gain:purple2 -> research_tech:main": 11,
+          "tech:gain:purple4 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 11,
+          "tech:gain:purple4 -> research_tech:main": 11,
+          "decision:choose_target:aa997a97 -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace": 8,
+          "land:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace": 8,
+          "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 8,
+          "orbit:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace/cardEffect=alien_trace": 8,
+          "sector:win:sector-3-a:2 -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 8,
+          "sector:win:sector-3-a:2 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 8,
+          "card:resolve:alien-amiba-2-16 -> card_corner:quick": 1
+        },
+        "frontierOriginCountByFamily": {
+          "choose_card": 111,
+          "play_card": 45,
+          "scan": 42,
+          "end_turn": 28,
+          "place_data": 26,
+          "card_corner": 17,
+          "runezu_face_symbol": 16,
+          "choose_payment": 12,
+          "choose_target": 10,
+          "pass": 8,
+          "quick_trade": 8,
+          "move": 4
+        },
+        "totalMilliseconds": 15033.498625
+      }
+    }
+  ],
+  "trades": 293,
+  "oldPathLeaves": [
+    {
+      "actionId": "move:dd59ea16",
+      "leafId": "leaf:e2f831f5",
+      "chain": [
+        "move:dd59ea16",
+        "choose_payment:35150397",
+        "move:d40d18c3",
+        "land:c95c1043",
+        "choose_target:aa997a97",
+        "choose_card:9924a10f"
+      ]
+    }
+  ],
+  "winner": {
+    "score": 15,
+    "leafId": "leaf:e2f831f5",
+    "chain": [
+      "move:dd59ea16",
+      "choose_payment:35150397",
+      "move:d40d18c3",
+      "land:c95c1043",
+      "choose_target:aa997a97",
+      "choose_card:9924a10f"
+    ]
+  },
+  "checks": {
+    "time": true,
+    "errors": true,
+    "budget": true,
+    "oldPathPresent": true
+  },
+  "passed": true
+}
