@@ -653,8 +653,9 @@ PASS优胜。前沿已有data:analyze路线的长条件链（深度16/17），�
 
 读取R2c棕色396步checkpoint（不重跑）：4096次执行中记录1617次目标完成转换；
 分析路线76次被接受为非支配完成转换，科技blue3/orange3/purple2分别3/1/1次。
-但结果输出只收state.leaves，不收继续展开时写入的frontierLeaves；完成目标后只要还能
-尝试下一目标，就没有为该已兑现结果建叶，预算耗尽后全部变成无叶不可选。
+当时的结果输出不保留中途结果，完成目标后继续尝试下一目标会丢失已兑现收益。
+该问题现已由独立完成叶解决；2026-09-12进一步删除无人消费的中途结果构造，
+实际搜索队列和截断统计保留。本节是暂停草案的历史背景，不描述当前缺陷。
 
 本修订只纠正“已完成目标结果保留”，不修改根目录、目标准入、需求选择、排序权重、
 堆顺序、预算、状态等价、资源下界或Pareto定义。不是第四轮搜索架构验收。
@@ -663,7 +664,7 @@ PASS优胜。前沿已有data:analyze路线的长条件链（深度16/17），�
 |---|---|---|
 | 完成定义 | rule-composition复用completesRouteTarget与goalCompletionPending；只有附带Decision已排空、inspection为completed/idle才是完整目标结果 | 主行动已加分但支付/奖励未完不能新增goal-completed叶 |
 | 完成后仍可继续 | 非条件根、非PASS、未达到目标深度终止时，在当前已完成目标边界保存goal-completed叶，再执行原有下一目标选择 | 完成3分目标后继续下一目标并触顶，3分仍可选；较长已完成高分仍参与比较 |
-| 非完成边界 | 不把原frontierLeaves整体开放；未完成目标的正常行动只按原route-unreachable等边界处理，条件截断仍pruned | 没完成的目标没有固定分或伪造叶 |
+| 非完成边界 | 不把中途结果当完成叶；未完成目标的正常行动只按原route-unreachable等边界处理，条件截断仍pruned | 没完成的目标没有固定分或伪造叶 |
 | 结果与搜索完备性 | 已结算叶表示真实到达，不宣称搜索穷尽；原COUNTERFACTUAL_SEARCH_PRUNED/low confidence保留 | 相同outcome可以有真实叶且明确带pruned标记 |
 | 完成态支配 | 保存通过既有retainCompletedEndpoint的完成结果；后到支配关系继续剪其后继，不撤销已执行的历史结果 | 不新增目标/资源近似；输出的每个完成叶均有真实chain与observation |
 | 根与计划归属 | 复用addLeaf/fullLeafObservation；根目标、行动链、真实提交数、目标深度、信息遮蔽与目标trace都来自同一origin | winning leaf仍从原evaluateOutcome供plan提取，不能拿别的根结果 |
