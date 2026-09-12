@@ -1151,6 +1151,23 @@
       .some((step) => actionMatchesProbeStep(action, step));
   }
 
+  function selectProbeNextActions(actions, goals) {
+    const selected = new Map();
+    for (const goal of goals) {
+      const exact = actions.filter(action => actionAdvancesProbeGoal(action, goal));
+      const moves = exact.filter(action => action.family === "move");
+      // 同一目标普通移动局部择一；沿途收益可能不同，不属于状态等价。
+      // 仅从已有合法候选中选择，首选暂不可执行时不能阻断其余可达方向。
+      const preferred = moves.find(action => actionMatchesProbeStep(action, goal.nextStep))
+        || (goal.movementNextSteps || []).map(step => moves.find(action => actionMatchesProbeStep(action, step)))
+          .find(Boolean);
+      for (const action of exact) {
+        if (action.family !== "move" || !preferred || action === preferred) selected.set(action.actionId, action);
+      }
+    }
+    return [...selected.values()];
+  }
+
   function isHuanyuMovementAction(action) {
     return action.family === "industry" && action.target?.abilityId === "huanyu_free_moves";
   }
@@ -1893,9 +1910,7 @@
           && allowsQuickActionTiming({ observation: input.rootObservation,
           action, legalActions, routeTargetId: goal.targetId, routePlanId: `probe:${goal.requirementId}` }));
       }
-      const exact = legalActions.filter((action) => (
-        actionAdvancesProbeGoal(action, goal)
-      ));
+      const exact = selectProbeNextActions(legalActions, [goal]);
       // 打牌 spawn 的免费发射可作为探测的发射步骤：用户 405 档打 b_117
       // （LAUNCH skipCost 免费发射 +2 宣传）→ 免费探测 + 攒宣传研究科技。
       // 此前探测目标只认 launch 行动，打牌发射完全不可见（AI 评估 b_117
@@ -3640,9 +3655,7 @@
             ? bindRoute(currentWindow, input.routeTargetId, input.routePlanId)
             : continueBoundTargetNextTurn();
         }
-        const exact = successors.filter((action) => (
-          goals.some((goal) => actionAdvancesProbeGoal(action, goal))
-        ));
+        const exact = selectProbeNextActions(successors, goals);
         const movementCards = goals.flatMap((goal) => selectProbeMovementCards(
           input.branchObservation,
           goal,
