@@ -1569,12 +1569,13 @@
   }
 
   function selectProbeResourcePreparation(observation, goals, successors, seatId) {
+    // 不同剩余资源不是等价状态；同探测目标沿既有最小成本排序局部择一。
     return goals.flatMap((goal) => selectMinimumCostResourcePreparation(
       observation,
       goal.required || {},
       successors,
       seatId,
-    )).filter((action, index, actions) => (
+    ).slice(0, 1)).filter((action, index, actions) => (
       actions.findIndex((candidate) => candidate.actionId === action.actionId) === index
     ));
   }
@@ -1931,9 +1932,9 @@
       );
       const resourcePreparation = exact.length
         ? []
-        : selectMinimumCostResourcePreparation(
+        : selectProbeResourcePreparation(
           input.rootObservation,
-          goal.required || {},
+          [goal],
           legalActions,
           input.focalSeatId,
         );

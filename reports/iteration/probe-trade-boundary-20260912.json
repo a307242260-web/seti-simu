@@ -1,0 +1,393 @@
+{
+  "baseline": "033b244a",
+  "scope": "读取相同465公开输入比较非探测根与指定公牌后继，不运行规则或AI",
+  "external": [
+    [
+      {
+        "targetId": "card:acquire:card-82-0",
+        "planId": "card:acquire:card-82-0",
+        "resultTargetIds": [
+          "card:acquire:card-82-0"
+        ],
+        "compatibleActionIds": [
+          "quick_trade:38002215",
+          "quick_trade:76cce73d",
+          "quick_trade:90440450"
+        ]
+      },
+      {
+        "targetId": "card:resolve:alien-amiba-1-2",
+        "planId": "card:resolve:alien-amiba-1-2",
+        "resultTargetIds": [
+          "card:resolve:alien-amiba-1-2"
+        ],
+        "compatibleActionIds": [
+          "card_corner:68d40e4b"
+        ]
+      },
+      {
+        "targetId": "card:resolve:alien-amiba-2-9",
+        "planId": "card:resolve:alien-amiba-2-9",
+        "resultTargetIds": [
+          "card:resolve:alien-amiba-2-9"
+        ],
+        "compatibleActionIds": [
+          "card_corner:cdbef27a"
+        ]
+      },
+      {
+        "targetId": "card:resolve:alien-chong-1-21",
+        "planId": "card:resolve:alien-chong-1-21",
+        "resultTargetIds": [
+          "card:resolve:alien-chong-1-21"
+        ],
+        "compatibleActionIds": [
+          "card_corner:2f475e38"
+        ]
+      },
+      {
+        "targetId": "income:gain:8,2,0,0,2,0",
+        "planId": "income:data:computer-slot-4",
+        "resultTargetIds": [
+          "income:gain:8,2,0,0,2,0"
+        ],
+        "compatibleActionIds": [
+          "place_data:dbe01b29"
+        ]
+      },
+      {
+        "targetId": "sector:win:sector-2-b:1",
+        "planId": "sector:card:card-77-0:sector-2-b",
+        "resultTargetIds": [
+          "sector:win:sector-2-b:1"
+        ],
+        "compatibleActionIds": [
+          "play_card:82f7184f"
+        ]
+      },
+      {
+        "targetId": "sector:win:sector-2-b:1",
+        "planId": "sector:standard-scan:sector-2-b",
+        "resultTargetIds": [
+          "sector:win:sector-2-b:1"
+        ],
+        "compatibleActionIds": [
+          "quick_trade:0037d2c5",
+          "quick_trade:ee5652be"
+        ]
+      },
+      {
+        "targetId": "tech:gain:blue1",
+        "planId": "tech:blue1:1",
+        "resultTargetIds": [
+          "tech:gain:blue1"
+        ],
+        "compatibleActionIds": [
+          "play_card:1c79ba15",
+          "play_card:e590d739",
+          "research_tech:f86fc96a"
+        ]
+      },
+      {
+        "targetId": "tech:gain:blue2",
+        "planId": "tech:blue2:1",
+        "resultTargetIds": [
+          "tech:gain:blue2"
+        ],
+        "compatibleActionIds": [
+          "play_card:1c79ba15",
+          "play_card:e590d739",
+          "research_tech:f86fc96a"
+        ]
+      },
+      {
+        "targetId": "tech:gain:orange3",
+        "planId": "tech:orange3:",
+        "resultTargetIds": [
+          "tech:gain:orange3"
+        ],
+        "compatibleActionIds": [
+          "research_tech:f86fc96a"
+        ]
+      }
+    ],
+    [
+      {
+        "targetId": "card:acquire:card-82-0",
+        "planId": "card:acquire:card-82-0",
+        "resultTargetIds": [
+          "card:acquire:card-82-0"
+        ],
+        "compatibleActionIds": [
+          "quick_trade:38002215",
+          "quick_trade:76cce73d",
+          "quick_trade:90440450"
+        ]
+      },
+      {
+        "targetId": "card:resolve:alien-amiba-1-2",
+        "planId": "card:resolve:alien-amiba-1-2",
+        "resultTargetIds": [
+          "card:resolve:alien-amiba-1-2"
+        ],
+        "compatibleActionIds": [
+          "card_corner:68d40e4b"
+        ]
+      },
+      {
+        "targetId": "card:resolve:alien-amiba-2-9",
+        "planId": "card:resolve:alien-amiba-2-9",
+        "resultTargetIds": [
+          "card:resolve:alien-amiba-2-9"
+        ],
+        "compatibleActionIds": [
+          "card_corner:cdbef27a"
+        ]
+      },
+      {
+        "targetId": "card:resolve:alien-chong-1-21",
+        "planId": "card:resolve:alien-chong-1-21",
+        "resultTargetIds": [
+          "card:resolve:alien-chong-1-21"
+        ],
+        "compatibleActionIds": [
+          "card_corner:2f475e38"
+        ]
+      },
+      {
+        "targetId": "income:gain:8,2,0,0,2,0",
+        "planId": "income:data:computer-slot-4",
+        "resultTargetIds": [
+          "income:gain:8,2,0,0,2,0"
+        ],
+        "compatibleActionIds": [
+          "place_data:dbe01b29"
+        ]
+      },
+      {
+        "targetId": "sector:win:sector-2-b:1",
+        "planId": "sector:card:card-77-0:sector-2-b",
+        "resultTargetIds": [
+          "sector:win:sector-2-b:1"
+        ],
+        "compatibleActionIds": [
+          "play_card:82f7184f"
+        ]
+      },
+      {
+        "targetId": "sector:win:sector-2-b:1",
+        "planId": "sector:standard-scan:sector-2-b",
+        "resultTargetIds": [
+          "sector:win:sector-2-b:1"
+        ],
+        "compatibleActionIds": [
+          "quick_trade:0037d2c5",
+          "quick_trade:ee5652be"
+        ]
+      },
+      {
+        "targetId": "tech:gain:blue1",
+        "planId": "tech:blue1:1",
+        "resultTargetIds": [
+          "tech:gain:blue1"
+        ],
+        "compatibleActionIds": [
+          "play_card:1c79ba15",
+          "play_card:e590d739",
+          "research_tech:f86fc96a"
+        ]
+      },
+      {
+        "targetId": "tech:gain:blue2",
+        "planId": "tech:blue2:1",
+        "resultTargetIds": [
+          "tech:gain:blue2"
+        ],
+        "compatibleActionIds": [
+          "play_card:1c79ba15",
+          "play_card:e590d739",
+          "research_tech:f86fc96a"
+        ]
+      },
+      {
+        "targetId": "tech:gain:orange3",
+        "planId": "tech:orange3:",
+        "resultTargetIds": [
+          "tech:gain:orange3"
+        ],
+        "compatibleActionIds": [
+          "research_tech:f86fc96a"
+        ]
+      }
+    ]
+  ],
+  "selected": [
+    [
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:38002215",
+        "actorId": "player-green",
+        "stateVersion": 225,
+        "decisionVersion": 20,
+        "target": {
+          "tradeId": "cards-for-pick-card"
+        },
+        "payload": {
+          "cost": {
+            "handSize": 2
+          },
+          "gain": {
+            "handSize": 1
+          }
+        },
+        "decision": null,
+        "summary": "2张牌 → 精选1张牌",
+        "routeTargetId": "card:acquire:card-82-0",
+        "routePlanId": "card:acquire:card-82-0",
+        "routeResultTargetIds": [
+          "card:acquire:card-82-0"
+        ]
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:76cce73d",
+        "actorId": "player-green",
+        "stateVersion": 225,
+        "decisionVersion": 20,
+        "target": {
+          "tradeId": "publicity-for-card"
+        },
+        "payload": {
+          "cost": {
+            "publicity": 3
+          },
+          "gain": {
+            "handSize": 1
+          }
+        },
+        "decision": null,
+        "summary": "3宣传 → 精选1张牌",
+        "routeTargetId": "card:acquire:card-82-0",
+        "routePlanId": "card:acquire:card-82-0",
+        "routeResultTargetIds": [
+          "card:acquire:card-82-0"
+        ]
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:90440450",
+        "actorId": "player-green",
+        "stateVersion": 225,
+        "decisionVersion": 20,
+        "target": {
+          "tradeId": "credits-for-card"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "gain": {
+            "handSize": 1
+          }
+        },
+        "decision": null,
+        "summary": "2信用点 → 1张牌",
+        "routeTargetId": "card:acquire:card-82-0",
+        "routePlanId": "card:acquire:card-82-0",
+        "routeResultTargetIds": [
+          "card:acquire:card-82-0"
+        ]
+      }
+    ],
+    [
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:38002215",
+        "actorId": "player-green",
+        "stateVersion": 225,
+        "decisionVersion": 20,
+        "target": {
+          "tradeId": "cards-for-pick-card"
+        },
+        "payload": {
+          "cost": {
+            "handSize": 2
+          },
+          "gain": {
+            "handSize": 1
+          }
+        },
+        "decision": null,
+        "summary": "2张牌 → 精选1张牌",
+        "routeTargetId": "card:acquire:card-82-0",
+        "routePlanId": "card:acquire:card-82-0",
+        "routeResultTargetIds": [
+          "card:acquire:card-82-0"
+        ]
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:76cce73d",
+        "actorId": "player-green",
+        "stateVersion": 225,
+        "decisionVersion": 20,
+        "target": {
+          "tradeId": "publicity-for-card"
+        },
+        "payload": {
+          "cost": {
+            "publicity": 3
+          },
+          "gain": {
+            "handSize": 1
+          }
+        },
+        "decision": null,
+        "summary": "3宣传 → 精选1张牌",
+        "routeTargetId": "card:acquire:card-82-0",
+        "routePlanId": "card:acquire:card-82-0",
+        "routeResultTargetIds": [
+          "card:acquire:card-82-0"
+        ]
+      },
+      {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:90440450",
+        "actorId": "player-green",
+        "stateVersion": 225,
+        "decisionVersion": 20,
+        "target": {
+          "tradeId": "credits-for-card"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "gain": {
+            "handSize": 1
+          }
+        },
+        "decision": null,
+        "summary": "2信用点 → 1张牌",
+        "routeTargetId": "card:acquire:card-82-0",
+        "routePlanId": "card:acquire:card-82-0",
+        "routeResultTargetIds": [
+          "card:acquire:card-82-0"
+        ]
+      }
+    ]
+  ],
+  "pass": true
+}
