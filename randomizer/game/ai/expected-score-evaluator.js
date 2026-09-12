@@ -2722,6 +2722,16 @@
     const pureScores = new Map();
     for (const action of positioned) {
       const target = action.target;
+      if (isTrace(action) && target.stateExtra && !isFace(action) && !target.fangzhouUnlock
+        && action.actorId === (observation?.perspectivePlayerId ?? observation?.viewer?.seatId)) {
+        const slot = slots.find(item => Number(item.slotId) === Number(target.alienSlotId));
+        if (slot?.revealed && slot.alienId !== "方舟" && slot.traces?.[target.traceType]?.firstPlaced) {
+          // 同色额外位的即时收益相同，但槽位归属不同；仅作贪心，不记等价省略。
+          pureScores.set(action, { key: JSON.stringify([action.actorId, "state-extra", target.traceType]),
+            score: finite(alienState.getExtraTraceReward().gain.score) });
+        }
+        continue;
+      }
       if (!isFace(action) || target.speciesId !== "chong"
         || !["pink", "yellow"].includes(target.traceType)
         || action.actorId !== (observation?.perspectivePlayerId ?? observation?.viewer?.seatId)) continue;

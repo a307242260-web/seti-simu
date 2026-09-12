@@ -118,6 +118,28 @@ const seatId = "strategic-seat";
   selectAllPaths([pink, yellow], [pink, yellow], observation({
     alienSlots: [{ ...chongSlots[0], revealed: false }],
   }));
+  const extraSlots = ["阿米巴", "虫"].map((alienId, i) => ({ slotId: i + 1, revealed: true,
+    alienId, traces: { yellow: { firstPlaced: true }, blue: { firstPlaced: true } } }));
+  const extras = [1, 2].map(alienSlotId => ({ ...overflow, actionId: `extra:${alienSlotId}`,
+    target: { ...overflow.target, alienSlotId } }));
+  const extraObs = observation({ alienSlots: extraSlots });
+  selectAllPaths(extras, [extras[0]], extraObs);
+  selectAllPaths([...extras].reverse(), [extras[0]], extraObs);
+  selectAllPaths(extras, [extras[0]], { perspectivePlayerId: seatId,
+    publicState: extraObs.publicState, selfState: extraObs.selfState });
+  const blueExtra = { ...extras[1], actionId: "extra:blue", target: { ...extras[1].target, traceType: "blue" } };
+  selectAllPaths([extras[0], blueExtra], [extras[0], blueExtra], extraObs);
+  for (const reservedCards of [[{ id: "task-b67", cardId: "b_67.webp" }], [{ id: "alien-chong-7-1", kind: "alien" }]]) {
+    selectAllPaths(extras, extras, observation({ alienSlots: extraSlots, reservedCards }));
+  }
+  // 未揭示后继另有既定奖励筛选；这里只验证新增根筛选不处理未揭示槽。
+  assert.equal(evaluator.selectSecondaryAgentRootActions({ focalSeatId: seatId, legalActions: extras,
+    rootObservation: observation({ alienSlots: extraSlots.map(s => ({ ...s, revealed: false })) }),
+  }).length, 2);
+  selectAllPaths(extras, extras, observation({ alienSlots: extraSlots.map(s => ({ ...s, alienId: "方舟" })) }));
+  const unlockExtra = { ...extras[1], target: { ...extras[1].target, fangzhouUnlock: true } };
+  selectAllPaths([extras[0], unlockExtra], [extras[0], unlockExtra], extraObs);
+  console.log("同色额外位贪心、原生输入与任务/特殊边界通过");
   console.log("虫族跨颜色纯分数贪心、正式奖励、任务与特殊奖励边界通过");
   console.log("外星人普通槽位贪心：根/绑定/未绑定、末轮、特殊位置及方舟边界通过");
 }
