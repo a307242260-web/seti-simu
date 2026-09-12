@@ -194,7 +194,7 @@
       <h1>当前 Base 机器人策略<br>全景报告</h1>
       <p class="lede">从可见状态、目标准入、反事实执行、叶估值、稳定决胜到计划复用，本报告说明当前机器人的完整决策流程。核心策略是：<strong>先确定值得完成的目标，再搜索能推进目标的动作</strong>。</p>
       <div class="stamp-row">
-        <span class="stamp good">Base: frontier-materialization-20260912</span>
+        <span class="stamp good">Base: trace-score-greedy-input-20260912</span>
         <span class="stamp">Policy: seti-heuristic-policy-v0</span>
         <span class="stamp">Rollout: secondary-agent-rollout-v21</span>
         <span class="stamp warn">进行中：预算与耗时专项；无目标普通搜索暂缓</span>
@@ -209,7 +209,7 @@
         <div class="card metric"><strong class="accent">97.75</strong><span>固定盘面完整终局均分</span></div>
         <div class="card metric"><strong>597</strong><span>自然终局正式输入步数</span></div>
         <div class="card metric"><strong class="amber">48</strong><span>战略搜索达到 4096 节点上限</span></div>
-        <div class="card metric"><strong>1135.2s</strong><span>完整局墙钟耗时</span></div>
+        <div class="card metric"><strong>1099.1s</strong><span>完整局墙钟耗时</span></div>
       </div>
       <div class="grid grid-3" style="margin-top:16px">
         <div class="card"><h3>策略范式</h3><p>目标引导 + 需求引导。探测、分析、扇区、收入、科技先形成具名目标，再绑定主动作和资源准备动作。</p></div>
@@ -225,9 +225,9 @@
         <table>
           <thead><tr><th>层次</th><th>标识</th><th>含义</th></tr></thead>
           <tbody>
-            <tr><td>版本登记</td><td class="mono">frontier-materialization-20260912</td><td>主行动前准备、主行动后兑现可能损失的移动/精选机会；外星牌仍固定每张 12 分。</td></tr>
-            <tr><td>生产行为快照</td><td class="mono">eee63294</td><td>本报告描述的策略代码提交，也是完整局记录绑定的代码版本。</td></tr>
-            <tr><td>完整局记录</td><td class="mono">1d63c8e7.eee63294.full.json</td><td>本生产版本唯一完整局、存档和逐步复盘；从初始盘面自然完成。</td></tr>
+            <tr><td>版本登记</td><td class="mono">trace-score-greedy-input-20260912</td><td>虫族粉黄纯分数按正式奖励贪心，任务及特殊奖励保留；外星牌仍固定每张 12 分。</td></tr>
+            <tr><td>生产行为快照</td><td class="mono">d75fb99a</td><td>本报告描述的策略代码提交，也是完整局记录绑定的代码版本。</td></tr>
+            <tr><td>完整局记录</td><td class="mono">ccfb509e.d75fb99a.full.json</td><td>本生产版本唯一完整局、存档和逐步复盘；从初始盘面自然完成。</td></tr>
             <tr><td>Policy provenance</td><td class="mono">heuristic / v0 / laughable</td><td><code>laughable</code> 当前只进入 provenance/config checksum，生产策略中没有按难度分叉。</td></tr>
             <tr><td>实验盘面</td><td class="mono">seti-free-analyze-v1</td><td>4 席固定盘面，flags 为空，完整自然终局。</td></tr>
           </tbody>
@@ -305,7 +305,7 @@
           <tr data-kind="goal approx"><td>打牌</td><td>只在牌能推进收入、科技、免费发射探测、扇区、数据等具名目标时进入战略根。</td><td>不平铺全部手牌；普通卡完整价值尚未接入。得分卡角标可建立 <code>card:resolve</code> 目标。</td><td><span class="tag approx">目标门控</span></td></tr>
           <tr data-kind="goal"><td>快速交易 / 卡角</td><td>只作为具名目标的资源准备或已确认得分角标出现；交易序列取满足目标的最小总损失、最少步数。</td><td>无目标的 quick_trade/card_corner 不进入树内未绑定后继。指定公共牌可建立获取目标，正式交易及五种公司取牌共用准入；没有直接来源时允许补足实际宣传缺口。</td><td><span class="tag live">需求驱动</span></td></tr>
           <tr data-kind="settle"><td>条件 Decision</td><td>全部通过 active Effect Session 的标准合法 choice；条件根本身成为结构目标。</td><td>未绑定支付/交易选牌视为纯结算收束；绑定可替代资源的弃牌只留代表，卡牌身份敏感目标保留全部。</td><td><span class="tag live">正式结算</span></td></tr>
-          <tr data-kind="approx"><td>外星痕迹</td><td>未揭示槽按正式即时奖励做支配剪枝；会区分槽位的未完成任务则保留相关选择。</td><td>揭示后普通位置按物种保留更下面的选择；付费换分位、虫族蓝位、符文符号位等保留。它是授权近似，不是等价去重。</td><td><span class="tag approx">策略近似</span></td></tr>
+          <tr data-kind="approx"><td>外星痕迹</td><td>未揭示槽按正式即时奖励做支配剪枝；会区分槽位的未完成任务则保留相关选择。</td><td>揭示后普通位置按物种保留更下面的选择；虫族同槽粉黄纯分数只留即时最高分，同分按稳定ID；有未完成普通任务或已打外星牌时不作跨色筛选。特殊奖励保留。这是局部贪心，会放弃未来牌产生的颜色机会，不是等价去重。</td><td><span class="tag approx">策略近似</span></td></tr>
           <tr data-kind="approx"><td>卡牌触发奖励</td><td>已触发且只剩“立即结算/跳过”的 residual card settlement 稳定选择立即结算。</td><td>可能错过资源将满时延后领取的时机；保留近似用于阻止 trigger 指数重复分支。</td><td><span class="tag approx">策略近似</span></td></tr>
           <tr data-kind="settle"><td>终局板块</td><td>直接读正式 a/b/c/d 公式和下一空槽倍率，选择实际终局分最高项。</td><td>终局叶只比较正式终局分；剩余资源、未来科技/收入/外星期望全部归零。</td><td><span class="tag live">确定性选择</span></td></tr>
         </tbody>
@@ -408,7 +408,7 @@
             <tr><td>平均节点</td><td>2,105.1</td></tr>
             <tr><td>触发 beam 裁剪</td><td>60 次</td></tr>
             <tr><td>达到 4,096 上限</td><td>48 次</td></tr>
-            <tr><td>战略搜索累计耗时</td><td>833.7s（完整局墙钟的 73.4%）</td></tr>
+            <tr><td>战略搜索累计耗时</td><td>803.4s（完整局墙钟的 73.1%）</td></tr>
           </tbody>
         </table></div></div>
         <div class="card"><h3>正式动作构成（Top 10）</h3><div class="bar-list">
@@ -425,7 +425,7 @@
         </div></div>
       </div>
       <div class="callout warn" style="margin-top:16px"><strong>原始记录口径澄清：</strong> <code>metrics.budgetHits.length=54</code> 中，48 次为战略搜索的 4096 节点截断，另 6 次为 control 的 1 节点截断；不能全部表述为 4096 节点耗尽。全部 203 次搜索执行 233,757 节点。战略 8 叶限制未启用，256 队列截断 60 次。</div>
-      <p>本版597步自然终局，完整动作描述符及逐步状态摘要与QUICK基线一致；正式75/125/102/89，均97.75，无搜索执行失败。删除无人消费的中途结果构造后，整局1205.691→1135.162秒（单次减少5.85%），战略累计减少7.44%；执行/队列截断54/60不变，专项尚未完成。相关search测试与唯一full-flow通过，AI目录19通过、1项既有失败。详见<a href="iteration/frontier-materialization-acceptance-20260912.md">本项验收</a>。</p>
+      <p>本版597步自然终局，正式75/125/102/89，均97.75，与基线完整拆分相同，无搜索执行失败。虫族粉黄纯分数贪心使目标506步的痕迹节点1213→1069；全局节点总数不变，战略耗时单次减少约3.6%，不代表稳定加速保证。四处动作变化分别交换两次移动支付、两次粉黄痕迹的先后顺序，并非全程轨迹相同。执行/队列截断54/60不变，专项尚未完成。6个search测试与唯一full-flow通过，既有目标释放断言失败单列。下一热点542步：痕迹910节点、放置数据773节点。详见<a href="iteration/trace-score-full-acceptance-20260912.md">本项验收</a>。</p>
     </section>
 
     <section id="boundaries">
@@ -463,10 +463,10 @@
       <details><summary>版本、文档与完整局</summary><ul>
         <li><a href="iteration/strategy-todo-20260911.md">机器人策略迭代 TODO</a>：策略审阅中的待改进项与验收方向。</li>
         <li><a href="../docs/ai-design.md">docs/ai-design.md</a>：机器玩家设计参考；本报告的具体策略以所标注提交的生产源码为准。</li>
-        <li><a href="research/1d63c8e7.eee63294.full.json">完整局研究记录</a>：597步、搜索诊断、动作计数与运行元数据；总耗时1135.162秒。</li>
+        <li><a href="research/ccfb509e.d75fb99a.full.json">完整局研究记录</a>：597步、搜索诊断、动作计数与运行元数据；总耗时约1099.1秒。</li>
         <li><a href="iteration/quick-timing-acceptance-20260912.md">快速行动时机验收</a>：五项行为目标、正式案例、完整局效果及已知边界。</li>
-        <li><a href="iteration/frontier-materialization-20260912/1d63c8e7.eee63294.full.action-log.html">逐步行动复盘</a>：按玩家回合聚合的可视化回放。</li>
-        <li><a href="../seti-saves/seti-save-research-frontier-materialization-20260912-eee63294-full-v285.json">完整局存档</a>：正式终局分及拆分来源。</li>
+        <li><a href="iteration/trace-score-greedy-input-20260912/ccfb509e.d75fb99a.full.action-log.html">逐步行动复盘</a>：按玩家回合聚合的可视化回放。</li>
+        <li><a href="../seti-saves/seti-save-research-trace-score-greedy-input-20260912-d75fb99a-full-v285.json">完整局存档</a>：正式终局分及拆分来源。</li>
       </ul></details>
       <div class="callout"><strong>证据优先级：</strong> 生产源码与版本化实验记录优先于叙述性文档；报告中所有“当前已生效”判断均按提交快照逐项核对。</div>
     </section>

@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-12T10:53:43.864Z",
+  "builtAt": "2026-09-12T11:26:38.038Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "69359b5d",
-  "currentBaseline": "frontier-materialization-20260912",
+  "headCommit": "68268d1a",
+  "currentBaseline": "trace-score-greedy-input-20260912",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,523 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "trace-score-greedy-input-20260912",
+      "name": "虫族粉黄纯分数贪心",
+      "date": "2026-09-12",
+      "baseline": "frontier-materialization-20260912",
+      "head": "d75fb99a",
+      "commits": [
+        {
+          "hash": "b5c95bbb",
+          "date": "2026-09-12",
+          "subject": "[TRACE-SCORE-GREEDY-01] 合并虫族粉黄纯分数奖励候选"
+        },
+        {
+          "hash": "bad02338",
+          "date": "2026-09-12",
+          "subject": "[TRACE-SCORE-GREEDY-01] 记录单决策门槛通过与既有失败"
+        },
+        {
+          "hash": "dbceef73",
+          "date": "2026-09-12",
+          "subject": "[TRACE-SCORE-INPUT-01] 修复原生搜索观察席位识别并撤销首次验收"
+        },
+        {
+          "hash": "d75fb99a",
+          "date": "2026-09-12",
+          "subject": "[TRACE-SCORE-GREEDY-01] 确认原生搜索痕迹节点减少并通过单步门槛"
+        }
+      ],
+      "summary": "虫族粉黄纯分数按正式奖励择优，任务与特殊奖励保留，原生搜索及决策观察共用筛选",
+      "diffStat": "42 files changed, 262396 insertions(+), 25 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "AGENTS.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "adhoc/benchmark-trace-score-greedy-20260912.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-trace-sequence-step506-20260912.js",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-budget-step506-20260912.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-frontier-full-20260912.js",
+          "insertions": 50,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/diagnose-trace-sequence-step506-20260912.js",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-step506-reward-choices-20260912.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-step506-trace-order-state-20260912.js",
+          "insertions": 44,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-step506-trace-pairs-20260912.js",
+          "insertions": 80,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-frontier-delivery-20260912.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-step506-trace-order-suffix-20260912.js",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-trace-score-greedy-20260912.js",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 6,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 36,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/strategic-goal-evaluator.test.js",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/budget-before-step506-20260912.json",
+          "insertions": 448,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/frontier-delivery-verification-20260912.json",
+          "insertions": 51,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/frontier-full-comparison-eee63294-20260912.json",
+          "insertions": 465,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/frontier-materialization-20260912/1d63c8e7.eee63294.full.action-log.html",
+          "insertions": 2053,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/frontier-materialization-acceptance-20260912.md",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 823,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/step506-reward-choices-20260912.json",
+          "insertions": 922,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/step506-trace-investigation-20260912.md",
+          "insertions": 68,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/step506-trace-order-state-20260912.json",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/step506-trace-order-suffix-20260912.json",
+          "insertions": 1040,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/step506-trace-pairs-20260912.json",
+          "insertions": 27081,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/strategy-todo-20260911.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-score-greedy-choices-20260912.json",
+          "insertions": 262,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-score-greedy-plan-20260912.md",
+          "insertions": 61,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-score-greedy-raw-choices-20260912.json",
+          "insertions": 262,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-score-greedy-step506-b5c95bbb-20260912.json",
+          "insertions": 4887,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-score-greedy-step506-dbceef73-20260912.json",
+          "insertions": 4881,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-sequence-rejected-candidate-20260912.patch",
+          "insertions": 287,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-sequence-rejected-delivery-20260912.json",
+          "insertions": 14,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-sequence-search-plan-20260912.md",
+          "insertions": 70,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-sequence-step506-a4ef3e8f-20260912.json",
+          "insertions": 1447,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-sequence-step506-diagnostic-20260912.json",
+          "insertions": 144335,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d63c8e7.eee63294.full.json",
+          "insertions": 29219,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 823,
+          "deletions": 4
+        },
+        {
+          "file": "reports/seti-current-base-robot-strategy-20260911.html",
+          "insertions": 14,
+          "deletions": 14
+        },
+        {
+          "file": "seti-saves/seti-save-research-frontier-materialization-20260912-eee63294-full-v285.json",
+          "insertions": 42180,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "ccfb509e.d75fb99a.full.json",
+          "recordPath": "reports/research/ccfb509e.d75fb99a.full.json",
+          "mode": "full",
+          "steps": 597,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 1099067,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "d75fb99a",
+          "createdAt": "2026-09-12T11:22:48.864Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "本项候选与单决策门槛达到，交付核验见 trace-score-full-acceptance-20260912.md；597步自然终局75/125/102/89，均97.75，与基线完整拆分相同。战略233665节点不变，耗时803395.686373ms；队列截断60、执行截断54，预算专项未完成。初版原生观察输入错误已插入修正；中止实验不计成绩。",
+          "scores": {
+            "player-blue": 75,
+            "player-green": 125,
+            "player-brown": 102,
+            "player-white": 89
+          },
+          "avgScore": 97.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 75,
+              "base": 54,
+              "tile": 19,
+              "card": 2,
+              "tileScoresById": {
+                "a": 16,
+                "b": 0,
+                "c": 0,
+                "d": 3
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 3,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 5,
+                "orbitScore": 15,
+                "scanScore": 13,
+                "taskCardScore": 0,
+                "techBonusScore": 2
+              }
+            },
+            "player-green": {
+              "total": 125,
+              "base": 89,
+              "tile": 36,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 8,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 7,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 12,
+                "blueTechScore": 0,
+                "cardEffectScore": 3,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 21,
+                "orbitScore": 15,
+                "scanScore": 9,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-brown": {
+              "total": 102,
+              "base": 68,
+              "tile": 31,
+              "card": 3,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_10.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "publicity",
+                    "scorePer": 1
+                  },
+                  "score": 3
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 7,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 8,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 0,
+                "orbitScore": 6,
+                "scanScore": 11,
+                "taskCardScore": 0,
+                "techBonusScore": 17
+              }
+            },
+            "player-white": {
+              "total": 89,
+              "base": 69,
+              "tile": 20,
+              "card": 0,
+              "tileScoresById": {
+                "a": 5,
+                "b": 0,
+                "c": 0,
+                "d": 15
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 5,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 16,
+                "alienTraceBlueScore": 10,
+                "alienTracePinkScore": 14,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 7,
+                "orbitScore": 0,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 6
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-trace-score-greedy-input-20260912-d75fb99a-full-v285.json",
+          "reportPath": "reports/iteration/trace-score-greedy-input-20260912/ccfb509e.d75fb99a.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "ccfb509e.d75fb99a.full",
+            "path": "reports/iteration/trace-score-greedy-input-20260912/ccfb509e.d75fb99a.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "trace-sequence-rejected-20260912",
       "name": "痕迹编号去重（未通过，不入生产）",
@@ -999,7 +1516,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
