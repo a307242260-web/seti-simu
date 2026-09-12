@@ -1685,6 +1685,18 @@
         return fail("CARD_EFFECT_CONTEXT_STALE", "卡牌效果上下文已失效");
       }
       const descriptor = GENERIC_EFFECT_DESCRIPTORS[effect.type];
+      if (effect.type === aliens.runezu.EFFECT_TYPES.SYMBOL_REWARD) {
+        if (!/^symbol_[1-7]$/.test(options.symbolId || "")) {
+          return fail("RUNEZU_SYMBOL_INVALID", "符文奖励缺少有效符号");
+        }
+        const resolved = aliens.runezu.getTraceFaceRewardForSymbol(getWorkingSlice(root, "aliens"), options.symbolId);
+        // 未放入黑圈的符号没有位置奖励，与正式弃牌角标一致；不是获得符号本体。
+        return cardEffectResult(state, root, sessionEffect, {
+          spawnedEffects: resolved.ok ? spawnCardEffects(cards.buildRewardEffects(resolved.reward, effect.id), sessionEffect) : [],
+          event: { symbolId: options.symbolId, position: resolved.position || null,
+            ...(resolved.ok ? {} : { skipped: true, reason: "symbol_not_placed" }) },
+        });
+      }
       if (isMoveReveal(sessionEffect)) {
         return cardEffectResult(state, root, sessionEffect, {
           spawnedEffects: [{ priority: "direct", effect: {
@@ -1896,6 +1908,15 @@
       const actor = getActor(root, sessionEffect.ownerId);
       const options = effect?.options || {};
       if (!actor) return [];
+      if (effect.type === aliens.runezu.EFFECT_TYPES.SYMBOL_BRANCH) {
+        if (!Array.isArray(options.branches) || !options.branches.length
+          || options.branches.some(branch => !branch.id || !Array.isArray(branch.symbolIds)
+            || !branch.symbolIds.length || branch.symbolIds.some(id => !/^symbol_[1-7]$/.test(id)))
+          || new Set(options.branches.map(branch => branch.id)).size !== options.branches.length) {
+          throw new Error("RUNEZU_BRANCH_INVALID: 符文分支模型无效");
+        }
+        return options.branches.map(branch => makeChoice("choose_target", branch.id, {}, {}, branch.label || branch.id));
+      }
       if (effect.type === aliens.chong?.EFFECT_TYPES?.CHONG_PICKUP_FOSSIL) {
         // 虫族拾取化石：列出上一步登陆/环绕落点（木星/土星）的可拾取化石
         const resolved = aliens.chong.resolvePlayEffect(
@@ -2112,6 +2133,16 @@
       const legal = listGenericChoices(root, sessionEffect)
         .find((candidate) => candidate.target.choiceId === choice?.target?.choiceId);
       if (!actor || !legal) return fail("CARD_EFFECT_CHOICE_STALE", "卡牌效果选择已失效");
+      if (effect.type === aliens.runezu.EFFECT_TYPES.SYMBOL_BRANCH) {
+        const branch = options.branches.find(entry => entry.id === legal.target.choiceId);
+        return cardEffectResult(state, root, sessionEffect, {
+          spawnedEffects: spawnCardEffects(branch.symbolIds.map((symbolId, index) => ({
+            id: `${branch.id}:${index}`, type: aliens.runezu.EFFECT_TYPES.SYMBOL_REWARD,
+            label: aliens.runezu.formatSymbolLabel(symbolId), options: { symbolId },
+          })), sessionEffect),
+          historyType: "card_effect_decision", history: { choiceId: branch.id },
+        });
+      }
       // 扫描家族（ANY/CONDITIONAL/PLANET/LANDING/PROBE）已统一到 science SCAN_STEP；
       // 仅 DRAW_THEN_SCAN（盲抽后扫描）保留自己的流程。
       if ([
@@ -2449,6 +2480,8 @@
     }
 
     const GENERIC_EFFECT_DESCRIPTORS = Object.freeze({
+      [aliens.runezu.EFFECT_TYPES.SYMBOL_BRANCH]: { decisionKind: "choose_target" },
+      [aliens.runezu.EFFECT_TYPES.SYMBOL_REWARD]: {},
       [cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD]: { decisionKind: "choose_card" },
       [cardEffects.EFFECT_TYPES.CONDITIONAL_REWARD]: {},
       [cardEffects.EFFECT_TYPES.COUNT_HAND_CORNER_MOVE]: { decisionKind: "choose_target" },

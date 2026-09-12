@@ -1,0 +1,1155 @@
+[
+  {
+    "cardId": "runezu_0.webp",
+    "result": {
+      "ok": true,
+      "projection": {
+        "schemaVersion": "seti-effect-session-v1",
+        "sessionId": "effect-session-1",
+        "phase": "awaiting_input",
+        "revision": 2,
+        "state": {
+          "stateVersion": 0,
+          "player": {
+            "credits": 8,
+            "energy": 10,
+            "publicity": 0,
+            "availableData": 0,
+            "hand": [],
+            "reserved": [
+              "instance:runezu_0.webp"
+            ],
+            "mainActionCompleted": true,
+            "income": {}
+          },
+          "discard": [],
+          "sequences": {
+            "card": 100,
+            "dataToken": 200,
+            "finalMark": 1,
+            "nebulaToken": 43,
+            "nebulaReplacement": 1,
+            "rocket": 1
+          },
+          "cardRandom": null,
+          "dataTokens": [],
+          "scans": [
+            {
+              "nebulaId": "sector-4-a",
+              "tokens": [
+                {
+                  "slotIndex": 1,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 2,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 3,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 4,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 5,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 6,
+                  "replacedByPlayerId": null
+                }
+              ]
+            },
+            {
+              "nebulaId": "sector-3-a",
+              "tokens": [
+                {
+                  "slotIndex": 1,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 2,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 3,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 4,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 5,
+                  "replacedByPlayerId": null
+                }
+              ]
+            }
+          ],
+          "rockets": []
+        },
+        "decision": {
+          "ok": true,
+          "decisionId": "effect-session-1:effect:3",
+          "decisionVersion": 2,
+          "ownerId": "p1",
+          "decisionKind": "choose_target",
+          "allowQuickActions": false,
+          "choices": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:1fd50446",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "runezu-0-branch-branch-1"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "符文4+符文7"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:2ccfffd1",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "runezu-0-branch-branch-2"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "符文3+符文2"
+            }
+          ]
+        },
+        "stateVersion": 0
+      },
+      "journal": {
+        "actions": [
+          {
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:7a7dfde9",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_0.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_0.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "quick": false,
+            "revision": 0
+          }
+        ],
+        "decisions": [],
+        "effects": [
+          {
+            "effectId": "effect-session-1:effect:1",
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "type": "card_play_domain_play",
+            "revision": 1
+          },
+          {
+            "effectId": "effect-session-1:effect:2",
+            "groupId": "effect-session-1:group:2",
+            "groupKind": "spawned",
+            "type": "card_play_domain_effect:effect:runezu_symbol_branch",
+            "revision": 2
+          }
+        ],
+        "events": [
+          {
+            "type": "playCard",
+            "timing": "after_play_card",
+            "playerId": "p1",
+            "cardId": "runezu_0.webp",
+            "sourceCardInstanceId": "instance:runezu_0.webp",
+            "price": 2,
+            "executorId": "card_play:executor:v1"
+          },
+          {
+            "type": "card_effect",
+            "effectId": "runezu-0-branch",
+            "effectType": "runezu_symbol_branch",
+            "playerId": "p1",
+            "awaitingDecision": true,
+            "legalChoiceCount": 2
+          }
+        ],
+        "rng": [],
+        "history": [
+          {
+            "type": "play_card",
+            "playerId": "p1",
+            "cardInstanceId": "instance:runezu_0.webp",
+            "cardId": "runezu_0.webp",
+            "cost": {
+              "credits": 2
+            },
+            "reserved": true
+          },
+          {
+            "type": "card_effect",
+            "effectId": "runezu-0-branch",
+            "effectType": "runezu_symbol_branch",
+            "executorId": "card_play:executor:v1"
+          }
+        ],
+        "logs": [],
+        "replay": [
+          {
+            "cursor": 0,
+            "kind": "action",
+            "confirmed": true,
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:7a7dfde9",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_0.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_0.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "cardId": "runezu_1.webp",
+    "result": {
+      "ok": true,
+      "projection": {
+        "schemaVersion": "seti-effect-session-v1",
+        "sessionId": "effect-session-1",
+        "phase": "awaiting_input",
+        "revision": 2,
+        "state": {
+          "stateVersion": 0,
+          "player": {
+            "credits": 8,
+            "energy": 10,
+            "publicity": 0,
+            "availableData": 0,
+            "hand": [],
+            "reserved": [],
+            "mainActionCompleted": true,
+            "income": {}
+          },
+          "discard": [
+            "instance:runezu_1.webp"
+          ],
+          "sequences": {
+            "card": 100,
+            "dataToken": 200,
+            "finalMark": 1,
+            "nebulaToken": 43,
+            "nebulaReplacement": 1,
+            "rocket": 1
+          },
+          "cardRandom": null,
+          "dataTokens": [],
+          "scans": [
+            {
+              "nebulaId": "sector-4-a",
+              "tokens": [
+                {
+                  "slotIndex": 1,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 2,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 3,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 4,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 5,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 6,
+                  "replacedByPlayerId": null
+                }
+              ]
+            },
+            {
+              "nebulaId": "sector-3-a",
+              "tokens": [
+                {
+                  "slotIndex": 1,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 2,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 3,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 4,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 5,
+                  "replacedByPlayerId": null
+                }
+              ]
+            }
+          ],
+          "rockets": []
+        },
+        "decision": {
+          "ok": true,
+          "decisionId": "effect-session-1:effect:3",
+          "decisionVersion": 2,
+          "ownerId": "p1",
+          "decisionKind": "choose_target",
+          "allowQuickActions": false,
+          "choices": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:82125537",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "runezu-1-branch-branch-1"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "符文2+符文2+符文6"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:19d222a0",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "runezu-1-branch-branch-2"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "符文3+符文3+符文7"
+            }
+          ]
+        },
+        "stateVersion": 0
+      },
+      "journal": {
+        "actions": [
+          {
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:c330852a",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_1.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_1.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "quick": false,
+            "revision": 0
+          }
+        ],
+        "decisions": [],
+        "effects": [
+          {
+            "effectId": "effect-session-1:effect:1",
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "type": "card_play_domain_play",
+            "revision": 1
+          },
+          {
+            "effectId": "effect-session-1:effect:2",
+            "groupId": "effect-session-1:group:2",
+            "groupKind": "spawned",
+            "type": "card_play_domain_effect:effect:runezu_symbol_branch",
+            "revision": 2
+          }
+        ],
+        "events": [
+          {
+            "type": "playCard",
+            "timing": "after_play_card",
+            "playerId": "p1",
+            "cardId": "runezu_1.webp",
+            "sourceCardInstanceId": "instance:runezu_1.webp",
+            "price": 2,
+            "executorId": "card_play:executor:v1"
+          },
+          {
+            "type": "card_effect",
+            "effectId": "runezu-1-branch",
+            "effectType": "runezu_symbol_branch",
+            "playerId": "p1",
+            "awaitingDecision": true,
+            "legalChoiceCount": 2
+          }
+        ],
+        "rng": [],
+        "history": [
+          {
+            "type": "play_card",
+            "playerId": "p1",
+            "cardInstanceId": "instance:runezu_1.webp",
+            "cardId": "runezu_1.webp",
+            "cost": {
+              "credits": 2
+            },
+            "reserved": false
+          },
+          {
+            "type": "card_effect",
+            "effectId": "runezu-1-branch",
+            "effectType": "runezu_symbol_branch",
+            "executorId": "card_play:executor:v1"
+          }
+        ],
+        "logs": [],
+        "replay": [
+          {
+            "cursor": 0,
+            "kind": "action",
+            "confirmed": true,
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:c330852a",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_1.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_1.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "cardId": "runezu_7.webp",
+    "result": {
+      "ok": true,
+      "projection": {
+        "schemaVersion": "seti-effect-session-v1",
+        "sessionId": "effect-session-1",
+        "phase": "awaiting_input",
+        "revision": 2,
+        "state": {
+          "stateVersion": 0,
+          "player": {
+            "credits": 8,
+            "energy": 10,
+            "publicity": 0,
+            "availableData": 0,
+            "hand": [],
+            "reserved": [],
+            "mainActionCompleted": true,
+            "income": {}
+          },
+          "discard": [
+            "instance:runezu_7.webp"
+          ],
+          "sequences": {
+            "card": 100,
+            "dataToken": 200,
+            "finalMark": 1,
+            "nebulaToken": 43,
+            "nebulaReplacement": 1,
+            "rocket": 1
+          },
+          "cardRandom": null,
+          "dataTokens": [],
+          "scans": [
+            {
+              "nebulaId": "sector-4-a",
+              "tokens": [
+                {
+                  "slotIndex": 1,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 2,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 3,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 4,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 5,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 6,
+                  "replacedByPlayerId": null
+                }
+              ]
+            },
+            {
+              "nebulaId": "sector-3-a",
+              "tokens": [
+                {
+                  "slotIndex": 1,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 2,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 3,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 4,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 5,
+                  "replacedByPlayerId": null
+                }
+              ]
+            }
+          ],
+          "rockets": []
+        },
+        "decision": {
+          "ok": true,
+          "decisionId": "effect-session-1:effect:3",
+          "decisionVersion": 2,
+          "ownerId": "p1",
+          "decisionKind": "choose_target",
+          "allowQuickActions": false,
+          "choices": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:c6e8393d",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "runezu-7-branch-branch-1"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "符文7+符文7+符文6"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:b9ebaab2",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "runezu-7-branch-branch-2"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "符文5+符文5+符文1"
+            }
+          ]
+        },
+        "stateVersion": 0
+      },
+      "journal": {
+        "actions": [
+          {
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:a85d2ff0",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_7.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_7.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "quick": false,
+            "revision": 0
+          }
+        ],
+        "decisions": [],
+        "effects": [
+          {
+            "effectId": "effect-session-1:effect:1",
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "type": "card_play_domain_play",
+            "revision": 1
+          },
+          {
+            "effectId": "effect-session-1:effect:2",
+            "groupId": "effect-session-1:group:2",
+            "groupKind": "spawned",
+            "type": "card_play_domain_effect:effect:runezu_symbol_branch",
+            "revision": 2
+          }
+        ],
+        "events": [
+          {
+            "type": "playCard",
+            "timing": "after_play_card",
+            "playerId": "p1",
+            "cardId": "runezu_7.webp",
+            "sourceCardInstanceId": "instance:runezu_7.webp",
+            "price": 2,
+            "executorId": "card_play:executor:v1"
+          },
+          {
+            "type": "card_effect",
+            "effectId": "runezu-7-branch",
+            "effectType": "runezu_symbol_branch",
+            "playerId": "p1",
+            "awaitingDecision": true,
+            "legalChoiceCount": 2
+          }
+        ],
+        "rng": [],
+        "history": [
+          {
+            "type": "play_card",
+            "playerId": "p1",
+            "cardInstanceId": "instance:runezu_7.webp",
+            "cardId": "runezu_7.webp",
+            "cost": {
+              "credits": 2
+            },
+            "reserved": false
+          },
+          {
+            "type": "card_effect",
+            "effectId": "runezu-7-branch",
+            "effectType": "runezu_symbol_branch",
+            "executorId": "card_play:executor:v1"
+          }
+        ],
+        "logs": [],
+        "replay": [
+          {
+            "cursor": 0,
+            "kind": "action",
+            "confirmed": true,
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:a85d2ff0",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_7.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_7.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "cardId": "runezu_8.webp",
+    "result": {
+      "ok": true,
+      "projection": {
+        "schemaVersion": "seti-effect-session-v1",
+        "sessionId": "effect-session-1",
+        "phase": "awaiting_input",
+        "revision": 2,
+        "state": {
+          "stateVersion": 0,
+          "player": {
+            "credits": 8,
+            "energy": 10,
+            "publicity": 0,
+            "availableData": 0,
+            "hand": [],
+            "reserved": [
+              "instance:runezu_8.webp"
+            ],
+            "mainActionCompleted": true,
+            "income": {}
+          },
+          "discard": [],
+          "sequences": {
+            "card": 100,
+            "dataToken": 200,
+            "finalMark": 1,
+            "nebulaToken": 43,
+            "nebulaReplacement": 1,
+            "rocket": 1
+          },
+          "cardRandom": null,
+          "dataTokens": [],
+          "scans": [
+            {
+              "nebulaId": "sector-4-a",
+              "tokens": [
+                {
+                  "slotIndex": 1,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 2,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 3,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 4,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 5,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 6,
+                  "replacedByPlayerId": null
+                }
+              ]
+            },
+            {
+              "nebulaId": "sector-3-a",
+              "tokens": [
+                {
+                  "slotIndex": 1,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 2,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 3,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 4,
+                  "replacedByPlayerId": null
+                },
+                {
+                  "slotIndex": 5,
+                  "replacedByPlayerId": null
+                }
+              ]
+            }
+          ],
+          "rockets": []
+        },
+        "decision": {
+          "ok": true,
+          "decisionId": "effect-session-1:effect:3",
+          "decisionVersion": 2,
+          "ownerId": "p1",
+          "decisionKind": "choose_target",
+          "allowQuickActions": false,
+          "choices": [
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:a3de5fee",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "runezu-8-branch-branch-1"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "符文4+符文2"
+            },
+            {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "choose_target",
+              "phase": "conditional",
+              "actionId": "choose_target:ae608579",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "choiceId": "runezu-8-branch-branch-2"
+              },
+              "payload": {},
+              "decision": null,
+              "summary": "符文3+符文1"
+            }
+          ]
+        },
+        "stateVersion": 0
+      },
+      "journal": {
+        "actions": [
+          {
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:52d0d091",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_8.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_8.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "quick": false,
+            "revision": 0
+          }
+        ],
+        "decisions": [],
+        "effects": [
+          {
+            "effectId": "effect-session-1:effect:1",
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "type": "card_play_domain_play",
+            "revision": 1
+          },
+          {
+            "effectId": "effect-session-1:effect:2",
+            "groupId": "effect-session-1:group:2",
+            "groupKind": "spawned",
+            "type": "card_play_domain_effect:effect:runezu_symbol_branch",
+            "revision": 2
+          }
+        ],
+        "events": [
+          {
+            "type": "playCard",
+            "timing": "after_play_card",
+            "playerId": "p1",
+            "cardId": "runezu_8.webp",
+            "sourceCardInstanceId": "instance:runezu_8.webp",
+            "price": 2,
+            "executorId": "card_play:executor:v1"
+          },
+          {
+            "type": "card_effect",
+            "effectId": "runezu-8-branch",
+            "effectType": "runezu_symbol_branch",
+            "playerId": "p1",
+            "awaitingDecision": true,
+            "legalChoiceCount": 2
+          }
+        ],
+        "rng": [],
+        "history": [
+          {
+            "type": "play_card",
+            "playerId": "p1",
+            "cardInstanceId": "instance:runezu_8.webp",
+            "cardId": "runezu_8.webp",
+            "cost": {
+              "credits": 2
+            },
+            "reserved": true
+          },
+          {
+            "type": "card_effect",
+            "effectId": "runezu-8-branch",
+            "effectType": "runezu_symbol_branch",
+            "executorId": "card_play:executor:v1"
+          }
+        ],
+        "logs": [],
+        "replay": [
+          {
+            "cursor": 0,
+            "kind": "action",
+            "confirmed": true,
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:52d0d091",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_8.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_8.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "cardId": "runezu_9.webp",
+    "result": {
+      "ok": true,
+      "phase": "completed",
+      "family": "play_card",
+      "stateVersion": 1,
+      "failure": null,
+      "journal": {
+        "actions": [
+          {
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:058d8252",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_9.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_9.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "quick": false,
+            "revision": 0
+          }
+        ],
+        "decisions": [],
+        "effects": [
+          {
+            "effectId": "effect-session-1:effect:1",
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "type": "card_play_domain_play",
+            "revision": 1
+          },
+          {
+            "effectId": "effect-session-1:effect:2",
+            "groupId": "effect-session-1:group:2",
+            "groupKind": "spawned",
+            "type": "card_play_domain_launch",
+            "revision": 2
+          },
+          {
+            "effectId": "effect-session-1:effect:3",
+            "groupId": "effect-session-1:group:3",
+            "groupKind": "spawned",
+            "type": "card_play_domain_effect:effect:runezu_symbol_reward",
+            "revision": 3
+          }
+        ],
+        "events": [
+          {
+            "type": "playCard",
+            "timing": "after_play_card",
+            "playerId": "p1",
+            "cardId": "runezu_9.webp",
+            "sourceCardInstanceId": "instance:runezu_9.webp",
+            "price": 2,
+            "executorId": "card_play:executor:v1"
+          },
+          {
+            "type": "launch",
+            "rocketId": 1,
+            "playerId": "p1",
+            "source": "card"
+          },
+          {
+            "type": "card_effect",
+            "effectId": "runezu-9-s7",
+            "effectType": "runezu_symbol_reward",
+            "playerId": "p1",
+            "symbolId": "symbol_7",
+            "position": null,
+            "skipped": true,
+            "reason": "symbol_not_placed"
+          }
+        ],
+        "rng": [],
+        "history": [
+          {
+            "type": "play_card",
+            "playerId": "p1",
+            "cardInstanceId": "instance:runezu_9.webp",
+            "cardId": "runezu_9.webp",
+            "cost": {
+              "credits": 2
+            },
+            "reserved": true
+          },
+          {
+            "type": "card_effect",
+            "effectId": "runezu-9-launch",
+            "effectType": "launch",
+            "abilityId": "launchProbe",
+            "rocketId": 1,
+            "executorId": "card_play:executor:v1"
+          },
+          {
+            "type": "card_effect",
+            "effectId": "runezu-9-s7",
+            "effectType": "runezu_symbol_reward",
+            "executorId": "card_play:executor:v1"
+          }
+        ],
+        "logs": [],
+        "replay": [
+          {
+            "cursor": 0,
+            "kind": "action",
+            "confirmed": true,
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:058d8252",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_9.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_9.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action"
+          }
+        ]
+      },
+      "irreversibleBarrier": null
+    }
+  }
+]

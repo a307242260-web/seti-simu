@@ -27,7 +27,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/effects/state-store-session.test.js", "architecture/effect-session", "Session 只经 StateStore CAS 原子提交", "并发 working copy 覆盖新版本 committed state"),
     entry("randomizer/game/effects/standard-action-session.test.js", "architecture/effect-session", "Standard Action 领域只经统一 Session/Decision 入口", "conditional choice 绕过 owner/version 校验"),
     entry("randomizer/game/effects/probe-turn-session.test.js", "architecture/effect-session", "探测器、PASS 与纯回合推进只编排正式规则和跨域 handoff", "公司、收入、外星人或卡牌语义在 probe_turn 内执行或越过 handoff 先推进回合"),
-    entry("randomizer/game/effects/residual-domain-session.test.js", "architecture/effect-session", "公司、外星人、收入、卡牌触发与终局消费真实 handoff 并由统一 Session 提交；轮初数据收入生成各席真实token并遵守容量和编号", "effectType 错读、公司误耗主行动、收入仅加数字而无可放置数据、任务空结算或终局未写玩家正式结果"),
+    entry("randomizer/game/effects/residual-domain-session.test.js", "architecture/effect-session", "公司、外星人、收入、卡牌触发与终局消费真实 handoff 并由统一 Session 提交；轮初数据收入生成真实token；符文任务奖励使用共享位置结算", "effectType 错读、公司误耗主行动、收入无可放置数据、符文任务误增库存符号、任务空结算或终局未写正式结果"),
     entry("randomizer/game/effects/event-bonus-progress.test.js", "rules/card-event-bonus", "正式事件奖励与路线共用只读匹配、访问进度及领取资格", "首个行星提前发阈值奖励、重复访问再次领取、错误owner领奖或读取写入冻结状态"),
 
     entry("randomizer/game/state/state-store.test.js", "architecture/state-store", "StateStore 快照隔离、版本单调与 CAS", "修改只读快照或旧版本提交污染权威状态"),
@@ -87,7 +87,7 @@ module.exports = Object.freeze({
 
     entry("randomizer/game/cards/deck.test.js", "rules/cards", "牌库抽取、弃牌、补充与实例 identity", "同一实体复活、重复抽取或空堆猜测"),
     entry("randomizer/game/cards/effects.test.js", "rules/cards", "卡牌效果解析为显式规则结果", "未知效果 fallback 或失败效果部分写入"),
-    entry("randomizer/game/cards/play-domain.test.js", "rules/cards", "打牌事务、跨域能力与 Decision 共享同一 game owner；满额发射按规则跳过且后续奖励可恢复", "Browser 写错根、Simulation 简化重写、满额发射中断整张牌或误跳过可执行发射"),
+    entry("randomizer/game/cards/play-domain.test.js", "rules/cards", "打牌事务、跨域能力与 Decision 共享同一 game owner；满额发射按规则跳过且后续奖励可恢复；符文分支按黑圈位置逐次发奖且可恢复", "Browser 写错根、Simulation 简化重写、满额发射中断整张牌、符文分支缺执行器或把位置奖励当作符号本体"),
     entry("randomizer/game/cards/task-state.test.js", "rules/cards", "任务状态转换与完成门禁", "未达条件任务被确认或重复领奖"),
 
     entry("randomizer/game/data/data.test.js", "rules/data", "数据获得、放置、分析与容量不变量", "满容量、未知目标或重复放置成功"),

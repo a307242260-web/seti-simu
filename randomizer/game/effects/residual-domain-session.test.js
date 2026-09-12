@@ -871,4 +871,35 @@ for (const speciesId of ["yichangdian", "banrenma", "chong", "amiba", "aomomo", 
   }
 }
 
+for (const position of [3, 7]) {
+  const root = createRoot(), player = root.players.players[0];
+  const card = { id: "runezu-orbit-task", cardId: "runezu_2.webp" };
+  cardEffects.ensureCardEffectState(card);
+  player.reservedCards = [card];
+  aliens.runezu.gainPlayerSymbol(player, "symbol_4", 2);
+  const symbolsBefore = aliens.runezu.getPlayerSymbolCounts(player);
+  root.aliens.runezu = aliens.runezu.createRunezuState();
+  root.aliens.runezu.faceSymbolSlots[position] = { position, symbolId: "symbol_4", playerId: "p2" };
+  const owner = createHarness(residual, "createResidualDomain");
+  const augmented = residual.augmentEffectResult(root, { ok: true, nextState: {}, spawnedEffects: [],
+    events: [{ type: "orbit", planetId: "mars", playerId: "p1" }] }, { ownerId: "p1" });
+  const pending = augmented.spawnedEffects.find(entry => entry.effect.type === residual.EFFECT_TYPES.CARD_DECISION).effect;
+  const executor = owner.executors.get(residual.EFFECT_TYPES.CARD_DECISION);
+  const confirm = executor.getLegalChoices(root, pending, { state: root })
+    .find(choice => choice.target.choiceId.startsWith("confirm:"));
+  assert.ok(confirm);
+  const before = { ...player.resources };
+  const settled = executor.resolveDecision(root, pending, confirm, { state: root });
+  assert.equal(settled.ok, true);
+  assert.deepEqual(aliens.runezu.getPlayerSymbolCounts(player), symbolsBefore, "任务确认不得发符号本体");
+  const reward = settled.spawnedEffects.find(entry => entry.effect.payload?.cardEffect?.type === "runezu_symbol_reward");
+  assert.ok(reward, "任务必须交给共享符文位置奖励执行器");
+  const play = createHarness(require("../cards/play-domain"), "createExperimentalCardPlayDomain");
+  const applied = execute(play.executors.get(reward.effect.type), root, reward.effect);
+  assert.equal(applied.ok, true);
+  for (const next of applied.spawnedEffects) assert.equal(execute(play.executors.get(next.effect.type), root, next.effect).ok, true);
+  assert.equal(player.resources.credits - before.credits, position === 3 ? 1 : 0);
+  assert.equal(player.resources.score - before.score, position === 7 ? 3 : 0);
+  assert.deepEqual(aliens.runezu.getPlayerSymbolCounts(player), symbolsBefore);
+}
 console.log("residual-domain-session production proofs passed");

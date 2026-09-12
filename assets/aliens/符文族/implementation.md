@@ -7,7 +7,8 @@
 - 专属规则：`randomizer/game/aliens/runezu.js`。
 - 坐标：`randomizer/game/aliens/placement.js` 中的 `RUNEZU_TRACE_MARKER_SLOTS`、`RUNEZU_PANEL_SYMBOL_MARKER_SLOTS`、`RUNEZU_FACE_SYMBOL_SLOT_MARKER_SLOTS`。
 - 投影与渲染：`randomizer/app.js`、`randomizer/app/browser-host/resident-renderer.js`。
-- 奖励、symbol 分支与标准 Decision：`randomizer/game/effects/residual-domain-session.js`。
+- 卡牌 symbol 分支与位置奖励：`randomizer/game/cards/play-domain.js`；任务触发通过
+  `randomizer/game/effects/residual-domain-session.js`转成相同正式效果节点。
 - 终局符号计分与符文族终局牌：`randomizer/game/end-game-scoring.js`。
 
 ## 专属状态
@@ -22,7 +23,7 @@
 - `traceGrid`：三色痕迹各 1-4 号位；1 号位支持叠放，2/3/4 号位单占用。
 - `cardDeck` / `displayedCardIndex`：符文族牌堆和展示牌；卡牌实例序号统一由 canonical `meta.sequences.alienEntity` 分配。
 
-玩家持有的符号记录在 `player.runezuState.symbolCounts`，已放入黑圈的符号会从玩家库存扣除。
+玩家持有的符号记录在 `player.runezuSymbols`，通过 `getPlayerSymbolCounts`读取；已放入黑圈的符号会从玩家库存扣除。
 
 ## 揭示初始化
 
@@ -65,7 +66,10 @@
 符文族牌模型在 `runezu.js` 的 `CARD_DEFINITIONS` 中定义：
 
 - 0/8 号是 3 型终局牌，分别按同种符号最大数量、最大不同符号集合计分。
-- 1/7 号是立即牌，包含符号奖励和分支符号奖励。
+- 0/1/7/8 号的分支选择使用标准 `choose_target`，选择后按模型顺序逐个结算位置奖励，
+  重复符号不去重；9 号的确定符号奖励使用同一执行器。
+- `runezu_symbol_reward`按符号当前黑圈位置发奖，不增加玩家符号库存；符号未放入
+  黑圈时无奖励并记录`symbol_not_placed`。无效符号或分支模型显式失败。
 - 2/3/4/5/6 号是 1 型任务牌，复用普通卡牌 `triggers[]` 机制消费环绕/登陆、指定科技颜色、扫描行动、外星人痕迹、发射等事件，并把对应 `runezu_symbol_reward` 加入效果队列。
 - 2 号需要 3 次环绕或登陆；3 号分别在橙色、紫色、蓝色科技触发 1 次符文奖励；4 号需要 2 次扫描行动；5 号需要 3 次任意外星人痕迹；6 号需要 2 次发射。
 - 5 号的“外星人痕迹”任务消费任意外星人痕迹事件；符文奖励结算时按当前黑圈中对应 symbol 的实际放置位置动态计算奖励。

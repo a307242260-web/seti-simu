@@ -1,0 +1,573 @@
+[
+  {
+    "cardId": "runezu_0.webp",
+    "result": {
+      "ok": false,
+      "phase": "aborted",
+      "family": "play_card",
+      "stateVersion": 0,
+      "failure": {
+        "code": "EFFECT_EXECUTOR_NOT_REGISTERED",
+        "message": "未注册 Effect executor: card_play_domain_effect:effect:runezu_symbol_branch",
+        "effectId": "effect-session-1:effect:2",
+        "type": "card_play_domain_effect:effect:runezu_symbol_branch"
+      },
+      "journal": {
+        "actions": [
+          {
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:7a7dfde9",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_0.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_0.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "quick": false,
+            "revision": 0
+          }
+        ],
+        "decisions": [],
+        "effects": [
+          {
+            "effectId": "effect-session-1:effect:1",
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "type": "card_play_domain_play",
+            "revision": 1
+          }
+        ],
+        "events": [
+          {
+            "type": "playCard",
+            "timing": "after_play_card",
+            "playerId": "p1",
+            "cardId": "runezu_0.webp",
+            "sourceCardInstanceId": "instance:runezu_0.webp",
+            "price": 2,
+            "executorId": "card_play:executor:v1"
+          }
+        ],
+        "rng": [],
+        "history": [
+          {
+            "type": "play_card",
+            "playerId": "p1",
+            "cardInstanceId": "instance:runezu_0.webp",
+            "cardId": "runezu_0.webp",
+            "cost": {
+              "credits": 2
+            },
+            "reserved": true
+          }
+        ],
+        "logs": [],
+        "replay": [
+          {
+            "cursor": 0,
+            "kind": "action",
+            "confirmed": true,
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:7a7dfde9",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_0.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_0.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action"
+          }
+        ]
+      },
+      "irreversibleBarrier": null
+    }
+  },
+  {
+    "cardId": "runezu_1.webp",
+    "result": {
+      "ok": false,
+      "phase": "aborted",
+      "family": "play_card",
+      "stateVersion": 0,
+      "failure": {
+        "code": "EFFECT_EXECUTOR_NOT_REGISTERED",
+        "message": "未注册 Effect executor: card_play_domain_effect:effect:runezu_symbol_branch",
+        "effectId": "effect-session-1:effect:2",
+        "type": "card_play_domain_effect:effect:runezu_symbol_branch"
+      },
+      "journal": {
+        "actions": [
+          {
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:c330852a",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_1.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_1.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "quick": false,
+            "revision": 0
+          }
+        ],
+        "decisions": [],
+        "effects": [
+          {
+            "effectId": "effect-session-1:effect:1",
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "type": "card_play_domain_play",
+            "revision": 1
+          }
+        ],
+        "events": [
+          {
+            "type": "playCard",
+            "timing": "after_play_card",
+            "playerId": "p1",
+            "cardId": "runezu_1.webp",
+            "sourceCardInstanceId": "instance:runezu_1.webp",
+            "price": 2,
+            "executorId": "card_play:executor:v1"
+          }
+        ],
+        "rng": [],
+        "history": [
+          {
+            "type": "play_card",
+            "playerId": "p1",
+            "cardInstanceId": "instance:runezu_1.webp",
+            "cardId": "runezu_1.webp",
+            "cost": {
+              "credits": 2
+            },
+            "reserved": false
+          }
+        ],
+        "logs": [],
+        "replay": [
+          {
+            "cursor": 0,
+            "kind": "action",
+            "confirmed": true,
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:c330852a",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_1.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_1.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action"
+          }
+        ]
+      },
+      "irreversibleBarrier": null
+    }
+  },
+  {
+    "cardId": "runezu_7.webp",
+    "result": {
+      "ok": false,
+      "phase": "aborted",
+      "family": "play_card",
+      "stateVersion": 0,
+      "failure": {
+        "code": "EFFECT_EXECUTOR_NOT_REGISTERED",
+        "message": "未注册 Effect executor: card_play_domain_effect:effect:runezu_symbol_branch",
+        "effectId": "effect-session-1:effect:2",
+        "type": "card_play_domain_effect:effect:runezu_symbol_branch"
+      },
+      "journal": {
+        "actions": [
+          {
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:a85d2ff0",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_7.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_7.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "quick": false,
+            "revision": 0
+          }
+        ],
+        "decisions": [],
+        "effects": [
+          {
+            "effectId": "effect-session-1:effect:1",
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "type": "card_play_domain_play",
+            "revision": 1
+          }
+        ],
+        "events": [
+          {
+            "type": "playCard",
+            "timing": "after_play_card",
+            "playerId": "p1",
+            "cardId": "runezu_7.webp",
+            "sourceCardInstanceId": "instance:runezu_7.webp",
+            "price": 2,
+            "executorId": "card_play:executor:v1"
+          }
+        ],
+        "rng": [],
+        "history": [
+          {
+            "type": "play_card",
+            "playerId": "p1",
+            "cardInstanceId": "instance:runezu_7.webp",
+            "cardId": "runezu_7.webp",
+            "cost": {
+              "credits": 2
+            },
+            "reserved": false
+          }
+        ],
+        "logs": [],
+        "replay": [
+          {
+            "cursor": 0,
+            "kind": "action",
+            "confirmed": true,
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:a85d2ff0",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_7.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_7.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action"
+          }
+        ]
+      },
+      "irreversibleBarrier": null
+    }
+  },
+  {
+    "cardId": "runezu_8.webp",
+    "result": {
+      "ok": false,
+      "phase": "aborted",
+      "family": "play_card",
+      "stateVersion": 0,
+      "failure": {
+        "code": "EFFECT_EXECUTOR_NOT_REGISTERED",
+        "message": "未注册 Effect executor: card_play_domain_effect:effect:runezu_symbol_branch",
+        "effectId": "effect-session-1:effect:2",
+        "type": "card_play_domain_effect:effect:runezu_symbol_branch"
+      },
+      "journal": {
+        "actions": [
+          {
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:52d0d091",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_8.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_8.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "quick": false,
+            "revision": 0
+          }
+        ],
+        "decisions": [],
+        "effects": [
+          {
+            "effectId": "effect-session-1:effect:1",
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "type": "card_play_domain_play",
+            "revision": 1
+          }
+        ],
+        "events": [
+          {
+            "type": "playCard",
+            "timing": "after_play_card",
+            "playerId": "p1",
+            "cardId": "runezu_8.webp",
+            "sourceCardInstanceId": "instance:runezu_8.webp",
+            "price": 2,
+            "executorId": "card_play:executor:v1"
+          }
+        ],
+        "rng": [],
+        "history": [
+          {
+            "type": "play_card",
+            "playerId": "p1",
+            "cardInstanceId": "instance:runezu_8.webp",
+            "cardId": "runezu_8.webp",
+            "cost": {
+              "credits": 2
+            },
+            "reserved": true
+          }
+        ],
+        "logs": [],
+        "replay": [
+          {
+            "cursor": 0,
+            "kind": "action",
+            "confirmed": true,
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:52d0d091",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_8.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_8.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action"
+          }
+        ]
+      },
+      "irreversibleBarrier": null
+    }
+  },
+  {
+    "cardId": "runezu_9.webp",
+    "result": {
+      "ok": false,
+      "phase": "aborted",
+      "family": "play_card",
+      "stateVersion": 0,
+      "failure": {
+        "code": "EFFECT_EXECUTOR_NOT_REGISTERED",
+        "message": "未注册 Effect executor: card_play_domain_effect:effect:runezu_symbol_reward",
+        "effectId": "effect-session-1:effect:3",
+        "type": "card_play_domain_effect:effect:runezu_symbol_reward"
+      },
+      "journal": {
+        "actions": [
+          {
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:058d8252",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_9.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_9.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "quick": false,
+            "revision": 0
+          }
+        ],
+        "decisions": [],
+        "effects": [
+          {
+            "effectId": "effect-session-1:effect:1",
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action",
+            "type": "card_play_domain_play",
+            "revision": 1
+          },
+          {
+            "effectId": "effect-session-1:effect:2",
+            "groupId": "effect-session-1:group:2",
+            "groupKind": "spawned",
+            "type": "card_play_domain_launch",
+            "revision": 2
+          }
+        ],
+        "events": [
+          {
+            "type": "playCard",
+            "timing": "after_play_card",
+            "playerId": "p1",
+            "cardId": "runezu_9.webp",
+            "sourceCardInstanceId": "instance:runezu_9.webp",
+            "price": 2,
+            "executorId": "card_play:executor:v1"
+          },
+          {
+            "type": "launch",
+            "rocketId": 1,
+            "playerId": "p1",
+            "source": "card"
+          }
+        ],
+        "rng": [],
+        "history": [
+          {
+            "type": "play_card",
+            "playerId": "p1",
+            "cardInstanceId": "instance:runezu_9.webp",
+            "cardId": "runezu_9.webp",
+            "cost": {
+              "credits": 2
+            },
+            "reserved": true
+          },
+          {
+            "type": "card_effect",
+            "effectId": "runezu-9-launch",
+            "effectType": "launch",
+            "abilityId": "launchProbe",
+            "rocketId": 1,
+            "executorId": "card_play:executor:v1"
+          }
+        ],
+        "logs": [],
+        "replay": [
+          {
+            "cursor": 0,
+            "kind": "action",
+            "confirmed": true,
+            "action": {
+              "schemaVersion": "seti-standard-action-v1",
+              "family": "play_card",
+              "phase": "main",
+              "actionId": "play_card:058d8252",
+              "actorId": "p1",
+              "stateVersion": 0,
+              "decisionVersion": 0,
+              "target": {
+                "cardInstanceId": "instance:runezu_9.webp"
+              },
+              "payload": {
+                "cost": {
+                  "credits": 2
+                },
+                "handIndex": 0
+              },
+              "decision": null,
+              "summary": "runezu_9.webp"
+            },
+            "groupId": "effect-session-1:group:1",
+            "groupKind": "action"
+          }
+        ]
+      },
+      "irreversibleBarrier": null
+    }
+  }
+]

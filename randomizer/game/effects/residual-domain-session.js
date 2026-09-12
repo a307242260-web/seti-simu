@@ -1126,12 +1126,6 @@
             players.gainResources(player, { score: scoreGain });
             addScoreSource(player, sourceKey, scoreGain);
           }
-        } else if (effect.type === "runezu_symbol_reward") {
-          // 符文族牌奖励：玩家获得指定符文 symbol（进入持有集合，可放 face 或参与终局计分）。
-          const symbolId = effect.options?.symbolId;
-          if (symbolId && typeof runezu?.gainPlayerSymbol === "function") {
-            runezu.gainPlayerSymbol(player, symbolId);
-          }
         } else if (effect.type === "amiba_choose_symbol_reward") {
           // 阿米巴卡牌单细胞器图标：转成区域内任选一个的决策，与打牌路径一致。
           // 痕迹的区域全部奖励由独立确定性 Effect 负责。

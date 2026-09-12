@@ -1840,4 +1840,71 @@ for (const count of [0, 2]) {
     assert.deepEqual(runMoves(), after, "重放保持实体、RNG、journal和正式终态一致");
   } finally { composition.dispose(); }
 }
+// 符文奖励读取实际黑圈位置；重复符号重复发奖，不发放符号本体。
+for (const branchIndex of [0, 1]) {
+  for (const placed of [false, true]) {
+    const root = createCanonicalState("runezu_1.webp");
+    aliens.runezu.gainPlayerSymbol(root.players.players[0], "symbol_1", 2);
+    const symbolsBefore = aliens.runezu.getPlayerSymbolCounts(root.players.players[0]);
+    root.aliens.runezu = aliens.runezu.createRunezuState();
+    if (placed) root.aliens.runezu.faceSymbolSlots = {
+      1: { position: 1, symbolId: "symbol_2", playerId: "p1" },
+      3: { position: 3, symbolId: "symbol_6", playerId: "p1" },
+      5: { position: 5, symbolId: "symbol_7", playerId: "p1" },
+      7: { position: 7, symbolId: "symbol_3", playerId: "p1" },
+    };
+    const { composition } = createIntegratedComposition("runezu_1.webp", { state: root });
+    try {
+      const opened = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+      assert.equal(opened.ok, true);
+      const decision = composition.inspect().session.decision;
+      assert.equal(decision.choices.length, 2);
+      const saved = composition.lifecycle.save().envelope;
+      const input = { decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,
+        ownerId: decision.ownerId, choice: decision.choices[branchIndex] };
+      assert.equal(composition.inputPort.submitDecision({ ...input, ownerId: "p2" }).ok, false);
+      assert.deepEqual(composition.lifecycle.save().envelope, saved);
+      const resolved = composition.inputPort.submitDecision(input);
+      assert.equal(resolved.ok, true); assert.equal(resolved.phase, "completed");
+      const player = composition.stateSourcePort.getSnapshot().players.players[0];
+      assert.equal(player.resources.energy, 10 + (placed && branchIndex === 0 ? 2 : 0));
+      assert.equal(player.resources.credits, 8 + (placed && branchIndex === 0 ? 1 : 0));
+      assert.equal(player.resources.score, placed && branchIndex === 1 ? 6 : 0);
+      assert.equal(player.resources.publicity, placed && branchIndex === 1 ? 1 : 0);
+      assert.deepEqual(aliens.runezu.getPlayerSymbolCounts(player), symbolsBefore);
+      const after = composition.lifecycle.save().envelope;
+      assert.equal(composition.lifecycle.restore(saved, { silent: true }).ok, true);
+      assert.equal(composition.inputPort.submitDecision(input).ok, true);
+      assert.deepEqual(composition.lifecycle.save().envelope, after, "符文分支恢复后状态与journal一致");
+    } finally { composition.dispose(); }
+  }
+}
+{
+  const root = createCanonicalState("runezu_0.webp");
+  root.aliens.runezu = aliens.runezu.createRunezuState();
+  root.aliens.runezu.faceSymbolSlots = {
+    4: { position: 4, symbolId: "symbol_4", playerId: "p1" },
+    2: { position: 2, symbolId: "symbol_7", playerId: "p1" },
+  };
+  const { composition } = createIntegratedComposition("runezu_0.webp", { state: root });
+  try {
+    assert.equal(composition.inputPort.submitAction(getOnlyPlayAction(composition)).ok, true);
+    const decision = composition.inspect().session.decision;
+    const saved = composition.lifecycle.save().envelope;
+    const input = { decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,
+      ownerId: decision.ownerId, choice: decision.choices[0] };
+    const resolved = composition.inputPort.submitDecision(input);
+    assert.equal(resolved.ok, true); assert.equal(resolved.phase, "completed");
+    const committed = composition.stateSourcePort.getSnapshot(), player = committed.players.players[0];
+    assert.equal(player.hand.length, 1, "符号4所在位置奖励盲抽一张");
+    assert.equal(player.resources.additionalPublicScan, 1, "符号7所在位置奖励扫描标记而非立即扫描");
+    assert.equal(committed.meta.sequences.card, 101);
+    assert.equal(resolved.journal.rng.length, 1);
+    assert.equal(resolved.journal.events.filter(e => e.type === "signalMarked").length, 0);
+    const after = composition.lifecycle.save().envelope;
+    assert.equal(composition.lifecycle.restore(saved, { silent: true }).ok, true);
+    assert.equal(composition.inputPort.submitDecision(input).ok, true);
+    assert.deepEqual(composition.lifecycle.save().envelope, after, "盲抽恢复保持牌实体、RNG和日志一致");
+  } finally { composition.dispose(); }
+}
 console.log("card play domain production composition tests passed");
