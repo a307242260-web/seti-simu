@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-12T10:26:57.281Z",
+  "builtAt": "2026-09-12T10:53:43.864Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "2e7b7950",
+  "headCommit": "69359b5d",
   "currentBaseline": "frontier-materialization-20260912",
   "worktreeDirty": true,
   "bestOf": {
@@ -116,6 +116,213 @@
     ]
   },
   "versions": [
+    {
+      "id": "trace-sequence-rejected-20260912",
+      "name": "痕迹编号去重（未通过，不入生产）",
+      "date": "2026-09-12",
+      "baseline": "frontier-materialization-20260912",
+      "head": "7ee12271",
+      "commits": [
+        {
+          "hash": "a4ef3e8f",
+          "date": "2026-09-12",
+          "subject": "[TRACE-SEQUENCE-01] 实现痕迹排列搜索身份候选并补归属反例"
+        },
+        {
+          "hash": "edbe40b5",
+          "date": "2026-09-12",
+          "subject": "[TRACE-SEQUENCE-01] 留存首次单决策结果与待补复用证据"
+        },
+        {
+          "hash": "85027458",
+          "date": "2026-09-12",
+          "subject": "[TRACE-SEQUENCE-01] 增加仅trace启用的编号排列复用归因"
+        },
+        {
+          "hash": "7ee12271",
+          "date": "2026-09-12",
+          "subject": "[TRACE-SEQUENCE-01] 记录真实复用为零并判定候选未通过"
+        }
+      ],
+      "summary": "虫族与阿米巴痕迹编号排列用于搜索身份和分支采样；候选补丁及验收记录见 reports/iteration/trace-sequence-search-plan-20260912.md",
+      "diffStat": "33 files changed, 251320 insertions(+), 34 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "AGENTS.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "adhoc/benchmark-trace-sequence-step506-20260912.js",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-budget-step506-20260912.js",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-frontier-full-20260912.js",
+          "insertions": 50,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/diagnose-trace-sequence-step506-20260912.js",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-step506-reward-choices-20260912.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-step506-trace-order-state-20260912.js",
+          "insertions": 44,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-step506-trace-pairs-20260912.js",
+          "insertions": 80,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-frontier-delivery-20260912.js",
+          "insertions": 59,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-step506-trace-order-suffix-20260912.js",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 8,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/effects/search-root-attribution.test.js",
+          "insertions": 65,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 80,
+          "deletions": 7
+        },
+        {
+          "file": "reports/iteration/budget-before-step506-20260912.json",
+          "insertions": 448,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/frontier-delivery-verification-20260912.json",
+          "insertions": 51,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/frontier-full-comparison-eee63294-20260912.json",
+          "insertions": 465,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/frontier-materialization-20260912/1d63c8e7.eee63294.full.action-log.html",
+          "insertions": 2053,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/frontier-materialization-acceptance-20260912.md",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 616,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/step506-reward-choices-20260912.json",
+          "insertions": 922,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/step506-trace-investigation-20260912.md",
+          "insertions": 68,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/step506-trace-order-state-20260912.json",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/step506-trace-order-suffix-20260912.json",
+          "insertions": 1040,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/step506-trace-pairs-20260912.json",
+          "insertions": 27081,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/strategy-todo-20260911.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-sequence-search-plan-20260912.md",
+          "insertions": 64,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-sequence-step506-a4ef3e8f-20260912.json",
+          "insertions": 1447,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-sequence-step506-diagnostic-20260912.json",
+          "insertions": 144335,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/1d63c8e7.eee63294.full.json",
+          "insertions": 29219,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 616,
+          "deletions": 4
+        },
+        {
+          "file": "reports/seti-current-base-robot-strategy-20260911.html",
+          "insertions": 14,
+          "deletions": 14
+        },
+        {
+          "file": "seti-saves/seti-save-research-frontier-materialization-20260912-eee63294-full-v285.json",
+          "insertions": 42180,
+          "deletions": 0
+        }
+      ],
+      "results": [],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": false,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
     {
       "id": "frontier-materialization-20260912",
       "name": "删除无用中途结果构造",

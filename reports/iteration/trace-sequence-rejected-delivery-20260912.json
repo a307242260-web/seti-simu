@@ -1,0 +1,14 @@
+{
+  "date": "2026-09-12",
+  "status": "rejected",
+  "candidate": "7ee12271",
+  "productionBaseline": "frontier-materialization-20260912",
+  "historicalVersionsUnchanged": 119,
+  "productionDiffEmpty": true,
+  "reuse": {
+    "frontierMergeEvents": 0,
+    "processedSkipEvents": 0
+  },
+  "reportCenter": "reports/robot-iteration.html",
+  "fullGameRun": false
+}
