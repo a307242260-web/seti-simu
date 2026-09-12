@@ -132,4 +132,26 @@ assert.ok(budgeted.leaves.some((leaf) => leaf.observation.score === 3
 "launch→analyze的3分已结算，后续scan未执行不能抹掉它");
 assert.ok(budgeted.leaves.every((leaf) => leaf.status !== "search_frontier"));
 assert.deepEqual(continuing.lifecycle.save().envelope, continuingBefore);
+// 只有准备动作被执行，真实队列仍有工作；不能构造可评分的中途结果。
+const [unfinished] = continuing.counterfactualPort.evaluate(launch, {
+  viewer: { playerId: "p1", role: "player" }, maxNodes: 1, maxExecutionNodes: 1,
+  maxFrontierNodes: 1,
+  secondaryAgentSearch: {
+    focalSeatId: "p1", maxProxyDepth: 2,
+    selectRouteTarget: () => "score:3",
+    completesRouteTarget: ({ action }) => action.family === "analyze",
+    selectSuccessors: ({ legalSuccessors }) => legalSuccessors,
+  },
+});
+assert.equal(unfinished.status, "unresolved");
+assert.deepEqual(unfinished.leaves, []);
+assert.deepEqual(unfinished.searchCompleteness, { status: "incomplete", reasons: ["node-budget"] });
+assert.equal(continuing.counterfactualPort.getDiagnostics().remainingFrontierNodeCount, 1);
+const [ordinary] = continuing.counterfactualPort.evaluate(launch, {
+  viewer: { playerId: "p1", role: "player" }, maxNodes: 1, maxDepth: 1, maxLeaves: 1,
+});
+assert.equal(ordinary.status, "settled");
+assert.equal(ordinary.leaves.length, 1);
+assert.equal(ordinary.leaves[0].observation.score, 0);
+assert.deepEqual(continuing.lifecycle.save().envelope, continuingBefore);
 console.log("search root attribution tests passed");

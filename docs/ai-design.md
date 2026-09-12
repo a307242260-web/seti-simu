@@ -607,8 +607,10 @@ control 按实际叶上限记数。队列另记保留峰值 `peak` 与实际裁�
 
 outcome.status仍表达真实结果可用性；searchCompleteness独立报告complete、
 incomplete、not-evaluated及原因。已有真实叶且截断仍为settled，可评分/提取计划；
-无叶截断为unresolved，frontier不可冒充收益。完整性覆盖声明的单席策略范围，
-不表示全多人游戏最优。元数据经投影与Policy契约校验，不改变估值权重。
+无叶截断为unresolved，frontier不可冒充收益。
+未完成路线只保留实际搜索队列及统计，不构造不参与输出的中途结果副本；完成目标的
+真实叶仍独立保留，即使后续继续入队或遭预算裁剪也不丢弃。
+完整性覆盖声明的单席策略范围，不表示全多人游戏最优。元数据经投影与Policy契约校验，不改变估值权重。
 
 每次次级搜索期限30000ms，宏步前后检查；超时显式抛COUNTERFACTUAL_SEARCH_TIMEOUT，
 清理隔离fork，不返回部分策略或提交真实根。同步宏步不能中途抢占，因此不承诺严格

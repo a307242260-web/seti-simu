@@ -1139,7 +1139,6 @@
       const outcomeStateByActionId = new Map(legalActions.map((action) => [action.actionId, {
         action,
         leaves: [],
-        frontierLeaves: [],
         failures: [],
         pruned: false,
         incompleteReasons: new Set(),
@@ -1624,53 +1623,6 @@
             rootRoutePlanId: origin.rootRoutePlanId || null,
           } : {}),
         });
-      }
-
-      function addFrontierLeaf(origin, leafObservation, successors, nextInspection, nextCheckpoints) {
-        const state = outcomeStateByActionId.get(origin.rootAction.actionId);
-        if (!state) return;
-        const fullObservation = fullLeafObservation(origin, leafObservation);
-        const leaf = {
-          leafId: `frontier:${stableHash(origin.chain)}`,
-          status: "search_frontier",
-          actionChain: origin.chain,
-          executionStepCount: origin.executionStepCount || 0,
-          observation: fullObservation,
-          legalSuccessors: successors,
-          routeCheckpoints: [],
-          secondaryAgentDepth: origin.proxyDepth || 0,
-          quickTradeCount: origin.quickTradeCount || 0,
-          secondaryAgentTrace: clone(origin.routeActions || []),
-          rootActionObservation: origin.rootActionObservation || null,
-          rootActionLegalSuccessors: clone(origin.rootActionLegalSuccessors || []),
-          rootActionSettledObservation: origin.rootActionSettledObservation || null,
-          rootActionSettledLegalSuccessors: clone(origin.rootActionSettledLegalSuccessors || []),
-          terminalReason: "search-frontier",
-          rootRouteTargetId: origin.rootRouteTargetId || null,
-          rootRoutePlanId: origin.rootRoutePlanId || null,
-        };
-        const rootTargetId = origin.rootRouteTargetId || null;
-        const rootPlanId = origin.rootRoutePlanId || null;
-        const otherTargets = state.frontierLeaves.filter((candidate) => (
-          candidate.rootRouteTargetId !== rootTargetId
-          || candidate.rootRoutePlanId !== rootPlanId
-        ));
-        const byId = new Map(state.frontierLeaves
-          .filter((candidate) => (
-            candidate.rootRouteTargetId === rootTargetId
-            && candidate.rootRoutePlanId === rootPlanId
-          ))
-          .map((candidate) => [
-          candidate.leafId,
-          candidate,
-          ]));
-        byId.set(leaf.leafId, leaf);
-        const sameTargetLeaves = [...byId.values()]
-          .sort((left, right) => String(left.leafId).localeCompare(String(right.leafId)));
-        state.frontierLeaves = [
-          ...otherTargets,
-          ...(secondaryAgentSearch ? sameTargetLeaves : sameTargetLeaves.slice(-maxLeaves)),
-        ];
       }
 
       function executeNode(node) {
@@ -3012,19 +2964,16 @@
                 }
                 const completedEndpoint = completedGoal
                   && ["completed", "idle"].includes(execution.nextInspection.phase);
-                if (completedEndpoint || selectedRoutes.some((route) => (
-                  String(route.action.actorId) === focalSeatId
-                ))) {
-                  // 已完成目标的实际收益独立于后续搜索；未完成路线仍仅作frontier诊断。
-                  const recordEndpoint = completedEndpoint ? addLeaf : addFrontierLeaf;
-                  recordEndpoint(
+                if (completedEndpoint) {
+                  // 只构造已完成目标的实际结果；未完成路线由下方真实队列及诊断跟踪。
+                  addLeaf(
                     {
                       ...origin,
                       chain: nextChain,
                       proxyDepth: nextProxyDepth,
                       goalTracePaths: nextGoalTracePaths,
                       goalTraceSelections: nextGoalTraceSelections,
-                      terminalReason: completedEndpoint ? "goal-completed" : origin.terminalReason,
+                      terminalReason: "goal-completed",
                       quickTradeCount: nextQuickTradeCount,
                       targetQuickTradeCount: completedGoal
                         ? 0
@@ -3178,9 +3127,7 @@
 
       const outcomes = [...outcomeStateByActionId.values()].map((state) => {
         const failure = state.failures[0] || null;
-        const allLeaves = secondaryAgentSearch
-          ? [...state.leaves]
-          : [...state.leaves, ...state.frontierLeaves];
+        const allLeaves = [...state.leaves];
         const hasLeaves = allLeaves.length > 0;
         const status = hasLeaves
           ? "settled"
