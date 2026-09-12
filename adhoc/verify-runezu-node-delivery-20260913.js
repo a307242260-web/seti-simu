@@ -1,0 +1,14 @@
+"use strict";
+const fs=require("node:fs"),assert=require("node:assert/strict");
+let source=fs.readFileSync("adhoc/verify-frontier-delivery-20260912.js","utf8");
+const replacements={"frontier-materialization-20260912":"runezu-panel-node-projection-20260913","eee63294":"bea7de03","597":"482","97.75":"77.75","75, 125, 102, 89":"67, 93, 70, 81","203":"168","233757":"166159","54":"39","60":"42"};
+source=source.replace(/frontier-materialization-20260912|eee63294|75, 125, 102, 89|97\.75|\b(?:597|203|233757|54|60)\b/g,x=>replacements[x]);
+new Function("require","console","__dirname",source)(require,console,__dirname);
+const registry=JSON.parse(fs.readFileSync("reports/iteration/registry.json"));assert.equal(registry.warnings.filter(w=>w.level==="warn").length,5);
+const r=JSON.parse(fs.readFileSync("reports/research/22249691.bea7de03.full.json"));
+const html=fs.readFileSync("reports/seti-current-base-robot-strategy-20260911.html","utf8"),counts={};
+for(const seat of Object.values(r.metrics.famsBySeat))for(const[f,n]of Object.entries(seat))counts[f]=(counts[f]||0)+n;
+for(const[,f,n]of html.matchAll(/class="bar-row"><span>(\w+)<\/span>.*?<b>(\d+)<\/b>/g))assert.equal(Number(n),counts[f]);
+for(const s of r.metrics.searches)assert.deepEqual(s.diagnostics.failedNodeCountByCode,{});
+assert(html.includes("751 / 4,096"));assert(html.includes("整局降分未完全归因"));
+console.log("本轮版本、正式分、触限、链接、历史正文、动作构成及降分边界核验通过");

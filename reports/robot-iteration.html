@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-12T19:09:53.528Z",
+  "builtAt": "2026-09-12T20:42:02.203Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "2ae056c3",
-  "currentBaseline": "final-income-input-fix-20260913",
+  "headCommit": "ec10d1a1",
+  "currentBaseline": "runezu-panel-node-projection-20260913",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,624 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "runezu-panel-node-projection-20260913",
+      "name": "runezu-panel-node-projection-20260913",
+      "date": "2026-09-13",
+      "baseline": "final-income-input-fix-20260913",
+      "head": "bea7de03",
+      "commits": [
+        {
+          "hash": "2ae056c3",
+          "date": "2026-09-13",
+          "subject": "归档公司初始收入修复完整局与终局标记分歧证据"
+        },
+        {
+          "hash": "1e3cc2e6",
+          "date": "2026-09-13",
+          "subject": "更新公司收入修复报告中心并核验终局与历史正文"
+        },
+        {
+          "hash": "f599b974",
+          "date": "2026-09-13",
+          "subject": "修复符文族痕迹面板符号漏发并补充回归与冷决策门槛"
+        },
+        {
+          "hash": "3418fea7",
+          "date": "2026-09-13",
+          "subject": "归档符文痕迹修复冷门槛并定位策略观察检查耗时"
+        },
+        {
+          "hash": "b46436b7",
+          "date": "2026-09-13",
+          "subject": "记录观察共享检查微基准并排除单独冻结检查优化"
+        },
+        {
+          "hash": "c5fd5155",
+          "date": "2026-09-13",
+          "subject": "归档真实叶观察重复规模与共享检查遍历成本"
+        },
+        {
+          "hash": "2cf360bf",
+          "date": "2026-09-13",
+          "subject": "按批次复用观察事实副本以减少重复共享检查"
+        },
+        {
+          "hash": "09d4ad6a",
+          "date": "2026-09-13",
+          "subject": "记录批次副本复用候选未达总时门槛并保留逐叶验证工具"
+        },
+        {
+          "hash": "54797e98",
+          "date": "2026-09-13",
+          "subject": "纠正反事实测试的预算诊断漂移并记录既有交易断言失败"
+        },
+        {
+          "hash": "1580566e",
+          "date": "2026-09-13",
+          "subject": "在单个已执行节点内复用完整叶投影并隔离遮蔽边界"
+        },
+        {
+          "hash": "595105de",
+          "date": "2026-09-13",
+          "subject": "归档节点投影提速与全叶等价证据并记录既有续搜测试失败"
+        },
+        {
+          "hash": "bea7de03",
+          "date": "2026-09-13",
+          "subject": "补充待执行节点根归属并验证环绕续搜遭预算截断"
+        }
+      ],
+      "summary": "RUNEZU-PANEL-TRACE-01：修复三色痕迹1/4位漏发面板符号；POLICY-OBSERVATION-COST-01：单个物理节点内按遮蔽边界复用完整投影并在观察批次复用事实副本。两项分别归因，共同完整局验收。",
+      "diffStat": "56 files changed, 218216 insertions(+), 85 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/benchmark-runezu-panel334-20260913.js",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-final-income-full-20260913.js",
+          "insertions": 13,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/counterfactual-test-drift-20260913.md",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/final-income-full-review-20260913.md",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/final-income152-20260913.json",
+          "insertions": 3150,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-mars-continuation-20260913.js",
+          "insertions": 32,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-real-leaf-sharing334-20260913.js",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/mars-continuation-20260913.json",
+          "insertions": 11582,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/mars-continuation-resolution-20260913.md",
+          "insertions": 19,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/node-leaf-projection-gate-20260913.md",
+          "insertions": 28,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/node-leaf-projection-plan-20260913.md",
+          "insertions": 16,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/node-leaf-projection334-20260913.json",
+          "insertions": 49145,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/observation-clone-cache-plan-20260913.md",
+          "insertions": 16,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/observation-clone-cache-rejected-20260913.md",
+          "insertions": 13,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-runezu-panel334-20260913.js",
+          "insertions": 7,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-share-check-20260913.js",
+          "insertions": 35,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/profile-share-prototype-20260913.js",
+          "insertions": 10,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/real-leaf-sharing334-20260913.json",
+          "insertions": 9999,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/real-leaf-sharing334-findings-20260913.md",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/real-leaf-sharing334-view-20260913.json",
+          "insertions": 9623,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-panel-fix-plan-20260913.md",
+          "insertions": 30,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-panel-real334-fixed-20260913.json",
+          "insertions": 174,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-panel334-1580566e-20260913.json",
+          "insertions": 414,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-panel334-2cf360bf-20260913.json",
+          "insertions": 414,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-panel334-cpu-summary-f599b974-20260913.json",
+          "insertions": 490,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-panel334-f599b974-20260913.cpuprofile",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-panel334-f599b974-20260913.json",
+          "insertions": 414,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-panel334-gate-20260913.md",
+          "insertions": 32,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-panel334-profile-f599b974-20260913.json",
+          "insertions": 414,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/share-check-components-20260913.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/share-check-findings-20260913.md",
+          "insertions": 21,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/share-check-prototype-20260913.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-runezu-panel334-cpu-20260913.js",
+          "insertions": 25,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/update-final-income-base-report-20260913.js",
+          "insertions": 36,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-clone-cache-projection334-20260913.js",
+          "insertions": 58,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-final-income-delivery-20260913.js",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-final-income152-20260913.js",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-node-leaf-projection334-20260913.js",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-runezu-panel-real334-20260913.js",
+          "insertions": 13,
+          "deletions": 0
+        },
+        {
+          "file": "assets/aliens/符文族/implementation.md",
+          "insertions": 11,
+          "deletions": 5
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 7,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/app/simulation-counterfactual-outcome.test.js",
+          "insertions": 38,
+          "deletions": 22
+        },
+        {
+          "file": "randomizer/game/ai/outcome-model.js",
+          "insertions": 22,
+          "deletions": 7
+        },
+        {
+          "file": "randomizer/game/ai/outcome-projection.test.js",
+          "insertions": 25,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/runezu-panel-trace.test.js",
+          "insertions": 76,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/science-session.js",
+          "insertions": 14,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 16,
+          "deletions": 8
+        },
+        {
+          "file": "reports/iteration/final-income-full-comparison-5b3f3e20-20260913.json",
+          "insertions": 52065,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/final-income-input-fix-20260913/8aea2b8e.5b3f3e20.full.action-log.html",
+          "insertions": 2189,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 455,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/8aea2b8e.5b3f3e20.full.json",
+          "insertions": 32002,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 455,
+          "deletions": 4
+        },
+        {
+          "file": "reports/seti-current-base-robot-strategy-20260911.html",
+          "insertions": 35,
+          "deletions": 35
+        },
+        {
+          "file": "seti-saves/seti-save-research-final-income-input-fix-20260913-5b3f3e20-full-v307.json",
+          "insertions": 44284,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "22249691.bea7de03.full.json",
+          "recordPath": "reports/research/22249691.bea7de03.full.json",
+          "mode": "full",
+          "steps": 482,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 756474,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "bea7de03",
+          "createdAt": "2026-09-12T20:21:51.661Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "两项自身验收通过，待主目录交付：482步自然终局67/93/70/81，均77.75，搜索错误为空。相对基线均分下降24，整局1209700→756474ms，全部节点242983→166159，执行截断55→39、队列截断61→42。性能证据为同334输入65.12→23.56秒及6701叶等价，不把整局缩短全算作优化贡献。首次可见分歧231已追溯到186：仅符文修复即改变收入后继；叠加投影优化后全部根最佳评分/行动链及非耗时搜索诊断一致。首处分歧归因不等于完整解释整局降分，长期趋势继续观察。相关4项unit、唯一full-flow与V输入审计通过；验收明细见runezu-panel-node-acceptance-20260913.md。",
+          "scores": {
+            "player-blue": 67,
+            "player-green": 93,
+            "player-brown": 70,
+            "player-white": 81
+          },
+          "avgScore": 77.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 67,
+              "base": 51,
+              "tile": 13,
+              "card": 2,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 3
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 3,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 0,
+                "cardEffectScore": 2,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 0,
+                "orbitScore": 32,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 2
+              }
+            },
+            "player-green": {
+              "total": 93,
+              "base": 54,
+              "tile": 32,
+              "card": 6,
+              "tileScoresById": {
+                "a": 22,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_31.png",
+                  "rule": {
+                    "count": 2,
+                    "kind": "planetLandingPairs",
+                    "scorePer": 6
+                  },
+                  "score": 6
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 7,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 10,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            },
+            "player-brown": {
+              "total": 70,
+              "base": 62,
+              "tile": 7,
+              "card": 0,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 7
+              },
+              "tiles": [
+                {
+                  "baseValue": 0,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 0,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 7,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 13,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 17,
+                "orbitScore": 12,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            },
+            "player-white": {
+              "total": 81,
+              "base": 55,
+              "tile": 22,
+              "card": 0,
+              "tileScoresById": {
+                "a": 16,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 14,
+                "alienTraceBlueScore": 9,
+                "alienTracePinkScore": 16,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 0,
+                "orbitScore": 0,
+                "scanScore": 6,
+                "taskCardScore": 0,
+                "techBonusScore": 4
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-runezu-panel-node-projection-20260913-bea7de03-full-v238.json",
+          "reportPath": "reports/iteration/runezu-panel-node-projection-20260913/22249691.bea7de03.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "22249691.bea7de03.full",
+            "path": "reports/iteration/runezu-panel-node-projection-20260913/22249691.bea7de03.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "final-income-input-fix-20260913",
       "name": "final-income-input-fix-20260913",
@@ -631,7 +1249,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
