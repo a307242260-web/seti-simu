@@ -8,6 +8,7 @@ module.exports = Object.freeze({
   schemaVersion: "seti-node-test-inventory-v2",
   unit: Object.freeze([
     entry("randomizer/game/ai/probe-move-greedy.test.js", "policy/heuristic-policy", "同一主要目标普通移动按目录首步局部择一，保留合法替代和不同目标", "非法首选阻断可达路线、跨目标误删方向或修改免费条件移动"),
+    entry("randomizer/app/income-target-classification.test.js", "policy/heuristic-policy", "收入目标只准入真正增加永久收入的牌", "一次性收入角资源被误当作永久收入或真实收入牌被排除"),
     entry("tools/robot-report-replay.test.js", "training/reporting", "重放失败显式抛错，元数据刷新保持所有历史行动及得分正文", "部分重放或任意选项冒充成功并覆盖原报告，刷新元数据触发规则重放"),
     entry("tools/robot-report-link.test.js", "training/reporting", "版本复盘页研究链接解析到正式研究文件，无记录页不虚构链接", "重复目录前缀导致离线报告链接指向不存在的文件"),
     entry("randomizer/game/ai/public-card-goal.test.js", "policy/heuristic-policy", "指定公共牌目标贯穿根准入、选择、实际入手完成、叶目的与复用", "把尚未取得当离手完成、盲抽代替指定牌、同槽替换漏检或用后来入手掩盖根交易失败"),

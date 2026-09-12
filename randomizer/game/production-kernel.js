@@ -1194,7 +1194,6 @@ function cardCanIncreaseIncome(card) {
   const incomeEffectTypes = new Set([
     cardEffects.EFFECT_TYPES.INCOME,
     cardEffects.EFFECT_TYPES.TUCK_PLAYED_CARD_TO_INCOME,
-    cardEffects.EFFECT_TYPES.DISCARD_ANY_FOR_INCOME,
   ]);
   return cardEffects.buildPlayEffects(card).some((effect) => (
     incomeEffectTypes.has(effect?.type)
