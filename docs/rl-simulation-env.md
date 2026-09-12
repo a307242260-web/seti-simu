@@ -44,6 +44,9 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
 机器玩家计划使用 `seti-action-plan-v4`：`steps` 逐项携带动作身份、执行前揭示基线和
 具名依赖。搜索的折叠支付/连续数据提交也各有证据；同回合与跨回合均校验，只有控制
 动作的重决策例外受回合边界控制。计划不写入 checkpoint，恢复时清空。详见 AI 设计 §3。
+`card:acquire:<实例id>`计划从支付前绑定公共牌身份；选牌使用最新原生合法descriptor，
+规划器附加的route元数据不提交给Decision。目标以该牌正式进入本席手牌完成；盲抽、
+同槽其他牌和其他席位持牌不能替代。该扩展不改变Action、Observation或plan外层schema。
 自由main/quick步骤还带`futureDependencies`，保存剩余具名scope在当前步骤的预期
 存在性与事实；强制奖励与完成后的下一次投入不跨边界。旧v2/v3计划显式拒绝。
 

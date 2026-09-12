@@ -1,0 +1,187 @@
+{
+  "source": "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-full-v276.json",
+  "beforeStep": 48,
+  "actor": "player-green",
+  "committedMainActionCompleted": true,
+  "publicMainActionFieldPresent": true,
+  "privateMainActionFieldPresent": false,
+  "trade": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "quick_trade",
+    "phase": "quick",
+    "actionId": "quick_trade:fcb81f7a",
+    "actorId": "player-green",
+    "stateVersion": 12,
+    "decisionVersion": 0,
+    "target": {
+      "tradeId": "energy-for-card"
+    },
+    "payload": {
+      "cost": {
+        "energy": 2
+      },
+      "gain": {
+        "handSize": 1
+      }
+    },
+    "decision": null,
+    "summary": "2能量 → 1张牌"
+  },
+  "targetCatalog": [
+    {
+      "targetId": "orbit:venus:planet:",
+      "planId": "probe:rocket:2:orbit:venus:planet:",
+      "resultTargetIds": [
+        "income:gain:6,1,0,0,1,0",
+        "orbit:venus:planet:"
+      ],
+      "compatibleActionIds": [
+        "move:89eab4ca",
+        "move:cc916f6c"
+      ]
+    },
+    {
+      "targetId": "card:acquire:card-39-0",
+      "planId": "card:acquire:card-39-0",
+      "resultTargetIds": [
+        "card:acquire:card-39-0"
+      ],
+      "compatibleActionIds": [
+        "quick_trade:38002215",
+        "quick_trade:76cce73d",
+        "quick_trade:90440450",
+        "quick_trade:fcb81f7a"
+      ]
+    },
+    {
+      "targetId": "income:gain:6,1,0,0,1,0",
+      "planId": "income:data:computer-slot-4",
+      "resultTargetIds": [
+        "income:gain:6,1,0,0,1,0"
+      ],
+      "compatibleActionIds": [
+        "place_data:dbe01b29"
+      ]
+    },
+    {
+      "targetId": "tech:gain:blue1",
+      "planId": "tech:blue1:1",
+      "resultTargetIds": [
+        "tech:gain:blue1"
+      ],
+      "compatibleActionIds": [
+        "place_data:dbe01b29"
+      ]
+    },
+    {
+      "targetId": "tech:gain:blue2",
+      "planId": "tech:blue2:1",
+      "resultTargetIds": [
+        "tech:gain:blue2"
+      ],
+      "compatibleActionIds": [
+        "place_data:dbe01b29"
+      ]
+    },
+    {
+      "targetId": "tech:gain:orange3",
+      "planId": "tech:orange3:",
+      "resultTargetIds": [
+        "tech:gain:orange3"
+      ],
+      "compatibleActionIds": [
+        "place_data:dbe01b29"
+      ]
+    }
+  ],
+  "publicChoices": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:b0f88e10",
+      "actorId": "player-green",
+      "stateVersion": 12,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "trade-card-selection",
+        "choiceId": "public:0",
+        "source": "public",
+        "slotIndex": 0,
+        "cardInstanceId": "card-17-0"
+      },
+      "payload": {
+        "slotIndex": 0
+      },
+      "decision": null,
+      "summary": "b_2.webp",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-17-0",
+        "imageSrc": "../assets/cards/basic/split/b_2.webp",
+        "imageAlt": "b_2.webp"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:8af12771",
+      "actorId": "player-green",
+      "stateVersion": 12,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "trade-card-selection",
+        "choiceId": "public:1",
+        "source": "public",
+        "slotIndex": 1,
+        "cardInstanceId": "card-39-0"
+      },
+      "payload": {
+        "slotIndex": 1
+      },
+      "decision": null,
+      "summary": "dlc_38.png",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-39-0",
+        "imageSrc": "../assets/cards/space-agency/split/dlc_38.png",
+        "imageAlt": "dlc_38.png"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:4ffb5ce8",
+      "actorId": "player-green",
+      "stateVersion": 12,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "trade-card-selection",
+        "choiceId": "public:2",
+        "source": "public",
+        "slotIndex": 2,
+        "cardInstanceId": "card-19-0"
+      },
+      "payload": {
+        "slotIndex": 2
+      },
+      "decision": null,
+      "summary": "dlc_21.png",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-19-0",
+        "imageSrc": "../assets/cards/space-agency/split/dlc_21.png",
+        "imageAlt": "dlc_21.png"
+      }
+    }
+  ],
+  "wantedCardId": "card-39-0",
+  "chosenSlot": 1,
+  "wantedCardInHand": true,
+  "terminalDecisionResolved": true,
+  "acquisitionTarget": "card:acquire:card-39-0",
+  "targetCompleted": true,
+  "scope": "正式主行动后按目标目录及后继选择器取得指定公共牌并验证完成；不证明整体AI收益，不读取补牌身份、不重跑AI。"
+}

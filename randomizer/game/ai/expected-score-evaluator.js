@@ -284,6 +284,44 @@
   const V_INCOME_MULTIPLIER = 1.4; // 收入复利放大（收入→更多行动→更多分）
   const V_CARD_EFFECT_VALUE = 6; // 手牌可打效果期望（科技/收入/移动/登陆链）
 
+  function ordinaryCardEffectValue(cards, remainingPayments, roundNumber, finalRoundNumber) {
+    return cards.reduce((total, card) => {
+      if (outcomeModel.isAlienCard(card)) return total; // 已在alienValue按统一牌价值计入。
+      const effects = cardEffects?.buildPlayEffects?.(card) || [];
+      let value = 0;
+      for (const effect of effects) {
+        const type = effect?.type;
+        const options = effect?.options || {};
+        if (type === cardEffects?.EFFECT_TYPES?.RESEARCH_TECH) {
+          value += 30; // 免费科技（省 6 宣传 + 立即生效）
+        } else if (
+          type === cardEffects?.EFFECT_TYPES?.INCOME
+          || type === cardEffects?.EFFECT_TYPES?.TUCK_PLAYED_CARD_TO_INCOME
+        ) {
+          value += 8 * Math.max(1, remainingPayments); // 收入牌每轮资源
+        } else if (type === cardEffects?.REWARD_TYPES?.LAUNCH) {
+          value += 6; // 免费发射（省发射费 + 探测起点）
+        } else if (type === cardEffects?.EFFECT_TYPES?.CARD_LAND) {
+          value += 8; // 免费登陆（登陆奖励 + 外星链）
+        } else if (
+          type === cardEffects?.EFFECT_TYPES?.CARD_MOVE
+          || type === cardEffects?.EFFECT_TYPES?.FREE_MOVE
+        ) {
+          value += 3 * Math.max(1, finite(options?.movementPoints) || 1);
+        } else if (type === cardEffects?.REWARD_TYPES?.ALIEN_TRACE) {
+          value += 6; // 外星痕迹（分 + 外星人牌）
+        } else if (type === cardEffects?.REWARD_TYPES?.GAIN_RESOURCES) {
+          const gain = options?.resources || options?.gain || {};
+          value += finite(gain.score);
+          // 未打出效果的资源兑现概率统一为1/4；不再给钱电设第二套单价。
+          value += finite(gain.credits) * resourceUnitValue("credits", roundNumber, finalRoundNumber) * 0.25;
+          value += finite(gain.energy) * resourceUnitValue("energy", roundNumber, finalRoundNumber) * 0.25;
+        }
+      }
+      return total + value;
+    }, 0);
+  }
+
   function evaluateStateValue(observation, seatId) {
     const projection = observation?.outcomeProjection;
     if (!projection || projection.schemaVersion !== outcomeModel.PROJECTION_SCHEMA_VERSION) {
@@ -347,41 +385,7 @@
     ));
     const handCards = (selfState?.hand || selfPublic?.hand || []).filter(Boolean);
     const reservedCards = (selfState?.reservedCards || []).filter(Boolean);
-    const handEffectValue = (cards) => cards.reduce((total, card) => {
-      if (outcomeModel.isAlienCard(card)) return total; // 已在alienValue按统一牌价值计入。
-      const effects = cardEffects?.buildPlayEffects?.(card) || [];
-      let value = 0;
-      for (const effect of effects) {
-        const type = effect?.type;
-        const options = effect?.options || {};
-        if (type === cardEffects?.EFFECT_TYPES?.RESEARCH_TECH) {
-          value += 30; // 免费科技（省 6 宣传 + 立即生效）
-        } else if (
-          type === cardEffects?.EFFECT_TYPES?.INCOME
-          || type === cardEffects?.EFFECT_TYPES?.TUCK_PLAYED_CARD_TO_INCOME
-        ) {
-          value += 8 * Math.max(1, remainingPayments); // 收入牌每轮资源
-        } else if (type === cardEffects?.REWARD_TYPES?.LAUNCH) {
-          value += 6; // 免费发射（省发射费 + 探测起点）
-        } else if (type === cardEffects?.EFFECT_TYPES?.CARD_LAND) {
-          value += 8; // 免费登陆（登陆奖励 + 外星链）
-        } else if (
-          type === cardEffects?.EFFECT_TYPES?.CARD_MOVE
-          || type === cardEffects?.EFFECT_TYPES?.FREE_MOVE
-        ) {
-          value += 3 * Math.max(1, finite(options?.movementPoints) || 1);
-        } else if (type === cardEffects?.REWARD_TYPES?.ALIEN_TRACE) {
-          value += 6; // 外星痕迹（分 + 外星人牌）
-        } else if (type === cardEffects?.REWARD_TYPES?.GAIN_RESOURCES) {
-          const gain = options?.resources || options?.gain || {};
-          value += finite(gain.score);
-          // 未打出效果的资源兑现概率统一为1/4；不再给钱电设第二套单价。
-          value += finite(gain.credits) * resourceUnitValue("credits", roundNumber, finalRoundNumber) * 0.25;
-          value += finite(gain.energy) * resourceUnitValue("energy", roundNumber, finalRoundNumber) * 0.25;
-        }
-      }
-      return total + value;
-    }, 0);
+    const handEffectValue = (cards) => ordinaryCardEffectValue(cards, remainingPayments, roundNumber, finalRoundNumber);
     // 手牌全价值但折半（未必全打出）+ 保留牌更低（要花行动取回）
     const cardValue = (
       handEffectValue(handCards) * 0.5
@@ -443,6 +447,16 @@
 
   function quickTradePurpose(context, action, leaf) {
     if (action?.family !== "quick_trade") return { required: false, supported: true };
+    const acquisition = String(leaf?.rootRouteTargetId || "");
+    if (acquisition.startsWith("card:acquire:")) {
+      const cardId = acquisition.slice("card:acquire:".length);
+      const wasPublic = (context.observation?.publicState?.board?.publicCards || [])
+        .some(card => card?.id === cardId);
+      const acquired = (leaf.rootActionSettledObservation?.selfState?.hand || [])
+        .some(card => card?.id === cardId);
+      return { required: true, supported: wasPublic && acquired,
+        reason: wasPublic && acquired ? "quick-trade-acquired-public-target" : "quick-trade-public-target-not-acquired" };
+    }
     const nextAgent = (leaf?.secondaryAgentTrace || [])
       .find((candidate) => candidate?.family !== "quick_trade");
     if (!nextAgent) {
@@ -894,6 +908,11 @@
       return action.family === "analyze";
     }
     if (targetId === `decision:${action.actionId}`) return true;
+    if (targetId.startsWith("card:acquire:")) {
+      return String(input.branchObservation?.selfState?.playerId) === String(input.focalSeatId)
+        && (input.branchObservation.selfState.hand || [])
+          .some(card => String(card?.id) === targetId.slice("card:acquire:".length));
+    }
     if (targetId.startsWith("card:resolve:")) {
       const instanceId = targetId.slice("card:resolve:".length);
       return !(input.branchObservation?.selfState?.hand || []).some((card) => (
@@ -2016,6 +2035,15 @@
       `probe:${goal.requirementId || goal.targetId}`,
       goal,
     ]));
+    const round = input.rootObservation?.publicState?.roundNumber || 1;
+    const finalRound = input.rootObservation?.outcomeProjection?.progress?.finalRoundNumber || 4;
+    const cardTrades = legalActions.filter(action => action.family === "quick_trade"
+      && quickTrades.getTradeAction(action.target?.tradeId)?.gain?.handSize === 1);
+    for (const card of input.rootObservation?.publicState?.board?.publicCards || []) {
+      if (!card || ordinaryCardEffectValue([card], Math.max(0, finalRound - round), round, finalRound) <= 0) continue;
+      const targetId = `card:acquire:${card.id}`;
+      add(targetId, targetId, cardTrades);
+    }
     return [...targets.values()].sort((left, right) => {
       const leftProbe = probeByPlanId.get(left.planId);
       const rightProbe = probeByPlanId.get(right.planId);
@@ -2335,6 +2363,9 @@
   }
 
   function selectSecondaryAgentRouteTarget(input = {}) {
+    if (String(input.routeTargetId || "").startsWith("card:acquire:")) {
+      return { targetId: input.routeTargetId, planId: input.routePlanId };
+    }
     if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
       // 目标完成判定统一在 completesSecondaryAgentRouteTarget（analyze/place_data
       // 都算推进一步 → 收束），这里不再特判：analyze 完成时 completes 已返回 true，
@@ -2871,6 +2902,12 @@
         successors[0]?.phase === "conditional"
         || CONDITIONAL_FAMILIES.has(successors[0]?.family)
       ) {
+        if (String(input.routeTargetId || "").startsWith("card:acquire:")
+          && successors.every(action => action.target?.kind === "trade-card-selection")) {
+          const cardId = input.routeTargetId.slice("card:acquire:".length);
+          return bindRoute(successors.filter(action => action.target?.source === "public"
+            && String(action.target.cardInstanceId) === cardId), input.routeTargetId, input.routePlanId);
+        }
         if (isProbeMovementDecision(input.branchObservation, successors)) {
           const requirements = rawProbeRequirements(input.branchObservation);
           const primary = requirements.candidates.find((goal) => (
@@ -3247,6 +3284,12 @@
           }
         }
         return bindRoute(successors, input.routeTargetId, input.routePlanId);
+      }
+      if (String(input.routeTargetId || "").startsWith("card:acquire:")) {
+        const cardId = input.routeTargetId.slice("card:acquire:".length);
+        if (!(input.branchObservation?.publicState?.board?.publicCards || []).some(card => card?.id === cardId)) return [];
+        return bindRoute(successors.filter(action => action.family === "quick_trade"
+          && quickTrades.getTradeAction(action.target?.tradeId)?.gain?.handSize === 1), input.routeTargetId, input.routePlanId);
       }
       if (String(input.routeTargetId || "").startsWith("tech:gain:")) {
         const requirements = rawTechGainRequirements(input.branchObservation);

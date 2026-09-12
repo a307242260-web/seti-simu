@@ -844,6 +844,8 @@ function stepScopes(step, segment) {
     else if (!routePlanId.startsWith("card:") && !routePlanId.startsWith("income:industry:")) {
       return { valid: false, reason: "plan-income-scope-unknown" };
     }
+  } else if (targetId.startsWith("card:acquire:")) {
+    add("card", targetId.slice("card:acquire:".length));
   } else if (targetId && !targetId.startsWith("card:resolve:") && !targetId.startsWith("decision:")) {
     return { valid: false, reason: "plan-target-scope-unknown" };
   }

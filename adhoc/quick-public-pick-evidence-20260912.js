@@ -7,6 +7,7 @@ const evaluator = require("../randomizer/game/ai/expected-score-evaluator");
 const source = "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-full-v276.json";
 const save = JSON.parse(fs.readFileSync(source, "utf8"));
 const env = createSimulationEnv();
+const useGoal = process.argv.includes("--use-goal");
 let evidence = null;
 try {
   env.reset({ seed: save.seed, activePlayerCount: 4, aiDifficulty: "laughable" });
@@ -29,14 +30,29 @@ try {
         assert(decision);
         const choices = decision.choices.filter(a => a.target?.source === "public");
         assert(choices.length > 1, "须有多个公共牌供精确选择");
-        const selected = choices.at(-1);
+        const acquisition = useGoal ? catalog.find(t => t.targetId.startsWith("card:acquire:")
+          && t.compatibleActionIds.includes(trade.actionId)) : null;
+        if (useGoal) assert(acquisition, "正式边界必须产生公共牌获取目标");
+        const planned = useGoal ? evaluator.selectSecondaryAgentSuccessors({
+          focalSeatId: trade.actorId, branchObservation: comp.projection(viewer).state,
+          currentAction: trade, routeTargetId: acquisition.targetId, routePlanId: acquisition.planId,
+          legalSuccessors: decision.choices,
+        })[0] : choices.at(-1);
+        // 与正式搜索相同：目标绑定元数据用于规划，提交须重新取原生合法descriptor。
+        const selected = decision.choices.find(choice => choice.actionId === planned?.actionId);
+        assert(selected);
         const wanted = root.cards.publicCards[selected.target.slotIndex];
         assert(wanted);
-        assert.equal(comp.inputPort.submitDecision({ decisionId: decision.decisionId,
-          decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice: selected }).ok, true);
+        const submitted = comp.inputPort.submitDecision({ decisionId: decision.decisionId,
+          decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice: selected });
+        assert.equal(submitted.ok, true, JSON.stringify(submitted));
         assert.equal(comp.inspect().session, null, "取牌事务应完成");
         const after = comp.projection(viewer).state;
         assert(after.selfState.hand.some(c => c.id === wanted.id));
+        if (useGoal) assert.equal(evaluator.completesSecondaryAgentRouteTarget({
+          action: selected, targetId: acquisition.targetId, branchObservation: after,
+          focalSeatId: trade.actorId,
+        }), true);
         const publicPlayer = before.publicState.players.find(p => p.playerId === trade.actorId);
         evidence = { source, beforeStep: step.stepIndex + 1, actor: trade.actorId,
           committedMainActionCompleted: true,
@@ -45,7 +61,10 @@ try {
           trade, targetCatalog: catalog, publicChoices: choices,
           wantedCardId: wanted.id, chosenSlot: selected.target.slotIndex,
           wantedCardInHand: true, terminalDecisionResolved: true,
-          scope: "正式主行动后交易与精确公共牌选择接口证据；选择最后一个合法公共选项以验证身份绑定，不证明该牌在策略上值得获取，不读取补牌身份、不重跑AI。" };
+          ...(useGoal ? { acquisitionTarget: acquisition.targetId, targetCompleted: true } : {}),
+          scope: useGoal
+            ? "正式主行动后按目标目录及后继选择器取得指定公共牌并验证完成；不证明整体AI收益，不读取补牌身份、不重跑AI。"
+            : "正式主行动后交易与精确公共牌选择接口证据；选择最后一个合法公共选项以验证身份绑定，不证明该牌在策略上值得获取，不读取补牌身份、不重跑AI。" };
       } finally { comp.dispose(); }
       break;
     }
