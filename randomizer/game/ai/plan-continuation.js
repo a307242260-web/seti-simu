@@ -772,7 +772,7 @@ function capturePlanStep({ observation, action }) {
       nextSlotScore: candidate.nextSlotScore, ranking: structuredClone(candidate.ranking || []) })),
     cards: (board.publicCards || []).map((card) => card ? { id: card.id, cardId: card.cardId } : null),
     aliens: structuredClone(board.aliens.slots || []),
-    data: structuredClone(self.dataProgress || null),
+    data: self.dataProgress ? { ...structuredClone(self.dataProgress), availableData: Number(self.availableData) || 0 } : null,
   };
   if (action.family === "pass") {
     if (String(observation.selfState?.playerId || "") !== actorId) {

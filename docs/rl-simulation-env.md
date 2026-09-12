@@ -88,6 +88,8 @@ Composition drain，不伪装成策略动作。
 来自dataState.discardedCount；初始未建立数据状态时为0。标准outcomeProjection.progress
 及strategicFacts的dataProgress保留同一计数。它不是当前池数量，也不是本次扫描所得；
 单段溢出必须用同席前后差计算。只读投影不修改数据/RNG/Decision，不新增存档状态。
+启发式可选结果输出dataDiscardDelta，作为primary相等时的排序信息，不是额外分数；
+终局该排序项为0。计划data依赖同时包含availableData，准备方案不复用旧池数量。
 
 `publicState.players[].mainActionCompleted`为正式玩家主行动标记的布尔投影；正式开局
 未设置标记时为false，与规则判定一致。Browser/Simulation共用sanitizePublicPlayer，

@@ -776,6 +776,9 @@
           leafStateValue,
           strategicValue: leafValue(rootValue, leafStateValue, parameters),
           vDelta,
+          dataDiscardDelta: leafStateValue.terminal ? 0 : Math.max(0,
+            finite(leaf.observation.outcomeProjection?.progress?.dataProgress?.discardedCount)
+              - finite(outcome.rootObservation.outcomeProjection?.progress?.dataProgress?.discardedCount)),
           executionStepCount: Number(leaf.executionStepCount ?? leaf.actionChain?.length ?? 0),
         };
       })
@@ -784,12 +787,13 @@
       .filter((entry) => entry.leaf.terminalReason !== "route-unreachable" || entry.leafStateValue.terminal)
       .sort((left, right) => (
         right.strategicValue.primaryValue - left.strategicValue.primaryValue
+        || left.dataDiscardDelta - right.dataDiscardDelta
         || (vEnabled ? (right.vDelta - left.vDelta) : 0)
         || right.strategicValue.total - left.strategicValue.total
         || right.strategicValue.actualScoreDelta - left.strategicValue.actualScoreDelta
         || Number(left.leaf.quickTradeCount || 0) - Number(right.leaf.quickTradeCount || 0)
         || Number(left.leaf.secondaryAgentDepth || 0) - Number(right.leaf.secondaryAgentDepth || 0)
-        || (action?.phase === "conditional" && !left.leafStateValue.terminal && !right.leafStateValue.terminal
+        || (!left.leafStateValue.terminal && !right.leafStateValue.terminal
           ? left.executionStepCount - right.executionStepCount : 0)
         || String(left.leaf.leafId || "").localeCompare(String(right.leaf.leafId || ""))
       ));
@@ -824,10 +828,10 @@
       value: bestLeafValue.total,
       sortKey: [
         bestLeafValue.primaryValue,
-        0,
+        -best.dataDiscardDelta,
         -Number(best.leaf.quickTradeCount || 0),
         -Number(best.leaf.secondaryAgentDepth || 0),
-        ...(conditional && !best.leafStateValue.terminal ? [-best.executionStepCount] : []),
+        ...(!best.leafStateValue.terminal ? [-best.executionStepCount] : []),
       ],
       selectable: true,
       priorityClass: conditional ? 3 : control ? 0 : 2,
@@ -843,6 +847,7 @@
       quickTradeCount: Number(best.leaf.quickTradeCount || 0),
       secondaryAgentDepth: Number(best.leaf.secondaryAgentDepth || 0),
       executionStepCount: best.executionStepCount,
+      dataDiscardDelta: best.dataDiscardDelta,
       quickTradePurpose: tradePurpose.required ? tradePurpose : null,
       cardCornerPurpose: cornerPurpose.required ? cornerPurpose : null,
       infrastructureValue: best.strategicValue.infrastructure.total,
@@ -1950,7 +1955,7 @@
         if (source.family === "scan") {
           const scan = legalActions.find((action) => action.family === "scan");
           const preparation = scan
-            ? [scan]
+            ? [scan, ...legalActions.filter(action => action.family === "place_data")]
             : selectMinimumCostResourcePreparation(
               input.rootObservation,
               sectorRequirements.standardScanCost || {},
@@ -2958,6 +2963,11 @@
         successors[0]?.phase === "conditional"
         || CONDITIONAL_FAMILIES.has(successors[0]?.family)
       ) {
+        if (String(input.routePlanId || "").startsWith("sector:standard-scan:")
+          && input.currentAction?.family === "place_data") {
+          const choices = selectDataPlacementChoice(input.branchObservation, successors, focalSeatId);
+          if (choices) return bindRoute(choices, input.routeTargetId, input.routePlanId);
+        }
         if (String(input.routeTargetId || "").startsWith("card:acquire:")
           && successors.every(action => action.target?.kind === "trade-card-selection")) {
           const cardId = input.routeTargetId.slice("card:acquire:".length);
@@ -3380,7 +3390,8 @@
         // 条件/奖励分支在上方完成，不因满槽或目录换代而被此处中断。
         if (!requirements.candidates.some((candidate) => candidate.targetId === input.routeTargetId)) return [];
         const scan = successors.find((action) => action.family === "scan");
-        if (scan) return bindRoute([scan], input.routeTargetId, input.routePlanId);
+        if (scan) return bindRoute([scan, ...successors.filter(action => action.family === "place_data")],
+          input.routeTargetId, input.routePlanId);
         const preparation = selectMinimumCostResourcePreparation(
           input.branchObservation,
           requirements?.standardScanCost || {},

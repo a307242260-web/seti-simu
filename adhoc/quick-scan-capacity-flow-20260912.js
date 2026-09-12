@@ -21,7 +21,7 @@ try {
   }
   const actorId = save.replaySteps[scanStep - 1].action.actorId;
   for (const pool of [4, 5, 6]) {
-    for (const prepare of [0, ...pool > 4 ? [pool - 4] : []]) {
+    for (const prepare of (policyChoices ? [0, 1, 2] : [0, ...pool > 4 ? [pool - 4] : []])) {
       const comp = env.createCounterfactualFork(null, { branchKey: `scan-capacity-${pool}-${prepare}` }).composition;
       try {
         const envelope = comp.lifecycle.save().envelope;
@@ -43,6 +43,10 @@ try {
         }).find(target => target.targetId.startsWith("sector:win:")
           && target.compatibleActionIds.includes(initialScan?.actionId)) : null;
         if (policyChoices) assert(scanTarget, "正式扫描必须有可检验的扇区目标");
+        const rootAction = prepare
+          ? comp.inputPort.enumerateActions({}).find(a => a.family === "place_data") : initialScan;
+        if (policyChoices) assert(scanTarget.compatibleActionIds.includes(rootAction.actionId),
+          "准备方案必须从真实根目录进入，不能由脚本凭空绑定");
         const actionsTaken = [];
         const selectionEvidence = [];
         function decide(decision, choice) {
@@ -114,16 +118,31 @@ try {
         assert.equal(placedAfter, placedBefore + prepare);
         assert.equal(result.mainActionCompleted, true);
         assert(comp.inputPort.enumerateActions({}).some(a => a.family === "end_turn"));
+        const rootObservation = outcomeModel.createDecisionObservation(preparationObservation, { seatId: actorId });
+        const evaluation = policyChoices ? evaluator.evaluateOutcome({ seatId: actorId,
+          observation: rootObservation, legalActions: [rootAction], actionOutcomes: [{
+            schemaVersion: evaluator.OUTCOME_SCHEMA_VERSION, actionId: rootAction.actionId,
+            status: "settled", rootObservation, leaves: [{ leafId: `prepare-${prepare}`,
+              status: "settled", terminalReason: "scan-settled",
+              observation: outcomeModel.createDecisionObservation(publicAfter, { seatId: actorId }),
+              executionStepCount: actionsTaken.length,
+            }],
+          }] }, rootAction) : null;
         cases.push({ poolBefore: pool, placedBefore, prepared: prepare, poolAfter, placedAfter, discarded,
           mainActionCompleted: true, actionsTaken,
-          ...(policyChoices ? { scanTarget, selectionEvidence } : {}) });
+          ...(policyChoices ? { scanTarget, selectionEvidence, evaluation: {
+            selectable: evaluation.selectable, primaryValue: evaluation.primaryValue,
+            code: evaluation.code,
+            dataDiscardDelta: evaluation.dataDiscardDelta, sortKey: evaluation.sortKey,
+            executionStepCount: evaluation.executionStepCount,
+          } } : {}) });
       } finally { comp.dispose(); }
     }
   }
   console.log(JSON.stringify({ source, scanStep, actorId,
     fixture: "从既有正式扫描前状态起，用正式gainData构造池4/5/6；后续放置、扫描和条件选择全部经共享inputPort。",
     scope: policyChoices
-      ? "现有目标目录中首个扫描扇区目标，条件链由现有后继选择器唯一决定，原生descriptor正式提交；准备数量仍为外部指定，不证明AI会主动准备，也不外推其他科技或可选扫描。"
+      ? "现有扫描目标的根目录包含准备动作；枚举0/1/2次准备后，由现有后继选择器唯一决定扫描条件链并原生提交。只比较这一完整扫描事务，不外推目标获胜、AI最终选择或其他科技；若无primary收益仍必须不可选。"
       : "固定同一可见扫描选择链的容量必要性；不预测其他可选扫描、隐藏补牌或对手，不证明AI会主动先放数据。",
     cases }, null, 2));
 } finally { env.dispose(); }

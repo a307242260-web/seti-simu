@@ -81,10 +81,16 @@ ordinaryCardEffectValue，数值不变；普通牌入手不新增primary收益�
 交易；其余普通准备延后，绑定后继保留目标并通过合法end_turn继续下一自己turn。
 conditional付款/奖励和control不受该准入裁剪。计划步骤保存目标与计划身份，重新
 检查时机，并将moveTiming纳入路线依赖；窗口消失返回quick-timing-no-current-window。
-扫描前容量准备及其他必要准备来源仍在QUICK-TIMING-01验收范围内，尚未完成。
+扫描容量准备已接入根与绑定后继：标准scan合法时，并列扫描和合法place_data，
+绑定同一扇区目标，条件放置复用原选位函数。搜索执行真实扫描链，不另预测所得。
+完整叶及最终动作在primary相同时先比较同席根叶的dataDiscardDelta（越少越好），
+再按既有交易数/目标深度排序，非终局最后优先执行步骤更少的方案；终局不使用
+数据浪费作为优先项。无主要收益仍不可选，不为防溢出增分。所有准备分支共用
+现有全局搜索预算；单决策及完整局效果尚待验收，其他必要准备来源也尚未完成。
 数据溢出的正式累计事实通过publicState.players[].dataProgress.discardedCount进入
 标准progress与strategicFacts；用于区分同样装满数据池的不同真实结果。它不参与
 当前V或primary计分，不将历史丢弃重复扣分；后续准备比较须取同席前后增量。
+计划的data依赖包含availableData，池数量变化使旧准备步骤失效，不仅检查已填位置。
 仍存在于正式候选目录的sector:win目标在准备过程中保留原targetId/planId，不能
 因放数据或获得数据被通用分析启发式改绑。目录中的结算身份失效后返回null；完成
 仍由正式wins及settlementNumber判定，不以一次准备或一次扫描冒充赢得扇区。

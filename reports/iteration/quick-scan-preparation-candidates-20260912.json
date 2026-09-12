@@ -1,0 +1,774 @@
+{
+  "source": "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-full-v276.json",
+  "scanStep": 33,
+  "actorId": "player-white",
+  "fixture": "从既有正式扫描前状态起，用正式gainData构造池4/5/6；后续放置、扫描和条件选择全部经共享inputPort。",
+  "scope": "现有扫描目标的根目录包含准备动作；枚举0/1/2次准备后，由现有后继选择器唯一决定扫描条件链并原生提交。只比较这一完整扫描事务，不外推目标获胜、AI最终选择或其他科技；若无primary收益仍必须不可选。",
+  "cases": [
+    {
+      "poolBefore": 4,
+      "placedBefore": 4,
+      "prepared": 0,
+      "poolAfter": 6,
+      "placedAfter": 4,
+      "discarded": 0,
+      "mainActionCompleted": true,
+      "actionsTaken": [
+        {
+          "family": "scan",
+          "target": {
+            "kind": "standard-scan"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "family": "choose_card",
+          "target": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "scanTarget": {
+        "targetId": "sector:win:sector-3-a:1",
+        "planId": "sector:standard-scan:sector-3-a",
+        "resultTargetIds": [
+          "sector:win:sector-3-a:1"
+        ],
+        "compatibleActionIds": [
+          "place_data:8fd12fd3",
+          "scan:2d21a323"
+        ]
+      },
+      "selectionEvidence": [
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 1,
+          "selectedActionId": "choose_target:756e7901",
+          "selectedTarget": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 6,
+          "selectedActionId": "choose_card:836ae617",
+          "selectedTarget": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "evaluation": {
+        "selectable": false
+      }
+    },
+    {
+      "poolBefore": 4,
+      "placedBefore": 4,
+      "prepared": 1,
+      "poolAfter": 5,
+      "placedAfter": 5,
+      "discarded": 0,
+      "mainActionCompleted": true,
+      "actionsTaken": [
+        {
+          "family": "place_data",
+          "target": {
+            "kind": "place-data"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          }
+        },
+        {
+          "family": "scan",
+          "target": {
+            "kind": "standard-scan"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "family": "choose_card",
+          "target": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "scanTarget": {
+        "targetId": "sector:win:sector-3-a:1",
+        "planId": "sector:standard-scan:sector-3-a",
+        "resultTargetIds": [
+          "sector:win:sector-3-a:1"
+        ],
+        "compatibleActionIds": [
+          "place_data:8fd12fd3",
+          "scan:2d21a323"
+        ]
+      },
+      "selectionEvidence": [
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 1,
+          "selectedActionId": "choose_target:756e7901",
+          "selectedTarget": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 6,
+          "selectedActionId": "choose_card:836ae617",
+          "selectedTarget": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "evaluation": {
+        "selectable": false
+      }
+    },
+    {
+      "poolBefore": 4,
+      "placedBefore": 4,
+      "prepared": 2,
+      "poolAfter": 4,
+      "placedAfter": 6,
+      "discarded": 0,
+      "mainActionCompleted": true,
+      "actionsTaken": [
+        {
+          "family": "place_data",
+          "target": {
+            "kind": "place-data"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          }
+        },
+        {
+          "family": "place_data",
+          "target": {
+            "kind": "place-data"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          }
+        },
+        {
+          "family": "scan",
+          "target": {
+            "kind": "standard-scan"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "family": "choose_card",
+          "target": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "scanTarget": {
+        "targetId": "sector:win:sector-3-a:1",
+        "planId": "sector:standard-scan:sector-3-a",
+        "resultTargetIds": [
+          "sector:win:sector-3-a:1"
+        ],
+        "compatibleActionIds": [
+          "place_data:8fd12fd3",
+          "scan:2d21a323"
+        ]
+      },
+      "selectionEvidence": [
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 1,
+          "selectedActionId": "choose_target:756e7901",
+          "selectedTarget": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 6,
+          "selectedActionId": "choose_card:836ae617",
+          "selectedTarget": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "evaluation": {
+        "selectable": false
+      }
+    },
+    {
+      "poolBefore": 5,
+      "placedBefore": 4,
+      "prepared": 0,
+      "poolAfter": 6,
+      "placedAfter": 4,
+      "discarded": 1,
+      "mainActionCompleted": true,
+      "actionsTaken": [
+        {
+          "family": "scan",
+          "target": {
+            "kind": "standard-scan"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "family": "choose_card",
+          "target": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "scanTarget": {
+        "targetId": "sector:win:sector-3-a:1",
+        "planId": "sector:standard-scan:sector-3-a",
+        "resultTargetIds": [
+          "sector:win:sector-3-a:1"
+        ],
+        "compatibleActionIds": [
+          "place_data:8fd12fd3",
+          "scan:2d21a323"
+        ]
+      },
+      "selectionEvidence": [
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 1,
+          "selectedActionId": "choose_target:756e7901",
+          "selectedTarget": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 6,
+          "selectedActionId": "choose_card:836ae617",
+          "selectedTarget": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "evaluation": {
+        "selectable": false
+      }
+    },
+    {
+      "poolBefore": 5,
+      "placedBefore": 4,
+      "prepared": 1,
+      "poolAfter": 6,
+      "placedAfter": 5,
+      "discarded": 0,
+      "mainActionCompleted": true,
+      "actionsTaken": [
+        {
+          "family": "place_data",
+          "target": {
+            "kind": "place-data"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          }
+        },
+        {
+          "family": "scan",
+          "target": {
+            "kind": "standard-scan"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "family": "choose_card",
+          "target": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "scanTarget": {
+        "targetId": "sector:win:sector-3-a:1",
+        "planId": "sector:standard-scan:sector-3-a",
+        "resultTargetIds": [
+          "sector:win:sector-3-a:1"
+        ],
+        "compatibleActionIds": [
+          "place_data:8fd12fd3",
+          "scan:2d21a323"
+        ]
+      },
+      "selectionEvidence": [
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 1,
+          "selectedActionId": "choose_target:756e7901",
+          "selectedTarget": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 6,
+          "selectedActionId": "choose_card:836ae617",
+          "selectedTarget": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "evaluation": {
+        "selectable": false
+      }
+    },
+    {
+      "poolBefore": 5,
+      "placedBefore": 4,
+      "prepared": 2,
+      "poolAfter": 5,
+      "placedAfter": 6,
+      "discarded": 0,
+      "mainActionCompleted": true,
+      "actionsTaken": [
+        {
+          "family": "place_data",
+          "target": {
+            "kind": "place-data"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          }
+        },
+        {
+          "family": "place_data",
+          "target": {
+            "kind": "place-data"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          }
+        },
+        {
+          "family": "scan",
+          "target": {
+            "kind": "standard-scan"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "family": "choose_card",
+          "target": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "scanTarget": {
+        "targetId": "sector:win:sector-3-a:1",
+        "planId": "sector:standard-scan:sector-3-a",
+        "resultTargetIds": [
+          "sector:win:sector-3-a:1"
+        ],
+        "compatibleActionIds": [
+          "place_data:8fd12fd3",
+          "scan:2d21a323"
+        ]
+      },
+      "selectionEvidence": [
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 1,
+          "selectedActionId": "choose_target:756e7901",
+          "selectedTarget": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 6,
+          "selectedActionId": "choose_card:836ae617",
+          "selectedTarget": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "evaluation": {
+        "selectable": false
+      }
+    },
+    {
+      "poolBefore": 6,
+      "placedBefore": 4,
+      "prepared": 0,
+      "poolAfter": 6,
+      "placedAfter": 4,
+      "discarded": 2,
+      "mainActionCompleted": true,
+      "actionsTaken": [
+        {
+          "family": "scan",
+          "target": {
+            "kind": "standard-scan"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "family": "choose_card",
+          "target": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "scanTarget": {
+        "targetId": "sector:win:sector-3-a:1",
+        "planId": "sector:standard-scan:sector-3-a",
+        "resultTargetIds": [
+          "sector:win:sector-3-a:1"
+        ],
+        "compatibleActionIds": [
+          "place_data:8fd12fd3",
+          "scan:2d21a323"
+        ]
+      },
+      "selectionEvidence": [
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 1,
+          "selectedActionId": "choose_target:756e7901",
+          "selectedTarget": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 6,
+          "selectedActionId": "choose_card:836ae617",
+          "selectedTarget": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "evaluation": {
+        "selectable": false
+      }
+    },
+    {
+      "poolBefore": 6,
+      "placedBefore": 4,
+      "prepared": 1,
+      "poolAfter": 6,
+      "placedAfter": 5,
+      "discarded": 1,
+      "mainActionCompleted": true,
+      "actionsTaken": [
+        {
+          "family": "place_data",
+          "target": {
+            "kind": "place-data"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          }
+        },
+        {
+          "family": "scan",
+          "target": {
+            "kind": "standard-scan"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "family": "choose_card",
+          "target": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "scanTarget": {
+        "targetId": "sector:win:sector-3-a:1",
+        "planId": "sector:standard-scan:sector-3-a",
+        "resultTargetIds": [
+          "sector:win:sector-3-a:1"
+        ],
+        "compatibleActionIds": [
+          "place_data:8fd12fd3",
+          "scan:2d21a323"
+        ]
+      },
+      "selectionEvidence": [
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 1,
+          "selectedActionId": "choose_target:756e7901",
+          "selectedTarget": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 6,
+          "selectedActionId": "choose_card:836ae617",
+          "selectedTarget": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "evaluation": {
+        "selectable": false
+      }
+    },
+    {
+      "poolBefore": 6,
+      "placedBefore": 4,
+      "prepared": 2,
+      "poolAfter": 6,
+      "placedAfter": 6,
+      "discarded": 0,
+      "mainActionCompleted": true,
+      "actionsTaken": [
+        {
+          "family": "place_data",
+          "target": {
+            "kind": "place-data"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          }
+        },
+        {
+          "family": "place_data",
+          "target": {
+            "kind": "place-data"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "data:computer",
+            "target": "computer",
+            "blueSlot": null
+          }
+        },
+        {
+          "family": "scan",
+          "target": {
+            "kind": "standard-scan"
+          }
+        },
+        {
+          "family": "choose_target",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "family": "choose_card",
+          "target": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "scanTarget": {
+        "targetId": "sector:win:sector-3-a:1",
+        "planId": "sector:standard-scan:sector-3-a",
+        "resultTargetIds": [
+          "sector:win:sector-3-a:1"
+        ],
+        "compatibleActionIds": [
+          "place_data:8fd12fd3",
+          "scan:2d21a323"
+        ]
+      },
+      "selectionEvidence": [
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 1,
+          "selectedActionId": "choose_target:756e7901",
+          "selectedTarget": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        },
+        {
+          "targetId": "sector:win:sector-3-a:1",
+          "legalCount": 6,
+          "selectedActionId": "choose_card:836ae617",
+          "selectedTarget": {
+            "choiceId": "public:card-18-0:sector-3-a",
+            "cardInstanceId": "card-18-0",
+            "publicSlotIndex": 1,
+            "nebulaId": "sector-3-a"
+          }
+        }
+      ],
+      "evaluation": {
+        "selectable": false
+      }
+    }
+  ]
+}

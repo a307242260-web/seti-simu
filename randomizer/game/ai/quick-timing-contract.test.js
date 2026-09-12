@@ -6,6 +6,7 @@ const turnFlow = require("../turn-flow");
 const test = require("node:test");
 const evaluator = require("./expected-score-evaluator");
 const continuation = require("./plan-continuation");
+const outcomeModel = require("./outcome-model");
 
 // 窄接口义务：策略观察必须携带正式主行动阶段；不验证得分或完整局轨迹。
 const env = createSimulationEnv();
@@ -239,4 +240,60 @@ test("扫描准备保留仍有效的扇区目标，不因填数据改做分析",
   observation.sectorWinRequirements.candidates = [];
   assert.equal(evaluator.selectSecondaryAgentRouteTarget(input), null,
     "已消失的结算目标不能被准备动作重新激活");
+});
+
+test("扫描根和绑定后继保留准备方案，池数据变化使准备计划失效", () => {
+  const f = timingFixture;
+  const observation = structuredClone(f.observation);
+  const own = observation.publicState.players.find(p => p.playerId === f.actorId);
+  own.mainActionCompleted = false;
+  const scan = { family: "scan", phase: "main", actorId: f.actorId, actionId: "scan:capacity", target: {}, payload: {} };
+  const legal = [scan, f.place];
+  const target = evaluator.enumerateSecondaryAgentRootTargets({ rootObservation: observation,
+    focalSeatId: f.actorId, legalActions: legal }).find(t => t.planId.startsWith("sector:standard-scan:"));
+  assert(target);
+  assert.deepEqual([...target.compatibleActionIds].sort(), legal.map(a => a.actionId).sort());
+  const selected = evaluator.selectSecondaryAgentSuccessors({ branchObservation: observation,
+    focalSeatId: f.actorId, legalSuccessors: legal, routeTargetId: target.targetId, routePlanId: target.planId });
+  assert.deepEqual(selected.map(a => a.family).sort(), ["place_data", "scan"]);
+  const steps = continuation.compilePlanSteps([{
+    ...continuation.capturePlanStep({ observation, action: f.place }),
+    routeTargetId: target.targetId, routePlanId: target.planId,
+  }]);
+  const plan = { schemaVersion: continuation.PLAN_SCHEMA_VERSION, nextActionId: f.place.actionId, steps };
+  assert.equal(continuation.planReuseCheck(plan, observation, legal).hit, true);
+  own.availableData += 1;
+  assert.equal(continuation.planReuseCheck(plan, observation, legal).hit, false);
+  assert.deepEqual(evaluator.selectSecondaryAgentSuccessors({ branchObservation: observation,
+    focalSeatId: f.actorId, legalSuccessors: [scan], routeTargetId: target.targetId, routePlanId: target.planId })
+    .map(a => a.family), ["scan"], "无合法放置时不得制造准备动作");
+});
+
+test("真实叶同收益优先少丢数据，再少步骤；不以防溢出压过较高收益", () => {
+  const f = timingFixture;
+  function observation(scoreDelta, discardedCount) {
+    const source = structuredClone(f.observation);
+    const own = source.publicState.players.find(p => p.playerId === f.actorId);
+    own.score += scoreDelta;
+    own.dataProgress.discardedCount = discardedCount;
+    return outcomeModel.createDecisionObservation(source, { seatId: f.actorId });
+  }
+  const root = observation(0, 10);
+  const leaf = (id, scoreDelta, wasted, steps) => ({ leafId: id, status: "settled",
+    observation: observation(scoreDelta, 10 + wasted), executionStepCount: steps, terminalReason: "pass" });
+  const leaves = [leaf("excess-preparation", 1, 0, 6), leaf("wasted-data", 1, 1, 3), leaf("needed-preparation", 1, 0, 4)];
+  const context = { seatId: f.actorId, observation: root, legalActions: [f.place], actionOutcomes: [{
+    schemaVersion: evaluator.OUTCOME_SCHEMA_VERSION, actionId: f.place.actionId,
+    status: "settled", rootObservation: root, leaves,
+  }] };
+  const best = evaluator.evaluateOutcome(context, f.place);
+  assert.equal(best.selectable, true);
+  assert.equal(best.dataDiscardDelta, 0);
+  assert.equal(best.executionStepCount, 4);
+  assert.equal(best.primaryValue, 1, "避免丢数据不新增primary分");
+  leaves.push(leaf("higher-score", 2, 2, 3));
+  const higher = evaluator.evaluateOutcome(context, f.place);
+  assert.equal(higher.primaryValue, 2);
+  assert.equal(higher.dataDiscardDelta, 2, "只比较根叶增量，历史10个丢弃不重复计入");
+  assert.equal(higher.sortKey[1], -2, "最终动作排序与叶排序使用相同损失顺序");
 });
