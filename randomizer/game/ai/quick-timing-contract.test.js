@@ -171,7 +171,7 @@ test("计划身份和盘面依赖未变化也不能绕过主行动后时机判�
 test("移动窗口绑定方向，消失后计划失效；正式付款与结束不受裁剪", () => {
   const f = timingFixture;
   const target = f.rootTargets.find(t => t.planId.startsWith("probe:"));
-  const move = f.legalActions.find(a => a.actionId === target.compatibleActionIds[0]);
+  const move = f.legalActions.find(a => a.family === "move" && target.compatibleActionIds.includes(a.actionId));
   assert.equal(move.family, "move");
   const timingInput = { observation: f.observation, legalActions: f.legalActions,
     routeTargetId: target.targetId, routePlanId: target.planId };
@@ -219,6 +219,33 @@ test("机会资源准备只补第一步缺口，已满足时不为未来终点�
   goal.moveTiming.forEach(t => { t.comparable = false; });
   assert.equal(evaluator.allowsQuickActionTiming(input), false,
     "没有窗口不能仅因资源不足放行交易");
+});
+
+test("移动角标共用机会准入，缺牌、无窗口和点数不足均拒绝", () => {
+  const f = timingFixture;
+  const target = f.rootTargets.find(t => t.planId.startsWith("probe:"));
+  const observation = structuredClone(f.observation);
+  const card = { ...observation.selfState.hand[0], discardActionCode: 5 };
+  observation.selfState.hand[0] = card;
+  const action = { family: "card_corner", phase: "quick", actorId: f.actorId,
+    actionId: "unit-move-corner", target: { cardInstanceId: card.id }, payload: { kind: "move", multiplier: 1 } };
+  const legal = [...f.legalActions, action];
+  const input = { observation, action, legalActions: legal, routeTargetId: target.targetId, routePlanId: target.planId };
+  assert.equal(evaluator.allowsQuickActionTiming(input), true);
+  assert(evaluator.enumerateSecondaryAgentRootTargets({ rootObservation: observation,
+    focalSeatId: f.actorId, legalActions: legal }).some(t => t.planId === target.planId
+      && t.compatibleActionIds.includes(action.actionId)));
+  assert(evaluator.selectSecondaryAgentSuccessors({ branchObservation: observation,
+    focalSeatId: f.actorId, legalSuccessors: legal, routeTargetId: target.targetId,
+    routePlanId: target.planId }).some(a => a.actionId === action.actionId));
+  const goal = observation.probeRouteRequirements.candidates.find(g => `probe:${g.requirementId}` === target.planId);
+  goal.moveTiming.forEach(t => { t.firstMovementPoints = 2; });
+  assert.equal(evaluator.allowsQuickActionTiming(input), false);
+  goal.moveTiming.forEach(t => { t.firstMovementPoints = 1; t.comparable = false; });
+  assert.equal(evaluator.allowsQuickActionTiming(input), false);
+  goal.moveTiming.forEach(t => { t.comparable = true; });
+  observation.selfState.hand = [];
+  assert.equal(evaluator.allowsQuickActionTiming(input), false);
 });
 
 test("扫描准备保留仍有效的扇区目标，不因填数据改做分析", () => {

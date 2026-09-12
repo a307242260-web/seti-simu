@@ -1,0 +1,88 @@
+{
+  "source": "seti-saves/seti-save-research-quick-timing-20260912-60f8cca6-full-v261.json",
+  "inputStep": 413,
+  "policyMode": true,
+  "policyEvidence": "根目录、同目标条件后继、逐步计划编译与复用断言全部通过；生产为0a81908e之后本批工作树",
+  "fixture": {
+    "swappedCard": "alien-chong-9-10",
+    "donor": "player-blue",
+    "actorId": "player-white",
+    "energy": 0
+  },
+  "outcomes": [
+    {
+      "mode": "ordinary-payment",
+      "allowed": true,
+      "multiplier": null,
+      "steps": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_payment",
+          "phase": "conditional",
+          "actionId": "choose_payment:a1b9bca2",
+          "actorId": "player-white",
+          "stateVersion": 205,
+          "decisionVersion": 14,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "alien-chong-9-10",
+            "cardIds": [
+              "alien-chong-9-10"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "decision": null,
+          "summary": "弃 1 张移动牌"
+        }
+      ],
+      "scoreDelta": 0,
+      "energyDelta": 0,
+      "coordinate": {
+        "x": 4,
+        "y": 1
+      },
+      "targetId": "orbit:venus:planet:",
+      "planId": "probe:rocket:13:orbit:venus:planet:"
+    },
+    {
+      "mode": "corner",
+      "allowed": true,
+      "multiplier": 1,
+      "steps": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:1c88a1ef",
+          "actorId": "player-white",
+          "stateVersion": 205,
+          "decisionVersion": 14,
+          "target": {
+            "choiceId": "13:-1:0",
+            "rocketId": 13,
+            "deltaX": -1,
+            "deltaY": 0
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 1
+          },
+          "decision": null,
+          "summary": "R13 逆时针"
+        }
+      ],
+      "scoreDelta": 1,
+      "energyDelta": 0,
+      "coordinate": {
+        "x": 4,
+        "y": 1
+      },
+      "targetId": "orbit:venus:planet:",
+      "planId": "probe:rocket:13:orbit:venus:planet:"
+    }
+  ],
+  "scope": "正式合法输入及条件链对照；显式手牌交换变体，不是原完整局实际持牌，也不调用AI搜索。倍增接口无实现，当前正式枚举multiplier为1，未伪造倍增案例。"
+}

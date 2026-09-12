@@ -1210,6 +1210,18 @@
         && String(goal.rocketId) === String(timing.rocketId)
         && goal.path?.[0]?.deltaX === timing.deltaX && goal.path?.[0]?.deltaY === timing.deltaY));
     if (advances(action)) return true;
+    if (action.family === "card_corner" && action.payload?.kind === "move") {
+      const card = (observation?.selfState?.hand || []).find(candidate =>
+        String(candidate.id) === String(action.target?.cardInstanceId));
+      const reward = cards.getDiscardActionMoveRewardForCard(card);
+      if (!reward) return false;
+      if (!Number.isInteger(action.payload.multiplier) || action.payload.multiplier < 1) {
+        throw new TypeError("QUICK_TIMING_MOVE_CORNER_MULTIPLIER_MISSING");
+      }
+      const points = reward.movementPoints * action.payload.multiplier;
+      return windows.some(timing => Number.isFinite(timing.firstMovementPoints)
+        && timing.firstMovementPoints > 0 && points >= timing.firstMovementPoints);
+    }
     if (action.family !== "quick_trade" || legalActions.some(advances)) return false;
     return windows.some(timing => {
       if (!Number.isFinite(timing.firstMovementPoints) || timing.firstMovementPoints <= 0) {
