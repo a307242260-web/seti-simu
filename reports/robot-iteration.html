@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-12T11:26:38.038Z",
+  "builtAt": "2026-09-12T11:56:36.494Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "68268d1a",
-  "currentBaseline": "trace-score-greedy-input-20260912",
+  "headCommit": "f80037bd",
+  "currentBaseline": "overflow-trace-greedy-20260912",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,413 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "overflow-trace-greedy-20260912",
+      "name": "同色额外痕迹贪心",
+      "date": "2026-09-12",
+      "baseline": "trace-score-greedy-input-20260912",
+      "head": "126ed66e",
+      "commits": [
+        {
+          "hash": "8ce4ff92",
+          "date": "2026-09-12",
+          "subject": "[预算专项] 定位542步额外痕迹分支并留存正式输入"
+        },
+        {
+          "hash": "25628068",
+          "date": "2026-09-12",
+          "subject": "[OVERFLOW-TRACE-GREEDY-01] 同色已揭示额外痕迹稳定择一"
+        },
+        {
+          "hash": "126ed66e",
+          "date": "2026-09-12",
+          "subject": "[OVERFLOW-TRACE-GREEDY-01] 记录542步节点与耗时验收"
+        }
+      ],
+      "summary": "已揭示同色额外痕迹按正式收益稳定择一，保留任务、外星牌与特殊槽边界",
+      "diffStat": "21 files changed, 94024 insertions(+), 19 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/benchmark-overflow-trace-20260912.js",
+          "insertions": 44,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-budget-step542-20260912.js",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-trace-score-full-20260912.js",
+          "insertions": 61,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-step542-overflow-20260912.js",
+          "insertions": 51,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 10,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/strategic-goal-evaluator.test.js",
+          "insertions": 22,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/budget-before-step542-20260912.json",
+          "insertions": 3917,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/overflow-trace-greedy-plan-20260912.md",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/overflow-trace-investigation-20260912.md",
+          "insertions": 43,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/overflow-trace-step542-25628068-20260912.json",
+          "insertions": 3583,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 521,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/step542-overflow-choices-20260912.json",
+          "insertions": 10790,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-score-full-acceptance-20260912.md",
+          "insertions": 79,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-score-full-comparison-d75fb99a-20260912.json",
+          "insertions": 854,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/trace-score-greedy-input-20260912/ccfb509e.d75fb99a.full.action-log.html",
+          "insertions": 2053,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/ccfb509e.d75fb99a.full.json",
+          "insertions": 29190,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 521,
+          "deletions": 4
+        },
+        {
+          "file": "reports/seti-current-base-robot-strategy-20260911.html",
+          "insertions": 11,
+          "deletions": 11
+        },
+        {
+          "file": "seti-saves/seti-save-research-trace-score-greedy-input-20260912-d75fb99a-full-v285.json",
+          "insertions": 42180,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "42bace26.126ed66e.full.json",
+          "recordPath": "reports/research/42bace26.126ed66e.full.json",
+          "mode": "full",
+          "steps": 597,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 1099970,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "126ed66e",
+          "createdAt": "2026-09-12T11:53:50.308Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "本项单步与边界门槛达到；完整局597步，75/125/102/89，均97.75。542步额外痕迹节点686→411，战略总节点233665不变，执行/队列截断54/60；整局1099.970秒，未实现全局提速。仅587步改选额外痕迹槽。交付核验见overflow-trace-full-acceptance-20260912.md，预算专项继续。",
+          "scores": {
+            "player-blue": 75,
+            "player-green": 125,
+            "player-brown": 102,
+            "player-white": 89
+          },
+          "avgScore": 97.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 75,
+              "base": 54,
+              "tile": 19,
+              "card": 2,
+              "tileScoresById": {
+                "a": 16,
+                "b": 0,
+                "c": 0,
+                "d": 3
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 3,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 5,
+                "orbitScore": 15,
+                "scanScore": 13,
+                "taskCardScore": 0,
+                "techBonusScore": 2
+              }
+            },
+            "player-green": {
+              "total": 125,
+              "base": 89,
+              "tile": 36,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 8,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 7,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 12,
+                "blueTechScore": 0,
+                "cardEffectScore": 3,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 21,
+                "orbitScore": 15,
+                "scanScore": 9,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-brown": {
+              "total": 102,
+              "base": 68,
+              "tile": 31,
+              "card": 3,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_10.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "publicity",
+                    "scorePer": 1
+                  },
+                  "score": 3
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 7,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 8,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 0,
+                "orbitScore": 6,
+                "scanScore": 11,
+                "taskCardScore": 0,
+                "techBonusScore": 17
+              }
+            },
+            "player-white": {
+              "total": 89,
+              "base": 69,
+              "tile": 20,
+              "card": 0,
+              "tileScoresById": {
+                "a": 5,
+                "b": 0,
+                "c": 0,
+                "d": 15
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 5,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 16,
+                "alienTraceBlueScore": 10,
+                "alienTracePinkScore": 14,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 7,
+                "orbitScore": 0,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 6
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-overflow-trace-greedy-20260912-126ed66e-full-v285.json",
+          "reportPath": "reports/iteration/overflow-trace-greedy-20260912/42bace26.126ed66e.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "42bace26.126ed66e.full",
+            "path": "reports/iteration/overflow-trace-greedy-20260912/42bace26.126ed66e.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "trace-score-greedy-input-20260912",
       "name": "虫族粉黄纯分数贪心",
@@ -697,7 +1104,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
