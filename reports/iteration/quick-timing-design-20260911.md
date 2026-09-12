@@ -115,6 +115,13 @@
 该边界的目标目录只有probe/income/tech，energy-for-card不属于任何目标；新增精选
 时机不能仅靠放行family，还必须补齐指定公共牌的目标、完成条件与复用依赖。
 
+2026-09-12开始将证据转成永久行为门禁：新增并登记
+`randomizer/game/ai/quick-timing-contract.test.js`。正式开局→发射→end_turn→下一自己turn→
+恢复发射后快照，规则阶段依次为false/true/false/true；当前观察四处均缺失字段，
+定向命令`node tools/run_node_tests.js --match quick-timing-contract`按预期失败。
+此为本迭代尚未实现的新契约红测，不是已通过验收，也不与原有两项失败混算。
+测试同时验证读阶段不改变committed state或RNG；目前留在隔离目录，生产代码未改。
+
 ### 必须一并实现的消费者矩阵
 
 以下是代码审查后的实施义务，不代表已经落地；生产设计尚需闭合后两段列出的数据来源。

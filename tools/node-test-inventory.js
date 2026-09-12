@@ -7,6 +7,7 @@ function entry(file, owner, obligation, counterexample) {
 module.exports = Object.freeze({
   schemaVersion: "seti-node-test-inventory-v2",
   unit: Object.freeze([
+    entry("randomizer/game/ai/quick-timing-contract.test.js", "architecture/policy-host", "主行动阶段观察在正式执行、跨turn和恢复后与规则状态一致且读取无副作用", "目标入口过滤control后无法辨认阶段，或恢复沿用旧阶段"),
     entry("randomizer/game/ai/turing-active-tech.test.js", "policy/heuristic-policy", "图灵重复永久能力在启用和选择处剪枝，保留失效科技与其他公司", "读取根科技或显示文案误删真实能力、强制Decision变空"),
     entry("randomizer/game/ai/turing-immediate-expiry.test.js", "policy/heuristic-policy", "图灵刚借完科技不搜索立即结束回合，保留其他后继与正式根选择", "空借跨回合占用队列或误删其他公司的结束动作"),
     entry("randomizer/game/probe-directory-cache.test.js", "architecture/standard-action", "探测目录缓存随有效临时科技建立、切换、清除及到期更新，并隔离观察席位", "热缓存沿用旧登陆费用或遗漏卫星路线"),
