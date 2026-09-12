@@ -289,21 +289,19 @@ try {
       0,
       "PASS 前规划不得选择或读取尚未向白色公开的 PASS 预留牌",
     );
-    assert.equal(policyDiagnostics.beamPrunedOriginCount, 0,
-      "次级目标搜索不得恢复 beam");
-    // 统一搜索（v0）：play_card 受限评估（每卡 depth6/128 节点）是最后执行的 evaluate，
-    // 诊断反映其受控预算——play_card 常开要求物理上限内收敛（可命中上限但必须受控，
-    // 节点数不失控爆炸）。
+    const frontierBudget = policyDiagnostics.budgetLimits.frontier;
+    assert.equal(frontierBudget.enabled, true);
+    assert.equal(frontierBudget.limit, 256, "按现行战略队列预算验证，不要求裁剪恒为0");
+    assert.equal(frontierBudget.peak <= frontierBudget.limit, true);
+    assert.equal(frontierBudget.truncated, frontierBudget.trimCount > 0);
+    if (frontierBudget.truncated) assert.equal(policyDiagnostics.beamPrunedOriginCount > 0, true);
+    // 统一战略搜索按全局物理节点预算受控，允许触限并显式记录不完整。
     assert.equal(policyDiagnostics.executedNodeCount <= policyDiagnostics.maxExecutionNodes, true,
       "统一搜索（含 play_card 受限评估）节点数必须受物理上限控制");
-    assert.equal(Number.isSafeInteger(policyDiagnostics.conditionalEquivalentMergeCount), true);
-    assert.equal(Number.isSafeInteger(policyDiagnostics.resourceDominatedOriginCount), true);
-    assert.equal(
-      Object.values(policyDiagnostics.completionDominatedOriginCountByTarget || {})
-        .reduce((total, count) => total + count, 0),
-      policyDiagnostics.completionDominatedOriginCount,
-      "完成态支配诊断必须逐次级目标完整归因，不能跨目标合并",
-    );
+    for (const field of ["transpositionHitCount", "sharedPhysicalExecutionOriginCount", "targetEquivalentChoicePrunedCount"]) {
+      assert.equal(Number.isSafeInteger(policyDiagnostics[field]) && policyDiagnostics[field] >= 0, true,
+        `现行物理共享与候选去重诊断必须为非负整数：${field}`);
+    }
     const routeEntryStats = Object.values(policyDiagnostics.routeEntryStatsByTarget || {});
     assert.equal(routeEntryStats.length > 0, true,
       "次级目标搜索必须报告按目标拆分的入口状态统计");
@@ -349,8 +347,6 @@ try {
       [actions[0].actorId],
       "固定盘面全部物理执行节点必须只属于当前白色席位",
     );
-    assert.equal(policyDiagnostics.targetSchedulerPrunedCount > 0, true,
-      "后续目标必须由资源下界调度，而不是重新展开全部目标排列");
     assert.equal(Number.isSafeInteger(policyDiagnostics.unreachableRouteOriginCount), true);
     // 非等价支付由search-payment-choices.test.js核对实际费用/得分双叶；
     // 此处不以节点数量代替行为，正确折叠弃牌后节点数可以减少。

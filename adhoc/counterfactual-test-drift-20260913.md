@@ -1,0 +1,13 @@
+# 真实反事实unit的既有漂移（独立于性能候选）
+
+原测试在基线09d4ad6a和节点投影候选均因beamPrunedOriginCount=6667而失败，
+旧断言要求0，与当前256队列预算不符。已改为预算上限、峰值和裁剪状态一致性。
+随后发现conditionalEquivalentMergeCount/resourceDominatedOriginCount/
+completionDominatedOriginCount/targetSchedulerPrunedCount在当前生产中已不存在；
+不恢复已删机制，改为现行物理共享、转置命中、目标候选去重计数检查；保留目标路线
+归因、真实执行、隐藏信息、PASS边界等其他行为断言。
+
+候选继续到“固定fixture必须至少放行一个quick_trade根”时失败，不能宣称此unit全通过。
+已用修改后的同一测试加载09d4ad6a基线模块，仍在相同quick_trade断言失败，确认既有。
+下一步检查fixture的实际目标缺口；
+不靠删除失败断言来验收性能改动。此测试修订单独留档，未作为性能收益。
