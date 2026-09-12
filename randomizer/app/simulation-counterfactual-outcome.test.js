@@ -355,13 +355,18 @@ try {
     ));
     assert.equal(quickTradeOutcomes.length > 0, true,
       "固定盘面必须覆盖可执行快速交易");
-    // 统一搜索（unified）语义：quick_trade 凭需求放行（requiresRootCounterfactual 的
-    // prepares* 门控）——能补当前资源缺口的才进搜索，其余无需求保持 NOT_EVALUATED。
+    // 根准入由目标目录的资源准备决定；fixture不保证一定需要直接交易。
     const releasedQuickTrades = quickTradeOutcomes.filter((outcome) => (
       outcome.code !== "STRATEGIC_GOAL_NOT_EVALUATED"
     ));
-    assert.equal(releasedQuickTrades.length > 0, true,
-      "统一搜索下能补资源缺口的快速转换必须放行进入搜索（需求引导）");
+    const expectedQuickTradeRoots = require("../game/ai/expected-score-evaluator").selectSecondaryAgentRootActions({
+      focalSeatId: actions[0].actorId,
+      rootObservation: policyResult.actionOutcomes[0].rootObservation,
+      legalActions: actions,
+      maxProxyDepth: 15,
+    }).filter(action => action.family === "quick_trade").map(action => action.actionId).sort();
+    assert.deepEqual(releasedQuickTrades.map(outcome => outcome.actionId).sort(), expectedQuickTradeRoots,
+      "真实搜索须覆盖目录准入的交易且不横向展开目录外交易；目录策略本身由定向unit验证");
     assert.equal(
       quickTradeOutcomes.some((outcome) => (
         outcome.code === "STRATEGIC_GOAL_NOT_EVALUATED"

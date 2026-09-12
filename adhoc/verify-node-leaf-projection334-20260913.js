@@ -12,11 +12,7 @@ const rulePath = path.resolve("randomizer/game/rule-composition.js");
 let ruleSource = fs.readFileSync(rulePath, "utf8");
 const needle = "const fullObservation = fullLeafObservation(origin, leafObservation);";
 assert.equal(ruleSource.split(needle).length, 2);
-ruleSource = ruleSource.replace(needle, needle + `
-  const rebuilt = activeForkComposition.projection(viewer).state;
-  globalThis.__setiAssertLeafProjection334(fullObservation, origin.informationMasked
-    ? sanitizeHiddenInformationObservation(rootObservation, rebuilt, origin.informationBarrier || null) : rebuilt);
-`);
+ruleSource = ruleSource.replace(needle, needle + "const rebuilt = activeForkComposition.projection(viewer).state; globalThis.__setiAssertLeafProjection334(fullObservation, origin.informationMasked ? sanitizeHiddenInformationObservation(rootObservation, rebuilt, origin.informationBarrier || null) : rebuilt);");
 const rule = new Module(rulePath, module); rule.filename = rulePath; rule.paths = Module._nodeModulePaths(path.dirname(rulePath));
 rule._compile(ruleSource, rulePath); rule.loaded = true; require.cache[rulePath] = rule;
 const env = require("../randomizer/app/simulation-env").createSimulationEnv();`);
