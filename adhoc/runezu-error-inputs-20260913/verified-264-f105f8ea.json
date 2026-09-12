@@ -1,0 +1,185 @@
+{
+  "commit": "f105f8ea01c1f8d76be33963dac260036c48b6c9",
+  "step": 264,
+  "ok": true,
+  "searches": [
+    {
+      "kind": "control",
+      "diagnostics": {
+        "budgetLimits": {
+          "leaves": {
+            "enabled": true,
+            "limit": 1,
+            "reached": true,
+            "truncated": false,
+            "prunedOriginCount": 0
+          },
+          "frontier": {
+            "enabled": false,
+            "limit": 256,
+            "peak": 1,
+            "reached": false,
+            "truncated": false,
+            "trimCount": 0
+          },
+          "execution": {
+            "enabled": true,
+            "limit": 1,
+            "used": 1,
+            "reached": true,
+            "truncated": false,
+            "remainingFrontierNodeCount": 0
+          }
+        },
+        "executedNodeCount": 1,
+        "maxExecutionNodes": 1,
+        "executionLimitReached": false,
+        "beamPrunedOriginCount": 0,
+        "successfulInputSubmissionCount": 1,
+        "attemptedNodeCountByFamily": {
+          "pass": 1
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "pass": 1
+        },
+        "executedNodeCountByDecisionKind": {
+          "pass:main": 1
+        },
+        "executedNodeCountByActionSummary": {
+          "pass:PASS": 1
+        },
+        "executedOriginCountByTarget": {
+          "<unbound>": 1
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "<unbound> -> pass:main": 1
+        },
+        "frontierOriginCountByFamily": {},
+        "totalMilliseconds": 8.79712500000096
+      }
+    },
+    {
+      "kind": "strategic",
+      "diagnostics": {
+        "budgetLimits": {
+          "leaves": {
+            "enabled": false,
+            "limit": 8,
+            "reached": false,
+            "truncated": false,
+            "prunedOriginCount": 0
+          },
+          "frontier": {
+            "enabled": true,
+            "limit": 256,
+            "peak": 56,
+            "reached": false,
+            "truncated": false,
+            "trimCount": 0
+          },
+          "execution": {
+            "enabled": true,
+            "limit": 4096,
+            "used": 211,
+            "reached": false,
+            "truncated": false,
+            "remainingFrontierNodeCount": 0
+          }
+        },
+        "executedNodeCount": 211,
+        "maxExecutionNodes": 4096,
+        "executionLimitReached": false,
+        "beamPrunedOriginCount": 0,
+        "successfulInputSubmissionCount": 211,
+        "attemptedNodeCountByFamily": {
+          "card_corner": 62,
+          "choose_card": 12,
+          "choose_target": 25,
+          "end_turn": 44,
+          "pass": 45,
+          "play_card": 23
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "card_corner": 62,
+          "choose_card": 12,
+          "choose_target": 25,
+          "end_turn": 44,
+          "pass": 45,
+          "play_card": 23
+        },
+        "executedNodeCountByDecisionKind": {
+          "card_corner:quick": 62,
+          "choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card": 12,
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward": 18,
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 1,
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:runezu_symbol_branch/cardEffect=runezu_symbol_branch": 6,
+          "end_turn:turn_control": 44,
+          "pass:main": 45,
+          "play_card:main": 23
+        },
+        "executedNodeCountByActionSummary": {
+          "pass:PASS": 45,
+          "end_turn:结束回合": 44,
+          "card_corner:dlc_25.png：弃牌角标": 41,
+          "card_corner:amiba_3.webp：弃牌角标": 10,
+          "choose_target:粉色痕迹 1号位": 9,
+          "choose_target:蓝色痕迹 1号位": 9,
+          "play_card:amiba_3.webp": 9,
+          "card_corner:dlc_24.png：弃牌角标": 5,
+          "card_corner:dlc_27.png：弃牌角标": 5,
+          "play_card:dlc_27.png": 5,
+          "choose_card:dlc_24.png": 3,
+          "choose_card:dlc_27.png": 3,
+          "choose_card:dlc_28.png": 3,
+          "choose_card:盲抽 1 张牌": 3,
+          "choose_target:符文5+符文5+符文1": 3,
+          "choose_target:符文7+符文7+符文6": 3,
+          "play_card:dlc_25.png": 3,
+          "play_card:runezu_5.webp": 3,
+          "play_card:runezu_7.webp": 3,
+          "card_corner:amiba_1.webp：弃牌角标": 1,
+          "choose_target:结束移动": 1
+        },
+        "executedOriginCountByTarget": {
+          "<unbound>": 112,
+          "tech:gain:blue1": 61,
+          "tech:gain:blue2": 61,
+          "tech:gain:orange2": 61,
+          "decision:choose_target:178e1f5e": 9,
+          "decision:choose_target:30cf5375": 9,
+          "decision:choose_card:30787bd1": 3,
+          "decision:choose_card:4c50c750": 3,
+          "decision:choose_card:bfb5a1ec": 3,
+          "decision:choose_card:d8d7e6f2": 3,
+          "decision:choose_target:572f8168": 3,
+          "decision:choose_target:86ff4c3f": 3,
+          "card:resolve:alien-amiba-1-2": 2
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "tech:gain:blue1 -> card_corner:quick": 61,
+          "tech:gain:blue2 -> card_corner:quick": 61,
+          "tech:gain:orange2 -> card_corner:quick": 61,
+          "<unbound> -> pass:main": 45,
+          "<unbound> -> end_turn:turn_control": 44,
+          "<unbound> -> play_card:main": 23,
+          "decision:choose_target:178e1f5e -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward": 9,
+          "decision:choose_target:30cf5375 -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:amiba_remove_trace_for_region_reward/cardEffect=amiba_remove_trace_for_region_reward": 9,
+          "decision:choose_card:30787bd1 -> choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card": 3,
+          "decision:choose_card:4c50c750 -> choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card": 3,
+          "decision:choose_card:bfb5a1ec -> choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card": 3,
+          "decision:choose_card:d8d7e6f2 -> choose_card:conditional/decision=choose_card/effect=card_play_domain_pick_card/cardEffect=pick_card": 3,
+          "decision:choose_target:572f8168 -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:runezu_symbol_branch/cardEffect=runezu_symbol_branch": 3,
+          "decision:choose_target:86ff4c3f -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:runezu_symbol_branch/cardEffect=runezu_symbol_branch": 3,
+          "card:resolve:alien-amiba-1-2 -> card_corner:quick": 1,
+          "card:resolve:alien-amiba-1-2 -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 1
+        },
+        "frontierOriginCountByFamily": {},
+        "totalMilliseconds": 641.2594580000004
+      }
+    }
+  ]
+}

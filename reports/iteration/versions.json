@@ -7,6 +7,23 @@
   },
   "versions": [
     {
+      "id": "runezu-effect-fix-20260913",
+      "name": "runezu-effect-fix-20260913",
+      "date": "2026-09-13",
+      "baseline": "probe-owner-cache-20260912",
+      "head": "f105f8ea",
+      "commits": [
+        "f105f8ea"
+      ],
+      "summary": "补齐符文卡牌分支和位置奖励执行器，任务奖励共用正式结算且不增加符号库存",
+      "records": {
+        "e16bc101.f105f8ea.full.json": {
+          "note": "规则修复验收通过；589步自然终局，save-final 97/123/127/84，均107.75，与基线逐步action/after差异0；共同9个报错输入在本版错误归零。执行截断52、队列55未变，不算预算优化；详见runezu-effect-acceptance-20260913.md。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "probe-owner-cache-20260912",
       "name": "probe-owner-cache-20260912",
       "date": "2026-09-12",
