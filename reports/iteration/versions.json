@@ -7,6 +7,26 @@
   },
   "versions": [
     {
+      "id": "probe-move-greedy-20260912",
+      "name": "probe-move-greedy-20260912",
+      "date": "2026-09-12",
+      "baseline": "alien-pick-greedy-20260912",
+      "head": "d59d423f",
+      "commits": [
+        "8653ea0b",
+        "5cc46414",
+        "2e179b6d",
+        "065c511e",
+        "e893b2be",
+        "d59d423f"
+      ],
+      "summary": "主行动前同一探测目标普通移动按正式最低成本目录首步局部择一，保留合法替代、免费条件移动与主行动后窗口，不改规则或预算",
+      "records": {
+        "82762123.d59d423f.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "alien-pick-greedy-20260912",
       "name": "alien-pick-greedy-20260912",
       "date": "2026-09-12",
