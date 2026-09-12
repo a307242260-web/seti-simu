@@ -111,6 +111,13 @@ Standard Action身份；恢复存档时重新枚举，AI与浏览器不补写act
 包含正式终点`rewards`、`cost`与`ownMarkers`，由正式奖励/成本来源生成。计划比较该事实
 和路线总资源成本，不按原始标记总数猜奖励；奥陌陌取自身面板。
 
+主行动完成且movementContext.phase=ordinary时，候选追加`moveTiming[]`：每个当前
+路线首步携带rocketId、deltaX/deltaY、rotationCount、rotations=1、comparable；可比较时
+包含delayedMovementPoints和earlyMovementPoints（包含先走的点数）。它比较下一次
+转动的几何风险，不预测对手；缺路线为comparable=false，不输出无穷大。派生在私有
+复制上复用正式移动/转动及路线目录，不执行支付或奖励Decision、不消耗RNG、不计奖励。
+非该阶段不派生该字段；根/叶公开目录共享同一生产者，未新增存档字段或实体编号。
+
 `probeRouteRequirements.movementContext`描述当前普通/公司/卡牌移动阶段：
 `phase`、`cardRemaining`、`companyAvailable`、`companyRemaining`、`usedRocketIds`，
 卡牌阶段另有`cardInstanceId`。四种Card Play移动effect复用正式枚举的

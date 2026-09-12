@@ -3,7 +3,7 @@
 2026-09-11；起点615bb175；独立目录
 `/tmp/seti-quick-timing-20260911.3uuamI`。整体计划第三项；前两项已验收合回。
 
-当前实施状态（2026-09-12）：阶段观察接口及行为测试已落地；移动/精选时机、
+当前实施状态（2026-09-12）：阶段观察、移动时机事实接口及行为测试已落地；移动/精选准入、
 扫描准备和统一消费者接入尚未完成，整项未验收、未合回。下文基线证据对应各自记录版本。
 
 ## 目标与必要性
@@ -151,6 +151,29 @@ sanitizePublicPlayer，增加Boolean(player.mainActionCompleted)的只读公开�
 数据来源待闭合：移动风险事实应在公共projection中提供、不能令纯评估器读取私有内核；
 应复用正式几何结算，不执行或估价隐藏奖励。指定公共牌“想要”的用途判断应复用
 已有卡牌估值/目标能力，不能另加固定抢牌分；采集和使用时共享一个牌身份。
+
+移动事实接口实施设计（2026-09-12）：在主行动完成且ordinary移动边界，由production-kernel
+为正式probe候选追加moveTiming。固定只看下一次转动，不递归枚举以后转动，不模拟对手。
+枚举同一来源当前路线的等成本首步；每个不同rocketId/deltaX/deltaY只计算一次，最多
+4×当前探测器数，再加一个不提前移动的转动对照。每个场景调用已有正式路线目录，
+递归调用明确关闭时机派生，避免投影递归。
+先移动场景只在私有复制上用rockets.moveRocket结算几何位置，再经turnFlow.rotateSolarSystem
+结算所有探测器转动；不执行支付/奖励Decision，不把移动点等价成能量或牌价，不计奖励。
+比较delayedMovementPoints与firstMovePoints+earlyRemainingMovementPoints，只输出有限数值
+和公开探测器/目标/方向；缺少未来路线明确输出不可比较，不用Infinity或虚构巨大成本。
+正式领域的移动/转动失败直接抛错；不调用RNG或生成实体，不修改原状态。
+缓存键覆盖现有probe结构键、完整太阳系与棋子几何，缓存沿用目录容量上限；资源缺口
+仍由现有目录逐次计算，不从缓存复制旧资源。性能需实测，未通过前不跑AI全盘。
+
+移动事实接口已实施：`buildProbeMoveTiming`在共享production-kernel中派生候选
+moveTiming数组；缓存与正式输入结构绑定，内部重读路线时关闭该派生，避免递归。
+永久契约测试通过正式移动及能量付款后转动，验证已走成本与剩余路线，并验证恢复
+缓存和原状态/RNG不变。12次原回放移动的已有证据脚本新增逐项对照断言，全部通过；
+probe-directory-cache、唯一full-flow、V输入审计通过。尚未改候选准入，未跑新的AI实验，
+单决策性能与整体策略验收仍待完成，不把接口测试速度当作机器人决策性能。
+全量Node回归：unit 83通过/2既有失败（共85），唯一full-flow通过；两项失败仍为
+simulation-counterfactual-outcome的“不得恢复beam”和strategic-goal-evaluator的分析
+完成后后继断言，无新增失败。日志`/tmp/seti-quick-move-facts-node-20260912.log`。
 
 防溢出来源待闭合：`buildDataAnalyzeRequirements`的scan计划dataCount=1是当前目录
 的简化值，不能作为整次扫描将获数量。正式science-session扫描队列含地球、公共牌

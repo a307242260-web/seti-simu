@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { createSimulationEnv } = require("../../app/simulation-env");
+const turnFlow = require("../turn-flow");
 
 // 窄接口义务：策略观察必须携带正式主行动阶段；不验证得分或完整局轨迹。
 const env = createSimulationEnv();
@@ -59,6 +60,39 @@ try {
   capture("next-own-turn");
   assert.equal(fork.lifecycle.restore(checkpoint).ok, true);
   capture("restored-after-main");
+  const goals = fork.projection(viewer).state.probeRouteRequirements.candidates;
+  const legalMoves = fork.inputPort.enumerateActions({}).filter(a => a.family === "move");
+  const goal = goals.find(g => g.moveTiming?.some(t => t.comparable && legalMoves.some(a => (
+    a.target.rocketId === t.rocketId && a.target.deltaX === t.deltaX && a.target.deltaY === t.deltaY
+  ))));
+  assert(goal, "发射后必须提供至少一个可比较的正式路线首步");
+  const timing = goal.moveTiming.find(t => t.comparable && legalMoves.some(a => (
+    a.target.rocketId === t.rocketId && a.target.deltaX === t.deltaX && a.target.deltaY === t.deltaY
+  )));
+  const timedMove = legalMoves.find(a => a.target.rocketId === timing.rocketId
+    && a.target.deltaX === timing.deltaX && a.target.deltaY === timing.deltaY);
+  function rotatedCost(saved) {
+    const state = JSON.parse(saved.committedState);
+    assert.equal(turnFlow.rotateSolarSystem(state, 1, actorId).ok, true);
+    assert.equal(fork.lifecycle.restore({ ...saved, committedState: JSON.stringify(state) }).ok, true);
+    return fork.projection(viewer).state.probeRouteRequirements.candidates
+      .find(g => g.requirementId === goal.requirementId).required.movementPoints;
+  }
+  assert.equal(timing.delayedMovementPoints, rotatedCost(checkpoint));
+  assert.equal(fork.lifecycle.restore(checkpoint).ok, true);
+  assert.equal(fork.inputPort.submitAction(timedMove).ok, true);
+  const payment = fork.inspect().session.decision;
+  const energyPayment = payment.choices.find(c => c.target?.choiceId === "energy");
+  assert(energyPayment);
+  assert.equal(fork.inputPort.submitDecision({ decisionId: payment.decisionId,
+    decisionVersion: payment.decisionVersion, ownerId: payment.ownerId, choice: energyPayment }).ok, true);
+  assert.equal(fork.inspect().session, null);
+  assert.equal(timing.earlyMovementPoints,
+    timedMove.payload.requiredMovePoints + rotatedCost(fork.lifecycle.save().envelope),
+    "投影成本必须等于正式移动付款完成后再转动的剩余路线加已走点数");
+  assert.equal(fork.lifecycle.restore(checkpoint).ok, true);
+  assert.deepEqual(fork.projection(viewer).state.probeRouteRequirements.candidates, goals,
+    "恢复相同盘面必须得到相同时机事实，不能沿用转动场景的缓存");
   assert.deepEqual(observed.map(s => s.expected), [false, true, true, false, true]);
   assert.deepEqual(observed.map(s => ({ label: s.label, completed: s.actual })),
     observed.map(s => ({ label: s.label, completed: s.expected })),

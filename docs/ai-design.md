@@ -40,6 +40,9 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 - 观察中的`publicState.players[].mainActionCompleted`直接来自正式玩家标记，区分
   主行动前后；不能从目标枚举收到的合法子集是否包含end_turn猜测阶段。该公开字段
   不改变动作合法性或强制Decision流程；快速行动时机策略的接入仍属QUICK-TIMING-01。
+- 主行动后的普通移动目录提供`moveTiming`：同一探测器同一目标，比较下一次转动
+  后再走的移动点与先走一步再转动的总移动点。此为只读风险事实，不是额外估值；
+  不预测对手，不把丢失路线换成虚构收益。候选筛选及复用接入仍在QUICK-TIMING-01内实施。
 - **方案内部链路**（未命中时才走）：`heuristic-decision-function` 经
   composition.counterfactualPort 生成 actionOutcomes -> Policy Port -> Policy
   -> PolicyDecision -> 提交。Browser 与 Simulation 完全同一份实现（同一协调器、

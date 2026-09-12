@@ -80,6 +80,17 @@ function inspectMove(action, step) {
       const currentEnergy = c.required.energy;
       const delayedEnergy = wait.required.energy;
       const earlyEnergy = paidEnergy + beforeRotation.required.energy;
+      const projectedTiming = c.moveTiming?.find(fact => fact.rocketId === action.target.rocketId
+        && fact.deltaX === action.target.deltaX && fact.deltaY === action.target.deltaY);
+      if (c.movementNextSteps.some(s => s.family === "move" && s.rocketId === action.target.rocketId
+        && s.deltaX === action.target.deltaX && s.deltaY === action.target.deltaY)) {
+        assert(projectedTiming, `正式路线首步缺少时机事实 ${step}/${c.requirementId}`);
+      }
+      if (projectedTiming) {
+        assert.equal(projectedTiming.comparable, true);
+        assert.equal(projectedTiming.delayedMovementPoints, wait.required.movementPoints);
+        assert.equal(projectedTiming.earlyMovementPoints, movePoints + beforeRotation.required.movementPoints);
+      }
       return {
         requirementId: c.requirementId, comparable: true,
         currentEnergy, delayedEnergy, earlyEnergy, paidEnergy,

@@ -351,6 +351,7 @@ const PROBE_ROUTE_TOPOLOGY_CACHE_MAX = 2048;
 // resourceGap（每节点便宜地重算）。结构命中时跳过 listOrbitRequirementsAt/
 // buildRewardEffects/getSectorRanking 等昂贵重算。
 const PROBE_STRUCTURE_CACHE = new Map();
+const PROBE_MOVE_TIMING_CACHE = new Map();
 const SECTOR_REQUIREMENTS_CACHE = new Map();
 const REQUIREMENTS_CACHE_MAX = 4096;
 
@@ -542,7 +543,7 @@ function probeRouteTopology(workingState, player, context, sources) {
   return topology;
 }
 
-function buildProbeRouteRequirements(workingState, requestedPlayerId = null, session = null) {
+function buildProbeRouteRequirements(workingState, requestedPlayerId = null, session = null, includeMoveTiming = true) {
   const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
   const player = workingState.players.players.find((candidate) => candidate.id === playerId);
   if (!player || workingState.turn.gameEnded) return null;
@@ -597,7 +598,74 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null, ses
       Object.freeze(buildProbeCandidateStructures(workingState, player, context, topology, sources)),
     );
   }
-  return finalizeProbeRequirements(player, structure, context.probeMovement);
+  const requirements = finalizeProbeRequirements(player, structure, context.probeMovement);
+  if (!includeMoveTiming || !player.mainActionCompleted || context.probeMovement.phase !== "ordinary") {
+    return requirements;
+  }
+  const timingKey = `${structureKey}|S${JSON.stringify(workingState.solarSystem)}|R${JSON.stringify(workingState.pieces)}`;
+  let timing = PROBE_MOVE_TIMING_CACHE.get(timingKey);
+  if (!timing) {
+    timing = buildProbeMoveTiming(workingState, player, context, requirements);
+    cachePut(PROBE_MOVE_TIMING_CACHE, timingKey, timing);
+  }
+  return { ...requirements, candidates: requirements.candidates.map(candidate => ({
+    ...candidate,
+    moveTiming: timing.get(candidate.requirementId) || [],
+  })) };
+}
+
+function buildProbeMoveTiming(state, player, context, requirements) {
+  const steps = new Map();
+  for (const candidate of requirements.candidates) {
+    if (candidate.rocketId == null || !candidate.path.length) continue;
+    const firstSteps = candidate.movementNextSteps.flatMap(step => (
+      step.family === "move" ? [step]
+        : step.family === "industry" ? [{ rocketId: candidate.rocketId, ...candidate.path[0] }] : []
+    ));
+    for (const step of firstSteps) {
+      const key = `${step.rocketId}:${step.deltaX}:${step.deltaY}`;
+      if (!steps.has(key)) steps.set(key, { ...step, targets: new Set() });
+      steps.get(key).targets.add(candidate.requirementId);
+    }
+  }
+  const result = new Map();
+  if (!steps.size) return result;
+  function rotatedRoutes(snapshot) {
+    const rotation = turnFlowApi.rotateSolarSystem(snapshot, 1, player.id);
+    if (!rotation.ok) throw new Error(`PROBE_TIMING_ROTATION_FAILED: ${rotation.message}`);
+    return new Map(buildProbeRouteRequirements(snapshot, player.id, null, false).candidates
+      .map(candidate => [candidate.requirementId, candidate]));
+  }
+  const delayed = rotatedRoutes(clone(state));
+  for (const step of steps.values()) {
+    const rocket = state.pieces.rockets.find(item => item.id === step.rocketId);
+    const points = rocketAbility.getRequiredMovePointsFromCoordinate(
+      context, player, rockets.getRocketSectorCoordinate(rocket),
+    );
+    if (!Number.isFinite(points) || points <= 0) throw new Error("PROBE_TIMING_MOVE_COST_INVALID");
+    const earlyState = clone(state);
+    const moved = rockets.moveRocket(earlyState.pieces, step.rocketId, step.deltaX, step.deltaY);
+    if (!moved.ok) throw new Error(`PROBE_TIMING_MOVE_FAILED: ${moved.message}`);
+    const early = rotatedRoutes(earlyState);
+    for (const requirementId of step.targets) {
+      const waitRoute = delayed.get(requirementId);
+      const earlyRoute = early.get(requirementId);
+      const fact = {
+        rocketId: step.rocketId, deltaX: step.deltaX, deltaY: step.deltaY,
+        rotationCount: state.solarSystem.rotation.rotationCount,
+        rotations: 1,
+        comparable: Boolean(waitRoute && earlyRoute),
+        ...(waitRoute && earlyRoute ? {
+          delayedMovementPoints: waitRoute.required.movementPoints,
+          earlyMovementPoints: points + earlyRoute.required.movementPoints,
+        } : {}),
+      };
+      if (!result.has(requirementId)) result.set(requirementId, []);
+      result.get(requirementId).push(Object.freeze(fact));
+    }
+  }
+  for (const facts of result.values()) Object.freeze(facts);
+  return result;
 }
 
 // 探测候选结构缓存键：拓扑键（火箭/旋转/orange2/火箭上限）+ 行星标记 + 玩家科技/有效登陆能力 +
