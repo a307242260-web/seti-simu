@@ -7,6 +7,26 @@
   },
   "versions": [
     {
+      "id": "data-trade-greedy-20260913",
+      "name": "data-trade-greedy-20260913",
+      "date": "2026-09-13",
+      "baseline": "public-card-runezu-greedy-20260913",
+      "head": "f0ce26ea",
+      "commits": [
+        "f25cf56c",
+        "abd168bd",
+        "4a046f70",
+        "f0ce26ea"
+      ],
+      "summary": "同一分析、放置数据与取数据扫描目标的普通资源准备按既有成本排序择一，保留不同卡牌和角标来源",
+      "records": {
+        "a608f874.f0ce26ea.full.json": {
+          "note": "待验收：551步自然终局，70/135/76/90，均92.75；所有搜索错误为空。执行截断50→45，队列53→48，战略节点208030→190662；均分99→92.75。前316步一致，317从扫描改角标，需复核315计划原获胜叶保留后再决定接受。未合主。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "public-card-runezu-greedy-20260913",
       "name": "public-card-runezu-greedy-20260913",
       "date": "2026-09-13",
