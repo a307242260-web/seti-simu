@@ -1,0 +1,156 @@
+{
+  "gitCommit": "8d5adb792e2a2133724cdffb43fc9b1114bec626",
+  "scriptHash": "6f6e71f8879c8499c69fc47bbfdb455ebe7cf5484131c58ae229e6199462a357",
+  "source": "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-full-v276.json",
+  "beforeStep": 48,
+  "scope": "正式回放边界的隔离公司变体；真实根目录、时机与后继选择器指定公共牌，正式Action/Decision执行。多个交换手牌/奖励候选仍取首项或skip，不是完整AI搜索或整局。",
+  "cases": [
+    {
+      "label": "芬威克研究中心",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:c476c4cd",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "芬威克研究中心",
+          "abilityId": "fenwick_publicity_pick_corner"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "芬威克研究中心 1x 行动"
+      },
+      "wantedCardId": "card-11-0",
+      "allowed": true,
+      "steps": [
+        {
+          "phase": "public_card",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:aba349be",
+            "actorId": "player-green",
+            "stateVersion": 12,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "public:0:card-11-0",
+              "slotIndex": 0,
+              "cardInstanceId": "card-11-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "b_65.webp",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-11-0",
+              "imageSrc": "../assets/cards/basic/split/b_65.webp",
+              "imageAlt": "b_65.webp"
+            }
+          }
+        },
+        {
+          "phase": "free_move",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_target",
+            "phase": "conditional",
+            "actionId": "choose_target:93c5f212",
+            "actorId": "player-green",
+            "stateVersion": 12,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:2:in",
+              "rocketId": 2,
+              "deltaX": 0,
+              "deltaY": -1
+            },
+            "payload": {
+              "direction": "in"
+            },
+            "decision": null,
+            "summary": "移动 2 向内"
+          },
+          "legalMoves": 4,
+          "selectedMoves": 4,
+          "targetAlreadyInHand": true,
+          "positionBefore": [
+            5,
+            2
+          ],
+          "positionAfter": [
+            5,
+            1
+          ]
+        }
+      ],
+      "beforeResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 12
+      },
+      "afterResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 4,
+        "publicity": 2,
+        "score": 12
+      },
+      "targetInHand": true,
+      "sessionDrained": true,
+      "futureTargetScore": 0,
+      "strategySlots": {
+        "blue": true,
+        "red": true,
+        "yellow": true
+      },
+      "publicPlayerKeys": [
+        "playerId",
+        "industryAbilityId",
+        "color",
+        "playerLabel",
+        "score",
+        "finalScore",
+        "scoreBreakdown",
+        "scoreSources",
+        "credits",
+        "energy",
+        "publicity",
+        "availableData",
+        "additionalPublicScan",
+        "handCount",
+        "reservedCount",
+        "completedTaskCount",
+        "dataProgress",
+        "techState",
+        "income",
+        "blueBonusAssets",
+        "passed",
+        "mainActionCompleted",
+        "securedEndGameBonus"
+      ],
+      "privatePlayerKeys": [
+        "playerId",
+        "hand",
+        "reservedCards",
+        "companyState",
+        "privateAlienCards",
+        "taskState",
+        "oneTimeAbilities"
+      ]
+    }
+  ]
+}
