@@ -32,10 +32,8 @@ RNG 起点契约：任何 seed 的盘面都从 `hashSeed(seed)` 开始（`create
 - boardId：`seti-104-board-v1`（RNG 起点契约重构后内容变化，曾升 `-v2`）
 - 白色（人类）初始 2 选 1：**赫利昂联合体 / 未来跨度研究所**（用户反馈"初始公司
   太垃圾"，因此不再作为默认）
-- 仍在被引用：`simulation-counterfactual-outcome.test.js` 写死此 seed（`seed-baseline.json`
-  已删除；`randomizer/training/heuristic-policy.fixed-board.json` 为孤儿文件，无 require——
-  同目录 `heuristic-policy.fixed-board.js` 是活跃配置源，被 turn-report / benchmark /
-  diagnose 等工具 require，见下文"训练侧"）
+- 测试仍使用此 seed；训练配置源为 `randomizer/training/heuristic-policy.fixed-board.js`，
+  见下文“训练侧”。
 - 新契约下盘面指纹：扇区 `{1:2, 2:4, 3:1, 4:3}`，轮步 `{w2:-26, w3:-16, w4:-5}`，
   公共牌 `[b_68.webp, b_111.webp, b_44.webp]`
 

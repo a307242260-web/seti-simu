@@ -179,16 +179,6 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 
 公司、外星人、数据、卡牌后续等剩余领域统一位于 `randomizer/game/effects/residual-domain-session.js`。它不新增第二套 choice identity：picker、痕迹、机会、牌、任务和物种分支分别映射到既有 conditional Standard Action family，并以 `decisionKind` 暴露 presentation 语义。领域 followup 只能产生标准 Decision 或 Effect；未知 kind/species/family/followup 一律终止 session。
 
-## 旧流程删除状态
-
-旧字段已按领域迁入 Decision Session、Effect Session、session journal 或正式 UI/Browser Host state；`randomizer/app/runtime.js` 已物理删除（不再存在，也不会创建通用 `pending` 对象）。迁移验收仍必须证明以下旧责任从生产热路径不可达：
-
-- `abilities.chain` 不再作为第二套队列/插入状态机。
-- `actionHistory` / `quickActionHistory` 不再各自决定事务边界，改为消费 session journal。
-- `renderAll`、overlay callback 和 DOM click 不再调用领域 旧路径 推进规则。
-- AI automation 不再按 pending priority 选择或自动 resolve 多选项。
-- simulation 未识别 pending 不再 recover/skip；显式返回 unsupported 并停止。
-
 ## Proof obligations 与证据计划
 
 | ID | 可证伪命题 | 最小反例 | 窄契约证据 | 完整链路证据 |

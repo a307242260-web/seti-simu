@@ -51,15 +51,13 @@ DOM / Browser ViewState
 同时包含：
 
 - **规则观察信息层**（与 Simulation `buildRuleObservation` 完全同源，见
-  `docs/browser-simulation-unification.md` §8）：顶层 `publicState.players/board`、
+  `docs/browser-simulation-unification.md` §信息层统一）：顶层 `publicState.players/board`、
   `selfState.hand`、requirements —— 机器协调器 / AI 评估 / 训练从这里读盘面；
 - **UI 展示视图**：`match`、`resident`（信息字段 + `resident.ui` 读模型壳）、
   `feedback` —— 人类 UI 从这里渲染。
 
-**修复约束（不得回退）**：`resident` 的信息字段（players/board/cards/tech/aliens/
-solar/planets/data/finalScoring）必须保留，读模型壳只作为 `resident.ui` 附加——
-此前把 `resident` 整体替换为读模型导致机器席位 observation 失明（players/hand/assets
-全空 → 启发式决策静默退化为 pass），属隐藏失败。
+**投影约束**：`resident` 的信息字段（players/board/cards/tech/aliens/
+solar/planets/data/finalScoring）必须保留，读模型壳只作为 `resident.ui` 附加，不覆盖规则信息字段。
 
 ### Presentation
 
@@ -86,8 +84,7 @@ Presentation helper 必须满足：
 - Browser 不根据 label、selector 或旧 pending 猜测 legal choice；
 - stale、wrong-owner、removed-choice、unknown family 必须零副作用失败。
 
-不得创建按字符串方法名转发旧 runtime target 的所谓 `StandardInputRegistry`。只有最终调用
-正式 `dispatchAction` / `submitDecision` 的端口才是规则输入。
+规则输入端口最终调用正式 `dispatchAction` / `submitDecision`，不按任意字符串转发方法。
 
 ### Browser 能力与恢复
 
@@ -118,15 +115,14 @@ Composition lifecycle envelope 与独立 ViewState 组合/恢复。
 | `randomizer/app/ai/browser-bootstrap.js` | 机器席位端口：协调器 + Heuristic 决策函数装配 |
 | `randomizer/app/public-api.js` | 冻结的 inspect/capture/restore/input facade |
 
-旧 `card-runtime.js`、`scan-flow.js`、`tech-runtime.js`、`industry-runtime.js`、
-`alien-ui.js`、Host effect/conditional/turn runtime 已物理删除。领域展示统一消费
-viewer-safe projection，交互统一提交 Standard Action/Decision；不得重建兼容 alias、
-旧路径、history mutation、executor 或 working-root 参数。
+领域展示消费 viewer-safe projection，交互提交 Standard Action/Decision。
 
-## 4. 禁止恢复的模式
+## 4. 宿主边界
 
-- Browser `OwnerInput`、通用 target registry 或任意方法名 dispatch；
-- `createReadoutRoot`、传统 slice root、canonical root clone 作为 renderer context；
+Browser 不允许以下行为：
+
+- Browser 通用 target registry 或任意方法名 dispatch；
+- canonical root clone 作为 renderer context；
 - Browser 专有 Action provider、executor、Decision resolver 或 deterministic drain；
 - render-time 补状态、结算奖励、恢复 pending、续跑 Effect 或调度 Policy；
 - Simulation adapter、no-op DOM、headless shim 或训练专用规则进入 Browser；
@@ -145,5 +141,5 @@ viewer-safe projection，交互统一提交 Standard Action/Decision；不得重
 5. 涉及跨宿主规则时，补 Browser/Simulation 同 descriptor、Decision、journal 与 committed
    checkpoint parity。
 
-测试用于验证已经推导出的架构，不用于逐次发现下一个待迁移 handler。跨域任务必须按一个
-Production domain 的完整纵向链交付，旧路径物理删除后再开启下一域。
+大型迁移按范围清单核对完整输入、执行、恢复链。调查与测试中发现的新事实可用于修订设计；
+完成声明须与实际覆盖范围一致。
