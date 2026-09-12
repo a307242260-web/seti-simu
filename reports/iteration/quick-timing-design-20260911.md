@@ -243,6 +243,26 @@ scope同批修改。正式交易/Decision/RNG/补牌不改，新目标最多当�
 
 ## 验收义务
 
+公司正式执行证据（2026-09-12，9cc8a315）：
+`adhoc/quick-company-pick-flow-20260912.js`重放基线前47步，在隔离副本分别配置五种
+公司并重置本轮额度，宣传设3；未来跨度从手牌移出一张作为停放牌，保持实体唯一和
+handSize一致。正式枚举均产生industry输入，主行动后可执行，五例均通过正式Decision
+取得指定最后一张公共牌并排空会话，而当前策略时机判断五例全部拒绝。
+有效checkpoint为`quick-company-pick-flow-20260912-9cc8a315-f171e231.json`，保留输入、
+Decision路径、资源前后、私有/公开观察字段与目标完成断言。深空明确经过swap_hand→
+swap_public；未来跨度目标分20→22；宇宙战略黄/红/蓝槽全部清空。此处人工选择
+公共牌与条件项，不冒充AI已支持来源。本次芬威克目标角标为数据，免费移动分支仍待
+另一个移动角标案例覆盖。任务中继站的盲抽收入角标由正式流程排空，不读取新增牌来选目标。
+首份不含脚本指纹的记录因构造错误槽名已标invalid-fixture-slot-keys；只使用修正后
+黄/红/蓝槽且通过清槽断言的记录作为证据。未运行AI搜索或完整局。
+
+计划观察缺口也已确认：sanitizePublicPlayer仅公开industryAbilityId，sanitizeSelfPlayer
+的industryId/industryCardId/industryAbilityUsed不是正式industryRoundMarkRound、
+industryFutureSpan或industryStrategyPassiveSlots；capturePlanStep目前仅为寰宇添加
+公司相关scope。下一生产批次必须一并提供同席公司状态的明确只读投影、取牌来源的
+计划依赖、五种公司普通根/绑定后继和指定公共牌条件选择。不得只放开industry根，
+依靠通用条件展开碰巧取得正确牌，或让合法性检查代替费用/停放/奖励槽的价值依赖。
+
 取牌来源审计（2026-09-12，33059adb）：
 `adhoc/quick-pick-source-audit-20260912.js`生成
 `quick-pick-source-audit-20260912-33059adb.json`。用正式TRADE_ACTIONS完整枚举四种

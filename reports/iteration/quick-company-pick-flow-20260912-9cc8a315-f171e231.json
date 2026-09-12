@@ -1,0 +1,592 @@
+{
+  "gitCommit": "9cc8a315679d5f4cf641206b76813820a106b28f",
+  "scriptHash": "f171e2313c063dfd443c40996f54b021c7f97efe2bc405f8ae5f29d8029464bd",
+  "source": "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-full-v276.json",
+  "beforeStep": 48,
+  "scope": "正式回放边界的隔离公司变体，合法Action/Decision执行及指定牌入手；人工选择目标和条件项，不是AI决策或完整局。",
+  "cases": [
+    {
+      "label": "任务中继站",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:b7be1a93",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "任务中继站",
+          "abilityId": "mission_publicity_pick_income"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "任务中继站 1x 行动"
+      },
+      "wantedCardId": "card-19-0",
+      "allowed": false,
+      "steps": [
+        {
+          "phase": "public_card",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:9003c046",
+            "actorId": "player-green",
+            "stateVersion": 12,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "public:2:card-19-0",
+              "slotIndex": 2,
+              "cardInstanceId": "card-19-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "dlc_21.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-19-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_21.png",
+              "imageAlt": "dlc_21.png"
+            }
+          }
+        }
+      ],
+      "beforeResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 12
+      },
+      "afterResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 5,
+        "publicity": 1,
+        "score": 12
+      },
+      "targetInHand": true,
+      "sessionDrained": true,
+      "futureTargetScore": 0,
+      "strategySlots": {
+        "blue": true,
+        "red": true,
+        "yellow": true
+      },
+      "publicPlayerKeys": [
+        "playerId",
+        "industryAbilityId",
+        "color",
+        "playerLabel",
+        "score",
+        "finalScore",
+        "scoreBreakdown",
+        "scoreSources",
+        "credits",
+        "energy",
+        "publicity",
+        "availableData",
+        "additionalPublicScan",
+        "handCount",
+        "reservedCount",
+        "completedTaskCount",
+        "dataProgress",
+        "techState",
+        "income",
+        "blueBonusAssets",
+        "passed",
+        "mainActionCompleted",
+        "securedEndGameBonus"
+      ],
+      "privatePlayerKeys": [
+        "playerId",
+        "hand",
+        "reservedCards",
+        "privateAlienCards",
+        "taskState",
+        "oneTimeAbilities"
+      ]
+    },
+    {
+      "label": "芬威克研究中心",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:c476c4cd",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "芬威克研究中心",
+          "abilityId": "fenwick_publicity_pick_corner"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "芬威克研究中心 1x 行动"
+      },
+      "wantedCardId": "card-19-0",
+      "allowed": false,
+      "steps": [
+        {
+          "phase": "public_card",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:9003c046",
+            "actorId": "player-green",
+            "stateVersion": 12,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "public:2:card-19-0",
+              "slotIndex": 2,
+              "cardInstanceId": "card-19-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "dlc_21.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-19-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_21.png",
+              "imageAlt": "dlc_21.png"
+            }
+          }
+        }
+      ],
+      "beforeResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 12
+      },
+      "afterResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 4,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 4,
+        "publicity": 2,
+        "score": 12
+      },
+      "targetInHand": true,
+      "sessionDrained": true,
+      "futureTargetScore": 0,
+      "strategySlots": {
+        "blue": true,
+        "red": true,
+        "yellow": true
+      },
+      "publicPlayerKeys": [
+        "playerId",
+        "industryAbilityId",
+        "color",
+        "playerLabel",
+        "score",
+        "finalScore",
+        "scoreBreakdown",
+        "scoreSources",
+        "credits",
+        "energy",
+        "publicity",
+        "availableData",
+        "additionalPublicScan",
+        "handCount",
+        "reservedCount",
+        "completedTaskCount",
+        "dataProgress",
+        "techState",
+        "income",
+        "blueBonusAssets",
+        "passed",
+        "mainActionCompleted",
+        "securedEndGameBonus"
+      ],
+      "privatePlayerKeys": [
+        "playerId",
+        "hand",
+        "reservedCards",
+        "privateAlienCards",
+        "taskState",
+        "oneTimeAbilities"
+      ]
+    },
+    {
+      "label": "深空探测",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:b698b2f4",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "深空探测",
+          "abilityId": "deepspace_swap_cards"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "深空探测 1x 行动"
+      },
+      "wantedCardId": "card-19-0",
+      "allowed": false,
+      "steps": [
+        {
+          "phase": "swap_hand",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:82e29f82",
+            "actorId": "player-green",
+            "stateVersion": 12,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "hand:card-5-0",
+              "cardInstanceId": "card-5-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "dlc_35.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-5-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_35.png",
+              "imageAlt": "dlc_35.png"
+            }
+          }
+        },
+        {
+          "phase": "swap_public",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:9d7e33f2",
+            "actorId": "player-green",
+            "stateVersion": 12,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "public:2:card-19-0",
+              "slotIndex": 2,
+              "cardInstanceId": "card-19-0"
+            },
+            "payload": {
+              "handCardInstanceId": "card-5-0"
+            },
+            "decision": null,
+            "summary": "dlc_21.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-19-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_21.png",
+              "imageAlt": "dlc_21.png"
+            }
+          }
+        }
+      ],
+      "beforeResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 12
+      },
+      "afterResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 12
+      },
+      "targetInHand": true,
+      "sessionDrained": true,
+      "futureTargetScore": 0,
+      "strategySlots": {
+        "blue": true,
+        "red": true,
+        "yellow": true
+      },
+      "publicPlayerKeys": [
+        "playerId",
+        "industryAbilityId",
+        "color",
+        "playerLabel",
+        "score",
+        "finalScore",
+        "scoreBreakdown",
+        "scoreSources",
+        "credits",
+        "energy",
+        "publicity",
+        "availableData",
+        "additionalPublicScan",
+        "handCount",
+        "reservedCount",
+        "completedTaskCount",
+        "dataProgress",
+        "techState",
+        "income",
+        "blueBonusAssets",
+        "passed",
+        "mainActionCompleted",
+        "securedEndGameBonus"
+      ],
+      "privatePlayerKeys": [
+        "playerId",
+        "hand",
+        "reservedCards",
+        "privateAlienCards",
+        "taskState",
+        "oneTimeAbilities"
+      ]
+    },
+    {
+      "label": "未来跨度研究所",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:65535530",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "未来跨度研究所",
+          "abilityId": "future_span_pick_advance"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "未来跨度研究所 1x 行动"
+      },
+      "wantedCardId": "card-19-0",
+      "allowed": false,
+      "steps": [
+        {
+          "phase": "public_card",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:9003c046",
+            "actorId": "player-green",
+            "stateVersion": 12,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "public:2:card-19-0",
+              "slotIndex": 2,
+              "cardInstanceId": "card-19-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "dlc_21.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-19-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_21.png",
+              "imageAlt": "dlc_21.png"
+            }
+          }
+        }
+      ],
+      "beforeResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 3,
+        "score": 12
+      },
+      "afterResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 12
+      },
+      "targetInHand": true,
+      "sessionDrained": true,
+      "futureTargetScore": 22,
+      "strategySlots": {
+        "blue": true,
+        "red": true,
+        "yellow": true
+      },
+      "publicPlayerKeys": [
+        "playerId",
+        "industryAbilityId",
+        "color",
+        "playerLabel",
+        "score",
+        "finalScore",
+        "scoreBreakdown",
+        "scoreSources",
+        "credits",
+        "energy",
+        "publicity",
+        "availableData",
+        "additionalPublicScan",
+        "handCount",
+        "reservedCount",
+        "completedTaskCount",
+        "dataProgress",
+        "techState",
+        "income",
+        "blueBonusAssets",
+        "passed",
+        "mainActionCompleted",
+        "securedEndGameBonus"
+      ],
+      "privatePlayerKeys": [
+        "playerId",
+        "hand",
+        "reservedCards",
+        "privateAlienCards",
+        "taskState",
+        "oneTimeAbilities"
+      ]
+    },
+    {
+      "label": "宇宙战略集团",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:90856b65",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "宇宙战略集团",
+          "abilityId": "strategy_pick_card"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "宇宙战略集团 1x 行动"
+      },
+      "wantedCardId": "card-19-0",
+      "allowed": false,
+      "steps": [
+        {
+          "phase": "public_card",
+          "action": {
+            "schemaVersion": "seti-standard-action-v1",
+            "family": "choose_card",
+            "phase": "conditional",
+            "actionId": "choose_card:9003c046",
+            "actorId": "player-green",
+            "stateVersion": 12,
+            "decisionVersion": 0,
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "public:2:card-19-0",
+              "slotIndex": 2,
+              "cardInstanceId": "card-19-0"
+            },
+            "payload": {},
+            "decision": null,
+            "summary": "dlc_21.png",
+            "presentation": {
+              "cardKind": "pick",
+              "cardId": "card-19-0",
+              "imageSrc": "../assets/cards/space-agency/split/dlc_21.png",
+              "imageAlt": "dlc_21.png"
+            }
+          }
+        }
+      ],
+      "beforeResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 3,
+        "publicity": 3,
+        "score": 12
+      },
+      "afterResources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 3,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 4,
+        "publicity": 3,
+        "score": 12
+      },
+      "targetInHand": true,
+      "sessionDrained": true,
+      "futureTargetScore": 0,
+      "strategySlots": {
+        "blue": false,
+        "red": false,
+        "yellow": false
+      },
+      "publicPlayerKeys": [
+        "playerId",
+        "industryAbilityId",
+        "color",
+        "playerLabel",
+        "score",
+        "finalScore",
+        "scoreBreakdown",
+        "scoreSources",
+        "credits",
+        "energy",
+        "publicity",
+        "availableData",
+        "additionalPublicScan",
+        "handCount",
+        "reservedCount",
+        "completedTaskCount",
+        "dataProgress",
+        "techState",
+        "income",
+        "blueBonusAssets",
+        "passed",
+        "mainActionCompleted",
+        "securedEndGameBonus"
+      ],
+      "privatePlayerKeys": [
+        "playerId",
+        "hand",
+        "reservedCards",
+        "privateAlienCards",
+        "taskState",
+        "oneTimeAbilities"
+      ]
+    }
+  ]
+}
