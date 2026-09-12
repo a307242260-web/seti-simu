@@ -1,0 +1,1014 @@
+{
+  "source": "reports/iteration/budget-step477-profile-20260912.json",
+  "cpuSource": "reports/iteration/budget-step477-20260912.cpuprofile",
+  "commit": "2e179b6d536734010cb83f6a58d0964f96a1b3f7",
+  "wallMs": 28079.214,
+  "cpuSelfMilliseconds": [
+    {
+      "frame": "canShare file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/ai/heuristic-decision-function.js:108",
+      "ms": 7688.71
+    },
+    {
+      "frame": "structuredClone node:internal/worker/js_transferable:112",
+      "ms": 6999.946
+    },
+    {
+      "frame": "(garbage collector) :0",
+      "ms": 2464.787
+    },
+    {
+      "frame": "stableSerialize file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/state/state-store.js:46",
+      "ms": 981.023
+    },
+    {
+      "frame": "deepFreeze file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/rule-composition.js:39",
+      "ms": 792.172
+    },
+    {
+      "frame": "copySerializable file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/ai/policy-port.js:50",
+      "ms": 557.035
+    },
+    {
+      "frame": "stableSerialize file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/rule-composition.js:45",
+      "ms": 514.505
+    },
+    {
+      "frame": "deepFreeze file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/ai/outcome-model.js:39",
+      "ms": 414.086
+    },
+    {
+      "frame": "stableHashSerialized file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/rule-composition.js:67",
+      "ms": 361.831
+    },
+    {
+      "frame": "structuredClone :0",
+      "ms": 338.373
+    },
+    {
+      "frame": " file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/ai/heuristic-decision-function.js:135",
+      "ms": 337.419
+    },
+    {
+      "frame": "internalModuleStat :0",
+      "ms": 276.375
+    },
+    {
+      "frame": "envelopeHash file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/rule-composition.js:1086",
+      "ms": 275.333
+    },
+    {
+      "frame": "buildSectorWinRequirements file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/production-kernel.js:1081",
+      "ms": 256.243
+    },
+    {
+      "frame": "buildProbeRouteRequirements file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/production-kernel.js:546",
+      "ms": 241.079
+    },
+    {
+      "frame": "visit file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/state/low-coupling-slices.js:110",
+      "ms": 235.916
+    },
+    {
+      "frame": "getWheelStep file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/solar-system/core.js:173",
+      "ms": 205.832
+    },
+    {
+      "frame": "getTrustedState file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/rule-composition.js:1079",
+      "ms": 178.374
+    },
+    {
+      "frame": "probeStructureKey file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/production-kernel.js:675",
+      "ms": 171.872
+    },
+    {
+      "frame": "containsUnknownCardReference file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/rule-composition.js:113",
+      "ms": 155.96
+    },
+    {
+      "frame": "compactObject file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/app/simulation-contract.js:37",
+      "ms": 151.667
+    },
+    {
+      "frame": "scanForbidden file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/state/high-coupling-slices.js:113",
+      "ms": 150.086
+    },
+    {
+      "frame": "deepFreeze file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/state/state-store.js:40",
+      "ms": 126.957
+    },
+    {
+      "frame": "evaluateCounterfactualOutcomes file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/rule-composition.js:977",
+      "ms": 111.208
+    },
+    {
+      "frame": "validateForbiddenFields file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/state/low-coupling-slices.js:137",
+      "ms": 109.958
+    },
+    {
+      "frame": "stableHash file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/rule-composition.js:76",
+      "ms": 102.085
+    },
+    {
+      "frame": "deepFreeze file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/ai/policy-port.js:104",
+      "ms": 93.085
+    },
+    {
+      "frame": "compareNodes file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/rule-composition.js:1500",
+      "ms": 72.04
+    },
+    {
+      "frame": "finalizeProbeRequirements file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/production-kernel.js:813",
+      "ms": 57.124
+    },
+    {
+      "frame": "stableSerialize file:///private/tmp/seti-move-budget-20260912.27DCFp/randomizer/game/actions/standard-action.js:37",
+      "ms": 56.667
+    }
+  ],
+  "searchTiming": {
+    "maxMilliseconds": 30000,
+    "forkMilliseconds": 801.9377399999655,
+    "executionMilliseconds": 2008.0080880000025,
+    "projectionMilliseconds": 1198.6487659999912,
+    "identityMilliseconds": 7.663696999969716,
+    "checkpointMilliseconds": 1249.293499000015,
+    "frontierMilliseconds": 233.67313900006877,
+    "orchestrationMilliseconds": 9535.220111999986,
+    "totalMilliseconds": 15034.445040999999
+  },
+  "budgetLimits": {
+    "leaves": {
+      "enabled": false,
+      "limit": 8,
+      "reached": false,
+      "truncated": false,
+      "prunedOriginCount": 0
+    },
+    "frontier": {
+      "enabled": true,
+      "limit": 256,
+      "peak": 256,
+      "reached": true,
+      "truncated": true,
+      "trimCount": 546
+    },
+    "execution": {
+      "enabled": true,
+      "limit": 4096,
+      "used": 4096,
+      "reached": true,
+      "truncated": true,
+      "remainingFrontierNodeCount": 256
+    }
+  },
+  "failedNodeCountByCode": {},
+  "routeEntryStatsByTarget": {
+    "tech:gain:purple1": {
+      "bindingOriginCount": 232,
+      "distinctEntryStateCount": 144,
+      "maxBindingsPerEntryState": 2,
+      "completedTransitionCount": 4,
+      "retainedCompletedTransitionCount": 4
+    },
+    "land:jupiter:satellite:callisto": {
+      "bindingOriginCount": 191,
+      "distinctEntryStateCount": 101,
+      "maxBindingsPerEntryState": 2,
+      "completedTransitionCount": 0,
+      "retainedCompletedTransitionCount": 0
+    },
+    "land:jupiter:satellite:europa": {
+      "bindingOriginCount": 191,
+      "distinctEntryStateCount": 101,
+      "maxBindingsPerEntryState": 2,
+      "completedTransitionCount": 0,
+      "retainedCompletedTransitionCount": 0
+    },
+    "land:jupiter:satellite:ganymede": {
+      "bindingOriginCount": 191,
+      "distinctEntryStateCount": 101,
+      "maxBindingsPerEntryState": 2,
+      "completedTransitionCount": 0,
+      "retainedCompletedTransitionCount": 0
+    },
+    "land:jupiter:satellite:io": {
+      "bindingOriginCount": 191,
+      "distinctEntryStateCount": 101,
+      "maxBindingsPerEntryState": 2,
+      "completedTransitionCount": 0,
+      "retainedCompletedTransitionCount": 0
+    },
+    "land:mars:planet:": {
+      "bindingOriginCount": 191,
+      "distinctEntryStateCount": 101,
+      "maxBindingsPerEntryState": 2,
+      "completedTransitionCount": 54,
+      "retainedCompletedTransitionCount": 54
+    },
+    "land:saturn:satellite:enceladus": {
+      "bindingOriginCount": 191,
+      "distinctEntryStateCount": 101,
+      "maxBindingsPerEntryState": 2,
+      "completedTransitionCount": 144,
+      "retainedCompletedTransitionCount": 144
+    },
+    "orbit:venus:planet:": {
+      "bindingOriginCount": 191,
+      "distinctEntryStateCount": 101,
+      "maxBindingsPerEntryState": 2,
+      "completedTransitionCount": 168,
+      "retainedCompletedTransitionCount": 168
+    },
+    "sector:win:sector-1-b:1": {
+      "bindingOriginCount": 148,
+      "distinctEntryStateCount": 138,
+      "maxBindingsPerEntryState": 2,
+      "completedTransitionCount": 0,
+      "retainedCompletedTransitionCount": 0
+    },
+    "data:analyze": {
+      "bindingOriginCount": 146,
+      "distinctEntryStateCount": 146,
+      "maxBindingsPerEntryState": 1,
+      "completedTransitionCount": 292,
+      "retainedCompletedTransitionCount": 292
+    },
+    "tech:gain:blue1": {
+      "bindingOriginCount": 135,
+      "distinctEntryStateCount": 135,
+      "maxBindingsPerEntryState": 1,
+      "completedTransitionCount": 0,
+      "retainedCompletedTransitionCount": 0
+    },
+    "tech:gain:orange1": {
+      "bindingOriginCount": 135,
+      "distinctEntryStateCount": 135,
+      "maxBindingsPerEntryState": 1,
+      "completedTransitionCount": 0,
+      "retainedCompletedTransitionCount": 0
+    },
+    "card:resolve:alien-amiba-4-26": {
+      "bindingOriginCount": 118,
+      "distinctEntryStateCount": 118,
+      "maxBindingsPerEntryState": 1,
+      "completedTransitionCount": 14,
+      "retainedCompletedTransitionCount": 14
+    },
+    "card:resolve:alien-amiba-5-16": {
+      "bindingOriginCount": 118,
+      "distinctEntryStateCount": 118,
+      "maxBindingsPerEntryState": 1,
+      "completedTransitionCount": 14,
+      "retainedCompletedTransitionCount": 14
+    },
+    "card:resolve:alien-amiba-1-2": {
+      "bindingOriginCount": 115,
+      "distinctEntryStateCount": 115,
+      "maxBindingsPerEntryState": 1,
+      "completedTransitionCount": 14,
+      "retainedCompletedTransitionCount": 14
+    },
+    "card:resolve:alien-chong-2-6": {
+      "bindingOriginCount": 115,
+      "distinctEntryStateCount": 115,
+      "maxBindingsPerEntryState": 1,
+      "completedTransitionCount": 14,
+      "retainedCompletedTransitionCount": 14
+    },
+    "card:acquire:card-87-0": {
+      "bindingOriginCount": 20,
+      "distinctEntryStateCount": 9,
+      "maxBindingsPerEntryState": 4,
+      "completedTransitionCount": 10,
+      "retainedCompletedTransitionCount": 10
+    }
+  },
+  "completedRouteGroupsByTarget": {
+    "data:analyze": [
+      {
+        "routeFamilies": [
+          "place_data",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 59,
+        "retainedCompletedTransitionCount": 59
+      },
+      {
+        "routeFamilies": [
+          "place_data",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 47,
+        "retainedCompletedTransitionCount": 47
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "place_data",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 44,
+        "retainedCompletedTransitionCount": 44
+      },
+      {
+        "routeFamilies": [
+          "place_data",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 30,
+        "retainedCompletedTransitionCount": 30
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "place_data",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 24,
+        "retainedCompletedTransitionCount": 24
+      },
+      {
+        "routeFamilies": [
+          "place_data",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 12,
+        "retainedCompletedTransitionCount": 12
+      },
+      {
+        "routeFamilies": [
+          "place_data",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 12,
+        "retainedCompletedTransitionCount": 12
+      },
+      {
+        "routeFamilies": [
+          "place_data",
+          "place_data",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 12,
+        "retainedCompletedTransitionCount": 12
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "place_data",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 12,
+        "retainedCompletedTransitionCount": 12
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "place_data",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 12,
+        "retainedCompletedTransitionCount": 12
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "place_data",
+          "place_data",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 11,
+        "retainedCompletedTransitionCount": 11
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "place_data",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 8,
+        "retainedCompletedTransitionCount": 8
+      },
+      {
+        "routeFamilies": [
+          "place_data",
+          "place_data",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 5,
+        "retainedCompletedTransitionCount": 5
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "place_data",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 2,
+        "retainedCompletedTransitionCount": 2
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "place_data",
+          "place_data",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 2,
+        "retainedCompletedTransitionCount": 2
+      }
+    ],
+    "orbit:venus:planet:": [
+      {
+        "routeFamilies": [
+          "launch",
+          "move",
+          "move",
+          "quick_trade",
+          "orbit"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 162,
+        "retainedCompletedTransitionCount": 162
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "launch",
+          "move",
+          "move",
+          "quick_trade",
+          "orbit"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "launch",
+          "move",
+          "move",
+          "quick_trade",
+          "quick_trade",
+          "orbit"
+        ],
+        "quickTradeCount": 2,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      }
+    ],
+    "land:saturn:satellite:enceladus": [
+      {
+        "routeFamilies": [
+          "launch",
+          "move",
+          "move",
+          "move",
+          "quick_trade",
+          "land"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 126,
+        "retainedCompletedTransitionCount": 126
+      },
+      {
+        "routeFamilies": [
+          "launch",
+          "move",
+          "move",
+          "move",
+          "quick_trade",
+          "quick_trade",
+          "land"
+        ],
+        "quickTradeCount": 2,
+        "completedTransitionCount": 18,
+        "retainedCompletedTransitionCount": 18
+      }
+    ],
+    "land:mars:planet:": [
+      {
+        "routeFamilies": [
+          "launch",
+          "move",
+          "quick_trade",
+          "land"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 54,
+        "retainedCompletedTransitionCount": 54
+      }
+    ],
+    "card:resolve:alien-amiba-1-2": [
+      {
+        "routeFamilies": [
+          "card_corner"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 11,
+        "retainedCompletedTransitionCount": 11
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "card_corner"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      }
+    ],
+    "card:resolve:alien-amiba-4-26": [
+      {
+        "routeFamilies": [
+          "card_corner"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 11,
+        "retainedCompletedTransitionCount": 11
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "card_corner"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      }
+    ],
+    "card:resolve:alien-amiba-5-16": [
+      {
+        "routeFamilies": [
+          "card_corner"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 11,
+        "retainedCompletedTransitionCount": 11
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "card_corner"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      }
+    ],
+    "card:resolve:alien-chong-2-6": [
+      {
+        "routeFamilies": [
+          "card_corner"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 11,
+        "retainedCompletedTransitionCount": 11
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "card_corner"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      }
+    ],
+    "card:acquire:card-87-0": [
+      {
+        "routeFamilies": [
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 7,
+        "retainedCompletedTransitionCount": 7
+      },
+      {
+        "routeFamilies": [
+          "quick_trade"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      }
+    ],
+    "decision:choose_target:4b676cb1": [
+      {
+        "routeFamilies": [],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 10,
+        "retainedCompletedTransitionCount": 10
+      }
+    ],
+    "decision:choose_target:653b7ded": [
+      {
+        "routeFamilies": [],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 10,
+        "retainedCompletedTransitionCount": 10
+      }
+    ],
+    "decision:choose_target:aba3bdc5": [
+      {
+        "routeFamilies": [],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 10,
+        "retainedCompletedTransitionCount": 10
+      }
+    ],
+    "decision:choose_card:0634c9fe": [
+      {
+        "routeFamilies": [
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      }
+    ],
+    "decision:choose_card:270d0e72": [
+      {
+        "routeFamilies": [
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      }
+    ],
+    "decision:choose_card:2743103c": [
+      {
+        "routeFamilies": [
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      }
+    ],
+    "decision:choose_card:5920722a": [
+      {
+        "routeFamilies": [
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      }
+    ],
+    "decision:choose_card:74195d8c": [
+      {
+        "routeFamilies": [
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      }
+    ],
+    "decision:choose_card:c2c97dd0": [
+      {
+        "routeFamilies": [
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      }
+    ],
+    "decision:choose_card:ce2cdcac": [
+      {
+        "routeFamilies": [
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      }
+    ],
+    "decision:choose_card:4130e738": [
+      {
+        "routeFamilies": [
+          "industry"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      }
+    ],
+    "decision:choose_card:4b9229a6": [
+      {
+        "routeFamilies": [
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      }
+    ],
+    "decision:choose_card:7e6e1595": [
+      {
+        "routeFamilies": [
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      }
+    ],
+    "decision:choose_card:acef3ebf": [
+      {
+        "routeFamilies": [
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      }
+    ],
+    "decision:choose_card:e5d5ccad": [
+      {
+        "routeFamilies": [
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      }
+    ],
+    "decision:choose_card:fa975da2": [
+      {
+        "routeFamilies": [
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      }
+    ],
+    "tech:gain:purple1": [
+      {
+        "routeFamilies": [
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      }
+    ],
+    "decision:choose_card:2a646b8b": [
+      {
+        "routeFamilies": [
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 2,
+        "retainedCompletedTransitionCount": 2
+      }
+    ],
+    "decision:choose_card:36726e64": [
+      {
+        "routeFamilies": [
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 2,
+        "retainedCompletedTransitionCount": 2
+      }
+    ],
+    "decision:choose_card:e6514af6": [
+      {
+        "routeFamilies": [
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      },
+      {
+        "routeFamilies": [
+          "play_card",
+          "play_card"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      }
+    ]
+  },
+  "scope": "采样自身耗时而非调用链累计；采样和路线trace有额外成本，不将28.08秒与完整局单步耗时差异称为退化。目标来源与路线完成计数不是互斥物理节点。"
+}
