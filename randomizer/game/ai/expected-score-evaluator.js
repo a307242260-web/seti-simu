@@ -1818,9 +1818,29 @@
     return scored.slice(0, 3).map((entry) => entry.plan);
   }
 
+  // 外星牌统一按12估值不代表状态等价：此处仅作公开展示优先的局部贪心。
+  // 只接受同一物种、同席位的完整拿牌Decision，不读取隐藏牌序。
+  function selectGreedyAlienCardChoices(observation, actions, allowGreedy) {
+    const owner = observation?.perspectivePlayerId ?? observation?.viewer?.seatId;
+    const species = String(actions[0]?.target?.choiceId || "").split(":")[0];
+    if (!actions.length || !["chong", "amiba", "aomomo", "banrenma", "runezu", "yichangdian"].includes(species)
+      || !actions.every(action => action.family === "choose_card" && action.phase === "conditional"
+        && action.actorId === owner && action.target?.kind === "residual-domain"
+        && ["display", "blind", "cancel"].includes(action.target?.source)
+        && String(action.target?.choiceId || "").startsWith(`${species}:${action.target.source}`))) return actions;
+    const withoutCancel = actions.filter(action => action.target.source !== "cancel");
+    if (!withoutCancel.length) return actions;
+    if (!allowGreedy) return withoutCancel;
+    const display = withoutCancel.filter(action => action.target.source === "display");
+    // 正式目录当前至多一张展示牌；扩展为多张后需重新确定择牌策略。
+    if (display.length > 1) return withoutCancel;
+    return display.length ? display : withoutCancel;
+  }
+
   function enumerateSecondaryAgentRootTargets(input = {}) {
     const legalActions = selectNonredundantTuringActions(input.rootObservation,
-      selectGreedyAlienTracePositions(input.rootObservation, input.legalActions || []))
+      selectGreedyAlienTracePositions(input.rootObservation,
+        selectGreedyAlienCardChoices(input.rootObservation, input.legalActions || [], true)))
       .sort((left, right) => String(left.actionId).localeCompare(String(right.actionId)));
     const legalIds = new Set(legalActions.map((action) => action.actionId));
     const targets = new Map();
@@ -3141,21 +3161,12 @@
             }));
           }
         }
-        // 外星拿牌去掉 cancel（2026-08-21 用户裁定：不可能选取消）——display（拿
-        // 已知展示牌）与 blind（盲抽）保留正常反事实评估（不贪心折叠），cancel 从
-        // 搜索选项移除（AI 永远不会选取消）。
-        const alienPickChoices = successors.filter((action) => (
-          action.family === "choose_card"
-          && action.target?.kind === "residual-domain"
-          && ["display", "blind", "cancel"].includes(action.target?.source)
-        ));
-        if (alienPickChoices.length && alienPickChoices.length === successors.length) {
-          const withoutCancel = alienPickChoices.filter((action) => (
-            action.target?.source !== "cancel"
-          ));
-          if (withoutCancel.length) {
-            return bindRoute(withoutCancel, input.routeTargetId, input.routePlanId);
-          }
+        const cardIdentityBound = [input.routeTargetId, input.routePlanId, ...(input.routeResultTargetIds || [])]
+          .some(id => /(^|:)(card|decision):/.test(String(id || "")));
+        const alienPickChoices = selectGreedyAlienCardChoices(input.branchObservation, successors,
+          !cardIdentityBound && (targetUsesFungibleResources || (!input.routeTargetId && !input.routePlanId)));
+        if (alienPickChoices !== successors) {
+          return bindRoute(alienPickChoices, input.routeTargetId, input.routePlanId);
         }
         const alienTraceChoices = selectUnrevealedAlienTraceChoices(
           input.branchObservation,

@@ -32,4 +32,28 @@ assert.deepEqual(expectedScore.evaluateOutcome(context(), actions[0]).score, 0, 
 const leaves = context();
 leaves.actionOutcomes[0].leaves.push({ ...leaves.actionOutcomes[0].leaves[0], leafId: "z-short", executionStepCount: 2 });
 assert.equal(expectedScore.evaluateOutcome(leaves, actions[0]).selectedLeafId, "z-short", "叶选择与根排序使用相同执行长度");
+const alienChoices = ["display", "blind", "cancel"].map(source => ({
+  actionId: `alien-${source}`, family: "choose_card", phase: "conditional", actorId: seatId,
+  target: { kind: "residual-domain", source, choiceId: `amiba:${source}${source === "display" ? ":6" : ""}` },
+}));
+const alienInput = { focalSeatId: seatId, branchObservation: observation(),
+  legalSuccessors: alienChoices, routeTargetId: "land:saturn:satellite:titan",
+  routePlanId: "probe:rocket:11:land:saturn:satellite:titan" };
+const sources = input => expectedScore.selectSecondaryAgentSuccessors(input).map(a => a.target.source).sort();
+const originalChoices = JSON.stringify(alienChoices);
+assert.deepEqual(sources(alienInput), ["display"], "普通探测目标的外星拿牌局部优先展示牌");
+assert.deepEqual(sources({ ...alienInput, legalSuccessors: [...alienChoices].reverse() }), ["display"]);
+assert.deepEqual(sources({ ...alienInput, legalSuccessors: alienChoices.slice(1) }), ["blind"]);
+assert.deepEqual(sources({ ...alienInput, legalSuccessors: alienChoices.slice(2) }), ["cancel"]);
+assert.deepEqual(sources({ ...alienInput, routeTargetId: "card:acquire:public-1", routePlanId: "card:acquire:public-1" }),
+  ["blind", "display"], "卡身份目标保留两条真实拿牌分支");
+assert.deepEqual(sources({ ...alienInput, routeResultTargetIds: ["card:acquire:public-1"] }), ["blind", "display"]);
+assert.deepEqual(sources({ ...alienInput, routePlanId: "data:card:b1:pick:b2" }), ["blind", "display"]);
+assert.deepEqual(sources({ ...alienInput, routeTargetId: "unknown:goal", routePlanId: "unknown:plan" }), ["blind", "display"]);
+const rootPicks = expectedScore.enumerateSecondaryAgentRootTargets({ rootObservation: observation(), legalActions: alienChoices });
+assert.deepEqual([...new Set(rootPicks.flatMap(target => target.compatibleActionIds))], ["alien-display"]);
+const otherOwner = alienChoices.map(a => ({ ...a, actorId: "p2" }));
+const otherRoots = expectedScore.enumerateSecondaryAgentRootTargets({ rootObservation: observation(), legalActions: otherOwner });
+assert.equal(new Set(otherRoots.flatMap(target => target.compatibleActionIds)).size, 3, "不替其他席位贪心拿牌");
+assert.equal(JSON.stringify(alienChoices), originalChoices, "筛选不修改原始合法集");
 console.log("conditional resolution tests passed");
