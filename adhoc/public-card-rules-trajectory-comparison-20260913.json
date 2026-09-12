@@ -1,0 +1,15 @@
+{
+  "sources": [
+    {
+      "file": "/tmp/seti-public-card-greedy-20260913.87etUF/seti-saves/seti-save-research-public-card-trade-greedy-20260913-a5e6170c-full-v300.json",
+      "sha256": "5a39f5cac01b063f6bbbf6a95339e205700774af2a6cd57ec0f0442feff42359"
+    },
+    {
+      "file": "seti-saves/seti-save-research-public-card-runezu-greedy-20260913-3544e2df-full-v300.json",
+      "sha256": "1a059b7f822b49bd7086cc0afcd72571b3930a59dccdf4bd360ff5002383d568"
+    }
+  ],
+  "steps": 608,
+  "differences": [],
+  "scope": "逐步完整action/after比较，不比较反事实节点，不运行AI或规则重放。"
+}

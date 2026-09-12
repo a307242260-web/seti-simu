@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "public-card-runezu-greedy-20260913",
+      "name": "public-card-runezu-greedy-20260913",
+      "date": "2026-09-13",
+      "baseline": "runezu-effect-fix-20260913",
+      "head": "3544e2df",
+      "commits": [
+        "e1137a06",
+        "3544e2df"
+      ],
+      "summary": "在已修复符文规则基线上，同一公共牌普通交易按现有资源成本择一，保留公司来源与未知手牌付款，预算不变",
+      "records": {
+        "76414b52.3544e2df.full.json": {
+          "note": "局部门槛通过；608步正式84/141/86/85均99，搜索错误为空；战略208030节点，执行截断50、队列53。总耗时996582ms高于基线947015ms，均分低于107.75，不宣称整体加速。45旧最佳完整链仍实际保留，80.75新路线替代；详见public-card-runezu-acceptance-20260913.md。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "runezu-effect-fix-20260913",
       "name": "runezu-effect-fix-20260913",
       "date": "2026-09-13",

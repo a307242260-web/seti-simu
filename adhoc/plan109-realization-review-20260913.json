@@ -1,0 +1,442 @@
+{
+  "sourceCommit": "40ce8e97",
+  "sources": [
+    {
+      "file": "/tmp/seti-plan109-audit-20260912.qncVVm/plan109-20260912.json",
+      "sha256": "9d0075034593ce4137b12fe7acf6fd19506439da6319f840775ad06b731dbb13"
+    },
+    {
+      "file": "/tmp/seti-plan109-audit-20260912.qncVVm/route-changes-from69-20260912.json",
+      "sha256": "693ac83f3ed9a43ba61cf1c8d94b85ddab4d081db8860c7476b4ac8920a38de3"
+    }
+  ],
+  "successfulPlanChecks": [
+    {
+      "step": 70,
+      "hit": true
+    },
+    {
+      "step": 91,
+      "hit": true
+    },
+    {
+      "step": 92,
+      "hit": true
+    },
+    {
+      "step": 93,
+      "hit": true
+    },
+    {
+      "step": 94,
+      "hit": true
+    }
+  ],
+  "step109": {
+    "check": {
+      "hit": false,
+      "reason": "next-step-affected",
+      "affected": {
+        "kind": "route",
+        "id": "land:mars:planet:",
+        "sourceId": "launch"
+      }
+    },
+    "chosenAction": "pass:c858282e",
+    "route": {
+      "targetId": "land:mars:planet:",
+      "requirementId": "launch:land:mars:planet:",
+      "sourceId": "launch",
+      "rocketId": null,
+      "movementSteps": 4,
+      "movementNextSteps": [
+        {
+          "family": "launch"
+        }
+      ],
+      "moveTiming": null,
+      "paidMovementPoints": 4,
+      "requiredCost": {
+        "credits": 2,
+        "energy": 5
+      },
+      "endpointFacts": {
+        "rewards": [
+          {
+            "type": "gain_data",
+            "label": "首次登陆：额外获得 2 个数据",
+            "icon": "data",
+            "options": {
+              "count": 2
+            },
+            "id": "planet-reward-0",
+            "status": "pending"
+          },
+          {
+            "type": "gain_resources",
+            "label": "获得 6 分",
+            "icon": "score",
+            "options": {
+              "gain": {
+                "score": 6
+              }
+            },
+            "id": "planet-reward-1",
+            "status": "pending"
+          },
+          {
+            "type": "alien_trace",
+            "label": "获得 1 个黄色外星人标记",
+            "icon": "alien_yellow",
+            "needsUserChoice": true,
+            "options": {
+              "traceType": "yellow"
+            },
+            "id": "planet-reward-2",
+            "status": "pending"
+          }
+        ],
+        "cost": {
+          "energy": 1
+        },
+        "ownMarkers": {
+          "orbitMarkers": [],
+          "landingMarkers": [],
+          "satelliteLandings": []
+        }
+      }
+    },
+    "credits": 2,
+    "energy": 3,
+    "searches": [
+      {
+        "kind": "control",
+        "diagnostics": {
+          "budgetLimits": {
+            "leaves": {
+              "enabled": true,
+              "limit": 1,
+              "reached": true,
+              "truncated": false,
+              "prunedOriginCount": 0
+            },
+            "frontier": {
+              "enabled": false,
+              "limit": 256,
+              "peak": 1,
+              "reached": false,
+              "truncated": false,
+              "trimCount": 0
+            },
+            "execution": {
+              "enabled": true,
+              "limit": 1,
+              "used": 1,
+              "reached": true,
+              "truncated": false,
+              "remainingFrontierNodeCount": 0
+            }
+          },
+          "executedNodeCount": 1,
+          "maxExecutionNodes": 1,
+          "executionLimitReached": false,
+          "beamPrunedOriginCount": 0,
+          "successfulInputSubmissionCount": 1,
+          "attemptedNodeCountByFamily": {
+            "pass": 1
+          },
+          "failedNodeCountByFamily": {},
+          "failedNodeCountByCode": {},
+          "executedNodeCountByFamily": {
+            "pass": 1
+          },
+          "executedNodeCountByDecisionKind": {
+            "pass:main": 1
+          },
+          "executedNodeCountByActionSummary": {
+            "pass:PASS": 1
+          },
+          "executedOriginCountByTarget": {
+            "<unbound>": 1
+          },
+          "executedOriginCountByTargetAndDecisionKind": {
+            "<unbound> -> pass:main": 1
+          },
+          "frontierOriginCountByFamily": {},
+          "totalMilliseconds": 10.698875000000044
+        }
+      },
+      {
+        "kind": "strategic",
+        "diagnostics": {
+          "budgetLimits": {
+            "leaves": {
+              "enabled": false,
+              "limit": 8,
+              "reached": false,
+              "truncated": false,
+              "prunedOriginCount": 0
+            },
+            "frontier": {
+              "enabled": true,
+              "limit": 256,
+              "peak": 18,
+              "reached": false,
+              "truncated": false,
+              "trimCount": 0
+            },
+            "execution": {
+              "enabled": true,
+              "limit": 4096,
+              "used": 74,
+              "reached": false,
+              "truncated": false,
+              "remainingFrontierNodeCount": 0
+            }
+          },
+          "executedNodeCount": 74,
+          "maxExecutionNodes": 4096,
+          "executionLimitReached": false,
+          "beamPrunedOriginCount": 0,
+          "successfulInputSubmissionCount": 76,
+          "attemptedNodeCountByFamily": {
+            "accept_optional_effect": 7,
+            "choose_card": 3,
+            "choose_payment": 7,
+            "choose_target": 7,
+            "end_turn": 8,
+            "industry": 1,
+            "launch": 7,
+            "move": 14,
+            "pass": 8,
+            "place_data": 2,
+            "play_card": 7,
+            "quick_trade": 2,
+            "scan": 1
+          },
+          "failedNodeCountByFamily": {},
+          "failedNodeCountByCode": {},
+          "executedNodeCountByFamily": {
+            "accept_optional_effect": 7,
+            "choose_card": 3,
+            "choose_payment": 7,
+            "choose_target": 7,
+            "end_turn": 8,
+            "industry": 1,
+            "launch": 7,
+            "move": 14,
+            "pass": 8,
+            "place_data": 2,
+            "play_card": 7,
+            "quick_trade": 2,
+            "scan": 1
+          },
+          "executedNodeCountByDecisionKind": {
+            "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger": 7,
+            "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 1,
+            "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 2,
+            "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 7,
+            "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 6,
+            "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 1,
+            "end_turn:turn_control": 8,
+            "industry:quick": 1,
+            "launch:main": 7,
+            "move:quick": 14,
+            "pass:main": 8,
+            "place_data:quick": 2,
+            "play_card:main": 7,
+            "quick_trade:quick": 2,
+            "scan:main": 1
+          },
+          "executedNodeCountByActionSummary": {
+            "move:移动探测器 4 逆时针": 14,
+            "end_turn:结束回合": 8,
+            "pass:PASS": 8,
+            "accept_optional_effect:结算 dlc_23.png": 7,
+            "choose_payment:消耗 1 能量": 7,
+            "launch:发射": 7,
+            "play_card:dlc_34.png": 7,
+            "choose_card:dlc_34.png": 2,
+            "place_data:放置数据": 2,
+            "choose_card:dlc_21.png → 南河三": 1,
+            "choose_target:借用 orange1": 1,
+            "choose_target:借用 orange4": 1,
+            "choose_target:借用 purple1": 1,
+            "choose_target:借用 purple2": 1,
+            "choose_target:借用 purple3": 1,
+            "choose_target:借用 purple4": 1,
+            "choose_target:扫描 织女一": 1,
+            "industry:图灵系统 1x 行动": 1,
+            "quick_trade:2信用点 → 1张牌": 1,
+            "quick_trade:2能量 → 1张牌": 1,
+            "scan:扫描": 1
+          },
+          "executedOriginCountByTarget": {
+            "land:mercury:planet:": 35,
+            "<unbound>": 16,
+            "income:gain:4,2,0,1,1,0": 13,
+            "card:acquire:card-43-0": 4,
+            "sector:win:sector-1-a:1": 3,
+            "decision:choose_target:1bbc6216": 1,
+            "decision:choose_target:505cd48a": 1,
+            "decision:choose_target:a16ac402": 1,
+            "decision:choose_target:b8fbeffa": 1,
+            "decision:choose_target:dd16a166": 1,
+            "decision:choose_target:f70ace96": 1
+          },
+          "executedOriginCountByTargetAndDecisionKind": {
+            "land:mercury:planet: -> move:quick": 14,
+            "<unbound> -> pass:main": 8,
+            "<unbound> -> launch:main": 7,
+            "income:gain:4,2,0,1,1,0 -> play_card:main": 7,
+            "land:mercury:planet: -> accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger": 7,
+            "land:mercury:planet: -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 7,
+            "land:mercury:planet: -> end_turn:turn_control": 7,
+            "card:acquire:card-43-0 -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 2,
+            "card:acquire:card-43-0 -> quick_trade:quick": 2,
+            "income:gain:4,2,0,1,1,0 -> place_data:quick": 2,
+            "<unbound> -> industry:quick": 1,
+            "decision:choose_target:1bbc6216 -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 1,
+            "decision:choose_target:505cd48a -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 1,
+            "decision:choose_target:a16ac402 -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 1,
+            "decision:choose_target:b8fbeffa -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 1,
+            "decision:choose_target:dd16a166 -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 1,
+            "decision:choose_target:f70ace96 -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 1,
+            "income:gain:4,2,0,1,1,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 1,
+            "income:gain:4,2,0,1,1,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 1,
+            "income:gain:4,2,0,1,1,0 -> end_turn:turn_control": 1,
+            "income:gain:4,2,0,1,1,0 -> scan:main": 1,
+            "sector:win:sector-1-a:1 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 1,
+            "sector:win:sector-1-a:1 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 1,
+            "sector:win:sector-1-a:1 -> scan:main": 1
+          },
+          "frontierOriginCountByFamily": {},
+          "totalMilliseconds": 210.63450000000012
+        }
+      }
+    ]
+  },
+  "actualRouteChanges": [
+    {
+      "step": 69,
+      "actor": "player-blue",
+      "action": "play_card:3b8ed751",
+      "summary": "dlc_23.png",
+      "fact": {
+        "movementSteps": 2,
+        "energy": 4,
+        "rotation": {
+          "wheel1Steps": -2,
+          "wheel2Steps": -22,
+          "wheel3Steps": -17,
+          "wheel4Steps": -10,
+          "rotationCount": 2
+        }
+      }
+    },
+    {
+      "step": 79,
+      "actor": "player-white",
+      "action": "choose_target:d0b75b83",
+      "summary": "研究 purple4",
+      "fact": {
+        "movementSteps": 2,
+        "energy": 4,
+        "rotation": {
+          "wheel1Steps": -3,
+          "wheel2Steps": -23,
+          "wheel3Steps": -18,
+          "wheel4Steps": -10,
+          "rotationCount": 3
+        }
+      }
+    },
+    {
+      "step": 93,
+      "actor": "player-blue",
+      "action": "choose_target:228a8f72",
+      "summary": "研究 orange3",
+      "fact": {
+        "movementSteps": 3,
+        "energy": 4,
+        "rotation": {
+          "wheel1Steps": -4,
+          "wheel2Steps": -23,
+          "wheel3Steps": -18,
+          "wheel4Steps": -10,
+          "rotationCount": 4
+        }
+      }
+    },
+    {
+      "step": 94,
+      "actor": "player-blue",
+      "action": "end_turn:320f2608",
+      "summary": "结束回合",
+      "fact": {
+        "movementSteps": 3,
+        "energy": 5,
+        "rotation": {
+          "wheel1Steps": -4,
+          "wheel2Steps": -23,
+          "wheel3Steps": -18,
+          "wheel4Steps": -10,
+          "rotationCount": 4
+        }
+      }
+    },
+    {
+      "step": 96,
+      "actor": "player-brown",
+      "action": "choose_target:70241330",
+      "summary": "研究 purple4",
+      "fact": {
+        "movementSteps": 3,
+        "energy": 5,
+        "rotation": {
+          "wheel1Steps": -5,
+          "wheel2Steps": -24,
+          "wheel3Steps": -18,
+          "wheel4Steps": -10,
+          "rotationCount": 5
+        }
+      }
+    },
+    {
+      "step": 100,
+      "actor": "player-white",
+      "action": "choose_target:8dd1ded6",
+      "summary": "研究 purple2",
+      "fact": {
+        "movementSteps": 3,
+        "energy": 5,
+        "rotation": {
+          "wheel1Steps": -6,
+          "wheel2Steps": -25,
+          "wheel3Steps": -19,
+          "wheel4Steps": -10,
+          "rotationCount": 6
+        }
+      }
+    },
+    {
+      "step": 107,
+      "actor": "player-green",
+      "action": "choose_target:0975381b",
+      "summary": "研究 orange3",
+      "fact": {
+        "movementSteps": 4,
+        "energy": 5,
+        "rotation": {
+          "wheel1Steps": -7,
+          "wheel2Steps": -25,
+          "wheel3Steps": -19,
+          "wheel4Steps": -10,
+          "rotationCount": 7
+        }
+      }
+    }
+  ],
+  "conclusion": "已修复来源缓存后，真实盘面旋转使未来火星路线成本上升，109因资源不足重搜并PASS；74战略节点无预算截断。尚不能证明评分算术错误或移动贪心删路。",
+  "caveat": "变化序列中的非本席回合费用受当前行动席位影响，不作为蓝色费用证据；109本席的5能量需求与持有3能量为正式比较。无新完整局或AI搜索。"
+}
