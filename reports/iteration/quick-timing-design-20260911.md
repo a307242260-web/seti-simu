@@ -5,7 +5,8 @@
 
 当前实施状态（2026-09-12）：阶段观察、移动时机事实、指定公共牌获取目标和四处统一时机
 准入已落地；机会移动的交易准备限制为首步缺口。扫描准备候选与真实损失/步骤排序
-已接入，端到端兑现和性能仍待验收；其他必要准备来源仍待完成，整项未验收、未合回。
+已接入，真实近终点案例证实一放后扫描分叉及单决策成本；公司取牌与必要准备来源
+仍待完成，整项未验收、未合回。
 下文基线证据对应各自记录版本。
 
 ## 目标与必要性
@@ -241,6 +242,34 @@ scope同批修改。正式交易/Decision/RNG/补牌不改，新目标最多当�
 不凭历史成绩替代必要性判断。
 
 ## 验收义务
+
+取牌来源审计（2026-09-12，33059adb）：
+`adhoc/quick-pick-source-audit-20260912.js`生成
+`quick-pick-source-audit-20260912-33059adb.json`。用正式TRADE_ACTIONS完整枚举四种
+钱/电资源转换：其费用分别被credits-for-card、cards-for-pick-card或energy-for-card
+直接取牌费用覆盖。因此仅以“取得指定公共牌”为目标时，不存在必须先做普通资源
+兑换才能解锁首个取牌交易的资源状态；无须增加此类通用准备搜索。结论不扩展到
+公司额外角标奖励、保留特定资源或移动准备，也不证明具体取牌支付最优。
+
+更直接的缺口是五种公司取牌来源。正式abilities.buildActiveAbilityFlow均能生成流程，
+但同一card:acquire目标的时机入口与根目录均拒绝；诊断使用窄接口描述符，不冒充
+Production合法集/完整执行。下一实施应先完整接入这五种来源，而非仅扩充交易准备。
+
+| 公司来源 | 正式Decision路径与代价 | 必须保留的后续语义 |
+| --- | --- | --- |
+| mission_publicity_pick_income | public_card，2宣传 | 指定牌入手，收入角标一次性奖励，不增长收入栏 |
+| fenwick_publicity_pick_corner | public_card，1宣传 | 指定牌入手，弃牌角标奖励，可能继续免费移动 |
+| deepspace_swap_cards | swap_hand → swap_public，消耗指定手牌 | 公共牌交换，不视为盲抽/补牌 |
+| future_span_pick_advance | public_card，已有停放目标牌 | 入手后正式提高目标分，保留停放状态依赖 |
+| strategy_pick_card | public_card，公司正式额度 | 入手后清除奖励槽标记 |
+
+唯一执行owner仍为residual-domain-session；策略只添加来源、绑定目标选择和时机准入，
+不能复制公司付款、补牌、换牌、奖励或RNG逻辑。公司public选择不是trade-card-selection
+kind；后继必须按对应正式路径选指定cardInstanceId，深空先选手牌再选目标公共牌。
+目标入手不准截断附带奖励/免费移动；计划复用要覆盖来源费用、交换手牌、停放状态和
+额度失效。完整条件闭包及正式测试矩阵须在生产修改前进一步核对，当前未开始实施。
+宣传角标0/3可补取牌宣传，其他角标为数据/移动，不能笼统视为钱电准备；后续必要性
+按实际缺口与消耗手牌核对，不改DATA-PLACEMENT阶段的选位优先级。
 
 生产2c2fdb7f近终点单决策验证（2026-09-12）：先查research现有39条记录，再运行
 `node adhoc/quick-scan-search-20260912.js 5 --near-win`，仅运行这个新生产版本一次。

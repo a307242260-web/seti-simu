@@ -1,0 +1,72 @@
+{
+  "gitCommit": "33059adbb8bd7dbfee7fb6831170bf16511d1e4a",
+  "scope": "纯策略入口与正式能力构建原语核对；描述符为窄接口输入，未执行Production规则或AI搜索，不证明完整行动合法性与费用结算。",
+  "dominance": [
+    {
+      "conversion": "credits-for-energy",
+      "directPicksWithNoGreaterCost": [
+        "credits-for-card"
+      ]
+    },
+    {
+      "conversion": "cards-for-credit",
+      "directPicksWithNoGreaterCost": [
+        "cards-for-pick-card"
+      ]
+    },
+    {
+      "conversion": "cards-for-energy",
+      "directPicksWithNoGreaterCost": [
+        "cards-for-pick-card"
+      ]
+    },
+    {
+      "conversion": "energy-for-credit",
+      "directPicksWithNoGreaterCost": [
+        "energy-for-card"
+      ]
+    }
+  ],
+  "companySources": [
+    {
+      "label": "任务中继站",
+      "abilityId": "mission_publicity_pick_income",
+      "flowType": "mission_publicity_pick",
+      "publicityCost": 2,
+      "allowed": false,
+      "acquisitionRootPresent": false
+    },
+    {
+      "label": "芬威克研究中心",
+      "abilityId": "fenwick_publicity_pick_corner",
+      "flowType": "fenwick_publicity_pick",
+      "publicityCost": 1,
+      "allowed": false,
+      "acquisitionRootPresent": false
+    },
+    {
+      "label": "深空探测",
+      "abilityId": "deepspace_swap_cards",
+      "flowType": "deepspace_swap",
+      "publicityCost": 0,
+      "allowed": false,
+      "acquisitionRootPresent": false
+    },
+    {
+      "label": "未来跨度研究所",
+      "abilityId": "future_span_pick_advance",
+      "flowType": "future_span_pick",
+      "publicityCost": 0,
+      "allowed": false,
+      "acquisitionRootPresent": false
+    },
+    {
+      "label": "宇宙战略集团",
+      "abilityId": "strategy_pick_card",
+      "flowType": "strategy_pick",
+      "publicityCost": 0,
+      "allowed": false,
+      "acquisitionRootPresent": false
+    }
+  ]
+}
