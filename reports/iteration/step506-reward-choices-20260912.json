@@ -1,0 +1,922 @@
+{
+  "source": "/Users/bilibili/code/seti-simu/seti-saves/seti-save-research-frontier-materialization-20260912-eee63294-full-v285.json",
+  "scope": "按已记录真实路线重放，检查土卫六两次任意痕迹正式选择及绑定后继；无AI搜索，不证明其他路线相同。",
+  "rows": [
+    {
+      "step": 514,
+      "selectedRecordedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:84f5ee90",
+        "actorId": "player-white",
+        "stateVersion": 235,
+        "decisionVersion": 13,
+        "target": {
+          "choiceId": "trace:2:pink:chong:2",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 2,
+          "traceType": "pink",
+          "speciesId": "chong",
+          "position": 2
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "获得任意外星人标记 1/2 → 外星人 2 粉2号位（5分）"
+      },
+      "legalCount": 16,
+      "searchSelectedCount": 5,
+      "legalActions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:09a3bc7f",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:yellow:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "yellow",
+            "stateExtra": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 2 额外痕迹位（3分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:0c6b3a23",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:blue:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "blue",
+            "stateExtra": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 1 额外痕迹位（3分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:3ef0c79f",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:pink:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "pink",
+            "stateExtra": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 1 额外痕迹位（3分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:4861c8d0",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:yellow:chong:2",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "yellow",
+            "speciesId": "chong",
+            "position": 2
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 2 黄2号位（5分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:51429f22",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:pink:amiba:1",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "pink",
+            "speciesId": "amiba",
+            "position": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 1 粉1号位"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:6dc1e570",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:yellow:amiba:2",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "yellow",
+            "speciesId": "amiba",
+            "position": 2
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 1 黄2号位（1分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:716d1504",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:yellow:amiba:4",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "yellow",
+            "speciesId": "amiba",
+            "position": 4
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 1 黄4号位（1分+外星人牌）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:84f5ee90",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:pink:chong:2",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "pink",
+            "speciesId": "chong",
+            "position": 2
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 2 粉2号位（5分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:894628aa",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:yellow:amiba:3",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "yellow",
+            "speciesId": "amiba",
+            "position": 3
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 1 黄3号位（外星人牌）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:a7b8f322",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:blue:chong:7",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "blue",
+            "speciesId": "chong",
+            "position": 7
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 2 蓝7号位（化石奖励）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:bf39b96e",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:pink:chong:1",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "pink",
+            "speciesId": "chong",
+            "position": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 2 粉1号位（4分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:e34d427e",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:yellow:chong:1",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "yellow",
+            "speciesId": "chong",
+            "position": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 2 黄1号位（4分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:e7ca3da2",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:yellow:amiba:1",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "yellow",
+            "speciesId": "amiba",
+            "position": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 1 黄1号位"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:e8c82757",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:pink:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "pink",
+            "stateExtra": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 2 额外痕迹位（3分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:eb06bd7b",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:blue:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "blue",
+            "stateExtra": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 2 额外痕迹位（3分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:fc15cd27",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:yellow:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "yellow",
+            "stateExtra": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 1 额外痕迹位（3分）"
+        }
+      ],
+      "searchSelected": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:4861c8d0",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:yellow:chong:2",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "yellow",
+            "speciesId": "chong",
+            "position": 2
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 2 黄2号位（5分）",
+          "routeTargetId": "land:saturn:satellite:titan",
+          "routePlanId": "land:saturn:satellite:titan",
+          "routeResultTargetIds": [
+            "land:saturn:satellite:titan"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:51429f22",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:pink:amiba:1",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "pink",
+            "speciesId": "amiba",
+            "position": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 1 粉1号位",
+          "routeTargetId": "land:saturn:satellite:titan",
+          "routePlanId": "land:saturn:satellite:titan",
+          "routeResultTargetIds": [
+            "land:saturn:satellite:titan"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:716d1504",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:yellow:amiba:4",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "yellow",
+            "speciesId": "amiba",
+            "position": 4
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 1 黄4号位（1分+外星人牌）",
+          "routeTargetId": "land:saturn:satellite:titan",
+          "routePlanId": "land:saturn:satellite:titan",
+          "routeResultTargetIds": [
+            "land:saturn:satellite:titan"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:84f5ee90",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:pink:chong:2",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "pink",
+            "speciesId": "chong",
+            "position": 2
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 2 粉2号位（5分）",
+          "routeTargetId": "land:saturn:satellite:titan",
+          "routePlanId": "land:saturn:satellite:titan",
+          "routeResultTargetIds": [
+            "land:saturn:satellite:titan"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:a7b8f322",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:blue:chong:7",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "blue",
+            "speciesId": "chong",
+            "position": 7
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 1/2 → 外星人 2 蓝7号位（化石奖励）",
+          "routeTargetId": "land:saturn:satellite:titan",
+          "routePlanId": "land:saturn:satellite:titan",
+          "routeResultTargetIds": [
+            "land:saturn:satellite:titan"
+          ]
+        }
+      ]
+    },
+    {
+      "step": 515,
+      "selectedRecordedAction": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:4861c8d0",
+        "actorId": "player-white",
+        "stateVersion": 235,
+        "decisionVersion": 13,
+        "target": {
+          "choiceId": "trace:2:yellow:chong:2",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 2,
+          "traceType": "yellow",
+          "speciesId": "chong",
+          "position": 2
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "获得任意外星人标记 2/2 → 外星人 2 黄2号位（5分）"
+      },
+      "legalCount": 15,
+      "searchSelectedCount": 5,
+      "legalActions": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:09a3bc7f",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:yellow:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "yellow",
+            "stateExtra": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 2 额外痕迹位（3分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:0c6b3a23",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:blue:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "blue",
+            "stateExtra": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 1 额外痕迹位（3分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:3ef0c79f",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:pink:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "pink",
+            "stateExtra": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 1 额外痕迹位（3分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:4861c8d0",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:yellow:chong:2",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "yellow",
+            "speciesId": "chong",
+            "position": 2
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 2 黄2号位（5分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:51429f22",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:pink:amiba:1",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "pink",
+            "speciesId": "amiba",
+            "position": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 1 粉1号位"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:6dc1e570",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:yellow:amiba:2",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "yellow",
+            "speciesId": "amiba",
+            "position": 2
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 1 黄2号位（1分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:716d1504",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:yellow:amiba:4",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "yellow",
+            "speciesId": "amiba",
+            "position": 4
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 1 黄4号位（1分+外星人牌）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:894628aa",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:yellow:amiba:3",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "yellow",
+            "speciesId": "amiba",
+            "position": 3
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 1 黄3号位（外星人牌）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:a7b8f322",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:blue:chong:7",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "blue",
+            "speciesId": "chong",
+            "position": 7
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 2 蓝7号位（化石奖励）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:bf39b96e",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:pink:chong:1",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "pink",
+            "speciesId": "chong",
+            "position": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 2 粉1号位（4分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:e34d427e",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:yellow:chong:1",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "yellow",
+            "speciesId": "chong",
+            "position": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 2 黄1号位（4分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:e7ca3da2",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:yellow:amiba:1",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "yellow",
+            "speciesId": "amiba",
+            "position": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 1 黄1号位"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:e8c82757",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:pink:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "pink",
+            "stateExtra": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 2 额外痕迹位（3分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:eb06bd7b",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:blue:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "blue",
+            "stateExtra": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 2 额外痕迹位（3分）"
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:fc15cd27",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:yellow:state-extra",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "yellow",
+            "stateExtra": true
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 1 额外痕迹位（3分）"
+        }
+      ],
+      "searchSelected": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:4861c8d0",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:yellow:chong:2",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "yellow",
+            "speciesId": "chong",
+            "position": 2
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 2 黄2号位（5分）",
+          "routeTargetId": "land:saturn:satellite:titan",
+          "routePlanId": "land:saturn:satellite:titan",
+          "routeResultTargetIds": [
+            "land:saturn:satellite:titan"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:51429f22",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:pink:amiba:1",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "pink",
+            "speciesId": "amiba",
+            "position": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 1 粉1号位",
+          "routeTargetId": "land:saturn:satellite:titan",
+          "routePlanId": "land:saturn:satellite:titan",
+          "routeResultTargetIds": [
+            "land:saturn:satellite:titan"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:716d1504",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:1:yellow:amiba:4",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 1,
+            "traceType": "yellow",
+            "speciesId": "amiba",
+            "position": 4
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 1 黄4号位（1分+外星人牌）",
+          "routeTargetId": "land:saturn:satellite:titan",
+          "routePlanId": "land:saturn:satellite:titan",
+          "routeResultTargetIds": [
+            "land:saturn:satellite:titan"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:a7b8f322",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:blue:chong:7",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "blue",
+            "speciesId": "chong",
+            "position": 7
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 2 蓝7号位（化石奖励）",
+          "routeTargetId": "land:saturn:satellite:titan",
+          "routePlanId": "land:saturn:satellite:titan",
+          "routeResultTargetIds": [
+            "land:saturn:satellite:titan"
+          ]
+        },
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:bf39b96e",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "trace:2:pink:chong:1",
+            "kind": "planet-reward-alien-trace",
+            "alienSlotId": 2,
+            "traceType": "pink",
+            "speciesId": "chong",
+            "position": 1
+          },
+          "payload": {},
+          "decision": null,
+          "summary": "获得任意外星人标记 2/2 → 外星人 2 粉1号位（4分）",
+          "routeTargetId": "land:saturn:satellite:titan",
+          "routePlanId": "land:saturn:satellite:titan",
+          "routeResultTargetIds": [
+            "land:saturn:satellite:titan"
+          ]
+        }
+      ]
+    }
+  ]
+}

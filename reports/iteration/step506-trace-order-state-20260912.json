@@ -1,0 +1,26 @@
+{
+  "source": "/Users/bilibili/code/seti-simu/seti-saves/seti-save-research-frontier-materialization-20260912-eee63294-full-v285.json",
+  "orders": [
+    [
+      "trace:2:pink:chong:2",
+      "trace:2:yellow:chong:2"
+    ],
+    [
+      "trace:2:yellow:chong:2",
+      "trace:2:pink:chong:2"
+    ]
+  ],
+  "differences": [
+    {
+      "path": "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+      "forward": 30,
+      "reverse": 31
+    },
+    {
+      "path": "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+      "forward": 31,
+      "reverse": 30
+    }
+  ],
+  "scope": "仅验证虫族粉2/黄2相反顺序的完整状态差异；不宣称其他组合或未来行为等价。"
+}
