@@ -185,8 +185,9 @@ seti-saves/*.json（存档，可选）    │      └→ reports/iteration/regi
 
 当前报告中心指本仓库机器人版本总览与复盘页，不自动包含外部发布。
 本轮执行顺序见 [策略 TODO 的已确认迭代顺序](../reports/iteration/strategy-todo-20260911.md)：
-ALIEN-VALUE-01 → TURN-BOUNDARY-01 → QUICK-TIMING-01 → GOAL-ONLY-01 →
-预算截断专项循环直至达成 → DATA-PLACEMENT-01 → ROUND-PLAN-01。
+ALIEN-VALUE-01 → TURN-BOUNDARY-01 → QUICK-TIMING-01 →
+预算截断专项循环直至达成 → GOAL-ONLY-01 → DATA-PLACEMENT-01 → ROUND-PLAN-01。
+2026-09-12用户因搜索耗时不可接受要求优先进入预算阶段；GOAL-ONLY暂缓但保留。
 
 #### “消除全部预算截断”专项的自迭代流程（2026-09-11 用户确认）
 
@@ -207,7 +208,7 @@ ALIEN-VALUE-01 → TURN-BOUNDARY-01 → QUICK-TIMING-01 → GOAL-ONLY-01 →
 过程记录须可串联：所属大目标 → 本次选中的决策及记录来源 → 最大头分析 → 小目标
 及 PASS 证据 → 更新后的瓶颈／专项完成证据。预算阈值保持既定口径，不靠扩大预算、
 隐藏截断或把有损搜索标成完整来达成目标；实验去重及验证要求继续适用。
-当前是在登记专项方法，不表示已启动实验或已达到专项目标。
+2026-09-12已启动专项取证；完成条件未变，尚未达到专项目标。
 
 阶段目标与历史进度按需查阅 [阶段进度](progress-20260912.md)。
 
