@@ -1,0 +1,82 @@
+{
+  "scope": "同一真实决策输入，使用正式probe路线契约；无AI。原直接land计划ID由调查脚本手填，不代表生产路径。",
+  "priorPlanSource": "trace-score-greedy-step506-dbceef73-20260912.json",
+  "routePlanIds": [
+    "probe:rocket:11:land:saturn:satellite:titan",
+    null,
+    "tech:blue3:1"
+  ],
+  "rows": [
+    {
+      "routeTargetId": "land:saturn:satellite:titan",
+      "routePlanId": "probe:rocket:11:land:saturn:satellite:titan",
+      "selected": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:6469aa62",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "land:11:saturn:satellite:titan",
+            "rocketId": 11,
+            "planetId": "saturn",
+            "landTarget": {
+              "type": "satellite",
+              "satelliteId": "titan",
+              "rocketId": 11
+            }
+          },
+          "payload": {
+            "energyCost": 1
+          },
+          "decision": null,
+          "summary": "登陆土卫六（土星）｜奖励：获得 7 分；获得任意外星人标记 1/2；获得任意外星人标记 2/2",
+          "routeTargetId": "land:saturn:satellite:titan",
+          "routePlanId": "probe:rocket:11:land:saturn:satellite:titan",
+          "routeResultTargetIds": [
+            "land:saturn:satellite:titan"
+          ]
+        }
+      ]
+    },
+    {
+      "routeTargetId": "land:saturn:satellite:enceladus",
+      "routePlanId": "probe:rocket:11:land:saturn:satellite:enceladus",
+      "selected": [
+        {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:305155fa",
+          "actorId": "player-white",
+          "stateVersion": 235,
+          "decisionVersion": 13,
+          "target": {
+            "choiceId": "land:11:saturn:satellite:enceladus",
+            "rocketId": 11,
+            "planetId": "saturn",
+            "landTarget": {
+              "type": "satellite",
+              "satelliteId": "enceladus",
+              "rocketId": 11
+            }
+          },
+          "payload": {
+            "energyCost": 1
+          },
+          "decision": null,
+          "summary": "登陆土卫二（土星）｜奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描",
+          "routeTargetId": "land:saturn:satellite:enceladus",
+          "routePlanId": "probe:rocket:11:land:saturn:satellite:enceladus",
+          "routeResultTargetIds": [
+            "land:saturn:satellite:enceladus"
+          ]
+        }
+      ]
+    }
+  ],
+  "conclusion": "当前生产目标筛选正常，不实施直接land补丁"
+}
