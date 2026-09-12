@@ -7,6 +7,29 @@
   },
   "versions": [
     {
+      "id": "chong-trace-reward-20260912",
+      "name": "chong-trace-reward-20260912",
+      "date": "2026-09-12",
+      "baseline": "overflow-trace-greedy-20260912",
+      "head": "35ee7180",
+      "commits": [
+        "f80037bd",
+        "d9397c00",
+        "b9921b43",
+        "bfa83eec",
+        "3c87175e",
+        "db7b7a90",
+        "e4b5fdaf",
+        "caad64d0",
+        "35ee7180"
+      ],
+      "summary": "补全虫族蓝1至7面板化石痕迹奖励，保留正式抽牌与精选屏障",
+      "records": {
+        "d4702a6f.35ee7180.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "overflow-trace-greedy-20260912",
       "name": "同色额外痕迹贪心",
       "date": "2026-09-12",
