@@ -51,3 +51,13 @@ science的ALIEN_TRACE领奖仅处理gain、pickAlienCard、region，未消费fos
 hidden_card_draw。领奖后恢复观察/合法集一致；领奖前恢复再执行后，整个core与
 composition Session一致（含RNG和实体序号）。不是只核对手牌数量。
 单决策入口为`adhoc/benchmark-chong-trace-reward-20260912.js`，仍待执行。
+
+## 单决策门槛通过
+
+固定提交caad64d0，`chong-trace-reward-step506-caad64d0-20260912.json`：
+普通决策总耗时19761.501417ms，战略搜索15206.1345ms，选择move:547412a6。
+战略及control失败计数均为空，达到本项预设小于30000ms门槛。
+战略4096节点仍截断、256队列仍截断（trimCount=2036），战略8叶限制未启用；
+control一节点自然结束，触顶但没有截断。不将本次修复计作消除预算截断。
+主目录去重清单已核对148条，尚无本候选完整局。下一步完成受影响接口文档复核，
+提交固定验收版本后，仅运行一次新的标准登记完整局。本项尚未合回／PASS。
