@@ -4,6 +4,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const assert = require("node:assert/strict");
+const { execFileSync } = require("node:child_process");
 const root = path.resolve(__dirname, "..");
 const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
 const registry = JSON.parse(read("reports/iteration/registry.json"));
@@ -42,7 +43,17 @@ for (const file of pages) {
 const center = read("reports/robot-iteration.html");
 assert(center.includes(id));
 assert(center.includes(result.reportPath.replace(/^reports\//, "")));
+const restoration = JSON.parse(read("reports/iteration/report-metadata-restoration-20260912.json"));
+const panels = (html) => [...html.matchAll(/<section\b[^>]*>[\s\S]*?<\/section>/g)]
+  .map((match) => match[0]).filter((panel) => !panel.includes("<h2>搜索触限记录</h2>"));
+for (const entry of restoration.entries) {
+  const original = execFileSync("git", ["show", `${restoration.baseline}:${entry.path}`],
+    { cwd: root, maxBuffer: 16 * 1024 * 1024 }).toString();
+  assert.deepEqual(panels(read(entry.path)), panels(original), entry.path);
+}
 console.log(JSON.stringify({ version: id, commit: result.gitCommit, steps: result.steps,
   scores: result.scores, average: result.avgScore, searches: searches.length,
   executionTruncations: 54, frontierTruncations: 60, checkedLinks,
-  historicalWarnings: registry.warnings, outcome: "pass" }, null, 2));
+  preservedHistoricalReports: restoration.entries.length,
+  historicalUnverified: restoration.excluded,
+  historicalWarnings: registry.warnings.filter((warning) => warning.level === "warn"), outcome: "pass" }, null, 2));

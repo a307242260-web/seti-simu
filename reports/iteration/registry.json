@@ -1,13 +1,13 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-11T10:53:40.637Z",
+  "builtAt": "2026-09-12T09:43:52.013Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "4d6a2a47",
-  "currentBaseline": "turn-boundary-20260911",
+  "headCommit": "2ab775c2",
+  "currentBaseline": "quick-timing-corner-20260912",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -116,6 +116,1142 @@
     ]
   },
   "versions": [
+    {
+      "id": "quick-timing-corner-20260912",
+      "name": "快速行动时机·移动角标（已验收合回）",
+      "date": "2026-09-12",
+      "baseline": "quick-timing-20260912",
+      "head": "a83f69ec",
+      "commits": [
+        {
+          "hash": "296a095c",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 留档完整局及正式回放审计，记录降分和待验收边界"
+        },
+        {
+          "hash": "ee4e74cb",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 核对取牌后继和正式分数差，明确移动角标待验证边界"
+        },
+        {
+          "hash": "0a81908e",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 复现机会移动角标被拒及正式额外收益，登记完整接入义务"
+        },
+        {
+          "hash": "a83f69ec",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 接入机会移动角标并验证同目标后继与计划复用"
+        }
+      ],
+      "summary": "机会移动角标接入统一时机准入，保留正式额外收益、同目标后继和计划复用",
+      "diffStat": "19 files changed, 82420 insertions(+), 4 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/quick-move-corner-evidence-20260912.js",
+          "insertions": 117,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/quick-timing-full-audit-20260912.js",
+          "insertions": 65,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/quick-timing-score-delta-20260912.js",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 4,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 12,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/quick-timing-contract.test.js",
+          "insertions": 28,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/quick-move-corner-evidence-20260912-ee4e74cb.json",
+          "insertions": 86,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-move-corner-policy-20260912.json",
+          "insertions": 88,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-scan-search-20260912-60f8cca6-ca628f2b-pool5-near-win.json",
+          "insertions": 10444,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-timing-20260912/7bb2c6d4.60f8cca6.full.action-log.html",
+          "insertions": 1985,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-timing-20260912/7bb2c6d4.60f8cca6.quick-24.action-log.html",
+          "insertions": 155,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-timing-design-20260911.md",
+          "insertions": 128,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/quick-timing-full-audit-20260912-60f8cca6.json",
+          "insertions": 254,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-timing-score-delta-20260912-60f8cca6.json",
+          "insertions": 656,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 45,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/7bb2c6d4.60f8cca6.full.json",
+          "insertions": 22541,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/7bb2c6d4.60f8cca6.quick-24.json",
+          "insertions": 557,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-quick-timing-20260912-60f8cca6-full-v261.json",
+          "insertions": 36469,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-quick-timing-20260912-60f8cca6-quick-24-v2.json",
+          "insertions": 8732,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "5097a6bb.a83f69ec.full.json",
+          "recordPath": "reports/research/5097a6bb.a83f69ec.full.json",
+          "mode": "full",
+          "steps": 597,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 1205691,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "a83f69ec",
+          "createdAt": "2026-09-12T09:00:47.301Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "QUICK-TIMING-01五条行为目标通过技术验收，已以43c28152合回并完成主目录回归；本项报告中心记录/存档/复盘及20条链接已核验；历史正文保留的元数据刷新已实施。597步自然终局75/125/102/89，均97.75，较上一候选80.25增加17.5，较TURN基线89.25增加8.5。耗时1205.691秒。203次搜索、233757节点；战略执行截断48、队列截断60，control执行截断6；失败节点0。战略8叶未启用。597步正式重放自然终局，后置快速行动5次（精选交易3、公司取牌1、移动1），均存在当前准入目标，无后置放数据。完整局没有实际后置移动角标，其准入/收益/后继/复用使用定向正式案例证明；不把涨分说成预算改善。",
+          "scores": {
+            "player-blue": 75,
+            "player-green": 125,
+            "player-brown": 102,
+            "player-white": 89
+          },
+          "avgScore": 97.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 75,
+              "base": 54,
+              "tile": 19,
+              "card": 2,
+              "tileScoresById": {
+                "a": 16,
+                "b": 0,
+                "c": 0,
+                "d": 3
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 3,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 5,
+                "orbitScore": 15,
+                "scanScore": 13,
+                "taskCardScore": 0,
+                "techBonusScore": 2
+              }
+            },
+            "player-green": {
+              "total": 125,
+              "base": 89,
+              "tile": 36,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 8,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 7,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 12,
+                "blueTechScore": 0,
+                "cardEffectScore": 3,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 21,
+                "orbitScore": 15,
+                "scanScore": 9,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            },
+            "player-brown": {
+              "total": 102,
+              "base": 68,
+              "tile": 31,
+              "card": 3,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_10.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "publicity",
+                    "scorePer": 1
+                  },
+                  "score": 3
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 7,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 8,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 0,
+                "orbitScore": 6,
+                "scanScore": 11,
+                "taskCardScore": 0,
+                "techBonusScore": 17
+              }
+            },
+            "player-white": {
+              "total": 89,
+              "base": 69,
+              "tile": 20,
+              "card": 0,
+              "tileScoresById": {
+                "a": 5,
+                "b": 0,
+                "c": 0,
+                "d": 15
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 5,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 16,
+                "alienTraceBlueScore": 10,
+                "alienTracePinkScore": 14,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 7,
+                "orbitScore": 0,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 6
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-quick-timing-corner-20260912-a83f69ec-full-v285.json",
+          "reportPath": "reports/iteration/quick-timing-corner-20260912/5097a6bb.a83f69ec.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "5097a6bb.a83f69ec.full",
+            "path": "reports/iteration/quick-timing-corner-20260912/5097a6bb.a83f69ec.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
+    {
+      "id": "quick-timing-20260912",
+      "name": "快速行动时机（中间候选留档）",
+      "date": "2026-09-12",
+      "baseline": "turn-boundary-20260911",
+      "head": "60f8cca6",
+      "commits": [
+        {
+          "hash": "90eb2e71",
+          "date": "2026-09-11",
+          "subject": "[QUICK-TIMING-01] 登记快速行动时机基线与验收义务"
+        },
+        {
+          "hash": "de1aec3b",
+          "date": "2026-09-11",
+          "subject": "[QUICK-TIMING-01] 留档扫描容量与放数据可延后证据"
+        },
+        {
+          "hash": "405c7a36",
+          "date": "2026-09-11",
+          "subject": "[QUICK-TIMING-01] 验证数据容量临界值与必要提前放置数量"
+        },
+        {
+          "hash": "d91bb311",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 明确推迟损失口径与移动精选验收边界"
+        },
+        {
+          "hash": "e1c68bd5",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 验证先移动规避转动成本的正式正反案例"
+        },
+        {
+          "hash": "55229c0b",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 验证指定公共牌获取并明确时机接入义务"
+        },
+        {
+          "hash": "f9163d4a",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 验证扫描前腾容量的完整正式行动链"
+        },
+        {
+          "hash": "96e3801d",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 建立主行动阶段观察的待实现行为门禁"
+        },
+        {
+          "hash": "105f3503",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 公开正式主行动阶段并验证执行恢复一致性"
+        },
+        {
+          "hash": "6baa2845",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 派生同源转动时机成本并验证正式执行一致性"
+        },
+        {
+          "hash": "9b9b21b5",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 贯通指定公共牌获取目标与计划身份依赖"
+        },
+        {
+          "hash": "e83eb4c1",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 固化四处时机准入反例并留档红测证据"
+        },
+        {
+          "hash": "c5adb09c",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 统一四处时机准入并约束机会首步资源准备"
+        },
+        {
+          "hash": "35fa1992",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 验证目标选择器驱动扫描的容量准备边界"
+        },
+        {
+          "hash": "d4baf31f",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 公开正式数据溢出计数并贯通反事实观察"
+        },
+        {
+          "hash": "7fd4b929",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 保持扫描准备链的有效扇区目标"
+        },
+        {
+          "hash": "1406b01d",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 接入扫描准备候选并按真实损失择优"
+        },
+        {
+          "hash": "71eb7a13",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 留档完整合法集单决策成本与未达成证据"
+        },
+        {
+          "hash": "fa96b75d",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 留档近完成扫描案例并定位连续填数据跳过分叉"
+        },
+        {
+          "hash": "2c2fdb7f",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 连续放数据服从全部来源的目标后继边界"
+        },
+        {
+          "hash": "33059adb",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 验证真实扫描的一次准备分叉并记录固定预算成本"
+        },
+        {
+          "hash": "9cc8a315",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 核对取牌准备必要性并定位五种公司来源缺口"
+        },
+        {
+          "hash": "46ec5d08",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 留档五种公司正式取牌链与计划观察缺口"
+        },
+        {
+          "hash": "8d5adb79",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 接通五种公司取牌来源与同席逐步计划依赖"
+        },
+        {
+          "hash": "7bbe8b3f",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 验证芬威克取牌后保留并执行免费移动奖励"
+        },
+        {
+          "hash": "60f8cca6",
+          "date": "2026-09-12",
+          "subject": "[QUICK-TIMING-01] 指定公共牌仅在必要时用单次角标补宣传"
+        }
+      ],
+      "summary": "阶段与机会窗口准入、扫描容量准备、公司指定取牌及必要宣传准备",
+      "diffStat": "57 files changed, 113337 insertions(+), 104 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/quick-company-pick-flow-20260912.js",
+          "insertions": 176,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/quick-data-capacity-evidence-20260911.js",
+          "insertions": 35,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/quick-move-rotation-evidence-20260912.js",
+          "insertions": 136,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/quick-pick-source-audit-20260912.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/quick-public-pick-evidence-20260912.js",
+          "insertions": 77,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/quick-scan-capacity-flow-20260912.js",
+          "insertions": 148,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/quick-scan-search-20260912.js",
+          "insertions": 111,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/quick-timing-baseline-20260911.js",
+          "insertions": 28,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/quick-timing-replay-evidence-20260911.js",
+          "insertions": 57,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 52,
+          "deletions": 2
+        },
+        {
+          "file": "docs/rl-simulation-env.md",
+          "insertions": 32,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/app/simulation-contract.js",
+          "insertions": 13,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 208,
+          "deletions": 52
+        },
+        {
+          "file": "randomizer/game/ai/machine-player-coordinator.test.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/outcome-model.js",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/outcome-projection.test.js",
+          "insertions": 50,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/plan-continuation.js",
+          "insertions": 18,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/public-card-goal.test.js",
+          "insertions": 150,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/quick-timing-contract.test.js",
+          "insertions": 299,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/search-placement-boundary.test.js",
+          "insertions": 115,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/production-kernel.js",
+          "insertions": 71,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/rule-composition.js",
+          "insertions": 39,
+          "deletions": 9
+        },
+        {
+          "file": "reports/iteration/public-card-target-flow-20260912.json",
+          "insertions": 187,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-company-pick-flow-20260912-46ec5d08-0be60933.json",
+          "insertions": 598,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-company-pick-flow-20260912-7bbe8b3f-06fb7cf8-publicity-prep.json",
+          "insertions": 144,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-company-pick-flow-20260912-8d5adb79-6f6e71f8-fenwick-move.json",
+          "insertions": 156,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-company-pick-flow-20260912-8d5adb79-7b891425-fenwick-move.json",
+          "insertions": 144,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-company-pick-flow-20260912-9cc8a315-f171e231.json",
+          "insertions": 592,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-company-pick-flow-20260912-9cc8a315.json",
+          "insertions": 593,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-data-capacity-evidence-20260911.json",
+          "insertions": 222,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-move-rotation-evidence-20260912.json",
+          "insertions": 3460,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-pick-source-audit-20260912-33059adb.json",
+          "insertions": 72,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-public-pick-evidence-20260912.json",
+          "insertions": 172,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-scan-capacity-flow-20260912.json",
+          "insertions": 221,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-scan-policy-capacity-20260912.json",
+          "insertions": 386,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-scan-preparation-candidates-20260912.json",
+          "insertions": 774,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-scan-search-20260912-1406b01d-90320c76-pool5.json",
+          "insertions": 749,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-scan-search-20260912-1406b01d-a136e932-pool5.json",
+          "insertions": 6100,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-scan-search-20260912-2c2fdb7f-ca628f2b-pool5-near-win.json",
+          "insertions": 10444,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-scan-search-20260912-71eb7a13-ca628f2b-pool5-near-win.json",
+          "insertions": 9604,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-timing-baseline-20260911.json",
+          "insertions": 996,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-timing-consumers-red-20260912.log",
+          "insertions": 127,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-timing-design-20260911.md",
+          "insertions": 567,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/quick-timing-replay-evidence-20260911.json",
+          "insertions": 100,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 456,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/strategy-todo-20260911.md",
+          "insertions": 15,
+          "deletions": 6
+        },
+        {
+          "file": "reports/iteration/turn-boundary-20260911/885906e7.31a2e43b.full.action-log.html",
+          "insertions": 2002,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turn-boundary-20260911/885906e7.31a2e43b.quick-24.action-log.html",
+          "insertions": 155,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/turn-boundary-design-20260911.md",
+          "insertions": 21,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 28,
+          "deletions": 2
+        },
+        {
+          "file": "reports/research/885906e7.31a2e43b.full.json",
+          "insertions": 24439,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/885906e7.31a2e43b.quick-24.json",
+          "insertions": 489,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 456,
+          "deletions": 4
+        },
+        {
+          "file": "reports/seti-current-base-robot-strategy-20260911.html",
+          "insertions": 19,
+          "deletions": 19
+        },
+        {
+          "file": "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-full-v276.json",
+          "insertions": 38241,
+          "deletions": 0
+        },
+        {
+          "file": "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-quick-24-v2.json",
+          "insertions": 8732,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 3,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "7bb2c6d4.60f8cca6.full.json",
+          "recordPath": "reports/research/7bb2c6d4.60f8cca6.full.json",
+          "mode": "full",
+          "steps": 513,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 708288,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "60f8cca6",
+          "createdAt": "2026-09-12T08:21:24.265Z",
+          "resumeStep": 24,
+          "seed": "seti-free-analyze-v1",
+          "note": "QUICK-TIMING-01待验收、未合回：513步自然终局83/83/72/83，均80.25，较基线下降9分。167次搜索、154013节点；战略执行截断30、队列截断39，control执行截断5；搜索失败节点0。战略8叶未启用。续跑708.288秒，不含24步前缀。正式513步重放验证主行动后快速行动5次（移动3、取牌交易1、公司取牌1），均存在当前准入目标，但尚不作为原计划绑定的证据。剩余来源覆盖及降分归因审查中；不因降分直接回滚，也不宣称整项通过。",
+          "scores": {
+            "player-blue": 83,
+            "player-green": 83,
+            "player-brown": 72,
+            "player-white": 83
+          },
+          "avgScore": 80.25,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 83,
+              "base": 57,
+              "tile": 20,
+              "card": 6,
+              "tileScoresById": {
+                "a": 5,
+                "b": 0,
+                "c": 0,
+                "d": 15
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 5,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                },
+                {
+                  "cardId": "dlc_10.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "publicity",
+                    "scorePer": 1
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 5,
+                "orbitScore": 21,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 83,
+              "base": 58,
+              "tile": 25,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 0,
+                "c": 0,
+                "d": 3
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 3,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 3,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 0,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 7,
+                "orbitScore": 21,
+                "scanScore": 6,
+                "taskCardScore": 0,
+                "techBonusScore": 0
+              }
+            },
+            "player-brown": {
+              "total": 72,
+              "base": 58,
+              "tile": 14,
+              "card": 0,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 0,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 0,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 11,
+                "blueTechScore": 2,
+                "cardEffectScore": 4,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 17,
+                "orbitScore": 0,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 13
+              }
+            },
+            "player-white": {
+              "total": 83,
+              "base": 69,
+              "tile": 11,
+              "card": 3,
+              "tileScoresById": {
+                "a": 5,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 5,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_14.webp",
+                  "rule": {
+                    "color": "red",
+                    "kind": "sectorWinsByColor",
+                    "scorePer": 3
+                  },
+                  "score": 3
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 20,
+                "alienTraceBlueScore": 6,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 5,
+                "blueTechScore": 6,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 5,
+                "orbitScore": 6,
+                "scanScore": 6,
+                "taskCardScore": 0,
+                "techBonusScore": 8
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-quick-timing-20260912-60f8cca6-full-v261.json",
+          "reportPath": "reports/iteration/quick-timing-20260912/7bb2c6d4.60f8cca6.full.action-log.html",
+          "reportExists": true
+        },
+        {
+          "recordFile": "7bb2c6d4.60f8cca6.quick-24.json",
+          "recordPath": "reports/research/7bb2c6d4.60f8cca6.quick-24.json",
+          "mode": "quick-24",
+          "steps": 24,
+          "stepsLimit": 24,
+          "terminal": false,
+          "wallMs": 14375,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "60f8cca6",
+          "createdAt": "2026-09-12T08:08:53.965Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "QUICK-TIMING-01待验收：24步前缀约14.4秒，未终局，均分7仅为进度；4096执行/256队列截断已记录。完整局从本存档续跑，不重跑前缀。版本贡献从隔离起点615bb175之后计，不含TURN-BOUNDARY-01的三次报告收口提交。",
+          "scores": {
+            "player-blue": 7,
+            "player-green": 7,
+            "player-brown": 8,
+            "player-white": 6
+          },
+          "avgScore": 7,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-quick-timing-20260912-60f8cca6-quick-24-v2.json",
+          "reportPath": "reports/iteration/quick-timing-20260912/7bb2c6d4.60f8cca6.quick-24.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "7bb2c6d4.60f8cca6.full",
+            "path": "reports/iteration/quick-timing-20260912/7bb2c6d4.60f8cca6.full.action-log.html",
+            "mode": "full"
+          },
+          {
+            "runKey": "7bb2c6d4.60f8cca6.quick-24",
+            "path": "reports/iteration/quick-timing-20260912/7bb2c6d4.60f8cca6.quick-24.action-log.html",
+            "mode": "quick-24"
+          }
+        ]
+      }
+    },
     {
       "id": "turn-boundary-20260911",
       "name": "turn-boundary-20260911",
@@ -549,7 +1685,7 @@
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
@@ -41536,7 +42672,7 @@
     },
     {
       "id": "fold-chain-real",
-      "name": "fold-chain-real",
+      "name": "fold-chain-real（历史行动明细未核验）",
       "date": "2026-08-22",
       "baseline": "elig-sum4",
       "head": "29e66b9b",

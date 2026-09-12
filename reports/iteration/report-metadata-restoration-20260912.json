@@ -1,0 +1,806 @@
+{
+  "baseline": "f072cb50065af5489261d801ed8424934a421d87",
+  "reports": 113,
+  "restoredBodies": 79,
+  "excluded": [
+    {
+      "path": "reports/iteration/fold-chain-real/e749439d.0a377f88.full.action-log.html",
+      "reason": "no-committed-original"
+    }
+  ],
+  "apply": true,
+  "backup": "/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-report-regeneration-backup-20260912-TUntVi",
+  "entries": [
+    {
+      "path": "reports/iteration/quick-timing-corner-20260912/5097a6bb.a83f69ec.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "30773f310721d814b6eb9761cabb955cd7665d6718f939fd7e396d479a4157c0",
+      "beforeHash": "e0d3474cffdbf32bdddcfdc490759aebc97d966eca358cc9d4ea39e668b05743",
+      "afterHash": "3b5e49bcc9c115e02fcb1334f7b51ce74566a874d445b2bbcac88eae6959baaf"
+    },
+    {
+      "path": "reports/iteration/quick-timing-20260912/7bb2c6d4.60f8cca6.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "2c7bc742a34729dc6f242d9860a3ded30059ef944c71e86e256d3a8c0411a4e9",
+      "beforeHash": "4deb8ca12f097e921bab1157c339bb605aa931be16688ab3c131bc2d02aadc24",
+      "afterHash": "a637c8e0f17422ccd7eb1ef37f096b5275d0168d8ae6adb1cb7f69a631b9df59"
+    },
+    {
+      "path": "reports/iteration/quick-timing-20260912/7bb2c6d4.60f8cca6.quick-24.action-log.html",
+      "restoredBody": true,
+      "originalHash": "62c3845675eb20c2d90b5843d5e124c3362bad0968e9aa45b2f4d8ed249b6566",
+      "beforeHash": "39aa5d3a8c9d324964bd4567129888a2534d33afbf0acb8b1d4b235f2e19cc86",
+      "afterHash": "c19a6266f7edbfb952c5f1f2dd2e67baed0f7453fbbccbfdc3953dac4e74b107"
+    },
+    {
+      "path": "reports/iteration/turn-boundary-20260911/885906e7.31a2e43b.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "19d6b764ec99a46a0d2b491b2278175ea92ddcd0c348805d75067fe928326d27",
+      "beforeHash": "2e8be362255df6b8bac14052095b8c71d9be6fd4558b029a2e922523d9253672",
+      "afterHash": "1acff355bb0b89c36f20d85b5b1c4330a453817254fbb802e702ac69fe3b3a1e"
+    },
+    {
+      "path": "reports/iteration/turn-boundary-20260911/885906e7.31a2e43b.quick-24.action-log.html",
+      "restoredBody": true,
+      "originalHash": "ec9a96eaff89ae9db20161f612bc2f16fce8ba3468858b728f8ecadffdc01cbe",
+      "beforeHash": "03f751903e62f017c45029e147765749681b9e455a434f5329cd8ae34a1710fe",
+      "afterHash": "23ede097326ebda44b2b635fc3f8924150b465495c17a17c63216525c45dadb2"
+    },
+    {
+      "path": "reports/iteration/alien-card12-20260911/3522c43c.ea32d6e8.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "d933c8e4dc3bc44d49fda241eff9443a3ada5f639761a7a6e118f63a91ea56cc",
+      "beforeHash": "cce067e6cbd7cbe78018f1c89688ff0fd53ae07ad62ad7f09e94768e3fc7cd69",
+      "afterHash": "ea6e7cb9fd5cdc24d86f6fd0c89cf9bf25a25ddc92edb4bfe403a8d67f85d5fa"
+    },
+    {
+      "path": "reports/iteration/alien-card12-20260911/3522c43c.ea32d6e8.quick-24.action-log.html",
+      "restoredBody": true,
+      "originalHash": "851b848f00464d7c09df492ea8dc1d858d4aefdc8ecb555f1d95c6a24dfbc754",
+      "beforeHash": "925c64d4bce5669cd6ee9369cd87711fe59baa3ab9cf63d851e0a13d6b0d7a95",
+      "afterHash": "44192323f0dd65b30eac0b1c04392369d7ef103ac222920a13828051e5df9b5f"
+    },
+    {
+      "path": "reports/iteration/alien-expectation-superseded-20260911/410a479a.cf4f69f3.quick-24.action-log.html",
+      "restoredBody": true,
+      "originalHash": "78d1903d9c2897d1f9478716ee103f5827b36abd828a7dadc03512ebc59be829",
+      "beforeHash": "510f87edb88dd7c81e87eadfd0fa777803dcd688a2fb13b8e34eccbd3148629c",
+      "afterHash": "c95450e1929b84613c53fc9e46dd10ee5cc4daf31127da6d58ce8b04cc98cb47"
+    },
+    {
+      "path": "reports/iteration/alien-facts-20260911/9fd08b9f.4d162d24.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "2a659fad2909dd1cb5cac40aa55f67b385e2d0debeeb27a37d1837f12882c64c",
+      "beforeHash": "17bf90ef2edaa8fac4128814ad0a139ea2fee2d5e64b23938b0829264b53e797",
+      "afterHash": "17bf90ef2edaa8fac4128814ad0a139ea2fee2d5e64b23938b0829264b53e797"
+    },
+    {
+      "path": "reports/iteration/alien-facts-20260911/9fd08b9f.4d162d24.quick-1.action-log.html",
+      "restoredBody": false,
+      "originalHash": "4ceaf60f57b0ecbf1b370184edb794bf677af5d62fedc898249c4ad9d89ff70e",
+      "beforeHash": "ed6817251436ae04968773f7a9a667133685775b68c8c4ab26c111bc20da9549",
+      "afterHash": "ed6817251436ae04968773f7a9a667133685775b68c8c4ab26c111bc20da9549"
+    },
+    {
+      "path": "reports/iteration/round5-correctness-base-20260909/cc9eb28a.f607c6e5.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "6f8548befc5f4fac65d020cf584f6449b3fbbfa9b84f3693e39851bcce3db29a",
+      "beforeHash": "a6c1efd05aeb7d80167c528427596be0b614280de1b5951128b894ab33319035",
+      "afterHash": "6a5d38841712daa135754ada9db6fb269fb1337c88db94ee4190aa920b5c41c2"
+    },
+    {
+      "path": "reports/iteration/counted-card-reveal-20260909/f0ec0eb8.a402ca99.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "606be2d97290744baaebbd4f2aa636568a3c8f3d7e286d83c78e1eea0fe7c6ad",
+      "beforeHash": "d33ce035347d0fae74f85fdedd0e6eea37bd0c3773c058bb9407ef92e84a4b7e",
+      "afterHash": "d8e857e50df9d3b606a36f4c32490c8a4ab35940371e7dd68503da450cef60a6"
+    },
+    {
+      "path": "reports/iteration/counted-card-move-20260909/f14a863e.4bc44eb2.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "ef8cd2f83e75db19ec1744a3d4a9a358f6dc77b37b6f6bf7343760d79ad10518",
+      "beforeHash": "072e59f401467ad369a788d66ee6fe1c823000b43b6c5920506c435850a85978",
+      "afterHash": "4e77ec43fe3643d389b16524240586802bde50684187a0c61049d238ca752926"
+    },
+    {
+      "path": "reports/iteration/route-leaf-eligibility-20260909/4a694948.ad676add.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "6e3b9351b19be6c9a5425a9e5e4cfd0c6f4daa5e015e1924d2edc358a6920a6f",
+      "beforeHash": "153f0e492c8056cc032bfbe5c43960a6f009f91a2d1c7d62f1db7b2cc715d1d8",
+      "afterHash": "a1d915e5080d7178fb039db89a6c7af9cd43670b5f3a897c4ff3006d8d6fc371"
+    },
+    {
+      "path": "reports/iteration/route-suffix-facts-20260908/3c7e0003.af937808.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "1e6eb94196d6d244b35cbf2a40d4088af96484d6721e4ef5928baf6172081a2c",
+      "beforeHash": "860eca81139662cf74c497696f955a97e68a6d224dc01c9c24c2faf17ca5d575",
+      "afterHash": "2ca4fb4ba54540a41692155c470a53f86ec3eab245d6c2d2383782b15e8cb41c"
+    },
+    {
+      "path": "reports/iteration/alien-pick-disabled-tech-20260908/80437cef.5d17835f.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "1232557db138f4c48853a47453406e4d87eeb8b2d142e0f8c721188a473cae34",
+      "beforeHash": "979c10d3213d767f11a6b896d090b8a6d7f8597846fb3dc04f864cd270f5ae2b",
+      "afterHash": "48374e04bec0ef6590b4e26dbcb7439ade7b43003b114de43f696edd125fe3e8"
+    },
+    {
+      "path": "reports/iteration/disabled-tech-value-20260908/e7bcda6c.a6812efe.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "5d07e3c793d977d87beb4cf771d0940fbaced544e3e61e75eb8b6e45d1069032",
+      "beforeHash": "391d0c823f1eda432ef8c81102c2bb5d3a29220f2331cd0affb62e0c97549a58",
+      "afterHash": "c6fd8c3ef4222733b77639ca9ebd28b9bac84d0c40e7e1929a67ec921327d929"
+    },
+    {
+      "path": "reports/iteration/alien-card-pick-greedy-20260908/b6c44201.aa277dac.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "48cce71b043e6f144928a6bd805724c64449c75f6198b719d92201b428cad224",
+      "beforeHash": "9c193d44181fbc37cb6ab9537d0aa2bb033c97c0d5c1d588272162779b3371f4",
+      "afterHash": "0c49ddc79a701069e52d8be01cc0bd550dd2c2441b5d68f9258cd6176fc28e4d"
+    },
+    {
+      "path": "reports/iteration/data-demand-pair-20260908/d814807d.6319beb1.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "05a8810de1407a78e0accd3613d2ac4816fde09378bb6499996c9226bfea97d6",
+      "beforeHash": "23adfd2ccc4f5310a210875247a90e9f9b4ecd7b6b6bf909a89f68188f071a77",
+      "afterHash": "e8f2396a0a39ad44907798d39484981276083e17ab7fe1dc90b04833ed505a20"
+    },
+    {
+      "path": "reports/iteration/route-selection-error-20260908/c43c1f88.70043d34.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "1002aa8093d6d418cb33ce242158615ccc71f0a137be3c44878df2724d8b0171",
+      "beforeHash": "f96b5a9e3bf1a726bf2a227cbe9fd4e35720510adfc483b847d205b7a35aa613",
+      "afterHash": "35608fd53e38f9a2882b97682fac65222e23e227d5b095bc4f8856a95a89110b"
+    },
+    {
+      "path": "reports/iteration/counterfactual-identity-20260908/362fa7f3.0b01af15.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "0737f2db1439f1ad0490fd8cf7010efad1049141513b1554a26348ef17d2fed5",
+      "beforeHash": "7057955a4a92d3e7589e17fd33b6ef3b920bd29845db96cd3f23b94f20e9e2de",
+      "afterHash": "835ccdeae4aaff44a7c0ae021888f73a7c107411bc86f20d71a52e7c89325df0"
+    },
+    {
+      "path": "reports/iteration/quick-turn-order-20260908/95016f07.438305b4.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "ff201f8b5a128a40d3b37c54fadcc522ab632cee134f5b48e8617dccb6f1cc7d",
+      "beforeHash": "5408de77dc2ede38c9e863a1063340185607501a923730bab11df7cc0a8bbb47",
+      "afterHash": "2623393eedc8fbe96793f50621345ea9334861bda458157909ad5e94c69ec0e7"
+    },
+    {
+      "path": "reports/iteration/grant-data-route-20260908/1a061690.1501ebfd.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "64090babf4bfa90d4eaf539809c21fe4220b74b2733bba590864f6f78984a198",
+      "beforeHash": "5886b463f8754d960e23b74fc348e4ba8b51c9b60c1aa4e398315f375ef0167c",
+      "afterHash": "ffeda30409b28b2eb84570a907e37f7cfea6471f2da823aa5512f1075cda10ac"
+    },
+    {
+      "path": "reports/iteration/income-boundary-company-base-20260908/73d04d3a.670441bc.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "2bfaadbcc6fbd149fc98b70c07897f6015313910b2acd061d468fee0c3b552d2",
+      "beforeHash": "f43ac759b1d5ae9fbccb394ae6d000521934e4ce08cf7749a8f1cafd37f89dda",
+      "afterHash": "a5bd4ce8ad3ab1e2209190cc898ba506c093010b3deb8665eb0122606b961294"
+    },
+    {
+      "path": "reports/iteration/income-blind-boundary-20260908/197640a3.f520347d.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "b73b3fe25db7443d76520ac1aeabdfc9ac4d6a3f920d60e65d851b5011d838df",
+      "beforeHash": "f1e823cc1ea2d2e57f011191d093f2e8f336eb50796b7a4a605ab2b81ae5e8dc",
+      "afterHash": "1717ab6991d74d90351ffd245f469f978328f63cac89b0aed3a71fa8e403227d"
+    },
+    {
+      "path": "reports/iteration/rules-baseline-20260908/6e4b4248.ee3ea52f.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "a9d96d6a330bcc6ed06de4bd1e8ce01ee2df10471659ea71ab20d254fb25289d",
+      "beforeHash": "51c002fafb6ece74238c4a248476875c1b8a7e49bb655a6c09c684a6444767e0",
+      "afterHash": "c1ff0e09cd349b90584ffa684aa78d563b4869aa738b47bb415b037a35b95feb"
+    },
+    {
+      "path": "reports/iteration/quick-move-events-20260908/ab2586b3.c50e4f01.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "41f21da4656f2b1296af1f987ec433f6cce6d8ed41b6795e4c00459a11411160",
+      "beforeHash": "49dd7e7a96526a13877d62e1441998b44fb3325085df06c97d4b50506d1c41ff",
+      "afterHash": "f6513e1e3edd39dd1bb62369ce48fef41a2db4621d524b0cfab8b530cc335b80"
+    },
+    {
+      "path": "reports/iteration/fangzhou-major-reward-20260908/b58e392b.4d3711c5.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "01cd9ace4933a01c85450f1372169c18d1045cb55c8952e5a361a095fc538fb7",
+      "beforeHash": "e882ac5aecb13def32a9505ea47e41cf37e1b05431b16ea28b8ed47dc72cba02",
+      "afterHash": "b651554c2741c518fbcd0b630f4a42747660f42629e8da8dd9ad34a4c9598682"
+    },
+    {
+      "path": "reports/iteration/turing-immediate-expiry-20260908/cb456d23.04648dd1.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "7099b9868cfa4aeaa2d2aedd6db0c334a34a385a0f45aa10a05de726b2c9cae5",
+      "beforeHash": "7ba8433188d1716cf2544f9be62320bf2177268c77f59b14579ce37bfd627721",
+      "afterHash": "bd9ba28a11ccf6621ca79a8c60a657979a2eb4cb1737346d413ae203bf7ae7c1"
+    },
+    {
+      "path": "reports/iteration/turing-active-tech-20260908/b7968542.cbf7966f.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "fe7d45199dc9433f11536f50b16afc4806cdc713bc5b0f24057cccc9aba49cac",
+      "beforeHash": "0b4b3b1a08f9b2642072842fd4fb3befc4746a3ede886ed7bca462dd1940d8aa",
+      "afterHash": "f2bef9736f5175558395b8e040bdae491c0a4d74391dbfb5b520485a27bf943b"
+    },
+    {
+      "path": "reports/iteration/borrowed-probe-cache-20260908/1969fccc.addcef7f.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "dd01604551f92b1f7e4a2a308241b25ce9fb5e14c5dd50225d1fd3675fa4463f",
+      "beforeHash": "ab0910f03d35d479fb0c8a944fe48f7801d36f52f3dcc61dddc41f074e87d4d9",
+      "afterHash": "e6d8b2c1fdc283c1c688fe40606cc44b1eea8bbe59a8ade66a154f3f717f11b5"
+    },
+    {
+      "path": "reports/iteration/company-base-income-scoring-20260908/68307c5f.a7d65847.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "de0ffef8bae469e897323ef73f78e4eae3ca4ce33b1fe8ce1468ab29a4d0c0ce",
+      "beforeHash": "3a2d76c397abd4c78c9a4b311c1f019ecea9072ec953d43d1d1c523170727713",
+      "afterHash": "cdcfe133561213721ab0fa5aa851a8e45ba9c9481f80496081bc227bded19104"
+    },
+    {
+      "path": "reports/iteration/chong-blue-card-order-20260908/6a79eb7c.4fbce3b5.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "3913870c0a6f7db0f8d15d56c88b562cccd093cc2f91c877a48819a33fa5c50f",
+      "beforeHash": "2e530cbcc294fae049a3d2a5b28285ff90dd788d52eb02a126af8d02a0eb09c8",
+      "afterHash": "c46c0bd9194b562b298970da6af7dc5841ac24dbd371d2a3f8cdc6325977fdba"
+    },
+    {
+      "path": "reports/iteration/expired-sector-goal-20260908/d5ef5962.2b44f883.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "9f2f2ae17e9ab4082f260fd66e1511d44553cc6a61902a61b38001410475d6a8",
+      "beforeHash": "d9952ecaf6bc0f8568393327f17dd55f91eb3afb9d491f5d90931bb68856c836",
+      "afterHash": "79336090a82a7660d54e45b658a56301011ad3b0d6d928fababdfd7bdfd1500e"
+    },
+    {
+      "path": "reports/iteration/route-reward-dependency-20260908/81eb1a1e.bb028006.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "fa12b1c3cb6b8879a33930e990c89725a9512274be91e8da1e38355cdcac45c6",
+      "beforeHash": "602c8f603abdc3de95dc51c8d5d29a93cd496fbd9058b4d40827915d36d48490",
+      "afterHash": "7c56f71cf8f71ab2ddd8b9879e6a4ff5cf4adc455fb2153efea31d67217b0178"
+    },
+    {
+      "path": "reports/iteration/aomomo-reward-ordinal-20260908/f6c9aabe.7a33ec07.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "20964fd063649a73661357a44c9e83035029e795b8ecc5decba2e162437ab5fd",
+      "beforeHash": "53f8b040d701e0d33e82531742e1dc44c98bec116e72f05d5fd97e1b88491689",
+      "afterHash": "ef46166c6e9a663da482d6060cfda1d3ad2ff775c5d9330fcb770bab2d9c55fd"
+    },
+    {
+      "path": "reports/iteration/reward-plan-dependency-20260907/5d9ead50.0b9837be.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "6eeb21cd835d512237c7409067270af35bd8c4faac50a2b137fac2b7f1654e31",
+      "beforeHash": "3156dcaf5a8557a9f44f85d90d4462571b22b0828c56784c2a06001a2f780121",
+      "afterHash": "6012209704d58961e0bb82d270a133a6da38a5914f4bcad985a094debb639dc0"
+    },
+    {
+      "path": "reports/iteration/analysis-plan-dependency-20260907/f9209270.36994979.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "79a0b5a0b7dcebaf118b9dad158b8706ae89e71612fad7957805ff7218717b87",
+      "beforeHash": "5ad3fb1e6a4d11fd3260bf61658585d5c15ce055be3bc008dc19d9b7a5b18f7a",
+      "afterHash": "5daf8dc9894f3322749790d4fad6271bf898b38f2c765b6d2201ecab8ff1c1c1"
+    },
+    {
+      "path": "reports/iteration/data-slot-order-20260907/a5beda5c.3b4e1c3a.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "d8a993065e057481c1bca2e6b2d2dbe00b0f9692afd3f1876280b51a4eab7a14",
+      "beforeHash": "4e3290d47ccc9dbf20ccd7b73392b52c8aed6b2c6ec9be2412e3a6fa6a664fe8",
+      "afterHash": "e000efbea03de4044e4e3809f3bd527d13d09c92a46d719d8595d08d0ad4ab97"
+    },
+    {
+      "path": "reports/iteration/data-demand-fusion-20260907/a29f82db.75320ae3.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "b0ef9e066d4cdd3fc52fd779c2db3dd31e7be7d12fddc57318c800c66817f0ac",
+      "beforeHash": "ca606274dc9b05f03853e96cbef1ba93f55412c7509758ba2792189ffae00c7a",
+      "afterHash": "2e3feaff5c9840e5fd06d4597ca84d33d65628348d6455a079b5ede930bf707a"
+    },
+    {
+      "path": "reports/iteration/trigger-scan-mapping-20260907/7dfcf27e.aaaed8d0.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "6c76ae971033cb679558eee1d9bd1f4221b73b63d2ab7a94784d4ef3e2a12f70",
+      "beforeHash": "207c2cb6311e79d44f7623ecad27925a4f196acdc44b8ed2724f0e7ca156cf46",
+      "afterHash": "e8b875f9db79096e58ad4da04382279321b02295284430a3f135b3be9bef71db"
+    },
+    {
+      "path": "reports/iteration/hidden-reward-boundary-20260907/78020346.646858ac.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "ed3dc6f7e996cea1c80a8378cbcfba05971851f503462c79409c925250166fc9",
+      "beforeHash": "e6492e8ee24b6ee15c3243af7fb626aadbd4e4bd9c6b051b244b67c9978a6562",
+      "afterHash": "bad63c609fac8cb784045e53c285b6ed42011e53751424d5514e0b54e66882b9"
+    },
+    {
+      "path": "reports/iteration/alien-trace-greedy-20260907/9e486f54.4212b427.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "f4e4b4194f13c644719ec1b65ec48509d3fdf45f3ac6756ecd235c3a4497bae9",
+      "beforeHash": "14e36b1b47830ca26b47d1c68b6c74e61590cbdfe8205680eaf3d4277591bd71",
+      "afterHash": "527ecb085f6cfd08547bf63dd20cc1d78c8e781b667c4e4ff6f98834e296d3c5"
+    },
+    {
+      "path": "reports/iteration/reorganization-resources-20260907/13a491f3.e6923ed1.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "3c04c39dfd101197081806c09acd5acf91cf074a9814221b7fe85337e857afb2",
+      "beforeHash": "0ae35cb9be5f0cae46e16923c609503a4d739e4c37752f1b376581f1c87012a2",
+      "afterHash": "ae30451894e6edfac0d8c92a6b5075280e289d8d688345ca8d9cfb04db5e53e8"
+    },
+    {
+      "path": "reports/iteration/resource-preparation-cache-20260907/aed4e5db.1f55695a.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "7976857ab2863ad3872add32af0ee7867af54d21bd1e7491650b06649304bfec",
+      "beforeHash": "eddfda92de7f24b9f8c06de435f0565901f3f8f34c58c4d786315a7d0cc7c012",
+      "afterHash": "9db707c6854fe56d954d316e7efc5165b8597983c14c356fcf7a76c0ca9fceb8"
+    },
+    {
+      "path": "reports/iteration/company-movement-finish-20260907/f237707b.4b246dca.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "597048462d56add4afb710210f7f67e44e1cd5de9c369cb58e85abec1a7c8561",
+      "beforeHash": "6fb5ac8d84a24d8cbe62f86c825b6815dcf62e5f1c421ffd23de1f39d04448b3",
+      "afterHash": "ac4903dd682576cd5de1ac601a9a070861e745940e8fe7270c5a9e153373a566"
+    },
+    {
+      "path": "reports/iteration/card-movement-finish-20260907/7d87ceb5.6b5381c1.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "f0d62858ed96dee2d9d0b827a635ba9e84048c441a693b4636d47e4d377da037",
+      "beforeHash": "7209e17fdc786a886ad3c74354e72433fa7835b7d71a722a8b7462a94cf842cb",
+      "afterHash": "950028b2693199cb9f4243fae4bcff98a8db2b3f9399827954efed924e8ca026"
+    },
+    {
+      "path": "reports/iteration/ordinary-movement-demand-20260907/1066a36f.0b586daa.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "9bf98933687c4ae2bc5901b406174ecd49cd1f91b31f12d7e509578378193641",
+      "beforeHash": "171b2ba8318bda8144995de0e8c4500dd2db1d5a91b2562aefd9d77a0401d965",
+      "afterHash": "887e5825c954735a9d06db5690e207440c9ca08aa5bf1151d70f91b05e1d264e"
+    },
+    {
+      "path": "reports/iteration/company-delayed-allowance-20260907/b347c0e8.9968644b.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "2282ce2f9c50db1db58621f44fc2215c7834928a5e85e1a303a2e1563f988def",
+      "beforeHash": "4ceb6ea87b68a13c9f8506da2e9c824b708158edec46bf963512e29549349c22",
+      "afterHash": "e0f6404683c5722e526b060ffcf7111aab7b2350598faec89fd0852318896a04"
+    },
+    {
+      "path": "reports/iteration/main-goal-movement-20260907/14114d45.77d36854.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "f72a88e3668e64d1e560ebd0f4da83f54936699be72409980924c6b236175f81",
+      "beforeHash": "ce1893f0fb1af27014f3cf99c99a97eacf4e5e0781ec4995461f90ccf7980f7b",
+      "afterHash": "a604531053e16fcf003a6897f16c83f1ffa7584bb9c8461014140a54c379867a"
+    },
+    {
+      "path": "reports/iteration/asteroid-movement-modifier-20260907/7feb57c3.96e60c14.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "e925b6631c000fc887832445bff4599c727a31e7dd1dfa582b9f158fda15e003",
+      "beforeHash": "fb7cce41283fc5b9ce52d4023c85fcf21f5dcdef6c2eaf6dddf17051e86b9fa8",
+      "afterHash": "9e8b96d4f43cd09e55304c2a28db9828e0feaf83708542fdbd4b9db8f3cd516c"
+    },
+    {
+      "path": "reports/iteration/input-classification-20260907/6eb79d83.18839186.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "ec079ba9ac21cda02c4767590338351c370698691aa851ddec0d6dbc88fa04f0",
+      "beforeHash": "64f7751fdd376fcb1f7fce5e0bc73ea26b0726ea33b930aad54adb3c97b2e3f3",
+      "afterHash": "fd7cec3c13c1991b44d97202d6efe4cffeb28713836c423805f254320909e181"
+    },
+    {
+      "path": "reports/iteration/visit-progress-read-20260907/2a4865e5.1585d689.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "0d44d955367ea5589cac7a6dec0284cf7c6149c99f49e4bc7213bc55c26b5ea2",
+      "beforeHash": "e068ae25d1f847cd4297e784d1be9648365eafd1171255a00a04a5fc490c3691",
+      "afterHash": "de5e3d296b038fcf2064684f75524ec2fcf598a6cb943b3bf9d9b215082a15cb"
+    },
+    {
+      "path": "reports/iteration/data-event-contract-20260907/7f66d3e1.c555bc33.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "50ddb682da1ab6d6448358d644ba7bb24a741da92830075f23539b0545f01dac",
+      "beforeHash": "90ddf186aee0ccd7c401b0983c74339b23cb29ee82795bf6ec61eab385a5ebde",
+      "afterHash": "5d298140cd980c6dbfc5fd27aadf73deb8c92fc2257e3b416f0539ff5623e91e"
+    },
+    {
+      "path": "reports/iteration/any-alien-contract-20260907/0b8c855d.0caa713a.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "880dfdb19c8ca5df855f23434778d990a6573412c1ee555a578e5c81c1095196",
+      "beforeHash": "49af1bf9545a14dd883ef1fa0b6ad86d06b132b0c77158509552ffaa5cd78a71",
+      "afterHash": "8d011c68e991b640f037efc796932a2a97cb6b49f2010879cc10d84c87d38e3c"
+    },
+    {
+      "path": "reports/iteration/probe-scan-scope-20260907/ddc98722.1f0d82ec.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "49e7f108812b119b1c19d5cd24bb3417004f2a409544a839ac9cb729d49ab0c1",
+      "beforeHash": "992a1cb964dbf0887100d83607a74532ae751b86b60c6cb25349b7bc4786b467",
+      "afterHash": "3abef7f91b75608440825fc43671a61d5ddd3fee6a13c0236835f992dd1da2db"
+    },
+    {
+      "path": "reports/iteration/probe-scan-contract-20260907/b48d2904.def25c80.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "911bf308f8c0ad33ebdb3101641740322f9034550506d6ee43223177a7aeec1b",
+      "beforeHash": "716ff047b961ea64a9d51b645e6fe49663cbf053d3d548bae01aaf5bf1ec1f95",
+      "afterHash": "0024f52771df0429fabbab6edd8b5ecbf8f1edc154f181764acab2758e595085"
+    },
+    {
+      "path": "reports/iteration/trade-confirm-20260907/7ac3da29.de8a4056.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "7f0787455b17d8fc0dc8df738028555511753651b2f9441f05ca3c9829461762",
+      "beforeHash": "68e78c84938fd6a90be640d1d05e3562d3a1113f58fb968f30da510446bb2e94",
+      "afterHash": "239f27b8104877dfbad4ef6964712b7c564fe3c8bda67caf596592bd4243b919"
+    },
+    {
+      "path": "reports/iteration/orbit-visit-trigger-20260907/64334dc7.7613a096.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "15c8c2dc95145d221aea9e9beb068f972713c3911078d119ae5b2c50a0d80798",
+      "beforeHash": "40d1d029bd267027a72ca8b89e40a69803e5ef65c4a9a20a22b1dea232d05d37",
+      "afterHash": "51270d488f46f366bc6c157e5b62fbb1b5ac44af66e1d03bcad01cea06016b5d"
+    },
+    {
+      "path": "reports/iteration/probe-location-data-20260907/ac62e0db.a41ae85a.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "773b1ffed1fb30d5b327e4a9c9a1dbad99ea1d794a4fa9edb100d56579b02aaa",
+      "beforeHash": "28cb5001e89d7a08d59d84a8115d28d0f7b7f022a2ff0df95068016000924990",
+      "afterHash": "034ad99b7f3953b03ff0888d59d80e782cbd22892f25c99f896f08aa15dd4591"
+    },
+    {
+      "path": "reports/iteration/final-probe-location-20260907/c292b693.01b4d49e.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "21b92928c22aec93a976d0b008596c953d84a27aedce153b11af3827690aa86d",
+      "beforeHash": "eaa6ecd58f845d42c516cb4da3c27fda46d5e7cd3663d262ce6080121f62a134",
+      "afterHash": "dc7a9130ddd11e5e9c77cf65b5d8d55bfa2a257a4822ad0d2e6438fea63e8953"
+    },
+    {
+      "path": "reports/iteration/probe-location-read-20260907/beaacd3e.b8be61a5.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "34a33bbcf802c3361623ead32622caf79116c196a32c06e743c2ae9d8af0d7ab",
+      "beforeHash": "50fc96dbf79968f7e65f6bcdbbce2c97b1770bab93dd7da1e8346c8e26744192",
+      "afterHash": "9e24acde1d6f1bbf2073a45100919637a75400aaeb741effcc0a28b4729d6a27"
+    },
+    {
+      "path": "reports/iteration/card-launch-limit-20260907/39fc344f.b10ae543.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "a70e127b652258f584261bd5d604eb5fa9e951e69fb5288b4adcd7b7f32832a6",
+      "beforeHash": "d1a95abcc5d7bb4533005aadfae69a989d8cf6b958fc1692c735d7cadc151ddc",
+      "afterHash": "bb02dfae9b990d034b423a5dd482cd356cfd7de5fd57a4a672b135d619881fe3"
+    },
+    {
+      "path": "reports/iteration/projection-isolation-20260907/0eee8b82.744c5cf9.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "026cc48388b4bbb38586f88019efafc86aea97c8dcaf70e71c09a652cdad4a56",
+      "beforeHash": "5c595a13f353a4f2b7cd05b341db52675e23f2ad62f7a2a38d7f12201fcedc7e",
+      "afterHash": "e385c66878847ec447f947809b0d2c7f668a8b0331fb1c83057279afbb6db8da"
+    },
+    {
+      "path": "reports/iteration/alien-card-cancel-20260907/e81fab58.61cc94af.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "dda5bb520a1799b553ab8ab5dfd5e9fb5c50517e09f831094fd304f8dec52f56",
+      "beforeHash": "6e81b6958e169ada27ecd908c5028f3a8fdc480767d89ea1e2cc032269b81f38",
+      "afterHash": "32ae1e20a5e217a680ab80490f1a7724446a8a5b92fda83afdbe92ebc30c749a"
+    },
+    {
+      "path": "reports/iteration/shared-leaf-observation-20260907/dd9a1dab.a4453b64.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "aeeba2fdda14cf64fc178443d5ea62c0284d53d4a607f3bbcb3c67351c38522b",
+      "beforeHash": "5b348cc9a58b1e956369d157936492579790a387bd14dcdc0ac9afe8035bd357",
+      "afterHash": "10d0aa059f20a14709f91f02f5673b6afb6c2fdcee3f9c584b30cab962a6d271"
+    },
+    {
+      "path": "reports/iteration/policy-plan-evidence-20260906/91f9a83a.73e7b2ca.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "5b0b672ef5b2edf8918cf40925959ff3e1182c74ccf924e97f66b99d0131f499",
+      "beforeHash": "acc3e754c01520e3690c089d3d1cf5ff8aea882a3b1895d76ad9cd6724e652db",
+      "afterHash": "776f22fba1f17f9871471b42928b11e4f98073dcaa7ee1ce775153dd3a0f2c72"
+    },
+    {
+      "path": "reports/iteration/amiba-data-overflow-20260906/25c65ece.795cd6eb.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "141d9ea5396e72b57261c68b73ad599316ca98cf8adda6c2451501453763a9a8",
+      "beforeHash": "3ec471f8d44101d6a7ff5d709304b6bcb617c42a8cd4bc372db76aebf61d247d",
+      "afterHash": "10c9041ff80a41c470a0c17a8ebd75a77aeecbb8a0dfa6a85aaafaf4ad6f8580"
+    },
+    {
+      "path": "reports/iteration/company-free-move-20260906/ffb71a57.553e19c6.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "b9ed29611fee271065796e7db51e422307ed072d5ff5b722b3852cedf5b36048",
+      "beforeHash": "27d4fc5a10461d63b90c7001c353ee49287150a7fb598f29a4ba273008eecf3c",
+      "afterHash": "70f65af4e3557336d0582e48e1c1b6f59e361c1dbe7aaf5cfd48e3c2137c711b"
+    },
+    {
+      "path": "reports/iteration/card-trace-owner-20260906/220d6a11.6cd56452.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "ec6b665e746714be74abfa0b4c98faf34545875cdd6f22810473df8d7ed5e978",
+      "beforeHash": "ff8502ef3b11b9567610bc745f12b4cf13d35075ab5461c59b9c7c2dd012b17d",
+      "afterHash": "729b57174fc6cdd81818b411b0ac3250bc0f2190fce1f55f2399b94969442171"
+    },
+    {
+      "path": "reports/iteration/card-trace-owner-20260906/220d6a11.6cd56452.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "e6ba4ed30dfe84299a9f0cd71c486d7c7e1b8b86fc82d17117dda441ef840575",
+      "beforeHash": "05384faf22b670d3a6ff543f9fcd11b4fd1b4120ffbf0f315a7b44cf25933b24",
+      "afterHash": "66e674f7451837109e9d0a7adad8602406e36e6bf124a3becb7fb60a3f432c25"
+    },
+    {
+      "path": "reports/iteration/amiba-region-rule-20260906/857426ea.be6bd7b6.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "55f80923903677c12bb89a2cec8eaf1089f8d24c2ce1ef77c9d818cf4fcac712",
+      "beforeHash": "262bd5d85f7a6adb5591f0fd30e494336c766ab638220a923ea6deeafd40b84b",
+      "afterHash": "cfa2be23d336baeb0a321705c64334ad1e6a8fffce831f20b3a3310324dfc3f1"
+    },
+    {
+      "path": "reports/iteration/amiba-region-rule-20260906/857426ea.be6bd7b6.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "30d36e4132686fa1f5e0b77b1831987c8ebb99560c12d3aeb937b6eb910c775b",
+      "beforeHash": "c0d1f5dcfbaa8611a3785e475015203dfd6b7f41e4f1e5763741431c6192d8ad",
+      "afterHash": "d8ad6dd6de85648bc1b4ff8a52c4f5641c4a65e7ff0f337e5645d72be27c9a7d"
+    },
+    {
+      "path": "reports/iteration/search-statistics-p1-20260906/4e84be21.06738145.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "79b46eb6fc8d1e7c08dd7f3012cb63d83ac67d24dfa3ffdfc52ae4fa933bc026",
+      "beforeHash": "762b8e15236075d8b1a7c7da9662ddc4fd25993ea2c94c0f1dc4c391d0c1b8f7",
+      "afterHash": "4a3df9d81335f5ca97dd43f46cb7e9267e173c4d4afa99492fa1c5c69aa29166"
+    },
+    {
+      "path": "reports/iteration/search-statistics-p1-20260906/4e84be21.06738145.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "2cded847579a0076fb10a1829cf6496054517f186d9b7b4162f727983f18dbf7",
+      "beforeHash": "2d051d906b6dd01b14c859eb27e0b7f9be12177831b4d70000cb70f2266ee0c7",
+      "afterHash": "c2fd9be9d2b9d7ffe1e362a832e9142594023168cbb5f8ea9043df411c867307"
+    },
+    {
+      "path": "reports/iteration/observe-decision-r4-20260906/2848eba2.213f34db.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "3625f8cc1192a29b864a33b145280a2d302b69f1f80d1ace83448e5036cc5767",
+      "beforeHash": "b0826090d7bcf112e62e88ee25f6387e1b986a1326ae573ddf1ee1766eca1fec",
+      "afterHash": "35f5b152ec8f222daef0430811bb7eb05de0c64833d69531d1fa3f5370540bf0"
+    },
+    {
+      "path": "reports/iteration/observe-decision-r4-20260906/2848eba2.213f34db.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "6c1e899499d5bfb8859fc3c8878c547cccf1f5f0e5c72df203c336fd25d28b65",
+      "beforeHash": "235e032e72bc2c4be21569bbd5a8155070213d237eb1796c05ff39e9353dc767",
+      "afterHash": "13f6c0810a0eff0776c3f08d9ebdaa0aa224e630e13205277e56ac1281a0ee3a"
+    },
+    {
+      "path": "reports/iteration/round-data-income-r4-20260906/cdcd5d61.6d67a974.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "ebdf1c1512c4e20ba411420629fa03df8c3b1328d68eb87948179db8b87b48b0",
+      "beforeHash": "a0f110b24579c00e18fdfe737b333fd16f18e05bd6d380a485295d665c4c6c07",
+      "afterHash": "cad8333c9b5eec66b110c1b1bf3d088d15d28d47da7ff3f0103e1cde2801ba4c"
+    },
+    {
+      "path": "reports/iteration/score-corner-r4-20260906/7a4c63fd.0d21aebf.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "fdebc0b9f732f50075ac25e136ead8e9e5da2947798b10c6901b6958ee4e53e5",
+      "beforeHash": "54e591448e33431549a20f72e13eb2af9bc2a59bbc60b0d1c45c4c6e8aafd101",
+      "afterHash": "d3cf73d629cb37a43c647aa7fd47df6fce03768f296609aac308cd39d93697dd"
+    },
+    {
+      "path": "reports/iteration/score-corner-r4-20260906/7a4c63fd.0d21aebf.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "b90d5161f7d415ee8e225b818c65c89bc2307bbe4b954178189f32c2e850a612",
+      "beforeHash": "6d58b13c08cc60271e0cd8a1f5f4cacd21db07917fdb0dd1110ca7c84f29bb13",
+      "afterHash": "37ab23bc2b8964a8395015bb8cc3848cf747b2fd57ba2258fe28fcf2060afc82"
+    },
+    {
+      "path": "reports/iteration/search-deadline-r4-20260906/76d49ed1.8a6ef25e.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "05c432ba9dd224bf2ba1c69ddf677a02ca2b167aa6889527dafd30e5c4a3ec27",
+      "beforeHash": "8a21a207247fdb42a09ba903dd25984e2d37b34ecfd9799574cb84956dffade3",
+      "afterHash": "69c16c3945da4b997eb93b863ef0a1e02d29a0ed6eb6270766ccd6030ae6d24a"
+    },
+    {
+      "path": "reports/iteration/search-deadline-r4-20260906/76d49ed1.8a6ef25e.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "55eec14b9545c1abee92fa8ad440d687093a636352042039689fa8760ec56674",
+      "beforeHash": "336362bc00079093b16c93ebfca677ec0bd203b04710f8ebef4cd2372b7c2657",
+      "afterHash": "a61ab4a0346dab707a13d895739c2faa62be93873dc04ddb7b10374cf6a14737"
+    },
+    {
+      "path": "reports/iteration/probe-source-r3p1-20260906/c9b29e5a.d969b727.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "9adee1e6085a6b6e0291e0d659b05cac6163f67d9dd4b00df7363ca494b0db9c",
+      "beforeHash": "643ac6b8a52913b69b836bb6881c385fcb15efa75dce22e1247620ece58252cb",
+      "afterHash": "45996170f04a5ba19f813f24cbdab32a8848f23a0d708a2edeca8bbeab092de2"
+    },
+    {
+      "path": "reports/iteration/probe-source-r3p1-20260906/c9b29e5a.d969b727.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "ddf8ec0670d3bdf701365bff6d49ddfd9bbed542768e60f995014a5af225d61d",
+      "beforeHash": "1bdc31f8a51e81822034c55a2134032ea19b710e658303a59b9757e5ddf9a94b",
+      "afterHash": "fb7d7423d5e21e4ea217eadf954cb814f1cc07ca8cf804272aa0e7dd370f213f"
+    },
+    {
+      "path": "reports/iteration/card-income-id-r3c1-20260906/22cf8cea.cf4280fd.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "9474021978380a8aec4346f0c6d0f8cfefc531c97b9c3b24453964b2c96fbf21",
+      "beforeHash": "f5ea85902a1b209b77a01dbd96caee4422c60ba3a38197786398016d40e424ce",
+      "afterHash": "2440c62a8795f2887eabda21d5be1222f2e10018fc52ff455a186f4f96be8d44"
+    },
+    {
+      "path": "reports/iteration/card-income-id-r3c1-20260906/22cf8cea.cf4280fd.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "10e2397c8765c717b86f592da6a7611d4ab1231107caee183989bfb7e8175e53",
+      "beforeHash": "7a386bd1d08a7e5ab772f255857e9ab445d40709b7b9cf9bee431365b48b88f8",
+      "afterHash": "4715d9476bbf892d8f78815346285c158f51a3730ff36c82ce9c6b2048a42c54"
+    },
+    {
+      "path": "reports/iteration/income-reserve-r3i1-20260906/990c007e.082d3e12.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "a78403df2eb1304d005d854918ec815dd26901e57498c315099547bce632ccd0",
+      "beforeHash": "2408bc3ae8888f5eb47ac9fb325c450dd46b40bacc847292466d36444f49bb7d",
+      "afterHash": "c221be42ea3e365f7722da1bcb05bdcd79a76447eb64834017ec1567fec25784"
+    },
+    {
+      "path": "reports/iteration/scan-earth-r3s1-20260906/c3eebca2.4fba7beb.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "27e414a99a6a31c931eb1019921ea584dd848382d2d0bb4684b746e169bc43cd",
+      "beforeHash": "49458e3fadc2f5f198ca3eab5d1f611b8151ad9e09d67e89d0974e58475c6000",
+      "afterHash": "1c783db4998c199af3270d30c5eb53d8f7abcd01839475229d75600209fada09"
+    },
+    {
+      "path": "reports/iteration/scan-earth-r3s1-20260906/c3eebca2.4fba7beb.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "931b9ff3bf0b6f45b1d867779406d3b3dc8151e979ca2b52bad63198ce5d9559",
+      "beforeHash": "7f9a3a1162b77e453bf3d47a6861b6c41061ad96ca5a30dfbf29d4bba6e453ec",
+      "afterHash": "009c5b47dc8f4b9bf2f500fefd1aa12a45fab80a8118d5aa0a08b0565b78d3eb"
+    },
+    {
+      "path": "reports/iteration/sector-directory-s2-20260906/5216eea5.904acf13.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "28396b7ad2f73b3340ff3d62feae0abe5a7218b3b071a61c49bbdffc457cb600",
+      "beforeHash": "054e247a543023723ff8efbe9d9aa3a2404c69e59da8243cf1c77ac9deec5155",
+      "afterHash": "0137aaa12d04d7b7280c060f64990df191b14b0bba7407d27740533ab8d6a449"
+    },
+    {
+      "path": "reports/iteration/sector-directory-s2-20260906/5216eea5.904acf13.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "f408cd91859f8430e48182c0f57b732e596619f27f5b34ee780b3736f3138445",
+      "beforeHash": "305d28110fccd098af427197234f3b1b007f31ac975ab53a357917f4df57dfe5",
+      "afterHash": "4669a1b369d8bbc54155fbefdba3150c6732d9f2db051ad349686ef4ae99e4b5"
+    },
+    {
+      "path": "reports/iteration/tile-dependency-r3t1-20260906/6fbffdcf.5ebc336e.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "44b1620297ba702b425481d6f468ed4f0f657335dcbef5c567371787e5bd0dcb",
+      "beforeHash": "3996536e8421eeb4675505674712e22b974530d96395d50ec215d9facc8b7edd",
+      "afterHash": "0208c222193c75225b2de8b1b80695752a25e0f0f5951c20c57d2dcbbafce768"
+    },
+    {
+      "path": "reports/iteration/tile-dependency-r3t1-20260906/6fbffdcf.5ebc336e.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "051dc6b2d6c3960fb84595abedff5f06d4df42040de140d28d194d140d78ffba",
+      "beforeHash": "1ff5ee51c3a6fec8458a8d849fabf6f84e8258790f68702e0c3ca89a81e748bf",
+      "afterHash": "b2d53bc2d3aa757694488a9e5092357384364ccd054e9b2d30c26b8e47852fde"
+    },
+    {
+      "path": "reports/iteration/plan-steps-r3-20260906/e529366a.d7a78140.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "85a05e045b4bd39d7959cb000ba627ced3f31e046d5ac826d3a777ae9ee77524",
+      "beforeHash": "375df515333de92a9cf80ddc5edc27efc152a6583f71b08e9f34e3d2f21cdc12",
+      "afterHash": "d8805139f2d04d7ff3c5dd5944dd24b645d110efbceea6e10f8185611f220fe8"
+    },
+    {
+      "path": "reports/iteration/plan-steps-r3-20260906/e529366a.d7a78140.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "4dfb03dacf145e1f28b02faca477474ada29cda0a3b99ad6ea0b951f0721b3a8",
+      "beforeHash": "dd6d9f4b4f6e6539cc420c38e934578bf6eafe36896a9483d61c80203bce790e",
+      "afterHash": "e48b01d57fe07b0b20450261c3ff18935bcf016c562b68ee4214b7ab3b221d21"
+    },
+    {
+      "path": "reports/iteration/blue-future-r2e-20260905/baea50cc.20feca27.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "9e5c76daf0beb7cf2848aa576c61057a84a0fbb30fd6ddffc8f7cf4699560979",
+      "beforeHash": "3239d5ab236c5f4ad946c5849517e28889de9e9b87a7c200345d3b7a5a1d21a0",
+      "afterHash": "31ad77c5126e26f3bd9152823a2f28fbc5aa60694ea854844b1b830a90df50eb"
+    },
+    {
+      "path": "reports/iteration/blue-future-r2e-20260905/baea50cc.20feca27.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "2d8c473e9d0037182734814eb483f8a598073531f58047bc492cbf33093de8ac",
+      "beforeHash": "ec4dbc8d743b17c350493c8658e19bc98ff05702b4a34a2a76e0a19a8c108b3d",
+      "afterHash": "5629f866371b3b29dcba3302a48e09580a1de71a88da1502424a40d9ff98b258"
+    },
+    {
+      "path": "reports/iteration/search-result-retention-s1-20260905/1ed8224b.e80ca9e7.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "38e55aeddbef3f6f6e26c40dffb370daeb79d15ce9d80eb96af24265174c54fc",
+      "beforeHash": "9fa5c6e6df6650486a1d698e8ce60310007de70ccded7cad455ba5d65b7ce2cf",
+      "afterHash": "10d0b268553464caa1ee0045ab94927bc936607bdd1a11a834f5b0684be1fa6f"
+    },
+    {
+      "path": "reports/iteration/search-result-retention-s1-20260905/1ed8224b.e80ca9e7.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "31652b0b7918bc57fce5d86cd0ce33ac56ff4e2bfdad0730b3bea454404c4668",
+      "beforeHash": "ac2e6c66edfa1d27b76c336c5ee26bc3021a6a493178bfa11de894b0721fe16b",
+      "afterHash": "4f328ab66b947fec5bde9345d4c72fbb7a751eb83d3f12b115620e7c2da97d86"
+    },
+    {
+      "path": "reports/iteration/conditional-progress-r2c-20260905/39530f19.fda901b9.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "6209693e20efe3846eae051b5f23ac924e83160648ed601fd64c88e5a742f0b9",
+      "beforeHash": "280fa9baa2f31de0e75e82178feba1c84dee5257febf0f12477a4aaa74cbe440",
+      "afterHash": "836d213c70b4b02cdf08a5baf6205cdf3770c817dbfcd179fe3cb584c6c668c7"
+    },
+    {
+      "path": "reports/iteration/conditional-progress-r2c-20260905/39530f19.fda901b9.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "4de42006ef6abe77a8cbcc5a27b6761963523b104b0efe626cfe195cbbe223ef",
+      "beforeHash": "b751211d13f4cbec893e6386e68bd0e3be1caf459b58dad8853bf25ed33847b0",
+      "afterHash": "33af1cc213dd09bf2dab453f6bb5f353029a3556b37a672a222ae49537363e18"
+    },
+    {
+      "path": "reports/iteration/resource-realization-r2b-20260905/60664a0b.c1b7bd49.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "2bd802a980f5acf231ee9a13e7bee4afd08367f6578c28dd1291451b2f0d3fab",
+      "beforeHash": "ff0c2d5febeb5ba584fe9b9b726b5835a588e8805092c8976b5961f2ce6ccc72",
+      "afterHash": "fd56812b0aec7013b028ff0015e45022a7faed38b246ea74ad8f398aa93e0fcf"
+    },
+    {
+      "path": "reports/iteration/resource-attribution-r2-20260905/241f6fc0.4f994f86.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "4853c4e0042c2d08638b25557a7b5e6a054f5af98864d882d6555a07bf7fe938",
+      "beforeHash": "d8b0f1f3d1b6211a20ececcfd5d2c3015b82739c51628231d765fa63d52fc64a",
+      "afterHash": "98a579a85cf034d1e75ff98fdf9d8011c4ff2bb55c666f0f16df94a3b4547dbf"
+    },
+    {
+      "path": "reports/iteration/resource-attribution-r2-20260905/241f6fc0.4f994f86.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "783c848b55d64b6095b1864e42b3b133b6c7eb2f9a91f4e7b5f6cde67cc8a736",
+      "beforeHash": "db1b04eafaee63876d7f9f20ada8c42eb684338d82abb41d6ca86069f6078da0",
+      "afterHash": "c8b5cc7195449969c0438cdfb64f0f3b3895e0c0ffb05bbc1ac937319dc031c6"
+    },
+    {
+      "path": "reports/iteration/terminal-value-r1-20260905/16bce41e.d9283ce5.quick-200.action-log.html",
+      "restoredBody": true,
+      "originalHash": "f2d8987b72437696f1e10e349bbbcac9441fb51423c505926fcd01ec610da606",
+      "beforeHash": "98c17409ad8c363aedbe22a72e0cd8f4d200331597b940dce55622c5042ca61c",
+      "afterHash": "80fc9549ddbb1ccccf19554a7e17166723ef2eab85a105858d162ee243057475"
+    },
+    {
+      "path": "reports/iteration/terminal-value-r1-20260905/16bce41e.d9283ce5.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "f664c1f584512a3b213a6fd02f0f52ab9b602008490833b5b7fa2ce06ad79c42",
+      "beforeHash": "fca76d2c5dc70333e69c9eb6e2e2eb755e8c923d028e5b8fa6f5301b05c3f0a3",
+      "afterHash": "3af0edda81e72391ccc01afbc55681cb2cd28d27eddd907a367945e03063cbe3"
+    },
+    {
+      "path": "reports/iteration/elig-sum4/3eb9e994.56e9a9c0.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "29ae856ee126bc0201c0cb5706714f5aeee119150fb1f1cc86f283bf1caedaad",
+      "beforeHash": "99c26481fcc93c92f9424bdd5cd61d3886fb1fcb1435ab2a0c4b7b29fa65d1c6",
+      "afterHash": "128b8b64a044a79c1a2a37fdfdbb5588d1d6c0e53e46fc18d27c71853c662ec4"
+    },
+    {
+      "path": "reports/iteration/elig-threshold4/aeaabc4b.3ebcf7f0.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "c25cdc322d7a1c083d47d036268c129f09fed50b7ecc98d2b9c25eda8a38dd29",
+      "beforeHash": "89ca50418aa984a85a3b8e8e7135764fc4ada8b72970313b98237608404c9b00",
+      "afterHash": "ad83c2747fd0f9e8616f5f221e2ef18fdb77e3bc933fa782361620eab88d4bd5"
+    },
+    {
+      "path": "reports/iteration/elig-aligned/81738624.e9b52a49.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "c6ec0adfa324b04936198a2f966a8594c915d1aa9523d4c18befea30da4c21b4",
+      "beforeHash": "a5e547387b827e14a942fbe902066e2dc830c3d8cbb0bdd0821ea38568ecd9a7",
+      "afterHash": "27d2a670bf79cbe109e077abdb02f151796f0a54dc866ba93cc5107c7e495c89"
+    },
+    {
+      "path": "reports/iteration/completes-v4-placement/ceddb30f.3c78eed2.full.action-log.html",
+      "restoredBody": true,
+      "originalHash": "1496465cec376d1f944d6012eee07c6ab4e74e3de8d71b4052a511267efb7503",
+      "beforeHash": "a55c488d13941306327aabcae12611371727391e1bc7d7f32f29e1968b1738b1",
+      "afterHash": "caaa77cfe78b0fd00920e27183ee49177067340a8cac37071c635dcb7ed5f8e5"
+    },
+    {
+      "path": "reports/iteration/placement-full/5484d4eb.b8cfb508.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "ab49b2c58e44c397e09a5db2ab18ad368cd24883fc0aab49f3925f0cbb398114",
+      "beforeHash": "b3ba73ff933fa30c02781ec9a00629295ab370095c44194268fa41e241841322",
+      "afterHash": "022af3f47c062cd6380c6ee00e55ef3e7fc160b2bbb3225e4b8e7c597977b2ce"
+    },
+    {
+      "path": "reports/iteration/pure-profit/dd6cc9dd.4e6acd93.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "5e13312b5f45a0b8c043a5650e34976153000a72bf04a6e8b75acca20960154d",
+      "beforeHash": "9e11ae8d23de038d5e2393c357861ad964c72b23820fa79c83198af0d5824163",
+      "afterHash": "976d1780f44ac68e36bebe96754a2560848ab32b2699eae28214ce64bb8abc11"
+    },
+    {
+      "path": "reports/iteration/data-chain-fix/a67b0b40.7de69080.full.action-log.html",
+      "restoredBody": false,
+      "originalHash": "c9997e0e46c7720349df7c70e8e9d2669b7ed528c1d6b9b4f14d1d7d37307315",
+      "beforeHash": "c69d1bd33671c546347b7ec198eb3422da1e877272c4ca86cdb9aa9651c80318",
+      "afterHash": "2594aeb5ad9a79e1a7fb15220911d78ec4fef884a368a1ccd796c8cc62db7383"
+    }
+  ]
+}
