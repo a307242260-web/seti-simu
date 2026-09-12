@@ -1,0 +1,150 @@
+{
+  "source": "reports/iteration/trace-reward-outcomes-20260912.json",
+  "sourceHash": "01dceeb7b3920f7b5bc77e0ad7575fc88949137c248dc79da8e27f5ea2a45863",
+  "scope": "读取已有真实阿米巴拿牌观察。前525步与新基线动作/after一致，此路径阿米巴生产未改；不重放、不运行AI、不读取盲抽牌序。",
+  "legal": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:2137e90e",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "amiba:display:6",
+        "source": "display",
+        "cardIndex": 6
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得展示的物理表征",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "6",
+        "imageSrc": "../assets/aliens/阿米巴/cards/6.webp",
+        "imageAlt": "物理表征"
+      }
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:7aa9f95e",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "amiba:cancel",
+        "source": "cancel"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "取消"
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:c5e2c9c0",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "amiba:blind",
+        "source": "blind"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "盲抽阿米巴牌"
+    }
+  ],
+  "root": [
+    {
+      "targetId": "decision:choose_card:2137e90e",
+      "planId": "decision:choose_card:2137e90e",
+      "resultTargetIds": [
+        "decision:choose_card:2137e90e"
+      ],
+      "compatibleActionIds": [
+        "choose_card:2137e90e"
+      ]
+    },
+    {
+      "targetId": "decision:choose_card:7aa9f95e",
+      "planId": "decision:choose_card:7aa9f95e",
+      "resultTargetIds": [
+        "decision:choose_card:7aa9f95e"
+      ],
+      "compatibleActionIds": [
+        "choose_card:7aa9f95e"
+      ]
+    },
+    {
+      "targetId": "decision:choose_card:c5e2c9c0",
+      "planId": "decision:choose_card:c5e2c9c0",
+      "resultTargetIds": [
+        "decision:choose_card:c5e2c9c0"
+      ],
+      "compatibleActionIds": [
+        "choose_card:c5e2c9c0"
+      ]
+    }
+  ],
+  "successor": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:2137e90e",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "amiba:display:6",
+        "source": "display",
+        "cardIndex": 6
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得展示的物理表征",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "6",
+        "imageSrc": "../assets/aliens/阿米巴/cards/6.webp",
+        "imageAlt": "物理表征"
+      },
+      "routeTargetId": "land:saturn:satellite:titan",
+      "routePlanId": "probe:rocket:11:land:saturn:satellite:titan",
+      "routeResultTargetIds": [
+        "land:saturn:satellite:titan"
+      ]
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:c5e2c9c0",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "amiba:blind",
+        "source": "blind"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "盲抽阿米巴牌",
+      "routeTargetId": "land:saturn:satellite:titan",
+      "routePlanId": "probe:rocket:11:land:saturn:satellite:titan",
+      "routeResultTargetIds": [
+        "land:saturn:satellite:titan"
+      ]
+    }
+  ]
+}
