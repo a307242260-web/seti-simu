@@ -42,3 +42,18 @@ GOAL-ONLY设计恢复点保留在`/tmp/seti-goal-only-20260912.QVpyh6`的`35c9f1
 单决策诊断使用`profile-budget-step188-20260912.js`，正式traceGoalClusters配置及Node
 CPU采样，仅诊断188步冷计划，不重跑已有全局实验。保持生产预算并校验完整合法集一致；
 输出存在即跳过，异常结果留档。采样会增加开销，耗时不能直接当成优化前后公平比较。
+
+## CPU与路线诊断结论
+
+受测提交`84c08ddd`，单决策成功，4096节点，仍选`place_data:8fd12fd3`，总耗时24.22秒。
+采样自身耗时：`structuredClone`7310ms，GC2716ms，`policyOutcomeView.canShare`1704ms；
+主采样和诊断分别见`budget-step188-20260912.cpuprofile`、`budget-step188-profile-20260912.json`，
+可查询摘要见`budget-step188-profile-summary-20260912.json`。
+
+分析目标根簇记录285种已完成路线变体；同一行动族路线可对应多个收入牌、痕迹奖励和
+结算结果，不能按family序列相同就删掉。存在已揭示物种不同奖励槽的实际选择，直接
+按最末位置统一贪心会扩大既有策略范围，不是已证明等价的剪枝。
+
+下一实现方案优先核查两点：前置资源路线能否按可达性/真实资源支配消除重复，以及
+相同不可变结果在frontier与Policy投影中的反复复制和验证。后者是用户要求的耗时改善，
+但即使通过也不能声称已消除节点截断。正式方案与数值PASS门槛冻结前不写生产patch。

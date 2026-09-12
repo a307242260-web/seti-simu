@@ -1,0 +1,647 @@
+{
+  "source": "reports/iteration/budget-step188-profile-20260912.json",
+  "cpuSource": "reports/iteration/budget-step188-20260912.cpuprofile",
+  "commit": "84c08ddde6e3489049dcc30b7ede023301a53536",
+  "wallMs": 24221.744583,
+  "cpuSelfMilliseconds": [
+    {
+      "frame": "structuredClone node:internal/worker/js_transferable:112",
+      "ms": 7310.392
+    },
+    {
+      "frame": "(garbage collector) :0",
+      "ms": 2716.476
+    },
+    {
+      "frame": "canShare file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/ai/heuristic-decision-function.js:108",
+      "ms": 1704.038
+    },
+    {
+      "frame": "deepFreeze file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/rule-composition.js:39",
+      "ms": 858.499
+    },
+    {
+      "frame": "addFrontierLeaf file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/rule-composition.js:1629",
+      "ms": 770.588
+    },
+    {
+      "frame": "stableSerialize file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/state/state-store.js:46",
+      "ms": 737.504
+    },
+    {
+      "frame": "copySerializable file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/ai/policy-port.js:50",
+      "ms": 516.915
+    },
+    {
+      "frame": "buildSectorWinRequirements file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/production-kernel.js:1081",
+      "ms": 400.919
+    },
+    {
+      "frame": "structuredClone :0",
+      "ms": 367.419
+    },
+    {
+      "frame": "stableSerialize file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/rule-composition.js:45",
+      "ms": 362.924
+    },
+    {
+      "frame": "containsUnknownCardReference file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/rule-composition.js:113",
+      "ms": 333.167
+    },
+    {
+      "frame": "buildProbeRouteRequirements file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/production-kernel.js:546",
+      "ms": 302.08
+    },
+    {
+      "frame": " file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/rule-composition.js:1669",
+      "ms": 290.126
+    },
+    {
+      "frame": "stableHashSerialized file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/rule-composition.js:67",
+      "ms": 287.627
+    },
+    {
+      "frame": "compactObject file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/app/simulation-contract.js:37",
+      "ms": 277.875
+    },
+    {
+      "frame": " file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/ai/heuristic-decision-function.js:135",
+      "ms": 264.127
+    },
+    {
+      "frame": "probeStructureKey file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/production-kernel.js:675",
+      "ms": 247.916
+    },
+    {
+      "frame": "deepFreeze file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/ai/outcome-model.js:39",
+      "ms": 241.499
+    },
+    {
+      "frame": "internalModuleStat :0",
+      "ms": 230.167
+    },
+    {
+      "frame": "visit file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/state/low-coupling-slices.js:110",
+      "ms": 219.373
+    },
+    {
+      "frame": "getWheelStep file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/solar-system/core.js:173",
+      "ms": 168.951
+    },
+    {
+      "frame": "envelopeHash file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/rule-composition.js:1086",
+      "ms": 167.666
+    },
+    {
+      "frame": "evaluateCounterfactualOutcomes file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/rule-composition.js:977",
+      "ms": 159.293
+    },
+    {
+      "frame": "getTrustedState file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/rule-composition.js:1079",
+      "ms": 148.251
+    },
+    {
+      "frame": "scanForbidden file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/state/high-coupling-slices.js:113",
+      "ms": 136.459
+    },
+    {
+      "frame": "deepFreeze file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/state/state-store.js:40",
+      "ms": 114.499
+    },
+    {
+      "frame": "compareNodes file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/rule-composition.js:1501",
+      "ms": 112.755
+    },
+    {
+      "frame": "validateForbiddenFields file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/state/low-coupling-slices.js:137",
+      "ms": 104.211
+    },
+    {
+      "frame": "normalizeIndustryLabel file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/industry/catalog.js:73",
+      "ms": 81.914
+    },
+    {
+      "frame": "deepFreeze file:///private/tmp/seti-budget-loop-20260912.zGKsj6/randomizer/game/ai/policy-port.js:104",
+      "ms": 80.333
+    }
+  ],
+  "searchTiming": {
+    "maxMilliseconds": 30000,
+    "forkMilliseconds": 639.6957889999569,
+    "executionMilliseconds": 1813.4973720000178,
+    "projectionMilliseconds": 1054.3746520000711,
+    "identityMilliseconds": 7.744818000037981,
+    "checkpointMilliseconds": 886.9725230000122,
+    "frontierMilliseconds": 441.0729739999459,
+    "orchestrationMilliseconds": 13445.096121999957,
+    "totalMilliseconds": 18288.45425
+  },
+  "budgetLimits": {
+    "leaves": {
+      "enabled": false,
+      "limit": 8,
+      "reached": false,
+      "truncated": false,
+      "prunedOriginCount": 0
+    },
+    "frontier": {
+      "enabled": true,
+      "limit": 256,
+      "peak": 256,
+      "reached": true,
+      "truncated": true,
+      "trimCount": 1344
+    },
+    "execution": {
+      "enabled": true,
+      "limit": 4096,
+      "used": 4096,
+      "reached": true,
+      "truncated": true,
+      "remainingFrontierNodeCount": 240
+    }
+  },
+  "failedNodeCountByCode": {},
+  "routeEntryStatsByTarget": {
+    "tech:gain:blue1": {
+      "bindingOriginCount": 832,
+      "distinctEntryStateCount": 416,
+      "maxBindingsPerEntryState": 3,
+      "completedTransitionCount": 0,
+      "retainedCompletedTransitionCount": 0
+    },
+    "tech:gain:blue2": {
+      "bindingOriginCount": 832,
+      "distinctEntryStateCount": 416,
+      "maxBindingsPerEntryState": 3,
+      "completedTransitionCount": 0,
+      "retainedCompletedTransitionCount": 0
+    },
+    "tech:gain:orange3": {
+      "bindingOriginCount": 832,
+      "distinctEntryStateCount": 416,
+      "maxBindingsPerEntryState": 3,
+      "completedTransitionCount": 0,
+      "retainedCompletedTransitionCount": 0
+    },
+    "card:resolve:alien-amiba-1-2": {
+      "bindingOriginCount": 790,
+      "distinctEntryStateCount": 374,
+      "maxBindingsPerEntryState": 3,
+      "completedTransitionCount": 1,
+      "retainedCompletedTransitionCount": 1
+    },
+    "income:gain:5,2,0,0,2,1": {
+      "bindingOriginCount": 544,
+      "distinctEntryStateCount": 224,
+      "maxBindingsPerEntryState": 3,
+      "completedTransitionCount": 0,
+      "retainedCompletedTransitionCount": 0
+    },
+    "sector:win:sector-2-a:1": {
+      "bindingOriginCount": 520,
+      "distinctEntryStateCount": 232,
+      "maxBindingsPerEntryState": 3,
+      "completedTransitionCount": 0,
+      "retainedCompletedTransitionCount": 0
+    },
+    "land:venus:planet:": {
+      "bindingOriginCount": 344,
+      "distinctEntryStateCount": 184,
+      "maxBindingsPerEntryState": 3,
+      "completedTransitionCount": 12,
+      "retainedCompletedTransitionCount": 12
+    },
+    "orbit:venus:planet:": {
+      "bindingOriginCount": 344,
+      "distinctEntryStateCount": 184,
+      "maxBindingsPerEntryState": 3,
+      "completedTransitionCount": 324,
+      "retainedCompletedTransitionCount": 324
+    },
+    "income:gain:4,2,0,0,3,1": {
+      "bindingOriginCount": 160,
+      "distinctEntryStateCount": 64,
+      "maxBindingsPerEntryState": 3,
+      "completedTransitionCount": 0,
+      "retainedCompletedTransitionCount": 0
+    },
+    "data:analyze": {
+      "bindingOriginCount": 141,
+      "distinctEntryStateCount": 138,
+      "maxBindingsPerEntryState": 2,
+      "completedTransitionCount": 702,
+      "retainedCompletedTransitionCount": 702
+    },
+    "sector:win:sector-3-a:1": {
+      "bindingOriginCount": 13,
+      "distinctEntryStateCount": 8,
+      "maxBindingsPerEntryState": 2,
+      "completedTransitionCount": 93,
+      "retainedCompletedTransitionCount": 93
+    },
+    "income:gain:4,2,0,0,2,1": {
+      "bindingOriginCount": 2,
+      "distinctEntryStateCount": 2,
+      "maxBindingsPerEntryState": 1,
+      "completedTransitionCount": 6,
+      "retainedCompletedTransitionCount": 6
+    }
+  },
+  "completedRouteGroupsByTarget": {
+    "data:analyze": [
+      {
+        "routeFamilies": [
+          "card_corner",
+          "place_data",
+          "quick_trade",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 2,
+        "completedTransitionCount": 133,
+        "retainedCompletedTransitionCount": 133
+      },
+      {
+        "routeFamilies": [
+          "place_data",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "quick_trade",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 2,
+        "completedTransitionCount": 133,
+        "retainedCompletedTransitionCount": 133
+      },
+      {
+        "routeFamilies": [
+          "place_data",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 132,
+        "retainedCompletedTransitionCount": 132
+      },
+      {
+        "routeFamilies": [
+          "place_data",
+          "place_data",
+          "quick_trade",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 2,
+        "completedTransitionCount": 113,
+        "retainedCompletedTransitionCount": 113
+      },
+      {
+        "routeFamilies": [
+          "quick_trade",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 2,
+        "completedTransitionCount": 113,
+        "retainedCompletedTransitionCount": 113
+      },
+      {
+        "routeFamilies": [
+          "card_corner",
+          "place_data",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 20,
+        "retainedCompletedTransitionCount": 20
+      },
+      {
+        "routeFamilies": [
+          "place_data",
+          "place_data",
+          "card_corner",
+          "place_data",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 20,
+        "retainedCompletedTransitionCount": 20
+      },
+      {
+        "routeFamilies": [
+          "place_data",
+          "place_data",
+          "quick_trade",
+          "scan",
+          "place_data",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 19,
+        "retainedCompletedTransitionCount": 19
+      },
+      {
+        "routeFamilies": [
+          "quick_trade",
+          "scan",
+          "place_data",
+          "place_data",
+          "analyze"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 19,
+        "retainedCompletedTransitionCount": 19
+      }
+    ],
+    "orbit:venus:planet:": [
+      {
+        "routeFamilies": [
+          "launch",
+          "move",
+          "play_card",
+          "quick_trade",
+          "quick_trade",
+          "quick_trade",
+          "orbit"
+        ],
+        "quickTradeCount": 3,
+        "completedTransitionCount": 161,
+        "retainedCompletedTransitionCount": 161
+      },
+      {
+        "routeFamilies": [
+          "launch",
+          "play_card",
+          "move",
+          "quick_trade",
+          "quick_trade",
+          "quick_trade",
+          "orbit"
+        ],
+        "quickTradeCount": 3,
+        "completedTransitionCount": 150,
+        "retainedCompletedTransitionCount": 150
+      },
+      {
+        "routeFamilies": [
+          "launch",
+          "move",
+          "play_card",
+          "quick_trade",
+          "orbit"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      },
+      {
+        "routeFamilies": [
+          "launch",
+          "play_card",
+          "quick_trade",
+          "orbit"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      },
+      {
+        "routeFamilies": [
+          "launch",
+          "play_card",
+          "move",
+          "quick_trade",
+          "orbit"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 2,
+        "retainedCompletedTransitionCount": 2
+      },
+      {
+        "routeFamilies": [
+          "launch",
+          "play_card",
+          "play_card",
+          "quick_trade",
+          "orbit"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 2,
+        "retainedCompletedTransitionCount": 2
+      },
+      {
+        "routeFamilies": [
+          "launch",
+          "play_card",
+          "quick_trade",
+          "quick_trade",
+          "quick_trade",
+          "orbit"
+        ],
+        "quickTradeCount": 3,
+        "completedTransitionCount": 2,
+        "retainedCompletedTransitionCount": 2
+      }
+    ],
+    "decision:choose_target:4b676cb1": [
+      {
+        "routeFamilies": [],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 206,
+        "retainedCompletedTransitionCount": 206
+      }
+    ],
+    "decision:choose_target:653b7ded": [
+      {
+        "routeFamilies": [],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 206,
+        "retainedCompletedTransitionCount": 206
+      }
+    ],
+    "decision:choose_target:91d79691": [
+      {
+        "routeFamilies": [],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 206,
+        "retainedCompletedTransitionCount": 206
+      }
+    ],
+    "decision:choose_target:aba3bdc5": [
+      {
+        "routeFamilies": [],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 206,
+        "retainedCompletedTransitionCount": 206
+      }
+    ],
+    "sector:win:sector-3-a:1": [
+      {
+        "routeFamilies": [
+          "quick_trade",
+          "quick_trade",
+          "scan"
+        ],
+        "quickTradeCount": 2,
+        "completedTransitionCount": 45,
+        "retainedCompletedTransitionCount": 45
+      },
+      {
+        "routeFamilies": [
+          "quick_trade",
+          "quick_trade",
+          "place_data",
+          "place_data",
+          "place_data",
+          "place_data",
+          "scan"
+        ],
+        "quickTradeCount": 2,
+        "completedTransitionCount": 24,
+        "retainedCompletedTransitionCount": 24
+      },
+      {
+        "routeFamilies": [
+          "quick_trade",
+          "scan"
+        ],
+        "quickTradeCount": 1,
+        "completedTransitionCount": 6,
+        "retainedCompletedTransitionCount": 6
+      },
+      {
+        "routeFamilies": [
+          "quick_trade",
+          "quick_trade",
+          "place_data",
+          "place_data",
+          "place_data",
+          "scan"
+        ],
+        "quickTradeCount": 2,
+        "completedTransitionCount": 6,
+        "retainedCompletedTransitionCount": 6
+      },
+      {
+        "routeFamilies": [
+          "quick_trade",
+          "quick_trade",
+          "place_data",
+          "place_data",
+          "scan"
+        ],
+        "quickTradeCount": 2,
+        "completedTransitionCount": 6,
+        "retainedCompletedTransitionCount": 6
+      },
+      {
+        "routeFamilies": [
+          "quick_trade",
+          "quick_trade",
+          "place_data",
+          "scan"
+        ],
+        "quickTradeCount": 2,
+        "completedTransitionCount": 6,
+        "retainedCompletedTransitionCount": 6
+      }
+    ],
+    "land:venus:planet:": [
+      {
+        "routeFamilies": [
+          "launch",
+          "move",
+          "play_card",
+          "quick_trade",
+          "quick_trade",
+          "quick_trade",
+          "land"
+        ],
+        "quickTradeCount": 3,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      },
+      {
+        "routeFamilies": [
+          "launch",
+          "play_card",
+          "quick_trade",
+          "quick_trade",
+          "quick_trade",
+          "land"
+        ],
+        "quickTradeCount": 3,
+        "completedTransitionCount": 4,
+        "retainedCompletedTransitionCount": 4
+      },
+      {
+        "routeFamilies": [
+          "launch",
+          "move",
+          "play_card",
+          "quick_trade",
+          "quick_trade",
+          "land"
+        ],
+        "quickTradeCount": 2,
+        "completedTransitionCount": 2,
+        "retainedCompletedTransitionCount": 2
+      },
+      {
+        "routeFamilies": [
+          "launch",
+          "play_card",
+          "move",
+          "quick_trade",
+          "quick_trade",
+          "land"
+        ],
+        "quickTradeCount": 2,
+        "completedTransitionCount": 2,
+        "retainedCompletedTransitionCount": 2
+      }
+    ],
+    "income:gain:4,2,0,0,2,1": [
+      {
+        "routeFamilies": [
+          "place_data",
+          "place_data"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 6,
+        "retainedCompletedTransitionCount": 6
+      }
+    ],
+    "card:resolve:alien-amiba-1-2": [
+      {
+        "routeFamilies": [
+          "card_corner"
+        ],
+        "quickTradeCount": 0,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      }
+    ]
+  },
+  "scope": "采样自身耗时而非调用链累计；采样和路线trace有额外成本，不将24.22秒与原21.17秒差异称为退化。目标来源与路线完成计数不是互斥物理节点。"
+}
