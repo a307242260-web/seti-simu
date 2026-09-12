@@ -1,0 +1,20 @@
+{
+  "commit": "3c87175e",
+  "source": "seti-saves/seti-save-research-overflow-trace-greedy-20260912-126ed66e-full-v285.json",
+  "step": 514,
+  "fossilId": "fossil_04",
+  "expectedReward": {
+    "gain": {},
+    "dataCount": 0,
+    "drawCards": 2,
+    "pickCard": false,
+    "pickAlienCard": false,
+    "fossilPanel": false,
+    "chooseFossilRewardOnly": false
+  },
+  "beforeHandCount": 6,
+  "afterHandCount": 6,
+  "actualDrawCount": 0,
+  "pass": false,
+  "scope": "真实规则输入的单次蓝7放置，非AI搜索或全盘实验；断言失败显式退出。"
+}
