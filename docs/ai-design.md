@@ -1,6 +1,6 @@
 # SETI 机器玩家设计
 
-本文描述 Browser 与 Simulation 当前共用的机器玩家生产契约。旧 AI 自动对战 controller、pending resolver、candidate selector、valuation/route/demand/pressure、battle report 与 tuning 架构已物理删除，不是兼容层或未来扩展点。
+本文描述 Browser 与 Simulation 当前共用的机器玩家生产契约。
 
 ## 1. 决策流程
 
@@ -26,9 +26,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   、requirements。Simulation 由 `projectCounterfactualState = buildRuleObservation`
   产出；Browser 由 `projectBrowserState` 附加同源信息层（`rule-observation.js` 同一份
   实现 + 同一 sanitize 纯函数），UI 渲染壳只作为 `resident.ui` 附加、不覆盖信息字段。
-  **修复前 Browser 机器席位 `projection.state` 是 UI 展示视图（resident 被读模型替换）
-  → observation 失明（players/hand/assets 全空）→ 启发式决策静默退化为 pass**，属
-  隐藏失败，不得回退到"壳替换芯"的装配方式。详见
+  详见
   `docs/browser-simulation-unification.md` §信息层统一。
 
 - **决策方案**（decision scheme）是一个可插拔接口：输入当前 viewer-safe observation
@@ -119,11 +117,9 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   不能用历史发牌实体或 checkpoint hash 固化旧随机轨迹。
 - `app/ai/browser-bootstrap.js`：Browser 机器席位端口——与 Simulation 共用同一协调器与
   Heuristic 决策函数（唯一差异：recordStep 记账钩子，browser 空操作）；只保留席位判定、
-  决策前稳定化、同 decision 去重、lifecycle 失效重建与 fail-closed 结果转写。内联反事实
-  搜索拷贝已删除，开关（traceCounterfactualGoalClusters 等）经
+  决策前稳定化、同 decision 去重、lifecycle 失效重建与 fail-closed 结果转写。
+  开关（traceCounterfactualGoalClusters 等）经
   同一 config 源透传（URL 参数，见 §3.4）。
-
-`game/ai/index.js` 聚合器已删除（无消费方，Browser 装配直接经 index.html 逐个加载模块）。不得恢复 SetiAI 聚合或 legacy valuation、candidate、planner、analytics、controller adapter。
 
 ## 3. 决策方案输出契约与计划延续复用（simulation 侧）
 
@@ -260,7 +256,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   不继续展开后续主行动
   （leafValue 是整链价值，不按动作分摊；全放行时 quick_trade 87/card_corner 65
   虚高导致乱做）；
-- **bounded 桶已删除**：play_card 经目标绑定进入搜索（income:card 收入牌 /
+- **打牌目标准入**：play_card 经目标绑定进入搜索（income:card 收入牌 /
   tech:research 免费科技 / probe:免费发射 / sector:观测 / data:卡牌），未绑定目标
   的打牌保持 `STRATEGIC_GOAL_NOT_EVALUATED`。**不全部放行 play_card**——实测全部
   放行让单决策 8.9s/4096 撞顶且全盘行为退化（白色 86→17，纯效果牌评估虚高、
@@ -449,8 +445,8 @@ targetEquivalentChoiceCount 报告），**不再展开全部 blue 槽**——此
 新轮，因此不会把轮初收入误算成 PASS 的价值。
 
 完整目标结果保留真实观察供终点评分；评分摘要不再用于淘汰后续搜索。不同火箭位置、
-手牌、公共盘面、RNG或实体序号不能因为当前分数相同而互相支配。旧完成事实
-目录及其支配比较器已删除。状态共享仅按完整envelope/session、动作与剩余条件深度，
+手牌、公共盘面、RNG或实体序号不能因为当前分数相同而互相支配。
+状态共享仅按完整envelope/session、动作与剩余条件深度，
 不同origin继续保留各自目标/计划和来源义务。
 
 收入目标ID保存建立目标时六条收入轨基线；同一中文目标不等于同一状态。
@@ -702,10 +698,9 @@ Browser bootstrap 不可以：
 - 执行 Standard Action/Decision；
 - 保存 battle report/tuning history；
 - 持有规则 working root；
-- 通过 fallback、alias 或全局模块恢复旧 controller。
 - 保存或应用按 family 调参的 strategy weights。
 
-终局板块、初始选择、弃牌、支付、科技与外星人选择都必须作为标准 Decision 进入同一 Policy 输入链；没有单独的 final-score AI runtime。
+终局板块、初始选择、弃牌、支付、科技与外星人选择都必须作为标准 Decision 进入同一 Policy 输入链。
 
 ## 6. 验证
 

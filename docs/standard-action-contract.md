@@ -7,8 +7,7 @@ Standard Action 是浏览器控件与训练 Policy 之间唯一共享的游戏�
 当前 16 个顶层 family 与 7 个 conditional family 均由 game Production Domain Pack
 唯一注册。浏览器 AI 与训练 Policy 选择完整 descriptor，并只通过 Composition input port
 执行；条件动作由 active Effect domain 或 game-owned initial-setup/quick-trade source
-枚举。旧 kind switch、Simulation 私有条件 registry/旧路径、Browser Decision
-side-channel、`payload.legacyAction`、`executeLegacy` 与 runtime bypass 已删除。
+枚举。
 
 ## Action envelope
 

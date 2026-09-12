@@ -35,7 +35,7 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
   `actionOutcomes`以及计划提取仍保留完整`planSteps`，不改变外部API或计划执行。
   内部视图还可在本次调用内共享完整值相同的冻结叶观察，资格与隔离见AI设计§2；
   返回的原始结果不做该合并，搜索链、节点数、规则输入和随机状态不变。
-  **策略估值统一入口**：旧 `evaluateActionOutcomes()` 入口已删除——评估动作必须用 `runHeuristicPolicyDecision` 返回的 `actionOutcomes`（与决策函数同一搜索参数：secondary-agent 目标引导单一路径），不存在第二套搜索参数。反事实原语（任意候选评估）不是 env API：单动作结算链验证经规则层测试（`simulation-rule-composition.test.js` 或生产 composition 的 `counterfactualPort.evaluate`）。
+  **策略估值统一入口**：评估动作使用 `runHeuristicPolicyDecision` 返回的 `actionOutcomes`（与决策函数同一搜索参数：secondary-agent 目标引导单一路径），不存在第二套搜索参数。反事实原语（任意候选评估）不是 env API：单动作结算链验证经规则层测试（`simulation-rule-composition.test.js` 或生产 composition 的 `counterfactualPort.evaluate`）。
 - `getDiagnostics()` / `getCounterfactualDiagnostics()`：只读性能诊断。
   探测路线费用缓存与正式移动共用当回合小行星限制修正（b124），修正开始/清除及
   玩家切换不能沿用另一费用状态；Action、Observation与checkpoint外层schema不变。
@@ -218,8 +218,8 @@ usedKeys/claimedKeys、不发奖励或生成Decision；正式owner仍按原顺�
 
 rollout v20沿用4096物理节点、256全局队列容量及30000ms搜索期限；根首步优先，
 队列为每个仍有frontier的根保留最优节点，再按统一优先级填充。去重保留完整状态、
-RNG/序号和Decision；资源/完成摘要不再支配删除后继。全部准入目标进入统一队列，
-旧completeTargetCatalog配置及未绑定top-4已删除。宏步前后超时检查显式失败，不提交
+RNG/序号和Decision；资源/完成摘要不再支配删除后继。全部准入目标进入统一队列。
+宏步前后超时检查显式失败，不提交
 真实根；同步宏步不能中断。2026-09-06用户允许适度放宽模拟耗时，完整决策略超10秒
 不再单独阻止全盘验证；快速验证触发原10秒搜索超时后，期限独立放宽为30秒，
 不增加节点预算，整局耗时另行实测报告。再次超时须定位，不自动继续加码。

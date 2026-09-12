@@ -19,6 +19,12 @@
 - `docs/effect-session-runtime.md`：Effect、Decision、事务与 replay 协议。
 - `docs/ai-design.md`：机器玩家与启发式策略设计。
 
+## 进度与版本（按需）
+
+- `PROJECT_MEMORY.md`：仍有效的长期决定。
+- `docs/progress-20260912.md`：阶段目标、待办与历史进度。
+- `reports/iteration/versions.json`：版本登记及实验记录归属。
+
 ## 验证
 
 ```bash
