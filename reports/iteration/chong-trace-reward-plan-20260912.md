@@ -41,3 +41,13 @@ science的ALIEN_TRACE领奖仅处理gain、pickAlienCard、region，未消费fos
 
 尚待：满池与抽牌失败反例、精选实际后续执行及Session恢复/屏障证据，相关接口文档核对，
 提交后单决策门槛、新版本完整局、合回和报告中心核验。本项尚未PASS。
+
+## 异常边界与真实恢复通过
+
+新增执行器反例通过：满池连续两枚数据均记弃置；空牌堆盲抽返回失败且无成功提交；
+化石精选实际取得指定公共牌并记录补牌屏障。
+`chong-trace-reward-repro-e4b5fdaf-20260912.json`验证已提交生产代码（dirty=false，
+记录两个实现文件SHA256）：真实514手牌6→8，下一决策为第二枚痕迹，Session记录
+hidden_card_draw。领奖后恢复观察/合法集一致；领奖前恢复再执行后，整个core与
+composition Session一致（含RNG和实体序号）。不是只核对手牌数量。
+单决策入口为`adhoc/benchmark-chong-trace-reward-20260912.js`，仍待执行。

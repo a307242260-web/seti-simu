@@ -1,0 +1,36 @@
+{
+  "commit": "e4b5fdaf",
+  "source": "seti-saves/seti-save-research-overflow-trace-greedy-20260912-126ed66e-full-v285.json",
+  "step": 514,
+  "fossilId": "fossil_04",
+  "expectedReward": {
+    "gain": {},
+    "dataCount": 0,
+    "drawCards": 2,
+    "pickCard": false,
+    "pickAlienCard": false,
+    "fossilPanel": false,
+    "chooseFossilRewardOnly": false
+  },
+  "codeHashes": {
+    "randomizer/game/aliens/chong.js": "6d655da43b9ba3cdf646754c7a4569f5dbb360c522bd1f1406e47630a6319e5f",
+    "randomizer/game/effects/science-session.js": "e73feffd5b42e6bd96762793497445c1b8a8e2dc0ed709c4a94183a714decbfd"
+  },
+  "productionDirty": false,
+  "beforeHandCount": 6,
+  "afterHandCount": 8,
+  "actualDrawCount": 2,
+  "pass": true,
+  "barrier": {
+    "effectId": "effect-session-4:effect:6",
+    "revision": 5,
+    "code": "hidden_card_draw",
+    "reason": "外星人痕迹奖励盲抽翻开隐藏牌"
+  },
+  "recovery": {
+    "afterObservation": true,
+    "afterLegal": true,
+    "beforeReplayCoreAndSession": true
+  },
+  "scope": "真实规则输入的单次蓝7放置，非AI搜索或全盘实验；断言失败显式退出。"
+}

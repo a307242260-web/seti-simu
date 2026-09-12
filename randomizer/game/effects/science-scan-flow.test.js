@@ -701,7 +701,10 @@ for (const [incomeCode, emptyDeck] of [[0, false], [1, false], [2, false], [3, f
   assert.deepEqual(root, after, "重复收入选择不得再次扣牌或发奖");
 }
 // 虫族面板痕迹完整领奖；直接调用正式执行器，覆盖奖励派发而不复刻实现。
-for (const fossilId of aliens.chong.FOSSIL_IDS) for (const position of [1, 2, 3, 4, 5, 6, 7]) {
+const fossilCases = aliens.chong.FOSSIL_IDS.flatMap(fossilId =>
+  [1, 2, 3, 4, 5, 6, 7].map(position => [fossilId, position, "normal"]));
+fossilCases.push(["fossil_05", 7, "full-pool"], ["fossil_04", 7, "empty-deck"]);
+for (const [fossilId, position, mode] of fossilCases) {
   const { root } = createCanonicalState();
   const actor = root.players.players[0];
   root.meta.sequences.alienEntity = 1;
@@ -718,6 +721,16 @@ for (const fossilId of aliens.chong.FOSSIL_IDS) for (const position of [1, 2, 3,
   actor.resources.availableData = 0;
   actor.dataState = { poolTokens: [], placedTokens: [], discardedCount: 0 };
   root.cards.drawPileCardIds = ["b_2.webp", "b_3.webp"];
+  root.cards.publicCards = [{ id: "public-fossil-reward", cardId: "b_4.webp" }];
+  if (mode === "full-pool") {
+    for (let i = 0; i < players.RESOURCE_LIMITS.availableData; i += 1) {
+      assert.equal(data.gainData(actor, { root }).ok, true);
+    }
+  }
+  if (mode === "empty-deck") {
+    root.cards.drawPileCardIds = [];
+    root.cards.removedFromGameCardIds = require("../../../assets/cards/card_model.json").map(c => c.card_id);
+  }
   const executors = new Map();
   scienceSession.createScienceDomain({ runtime: { registerExecutor(type, executor) {
     executors.set(type, executor);
@@ -730,12 +743,19 @@ for (const fossilId of aliens.chong.FOSSIL_IDS) for (const position of [1, 2, 3,
   const before = structuredClone(root);
   const reward = aliens.chong.getFossilReward(fossilId);
   const result = executor.resolveDecision(root, effect, choice, { state: root });
+  if (mode === "empty-deck") {
+    assert.equal(result.ok, false, "化石盲抽失败必须显式返回");
+    assert.equal(result.nextState, undefined, "失败不得提交工作状态");
+    assert.equal(result.irreversible, undefined);
+    continue;
+  }
   assert.equal(result.ok, true, `${fossilId} 蓝${position}`);
   for (const key of ["score", "credits", "energy", "publicity"]) {
     assert.equal(actor.resources[key] - before.players.players[0].resources[key], reward.gain[key] || 0);
   }
   assert.equal(actor.hand.length, reward.drawCards);
-  assert.equal(actor.resources.availableData, reward.dataCount);
+  assert.equal(actor.resources.availableData, mode === "full-pool" ? players.RESOURCE_LIMITS.availableData : reward.dataCount);
+  assert.equal(actor.dataState.discardedCount, mode === "full-pool" ? 2 : 0);
   assert.equal(Boolean(result.irreversible), Boolean(reward.drawCards));
   assert.equal(result.spawnedEffects.filter(row => row.effect.type === scienceSession.EFFECT_TYPES.PICK_CARD).length,
     Number(reward.pickCard));
@@ -747,5 +767,17 @@ for (const fossilId of aliens.chong.FOSSIL_IDS) for (const position of [1, 2, 3,
   const after = structuredClone(root);
   assert.equal(executor.resolveDecision(root, effect, choice, { state: root }).ok, false);
   assert.deepEqual(root, after, "重复选择不得再次领奖");
+  if (reward.pickCard) {
+    const pickEffect = result.spawnedEffects.find(row => row.effect.type === scienceSession.EFFECT_TYPES.PICK_CARD).effect;
+    assert.equal(pickEffect.ownerId, actor.id);
+    const pickExecutor = executors.get(pickEffect.type);
+    const pickChoice = pickExecutor.getLegalChoices(root, pickEffect, { state: root })[0];
+    assert(pickChoice, "化石精选必须产生真实合法选择");
+    const picked = pickExecutor.resolveDecision(root, pickEffect, pickChoice, { state: root });
+    assert.equal(picked.ok, true);
+    assert.equal(actor.hand.length, 1);
+    assert.equal(actor.hand[0].cardId, "b_4.webp");
+    assert.equal(picked.irreversible.code, "hidden_card_reveal");
+  }
 }
 console.log("science scan and blue reward tests passed");
