@@ -589,20 +589,17 @@ const FINAL_FORMULA_LABELS = {
 //   1) 研究科技：研究了哪张科技（ownedTiles 新增）+ 获得的背面 bonus（研究前该堆堆顶 bonusId）
 //   2) 收入插牌：choose_card summary 为「收入 <cardId>」的步骤
 // 返回 Map: stepIndex -> { research?: {tileId, bonusId}, income?: {cardId} }
-// 重放失败（某步不匹配）时返回已收集的部分增强，报告仍可生成（主行动显示退化，不静默吞错——注释如上）。
+// 重放必须完整匹配；失败抛出存档和步骤，不用部分增强覆盖历史报告。
 function replaySaveEnriched(savePath) {
   const enrich = new Map();
-  const save = readJson(path.join(REPO_ROOT, savePath));
-  if (!save || !Array.isArray(save.replaySteps)) return enrich;
+  const save = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, savePath), "utf8"));
+  if (!Array.isArray(save?.replaySteps)) throw new Error(`REPORT_REPLAY_STEPS_MISSING: ${savePath}`);
   const steps = save.replaySteps;
   let st0 = save.committedState;
   if (typeof st0 === "string") {
-    try {
-      st0 = JSON.parse(st0);
-    } catch {
-      st0 = null;
-    }
+    st0 = JSON.parse(st0);
   }
+  if (!st0 || typeof st0 !== "object") throw new Error(`REPORT_REPLAY_STATE_MISSING: ${savePath}`);
   const SEED = "seti-free-analyze-v1";
   const random = createSeededRandom(SEED);
   random.setState(hashSeed(SEED));
@@ -612,150 +609,153 @@ function replaySaveEnriched(savePath) {
     activePlayerCount: 4,
     trustedProjectionReader: true,
   });
-  kernel.composition.lifecycle.newGame({
-    seed: st0?.meta?.seed || SEED,
-    activePlayerCount: 4,
-    initialize: true,
-    rngState: { algorithm: "seti-simulation-mulberry32-v1", state: hashSeed(SEED) },
-  });
-  kernel.composition.inputPort.beginDrain({ metadata: { source: "report-enrich" } });
-
-  // 本局各终局板块实际使用的公式（finalScores.tiles 的 formulaId，如 d2）
-  const formulaByTile = {};
-  for (const fsItem of st0?.match?.finalScores || []) {
-    for (const t of fsItem.tiles || []) {
-      if (t.tileId && t.formulaId) formulaByTile[t.tileId] = t.formulaId;
-    }
-  }
-  const formulaForTile = (tileId) => formulaByTile[tileId] || null;
-
-  function snapshot() {
-    const st = kernel.composition.projection().state;
-    const owned = new Map();
-    const hands = new Map();
-    const incomes = new Map();
-    for (const p of st.players?.players || []) {
-      owned.set(p.id, new Set(Object.keys(p.techState?.ownedTiles || {})));
-      hands.set(p.id, (p.hand || []).map((c) => c.cardId));
-      incomes.set(p.id, p.income ? { ...p.income } : null);
-    }
-    const bonus = new Map();
-    for (const [tid, stack] of Object.entries(st.tech?.stacks || {})) {
-      if (stack && stack.bonusId) bonus.set(tid, stack.bonusId);
-    }
-    // 终局板块标记：tileId -> Set("playerColor:slotIndex:threshold")
-    const finalMarks = new Map();
-    for (const [tileId, tile] of Object.entries(st.finalScoring?.tiles || {})) {
-      finalMarks.set(tileId, new Set((tile?.marks || []).map((mk) => `${mk.playerColor}:${mk.slotIndex}:${mk.threshold}`)));
-    }
-    return { owned, hands, incomes, bonus, finalMarks };
-  }
-
-  for (let index = 0; index < steps.length; index += 1) {
-    const step = steps[index];
-    const action = step.action || {};
-    const before = snapshot();
-    const insp = kernel.composition.inspect();
-    let r;
-    if (insp.phase !== "awaiting_input") {
-      const proj = kernel.composition.projection();
-      const fixed = {
-        ...action,
-        stateVersion: proj.stateVersion,
-        decisionVersion: proj.state?.match?.decisionVersion ?? 0,
-      };
-      r = step.phase === "quick"
-        ? kernel.composition.inputPort.submitQuickAction(fixed)
-        : kernel.composition.inputPort.submitAction(fixed);
-    } else {
-      const d = insp.session.decision;
-      const isWhite = action.actorId === "player-white" || action.actorPlayerId === "player-white";
-      const cid = String(action.choiceId || action.target?.choiceId || "");
-      let pick = d.choices.find((c) => String(c.target?.choiceId) === cid)
-        || d.choices.find((c) => String(c.actionId) === String(action.actionId))
-        || d.choices.find((c) => String(c.summary || "") === String(action.summary || ""));
-      if (!pick && !isWhite) pick = d.choices.find((c) => !c.disabledReason) || d.choices[0];
-      if (!pick) break;
-      r = kernel.composition.inputPort.submitDecision({
-        decisionId: d.decisionId,
-        decisionVersion: d.decisionVersion,
-        ownerId: d.ownerId,
-        choice: pick,
-      });
-    }
-    if (!r?.ok) {
-      if (action.family === "accept_optional_effect" && String(action.summary || "").startsWith("跳过") && insp.phase !== "awaiting_input") {
-        continue;
-      }
-      break;
-    }
-    const after = snapshot();
-    const e = {};
-    // 研究科技：该步后 ownedTiles 新增（actor 在 step.actorPlayerId / action.actorId）
-    const actorId = step.actorPlayerId || action.actorId;
-    if (actorId) {
-      const beforeSet = before.owned.get(actorId) || new Set();
-      const afterSet = after.owned.get(actorId) || new Set();
-      for (const tid of afterSet) {
-        if (!beforeSet.has(tid)) {
-          e.research = { tileId: tid, bonusId: before.bonus.get(tid) || null };
-          break;
-        }
-      }
-    }
-    // 收入插牌：summary 以「收入 」开头；资源 = 该步前后 income 增量
-    const sum = String(action.summary || "");
-    if (sum.startsWith("收入 ")) {
-      const beforeInc = before.incomes.get(actorId) || {};
-      const afterInc = after.incomes.get(actorId) || {};
-      const gains = [];
-      for (const key of ["credits", "energy", "handSize", "publicity", "availableData", "additionalPublicScan"]) {
-        const diff = (afterInc[key] || 0) - (beforeInc[key] || 0);
-        if (!diff) continue;
-        if (key === "handSize") {
-          // 收入码 2 实际效果是获得一张随机牌（盲抽进手牌），不是"手牌上限+1"（2026-08-21 用户纠正）
-          gains.push(diff === 1 ? "1 张随机牌" : `${diff} 张随机牌`);
-        } else {
-          gains.push(`${INCOME_GAIN_LABELS[key] || key}${diff > 0 ? "+" : ""}${diff}`);
-        }
-      }
-      e.income = { cardId: sum.slice(3).trim(), gain: gains.join(" · ") || null };
-    } else if (actorId && sum !== "开始初始选择" && sum !== "确认初始选择" && !/^选择公司：/.test(sum) && !/^选择：初始牌/.test(sum)) {
-      // 抽牌（盲抽/精选奖励）：该步后 hand 新增的卡（排除初始选择与收入插牌步骤）
-      const beforeHand = before.hands.get(actorId) || [];
-      const afterHand = after.hands.get(actorId) || [];
-      const newCards = afterHand.filter((c) => !beforeHand.includes(c));
-      if (newCards.length) {
-        e.draw = { cardId: newCards[newCards.length - 1] };
-      }
-    }
-    // 终局板块标记（choose_target「标记 X」）：该步后某板块 marks 新增 → 槽位/阈值
-    const markMatch = /^标记 ([A-D])$/.exec(sum);
-    if (markMatch) {
-      const tileId = markMatch[1].toLowerCase();
-      const beforeMarks = before.finalMarks.get(tileId) || new Set();
-      const afterMarks = after.finalMarks.get(tileId) || new Set();
-      for (const mk of afterMarks) {
-        if (!beforeMarks.has(mk)) {
-          const [, slotIdx, threshold] = mk.split(":");
-          e.finalMark = {
-            tileId,
-            slotIndex: Number(slotIdx),
-            threshold: Number(threshold),
-            formula: formulaForTile(tileId),
-          };
-          break;
-        }
-      }
-    }
-    if (Object.keys(e).length) enrich.set(step.stepIndex ?? index, e);
-  }
+  let replayError = null;
   try {
-    kernel.dispose?.();
-  } catch {
-    // 内核释放失败不影响已收集的增强数据
+    kernel.composition.lifecycle.newGame({
+      seed: st0?.meta?.seed || SEED,
+      activePlayerCount: 4,
+      initialize: true,
+      rngState: { algorithm: "seti-simulation-mulberry32-v1", state: hashSeed(SEED) },
+    });
+    kernel.composition.inputPort.beginDrain({ metadata: { source: "report-enrich" } });
+
+    // 本局各终局板块实际使用的公式（finalScores.tiles 的 formulaId，如 d2）
+    const formulaByTile = {};
+    for (const fsItem of st0?.match?.finalScores || []) {
+      for (const t of fsItem.tiles || []) {
+        if (t.tileId && t.formulaId) formulaByTile[t.tileId] = t.formulaId;
+      }
+    }
+    const formulaForTile = (tileId) => formulaByTile[tileId] || null;
+
+    function snapshot() {
+      const st = kernel.composition.projection().state;
+      const owned = new Map();
+      const hands = new Map();
+      const incomes = new Map();
+      for (const p of st.players?.players || []) {
+        owned.set(p.id, new Set(Object.keys(p.techState?.ownedTiles || {})));
+        hands.set(p.id, (p.hand || []).map((c) => c.cardId));
+        incomes.set(p.id, p.income ? { ...p.income } : null);
+      }
+      const bonus = new Map();
+      for (const [tid, stack] of Object.entries(st.tech?.stacks || {})) {
+        if (stack && stack.bonusId) bonus.set(tid, stack.bonusId);
+      }
+      // 终局板块标记：tileId -> Set("playerColor:slotIndex:threshold")
+      const finalMarks = new Map();
+      for (const [tileId, tile] of Object.entries(st.finalScoring?.tiles || {})) {
+        finalMarks.set(tileId, new Set((tile?.marks || []).map((mk) => `${mk.playerColor}:${mk.slotIndex}:${mk.threshold}`)));
+      }
+      return { owned, hands, incomes, bonus, finalMarks };
+    }
+
+    for (let index = 0; index < steps.length; index += 1) {
+      const step = steps[index];
+      const action = step.action || {};
+      const before = snapshot();
+      const insp = kernel.composition.inspect();
+      let r;
+      if (insp.phase !== "awaiting_input") {
+        const proj = kernel.composition.projection();
+        const fixed = {
+          ...action,
+          stateVersion: proj.stateVersion,
+          decisionVersion: proj.state?.match?.decisionVersion ?? 0,
+        };
+        r = step.phase === "quick"
+          ? kernel.composition.inputPort.submitQuickAction(fixed)
+          : kernel.composition.inputPort.submitAction(fixed);
+      } else {
+        const d = insp.session.decision;
+        const cid = String(action.choiceId || action.target?.choiceId || "");
+        const pick = d.choices.find((c) => String(c.target?.choiceId) === cid)
+          || d.choices.find((c) => String(c.actionId) === String(action.actionId))
+          || d.choices.find((c) => String(c.summary || "") === String(action.summary || ""));
+        if (!pick) throw new Error(`REPORT_REPLAY_CHOICE_MISSING: ${savePath} step=${index} action=${action.actionId}`);
+        r = kernel.composition.inputPort.submitDecision({
+          decisionId: d.decisionId,
+          decisionVersion: d.decisionVersion,
+          ownerId: d.ownerId,
+          choice: pick,
+        });
+      }
+      if (!r?.ok) {
+        throw new Error(`REPORT_REPLAY_SUBMISSION_FAILED: ${savePath} step=${index} action=${action.actionId} result=${JSON.stringify(r)}`);
+      }
+      const after = snapshot();
+      const e = {};
+      // 研究科技：该步后 ownedTiles 新增（actor 在 step.actorPlayerId / action.actorId）
+      const actorId = step.actorPlayerId || action.actorId;
+      if (actorId) {
+        const beforeSet = before.owned.get(actorId) || new Set();
+        const afterSet = after.owned.get(actorId) || new Set();
+        for (const tid of afterSet) {
+          if (!beforeSet.has(tid)) {
+            e.research = { tileId: tid, bonusId: before.bonus.get(tid) || null };
+            break;
+          }
+        }
+      }
+      // 收入插牌：summary 以「收入 」开头；资源 = 该步前后 income 增量
+      const sum = String(action.summary || "");
+      if (sum.startsWith("收入 ")) {
+        const beforeInc = before.incomes.get(actorId) || {};
+        const afterInc = after.incomes.get(actorId) || {};
+        const gains = [];
+        for (const key of ["credits", "energy", "handSize", "publicity", "availableData", "additionalPublicScan"]) {
+          const diff = (afterInc[key] || 0) - (beforeInc[key] || 0);
+          if (!diff) continue;
+          if (key === "handSize") {
+            // 收入码 2 实际效果是获得一张随机牌（盲抽进手牌），不是"手牌上限+1"（2026-08-21 用户纠正）
+            gains.push(diff === 1 ? "1 张随机牌" : `${diff} 张随机牌`);
+          } else {
+            gains.push(`${INCOME_GAIN_LABELS[key] || key}${diff > 0 ? "+" : ""}${diff}`);
+          }
+        }
+        e.income = { cardId: sum.slice(3).trim(), gain: gains.join(" · ") || null };
+      } else if (actorId && sum !== "开始初始选择" && sum !== "确认初始选择" && !/^选择公司：/.test(sum) && !/^选择：初始牌/.test(sum)) {
+        // 抽牌（盲抽/精选奖励）：该步后 hand 新增的卡（排除初始选择与收入插牌步骤）
+        const beforeHand = before.hands.get(actorId) || [];
+        const afterHand = after.hands.get(actorId) || [];
+        const newCards = afterHand.filter((c) => !beforeHand.includes(c));
+        if (newCards.length) {
+          e.draw = { cardId: newCards[newCards.length - 1] };
+        }
+      }
+      // 终局板块标记（choose_target「标记 X」）：该步后某板块 marks 新增 → 槽位/阈值
+      const markMatch = /^标记 ([A-D])$/.exec(sum);
+      if (markMatch) {
+        const tileId = markMatch[1].toLowerCase();
+        const beforeMarks = before.finalMarks.get(tileId) || new Set();
+        const afterMarks = after.finalMarks.get(tileId) || new Set();
+        for (const mk of afterMarks) {
+          if (!beforeMarks.has(mk)) {
+            const [, slotIdx, threshold] = mk.split(":");
+            e.finalMark = {
+              tileId,
+              slotIndex: Number(slotIdx),
+              threshold: Number(threshold),
+              formula: formulaForTile(tileId),
+            };
+            break;
+          }
+        }
+      }
+      if (Object.keys(e).length) enrich.set(step.stepIndex ?? index, e);
+    }
+    return enrich;
+  } catch (error) {
+    replayError = error;
+    throw error;
+  } finally {
+    try {
+      kernel.dispose?.();
+    } catch (cleanupError) {
+      if (replayError) throw new AggregateError([replayError, cleanupError], `REPORT_REPLAY_CLEANUP_FAILED: ${savePath}`);
+      throw cleanupError;
+    }
   }
-  return enrich;
 }
 
 // 修正 orbit 等摘要里误导性的收入描述「获得 1 次收入（R1，1信用点 + 1能量）」：
@@ -1212,6 +1212,30 @@ code{background:#f0f2f6;padding:1px 4px;border-radius:3px;font-size:12px}
 </main></body></html>`;
 }
 
+// 仅刷新已有报告的元数据；历史行动和得分正文原样保留，不执行规则重放。
+function refreshActionLogReportMetadata(html, opts) {
+  const replaceOne = (pattern, replacement, label) => {
+    if ([...html.matchAll(pattern)].length !== 1) throw new Error(`REPORT_METADATA_BOUNDARY_INVALID: ${opts.recordFile} ${label}`);
+    html = html.replace(pattern, () => replacement);
+  };
+  const relRecord = opts.recordRelPath || relRecordPath(opts.recordFile);
+  const research = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, relRecord), "utf8"));
+  replaceOne(/<title>[\s\S]*?<\/title>/g,
+    `<title>SETI 行动复盘 · ${escapeHtml(opts.versionName || opts.versionId)} · ${escapeHtml(opts.runKey || opts.savePath)}</title>`, "title");
+  const href = path.posix.relative(path.posix.join("reports", "iteration", opts.versionId), relRecord);
+  replaceOne(/<div class="links">[\s\S]*?<\/div>/g,
+    `<div class="links">记录: <a href="${escapeHtml(href)}">${escapeHtml(opts.recordFile)}</a> · 存档: <code>${escapeHtml(opts.savePath)}</code></div>`, "links");
+  const budgetPattern = /<section class="panel"><h2>搜索触限记录<\/h2>[\s\S]*?<\/section>/g;
+  const budget = renderSearchBudgetReport(research?.metrics?.searches);
+  if ([...html.matchAll(budgetPattern)].length) replaceOne(budgetPattern, budget, "budget");
+  else {
+    // 老模板没有触限区，插在首个面板前，不替换历史正文。
+    if (!html.includes('<section class="panel')) throw new Error(`REPORT_METADATA_BOUNDARY_INVALID: ${opts.recordFile} panels`);
+    html = html.replace('<section class="panel', budget + '\n  <section class="panel');
+  }
+  return html;
+}
+
 // ---------------- 总览页渲染 ----------------
 
 function renderPage(registry) {
@@ -1235,7 +1259,10 @@ function renderPage(registry) {
 // 纯计算 registry（不落盘）：解析版本 → 结果 → best-of → 审计 → 版本详情。
 // generateReports=true 时为所有有存档但缺报告的记录生成复盘报告（纯重放）并落盘；
 // forceReports=true 时已存在的报告也重新生成（报告模板/逻辑改动后刷新用）。
-function computeRegistry({ generateReports = false, forceReports = false } = {}) {
+function computeRegistry({ generateReports = false, forceReports = false, refreshReportMetadata = false } = {}) {
+  if (refreshReportMetadata && (generateReports || forceReports)) {
+    throw new Error("REPORT_REFRESH_MODE_CONFLICT: 元数据刷新不能与完整重放混用");
+  }
   const versionsData = loadVersions();
   const versions = versionsData.versions;
   const recordsByFile = scanResearchRecords();
@@ -1243,14 +1270,14 @@ function computeRegistry({ generateReports = false, forceReports = false } = {})
   for (const v of versions) resolvedMap[v.id] = resolveVersionResults(v, recordsByFile);
 
   const generated = [];
-  if (generateReports) {
+  if (generateReports || refreshReportMetadata) {
     for (const v of versions) {
       for (const r of resolvedMap[v.id]) {
-        if (r.missingRecord || !r.savePath || !r.reportPath) continue;
-        if (!forceReports && r.reportExists) continue;
+        if (r.missingRecord || !r.reportPath) continue;
+        if (refreshReportMetadata ? !r.reportExists : (!r.savePath || (!forceReports && r.reportExists))) continue;
         const reportPath = path.join(REPO_ROOT, r.reportPath);
         fs.mkdirSync(path.dirname(reportPath), { recursive: true });
-        const html = buildActionLogReport({
+        const reportOptions = {
           savePath: r.savePath,
           versionId: v.id,
           versionName: v.name,
@@ -1261,7 +1288,10 @@ function computeRegistry({ generateReports = false, forceReports = false } = {})
           flags: r.flags,
           wallMs: r.wallMs,
           mode: r.mode,
-        });
+        };
+        const html = refreshReportMetadata
+          ? refreshActionLogReportMetadata(fs.readFileSync(reportPath, "utf8"), reportOptions)
+          : buildActionLogReport(reportOptions);
         fs.writeFileSync(reportPath, html, "utf8");
         r.reportExists = true;
         generated.push(r.reportPath);
@@ -1425,6 +1455,7 @@ module.exports = {
   computeBestOf,
   auditRegistry,
   buildActionLogReport,
+  refreshActionLogReportMetadata,
   renderSearchBudgetReport,
   replaySaveEnriched,
   TECH_BONUS_LABELS,

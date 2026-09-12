@@ -15,9 +15,10 @@
 //       --no-reports        跳过复盘报告生成
 //   node tools/robot_iterate.js register --version-id <id> [--name n] [--summary "..."] [--commits h1,h2] [--records f1,f2] [--baseline vid] [--date YYYY-MM-DD] [--reports]
 //       手动登记已有记录为一个版本（不改代码不重跑）。
-//   node tools/robot_iterate.js build [--reports] [--force-reports]
+//   node tools/robot_iterate.js build [--reports] [--force-reports] [--refresh-report-metadata]
 //       重建 registry.json + robot-iteration.html；--reports 为所有有存档但缺报告的记录补齐复盘报告（纯重放），
-//       --force-reports 连已存在的报告也重新生成（报告模板/逻辑改动后刷新用）。
+//       --force-reports 完整重放并重建已有报告，失败显式报错；
+//       --refresh-report-metadata 仅更新已有报告标题/链接/触限区，保留历史正文，与重放选项互斥。
 //   node tools/robot_iterate.js review [--best] [--show <id>] [--compare <base>..<head>]
 //       历史分析（只读，不重跑）。
 //   node tools/robot_iterate.js report --save <存档> [--title "名称"] [--out <路径>]
@@ -71,6 +72,7 @@ function parseArgs(argv) {
       case "--no-reports": opts.noReports = true; break;
       case "--reports": opts.reports = true; break;
       case "--force-reports": opts.forceReports = true; break;
+      case "--refresh-report-metadata": opts.refreshReportMetadata = true; break;
       case "--verbose": opts.verbose = true; break;
       case "--steps": opts.steps = Number(take(key)); break;
       case "--name": opts.name = take(key); break;
@@ -110,7 +112,7 @@ function usage() {
 用法:
   node tools/robot_iterate.js run --name <id> [--full] [--steps N] [--config k=v] [--summary "..."]
   node tools/robot_iterate.js register --version-id <id> [--name n] [--summary "..."] [--commits h1,h2] [--records f1,f2] [--baseline vid] [--date YYYY-MM-DD] [--reports]
-  node tools/robot_iterate.js build [--reports] [--force-reports]
+  node tools/robot_iterate.js build [--reports] [--force-reports] [--refresh-report-metadata]
   node tools/robot_iterate.js review [--best] [--show <id>] [--compare <base>..<head>]
   node tools/robot_iterate.js report --save <存档> [--title "名称"] [--out <路径>]
   node tools/robot_iterate.js check
@@ -259,10 +261,11 @@ function cmdBuild(opts) {
   const { registry, pagePath, generated } = buildRegistry({
     generateReports: Boolean(opts.reports),
     forceReports: Boolean(opts.forceReports),
+    refreshReportMetadata: Boolean(opts.refreshReportMetadata),
   });
   console.log(`[registry] ${lib.REGISTRY_PATH}`);
   console.log(`[页面] ${pagePath}`);
-  if (generated.length) console.log(`[报告] 生成 ${generated.length} 份复盘报告`);
+  if (generated.length) console.log(`[报告] ${opts.refreshReportMetadata ? "刷新元数据" : "生成"} ${generated.length} 份复盘报告`);
   printWarnings(registry);
 }
 

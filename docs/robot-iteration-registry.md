@@ -47,8 +47,10 @@ seti-saves/*.json（存档，可选）    │      └→ reports/iteration/regi
 对话工具转发进度时直接输出stdout文本，不将整份进程结果序列化为含转义换行的JSON；
 后台采集以约10秒的短间隔读取同一存活进程，不用40秒批量输出及口头摘要替代原始进度
 （2026-09-12用户再次指出显示中断）。无新输出不等于进程结束，不因此重启实验。
-已有报告需用 `node tools/robot_iterate.js build --reports --force-reports` 重建展示；只读记录并重放
-存档，不重跑 AI，也不能补回运行时没有记录的字段。
+已有报告的标题、记录链接与触限展示用
+`node tools/robot_iterate.js build --refresh-report-metadata`刷新，保留历史行动和得分正文，
+不运行规则重放或AI，不能补回运行时未记录的字段。需要重建正文时才使用
+`build --reports --force-reports`；存档不能按当前规则完整重放时显式报错，不覆盖失败报告。
 
 ### 2.1 迭代 loop 统一规范（2026-09-11 用户确认）
 
@@ -242,6 +244,7 @@ node tools/robot_iterate.js register --version-id <id> --name "显示名" --summ
 
 # 重建 registry + 页面；--reports 为所有有存档但缺报告的记录补齐复盘报告
 node tools/robot_iterate.js build [--reports]
+node tools/robot_iterate.js build --refresh-report-metadata
 
 # 历史分析（只读）
 node tools/robot_iterate.js review --best                 # 固定盘面最佳（白分/均分/耗时）
@@ -313,8 +316,12 @@ node tools/robot_iterate.js check                         # 完整性审计（ex
 纯重放生成行动级复盘报告 → run 结束**硬校验**：记录/存档/复盘报告任一缺失即显式失败
 （exit 非 0，提示原因），不允许"跑完没复盘"的迭代收口。`build --reports` 可补齐缺报告记录。
 
-生成方式：`node tools/robot_iterate.js build --reports`（为所有有存档但缺报告的记录补齐；
-报告模板/聚合逻辑改动后用 `--force-reports` 强制重新生成全部报告）。**纯重放存档
+生成方式：`node tools/robot_iterate.js build --reports`（为有存档但缺报告的记录补齐；
+正文模板/聚合逻辑变化时用 `--force-reports` 完整重新生成）。历史存档可能与当前规则
+不兼容：输入匹配或正式提交失败须报告存档、步骤和错误，不返回部分增强，不以其他
+合法选择替换历史动作；失败报告不写入，已有文件保留。只刷新标题/记录链接/触限区
+时使用互斥的`--refresh-report-metadata`；缺文件不冒充已生成，无法识别或重复的模板
+边界显式报错。元数据刷新不证明旧轨迹已在当前规则下通过。**纯重放存档
 `replaySteps`（`after` 快照含每步后的分数/钱/电/宣传/手牌），不做任何 AI 搜索——绝不重跑。**
 
 报告内容（2026-08-21 起按**玩家回合**聚合——2026-08-21 用户口径：一个玩家的回合 =
