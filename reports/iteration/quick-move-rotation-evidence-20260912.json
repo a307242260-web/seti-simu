@@ -1,0 +1,3460 @@
+{
+  "source": "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-full-v276.json",
+  "terminal": true,
+  "scope": "已有回放的主行动后普通移动及其条件结算；一次正式转动领域结算、正式路线目录。移动点数用于几何成本比较；能量差未折算弃牌价值，不能单独当作总收益。未评估转动触发奖励，不模拟对手，不证明生产策略已实现。",
+  "cases": [
+    {
+      "step": 78,
+      "actor": "player-blue",
+      "action": {
+        "rocketId": 3,
+        "deltaX": 1,
+        "deltaY": 0
+      },
+      "payments": [
+        {
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-3-0",
+            "cardIds": [
+              "card-3-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          }
+        }
+      ],
+      "rotationBefore": {
+        "rotationCount": 2,
+        "wheel1Steps": -2,
+        "wheel2Steps": -22,
+        "wheel3Steps": -17,
+        "wheel4Steps": -10
+      },
+      "delayedRocketMoves": [
+        {
+          "rocketId": 3,
+          "from": {
+            "x": 3,
+            "y": 1
+          },
+          "to": {
+            "x": 2,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        }
+      ],
+      "earlyRocketMoves": [
+        {
+          "rocketId": 3,
+          "from": {
+            "x": 4,
+            "y": 1
+          },
+          "to": {
+            "x": 3,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        }
+      ],
+      "rotationEventCounts": {
+        "delayed": 0,
+        "early": 0
+      },
+      "comparisons": [
+        {
+          "requirementId": "rocket:3:orbit:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 8,
+          "earlyEnergy": 7,
+          "paidEnergy": 0,
+          "currentSteps": 6,
+          "delayedSteps": 7,
+          "earlySteps": 7,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 7,
+          "earlyMovePoints": 7,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:3:land:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 7,
+          "earlyEnergy": 6,
+          "paidEnergy": 0,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:3:land:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 8,
+          "delayedEnergy": 7,
+          "earlyEnergy": 7,
+          "paidEnergy": 0,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:3:orbit:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 0,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:3:land:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 8,
+          "delayedEnergy": 9,
+          "earlyEnergy": 8,
+          "paidEnergy": 0,
+          "currentSteps": 6,
+          "delayedSteps": 7,
+          "earlySteps": 7,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 7,
+          "earlyMovePoints": 7,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:3:land:saturn:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 6,
+          "earlyEnergy": 5,
+          "paidEnergy": 0,
+          "currentSteps": 5,
+          "delayedSteps": 5,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:3:orbit:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 5,
+          "paidEnergy": 0,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:3:orbit:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 6,
+          "earlyEnergy": 5,
+          "paidEnergy": 0,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:3:land:jupiter:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 0,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:3:land:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 3,
+          "delayedEnergy": 3,
+          "earlyEnergy": 2,
+          "paidEnergy": 0,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 2,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 2,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:3:land:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 6,
+          "paidEnergy": 0,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        }
+      ]
+    },
+    {
+      "step": 80,
+      "actor": "player-blue",
+      "action": {
+        "rocketId": 3,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payments": [
+        {
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          }
+        }
+      ],
+      "rotationBefore": {
+        "rotationCount": 2,
+        "wheel1Steps": -2,
+        "wheel2Steps": -22,
+        "wheel3Steps": -17,
+        "wheel4Steps": -10
+      },
+      "delayedRocketMoves": [
+        {
+          "rocketId": 3,
+          "from": {
+            "x": 4,
+            "y": 1
+          },
+          "to": {
+            "x": 3,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        }
+      ],
+      "earlyRocketMoves": [
+        {
+          "rocketId": 3,
+          "from": {
+            "x": 4,
+            "y": 2
+          },
+          "to": {
+            "x": 3,
+            "y": 2,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        }
+      ],
+      "rotationEventCounts": {
+        "delayed": 0,
+        "early": 0
+      },
+      "comparisons": [
+        {
+          "requirementId": "rocket:3:land:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 2,
+          "delayedEnergy": 2,
+          "earlyEnergy": 2,
+          "paidEnergy": 1,
+          "currentSteps": 1,
+          "delayedSteps": 1,
+          "earlySteps": 1,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 1,
+          "delayedMovePoints": 1,
+          "earlyMovePoints": 1,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:3:orbit:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 7,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 6,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 6,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:3:land:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 8,
+          "delayedEnergy": 7,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 6,
+          "delayedSteps": 5,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:3:orbit:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 6,
+          "delayedSteps": 5,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:3:land:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 6,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:3:land:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 8,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 6,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 6,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:3:land:saturn:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:3:land:jupiter:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:3:orbit:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:3:orbit:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:3:land:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 6,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        }
+      ]
+    },
+    {
+      "step": 230,
+      "actor": "player-white",
+      "action": {
+        "rocketId": 6,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payments": [
+        {
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          }
+        }
+      ],
+      "rotationBefore": {
+        "rotationCount": 11,
+        "wheel1Steps": -11,
+        "wheel2Steps": -28,
+        "wheel3Steps": -20,
+        "wheel4Steps": -10
+      },
+      "delayedRocketMoves": [
+        {
+          "rocketId": 6,
+          "from": {
+            "x": 4,
+            "y": 2
+          },
+          "to": {
+            "x": 3,
+            "y": 2,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        }
+      ],
+      "earlyRocketMoves": [],
+      "rotationEventCounts": {
+        "delayed": 0,
+        "early": 0
+      },
+      "comparisons": [
+        {
+          "requirementId": "rocket:6:land:saturn:planet:",
+          "comparable": true,
+          "currentEnergy": 3,
+          "delayedEnergy": 3,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:6:land:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 3,
+          "delayedEnergy": 4,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:6:orbit:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 6,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:6:land:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:6:land:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 6,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:6:orbit:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 5,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:6:land:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 7,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:6:orbit:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 6,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 5,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:6:land:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 6,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 5,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:6:land:jupiter:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:6:orbit:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": false
+        }
+      ]
+    },
+    {
+      "step": 232,
+      "actor": "player-white",
+      "action": {
+        "rocketId": 6,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payments": [
+        {
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          }
+        }
+      ],
+      "rotationBefore": {
+        "rotationCount": 11,
+        "wheel1Steps": -11,
+        "wheel2Steps": -28,
+        "wheel3Steps": -20,
+        "wheel4Steps": -10
+      },
+      "delayedRocketMoves": [],
+      "earlyRocketMoves": [
+        {
+          "rocketId": 6,
+          "from": {
+            "x": 3,
+            "y": 3
+          },
+          "to": {
+            "x": 2,
+            "y": 3,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        }
+      ],
+      "rotationEventCounts": {
+        "delayed": 0,
+        "early": 0
+      },
+      "comparisons": [
+        {
+          "requirementId": "rocket:6:land:saturn:planet:",
+          "comparable": true,
+          "currentEnergy": 2,
+          "delayedEnergy": 3,
+          "earlyEnergy": 2,
+          "paidEnergy": 1,
+          "currentSteps": 1,
+          "delayedSteps": 2,
+          "earlySteps": 1,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 1,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 1,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:6:orbit:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:6:land:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 5,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 3,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:6:land:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 6,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:6:orbit:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:6:orbit:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 6,
+          "earlyEnergy": 9,
+          "paidEnergy": 1,
+          "currentSteps": 6,
+          "delayedSteps": 5,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 8,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:6:land:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 6,
+          "earlyEnergy": 9,
+          "paidEnergy": 1,
+          "currentSteps": 6,
+          "delayedSteps": 5,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 8,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:6:land:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:6:orbit:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 4,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 3,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:6:land:jupiter:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 3,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 2,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": -2,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:6:land:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 3,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 2,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        }
+      ]
+    },
+    {
+      "step": 254,
+      "actor": "player-brown",
+      "action": {
+        "rocketId": 7,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payments": [
+        {
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          }
+        }
+      ],
+      "rotationBefore": {
+        "rotationCount": 12,
+        "wheel1Steps": -12,
+        "wheel2Steps": -29,
+        "wheel3Steps": -21,
+        "wheel4Steps": -10
+      },
+      "delayedRocketMoves": [
+        {
+          "rocketId": 7,
+          "from": {
+            "x": 1,
+            "y": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        }
+      ],
+      "earlyRocketMoves": [
+        {
+          "rocketId": 7,
+          "from": {
+            "x": 0,
+            "y": 1
+          },
+          "to": {
+            "x": 7,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "pushed"
+        }
+      ],
+      "rotationEventCounts": {
+        "delayed": 0,
+        "early": 0
+      },
+      "comparisons": [
+        {
+          "requirementId": "rocket:7:orbit:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 5,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 4,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:7:orbit:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 3,
+          "delayedEnergy": 3,
+          "earlyEnergy": 3,
+          "paidEnergy": 1,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 2,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 2,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:land:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 2,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 2,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:orbit:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 6,
+          "delayedSteps": 5,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:land:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 7,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:land:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 9,
+          "delayedEnergy": 8,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 6,
+          "delayedSteps": 5,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:land:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:land:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 7,
+          "earlyEnergy": 9,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 4,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:7:land:jupiter:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:orbit:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:land:saturn:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 6,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 4,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        }
+      ]
+    },
+    {
+      "step": 256,
+      "actor": "player-brown",
+      "action": {
+        "rocketId": 7,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payments": [
+        {
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          }
+        }
+      ],
+      "rotationBefore": {
+        "rotationCount": 12,
+        "wheel1Steps": -12,
+        "wheel2Steps": -29,
+        "wheel3Steps": -21,
+        "wheel4Steps": -10
+      },
+      "delayedRocketMoves": [
+        {
+          "rocketId": 7,
+          "from": {
+            "x": 0,
+            "y": 1
+          },
+          "to": {
+            "x": 7,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "pushed"
+        }
+      ],
+      "earlyRocketMoves": [
+        {
+          "rocketId": 7,
+          "from": {
+            "x": 7,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        }
+      ],
+      "rotationEventCounts": {
+        "delayed": 0,
+        "early": 0
+      },
+      "comparisons": [
+        {
+          "requirementId": "rocket:7:orbit:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 2,
+          "delayedEnergy": 2,
+          "earlyEnergy": 2,
+          "paidEnergy": 1,
+          "currentSteps": 1,
+          "delayedSteps": 1,
+          "earlySteps": 1,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 1,
+          "delayedMovePoints": 1,
+          "earlyMovePoints": 1,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:land:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 3,
+          "delayedEnergy": 3,
+          "earlyEnergy": 3,
+          "paidEnergy": 1,
+          "currentSteps": 1,
+          "delayedSteps": 1,
+          "earlySteps": 1,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 1,
+          "delayedMovePoints": 1,
+          "earlyMovePoints": 1,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:orbit:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:land:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:land:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 8,
+          "delayedEnergy": 7,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:land:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:orbit:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 6,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 7,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 7,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:7:land:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 8,
+          "earlyEnergy": 10,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 7,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 7,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:7:land:jupiter:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:orbit:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:7:land:saturn:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 7,
+          "earlyEnergy": 9,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 7,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 7,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        }
+      ]
+    },
+    {
+      "step": 306,
+      "actor": "player-brown",
+      "action": {
+        "rocketId": 9,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payments": [
+        {
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          }
+        }
+      ],
+      "rotationBefore": {
+        "rotationCount": 12,
+        "wheel1Steps": -12,
+        "wheel2Steps": -29,
+        "wheel3Steps": -21,
+        "wheel4Steps": -10
+      },
+      "delayedRocketMoves": [
+        {
+          "rocketId": 9,
+          "from": {
+            "x": 0,
+            "y": 1
+          },
+          "to": {
+            "x": 7,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "pushed"
+        },
+        {
+          "rocketId": 10,
+          "from": {
+            "x": 1,
+            "y": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 11,
+          "from": {
+            "x": 0,
+            "y": 1
+          },
+          "to": {
+            "x": 7,
+            "y": 1,
+            "slotIndex": 0
+          },
+          "reason": "pushed"
+        }
+      ],
+      "earlyRocketMoves": [
+        {
+          "rocketId": 9,
+          "from": {
+            "x": 7,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 10,
+          "from": {
+            "x": 1,
+            "y": 1
+          },
+          "to": {
+            "x": 0,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 11,
+          "from": {
+            "x": 0,
+            "y": 1
+          },
+          "to": {
+            "x": 7,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "pushed"
+        }
+      ],
+      "rotationEventCounts": {
+        "delayed": 0,
+        "early": 0
+      },
+      "comparisons": [
+        {
+          "requirementId": "rocket:9:orbit:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 2,
+          "delayedEnergy": 2,
+          "earlyEnergy": 2,
+          "paidEnergy": 1,
+          "currentSteps": 1,
+          "delayedSteps": 1,
+          "earlySteps": 1,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 1,
+          "delayedMovePoints": 1,
+          "earlyMovePoints": 1,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:9:orbit:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:9:land:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:9:land:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 8,
+          "delayedEnergy": 7,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:9:land:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:9:orbit:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 6,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 7,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 7,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:9:land:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 8,
+          "earlyEnergy": 10,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 7,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 7,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:9:land:jupiter:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:9:orbit:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:9:land:saturn:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 7,
+          "earlyEnergy": 9,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 7,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 7,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:9:land:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 3,
+          "delayedEnergy": 3,
+          "earlyEnergy": 3,
+          "paidEnergy": 1,
+          "currentSteps": 1,
+          "delayedSteps": 1,
+          "earlySteps": 1,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 1,
+          "delayedMovePoints": 1,
+          "earlyMovePoints": 1,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        }
+      ]
+    },
+    {
+      "step": 311,
+      "actor": "player-white",
+      "action": {
+        "rocketId": 10,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payments": [
+        {
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-56-0",
+            "cardIds": [
+              "card-56-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 2
+          }
+        }
+      ],
+      "rotationBefore": {
+        "rotationCount": 12,
+        "wheel1Steps": -12,
+        "wheel2Steps": -29,
+        "wheel3Steps": -21,
+        "wheel4Steps": -10
+      },
+      "delayedRocketMoves": [
+        {
+          "rocketId": 9,
+          "from": {
+            "x": 7,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 10,
+          "from": {
+            "x": 0,
+            "y": 1
+          },
+          "to": {
+            "x": 7,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "pushed"
+        },
+        {
+          "rocketId": 11,
+          "from": {
+            "x": 0,
+            "y": 1
+          },
+          "to": {
+            "x": 7,
+            "y": 1,
+            "slotIndex": 0
+          },
+          "reason": "pushed"
+        }
+      ],
+      "earlyRocketMoves": [
+        {
+          "rocketId": 9,
+          "from": {
+            "x": 7,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 10,
+          "from": {
+            "x": 7,
+            "y": 1
+          },
+          "to": {
+            "x": 6,
+            "y": 1,
+            "slotIndex": 0
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 11,
+          "from": {
+            "x": 0,
+            "y": 1
+          },
+          "to": {
+            "x": 7,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "pushed"
+        }
+      ],
+      "rotationEventCounts": {
+        "delayed": 0,
+        "early": 0
+      },
+      "comparisons": [
+        {
+          "requirementId": "rocket:10:orbit:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": -2,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:10:land:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:10:land:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 8,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": -2,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:10:land:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 4,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": -2,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:10:land:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 7,
+          "earlyEnergy": 9,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 7,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 8,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:10:orbit:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 6,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 7,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 8,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:10:land:jupiter:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 4,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": -2,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:10:orbit:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 4,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:10:land:saturn:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 7,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 7,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 6,
+          "earlyMovePoints": 8,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:10:orbit:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 3,
+          "delayedEnergy": 2,
+          "earlyEnergy": 2,
+          "paidEnergy": 1,
+          "currentSteps": 1,
+          "delayedSteps": 1,
+          "earlySteps": 1,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 1,
+          "earlyMovePoints": 2,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:10:land:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 3,
+          "delayedEnergy": 2,
+          "earlyEnergy": 2,
+          "paidEnergy": 1,
+          "currentSteps": 1,
+          "delayedSteps": 1,
+          "earlySteps": 1,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 1,
+          "earlyMovePoints": 2,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        }
+      ]
+    },
+    {
+      "step": 453,
+      "actor": "player-green",
+      "action": {
+        "rocketId": 12,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payments": [
+        {
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          }
+        }
+      ],
+      "rotationBefore": {
+        "rotationCount": 16,
+        "wheel1Steps": -16,
+        "wheel2Steps": -31,
+        "wheel3Steps": -22,
+        "wheel4Steps": -10
+      },
+      "delayedRocketMoves": [
+        {
+          "rocketId": 13,
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        }
+      ],
+      "earlyRocketMoves": [
+        {
+          "rocketId": 12,
+          "from": {
+            "x": 3,
+            "y": 2
+          },
+          "to": {
+            "x": 2,
+            "y": 2,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 13,
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        }
+      ],
+      "rotationEventCounts": {
+        "delayed": 0,
+        "early": 0
+      },
+      "comparisons": [
+        {
+          "requirementId": "rocket:12:orbit:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 2,
+          "delayedEnergy": 3,
+          "earlyEnergy": 2,
+          "paidEnergy": 1,
+          "currentSteps": 2,
+          "delayedSteps": 3,
+          "earlySteps": 2,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 2,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:12:land:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 2,
+          "delayedEnergy": 3,
+          "earlyEnergy": 2,
+          "paidEnergy": 1,
+          "currentSteps": 2,
+          "delayedSteps": 3,
+          "earlySteps": 2,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 2,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:12:land:jupiter:planet:",
+          "comparable": true,
+          "currentEnergy": 2,
+          "delayedEnergy": 2,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:12:land:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 2,
+          "delayedEnergy": 3,
+          "earlyEnergy": 3,
+          "paidEnergy": 1,
+          "currentSteps": 1,
+          "delayedSteps": 2,
+          "earlySteps": 1,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 1,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 1,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:12:orbit:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 1,
+          "delayedEnergy": 2,
+          "earlyEnergy": 2,
+          "paidEnergy": 1,
+          "currentSteps": 1,
+          "delayedSteps": 2,
+          "earlySteps": 1,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 1,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 1,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:12:orbit:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 7,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 7,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:12:land:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 6,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:12:land:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 5,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:12:orbit:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 5,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:12:land:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 7,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 7,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:12:orbit:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 5,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:12:land:saturn:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        }
+      ]
+    },
+    {
+      "step": 459,
+      "actor": "player-blue",
+      "action": {
+        "rocketId": 14,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payments": [
+        {
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          }
+        }
+      ],
+      "rotationBefore": {
+        "rotationCount": 16,
+        "wheel1Steps": -16,
+        "wheel2Steps": -31,
+        "wheel3Steps": -22,
+        "wheel4Steps": -10
+      },
+      "delayedRocketMoves": [
+        {
+          "rocketId": 12,
+          "from": {
+            "x": 3,
+            "y": 1
+          },
+          "to": {
+            "x": 2,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 13,
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 14,
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1,
+            "slotIndex": 0
+          },
+          "reason": "follow"
+        }
+      ],
+      "earlyRocketMoves": [
+        {
+          "rocketId": 12,
+          "from": {
+            "x": 3,
+            "y": 1
+          },
+          "to": {
+            "x": 2,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 13,
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 14,
+          "from": {
+            "x": 5,
+            "y": 2
+          },
+          "to": {
+            "x": 4,
+            "y": 2,
+            "slotIndex": 4
+          },
+          "reason": "pushed"
+        }
+      ],
+      "rotationEventCounts": {
+        "delayed": 0,
+        "early": 0
+      },
+      "comparisons": [
+        {
+          "requirementId": "rocket:14:land:jupiter:planet:",
+          "comparable": true,
+          "currentEnergy": 3,
+          "delayedEnergy": 4,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 2,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:land:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 3,
+          "delayedEnergy": 3,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:14:orbit:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:land:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 9,
+          "delayedEnergy": 8,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 7,
+          "delayedSteps": 6,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 7,
+          "delayedMovePoints": 6,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:orbit:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 8,
+          "delayedEnergy": 7,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 7,
+          "delayedSteps": 6,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 7,
+          "delayedMovePoints": 6,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:land:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 6,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:14:land:saturn:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 6,
+          "delayedSteps": 5,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:land:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 7,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 5,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:land:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:orbit:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 0,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:orbit:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 5,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 4,
+          "delayedSteps": 4,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 4,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:14:orbit:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 3,
+          "delayedEnergy": 3,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 4,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 4,
+          "movePointsSavedByMovingFirst": -2,
+          "matchedCurrentRoute": false
+        }
+      ]
+    },
+    {
+      "step": 461,
+      "actor": "player-blue",
+      "action": {
+        "rocketId": 14,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payments": [
+        {
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          }
+        }
+      ],
+      "rotationBefore": {
+        "rotationCount": 16,
+        "wheel1Steps": -16,
+        "wheel2Steps": -31,
+        "wheel3Steps": -22,
+        "wheel4Steps": -10
+      },
+      "delayedRocketMoves": [
+        {
+          "rocketId": 12,
+          "from": {
+            "x": 3,
+            "y": 1
+          },
+          "to": {
+            "x": 2,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 13,
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 14,
+          "from": {
+            "x": 5,
+            "y": 2
+          },
+          "to": {
+            "x": 4,
+            "y": 2,
+            "slotIndex": 4
+          },
+          "reason": "pushed"
+        }
+      ],
+      "earlyRocketMoves": [
+        {
+          "rocketId": 12,
+          "from": {
+            "x": 3,
+            "y": 1
+          },
+          "to": {
+            "x": 2,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 13,
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        }
+      ],
+      "rotationEventCounts": {
+        "delayed": 0,
+        "early": 0
+      },
+      "comparisons": [
+        {
+          "requirementId": "rocket:14:land:jupiter:planet:",
+          "comparable": true,
+          "currentEnergy": 2,
+          "delayedEnergy": 3,
+          "earlyEnergy": 2,
+          "paidEnergy": 1,
+          "currentSteps": 1,
+          "delayedSteps": 2,
+          "earlySteps": 1,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 1,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 1,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:orbit:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 5,
+          "earlyEnergy": 4,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 4,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:land:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 7,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 5,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:14:land:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 8,
+          "delayedEnergy": 7,
+          "earlyEnergy": 8,
+          "paidEnergy": 1,
+          "currentSteps": 6,
+          "delayedSteps": 5,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:orbit:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 6,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 6,
+          "delayedSteps": 5,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:land:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 6,
+          "earlyEnergy": 5,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 4,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 1,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:orbit:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 6,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 5,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:14:land:saturn:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 5,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": -1,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:14:orbit:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:14:land:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:14:land:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 7,
+          "paidEnergy": 1,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:14:orbit:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 3,
+          "delayedEnergy": 3,
+          "earlyEnergy": 6,
+          "paidEnergy": 1,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -3,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        }
+      ]
+    },
+    {
+      "step": 477,
+      "actor": "player-white",
+      "action": {
+        "rocketId": 13,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payments": [
+        {
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "alien-chong-9-10",
+            "cardIds": [
+              "alien-chong-9-10"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          }
+        }
+      ],
+      "rotationBefore": {
+        "rotationCount": 16,
+        "wheel1Steps": -16,
+        "wheel2Steps": -31,
+        "wheel3Steps": -22,
+        "wheel4Steps": -10
+      },
+      "delayedRocketMoves": [
+        {
+          "rocketId": 12,
+          "from": {
+            "x": 3,
+            "y": 1
+          },
+          "to": {
+            "x": 2,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 13,
+          "from": {
+            "x": 5,
+            "y": 2
+          },
+          "to": {
+            "x": 4,
+            "y": 2,
+            "slotIndex": 4
+          },
+          "reason": "pushed"
+        },
+        {
+          "rocketId": 15,
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        }
+      ],
+      "earlyRocketMoves": [
+        {
+          "rocketId": 12,
+          "from": {
+            "x": 3,
+            "y": 1
+          },
+          "to": {
+            "x": 2,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        },
+        {
+          "rocketId": 15,
+          "from": {
+            "x": 5,
+            "y": 1
+          },
+          "to": {
+            "x": 4,
+            "y": 1,
+            "slotIndex": 4
+          },
+          "reason": "follow"
+        }
+      ],
+      "rotationEventCounts": {
+        "delayed": 0,
+        "early": 0
+      },
+      "comparisons": [
+        {
+          "requirementId": "rocket:13:orbit:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 5,
+          "earlyEnergy": 3,
+          "paidEnergy": 0,
+          "currentSteps": 3,
+          "delayedSteps": 4,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 2,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:13:land:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 7,
+          "earlyEnergy": 7,
+          "paidEnergy": 0,
+          "currentSteps": 5,
+          "delayedSteps": 5,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:13:land:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 8,
+          "delayedEnergy": 7,
+          "earlyEnergy": 7,
+          "paidEnergy": 0,
+          "currentSteps": 6,
+          "delayedSteps": 5,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:13:orbit:neptune:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 0,
+          "currentSteps": 6,
+          "delayedSteps": 5,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:13:land:uranus:planet:",
+          "comparable": true,
+          "currentEnergy": 5,
+          "delayedEnergy": 6,
+          "earlyEnergy": 4,
+          "paidEnergy": 0,
+          "currentSteps": 3,
+          "delayedSteps": 4,
+          "earlySteps": 3,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 2,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 4,
+          "earlyMovePoints": 3,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:13:orbit:mercury:planet:",
+          "comparable": true,
+          "currentEnergy": 6,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 0,
+          "currentSteps": 5,
+          "delayedSteps": 5,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 5,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:13:land:saturn:planet:",
+          "comparable": true,
+          "currentEnergy": 7,
+          "delayedEnergy": 6,
+          "earlyEnergy": 6,
+          "paidEnergy": 0,
+          "currentSteps": 5,
+          "delayedSteps": 4,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": -1,
+          "energySavedByMovingFirst": 0,
+          "currentMovePoints": 6,
+          "delayedMovePoints": 5,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:13:orbit:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 6,
+          "paidEnergy": 0,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:13:land:venus:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 6,
+          "paidEnergy": 0,
+          "currentSteps": 3,
+          "delayedSteps": 3,
+          "earlySteps": 6,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 3,
+          "delayedMovePoints": 3,
+          "earlyMovePoints": 6,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:13:land:jupiter:planet:",
+          "comparable": true,
+          "currentEnergy": 2,
+          "delayedEnergy": 3,
+          "earlyEnergy": 1,
+          "paidEnergy": 0,
+          "currentSteps": 1,
+          "delayedSteps": 2,
+          "earlySteps": 1,
+          "rotationEnergyPenalty": 1,
+          "energySavedByMovingFirst": 2,
+          "currentMovePoints": 1,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 1,
+          "movePointsSavedByMovingFirst": 1,
+          "matchedCurrentRoute": true
+        },
+        {
+          "requirementId": "rocket:13:land:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 4,
+          "delayedEnergy": 4,
+          "earlyEnergy": 6,
+          "paidEnergy": 0,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        },
+        {
+          "requirementId": "rocket:13:orbit:mars:planet:",
+          "comparable": true,
+          "currentEnergy": 3,
+          "delayedEnergy": 3,
+          "earlyEnergy": 5,
+          "paidEnergy": 0,
+          "currentSteps": 2,
+          "delayedSteps": 2,
+          "earlySteps": 5,
+          "rotationEnergyPenalty": 0,
+          "energySavedByMovingFirst": -2,
+          "currentMovePoints": 2,
+          "delayedMovePoints": 2,
+          "earlyMovePoints": 5,
+          "movePointsSavedByMovingFirst": -3,
+          "matchedCurrentRoute": false
+        }
+      ]
+    }
+  ]
+}
