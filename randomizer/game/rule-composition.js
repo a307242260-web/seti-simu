@@ -1981,13 +1981,13 @@
                 drainHiddenBarrier = barrier;
               }
             }
-            // 连续填数据（2026-08-21 用户裁定：place_data 是快速行动，从 0 填到
-            // 收入直接连续填 4 个数据，不需要占据 4 个节点）：**仅当本节点是
-            // place_data**（或刚折叠了它的选位）时，选位折叠提交后若仍可继续填
-            // （数据池有数据 + 计算机第一排有剩余槽位，且本回合未 PASS），提交
-            // 下一个 place_data 快速行动，下一轮循环处理其选位——整条"填数据→
-            // 选位→填数据→选位"链在同一节点内连续执行，只算 1 个节点。
-            if (node.action?.family === "place_data") {
+            // 普通续填不是强制结算：所有来源必须仍以相同目标唯一要求继续填。
+            // 扫描分叉、目标完成/改绑及信息屏障交回统一搜索，不能跨过策略边界。
+            drainGuard += 1;
+            if (node.action?.family === "place_data" && secondaryAgentSearch
+              && !drainInformationMasked && !drainHiddenBarrier
+              && !planInformationMasked
+              && node.origins.every(origin => origin.routeTargetId && !origin.goalCompletionPending)) {
               const afterInspection = composition.inspect();
               if (afterInspection.phase !== "awaiting_input") {
                 const afterActions = composition.inputPort.enumerateActions({
@@ -1996,7 +1996,38 @@
                 const nextPlaceData = (afterActions || []).find((action) => (
                   action.family === "place_data" && action.phase !== "conditional"
                 ));
-                if (nextPlaceData) {
+                let continuePlacement = Boolean(nextPlaceData);
+                if (continuePlacement) {
+                  const projectedAt = now();
+                  const branchObservation = composition.projection({ ...(viewer || {}), cheap: true }).state;
+                  timing.projectionMilliseconds += now() - projectedAt;
+                  const executionEvents = probeSteps.flatMap(step => step.executionEvents);
+                  continuePlacement = node.origins.every(origin => {
+                    if (secondaryAgentSearch.completesRouteTarget?.({
+                      action: current, targetId: origin.routeTargetId, planId: origin.routePlanId,
+                      focalSeatId, rootObservation, branchObservation, executionEvents,
+                    })) return false;
+                    const selected = secondaryAgentSearch.selectSuccessors({
+                      focalSeatId, currentAction: current, branchObservation,
+                      legalSuccessors: afterActions, focalProxyDepth: origin.proxyDepth,
+                      actionChain: [...origin.chain, current.actionId],
+                      rolloutVersion: secondaryAgentSearch.rolloutVersion || null,
+                      routeTargetId: origin.routeTargetId, routePlanId: origin.routePlanId,
+                      routeResultTargetIds: origin.routeResultTargetIds || [], maxProxyDepth,
+                    }) || [];
+                    if (selected.length !== 1 || selected[0]?.actionId !== nextPlaceData.actionId) return false;
+                    const continuation = selected[0];
+                    return (!Object.hasOwn(continuation, "routeTargetId")
+                        || continuation.routeTargetId === origin.routeTargetId)
+                      && (!Object.hasOwn(continuation, "routePlanId")
+                        || continuation.routePlanId === origin.routePlanId)
+                      && (!Object.hasOwn(continuation, "routeResultTargetIds")
+                        || stableSerialize(continuation.routeResultTargetIds)
+                          === stableSerialize(origin.routeResultTargetIds || []))
+                      && !continuation.movementPreparation;
+                  });
+                }
+                if (continuePlacement) {
                   const placePlanStep = captureStep(nextPlaceData);
                   const placeResult = composition.inputPort.submitAction(nextPlaceData, {
                     skipProjection: true,
@@ -2014,7 +2045,6 @@
                 }
               }
             }
-            drainGuard += 1;
           }
           let nextInspection = composition.inspect();
           let awaitingDecision = nextInspection.phase === "awaiting_input";
