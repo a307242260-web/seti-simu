@@ -7,6 +7,26 @@
   },
   "versions": [
     {
+      "id": "trace-score-greedy-input-20260912",
+      "name": "虫族粉黄纯分数贪心",
+      "date": "2026-09-12",
+      "baseline": "frontier-materialization-20260912",
+      "head": "d75fb99a",
+      "commits": [
+        "b5c95bbb",
+        "bad02338",
+        "dbceef73",
+        "d75fb99a"
+      ],
+      "summary": "虫族粉黄纯分数按正式奖励择优，任务与特殊奖励保留，原生搜索及决策观察共用筛选",
+      "records": {
+        "ccfb509e.d75fb99a.full.json": {
+          "note": "本项候选与单决策门槛达到，交付核验见 trace-score-full-acceptance-20260912.md；597步自然终局75/125/102/89，均97.75，与基线完整拆分相同。战略233665节点不变，耗时803395.686373ms；队列截断60、执行截断54，预算专项未完成。初版原生观察输入错误已插入修正；中止实验不计成绩。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "trace-sequence-rejected-20260912",
       "name": "痕迹编号去重（未通过，不入生产）",
       "date": "2026-09-12",
