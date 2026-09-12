@@ -1,0 +1,599 @@
+{
+  "scope": "第45步原最佳路线保留与69计划失效，非全局最优证明",
+  "rawSources": [
+    {
+      "path": "/tmp/seti-move-path-audit-20260912.lZS8sa/audit.js",
+      "sha256": "cfb15c10b0e683cd2776d42b729c7d5e4410b3e3dcdc9aeaea932b1a74fee937"
+    },
+    {
+      "path": "/tmp/seti-move-path-audit-20260912.lZS8sa/new-search.js",
+      "sha256": "1e16838dda116e1911668e7522e513e154a37190d6a7ec5d3ca03549c74d7ba8"
+    },
+    {
+      "path": "/tmp/seti-move-path-audit-20260912.lZS8sa/inspect-plan69.js",
+      "sha256": "847ead209aa91c165484f207282a17a6da6bb662e4a0ec528ea45cf9b56a4544"
+    },
+    {
+      "path": "/tmp/seti-move-path-audit-20260912.lZS8sa/before-step45-20260912.json",
+      "sha256": "e84d5c1f31ae847c03843834386e1e24d92952abd9ce260d3f56af6ad3df170d"
+    },
+    {
+      "path": "/tmp/seti-move-path-audit-20260912.lZS8sa/move-winning-path-audit-20260912.json",
+      "sha256": "acacdce8704789f2512614629813c06753cb19d17a7b5e2b3b2b259567709632"
+    },
+    {
+      "path": "/tmp/seti-move-path-audit-20260912.lZS8sa/move-new-search-path-20260912.json",
+      "sha256": "5d26675171a62de6a611d38ae34e5158b4288467beb20b8a31fd74d0d626b5d6"
+    },
+    {
+      "path": "/tmp/seti-move-path-audit-20260912.lZS8sa/move-plan69-audit-20260912.json",
+      "sha256": "93f369f4a4219a360aca6c7abef7a909387c4b0fdf5b4c67e92022624930d692"
+    }
+  ],
+  "old": {
+    "root": "/tmp/seti-alien-pick-greedy-20260912.qijDon",
+    "chain": [
+      "launch:a4087d46",
+      "end_turn:320f2608",
+      "move:ff1d4c04",
+      "choose_payment:5d7f4364",
+      "move:ff1d4c04",
+      "choose_payment:609ec0f3",
+      "orbit:880b5658",
+      "choose_card:19ac00c3",
+      "end_turn:320f2608",
+      "play_card:6eb4a6de",
+      "choose_target:ef9931b7"
+    ],
+    "evaluation": {
+      "score": 62,
+      "selectedLeafId": "leaf:83d07d51",
+      "actionChain": [
+        "launch:a4087d46",
+        "end_turn:320f2608",
+        "move:ff1d4c04",
+        "choose_payment:5d7f4364",
+        "move:ff1d4c04",
+        "choose_payment:609ec0f3",
+        "orbit:880b5658",
+        "choose_card:19ac00c3",
+        "end_turn:320f2608",
+        "play_card:6eb4a6de",
+        "choose_target:ef9931b7"
+      ],
+      "actualScoreDelta": 11,
+      "techValue": 30,
+      "incomeValue": 16,
+      "publicityResearchValue": 5,
+      "rootResources": {
+        "credits": 6,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 0,
+        "ordinaryCards": 3,
+        "alienCards": 0
+      },
+      "leafResources": {
+        "credits": 0,
+        "energy": 1,
+        "publicity": 6,
+        "availableData": 0,
+        "ordinaryCards": 0,
+        "alienCards": 0
+      }
+    }
+  },
+  "prefixChecks": [
+    {
+      "prefix": [
+        "launch:a4087d46"
+      ],
+      "route": "probe:rocket:3:land:mars:planet:",
+      "next": "end_turn:320f2608",
+      "oldRetained": false,
+      "newRetained": false
+    },
+    {
+      "prefix": [
+        "launch:a4087d46"
+      ],
+      "route": "probe:rocket:3:orbit:venus:planet:",
+      "next": "end_turn:320f2608",
+      "oldRetained": true,
+      "newRetained": true
+    },
+    {
+      "prefix": [
+        "launch:a4087d46",
+        "end_turn:320f2608"
+      ],
+      "route": "probe:rocket:3:orbit:venus:planet:",
+      "next": "move:ff1d4c04",
+      "oldRetained": true,
+      "newRetained": true
+    },
+    {
+      "prefix": [
+        "launch:a4087d46",
+        "end_turn:320f2608",
+        "move:ff1d4c04"
+      ],
+      "route": "probe:rocket:3:orbit:venus:planet:",
+      "next": "choose_payment:5d7f4364",
+      "oldRetained": true,
+      "newRetained": true
+    },
+    {
+      "prefix": [
+        "launch:a4087d46",
+        "end_turn:320f2608",
+        "move:ff1d4c04",
+        "choose_payment:5d7f4364"
+      ],
+      "route": "probe:rocket:3:orbit:venus:planet:",
+      "next": "move:ff1d4c04",
+      "oldRetained": true,
+      "newRetained": true
+    },
+    {
+      "prefix": [
+        "launch:a4087d46",
+        "end_turn:320f2608",
+        "move:ff1d4c04",
+        "choose_payment:5d7f4364",
+        "move:ff1d4c04"
+      ],
+      "route": "probe:rocket:3:orbit:venus:planet:",
+      "next": "choose_payment:609ec0f3",
+      "oldRetained": true,
+      "newRetained": true
+    },
+    {
+      "prefix": [
+        "launch:a4087d46",
+        "end_turn:320f2608",
+        "move:ff1d4c04",
+        "choose_payment:5d7f4364",
+        "move:ff1d4c04",
+        "choose_payment:609ec0f3"
+      ],
+      "route": "probe:rocket:3:orbit:venus:planet:",
+      "next": "orbit:880b5658",
+      "oldRetained": true,
+      "newRetained": true
+    },
+    {
+      "prefix": [
+        "launch:a4087d46",
+        "end_turn:320f2608",
+        "move:ff1d4c04",
+        "choose_payment:5d7f4364",
+        "move:ff1d4c04",
+        "choose_payment:609ec0f3",
+        "orbit:880b5658"
+      ],
+      "route": "probe:rocket:3:orbit:venus:planet:",
+      "next": "choose_card:19ac00c3",
+      "oldRetained": true,
+      "newRetained": true
+    },
+    {
+      "prefix": [
+        "launch:a4087d46",
+        "end_turn:320f2608",
+        "move:ff1d4c04",
+        "choose_payment:5d7f4364",
+        "move:ff1d4c04",
+        "choose_payment:609ec0f3",
+        "orbit:880b5658",
+        "choose_card:19ac00c3"
+      ],
+      "route": null,
+      "next": "end_turn:320f2608",
+      "oldRetained": true,
+      "newRetained": true
+    },
+    {
+      "prefix": [
+        "launch:a4087d46",
+        "end_turn:320f2608",
+        "move:ff1d4c04",
+        "choose_payment:5d7f4364",
+        "move:ff1d4c04",
+        "choose_payment:609ec0f3",
+        "orbit:880b5658",
+        "choose_card:19ac00c3",
+        "end_turn:320f2608"
+      ],
+      "route": null,
+      "next": "play_card:6eb4a6de",
+      "oldRetained": true,
+      "newRetained": true
+    },
+    {
+      "prefix": [
+        "launch:a4087d46",
+        "end_turn:320f2608",
+        "move:ff1d4c04",
+        "choose_payment:5d7f4364",
+        "move:ff1d4c04",
+        "choose_payment:609ec0f3",
+        "orbit:880b5658",
+        "choose_card:19ac00c3",
+        "end_turn:320f2608",
+        "play_card:6eb4a6de"
+      ],
+      "route": "tech:orange2:",
+      "next": "choose_target:ef9931b7",
+      "oldRetained": false,
+      "newRetained": false
+    },
+    {
+      "prefix": [
+        "launch:a4087d46",
+        "end_turn:320f2608",
+        "move:ff1d4c04",
+        "choose_payment:5d7f4364",
+        "move:ff1d4c04",
+        "choose_payment:609ec0f3",
+        "orbit:880b5658",
+        "choose_card:19ac00c3",
+        "end_turn:320f2608",
+        "play_card:6eb4a6de"
+      ],
+      "route": "tech:orange3:",
+      "next": "choose_target:ef9931b7",
+      "oldRetained": false,
+      "newRetained": false
+    },
+    {
+      "prefix": [
+        "launch:a4087d46",
+        "end_turn:320f2608",
+        "move:ff1d4c04",
+        "choose_payment:5d7f4364",
+        "move:ff1d4c04",
+        "choose_payment:609ec0f3",
+        "orbit:880b5658",
+        "choose_card:19ac00c3",
+        "end_turn:320f2608",
+        "play_card:6eb4a6de"
+      ],
+      "route": "tech:purple4:",
+      "next": "choose_target:ef9931b7",
+      "oldRetained": true,
+      "newRetained": true
+    }
+  ],
+  "new": {
+    "root": "/tmp/seti-move-budget-20260912.27DCFp",
+    "action": "play_card:6eb4a6de",
+    "outcomes": [
+      {
+        "actionId": "launch:a4087d46",
+        "evaluation": {
+          "score": 62,
+          "selectedLeafId": "leaf:83d07d51",
+          "actionChain": [
+            "launch:a4087d46",
+            "end_turn:320f2608",
+            "move:ff1d4c04",
+            "choose_payment:5d7f4364",
+            "move:ff1d4c04",
+            "choose_payment:609ec0f3",
+            "orbit:880b5658",
+            "choose_card:19ac00c3",
+            "end_turn:320f2608",
+            "play_card:6eb4a6de",
+            "choose_target:ef9931b7"
+          ],
+          "actualScoreDelta": 11,
+          "techValue": 30,
+          "incomeValue": 16,
+          "publicityResearchValue": 5,
+          "rootResources": {
+            "credits": 6,
+            "energy": 2,
+            "publicity": 4,
+            "availableData": 0,
+            "ordinaryCards": 3,
+            "alienCards": 0
+          },
+          "leafResources": {
+            "credits": 0,
+            "energy": 1,
+            "publicity": 6,
+            "availableData": 0,
+            "ordinaryCards": 0,
+            "alienCards": 0
+          }
+        },
+        "leafCount": 516,
+        "oldChainLeaves": [
+          {
+            "leafId": "leaf:83d07d51",
+            "chain": [
+              "launch:a4087d46",
+              "end_turn:320f2608",
+              "move:ff1d4c04",
+              "choose_payment:5d7f4364",
+              "move:ff1d4c04",
+              "choose_payment:609ec0f3",
+              "orbit:880b5658",
+              "choose_card:19ac00c3",
+              "end_turn:320f2608",
+              "play_card:6eb4a6de",
+              "choose_target:ef9931b7"
+            ],
+            "sameOldChain": true
+          }
+        ]
+      },
+      {
+        "actionId": "play_card:6eb4a6de",
+        "evaluation": {
+          "score": 73.5,
+          "selectedLeafId": "leaf:49d4225d",
+          "actionChain": [
+            "play_card:6eb4a6de",
+            "choose_target:ac1eca13",
+            "end_turn:320f2608",
+            "play_card:3b8ed751",
+            "end_turn:320f2608",
+            "card_corner:03b95fd6",
+            "research_tech:b5bf67f7",
+            "choose_target:228a8f72",
+            "end_turn:320f2608",
+            "launch:a4087d46",
+            "accept_optional_effect:e83e2716",
+            "end_turn:320f2608",
+            "move:17103972",
+            "move:82ca5288",
+            "land:771c7f3f",
+            "choose_target:d64e085d",
+            "accept_optional_effect:51f32320"
+          ],
+          "actualScoreDelta": 28,
+          "techValue": 36,
+          "incomeValue": 0,
+          "publicityResearchValue": -2.5,
+          "rootResources": {
+            "credits": 6,
+            "energy": 2,
+            "publicity": 4,
+            "availableData": 0,
+            "ordinaryCards": 3,
+            "alienCards": 0
+          },
+          "leafResources": {
+            "credits": 0,
+            "energy": 0,
+            "publicity": 3,
+            "availableData": 2,
+            "ordinaryCards": 1,
+            "alienCards": 0
+          }
+        },
+        "leafCount": 443,
+        "oldChainLeaves": []
+      }
+    ]
+  },
+  "plan69": {
+    "checks": [
+      {
+        "step": 46,
+        "nextActionId": "choose_target:ac1eca13",
+        "hit": true
+      },
+      {
+        "step": 47,
+        "nextActionId": "end_turn:320f2608",
+        "hit": true
+      }
+    ],
+    "check69": {
+      "hit": false,
+      "reason": "future-step-affected",
+      "affected": {
+        "kind": "route",
+        "id": "land:mars:planet:",
+        "sourceId": "launch"
+      }
+    },
+    "nextActionId": "play_card:3b8ed751",
+    "expectedRoute": {
+      "scope": {
+        "kind": "route",
+        "id": "land:mars:planet:",
+        "sourceId": "launch"
+      },
+      "fact": {
+        "present": true,
+        "value": [
+          {
+            "targetId": "land:mars:planet:",
+            "requirementId": "launch:land:mars:planet:",
+            "sourceId": "launch",
+            "rocketId": null,
+            "movementSteps": 2,
+            "movementNextSteps": [
+              {
+                "family": "launch"
+              }
+            ],
+            "moveTiming": null,
+            "paidMovementPoints": 2,
+            "requiredCost": {
+              "credits": 2,
+              "energy": 4
+            },
+            "endpointFacts": {
+              "rewards": [
+                {
+                  "type": "gain_data",
+                  "label": "首次登陆：额外获得 2 个数据",
+                  "icon": "data",
+                  "options": {
+                    "count": 2
+                  },
+                  "id": "planet-reward-0",
+                  "status": "pending"
+                },
+                {
+                  "type": "gain_resources",
+                  "label": "获得 6 分",
+                  "icon": "score",
+                  "options": {
+                    "gain": {
+                      "score": 6
+                    }
+                  },
+                  "id": "planet-reward-1",
+                  "status": "pending"
+                },
+                {
+                  "type": "alien_trace",
+                  "label": "获得 1 个黄色外星人标记",
+                  "icon": "alien_yellow",
+                  "needsUserChoice": true,
+                  "options": {
+                    "traceType": "yellow"
+                  },
+                  "id": "planet-reward-2",
+                  "status": "pending"
+                }
+              ],
+              "cost": {
+                "energy": 2
+              },
+              "ownMarkers": {
+                "orbitMarkers": [],
+                "landingMarkers": [],
+                "satelliteLandings": []
+              }
+            }
+          }
+        ]
+      }
+    },
+    "currentRoutes": [
+      {
+        "targetId": "land:mars:planet:",
+        "requirementId": "rocket:3:land:mars:planet:",
+        "sourceId": "rocket:3",
+        "rocketId": 3,
+        "movementSteps": 2,
+        "movementNextSteps": [
+          {
+            "family": "move",
+            "rocketId": 3,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          {
+            "family": "move",
+            "rocketId": 3,
+            "deltaX": 1,
+            "deltaY": 0
+          }
+        ],
+        "moveTiming": null,
+        "paidMovementPoints": 2,
+        "requiredCost": {
+          "credits": 0,
+          "energy": 4
+        },
+        "endpointFacts": {
+          "rewards": [
+            {
+              "type": "gain_data",
+              "label": "首次登陆：额外获得 2 个数据",
+              "icon": "data",
+              "options": {
+                "count": 2
+              },
+              "id": "planet-reward-0",
+              "status": "pending"
+            },
+            {
+              "type": "gain_resources",
+              "label": "获得 6 分",
+              "icon": "score",
+              "options": {
+                "gain": {
+                  "score": 6
+                }
+              },
+              "id": "planet-reward-1",
+              "status": "pending"
+            },
+            {
+              "type": "alien_trace",
+              "label": "获得 1 个黄色外星人标记",
+              "icon": "alien_yellow",
+              "needsUserChoice": true,
+              "options": {
+                "traceType": "yellow"
+              },
+              "id": "planet-reward-2",
+              "status": "pending"
+            }
+          ],
+          "cost": {
+            "energy": 2
+          },
+          "ownMarkers": {
+            "orbitMarkers": [],
+            "landingMarkers": [],
+            "satelliteLandings": []
+          }
+        }
+      }
+    ],
+    "rockets": [
+      {
+        "angleDegrees": 112.5,
+        "color": "green",
+        "id": 2,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 2,
+        "radius": 156.26,
+        "sectorX": 4,
+        "sectorY": 2,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      },
+      {
+        "id": 3,
+        "playerId": "player-green",
+        "color": "green",
+        "surface": "solar-board",
+        "sectorX": 3,
+        "sectorY": 1,
+        "slotIndex": 4,
+        "radius": 84.68,
+        "angleDegrees": 67.5,
+        "launchGrid": {
+          "x": 3,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 3,
+          "y": 1
+        },
+        "playerSequence": 1
+      }
+    ],
+    "viewer": "player-blue",
+    "verifiedThroughStep": 68
+  }
+}

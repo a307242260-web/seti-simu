@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "probe-owner-cache-20260912",
+      "name": "probe-owner-cache-20260912",
+      "date": "2026-09-12",
+      "baseline": "probe-trade-greedy-20260912",
+      "head": "40ce8e97",
+      "commits": [
+        "b0d16094",
+        "e75e8950",
+        "607fc313",
+        "40ce8e97"
+      ],
+      "summary": "修复同编号同坐标不同归属探测器跨反事实分支缓存碰撞，按本席实际合法来源隔离；不改估值、贪心或预算",
+      "records": {
+        "6502f820.40ce8e97.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "probe-trade-greedy-20260912",
       "name": "probe-trade-greedy-20260912",
       "date": "2026-09-12",
@@ -20,7 +38,9 @@
       ],
       "summary": "直接探测目标资源准备沿既有最小成本排序择一，根和后继共用，保留指定公牌及非探测需求，预算不变",
       "records": {
-        "364f3d65.18a0d75b.full.json": { "note": "540步自然终局，save-final 92/110/98/80均95；战略144769节点，执行截断38（战略31/control7）、队列36，失败为空。本项门槛通过，专项未完成；验收见probe-trade-full-acceptance-20260912.md。" }
+        "364f3d65.18a0d75b.full.json": {
+          "note": "540步自然终局，save-final 92/110/98/80均95；战略144769节点，执行截断38（战略31/control7）、队列36，失败为空。本项门槛通过，专项未完成；验收见probe-trade-full-acceptance-20260912.md。"
+        }
       },
       "roadmap": null
     },
