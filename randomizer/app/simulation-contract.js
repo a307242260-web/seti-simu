@@ -90,6 +90,7 @@ function sanitizePublicPlayer(player, finalScoreSummary) {
       : Math.max(0, Math.round(Number(player?.reservedCount) || 0)),
     completedTaskCount: Object.values(player?.taskState || {}).filter(Boolean).length,
     dataProgress: {
+      discardedCount: Number(player?.dataState?.discardedCount) || 0,
       computerSlots: computerDataSlots,
       blueBonusCount: placedData.length - computerDataSlots.length,
       blueSlots: Object.entries(player?.techState?.blueBoardSlots || {})

@@ -82,6 +82,9 @@ ordinaryCardEffectValue，数值不变；普通牌入手不新增primary收益�
 conditional付款/奖励和control不受该准入裁剪。计划步骤保存目标与计划身份，重新
 检查时机，并将moveTiming纳入路线依赖；窗口消失返回quick-timing-no-current-window。
 扫描前容量准备及其他必要准备来源仍在QUICK-TIMING-01验收范围内，尚未完成。
+数据溢出的正式累计事实通过publicState.players[].dataProgress.discardedCount进入
+标准progress与strategicFacts；用于区分同样装满数据池的不同真实结果。它不参与
+当前V或primary计分，不将历史丢弃重复扣分；后续准备比较须取同席前后增量。
 
 - `game/ai/policy-port.js`：`DecisionContext -> PolicyDecision` 契约、公共 validator、请求失效语义。
   输入复制在单次调用内复用已完整校验的副本，先检查祖先循环，再查询副本缓存；不跨请求

@@ -241,6 +241,27 @@ scope同批修改。正式交易/Decision/RNG/补牌不改，新目标最多当�
 
 ## 验收义务
 
+实际溢出观察接口设计（2026-09-12）：正式data/state.gainData仅在池满拒收时累加
+dataState.discardedCount，常规放置与分析不累加。当前sanitizePublicPlayer未公开此值，
+仅凭结果availableData=6不能区分恰好装满与溢出；搜索执行事件又只保留探测类事件，
+不能凭事件名猜扫描实际所得。先打通正式结果的只读计数，为后续准备方案比较提供
+证据，不在本步骤决定扫描预测算法。唯一owner仍为gainData；sanitizePublicPlayer
+在dataProgress中投影discardedCount，outcome-model在标准progress/strategicFacts的
+dataProgress中透传。未初始化dataState的正式初始状态计0，与正式初始化一致；不
+产生新状态、id、RNG、Decision或事务。计数为累计值，单段损失必须用同席前后差，
+不得把历史损失反复扣分；本步骤不修改V、primary或任何策略权重。
+验证用正式gainData达到容量并溢出，再正式placeDataToComputer释放容量后重新获取，
+检查计数只在溢出增长、投影不修改输入；既有五组真实扫描案例检查公开/标准观察
+计数增量与canonical丢弃量完全一致。接口与AI文档同步，不把观察完成当作主动准备完成。
+
+该接口已实施并验证：永久outcome-projection unit通过正式获取/溢出/放置/重新获取
+检查0→1→1的累计计数，公开观察、标准progress与strategicFacts一致且不修改输入。
+五组选择器驱动的正式扫描案例追加公开/标准计数断言并通过，输出与35fa1992留档
+JSON一致，没有改动扫描选择或实际结果。全量unit 84通过/2既有失败，唯一full-flow
+通过，V输入审计通过；日志`/tmp/seti-data-overflow-observation-node-20260912.log`。
+两项既有失败仍为“不得恢复beam”和分析目标释放，无新增失败。尚未加入新的准备
+候选、叶端必要性判断或评分；单决策性能及AI整局验收仍待整项实现完成后执行。
+
 统一准入实施设计冻结（2026-09-12）：本段只覆盖主行动后消费者接通，不替代尚待
 完成的扫描容量准备。唯一判断owner为expected-score-evaluator的纯函数
 allowsQuickActionTiming，消费公开正式阶段、目标/计划身份和moveTiming；根add、

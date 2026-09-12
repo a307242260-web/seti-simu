@@ -177,6 +177,7 @@
       : [];
     return {
       computerPlacedCount: computerSlots.length,
+      discardedCount: finiteOrNull(progress.discardedCount) ?? 0,
       analyzeReady: Boolean(progress.analyzeReady || computerSlots.includes(6)),
       // 当前占用数，不代表累计放置或奖励；收益归因使用blueBonusAssets。
       blueBonusCount: Math.max(0, finiteOrNull(progress.blueBonusCount) ?? 0),

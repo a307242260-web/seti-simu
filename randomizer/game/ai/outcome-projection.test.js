@@ -74,4 +74,36 @@ for (const searchCompleteness of [
     }
   }
 }
+// 累计溢出来自正式gainData，释放容量后的获取不再增长；不是当前池数量的代理。
+{
+  const data = require("../data");
+  const players = require("../players");
+  const { sanitizePublicPlayer } = require("../../app/simulation-contract");
+  const player = players.getCurrentPlayer(players.createPlayerState({
+    currentPlayer: { color: "white", resources: { availableData: 0 } },
+  }));
+  const root = { meta: { sequences: { dataToken: 1 } } };
+  function check(expected) {
+    const before = structuredClone(player);
+    const own = sanitizePublicPlayer(player);
+    const source = { publicState: { players: [own], board: {} },
+      selfState: { playerId: player.id, hand: [] } };
+    assert.equal(own.dataProgress.discardedCount, expected);
+    assert.equal(model.createDecisionObservation(source, { seatId: player.id })
+      .outcomeProjection.progress.dataProgress.discardedCount, expected);
+    assert.equal(model.createStrategicFacts(source, player.id).dataProgress.discardedCount, expected);
+    assert.deepEqual(player, before, "公开溢出计数不得初始化或修改正式状态");
+  }
+  check(0);
+  for (let i = 0; i < players.RESOURCE_LIMITS.availableData; i += 1) {
+    assert.equal(data.gainData(player, { root }).ok, true);
+  }
+  check(0);
+  assert.equal(data.gainData(player, { root }).discarded, true);
+  check(1);
+  assert.equal(data.placeDataToComputer(player).ok, true);
+  check(1);
+  assert.equal(data.gainData(player, { root }).ok, true);
+  check(1);
+}
 console.log("outcome projection tests passed");

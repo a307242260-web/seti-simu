@@ -5,6 +5,7 @@ const fs = require("node:fs");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const data = require("../randomizer/game/data");
 const evaluator = require("../randomizer/game/ai/expected-score-evaluator");
+const outcomeModel = require("../randomizer/game/ai/outcome-model");
 const policyChoices = process.argv.includes("--policy-choices");
 const source = "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-full-v276.json";
 const save = JSON.parse(fs.readFileSync(source, "utf8"));
@@ -90,6 +91,12 @@ try {
         const after = JSON.parse(comp.lifecycle.save().envelope.committedState);
         const result = after.players.players.find(p => p.id === actorId);
         const discarded = result.dataState.discardedCount - player.dataState.discardedCount;
+        const publicAfter = comp.projection(viewer).state;
+        const projectedDiscarded = publicAfter.publicState.players.find(p => p.playerId === actorId)
+          .dataProgress.discardedCount;
+        assert.equal(projectedDiscarded - player.dataState.discardedCount, discarded);
+        assert.equal(outcomeModel.createDecisionObservation(publicAfter, { seatId: actorId })
+          .outcomeProjection.progress.dataProgress.discardedCount, projectedDiscarded);
         const poolAfter = data.listPoolTokens(result).length;
         const placedAfter = data.listComputerPlacedTokens(result).length;
         assert.equal(discarded, Math.max(0, pool - prepare + 2 - 6));
