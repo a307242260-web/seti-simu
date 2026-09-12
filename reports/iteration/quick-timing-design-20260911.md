@@ -86,6 +86,42 @@
 
 ## 现有实现与待闭合设计
 
+2026-09-12接入边界取证：`adhoc/quick-public-pick-evidence-20260912.js`从既有存档
+正式重放至第48步前，进入合法energy-for-card交易，精确选择公共区第2号槽的
+`card-19-0`并验证进入本席手牌、Decision事务结束。结果
+`quick-public-pick-evidence-20260912.json`记录3个公共选项及该状态的完整目标目录。
+这是精确取得指定牌的接口证据，不证明该牌值得获取；没有重跑AI。
+
+同一边界正式mainActionCompleted=true，但公共玩家与私有观察都没有该字段。
+`heuristic-decision-function.js::policyOutcomeActions`先过滤control，再调用目标枚举，
+所以不能以传入目标枚举的合法集是否有end_turn推断主行动阶段。
+该边界的目标目录只有probe/income/tech，energy-for-card不属于任何目标；新增精选
+时机不能仅靠放行family，还必须补齐指定公共牌的目标、完成条件与复用依赖。
+
+### 必须一并实现的消费者矩阵
+
+以下是代码审查后的实施义务，不代表已经落地；生产设计尚需闭合后两段列出的数据来源。
+
+| 边界 | 唯一来源/owner | 修改义务 | 可证伪验证 |
+| --- | --- | --- | --- |
+| 阶段观察 | 正式player.mainActionCompleted → simulation-contract共享观察 | 显式携带阶段；conditional不受快速行动时机裁剪 | 主行动前后、付款中、end_turn后恢复；Browser/Simulation同源 |
+| 移动风险 | 正式转动、探测器落位、probe路线目录 | 同探测器同目标比较，含已走成本；输出只读机会事实 | 第230/232/453步正例及其余反例；根状态/RNG不变 |
+| 指定公共牌目标 | 公开牌身份、现有卡牌用途估值、正式交易定义 | 获取目标不能借用card:resolve（离手完成）；须以指定身份入手完成 | 非首选槽、盲抽不完成、牌被拿走、支付后仍准确选牌 |
+| 根目录 | enumerateSecondaryAgentRootTargets | 准备动作绑定同一机会；主行动后普通研究/分析准备延后 | 去掉control后的合法子集仍按真实阶段裁剪 |
+| 后继 | selectSecondaryAgentSuccessors | 绑定与未绑定路径共用时机判断；conditional先按其正式owner处理 | 目标完成后不能从未绑定后继重新带回不适时动作 |
+| 叶端目的检查 | quickTradePurpose/cardCornerPurpose | 接受真实公共牌获取或机会准备，不能误判为无后继；不加额外时机分 | 取得指定牌可形成真实叶；只换资源不算完成精选 |
+| 计划复用 | capturePlanStep/stepScopes/planReuseCheck | 采集阶段及机会依赖；公共牌用身份而非仅槽号；准备链继承目标证据 | 转动/公共牌变化重搜，证据不变复用；不重启TURN的无条件control重搜 |
+
+数据来源待闭合：移动风险事实应在公共projection中提供、不能令纯评估器读取私有内核；
+应复用正式几何结算，不执行或估价隐藏奖励。指定公共牌“想要”的用途判断应复用
+已有卡牌估值/目标能力，不能另加固定抢牌分；采集和使用时共享一个牌身份。
+
+防溢出来源待闭合：`buildDataAnalyzeRequirements`的scan计划dataCount=1是当前目录
+的简化值，不能作为整次扫描将获数量。正式science-session扫描队列含地球、公共牌
+（最多1+2次）、可选水星/手牌及紫4派生效果；公共牌补牌在串尾，不能读隐藏补牌预测。
+需按当前目标实际要执行的可见扫描选择计数并扣除同一扇区剩余数据，不能直接按队列
+项数腾空，也不能为所有可选扫描预留容量。本项不改蓝槽的选位优先级。
+
 - 根准入：enumerateSecondaryAgentRootTargets按目标绑定准备动作，但没有统一的
   主行动后时机边界；研究动作因主行动已用而不可用时，仍可能转为宣传准备候选。
 - 树内：selectSecondaryAgentSuccessors会继续绑定目标及未绑定动作，place_data
