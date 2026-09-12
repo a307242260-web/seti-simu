@@ -2724,7 +2724,7 @@
       const target = action.target;
       if (!isFace(action) || target.speciesId !== "chong"
         || !["pink", "yellow"].includes(target.traceType)
-        || action.actorId !== observation?.viewer?.seatId) continue;
+        || action.actorId !== (observation?.perspectivePlayerId ?? observation?.viewer?.seatId)) continue;
       const slot = slots.find(item => Number(item.slotId) === Number(target.alienSlotId));
       if (!slot?.revealed || slot.alienId !== "虫") continue;
       const reward = alienChong.getTraceReward(null, target.traceType, target.position);

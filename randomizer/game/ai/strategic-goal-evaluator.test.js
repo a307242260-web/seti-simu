@@ -106,6 +106,8 @@ const seatId = "strategic-seat";
   const yellowLow = trace("chong", 1, "yellow");
   const yellowCard = trace("chong", 3, "yellow");
   selectAllPaths([pink, yellow], [pink], chongObs);
+  selectAllPaths([pink, yellow], [pink], { perspectivePlayerId: seatId,
+    publicState: chongObs.publicState, selfState: chongObs.selfState });
   selectAllPaths([yellow, pink], [pink], chongObs);
   selectAllPaths([pink, yellowLow], [pink], chongObs);
   selectAllPaths([pink, yellowCard, blue[6]], [pink, yellowCard, blue[6]], chongObs);

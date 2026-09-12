@@ -2,9 +2,8 @@
 const fs = require("node:fs");
 const assert = require("node:assert/strict");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
-const model = require("../randomizer/game/ai/outcome-model");
 const evaluator = require("../randomizer/game/ai/expected-score-evaluator");
-const output = "reports/iteration/trace-score-greedy-choices-20260912.json";
+const output = "reports/iteration/trace-score-greedy-raw-choices-20260912.json";
 if (fs.existsSync(output)) { console.log(`已有证据：${output}`); process.exit(0); }
 const input = JSON.parse(fs.readFileSync("reports/iteration/budget-before-step506-20260912.json"));
 const save = JSON.parse(fs.readFileSync(input.source));
@@ -18,7 +17,9 @@ try {
     assert.deepEqual(env.saveBrowserSave().replaySteps.at(-1).after, save.replaySteps[index].after);
   }
   const legal = env.legalActions();
-  const observation = model.createDecisionObservation(env.observe("player-white"), { seatId: "player-white" });
+  const observation = env.observe("player-white");
+  assert.equal(observation.perspectivePlayerId, "player-white");
+  assert.equal(observation.viewer, undefined, "本证据必须使用真实原生搜索观察，不预先包装");
   const selected = evaluator.selectSecondaryAgentSuccessors({ focalSeatId: "player-white",
     branchObservation: observation, currentAction: save.replaySteps[512].action,
     routeTargetId: "land:saturn:satellite:titan", routePlanId: "land:saturn:satellite:titan", legalSuccessors: legal });

@@ -1,0 +1,262 @@
+{
+  "source": "/Users/bilibili/code/seti-simu/seti-saves/seti-save-research-frontier-materialization-20260912-eee63294-full-v285.json",
+  "step": 514,
+  "legalCount": 16,
+  "previous": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:4861c8d0",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "choiceId": "trace:2:yellow:chong:2",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "yellow",
+        "speciesId": "chong",
+        "position": 2
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得任意外星人标记 1/2 → 外星人 2 黄2号位（5分）",
+      "routeTargetId": "land:saturn:satellite:titan",
+      "routePlanId": "land:saturn:satellite:titan",
+      "routeResultTargetIds": [
+        "land:saturn:satellite:titan"
+      ]
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:51429f22",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "choiceId": "trace:1:pink:amiba:1",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "pink",
+        "speciesId": "amiba",
+        "position": 1
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得任意外星人标记 1/2 → 外星人 1 粉1号位",
+      "routeTargetId": "land:saturn:satellite:titan",
+      "routePlanId": "land:saturn:satellite:titan",
+      "routeResultTargetIds": [
+        "land:saturn:satellite:titan"
+      ]
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:716d1504",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "choiceId": "trace:1:yellow:amiba:4",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "yellow",
+        "speciesId": "amiba",
+        "position": 4
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得任意外星人标记 1/2 → 外星人 1 黄4号位（1分+外星人牌）",
+      "routeTargetId": "land:saturn:satellite:titan",
+      "routePlanId": "land:saturn:satellite:titan",
+      "routeResultTargetIds": [
+        "land:saturn:satellite:titan"
+      ]
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:84f5ee90",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "choiceId": "trace:2:pink:chong:2",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "pink",
+        "speciesId": "chong",
+        "position": 2
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得任意外星人标记 1/2 → 外星人 2 粉2号位（5分）",
+      "routeTargetId": "land:saturn:satellite:titan",
+      "routePlanId": "land:saturn:satellite:titan",
+      "routeResultTargetIds": [
+        "land:saturn:satellite:titan"
+      ]
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:a7b8f322",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "choiceId": "trace:2:blue:chong:7",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "blue",
+        "speciesId": "chong",
+        "position": 7
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得任意外星人标记 1/2 → 外星人 2 蓝7号位（化石奖励）",
+      "routeTargetId": "land:saturn:satellite:titan",
+      "routePlanId": "land:saturn:satellite:titan",
+      "routeResultTargetIds": [
+        "land:saturn:satellite:titan"
+      ]
+    }
+  ],
+  "selected": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:4861c8d0",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "choiceId": "trace:2:yellow:chong:2",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "yellow",
+        "speciesId": "chong",
+        "position": 2
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得任意外星人标记 1/2 → 外星人 2 黄2号位（5分）",
+      "routeTargetId": "land:saturn:satellite:titan",
+      "routePlanId": "land:saturn:satellite:titan",
+      "routeResultTargetIds": [
+        "land:saturn:satellite:titan"
+      ]
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:51429f22",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "choiceId": "trace:1:pink:amiba:1",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "pink",
+        "speciesId": "amiba",
+        "position": 1
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得任意外星人标记 1/2 → 外星人 1 粉1号位",
+      "routeTargetId": "land:saturn:satellite:titan",
+      "routePlanId": "land:saturn:satellite:titan",
+      "routeResultTargetIds": [
+        "land:saturn:satellite:titan"
+      ]
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:716d1504",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "choiceId": "trace:1:yellow:amiba:4",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 1,
+        "traceType": "yellow",
+        "speciesId": "amiba",
+        "position": 4
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得任意外星人标记 1/2 → 外星人 1 黄4号位（1分+外星人牌）",
+      "routeTargetId": "land:saturn:satellite:titan",
+      "routePlanId": "land:saturn:satellite:titan",
+      "routeResultTargetIds": [
+        "land:saturn:satellite:titan"
+      ]
+    },
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:a7b8f322",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "choiceId": "trace:2:blue:chong:7",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "blue",
+        "speciesId": "chong",
+        "position": 7
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得任意外星人标记 1/2 → 外星人 2 蓝7号位（化石奖励）",
+      "routeTargetId": "land:saturn:satellite:titan",
+      "routePlanId": "land:saturn:satellite:titan",
+      "routeResultTargetIds": [
+        "land:saturn:satellite:titan"
+      ]
+    }
+  ],
+  "removed": [
+    {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:84f5ee90",
+      "actorId": "player-white",
+      "stateVersion": 235,
+      "decisionVersion": 13,
+      "target": {
+        "choiceId": "trace:2:pink:chong:2",
+        "kind": "planet-reward-alien-trace",
+        "alienSlotId": 2,
+        "traceType": "pink",
+        "speciesId": "chong",
+        "position": 2
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "获得任意外星人标记 1/2 → 外星人 2 粉2号位（5分）",
+      "routeTargetId": "land:saturn:satellite:titan",
+      "routePlanId": "land:saturn:satellite:titan",
+      "routeResultTargetIds": [
+        "land:saturn:satellite:titan"
+      ]
+    }
+  ],
+  "scope": "原路径规则重放及正式候选筛选，无AI搜索；只证明此节点5→4"
+}
