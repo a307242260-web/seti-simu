@@ -1,0 +1,51 @@
+{
+  "version": "frontier-materialization-20260912",
+  "commit": "eee63294",
+  "steps": 597,
+  "scores": {
+    "player-blue": 75,
+    "player-green": 125,
+    "player-brown": 102,
+    "player-white": 89
+  },
+  "average": 97.75,
+  "searches": 203,
+  "executionTruncations": 54,
+  "frontierTruncations": 60,
+  "checkedLinks": 21,
+  "preservedHistoricalReports": 113,
+  "historicalUnverified": [
+    {
+      "path": "reports/iteration/fold-chain-real/e749439d.0a377f88.full.action-log.html",
+      "reason": "no-committed-original"
+    }
+  ],
+  "historicalWarnings": [
+    {
+      "kind": "orphan-record",
+      "level": "warn",
+      "text": "未登记到任何版本（全盘记录必须归属）：4290b2ec.e4282728.full.json（name=v5-probe-fix commit=e4282728 createdAt=2026-08-21T14:25:20.649Z）"
+    },
+    {
+      "kind": "orphan-record",
+      "level": "warn",
+      "text": "未登记到任何版本（全盘记录必须归属）：66aa586b.46c8d0cf.full.json（name=fold-unified commit=46c8d0cf createdAt=2026-08-22T14:41:58.114Z）"
+    },
+    {
+      "kind": "orphan-record",
+      "level": "warn",
+      "text": "未登记到任何版本（全盘记录必须归属）：df4ad462.405ee903.full.json（name=v5-blue-debug commit=405ee903 createdAt=2026-08-21T13:55:22.775Z）"
+    },
+    {
+      "kind": "orphan-record",
+      "level": "warn",
+      "text": "未登记到任何版本（全盘记录必须归属）：f3dac799.70da1e5f.full.json（name=fold-chain-only commit=70da1e5f createdAt=2026-08-22T00:55:06.800Z）"
+    },
+    {
+      "kind": "commit-mismatch",
+      "level": "warn",
+      "text": "fold-chain-real 的记录 e749439d.0a377f88.full.json gitCommit=0a377f88 不在版本 commits（29e66b9b）内——运行于脏工作树或归属错误，请核对 versions.json"
+    }
+  ],
+  "outcome": "pass"
+}
