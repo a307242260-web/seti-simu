@@ -1,0 +1,749 @@
+{
+  "harnessStatus": "invalid-no-search",
+  "invalidReason": "反事实子composition未启用嵌套搜索，诊断为null且所有outcome unresolved；耗时及PASS选择均非有效验收证据。",
+  "source": "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-full-v276.json",
+  "step": 33,
+  "gitCommit": "1406b01d6da6df74ba85b2ee30aec2d1e22a0cdb",
+  "scriptHash": "90320c761b371e2108a0b291c97e5b6002afad55b8d689630b1b9b799ce02e83",
+  "pool": 5,
+  "seatId": "player-white",
+  "elapsedMilliseconds": 9.72729099999998,
+  "scope": "同一正式扫描前状态，用gainData构造池容量；完整生产决策函数仅搜索、不提交、不模拟对手。非整局实验。",
+  "selectedActionId": "pass:a1f33c73",
+  "searches": [
+    {
+      "kind": "control",
+      "diagnostics": null
+    },
+    {
+      "kind": "strategic",
+      "diagnostics": null
+    }
+  ],
+  "evaluations": [
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "launch",
+        "phase": "main",
+        "actionId": "launch:c94cda79",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": null,
+        "payload": {},
+        "decision": null,
+        "summary": "发射"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "COUNTERFACTUAL_FORK_UNAVAILABLE"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "incomplete",
+        "reasons": [
+          "branch-failed"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:2d21a323",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "COUNTERFACTUAL_FORK_UNAVAILABLE"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "incomplete",
+        "reasons": [
+          "branch-failed"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:8faf8ead",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-15-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 3
+          },
+          "handIndex": 0
+        },
+        "decision": null,
+        "summary": "dlc_9.png"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:a2d2f157",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-37-0"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "handIndex": 1
+        },
+        "decision": null,
+        "summary": "dlc_40.png"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "pass",
+        "phase": "main",
+        "actionId": "pass:a1f33c73",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "pass"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "PASS"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "COUNTERFACTUAL_FORK_UNAVAILABLE"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "incomplete",
+        "reasons": [
+          "branch-failed"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:f385e2ac",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "credits-for-energy"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "gain": {
+            "energy": 1
+          }
+        },
+        "decision": null,
+        "summary": "2信用点 → 1能量"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:49c75492",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "credits-for-card"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "gain": {
+            "handSize": 1
+          }
+        },
+        "decision": null,
+        "summary": "2信用点 → 1张牌"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:12411a2c",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "cards-for-credit"
+        },
+        "payload": {
+          "cost": {
+            "handSize": 2
+          },
+          "gain": {
+            "credits": 1
+          }
+        },
+        "decision": null,
+        "summary": "2张牌 → 1信用点"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:a39c1a77",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "cards-for-energy"
+        },
+        "payload": {
+          "cost": {
+            "handSize": 2
+          },
+          "gain": {
+            "energy": 1
+          }
+        },
+        "decision": null,
+        "summary": "2张牌 → 1能量"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:37140fcf",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "cards-for-pick-card"
+        },
+        "payload": {
+          "cost": {
+            "handSize": 2
+          },
+          "gain": {
+            "handSize": 1
+          }
+        },
+        "decision": null,
+        "summary": "2张牌 → 精选1张牌"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:122c43fc",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "energy-for-card"
+        },
+        "payload": {
+          "cost": {
+            "energy": 2
+          },
+          "gain": {
+            "handSize": 1
+          }
+        },
+        "decision": null,
+        "summary": "2能量 → 1张牌"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:df811f99",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "energy-for-credit"
+        },
+        "payload": {
+          "cost": {
+            "energy": 2
+          },
+          "gain": {
+            "credits": 1
+          }
+        },
+        "decision": null,
+        "summary": "2能量 → 1信用点"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:71814d67",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "publicity-for-card"
+        },
+        "payload": {
+          "cost": {
+            "publicity": 3
+          },
+          "gain": {
+            "handSize": 1
+          }
+        },
+        "decision": null,
+        "summary": "3宣传 → 精选1张牌"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:be9dd0cd",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "tradeId": "energy-for-move"
+        },
+        "payload": {
+          "cost": {
+            "energy": 1
+          },
+          "gain": {}
+        },
+        "decision": null,
+        "summary": "1能量 → 移动1步"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:e887dc52",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "深空探测",
+          "abilityId": "deepspace_swap_cards"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "深空探测 1x 行动"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:f9d602d7",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-15-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "dlc_9.png：弃牌角标"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:f7279abf",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-37-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "dlc_40.png：弃牌角标"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "STRATEGIC_GOAL_NOT_EVALUATED"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "not-evaluated",
+        "reasons": [
+          "not-evaluated"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:8fd12fd3",
+        "actorId": "player-white",
+        "stateVersion": 6,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "evaluation": {
+        "evaluationModel": "strategic-goal-search-v3",
+        "score": null,
+        "selectable": false,
+        "priorityClass": -1,
+        "status": "unresolved",
+        "confidence": "none",
+        "reasonCodes": [
+          "COUNTERFACTUAL_FORK_UNAVAILABLE"
+        ]
+      },
+      "searchCompleteness": {
+        "status": "incomplete",
+        "reasons": [
+          "branch-failed"
+        ]
+      },
+      "leafCount": 0,
+      "selectedSteps": []
+    }
+  ]
+}
