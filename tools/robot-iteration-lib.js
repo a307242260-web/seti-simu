@@ -1194,7 +1194,7 @@ code{background:#f0f2f6;padding:1px 4px;border-radius:3px;font-size:12px}
   <span class="eyebrow">SETI · 机器人行动复盘（纯重放存档 replaySteps，无 AI 重跑）</span>
   <h1><span class="version-badge">${escapeHtml(opts.versionId)}</span> ${escapeHtml(opts.runKey || "")}</h1>
   <div class="meta">seed=${escapeHtml(save.seed || "?")} · gitCommit=${escapeHtml(opts.gitCommit || "?")} · policy=${escapeHtml(opts.policyVersion || "?")} · flags=${escapeHtml(flagsText(opts.flags))} · 模式=${escapeHtml(opts.mode || "?")} · 步数 ${steps.length} · 耗时 ${fmtMs(opts.wallMs)}</div>
-  <div class="links">${relRecord ? `记录: <a href="../${escapeHtml(path.posix.relative(path.posix.join("reports","iteration",opts.versionId), relRecord))}">${escapeHtml(opts.recordFile)}</a>` : ""} · 存档: <code>${escapeHtml(opts.savePath)}</code></div>
+  <div class="links">${relRecord ? `记录: <a href="${escapeHtml(path.posix.relative(path.posix.join("reports","iteration",opts.versionId), relRecord))}">${escapeHtml(opts.recordFile)}</a>` : ""} · 存档: <code>${escapeHtml(opts.savePath)}</code></div>
   ${finalSection}
   ${searchBudgetSection}
   ${playerSections}
