@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "income-target-fix-20260912",
+      "name": "income-target-fix-20260912",
+      "date": "2026-09-12",
+      "baseline": "probe-move-greedy-20260912",
+      "head": "d3563b98",
+      "commits": [
+        "9e098475",
+        "4e160caf",
+        "5056e41b",
+        "d3563b98"
+      ],
+      "summary": "永久收入目标排除重组的一次性收入角奖励，保留真实收入选择与本牌插收入，合法打牌和预算不变",
+      "records": {
+        "ff5ca313.d3563b98.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "probe-move-greedy-20260912",
       "name": "probe-move-greedy-20260912",
       "date": "2026-09-12",
