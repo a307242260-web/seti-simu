@@ -75,7 +75,7 @@
     )) || null;
   }
 
-  function publicStateOf(source) {
+  function publicStateOf(source, clone = structuredClone) {
     if (source?.publicState) return clone(source.publicState);
     return {
       match: clone(source?.match || {}),
@@ -323,6 +323,10 @@
   }
 
   function createOutcomeProjection(source, seatId, options = {}) {
+    return buildOutcomeProjection(source, seatId, options, clone);
+  }
+
+  function buildOutcomeProjection(source, seatId, options, clone) {
     const publicPlayer = findPlayer(source, seatId);
     const selfState = selfStateOf(source, seatId, publicPlayer);
     const resources = publicPlayer?.resources || publicPlayer || selfState?.player?.resources || {};
@@ -403,6 +407,10 @@
   }
 
   function createDecisionObservation(source, options = {}) {
+    return buildDecisionObservation(source, options, clone);
+  }
+
+  function buildDecisionObservation(source, options, clone) {
     const seatId = String(options.seatId ?? source?.perspectivePlayerId ?? source?.viewer?.playerId ?? "");
     if (!seatId) throw new TypeError("Decision observation 缺少 viewer seatId");
     return deepFreeze({
@@ -412,9 +420,9 @@
         stateVersion: options.stateVersion ?? source?.source?.stateVersion ?? null,
         decisionVersion: options.decisionVersion ?? source?.decision?.decisionVersion ?? null,
       },
-      publicState: publicStateOf(source),
+      publicState: publicStateOf(source, clone),
       selfState: selfStateOf(source, seatId, findPlayer(source, seatId)),
-      outcomeProjection: createOutcomeProjection(source, seatId, options),
+      outcomeProjection: buildOutcomeProjection(source, seatId, options, clone),
     });
   }
 
@@ -528,6 +536,13 @@
   }
 
   function projectOutcomeObservations(outcomes, options = {}) {
+    // 批次内按来源对象身份复用独立副本；不跨调用缓存，不按相似内容合并事实。
+    const copies = new WeakMap();
+    function cloneShared(value) {
+      if (value == null || typeof value !== "object") return clone(value);
+      if (!copies.has(value)) copies.set(value, clone(value));
+      return copies.get(value);
+    }
     // 观察由正式投影重建，不先复制随后会被覆盖的整棵树。
     // 其余元数据一次复制为独立图，保留多叶共享的只读计划事实。
     const metadata = clone((outcomes || []).map(({ rootObservation, leaves, ...outcome }) => ({
@@ -535,7 +550,7 @@
       leaves: (leaves || []).map(({ observation, routeCheckpoints, ...leaf }) => leaf),
     })));
     return deepFreeze((outcomes || []).map((outcome, outcomeIndex) => {
-      const rootObservation = createDecisionObservation(outcome.rootObservation, options);
+      const rootObservation = buildDecisionObservation(outcome.rootObservation, options, cloneShared);
       return {
         ...metadata[outcomeIndex],
         rootObservation,
@@ -546,7 +561,7 @@
             target: clone(checkpoint.target || {}),
             summary: checkpoint.summary || null,
             actionChain: clone(checkpoint.actionChain || []),
-            observation: createDecisionObservation(checkpoint.observation, options),
+            observation: buildDecisionObservation(checkpoint.observation, options, cloneShared),
           }));
           const probeRouteSummary = createProbeRouteSummary(
             rootObservation,
@@ -555,10 +570,10 @@
           );
           return {
             ...metadata[outcomeIndex].leaves[leafIndex],
-            observation: createDecisionObservation(leaf.observation, {
+            observation: buildDecisionObservation(leaf.observation, {
               ...options,
               probeRouteSummary,
-            }),
+            }, cloneShared),
           };
         }),
       };

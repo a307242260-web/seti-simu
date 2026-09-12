@@ -12,6 +12,31 @@ const input = [{ actionId: "root", rootObservation: observation(1), note: { labe
   { leafId: "b", observation: observation(7), actionChain: ["root", "payment"], routeCheckpoints: [], planSteps: [shared] },
 ] }];
 const before = structuredClone(input);
+// 批次内同一原始事实只复制一次，顶层叶观察仍独立；下一批次必须重新读取来源。
+{
+  const publicState = observation(5).publicState;
+  const requirements = { playerId: "p1", targets: [{ id: "target-1", resource: -0 }] };
+  const source = { publicState, selfState: { playerId: "p1", hand: [] }, probeRouteRequirements: requirements };
+  const batch = [{ rootObservation: source, leaves: ["a", "b"].map(leafId => ({ leafId,
+    observation: { ...source }, actionChain: [], routeCheckpoints: [] })) }];
+  const projected = model.projectOutcomeObservations(batch, { seatId: "p1" });
+  const [a, b] = projected[0].leaves.map(leaf => leaf.observation);
+  assert.notEqual(a, b);
+  assert.equal(a.publicState, b.publicState, "同身份公开事实在批次内复用副本");
+  assert.equal(a.outcomeProjection.progress.probeGoalRequirements, b.outcomeProjection.progress.probeGoalRequirements);
+  assert.notEqual(a.publicState, publicState);
+  assert.notEqual(a.outcomeProjection.progress.probeGoalRequirements, requirements);
+  assert(Object.is(a.outcomeProjection.progress.probeGoalRequirements.targets[0].resource, -0));
+  assert.equal(Object.isFrozen(publicState), false);
+  assert.equal(Object.isFrozen(requirements), false);
+  publicState.players[0].resources.score = 7;
+  requirements.targets[0].resource = NaN;
+  assert.equal(a.publicState.players[0].resources.score, 5);
+  const next = model.projectOutcomeObservations(batch, { seatId: "p1" })[0].leaves[0].observation;
+  assert.equal(next.publicState.players[0].resources.score, 7);
+  assert(Number.isNaN(next.outcomeProjection.progress.probeGoalRequirements.targets[0].resource));
+  assert.notEqual(next.publicState, a.publicState);
+}
 input[0].searchCompleteness = { status: "incomplete", reasons: ["beam-budget"] };
 before[0].searchCompleteness = structuredClone(input[0].searchCompleteness);
 const result = model.projectOutcomeObservations(input, { seatId: "p1" });
