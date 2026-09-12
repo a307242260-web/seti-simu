@@ -7,6 +7,7 @@ function entry(file, owner, obligation, counterexample) {
 module.exports = Object.freeze({
   schemaVersion: "seti-node-test-inventory-v2",
   unit: Object.freeze([
+    entry("randomizer/game/ai/data-resource-greedy.test.js", "policy/heuristic-policy", "数据目标资源准备稳定择一，根后继一致且保留卡牌与角标来源", "非法首选阻断准备或跨数据来源误删候选"),
     entry("randomizer/game/ai/probe-move-greedy.test.js", "policy/heuristic-policy", "同一主要目标普通移动按目录首步局部择一，保留合法替代和不同目标", "非法首选阻断可达路线、跨目标误删方向或修改免费条件移动"),
     entry("randomizer/game/ai/probe-resource-greedy.test.js", "policy/heuristic-policy", "同探测目标资源准备择一且保留合法替代", "根与后继分歧或非法首选阻断准备"),
     entry("randomizer/app/income-target-classification.test.js", "policy/heuristic-policy", "收入目标只准入真正增加永久收入的牌", "一次性收入角资源被误当作永久收入或真实收入牌被排除"),

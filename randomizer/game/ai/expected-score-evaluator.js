@@ -1641,13 +1641,14 @@
 
   function selectDataResourcePreparation(observation, successors, seatId) {
     const requirements = rawDataAnalyzeRequirements(observation);
+    // 同一数据目标沿既有成本排序择一；剩余资源不同，是有损贪心而非等价省略。
     return dataAnalyzeEligible(requirements)
       ? selectMinimumCostResourcePreparation(
         observation,
         requirements.nextCost || {},
         successors,
         seatId,
-      )
+      ).slice(0, 1)
       : [];
   }
 
@@ -2024,7 +2025,7 @@
               plan.nextCost || {},
               legalActions,
               input.focalSeatId,
-            );
+            ).slice(0, 1);
         } else if (plan.kind === "card") {
           actions = legalActions.filter((action) => (
             action.family === "play_card"
@@ -3643,7 +3644,7 @@
                   plan.nextCost || {},
                   successors,
                   input.focalSeatId,
-                );
+                ).slice(0, 1);
             } else if (plan.kind === "card") {
               actions = successors.filter((action) => (
                 action.family === "play_card"
