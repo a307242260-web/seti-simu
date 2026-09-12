@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-12T17:05:51.364Z",
+  "builtAt": "2026-09-12T17:36:34.024Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "af3420c4",
-  "currentBaseline": "runezu-effect-fix-20260913",
+  "headCommit": "f25cf56c",
+  "currentBaseline": "public-card-runezu-greedy-20260913",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,571 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "public-card-runezu-greedy-20260913",
+      "name": "public-card-runezu-greedy-20260913",
+      "date": "2026-09-13",
+      "baseline": "runezu-effect-fix-20260913",
+      "head": "3544e2df",
+      "commits": [
+        {
+          "hash": "e1137a06",
+          "date": "2026-09-13",
+          "subject": "在符文规则修复基线上组合验证公共牌交易成本代表"
+        },
+        {
+          "hash": "3544e2df",
+          "date": "2026-09-13",
+          "subject": "归档交易组合的冷决策门槛与九个错误输入核验"
+        }
+      ],
+      "summary": "在已修复符文规则基线上，同一公共牌普通交易按现有资源成本择一，保留公司来源与未知手牌付款，预算不变",
+      "diffStat": "50 files changed, 81152 insertions(+), 20 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/benchmark-public-card-457-20260913.js",
+          "insertions": 40,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-runezu-error-inputs-20260913.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-public-card-runezu-full-20260913.js",
+          "insertions": 16,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-runezu-full-20260913.js",
+          "insertions": 14,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/public-card-457-e1137a06-20260913.json",
+          "insertions": 457,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/public-card-runezu-plan-20260913.md",
+          "insertions": 38,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-effect-plan-20260913.md",
+          "insertions": 22,
+          "deletions": 1
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/step-196.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/step-264.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/step-303.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/step-428.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/step-430.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/step-445.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/step-452.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/step-508.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/step-564.json",
+          "insertions": 1,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-196-e1137a06.json",
+          "insertions": 345,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-196-f105f8ea.json",
+          "insertions": 345,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-264-e1137a06.json",
+          "insertions": 185,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-264-f105f8ea.json",
+          "insertions": 185,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-303-e1137a06.json",
+          "insertions": 398,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-303-f105f8ea.json",
+          "insertions": 398,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-428-e1137a06.json",
+          "insertions": 340,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-428-f105f8ea.json",
+          "insertions": 340,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-430-e1137a06.json",
+          "insertions": 421,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-430-f105f8ea.json",
+          "insertions": 421,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-445-e1137a06.json",
+          "insertions": 379,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-445-f105f8ea.json",
+          "insertions": 379,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-452-e1137a06.json",
+          "insertions": 380,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-452-f105f8ea.json",
+          "insertions": 380,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-508-e1137a06.json",
+          "insertions": 419,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-508-f105f8ea.json",
+          "insertions": 419,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-564-e1137a06.json",
+          "insertions": 377,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-error-inputs-20260913/verified-564-f105f8ea.json",
+          "insertions": 377,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-runezu-delivery-20260913.js",
+          "insertions": 12,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-runezu-error-inputs-20260913.js",
+          "insertions": 25,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "docs/progress-20260912.md",
+          "insertions": 10,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 28,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/public-card-goal.test.js",
+          "insertions": 34,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 438,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/runezu-effect-acceptance-20260913.md",
+          "insertions": 52,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/runezu-effect-fix-20260913/e16bc101.f105f8ea.full.action-log.html",
+          "insertions": 2206,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/runezu-full-comparison-f105f8ea-20260913.json",
+          "insertions": 867,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 17,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/e16bc101.f105f8ea.full.json",
+          "insertions": 28115,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 438,
+          "deletions": 4
+        },
+        {
+          "file": "reports/seti-current-base-robot-strategy-20260911.html",
+          "insertions": 9,
+          "deletions": 9
+        },
+        {
+          "file": "seti-saves/seti-save-research-runezu-effect-fix-20260913-f105f8ea-full-v291.json",
+          "insertions": 41779,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 1
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "76414b52.3544e2df.full.json",
+          "recordPath": "reports/research/76414b52.3544e2df.full.json",
+          "mode": "full",
+          "steps": 608,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 996582,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "3544e2df",
+          "createdAt": "2026-09-12T17:32:13.229Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "局部门槛通过；608步正式84/141/86/85均99，搜索错误为空；战略208030节点，执行截断50、队列53。总耗时996582ms高于基线947015ms，均分低于107.75，不宣称整体加速。45旧最佳完整链仍实际保留，80.75新路线替代；详见public-card-runezu-acceptance-20260913.md。",
+          "scores": {
+            "player-blue": 84,
+            "player-green": 141,
+            "player-brown": 86,
+            "player-white": 85
+          },
+          "avgScore": 99,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 84,
+              "base": 63,
+              "tile": 16,
+              "card": 4,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 8,
+                "cardEffectScore": 0,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 0,
+                "orbitScore": 25,
+                "scanScore": 6,
+                "taskCardScore": 0,
+                "techBonusScore": 2
+              }
+            },
+            "player-green": {
+              "total": 141,
+              "base": 88,
+              "tile": 43,
+              "card": 10,
+              "tileScoresById": {
+                "a": 22,
+                "b": 6,
+                "c": 0,
+                "d": 15
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_31.png",
+                  "rule": {
+                    "count": 2,
+                    "kind": "planetLandingPairs",
+                    "scorePer": 6
+                  },
+                  "score": 6
+                },
+                {
+                  "cardId": "amiba_5.webp",
+                  "rule": {
+                    "kind": "amibaTraceCount",
+                    "scorePer": 2,
+                    "traceType": "pink"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 1,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 10,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 24,
+                "orbitScore": 15,
+                "scanScore": 2,
+                "taskCardScore": 9,
+                "techBonusScore": 10
+              }
+            },
+            "player-brown": {
+              "total": 86,
+              "base": 59,
+              "tile": 24,
+              "card": 0,
+              "tileScoresById": {
+                "a": 16,
+                "b": 8,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 7,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 5,
+                "orbitScore": 12,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            },
+            "player-white": {
+              "total": 85,
+              "base": 71,
+              "tile": 14,
+              "card": 0,
+              "tileScoresById": {
+                "a": 0,
+                "b": 0,
+                "c": 0,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 0,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 0,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 0,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 0,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 9,
+                "blueTechScore": 0,
+                "cardEffectScore": 2,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 17,
+                "orbitScore": 0,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-public-card-runezu-greedy-20260913-3544e2df-full-v300.json",
+          "reportPath": "reports/iteration/public-card-runezu-greedy-20260913/76414b52.3544e2df.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "76414b52.3544e2df.full",
+            "path": "reports/iteration/public-card-runezu-greedy-20260913/76414b52.3544e2df.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "runezu-effect-fix-20260913",
       "name": "runezu-effect-fix-20260913",
@@ -614,7 +1179,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
