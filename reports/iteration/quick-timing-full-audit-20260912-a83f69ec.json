@@ -1,0 +1,266 @@
+{
+  "source": "reports/research/5097a6bb.a83f69ec.full.json",
+  "save": "seti-saves/seti-save-research-quick-timing-corner-20260912-a83f69ec-full-v285.json",
+  "baseline": {
+    "source": "reports/research/885906e7.31a2e43b.full.json",
+    "gitCommit": "31a2e43b",
+    "steps": 541,
+    "summary": {
+      "round": 4,
+      "terminal": true,
+      "scores": {
+        "player-blue": 77,
+        "player-green": 96,
+        "player-brown": 91,
+        "player-white": 93
+      },
+      "avgScore": 89.25
+    },
+    "wallMs": 831102,
+    "resumeStep": 24,
+    "resumedFrom": "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-quick-24-v2.json",
+    "kinds": {
+      "control": {
+        "searches": 76,
+        "nodes": 76,
+        "failures": 0,
+        "limits": {
+          "leaves": {
+            "enabled": 76,
+            "reached": 72,
+            "truncated": 0
+          },
+          "frontier": {
+            "enabled": 0,
+            "reached": 0,
+            "truncated": 0
+          },
+          "execution": {
+            "enabled": 76,
+            "reached": 76,
+            "truncated": 4
+          }
+        }
+      },
+      "strategic": {
+        "searches": 104,
+        "nodes": 195984,
+        "failures": 0,
+        "limits": {
+          "leaves": {
+            "enabled": 0,
+            "reached": 0,
+            "truncated": 0
+          },
+          "frontier": {
+            "enabled": 104,
+            "reached": 55,
+            "truncated": 54
+          },
+          "execution": {
+            "enabled": 104,
+            "reached": 38,
+            "truncated": 38
+          }
+        }
+      }
+    }
+  },
+  "current": {
+    "source": "reports/research/5097a6bb.a83f69ec.full.json",
+    "gitCommit": "a83f69ec",
+    "steps": 597,
+    "summary": {
+      "round": 4,
+      "terminal": true,
+      "scores": {
+        "player-blue": 75,
+        "player-green": 125,
+        "player-brown": 102,
+        "player-white": 89
+      },
+      "avgScore": 97.75
+    },
+    "wallMs": 1205691,
+    "resumeStep": 0,
+    "resumedFrom": null,
+    "kinds": {
+      "control": {
+        "searches": 92,
+        "nodes": 92,
+        "failures": 0,
+        "limits": {
+          "leaves": {
+            "enabled": 92,
+            "reached": 86,
+            "truncated": 0
+          },
+          "frontier": {
+            "enabled": 0,
+            "reached": 0,
+            "truncated": 0
+          },
+          "execution": {
+            "enabled": 92,
+            "reached": 92,
+            "truncated": 6
+          }
+        }
+      },
+      "strategic": {
+        "searches": 111,
+        "nodes": 233665,
+        "failures": 0,
+        "limits": {
+          "leaves": {
+            "enabled": 0,
+            "reached": 0,
+            "truncated": 0
+          },
+          "frontier": {
+            "enabled": 111,
+            "reached": 60,
+            "truncated": 60
+          },
+          "execution": {
+            "enabled": 111,
+            "reached": 48,
+            "truncated": 48
+          }
+        }
+      }
+    }
+  },
+  "replayTerminal": true,
+  "counts": {
+    "before-main:place_data": 72,
+    "before-main:industry": 7,
+    "before-main:move": 14,
+    "after-main:quick_trade": 3,
+    "before-main:card_corner": 12,
+    "before-main:quick_trade": 11,
+    "after-main:industry": 1,
+    "after-main:move": 1
+  },
+  "late": [
+    {
+      "step": 85,
+      "actor": "player-green",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "cards-for-pick-card"
+      },
+      "payload": {
+        "cost": {
+          "handSize": 2
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "compatibleTargets": [
+        {
+          "targetId": "card:acquire:card-39-0",
+          "planId": "card:acquire:card-39-0"
+        }
+      ]
+    },
+    {
+      "step": 375,
+      "actor": "player-brown",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "energy-for-card"
+      },
+      "payload": {
+        "cost": {
+          "energy": 2
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "compatibleTargets": [
+        {
+          "targetId": "card:acquire:card-71-0",
+          "planId": "card:acquire:card-71-0"
+        }
+      ]
+    },
+    {
+      "step": 414,
+      "actor": "player-white",
+      "family": "industry",
+      "target": {
+        "companyId": "深空探测",
+        "abilityId": "deepspace_swap_cards"
+      },
+      "payload": {},
+      "compatibleTargets": [
+        {
+          "targetId": "card:acquire:card-78-0",
+          "planId": "card:acquire:card-78-0"
+        },
+        {
+          "targetId": "card:acquire:card-79-0",
+          "planId": "card:acquire:card-79-0"
+        }
+      ]
+    },
+    {
+      "step": 476,
+      "actor": "player-white",
+      "family": "move",
+      "target": {
+        "rocketId": 11,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payload": {
+        "direction": "out",
+        "requiredMovePoints": 1
+      },
+      "compatibleTargets": [
+        {
+          "targetId": "land:jupiter:satellite:callisto",
+          "planId": "probe:rocket:11:land:jupiter:satellite:callisto"
+        },
+        {
+          "targetId": "land:jupiter:satellite:europa",
+          "planId": "probe:rocket:11:land:jupiter:satellite:europa"
+        },
+        {
+          "targetId": "land:jupiter:satellite:ganymede",
+          "planId": "probe:rocket:11:land:jupiter:satellite:ganymede"
+        },
+        {
+          "targetId": "land:jupiter:satellite:io",
+          "planId": "probe:rocket:11:land:jupiter:satellite:io"
+        }
+      ]
+    },
+    {
+      "step": 542,
+      "actor": "player-green",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "publicity-for-card"
+      },
+      "payload": {
+        "cost": {
+          "publicity": 3
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "compatibleTargets": [
+        {
+          "targetId": "card:acquire:card-96-0",
+          "planId": "card:acquire:card-96-0"
+        }
+      ]
+    }
+  ],
+  "scope": "只重放正式输入，不调用AI；主行动标记读取每步正式状态。compatibleTargets证明当时存在准入目标，不证明原获胜计划绑定了其中某个目标。"
+}

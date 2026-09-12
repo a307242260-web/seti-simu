@@ -3,9 +3,10 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const evaluator = require("../randomizer/game/ai/expected-score-evaluator");
-const source = "reports/research/7bb2c6d4.60f8cca6.full.json";
+const source = process.argv[2] || "reports/research/7bb2c6d4.60f8cca6.full.json";
 const baseline = "reports/research/885906e7.31a2e43b.full.json";
-const output = "reports/iteration/quick-timing-full-audit-20260912-60f8cca6.json";
+const record = JSON.parse(fs.readFileSync(source, "utf8"));
+const output = `reports/iteration/quick-timing-full-audit-20260912-${record.gitCommit}.json`;
 if (fs.existsSync(output)) { console.log(`已有 checkpoint：${output}`); process.exit(0); }
 function summarize(path) {
   const r = JSON.parse(fs.readFileSync(path, "utf8"));
@@ -24,7 +25,6 @@ function summarize(path) {
   return { source: path, gitCommit: r.gitCommit, steps: r.steps, summary: r.summary,
     wallMs: r.wallMs, resumeStep: r.resumeStep, resumedFrom: r.resumedFrom, kinds };
 }
-const record = JSON.parse(fs.readFileSync(source, "utf8"));
 const save = JSON.parse(fs.readFileSync(record.savePath, "utf8"));
 const counts = {}, late = [];
 const env = createSimulationEnv();
