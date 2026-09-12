@@ -4,8 +4,9 @@ const assert = require("node:assert/strict");
 const { createSimulationEnv } = require("../app/simulation-env");
 const techBoard = require("./tech/board-state");
 const playerTech = require("./tech/player-tech");
+const rockets = require("./rockets");
 
-// 只测公共投影目录对临时科技的依赖；不执行AI或锁定历史轨迹。
+// 只测公共投影目录对临时科技和合法来源的依赖；不执行AI或锁定历史轨迹。
 const env = createSimulationEnv();
 let fork;
 try {
@@ -92,7 +93,31 @@ try {
     player.techState.disabledTiles[tile] = true;
     assert.deepEqual(project(state), baseline, "禁用科技不得保留费用或卫星收益");
   }
-  console.log("probe directory borrowed-tech cache tests passed");
+  // 反事实与正式分支可独立发射同编号探测器；位置相同不代表归属相同。
+  const other = base.players.players.find((p) => p.id !== actorId);
+  for (const ownerId of [actorId, other.id, actorId, other.id]) {
+    const ownerState = structuredClone(base);
+    ownerState.meta.gameId = "probe-owner-cache-20260912";
+    const owner = ownerState.players.players.find(p => p.id === ownerId);
+    const launched = rockets.launchRocketAtSector(ownerState.pieces, { x: 3, y: 1 },
+      { root: ownerState, playerId: ownerId, color: owner.color });
+    assert.equal(launched.ok, true);
+    for (const viewer of [actorId, other.id]) {
+      const warm = project(ownerState, viewer);
+      const cold = project(ownerState, viewer, true);
+      assert.deepEqual(warm, cold, `同编号探测器归属${ownerId}，观察席位${viewer}热冷目录一致`);
+      assert.ok(warm.candidates.length > 0);
+      for (const candidate of warm.candidates) {
+        if (candidate.rocketId != null) assert.equal(
+          ownerState.pieces.rockets.find(r => r.id === candidate.rocketId)?.playerId,
+          viewer, "目录不得继承其他玩家的探测器");
+      }
+      if (!ownerState.pieces.rockets.some(r => r.playerId === viewer && r.surface === "solar-board"))
+        assert.ok(warm.candidates.some(c => c.sourceId === "launch"),
+        "无自有探测器且发射位可用时保留发射来源");
+    }
+  }
+  console.log("probe directory borrowed-tech and owner cache tests passed");
 } finally {
   fork?.dispose();
   env.dispose();

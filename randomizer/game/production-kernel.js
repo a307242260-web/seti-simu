@@ -408,8 +408,9 @@ function probeRouteTopologyKey(workingState, player, sources, context) {
   // sources 依赖火箭上限（orange1 + 行业被动）与活跃火箭数，必须入键，否则科技变化后
   // 缓存的发射源过期（行为漂移）。
   const rocketLimit = rocketAbility.getRocketLimitForPlayer(player, context);
-  // player.id 必须入键：同盘面下不同玩家的 sources（谁的火箭/是否可发射）不同
-  return `${workingState.meta?.gameId || "?"}:${player.id}:${rotationKey}:${rocketSignatures}:${orange2}:${ignoreAsteroid}:${rocketLimit}:${JSON.stringify(context.probeMovement)}`;
+  // 同编号、同位置的棋子可能来自不同反事实分支、归属不同玩家；拓扑结果持有
+  // sources，必须按本席实际合法来源隔离，包含是否可发射及来源坐标。
+  return `${workingState.meta?.gameId || "?"}:${player.id}:${rotationKey}:${rocketSignatures}:${orange2}:${ignoreAsteroid}:${rocketLimit}:${JSON.stringify(context.probeMovement)}:${JSON.stringify(sources)}`;
 }
 
 function buildTopologyBody(workingState, player, context, sources) {

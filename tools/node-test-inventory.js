@@ -16,7 +16,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/quick-timing-contract.test.js", "architecture/policy-host", "主行动阶段及移动时机观察与正式执行、转动和恢复一致且读取无副作用", "过滤control后无法辨认阶段，未完成付款就计算时机收益，或恢复沿用旧转动缓存"),
     entry("randomizer/game/ai/turing-active-tech.test.js", "policy/heuristic-policy", "图灵重复永久能力在启用和选择处剪枝，保留失效科技与其他公司", "读取根科技或显示文案误删真实能力、强制Decision变空"),
     entry("randomizer/game/ai/turing-immediate-expiry.test.js", "policy/heuristic-policy", "图灵刚借完科技不搜索立即结束回合，保留其他后继与正式根选择", "空借跨回合占用队列或误删其他公司的结束动作"),
-    entry("randomizer/game/probe-directory-cache.test.js", "architecture/standard-action", "探测目录缓存随有效临时科技建立、切换、清除及到期更新，并隔离观察席位", "热缓存沿用旧登陆费用或遗漏卫星路线"),
+    entry("randomizer/game/probe-directory-cache.test.js", "architecture/standard-action", "探测目录缓存随有效临时科技及实际来源更新，隔离观察席位和同编号不同归属分支", "热缓存沿用旧费用、遗漏卫星路线或把对手探测器作为本席来源"),
     entry("randomizer/game/ai/probe-source-binding.test.js", "policy/heuristic-policy", "探测来源保持、两阶段登陆与正式完成事件一致", "同终点换火箭、通用登陆入口漏选、已登陆却未完成、重复发射覆盖来源"),
     entry("randomizer/app/rule-composition.test.js", "architecture/rule-composition", "组合层独占 registry、session 与原子提交", "handler 或 renderer 失败污染 committed state"),
     entry("randomizer/app/host-architecture-audit.test.js", "architecture/host-source-zero", "Host 规则来源归零且 22 family/5 domain owner 完备", "第二 owner、直接 root 写、改名 bridge 或成功 fallback 重新进入 Host"),
