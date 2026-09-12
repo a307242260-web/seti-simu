@@ -7,6 +7,34 @@
   },
   "versions": [
     {
+      "id": "runezu-panel-node-projection-20260913",
+      "name": "runezu-panel-node-projection-20260913",
+      "date": "2026-09-13",
+      "baseline": "final-income-input-fix-20260913",
+      "head": "bea7de03",
+      "commits": [
+        "2ae056c3",
+        "1e3cc2e6",
+        "f599b974",
+        "3418fea7",
+        "b46436b7",
+        "c5fd5155",
+        "2cf360bf",
+        "09d4ad6a",
+        "54797e98",
+        "1580566e",
+        "595105de",
+        "bea7de03"
+      ],
+      "summary": "RUNEZU-PANEL-TRACE-01：修复三色痕迹1/4位漏发面板符号；POLICY-OBSERVATION-COST-01：单个物理节点内按遮蔽边界复用完整投影并在观察批次复用事实副本。两项分别归因，共同完整局验收。",
+      "records": {
+        "22249691.bea7de03.full.json": {
+          "note": "待验收、未合主：482步自然终局67/93/70/81，均77.75，搜索错误为空。相对基线均分下降24，整局1209700→756474ms，全部节点242983→166159，执行截断55→39、队列截断61→42。第334步冷决策65.12→23.56秒及6701叶等价仅证明该输入；完整局首次可见分歧231为蓝色收入牌dlc_30→符文3，尚需区分规则修复与投影优化的影响，不以提速或规则纠错名义直接接受分数下降。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "final-income-input-fix-20260913",
       "name": "final-income-input-fix-20260913",
       "date": "2026-09-13",
