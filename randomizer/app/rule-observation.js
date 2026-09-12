@@ -157,6 +157,7 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
         const publicPlayer = sanitizePublicPlayer(player, breakdown);
         return {
           ...publicPlayer,
+          companyBaseIncome: clone(endGameScoring.getPlayerCompanyBaseIncome(player)),
           securedEndGameBonus: breakdown.totalScore - breakdown.baseScore
             + pendingFinalMarkValue(state, player),
         };

@@ -90,6 +90,10 @@ Composition drain，不伪装成策略动作。
 
 ## Observation
 
+`publicState.players[].companyBaseIncome`为公司初始收入的公开副本，由共享正式
+`getPlayerCompanyBaseIncome`解析，完整及cheap观察一致；用于A1/A2扣除初始收入，
+不附带公司私有状态或手牌。终局标记Policy缺此字段或完整公式盘面时显式报错。
+
 `publicState.players[].dataProgress.discardedCount`公开正式数据池满时累计拒收的数据数，
 来自dataState.discardedCount；初始未建立数据状态时为0。标准outcomeProjection.progress
 及strategicFacts的dataProgress保留同一计数。它不是当前池数量，也不是本次扫描所得；

@@ -340,11 +340,14 @@
     const player = players.find((candidate) => (
       String(candidate.playerId || candidate.color || "") === seatId
     ));
-    if (!player) return legalActions[0];
     const board = observation?.publicState?.board || {};
-    const finalScoring = board.finalScoring || {};
-    const tiles = finalScoring.tiles || {};
-    const variants = finalScoring.tileVariants || {};
+    if (!player || !player.companyBaseIncome || !board.finalScoring?.tiles
+      || !board.finalScoring?.tileVariants || !board.planets || !board.data || !board.aliens) {
+      throw new HeuristicPolicyError("FINAL_MARK_INPUT_INVALID", "终局标记缺少完整公开计分输入或公司初始收入");
+    }
+    const finalScoring = board.finalScoring;
+    const tiles = finalScoring.tiles;
+    const variants = finalScoring.tileVariants;
     const playerForFormula = {
       ...player,
       // 公式 c2 需要 type3 卡（保留区），从 selfState 补
@@ -359,8 +362,11 @@
     let best = null;
     for (const action of legalActions) {
       const tileId = String(action.target?.tileId || "");
-      const tile = tiles[tileId] || {};
-      const marks = Array.isArray(tile?.marks) ? tile.marks : [];
+      const tile = tiles[tileId];
+      if (!Array.isArray(tile?.marks) || ![1, 2].includes(Number(variants[tileId]))) {
+        throw new HeuristicPolicyError("FINAL_MARK_INPUT_INVALID", `终局标记缺少板块 ${tileId} 的槽位或变体`);
+      }
+      const marks = tile.marks;
       const nextSlot = !marks.some((mark) => Number(mark?.slotIndex) === 1) ? 1
         : !marks.some((mark) => Number(mark?.slotIndex) === 2) ? 2 : 3;
       const formulaId = endGameScoring.getFormulaId(tileId, variants[tileId]);
