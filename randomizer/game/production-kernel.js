@@ -654,6 +654,7 @@ function buildProbeMoveTiming(state, player, context, requirements) {
         rocketId: step.rocketId, deltaX: step.deltaX, deltaY: step.deltaY,
         rotationCount: state.solarSystem.rotation.rotationCount,
         rotations: 1,
+        firstMovementPoints: points,
         comparable: Boolean(waitRoute && earlyRoute),
         ...(waitRoute && earlyRoute ? {
           delayedMovementPoints: waitRoute.required.movementPoints,

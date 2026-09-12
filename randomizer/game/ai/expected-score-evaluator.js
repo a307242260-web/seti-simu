@@ -53,10 +53,8 @@
   // 树内 untargeted 枚举排除的手段动作（2026-08-21 用户裁定"无目标 quick_trade/
   // card_corner 非法"贯彻到搜索树内层）：这几类动作只有目标缺口时才做（经目标
   // 目录资源准备进 targeted），无目标时不该在每层枚举压队吃预算。
-  // **place_data 不在此列**（2026-08-21 实证）：把它从 untargeted 排除后，主行动
-  // （play_card 等）评估链里缺少"填数据拿资源"后继 → 评估漂移（步23 白色改选
-  // launch、全盘 84.5→57 崩）。place_data 是合法主行动后继（数据溢出/缺口时
-  // 填上拿资源，"溢出不浪费"），untargeted 枚举保留。
+  // place_data 暂保留在主行动前的未绑定目录；主行动后仍须通过统一时机判断。
+  // 全面取消无目标尝试属于下一项 GOAL-ONLY-01，不在本阶段提前修改。
   const UNTARGETED_MEANS_ONLY_FAMILIES = Object.freeze(new Set([
     // 普通移动与免费移动一致：目录拒绝的方向不得从无目标后继补回。
     "quick_trade", "card_corner", "move",
@@ -1149,6 +1147,41 @@
     return action.family === "industry" && action.target?.abilityId === "huanyu_free_moves";
   }
 
+  function allowsQuickActionTiming({ observation, action, legalActions = [], routeTargetId, routePlanId }) {
+    if (action.phase === "conditional" || CONDITIONAL_FAMILIES.has(action.family)
+      || CONTROL_FAMILIES.has(action.family)) return true;
+    if (publicPlayerOf(observation, action.actorId)?.mainActionCompleted !== true) return true;
+    if (String(routeTargetId || "").startsWith("card:acquire:")) {
+      const cardId = routeTargetId.slice("card:acquire:".length);
+      return action.family === "quick_trade"
+        && quickTrades.getTradeAction(action.target?.tradeId)?.gain?.handSize === 1
+        && (observation?.publicState?.board?.publicCards || []).some(card => String(card?.id) === cardId);
+    }
+    const goal = (rawProbeRequirements(observation)?.candidates || []).find(candidate => (
+      `probe:${candidate.requirementId}` === routePlanId
+    ));
+    if (!routeTargetId || !goal) return false;
+    const windows = (goal.moveTiming || []).filter(timing => timing.comparable
+      && timing.earlyMovementPoints < timing.delayedMovementPoints);
+    const matches = (candidate, timing) => candidate.family === "move"
+      && String(candidate.target?.rocketId) === String(timing.rocketId)
+      && candidate.target?.deltaX === timing.deltaX && candidate.target?.deltaY === timing.deltaY;
+    const advances = candidate => windows.some(timing => matches(candidate, timing)
+      || (isHuanyuMovementAction(candidate) && actionAdvancesProbeGoal(candidate, goal)
+        && String(goal.rocketId) === String(timing.rocketId)
+        && goal.path?.[0]?.deltaX === timing.deltaX && goal.path?.[0]?.deltaY === timing.deltaY));
+    if (advances(action)) return true;
+    if (action.family !== "quick_trade" || legalActions.some(advances)) return false;
+    return windows.some(timing => {
+      if (!Number.isFinite(timing.firstMovementPoints) || timing.firstMovementPoints <= 0) {
+        throw new TypeError("QUICK_TIMING_FIRST_MOVE_COST_MISSING");
+      }
+      return selectMinimumCostResourcePreparation(observation,
+        { energy: timing.firstMovementPoints }, legalActions, action.actorId)
+        .some(candidate => candidate.actionId === action.actionId);
+    });
+  }
+
   function isProbeMovementDecision(observation, actions) {
     const phase = rawProbeRequirements(observation)?.movementContext?.phase;
     return ["card", "company", "hidden"].includes(phase) && actions.length > 0
@@ -1739,6 +1772,8 @@
     const targets = new Map();
     function add(targetId, planId, actions, resultTargetIds = [targetId]) {
       const compatibleActionIds = [...new Set(actions
+        .filter(action => action && allowsQuickActionTiming({ observation: input.rootObservation,
+          action, legalActions, routeTargetId: targetId, routePlanId: planId }))
         .map((action) => action?.actionId)
         .filter((actionId) => legalIds.has(actionId)))]
         .sort();
@@ -1779,6 +1814,11 @@
     ));
     const probeGoals = selectHeuristicProbeGoals(input.rootObservation, paretoProbeGoals);
     function probePlanActions(goal) {
+      if (publicPlayerOf(input.rootObservation, input.focalSeatId)?.mainActionCompleted === true) {
+        return legalActions.filter(action => !CONTROL_FAMILIES.has(action.family)
+          && allowsQuickActionTiming({ observation: input.rootObservation,
+          action, legalActions, routeTargetId: goal.targetId, routePlanId: `probe:${goal.requirementId}` }));
+      }
       const exact = legalActions.filter((action) => (
         actionAdvancesProbeGoal(action, goal)
       ));
@@ -2659,14 +2699,22 @@
       routeTargetId,
       routePlanId,
       routeResultTargetIds = input.routeResultTargetIds,
-    ) => actions.map((action) => ({
-      ...action,
-      routeTargetId: routeTargetId || null,
-      routePlanId: routePlanId || null,
-      routeResultTargetIds: [...(routeResultTargetIds || (
-        routeTargetId ? [routeTargetId] : []
-      ))],
-    }));
+    ) => {
+      let selected = actions.filter(action => allowsQuickActionTiming({
+        observation: input.branchObservation, action, legalActions: successors, routeTargetId, routePlanId,
+      }));
+      if (actions.length && !selected.length && routeTargetId) {
+        selected = successors.filter(action => action.family === "end_turn");
+      }
+      return selected.map((action) => ({
+        ...action,
+        routeTargetId: routeTargetId || null,
+        routePlanId: routePlanId || null,
+        routeResultTargetIds: [...(routeResultTargetIds || (
+          routeTargetId ? [routeTargetId] : []
+        ))],
+      }));
+    };
     const focalSeatId = String(input.focalSeatId || "");
     const actorId = String(successors[0]?.actorId || "");
     const targetUsesFungibleResources = input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET
@@ -2884,6 +2932,8 @@
               && !UNTARGETED_MEANS_ONLY_FAMILIES.has(action.family)
               && !isHuanyuMovementAction(action)
               && !isProbeMovementDecision(input.branchObservation, successors)
+              && allowsQuickActionTiming({ observation: input.branchObservation, action,
+                legalActions: successors })
             ))
             .map((action) => ({
               ...action,
@@ -3461,6 +3511,14 @@
       const goals = (rawProbeRequirements(input.branchObservation)?.candidates || [])
         .filter((goal) => `probe:${goal.requirementId}` === input.routePlanId);
       if (input.routeTargetId && goals.length) {
+        if (publicPlayerOf(input.branchObservation, focalSeatId)?.mainActionCompleted === true) {
+          const currentWindow = successors.filter(action => !CONTROL_FAMILIES.has(action.family)
+            && allowsQuickActionTiming({ observation: input.branchObservation, action,
+              legalActions: successors, routeTargetId: input.routeTargetId, routePlanId: input.routePlanId }));
+          return currentWindow.length
+            ? bindRoute(currentWindow, input.routeTargetId, input.routePlanId)
+            : continueBoundTargetNextTurn();
+        }
         const exact = successors.filter((action) => (
           goals.some((goal) => actionAdvancesProbeGoal(action, goal))
         ));
@@ -3558,6 +3616,7 @@
     evaluateStrategicFactsBreakdown,
     evaluateSecondaryAgentSearchPriority,
     enumerateSecondaryAgentRootTargets,
+    allowsQuickActionTiming,
     selectSecondaryAgentRootActions,
     selectSecondaryAgentRouteTarget,
     evaluateAction: evaluateOutcome,

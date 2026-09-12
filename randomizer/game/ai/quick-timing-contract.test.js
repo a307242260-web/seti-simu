@@ -166,3 +166,56 @@ test("计划身份和盘面依赖未变化也不能绕过主行动后时机判�
   assert.equal(reused.hit, false, "可延后的旧计划步骤应重新决策，而非继续立即放数据");
   assert.equal(reused.reason, "quick-timing-no-current-window");
 });
+
+test("移动窗口绑定方向，消失后计划失效；正式付款与结束不受裁剪", () => {
+  const f = timingFixture;
+  const target = f.rootTargets.find(t => t.planId.startsWith("probe:"));
+  const move = f.legalActions.find(a => a.actionId === target.compatibleActionIds[0]);
+  assert.equal(move.family, "move");
+  const timingInput = { observation: f.observation, legalActions: f.legalActions,
+    routeTargetId: target.targetId, routePlanId: target.planId };
+  assert.equal(evaluator.allowsQuickActionTiming({ ...timingInput, action: move }), true);
+  const wrongDirection = f.legalActions.find(a => a.family === "move" && a.actionId !== move.actionId);
+  assert(wrongDirection);
+  assert.equal(evaluator.allowsQuickActionTiming({ ...timingInput, action: wrongDirection }), false);
+  const steps = continuation.compilePlanSteps([{
+    ...continuation.capturePlanStep({ observation: f.observation, action: move }),
+    routeTargetId: target.targetId, routePlanId: target.planId,
+  }]);
+  const plan = { schemaVersion: continuation.PLAN_SCHEMA_VERSION, nextActionId: move.actionId, steps };
+  assert.equal(continuation.planReuseCheck(plan, f.observation, f.legalActions).hit, true);
+  // 纯消费者反例：仅改变公开机会事实，验证不是动作合法性或身份变化导致重搜。
+  const changed = structuredClone(f.observation);
+  const goal = changed.probeRouteRequirements.candidates.find(g => `probe:${g.requirementId}` === target.planId);
+  goal.moveTiming.forEach(t => { t.delayedMovementPoints = t.earlyMovementPoints; });
+  assert.equal(continuation.planReuseCheck(plan, changed, f.legalActions).reason,
+    "quick-timing-no-current-window");
+  assert.equal(evaluator.allowsQuickActionTiming({ observation: changed,
+    action: { family: "choose_payment", phase: "conditional", actorId: f.actorId } }), true);
+  assert.equal(evaluator.allowsQuickActionTiming({ observation: changed,
+    action: f.legalActions.find(a => a.family === "end_turn") }), true);
+});
+
+test("机会资源准备只补第一步缺口，已满足时不为未来终点囤资源", () => {
+  const f = timingFixture;
+  const target = f.rootTargets.find(t => t.planId.startsWith("probe:"));
+  const observation = structuredClone(f.observation);
+  const own = observation.publicState.players.find(p => p.playerId === f.actorId);
+  own.energy = 0;
+  own.credits = 2;
+  const goal = observation.probeRouteRequirements.candidates.find(g => `probe:${g.requirementId}` === target.planId);
+  assert.equal(goal.moveTiming[0].firstMovementPoints, 1);
+  const trade = f.legalActions.find(a => a.family === "quick_trade" && a.target.tradeId === "credits-for-energy");
+  assert(trade);
+  const input = { observation, action: trade, legalActions: [trade],
+    routeTargetId: target.targetId, routePlanId: target.planId };
+  assert.equal(evaluator.allowsQuickActionTiming(input), true);
+  own.energy = 1;
+  goal.required.energy = 10;
+  assert.equal(evaluator.allowsQuickActionTiming(input), false,
+    "未来终点还缺能量不能成为当前窗口准备的理由");
+  own.energy = 0;
+  goal.moveTiming.forEach(t => { t.comparable = false; });
+  assert.equal(evaluator.allowsQuickActionTiming(input), false,
+    "没有窗口不能仅因资源不足放行交易");
+});

@@ -748,6 +748,7 @@ function capturePlanStep({ observation, action }) {
       sourceId: candidate.sourceId, rocketId: candidate.rocketId,
       movementSteps: candidate.gap?.movementSteps ?? candidate.required?.movementSteps ?? null,
       movementNextSteps: structuredClone(candidate.movementNextSteps || [candidate.nextStep]),
+      moveTiming: structuredClone(candidate.moveTiming ?? null),
       paidMovementPoints: candidate.required?.paidMovementPoints ?? null,
       requiredCost: candidate.required ? {
         credits: candidate.required.credits, energy: candidate.required.energy,
@@ -960,6 +961,7 @@ function compilePlanSteps(steps) {
     }));
     const missing = dependencies.some((dependency) => dependency.fact === undefined);
     return { actionId: step.action.actionId, actionKey: actionSemanticKey(step.action),
+      routeTargetId: step.routeTargetId || null, routePlanId: step.routePlanId || null,
       actorId: step.action.actorId, revealedCount: step.revealedCount,
       valid: selected.valid && !missing,
       reason: selected.reason || (missing ? "plan-dependency-fact-missing" : null),
@@ -1053,6 +1055,10 @@ function planReuseCheck(plan, currentObservation, legalActions) {
   }
   if (!currentObservation) {
     return Object.freeze({ hit: false, reason: "no-observation" });
+  }
+  if (!expectedScoreEvaluator.allowsQuickActionTiming({ observation: currentObservation,
+    action: current, legalActions, routeTargetId: step.routeTargetId, routePlanId: step.routePlanId })) {
+    return Object.freeze({ hit: false, reason: "quick-timing-no-current-window" });
   }
   if (countRevealedAliens(currentObservation) > step.revealedCount) {
     return Object.freeze({
