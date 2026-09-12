@@ -1,0 +1,1304 @@
+{
+  "root": "/private/tmp/seti-probe-owner-cache-20260912.yYhoYc",
+  "source": "before-step45-20260912.json",
+  "check": {
+    "hit": true,
+    "action": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "play_card",
+      "phase": "main",
+      "actionId": "play_card:3b8ed751",
+      "actorId": "player-blue",
+      "stateVersion": 25,
+      "decisionVersion": 0,
+      "target": {
+        "cardInstanceId": "card-3-0"
+      },
+      "payload": {
+        "cost": {
+          "credits": 1
+        },
+        "handIndex": 0
+      },
+      "decision": null,
+      "summary": "dlc_23.png"
+    },
+    "nextPlan": {
+      "schemaVersion": "seti-action-plan-v4",
+      "nextActionId": "end_turn:320f2608",
+      "steps": [
+        {
+          "actionId": "end_turn:320f2608",
+          "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [],
+          "futureDependencies": []
+        },
+        {
+          "actionId": "card_corner:03b95fd6",
+          "actionKey": "{\"family\":\"card_corner\",\"payload\":{\"kind\":\"resource\",\"multiplier\":1},\"target\":{\"cardInstanceId\":\"card-4-0\"}}",
+          "routeTargetId": "tech:gain:orange3",
+          "routePlanId": "tech:orange3:",
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [
+            {
+              "scope": {
+                "kind": "tech",
+                "id": "orange3"
+              },
+              "fact": {
+                "tileId": "orange3",
+                "techType": "orange",
+                "stackIndex": 3,
+                "bonusId": "bonus_3f",
+                "remaining": 4,
+                "depleted": false
+              }
+            }
+          ],
+          "futureDependencies": [
+            {
+              "scope": {
+                "kind": "alien",
+                "id": "1:yellow"
+              },
+              "fact": {
+                "present": true,
+                "value": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                }
+              }
+            },
+            {
+              "scope": {
+                "kind": "route",
+                "id": "land:mars:planet:",
+                "sourceId": "launch"
+              },
+              "fact": {
+                "present": true,
+                "value": [
+                  {
+                    "targetId": "land:mars:planet:",
+                    "requirementId": "launch:land:mars:planet:",
+                    "sourceId": "launch",
+                    "rocketId": null,
+                    "movementSteps": 2,
+                    "movementNextSteps": [
+                      {
+                        "family": "launch"
+                      }
+                    ],
+                    "moveTiming": null,
+                    "paidMovementPoints": 2,
+                    "requiredCost": {
+                      "credits": 2,
+                      "energy": 4
+                    },
+                    "endpointFacts": {
+                      "rewards": [
+                        {
+                          "type": "gain_data",
+                          "label": "首次登陆：额外获得 2 个数据",
+                          "icon": "data",
+                          "options": {
+                            "count": 2
+                          },
+                          "id": "planet-reward-0",
+                          "status": "pending"
+                        },
+                        {
+                          "type": "gain_resources",
+                          "label": "获得 6 分",
+                          "icon": "score",
+                          "options": {
+                            "gain": {
+                              "score": 6
+                            }
+                          },
+                          "id": "planet-reward-1",
+                          "status": "pending"
+                        },
+                        {
+                          "type": "alien_trace",
+                          "label": "获得 1 个黄色外星人标记",
+                          "icon": "alien_yellow",
+                          "needsUserChoice": true,
+                          "options": {
+                            "traceType": "yellow"
+                          },
+                          "id": "planet-reward-2",
+                          "status": "pending"
+                        }
+                      ],
+                      "cost": {
+                        "energy": 2
+                      },
+                      "ownMarkers": {
+                        "orbitMarkers": [],
+                        "landingMarkers": [],
+                        "satelliteLandings": []
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "scope": {
+                "kind": "route",
+                "id": "land:mars:planet:",
+                "sourceId": "rocket:3"
+              },
+              "fact": {
+                "present": false
+              }
+            }
+          ]
+        },
+        {
+          "actionId": "research_tech:b5bf67f7",
+          "actionKey": "{\"family\":\"research_tech\",\"payload\":{\"skipBonus\":false,\"skipCost\":false,\"skipRotate\":false},\"target\":{\"kind\":\"research-tech\"}}",
+          "routeTargetId": "tech:gain:orange3",
+          "routePlanId": "tech:orange3:",
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [
+            {
+              "scope": {
+                "kind": "tech",
+                "id": "orange3"
+              },
+              "fact": {
+                "tileId": "orange3",
+                "techType": "orange",
+                "stackIndex": 3,
+                "bonusId": "bonus_3f",
+                "remaining": 4,
+                "depleted": false
+              }
+            }
+          ],
+          "futureDependencies": [
+            {
+              "scope": {
+                "kind": "alien",
+                "id": "1:yellow"
+              },
+              "fact": {
+                "present": true,
+                "value": {
+                  "extraCount": 0,
+                  "extraMarkers": [],
+                  "firstPlaced": false,
+                  "ownerPlayerColor": null
+                }
+              }
+            },
+            {
+              "scope": {
+                "kind": "route",
+                "id": "land:mars:planet:",
+                "sourceId": "launch"
+              },
+              "fact": {
+                "present": true,
+                "value": [
+                  {
+                    "targetId": "land:mars:planet:",
+                    "requirementId": "launch:land:mars:planet:",
+                    "sourceId": "launch",
+                    "rocketId": null,
+                    "movementSteps": 2,
+                    "movementNextSteps": [
+                      {
+                        "family": "launch"
+                      }
+                    ],
+                    "moveTiming": null,
+                    "paidMovementPoints": 2,
+                    "requiredCost": {
+                      "credits": 2,
+                      "energy": 4
+                    },
+                    "endpointFacts": {
+                      "rewards": [
+                        {
+                          "type": "gain_data",
+                          "label": "首次登陆：额外获得 2 个数据",
+                          "icon": "data",
+                          "options": {
+                            "count": 2
+                          },
+                          "id": "planet-reward-0",
+                          "status": "pending"
+                        },
+                        {
+                          "type": "gain_resources",
+                          "label": "获得 6 分",
+                          "icon": "score",
+                          "options": {
+                            "gain": {
+                              "score": 6
+                            }
+                          },
+                          "id": "planet-reward-1",
+                          "status": "pending"
+                        },
+                        {
+                          "type": "alien_trace",
+                          "label": "获得 1 个黄色外星人标记",
+                          "icon": "alien_yellow",
+                          "needsUserChoice": true,
+                          "options": {
+                            "traceType": "yellow"
+                          },
+                          "id": "planet-reward-2",
+                          "status": "pending"
+                        }
+                      ],
+                      "cost": {
+                        "energy": 2
+                      },
+                      "ownMarkers": {
+                        "orbitMarkers": [],
+                        "landingMarkers": [],
+                        "satelliteLandings": []
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "scope": {
+                "kind": "route",
+                "id": "land:mars:planet:",
+                "sourceId": "rocket:3"
+              },
+              "fact": {
+                "present": false
+              }
+            }
+          ]
+        },
+        {
+          "actionId": "choose_target:228a8f72",
+          "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"skipBonus\":false,\"skipCost\":false,\"skipRotate\":false},\"target\":{\"blueSlot\":null,\"choiceId\":\"tech:orange3\",\"tileId\":\"orange3\"}}",
+          "routeTargetId": "tech:gain:orange3",
+          "routePlanId": "tech:orange3:",
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [
+            {
+              "scope": {
+                "kind": "tech",
+                "id": "orange3"
+              },
+              "fact": {
+                "tileId": "orange3",
+                "techType": "orange",
+                "stackIndex": 3,
+                "bonusId": "bonus_3f",
+                "remaining": 4,
+                "depleted": false
+              }
+            }
+          ],
+          "futureDependencies": []
+        },
+        {
+          "actionId": "end_turn:320f2608",
+          "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+          "routeTargetId": null,
+          "routePlanId": null,
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [],
+          "futureDependencies": []
+        },
+        {
+          "actionId": "launch:a4087d46",
+          "actionKey": "{\"family\":\"launch\",\"payload\":{},\"target\":{}}",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:launch:land:mars:planet:",
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [
+            {
+              "scope": {
+                "kind": "alien",
+                "id": "1:yellow"
+              },
+              "fact": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            },
+            {
+              "scope": {
+                "kind": "route",
+                "id": "land:mars:planet:",
+                "sourceId": "launch"
+              },
+              "fact": [
+                {
+                  "targetId": "land:mars:planet:",
+                  "requirementId": "launch:land:mars:planet:",
+                  "sourceId": "launch",
+                  "rocketId": null,
+                  "movementSteps": 2,
+                  "movementNextSteps": [
+                    {
+                      "family": "launch"
+                    }
+                  ],
+                  "moveTiming": null,
+                  "paidMovementPoints": 2,
+                  "requiredCost": {
+                    "credits": 2,
+                    "energy": 3
+                  },
+                  "endpointFacts": {
+                    "rewards": [
+                      {
+                        "type": "gain_data",
+                        "label": "首次登陆：额外获得 2 个数据",
+                        "icon": "data",
+                        "options": {
+                          "count": 2
+                        },
+                        "id": "planet-reward-0",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "gain_resources",
+                        "label": "获得 6 分",
+                        "icon": "score",
+                        "options": {
+                          "gain": {
+                            "score": 6
+                          }
+                        },
+                        "id": "planet-reward-1",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "alien_trace",
+                        "label": "获得 1 个黄色外星人标记",
+                        "icon": "alien_yellow",
+                        "needsUserChoice": true,
+                        "options": {
+                          "traceType": "yellow"
+                        },
+                        "id": "planet-reward-2",
+                        "status": "pending"
+                      }
+                    ],
+                    "cost": {
+                      "energy": 1
+                    },
+                    "ownMarkers": {
+                      "orbitMarkers": [],
+                      "landingMarkers": [],
+                      "satelliteLandings": []
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "futureDependencies": [
+            {
+              "scope": {
+                "kind": "route",
+                "id": "land:mars:planet:",
+                "sourceId": "rocket:3"
+              },
+              "fact": {
+                "present": false
+              }
+            }
+          ]
+        },
+        {
+          "actionId": "accept_optional_effect:e83e2716",
+          "actionKey": "{\"family\":\"accept_optional_effect\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-3-0\",\"choiceId\":\"confirm:trigger:card-3-0:dlc23-launch-draw\",\"kind\":\"residual-domain\",\"ruleId\":\"dlc23-launch-draw\"}}",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:3:land:mars:planet:",
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [
+            {
+              "scope": {
+                "kind": "alien",
+                "id": "1:yellow"
+              },
+              "fact": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            },
+            {
+              "scope": {
+                "kind": "route",
+                "id": "land:mars:planet:",
+                "sourceId": "rocket:3"
+              },
+              "fact": [
+                {
+                  "targetId": "land:mars:planet:",
+                  "requirementId": "rocket:3:land:mars:planet:",
+                  "sourceId": "rocket:3",
+                  "rocketId": 3,
+                  "movementSteps": 2,
+                  "movementNextSteps": [
+                    {
+                      "family": "move",
+                      "rocketId": 3,
+                      "deltaX": 0,
+                      "deltaY": 1
+                    },
+                    {
+                      "family": "move",
+                      "rocketId": 3,
+                      "deltaX": 1,
+                      "deltaY": 0
+                    }
+                  ],
+                  "moveTiming": [
+                    {
+                      "rocketId": 3,
+                      "deltaX": 0,
+                      "deltaY": 1,
+                      "rotationCount": 2,
+                      "rotations": 1,
+                      "firstMovementPoints": 1,
+                      "comparable": true,
+                      "delayedMovementPoints": 2,
+                      "earlyMovementPoints": 2
+                    },
+                    {
+                      "rocketId": 3,
+                      "deltaX": 1,
+                      "deltaY": 0,
+                      "rotationCount": 2,
+                      "rotations": 1,
+                      "firstMovementPoints": 1,
+                      "comparable": true,
+                      "delayedMovementPoints": 2,
+                      "earlyMovementPoints": 2
+                    }
+                  ],
+                  "paidMovementPoints": 2,
+                  "requiredCost": {
+                    "credits": 0,
+                    "energy": 3
+                  },
+                  "endpointFacts": {
+                    "rewards": [
+                      {
+                        "type": "gain_data",
+                        "label": "首次登陆：额外获得 2 个数据",
+                        "icon": "data",
+                        "options": {
+                          "count": 2
+                        },
+                        "id": "planet-reward-0",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "gain_resources",
+                        "label": "获得 6 分",
+                        "icon": "score",
+                        "options": {
+                          "gain": {
+                            "score": 6
+                          }
+                        },
+                        "id": "planet-reward-1",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "alien_trace",
+                        "label": "获得 1 个黄色外星人标记",
+                        "icon": "alien_yellow",
+                        "needsUserChoice": true,
+                        "options": {
+                          "traceType": "yellow"
+                        },
+                        "id": "planet-reward-2",
+                        "status": "pending"
+                      }
+                    ],
+                    "cost": {
+                      "energy": 1
+                    },
+                    "ownMarkers": {
+                      "orbitMarkers": [],
+                      "landingMarkers": [],
+                      "satelliteLandings": []
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "futureDependencies": []
+        },
+        {
+          "actionId": "end_turn:320f2608",
+          "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:3:land:mars:planet:",
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [
+            {
+              "scope": {
+                "kind": "alien",
+                "id": "1:yellow"
+              },
+              "fact": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            },
+            {
+              "scope": {
+                "kind": "route",
+                "id": "land:mars:planet:",
+                "sourceId": "rocket:3"
+              },
+              "fact": [
+                {
+                  "targetId": "land:mars:planet:",
+                  "requirementId": "rocket:3:land:mars:planet:",
+                  "sourceId": "rocket:3",
+                  "rocketId": 3,
+                  "movementSteps": 2,
+                  "movementNextSteps": [
+                    {
+                      "family": "move",
+                      "rocketId": 3,
+                      "deltaX": 0,
+                      "deltaY": 1
+                    },
+                    {
+                      "family": "move",
+                      "rocketId": 3,
+                      "deltaX": 1,
+                      "deltaY": 0
+                    }
+                  ],
+                  "moveTiming": [
+                    {
+                      "rocketId": 3,
+                      "deltaX": 0,
+                      "deltaY": 1,
+                      "rotationCount": 2,
+                      "rotations": 1,
+                      "firstMovementPoints": 1,
+                      "comparable": true,
+                      "delayedMovementPoints": 2,
+                      "earlyMovementPoints": 2
+                    },
+                    {
+                      "rocketId": 3,
+                      "deltaX": 1,
+                      "deltaY": 0,
+                      "rotationCount": 2,
+                      "rotations": 1,
+                      "firstMovementPoints": 1,
+                      "comparable": true,
+                      "delayedMovementPoints": 2,
+                      "earlyMovementPoints": 2
+                    }
+                  ],
+                  "paidMovementPoints": 2,
+                  "requiredCost": {
+                    "credits": 0,
+                    "energy": 3
+                  },
+                  "endpointFacts": {
+                    "rewards": [
+                      {
+                        "type": "gain_data",
+                        "label": "首次登陆：额外获得 2 个数据",
+                        "icon": "data",
+                        "options": {
+                          "count": 2
+                        },
+                        "id": "planet-reward-0",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "gain_resources",
+                        "label": "获得 6 分",
+                        "icon": "score",
+                        "options": {
+                          "gain": {
+                            "score": 6
+                          }
+                        },
+                        "id": "planet-reward-1",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "alien_trace",
+                        "label": "获得 1 个黄色外星人标记",
+                        "icon": "alien_yellow",
+                        "needsUserChoice": true,
+                        "options": {
+                          "traceType": "yellow"
+                        },
+                        "id": "planet-reward-2",
+                        "status": "pending"
+                      }
+                    ],
+                    "cost": {
+                      "energy": 1
+                    },
+                    "ownMarkers": {
+                      "orbitMarkers": [],
+                      "landingMarkers": [],
+                      "satelliteLandings": []
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "futureDependencies": []
+        },
+        {
+          "actionId": "move:17103972",
+          "actionKey": "{\"family\":\"move\",\"payload\":{\"direction\":\"out\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":0,\"deltaY\":1,\"rocketId\":3}}",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:3:land:mars:planet:",
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [
+            {
+              "scope": {
+                "kind": "alien",
+                "id": "1:yellow"
+              },
+              "fact": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            },
+            {
+              "scope": {
+                "kind": "route",
+                "id": "land:mars:planet:",
+                "sourceId": "rocket:3"
+              },
+              "fact": [
+                {
+                  "targetId": "land:mars:planet:",
+                  "requirementId": "rocket:3:land:mars:planet:",
+                  "sourceId": "rocket:3",
+                  "rocketId": 3,
+                  "movementSteps": 2,
+                  "movementNextSteps": [
+                    {
+                      "family": "move",
+                      "rocketId": 3,
+                      "deltaX": 0,
+                      "deltaY": 1
+                    },
+                    {
+                      "family": "move",
+                      "rocketId": 3,
+                      "deltaX": 1,
+                      "deltaY": 0
+                    }
+                  ],
+                  "moveTiming": null,
+                  "paidMovementPoints": 2,
+                  "requiredCost": {
+                    "credits": 0,
+                    "energy": 3
+                  },
+                  "endpointFacts": {
+                    "rewards": [
+                      {
+                        "type": "gain_data",
+                        "label": "首次登陆：额外获得 2 个数据",
+                        "icon": "data",
+                        "options": {
+                          "count": 2
+                        },
+                        "id": "planet-reward-0",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "gain_resources",
+                        "label": "获得 6 分",
+                        "icon": "score",
+                        "options": {
+                          "gain": {
+                            "score": 6
+                          }
+                        },
+                        "id": "planet-reward-1",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "alien_trace",
+                        "label": "获得 1 个黄色外星人标记",
+                        "icon": "alien_yellow",
+                        "needsUserChoice": true,
+                        "options": {
+                          "traceType": "yellow"
+                        },
+                        "id": "planet-reward-2",
+                        "status": "pending"
+                      }
+                    ],
+                    "cost": {
+                      "energy": 1
+                    },
+                    "ownMarkers": {
+                      "orbitMarkers": [],
+                      "landingMarkers": [],
+                      "satelliteLandings": []
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "futureDependencies": []
+        },
+        {
+          "actionId": "choose_payment:5d7f4364",
+          "actionKey": "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:3:land:mars:planet:",
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [
+            {
+              "scope": {
+                "kind": "alien",
+                "id": "1:yellow"
+              },
+              "fact": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            },
+            {
+              "scope": {
+                "kind": "route",
+                "id": "land:mars:planet:",
+                "sourceId": "rocket:3"
+              },
+              "fact": [
+                {
+                  "targetId": "land:mars:planet:",
+                  "requirementId": "rocket:3:land:mars:planet:",
+                  "sourceId": "rocket:3",
+                  "rocketId": 3,
+                  "movementSteps": 2,
+                  "movementNextSteps": [
+                    {
+                      "family": "move",
+                      "rocketId": 3,
+                      "deltaX": 0,
+                      "deltaY": 1
+                    },
+                    {
+                      "family": "move",
+                      "rocketId": 3,
+                      "deltaX": 1,
+                      "deltaY": 0
+                    }
+                  ],
+                  "moveTiming": null,
+                  "paidMovementPoints": 2,
+                  "requiredCost": {
+                    "credits": 0,
+                    "energy": 3
+                  },
+                  "endpointFacts": {
+                    "rewards": [
+                      {
+                        "type": "gain_data",
+                        "label": "首次登陆：额外获得 2 个数据",
+                        "icon": "data",
+                        "options": {
+                          "count": 2
+                        },
+                        "id": "planet-reward-0",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "gain_resources",
+                        "label": "获得 6 分",
+                        "icon": "score",
+                        "options": {
+                          "gain": {
+                            "score": 6
+                          }
+                        },
+                        "id": "planet-reward-1",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "alien_trace",
+                        "label": "获得 1 个黄色外星人标记",
+                        "icon": "alien_yellow",
+                        "needsUserChoice": true,
+                        "options": {
+                          "traceType": "yellow"
+                        },
+                        "id": "planet-reward-2",
+                        "status": "pending"
+                      }
+                    ],
+                    "cost": {
+                      "energy": 1
+                    },
+                    "ownMarkers": {
+                      "orbitMarkers": [],
+                      "landingMarkers": [],
+                      "satelliteLandings": []
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "futureDependencies": []
+        },
+        {
+          "actionId": "move:82ca5288",
+          "actionKey": "{\"family\":\"move\",\"payload\":{\"direction\":\"cw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":1,\"deltaY\":0,\"rocketId\":3}}",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:3:land:mars:planet:",
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [
+            {
+              "scope": {
+                "kind": "alien",
+                "id": "1:yellow"
+              },
+              "fact": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            },
+            {
+              "scope": {
+                "kind": "route",
+                "id": "land:mars:planet:",
+                "sourceId": "rocket:3"
+              },
+              "fact": [
+                {
+                  "targetId": "land:mars:planet:",
+                  "requirementId": "rocket:3:land:mars:planet:",
+                  "sourceId": "rocket:3",
+                  "rocketId": 3,
+                  "movementSteps": 1,
+                  "movementNextSteps": [
+                    {
+                      "family": "move",
+                      "rocketId": 3,
+                      "deltaX": 1,
+                      "deltaY": 0
+                    }
+                  ],
+                  "moveTiming": null,
+                  "paidMovementPoints": 1,
+                  "requiredCost": {
+                    "credits": 0,
+                    "energy": 2
+                  },
+                  "endpointFacts": {
+                    "rewards": [
+                      {
+                        "type": "gain_data",
+                        "label": "首次登陆：额外获得 2 个数据",
+                        "icon": "data",
+                        "options": {
+                          "count": 2
+                        },
+                        "id": "planet-reward-0",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "gain_resources",
+                        "label": "获得 6 分",
+                        "icon": "score",
+                        "options": {
+                          "gain": {
+                            "score": 6
+                          }
+                        },
+                        "id": "planet-reward-1",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "alien_trace",
+                        "label": "获得 1 个黄色外星人标记",
+                        "icon": "alien_yellow",
+                        "needsUserChoice": true,
+                        "options": {
+                          "traceType": "yellow"
+                        },
+                        "id": "planet-reward-2",
+                        "status": "pending"
+                      }
+                    ],
+                    "cost": {
+                      "energy": 1
+                    },
+                    "ownMarkers": {
+                      "orbitMarkers": [],
+                      "landingMarkers": [],
+                      "satelliteLandings": []
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "futureDependencies": []
+        },
+        {
+          "actionId": "choose_payment:5d7f4364",
+          "actionKey": "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:3:land:mars:planet:",
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [
+            {
+              "scope": {
+                "kind": "alien",
+                "id": "1:yellow"
+              },
+              "fact": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            },
+            {
+              "scope": {
+                "kind": "route",
+                "id": "land:mars:planet:",
+                "sourceId": "rocket:3"
+              },
+              "fact": [
+                {
+                  "targetId": "land:mars:planet:",
+                  "requirementId": "rocket:3:land:mars:planet:",
+                  "sourceId": "rocket:3",
+                  "rocketId": 3,
+                  "movementSteps": 1,
+                  "movementNextSteps": [
+                    {
+                      "family": "move",
+                      "rocketId": 3,
+                      "deltaX": 1,
+                      "deltaY": 0
+                    }
+                  ],
+                  "moveTiming": null,
+                  "paidMovementPoints": 1,
+                  "requiredCost": {
+                    "credits": 0,
+                    "energy": 2
+                  },
+                  "endpointFacts": {
+                    "rewards": [
+                      {
+                        "type": "gain_data",
+                        "label": "首次登陆：额外获得 2 个数据",
+                        "icon": "data",
+                        "options": {
+                          "count": 2
+                        },
+                        "id": "planet-reward-0",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "gain_resources",
+                        "label": "获得 6 分",
+                        "icon": "score",
+                        "options": {
+                          "gain": {
+                            "score": 6
+                          }
+                        },
+                        "id": "planet-reward-1",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "alien_trace",
+                        "label": "获得 1 个黄色外星人标记",
+                        "icon": "alien_yellow",
+                        "needsUserChoice": true,
+                        "options": {
+                          "traceType": "yellow"
+                        },
+                        "id": "planet-reward-2",
+                        "status": "pending"
+                      }
+                    ],
+                    "cost": {
+                      "energy": 1
+                    },
+                    "ownMarkers": {
+                      "orbitMarkers": [],
+                      "landingMarkers": [],
+                      "satelliteLandings": []
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "futureDependencies": []
+        },
+        {
+          "actionId": "land:771c7f3f",
+          "actionKey": "{\"family\":\"land\",\"payload\":{},\"target\":{\"select\":true}}",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:3:land:mars:planet:",
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [
+            {
+              "scope": {
+                "kind": "alien",
+                "id": "1:yellow"
+              },
+              "fact": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            },
+            {
+              "scope": {
+                "kind": "route",
+                "id": "land:mars:planet:",
+                "sourceId": "rocket:3"
+              },
+              "fact": [
+                {
+                  "targetId": "land:mars:planet:",
+                  "requirementId": "rocket:3:land:mars:planet:",
+                  "sourceId": "rocket:3",
+                  "rocketId": 3,
+                  "movementSteps": 0,
+                  "movementNextSteps": [
+                    {
+                      "family": "land",
+                      "rocketId": 3,
+                      "planetId": "mars",
+                      "target": {
+                        "type": "planet",
+                        "rocketId": 3
+                      }
+                    }
+                  ],
+                  "moveTiming": null,
+                  "paidMovementPoints": 0,
+                  "requiredCost": {
+                    "credits": 0,
+                    "energy": 1
+                  },
+                  "endpointFacts": {
+                    "rewards": [
+                      {
+                        "type": "gain_data",
+                        "label": "首次登陆：额外获得 2 个数据",
+                        "icon": "data",
+                        "options": {
+                          "count": 2
+                        },
+                        "id": "planet-reward-0",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "gain_resources",
+                        "label": "获得 6 分",
+                        "icon": "score",
+                        "options": {
+                          "gain": {
+                            "score": 6
+                          }
+                        },
+                        "id": "planet-reward-1",
+                        "status": "pending"
+                      },
+                      {
+                        "type": "alien_trace",
+                        "label": "获得 1 个黄色外星人标记",
+                        "icon": "alien_yellow",
+                        "needsUserChoice": true,
+                        "options": {
+                          "traceType": "yellow"
+                        },
+                        "id": "planet-reward-2",
+                        "status": "pending"
+                      }
+                    ],
+                    "cost": {
+                      "energy": 1
+                    },
+                    "ownMarkers": {
+                      "orbitMarkers": [],
+                      "landingMarkers": [],
+                      "satelliteLandings": []
+                    }
+                  }
+                }
+              ]
+            }
+          ],
+          "futureDependencies": []
+        },
+        {
+          "actionId": "choose_target:d64e085d",
+          "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"alienSlotId\":1,\"choiceId\":\"trace:1:yellow\",\"kind\":\"planet-reward-alien-trace\",\"traceType\":\"yellow\"}}",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:3:land:mars:planet:",
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [
+            {
+              "scope": {
+                "kind": "alien",
+                "id": "1:yellow"
+              },
+              "fact": {
+                "extraCount": 0,
+                "extraMarkers": [],
+                "firstPlaced": false,
+                "ownerPlayerColor": null
+              }
+            }
+          ],
+          "futureDependencies": []
+        },
+        {
+          "actionId": "accept_optional_effect:51f32320",
+          "actionKey": "{\"family\":\"accept_optional_effect\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-3-0\",\"choiceId\":\"confirm:trigger:card-3-0:dlc23-orbit-land-score\",\"kind\":\"residual-domain\",\"ruleId\":\"dlc23-orbit-land-score\"}}",
+          "routeTargetId": "land:mars:planet:",
+          "routePlanId": "probe:rocket:3:land:mars:planet:",
+          "actorId": "player-blue",
+          "revealedCount": 0,
+          "valid": true,
+          "reason": null,
+          "dependencies": [],
+          "futureDependencies": []
+        }
+      ]
+    }
+  },
+  "sources": [
+    "launch"
+  ],
+  "rockets": [
+    {
+      "id": 2,
+      "playerId": "player-green",
+      "color": "green",
+      "surface": "solar-board",
+      "sectorX": 4,
+      "sectorY": 2,
+      "slotIndex": 4,
+      "radius": 156.26,
+      "angleDegrees": 112.5,
+      "launchGrid": {
+        "x": 5,
+        "y": 1
+      },
+      "launchSectorCoordinate": {
+        "x": 5,
+        "y": 1
+      },
+      "playerSequence": 2
+    },
+    {
+      "id": 3,
+      "playerId": "player-green",
+      "color": "green",
+      "surface": "solar-board",
+      "sectorX": 3,
+      "sectorY": 1,
+      "slotIndex": 4,
+      "radius": 84.68,
+      "angleDegrees": 67.5,
+      "launchGrid": {
+        "x": 3,
+        "y": 1
+      },
+      "launchSectorCoordinate": {
+        "x": 3,
+        "y": 1
+      },
+      "playerSequence": 1
+    }
+  ],
+  "verifiedThroughStep": 68
+}
