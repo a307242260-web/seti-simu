@@ -108,3 +108,43 @@ for (const abilityId of ["mission_publicity_pick_income", "fenwick_publicity_pic
   }
 }
 console.log("company acquisition policy and plan dependencies passed");
+
+for (const fixture of [
+  { publicity: 2, code: 0, multiplier: 1, expected: true },
+  { publicity: 1, code: 0, multiplier: 1, expected: false },
+  { publicity: 1, code: 3, multiplier: 1, expected: true },
+  { publicity: 0, code: 3, multiplier: 2, expected: true },
+  { publicity: 3, code: 0, multiplier: 1, expected: false },
+  { publicity: 2, code: 1, multiplier: 1, expected: false },
+  { publicity: 0, code: 0, multiplier: 1, ability: "fenwick_publicity_pick_corner", expected: true },
+  { publicity: 0, code: 3, multiplier: 1, ability: "mission_publicity_pick_income", expected: true },
+  { publicity: 0, code: 3, multiplier: 1, ability: "mission_publicity_pick_income", used: true, expected: false },
+]) {
+  const own = structuredClone(before);
+  own.publicState.players[0].credits = 0;
+  own.publicState.players[0].energy = 0;
+  own.publicState.players[0].publicity = fixture.publicity;
+  own.selfState.hand = [{ id: "corner-card", discardActionCode: fixture.code }];
+  own.selfState.companyState = { abilityId: fixture.ability || null, roundMarkRound: fixture.used ? 2 : 0 };
+  const corner = { family: "card_corner", phase: "quick", actorId: "p1", actionId: "corner",
+    target: { cardInstanceId: "corner-card" }, payload: { kind: "resource", multiplier: fixture.multiplier } };
+  const roots = evaluator.enumerateSecondaryAgentRootTargets({ rootObservation: own,
+    focalSeatId: "p1", legalActions: [corner] });
+  assert.equal(roots.some(root => root.targetId === targetId), fixture.expected, JSON.stringify(fixture));
+  assert.equal(evaluator.allowsQuickActionTiming({ observation: own, action: corner,
+    legalActions: [corner], routeTargetId: targetId, routePlanId: targetId }), fixture.expected);
+  const successors = evaluator.selectSecondaryAgentSuccessors({ branchObservation: own,
+    focalSeatId: "p1", currentAction: corner, routeTargetId: targetId, routePlanId: targetId,
+    legalSuccessors: [corner] });
+  assert.equal(successors.some(a => a.actionId === corner.actionId), fixture.expected);
+  // 已有任何正式直接来源，不额外准备宣传（包括两手牌直接精选）。
+  for (const tradeId of ["credits-for-card", "cards-for-pick-card", "publicity-for-card"]) {
+    const direct = { ...trade, actionId: tradeId, target: { tradeId } };
+    assert.equal(evaluator.allowsQuickActionTiming({ observation: own, action: corner,
+      legalActions: [corner, direct], routeTargetId: targetId, routePlanId: targetId }), false);
+  }
+  const gone = structuredClone(own); gone.publicState.board.publicCards = [other];
+  assert.equal(evaluator.allowsQuickActionTiming({ observation: gone, action: corner,
+    legalActions: [corner], routeTargetId: targetId, routePlanId: targetId }), false);
+}
+console.log("public card publicity preparation boundaries passed");

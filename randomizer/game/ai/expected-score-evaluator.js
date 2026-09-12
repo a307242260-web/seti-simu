@@ -1162,13 +1162,38 @@
       || (action.family === "industry" && PUBLIC_CARD_COMPANY_ABILITIES.has(action.target?.abilityId));
   }
 
+  function selectPublicCardGoalActions(observation, legalActions, seatId) {
+    const direct = legalActions.filter(isPublicCardAcquisitionAction);
+    if (direct.length) return direct;
+    const company = observation?.selfState?.companyState;
+    const round = observation?.publicState?.roundNumber;
+    const companyCost = company?.roundMarkRound !== round
+      ? ({ mission_publicity_pick_income: 2, fenwick_publicity_pick_corner: 1 })[company?.abilityId] : null;
+    const cost = Math.min(quickTrades.getTradeAction("publicity-for-card").cost.publicity, companyCost ?? Infinity);
+    const gap = cost - finite(publicPlayerOf(observation, seatId)?.publicity);
+    if (gap <= 0) return [];
+    const hand = new Map((observation?.selfState?.hand || []).map(card => [String(card.id), card]));
+    const preparation = legalActions.filter(action => action.family === "card_corner" && action.payload?.kind === "resource")
+      .map(action => {
+        const reward = cards.getDiscardActionRewardForCard(hand.get(String(action.target?.cardInstanceId)));
+        if (!(finite(reward?.gain?.publicity) > 0)) return { action, publicity: 0 };
+        if (!Number.isInteger(action.payload.multiplier) || action.payload.multiplier < 1) {
+          throw new TypeError("PUBLIC_CARD_PREPARATION_MULTIPLIER_MISSING");
+        }
+        return { action, publicity: reward.gain.publicity * action.payload.multiplier };
+      }).filter(item => item.publicity > 0);
+    // 多张手牌已可直接精选，不需要为了取牌额外排列多次弃牌；只补本次即能满足的缺口。
+    return preparation.filter(item => item.publicity >= gap).map(item => item.action);
+  }
+
   function allowsQuickActionTiming({ observation, action, legalActions = [], routeTargetId, routePlanId }) {
     if (action.phase === "conditional" || CONDITIONAL_FAMILIES.has(action.family)
       || CONTROL_FAMILIES.has(action.family)) return true;
     if (publicPlayerOf(observation, action.actorId)?.mainActionCompleted !== true) return true;
     if (String(routeTargetId || "").startsWith("card:acquire:")) {
       const cardId = routeTargetId.slice("card:acquire:".length);
-      return isPublicCardAcquisitionAction(action)
+      return selectPublicCardGoalActions(observation, legalActions, action.actorId)
+        .some(candidate => candidate.actionId === action.actionId)
         && (observation?.publicState?.board?.publicCards || []).some(card => String(card?.id) === cardId);
     }
     const goal = (rawProbeRequirements(observation)?.candidates || []).find(candidate => (
@@ -2091,7 +2116,7 @@
     ]));
     const round = input.rootObservation?.publicState?.roundNumber || 1;
     const finalRound = input.rootObservation?.outcomeProjection?.progress?.finalRoundNumber || 4;
-    const cardSources = legalActions.filter(isPublicCardAcquisitionAction);
+    const cardSources = selectPublicCardGoalActions(input.rootObservation, legalActions, input.focalSeatId);
     for (const card of input.rootObservation?.publicState?.board?.publicCards || []) {
       if (!card || ordinaryCardEffectValue([card], Math.max(0, finalRound - round), round, finalRound) <= 0) continue;
       const targetId = `card:acquire:${card.id}`;
@@ -3367,7 +3392,7 @@
       if (String(input.routeTargetId || "").startsWith("card:acquire:")) {
         const cardId = input.routeTargetId.slice("card:acquire:".length);
         if (!(input.branchObservation?.publicState?.board?.publicCards || []).some(card => card?.id === cardId)) return [];
-        return bindRoute(successors.filter(isPublicCardAcquisitionAction), input.routeTargetId, input.routePlanId);
+        return bindRoute(selectPublicCardGoalActions(input.branchObservation, successors, focalSeatId), input.routeTargetId, input.routePlanId);
       }
       if (String(input.routeTargetId || "").startsWith("tech:gain:")) {
         const requirements = rawTechGainRequirements(input.branchObservation);

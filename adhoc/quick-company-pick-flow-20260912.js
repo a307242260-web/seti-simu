@@ -7,9 +7,10 @@ const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const evaluator = require("../randomizer/game/ai/expected-score-evaluator");
 const cards = require("../randomizer/game/cards/deck");
 const movementCase = process.argv.includes("--fenwick-move");
+const publicityCase = process.argv.includes("--publicity-prep");
 const gitCommit = execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim();
 const scriptHash = crypto.createHash("sha256").update(fs.readFileSync(__filename)).digest("hex");
-const output = `reports/iteration/quick-company-pick-flow-20260912-${gitCommit.slice(0, 8)}-${scriptHash.slice(0, 8)}${movementCase ? "-fenwick-move" : ""}.json`;
+const output = `reports/iteration/quick-company-pick-flow-20260912-${gitCommit.slice(0, 8)}-${scriptHash.slice(0, 8)}${movementCase ? "-fenwick-move" : publicityCase ? "-publicity-prep" : ""}.json`;
 if (fs.existsSync(output)) { process.stdout.write(`已有checkpoint：${output}\n`); process.exit(0); }
 const source = "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-full-v276.json";
 const save = JSON.parse(fs.readFileSync(source, "utf8"));
@@ -23,7 +24,7 @@ try {
     assert.equal(env.step(action).ok, true);
   }
   const actorId = env.legalActions()[0].actorId;
-  for (const label of movementCase ? ["芬威克研究中心"]
+  for (const label of movementCase || publicityCase ? ["芬威克研究中心"]
     : ["任务中继站", "芬威克研究中心", "深空探测", "未来跨度研究所", "宇宙战略集团"]) {
     const comp = env.createCounterfactualFork().composition;
     try {
@@ -36,6 +37,16 @@ try {
       player.industryRoundMarkTurn = 0;
       player.resources.publicity = 3;
       player.industryStrategyPassiveSlots = { yellow: true, red: true, blue: true };
+      if (publicityCase) {
+        const preparationCard = player.hand.find(card => cards.getDiscardActionRewardForCard(card)?.gain?.publicity > 0);
+        assert(preparationCard, "基线本席必须有真实宣传角标牌");
+        for (const card of player.hand) if (card !== preparationCard) cards.addRemovedFromGame(root.cards, card);
+        player.hand = [preparationCard];
+        player.resources.handSize = 1;
+        player.resources.credits = 0;
+        player.resources.energy = 0;
+        player.resources.publicity = 0;
+      }
       let movementCardId = null;
       if (movementCase) {
         // 基线b_65既有移动角标，也有当前目标目录认可的研究用途；不改牌面定义。
@@ -57,7 +68,7 @@ try {
       const viewer = { role: "player", playerId: actorId };
       const before = comp.projection(viewer).state;
       const legal = comp.inputPort.enumerateActions({ actorId });
-      const action = legal.find(a => a.family === "industry");
+      const action = legal.find(a => a.family === (publicityCase ? "card_corner" : "industry"));
       assert(action, `${label}应有正式合法入口`);
       const catalog = evaluator.enumerateSecondaryAgentRootTargets({ rootObservation: before,
         focalSeatId: actorId, legalActions: legal });
@@ -73,9 +84,25 @@ try {
       assert.equal(allowed, true, "正式公司来源必须通过时机准入");
       assert.equal(comp.inputPort.submitAction(action).ok, true);
       const steps = [];
-      while (comp.inspect().session) {
+      while (comp.inspect().session || (publicityCase
+        && !comp.projection(viewer).state.selfState.hand.some(card => card.id === wanted.id))) {
         assert(steps.length < 20, "必须有限排空公司条件链");
         const inspection = comp.inspect();
+        if (!inspection.session) {
+          const ordinary = comp.inputPort.enumerateActions({ actorId });
+          const selectedActions = evaluator.selectSecondaryAgentSuccessors({ branchObservation: comp.projection(viewer).state,
+            focalSeatId: actorId, currentAction: action, routeTargetId, routePlanId: acquisition.planId,
+            legalSuccessors: ordinary });
+          assert(selectedActions.length && selectedActions.every(a => a.family !== "card_corner"),
+            "宣传缺口满足后必须停止弃牌准备");
+          const planned = selectedActions.find(a => a.family === "industry");
+          const next = ordinary.find(a => a.actionId === planned?.actionId);
+          assert(next, "宣传角标后必须解锁正式公司取牌");
+          steps.push({ phase: "company-after-preparation", action: next,
+            publicity: comp.projection(viewer).state.publicState.players.find(p => p.playerId === actorId).publicity });
+          assert.equal(comp.inputPort.submitAction(next).ok, true);
+          continue;
+        }
         const decision = inspection.session.decision;
         assert(decision, "正式提交应排到输入边界");
         const phase = inspection.session.currentEffect.payload.step;
@@ -119,6 +146,12 @@ try {
         movement.positionAfter = [afterRocket.sectorX, afterRocket.sectorY];
       }
       assert.equal(afterPlayer.mainActionCompleted, true);
+      if (publicityCase) {
+        assert.equal(afterPlayer.resources.credits, 0);
+        assert.equal(afterPlayer.resources.energy, 0);
+        assert(!afterPlayer.hand.some(card => card.id === action.target.cardInstanceId));
+        assert.equal(steps.filter(step => step.phase === "company-after-preparation").length, 1);
+      }
       if (label === "未来跨度研究所") assert.equal(afterPlayer.industryFutureSpan.targetScore, 22);
       if (label === "宇宙战略集团") assert.deepEqual(afterPlayer.industryStrategyPassiveSlots,
         { yellow: false, red: false, blue: false });
