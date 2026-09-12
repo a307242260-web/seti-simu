@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "overflow-trace-greedy-20260912",
+      "name": "同色额外痕迹贪心",
+      "date": "2026-09-12",
+      "baseline": "trace-score-greedy-input-20260912",
+      "head": "126ed66e",
+      "commits": [
+        "8ce4ff92",
+        "25628068",
+        "126ed66e"
+      ],
+      "summary": "已揭示同色额外痕迹按正式收益稳定择一，保留任务、外星牌与特殊槽边界",
+      "records": {
+        "42bace26.126ed66e.full.json": {
+          "note": "本项单步与边界门槛达到；完整局597步，75/125/102/89，均97.75。542步额外痕迹节点686→411，战略总节点233665不变，执行/队列截断54/60；整局1099.970秒，未实现全局提速。仅587步改选额外痕迹槽。交付核验见overflow-trace-full-acceptance-20260912.md，预算专项继续。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "trace-score-greedy-input-20260912",
       "name": "虫族粉黄纯分数贪心",
       "date": "2026-09-12",
