@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-12T17:36:34.024Z",
+  "builtAt": "2026-09-12T18:25:37.776Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "f25cf56c",
-  "currentBaseline": "public-card-runezu-greedy-20260913",
+  "headCommit": "2d76f441",
+  "currentBaseline": "data-trade-greedy-20260913",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,453 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "data-trade-greedy-20260913",
+      "name": "data-trade-greedy-20260913",
+      "date": "2026-09-13",
+      "baseline": "public-card-runezu-greedy-20260913",
+      "head": "f0ce26ea",
+      "commits": [
+        {
+          "hash": "f25cf56c",
+          "date": "2026-09-13",
+          "subject": "归档公共牌交易组合验收与路线保留和退化证据"
+        },
+        {
+          "hash": "abd168bd",
+          "date": "2026-09-13",
+          "subject": "更新公共牌交易组合报告中心并核验退化指标"
+        },
+        {
+          "hash": "4a046f70",
+          "date": "2026-09-13",
+          "subject": "数据目标资源准备按既有成本排序择一并增加验收"
+        },
+        {
+          "hash": "f0ce26ea",
+          "date": "2026-09-13",
+          "subject": "留档数据交易单决策门槛与原获胜路线保留证据"
+        }
+      ],
+      "summary": "同一分析、放置数据与取数据扫描目标的普通资源准备按既有成本排序择一，保留不同卡牌和角标来源",
+      "diffStat": "28 files changed, 173568 insertions(+), 46 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/archive-plan109-review-20260913.js",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-public-card-choice45-20260913.js",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-data-trade-432-20260913.js",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-public-card-rules-20260913.js",
+          "insertions": 25,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/data-trade-432-4a046f70-20260913.json",
+          "insertions": 525,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/data-trade-gate-20260913.md",
+          "insertions": 19,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/data-trade-plan-20260913.md",
+          "insertions": 22,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/move-choice-and-cache-review-20260912.md",
+          "insertions": 8,
+          "deletions": 3
+        },
+        {
+          "file": "adhoc/plan-realization-review-20260913.md",
+          "insertions": 22,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/plan109-realization-review-20260913.json",
+          "insertions": 442,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/public-card-choice45-combined-20260913.json",
+          "insertions": 23637,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/public-card-rules-trajectory-comparison-20260913.json",
+          "insertions": 15,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/public-card-runezu-plan-20260913.md",
+          "insertions": 10,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-public-card-runezu-delivery-20260913.js",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 5,
+          "deletions": 0
+        },
+        {
+          "file": "docs/progress-20260912.md",
+          "insertions": 10,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/data-resource-greedy.test.js",
+          "insertions": 46,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/expected-score-evaluator.js",
+          "insertions": 4,
+          "deletions": 3
+        },
+        {
+          "file": "reports/iteration/public-card-runezu-acceptance-20260913.md",
+          "insertions": 65,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/public-card-runezu-full-comparison-3544e2df-20260913.json",
+          "insertions": 74060,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/public-card-runezu-greedy-20260913/76414b52.3544e2df.full.action-log.html",
+          "insertions": 2172,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 569,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/76414b52.3544e2df.full.json",
+          "insertions": 28153,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 569,
+          "deletions": 4
+        },
+        {
+          "file": "reports/seti-current-base-robot-strategy-20260911.html",
+          "insertions": 34,
+          "deletions": 32
+        },
+        {
+          "file": "seti-saves/seti-save-research-public-card-runezu-greedy-20260913-3544e2df-full-v300.json",
+          "insertions": 42981,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "a608f874.f0ce26ea.full.json",
+          "recordPath": "reports/research/a608f874.f0ce26ea.full.json",
+          "mode": "full",
+          "steps": 551,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 905304,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "f0ce26ea",
+          "createdAt": "2026-09-12T18:15:50.849Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "局部目标通过并合主：551步自然终局，70/135/76/90，均92.75；所有搜索错误为空。执行截断50→45，队列53→48，战略节点208030→190662；均分99→92.75。前316步一致；315共同输入原获胜完整链仍实际保留，新链36.5分替代29.6667分，导致317从扫描改角标。新链41实际执行步的兑现风险另查；不外推全局最优保留。报告中心核验入口adhoc/verify-data-trade-delivery-20260913.js。",
+          "scores": {
+            "player-blue": 70,
+            "player-green": 135,
+            "player-brown": 76,
+            "player-white": 90
+          },
+          "avgScore": 92.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 70,
+              "base": 52,
+              "tile": 16,
+              "card": 2,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 7,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 11,
+                "orbitScore": 15,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 2
+              }
+            },
+            "player-green": {
+              "total": 135,
+              "base": 80,
+              "tile": 43,
+              "card": 12,
+              "tileScoresById": {
+                "a": 33,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 0,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 0,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_31.png",
+                  "rule": {
+                    "count": 2,
+                    "kind": "planetLandingPairs",
+                    "scorePer": 6
+                  },
+                  "score": 12
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 1,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 6,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 22,
+                "orbitScore": 27,
+                "scanScore": 2,
+                "taskCardScore": 7,
+                "techBonusScore": 5
+              }
+            },
+            "player-brown": {
+              "total": 76,
+              "base": 61,
+              "tile": 14,
+              "card": 0,
+              "tileScoresById": {
+                "a": 8,
+                "b": 0,
+                "c": 0,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 10,
+                "orbitScore": 6,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 10
+              }
+            },
+            "player-white": {
+              "total": 90,
+              "base": 60,
+              "tile": 30,
+              "card": 0,
+              "tileScoresById": {
+                "a": 0,
+                "b": 16,
+                "c": 0,
+                "d": 14
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 14,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 9,
+                "blueTechScore": 0,
+                "cardEffectScore": 2,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 10,
+                "orbitScore": 0,
+                "scanScore": 8,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-data-trade-greedy-20260913-f0ce26ea-full-v282.json",
+          "reportPath": "reports/iteration/data-trade-greedy-20260913/a608f874.f0ce26ea.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "a608f874.f0ce26ea.full",
+            "path": "reports/iteration/data-trade-greedy-20260913/a608f874.f0ce26ea.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "public-card-runezu-greedy-20260913",
       "name": "public-card-runezu-greedy-20260913",
@@ -745,7 +1192,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
