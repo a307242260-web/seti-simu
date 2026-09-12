@@ -1,0 +1,20 @@
+{
+  "source": "randomizer/game/ai/heuristic-decision-function.js",
+  "sourceHash": "d39fcaeb85db10c8bcd3f0bb00a0a206128d174a3811f517ce00206b0426ce12",
+  "scope": "真实334根观察复制100份的受控微基准；不代表完整叶分布或正式单决策成绩",
+  "originalMs": 34.020542000000006,
+  "instrumentedMs": 94.853667,
+  "calls": {
+    "isFrozen": 77900,
+    "getPrototypeOf": 77900,
+    "getOwnPropertyDescriptor": 378200,
+    "hasOwn": 283800
+  },
+  "times": {
+    "isFrozen": 3.004216999999869,
+    "getPrototypeOf": 2.8304900000089788,
+    "getOwnPropertyDescriptor": 18.67829000023397,
+    "hasOwn": 10.839641000115762
+  },
+  "candidateMs": 33.480458
+}
