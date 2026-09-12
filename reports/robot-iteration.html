@@ -78,14 +78,14 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-12T13:44:24.578Z",
+  "builtAt": "2026-09-12T14:11:00.257Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "9e098475",
-  "currentBaseline": "probe-move-greedy-20260912",
+  "headCommit": "99a53b74",
+  "currentBaseline": "income-target-fix-20260912",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -194,6 +194,423 @@ const REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "income-target-fix-20260912",
+      "name": "income-target-fix-20260912",
+      "date": "2026-09-12",
+      "baseline": "probe-move-greedy-20260912",
+      "head": "d3563b98",
+      "commits": [
+        {
+          "hash": "9e098475",
+          "date": "2026-09-12",
+          "subject": "记录普通移动择一完整局验收及降分风险"
+        },
+        {
+          "hash": "4e160caf",
+          "date": "2026-09-12",
+          "subject": "更新普通移动迭代报告中心并记录主目录核验"
+        },
+        {
+          "hash": "5056e41b",
+          "date": "2026-09-12",
+          "subject": "修正重组一次性奖励误入永久收入目标并保存复现证据"
+        },
+        {
+          "hash": "d3563b98",
+          "date": "2026-09-12",
+          "subject": "记录收入目标修复单决策性能门槛通过"
+        }
+      ],
+      "summary": "永久收入目标排除重组的一次性收入角奖励，保留真实收入选择与本牌插收入，合法打牌和预算不变",
+      "diffStat": "22 files changed, 195764 insertions(+), 45 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/benchmark-income-target-20260912.js",
+          "insertions": 44,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-budget-step462-20260912.js",
+          "insertions": 36,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/compare-probe-move-full-20260912.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-income-discard-order-20260912.js",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 3,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/app/income-target-classification.test.js",
+          "insertions": 83,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/production-kernel.js",
+          "insertions": 0,
+          "deletions": 1
+        },
+        {
+          "file": "reports/iteration/budget-before-step462-20260912.json",
+          "insertions": 4318,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/income-budget-plan-20260912.md",
+          "insertions": 75,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/income-discard-order-20260912.json",
+          "insertions": 47126,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/income-target-step462-5056e41b-20260912.json",
+          "insertions": 4817,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/move-budget-plan-20260912.md",
+          "insertions": 5,
+          "deletions": 2
+        },
+        {
+          "file": "reports/iteration/probe-move-full-acceptance-20260912.md",
+          "insertions": 41,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-move-full-comparison-d59d423f-20260912.json",
+          "insertions": 72989,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-move-greedy-20260912/82762123.d59d423f.full.action-log.html",
+          "insertions": 2036,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 462,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "reports/research/82762123.d59d423f.full.json",
+          "insertions": 23677,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 462,
+          "deletions": 4
+        },
+        {
+          "file": "reports/seti-current-base-robot-strategy-20260911.html",
+          "insertions": 36,
+          "deletions": 34
+        },
+        {
+          "file": "seti-saves/seti-save-research-probe-move-greedy-20260912-d59d423f-full-v270.json",
+          "insertions": 39451,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 1,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "ff5ca313.d3563b98.full.json",
+          "recordPath": "reports/research/ff5ca313.d3563b98.full.json",
+          "mode": "full",
+          "steps": 532,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 706670,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "d3563b98",
+          "createdAt": "2026-09-12T14:06:49.391Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": null,
+          "scores": {
+            "player-blue": 91,
+            "player-green": 96,
+            "player-brown": 96,
+            "player-white": 77
+          },
+          "avgScore": 90,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 91,
+              "base": 65,
+              "tile": 22,
+              "card": 4,
+              "tileScoresById": {
+                "a": 0,
+                "b": 12,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 12,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 4
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 1,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 2,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 12,
+                "orbitScore": 21,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 4
+              }
+            },
+            "player-green": {
+              "total": 96,
+              "base": 62,
+              "tile": 19,
+              "card": 15,
+              "tileScoresById": {
+                "a": 11,
+                "b": 8,
+                "c": 0,
+                "d": 0
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 11,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 15
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 8,
+                "blueTechScore": 0,
+                "cardEffectScore": 4,
+                "cardQuickScore": 2,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 12,
+                "orbitScore": 9,
+                "scanScore": 6,
+                "taskCardScore": 0,
+                "techBonusScore": 0
+              }
+            },
+            "player-brown": {
+              "total": 96,
+              "base": 71,
+              "tile": 25,
+              "card": 0,
+              "tileScoresById": {
+                "a": 0,
+                "b": 4,
+                "c": 0,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 0,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 0,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 4,
+                  "score": 4,
+                  "slotIndex": 3,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 13,
+                "blueTechScore": 2,
+                "cardEffectScore": 4,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 20,
+                "orbitScore": 0,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 15
+              }
+            },
+            "player-white": {
+              "total": 77,
+              "base": 58,
+              "tile": 19,
+              "card": 0,
+              "tileScoresById": {
+                "a": 16,
+                "b": 0,
+                "c": 0,
+                "d": 3
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 3,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 14,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 0,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 0,
+                "orbitScore": 12,
+                "scanScore": 13,
+                "taskCardScore": 0,
+                "techBonusScore": 4
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-income-target-fix-20260912-d3563b98-full-v265.json",
+          "reportPath": "reports/iteration/income-target-fix-20260912/ff5ca313.d3563b98.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "ff5ca313.d3563b98.full",
+            "path": "reports/iteration/income-target-fix-20260912/ff5ca313.d3563b98.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "probe-move-greedy-20260912",
       "name": "probe-move-greedy-20260912",
@@ -638,7 +1055,7 @@ const REGISTRY = {
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,
