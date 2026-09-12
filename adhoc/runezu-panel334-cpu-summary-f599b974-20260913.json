@@ -1,0 +1,490 @@
+{
+  "source": "adhoc/runezu-panel334-f599b974-20260913.cpuprofile",
+  "sha256": "804e5bfd996b122eb7acb17311dee7a77618d2575d749b70574e40a433f13a0c",
+  "durationMs": 66589.875,
+  "note": "V8统计采样估计，包含基准脚本在决策后额外一次赢家评分及落盘；inclusive有嵌套不可求和，不替代冷门槛时间",
+  "topSelf": [
+    {
+      "id": 4689,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 10503.61999999994,
+      "inclusiveMs": 26276.235000001827
+    },
+    {
+      "id": 4690,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 9791.941000000044,
+      "inclusiveMs": 15760.364999999181
+    },
+    {
+      "id": 4688,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 5382.740000000074,
+      "inclusiveMs": 31658.975000003476
+    },
+    {
+      "id": 507,
+      "function": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "selfMs": 4361.220000000004,
+      "inclusiveMs": 4361.220000000004
+    },
+    {
+      "id": 4687,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 3676.3159999999843,
+      "inclusiveMs": 35336.79100000382
+    },
+    {
+      "id": 4691,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 3369.46699999998,
+      "inclusiveMs": 5962.3810000001
+    },
+    {
+      "id": 4692,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 1725.0339999999935,
+      "inclusiveMs": 2592.9139999999857
+    },
+    {
+      "id": 4686,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 1600.5529999999947,
+      "inclusiveMs": 36940.34400000384
+    },
+    {
+      "id": 4601,
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 1295.166999999999,
+      "inclusiveMs": 1295.166999999999
+    },
+    {
+      "id": 4622,
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 1127.3820000000012,
+      "inclusiveMs": 1127.3820000000012
+    },
+    {
+      "id": 964,
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 958.7110000000002,
+      "inclusiveMs": 958.7110000000002
+    },
+    {
+      "id": 4693,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 862.3800000000018,
+      "inclusiveMs": 867.8800000000018
+    },
+    {
+      "id": 4682,
+      "function": "",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 135,
+      "selfMs": 841.6660000000021,
+      "inclusiveMs": 38874.41100000388
+    },
+    {
+      "id": 4685,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 753.9870000000009,
+      "inclusiveMs": 37694.33100000385
+    },
+    {
+      "id": 4632,
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 704.7490000000006,
+      "inclusiveMs": 704.7490000000006
+    },
+    {
+      "id": 1188,
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 517.9949999999999,
+      "inclusiveMs": 517.9949999999999
+    },
+    {
+      "id": 1529,
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 423.13099999999986,
+      "inclusiveMs": 423.13099999999986
+    },
+    {
+      "id": 1091,
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 418.59199999999976,
+      "inclusiveMs": 418.59199999999976
+    },
+    {
+      "id": 4738,
+      "function": "copySerializable",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/policy-port.js",
+      "line": 50,
+      "selfMs": 400.1239999999997,
+      "inclusiveMs": 832.5060000000008
+    },
+    {
+      "id": 998,
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 389.5879999999996,
+      "inclusiveMs": 391.0879999999996
+    },
+    {
+      "id": 1276,
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 317.0369999999999,
+      "inclusiveMs": 317.0369999999999
+    },
+    {
+      "id": 1668,
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 278.083,
+      "inclusiveMs": 279.58299999999997
+    },
+    {
+      "id": 4684,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 263.1199999999999,
+      "inclusiveMs": 37957.45100000385
+    },
+    {
+      "id": 4739,
+      "function": "copySerializable",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/policy-port.js",
+      "line": 50,
+      "selfMs": 225.08700000000002,
+      "inclusiveMs": 367.00499999999977
+    },
+    {
+      "id": 950,
+      "function": "stableSerialize",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/state/state-store.js",
+      "line": 46,
+      "selfMs": 202.668,
+      "inclusiveMs": 696.4150000000001
+    }
+  ],
+  "topProjectInclusive": [
+    {
+      "id": 587,
+      "function": "runHeuristicPolicyDecision",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/app/simulation-env.js",
+      "line": 609,
+      "selfMs": 0,
+      "inclusiveMs": 62056.65600000364
+    },
+    {
+      "id": 638,
+      "function": "runDecision",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/machine-player-coordinator.js",
+      "line": 130,
+      "selfMs": 0,
+      "inclusiveMs": 62048.03100000364
+    },
+    {
+      "id": 663,
+      "function": "run",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 229,
+      "selfMs": 0,
+      "inclusiveMs": 62030.11400000364
+    },
+    {
+      "id": 4680,
+      "function": "policyOutcomeView",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 105,
+      "selfMs": 0,
+      "inclusiveMs": 38877.41100000388
+    },
+    {
+      "id": 4681,
+      "function": "",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 133,
+      "selfMs": 3,
+      "inclusiveMs": 38877.41100000388
+    },
+    {
+      "id": 4682,
+      "function": "",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 135,
+      "selfMs": 841.6660000000021,
+      "inclusiveMs": 38874.41100000388
+    },
+    {
+      "id": 4683,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 75.29400000000001,
+      "inclusiveMs": 38032.74500000385
+    },
+    {
+      "id": 4684,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 263.1199999999999,
+      "inclusiveMs": 37957.45100000385
+    },
+    {
+      "id": 4685,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 753.9870000000009,
+      "inclusiveMs": 37694.33100000385
+    },
+    {
+      "id": 4686,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 1600.5529999999947,
+      "inclusiveMs": 36940.34400000384
+    },
+    {
+      "id": 4687,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 3676.3159999999843,
+      "inclusiveMs": 35336.79100000382
+    },
+    {
+      "id": 4688,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 5382.740000000074,
+      "inclusiveMs": 31658.975000003476
+    },
+    {
+      "id": 4689,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 10503.61999999994,
+      "inclusiveMs": 26276.235000001827
+    },
+    {
+      "id": 667,
+      "function": "evaluateActions",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 160,
+      "selfMs": 40.45700000000001,
+      "inclusiveMs": 17659.738999999885
+    },
+    {
+      "id": 668,
+      "function": "evaluateCounterfactualOutcomes",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/rule-composition.js",
+      "line": 977,
+      "selfMs": 150.70499999999998,
+      "inclusiveMs": 17616.281999999883
+    },
+    {
+      "id": 4690,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 9791.941000000044,
+      "inclusiveMs": 15760.364999999181
+    },
+    {
+      "id": 716,
+      "function": "executeNode",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/rule-composition.js",
+      "line": 1628,
+      "selfMs": 34.251000000000005,
+      "inclusiveMs": 11413.694999999987
+    },
+    {
+      "id": 4691,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 3369.46699999998,
+      "inclusiveMs": 5962.3810000001
+    },
+    {
+      "id": 807,
+      "function": "captureStep",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/rule-composition.js",
+      "line": 1720,
+      "selfMs": 9.002,
+      "inclusiveMs": 3938.7659999999933
+    },
+    {
+      "id": 4597,
+      "function": "projectOutcomeObservations",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/outcome-model.js",
+      "line": 530,
+      "selfMs": 0,
+      "inclusiveMs": 3856.6639999999916
+    },
+    {
+      "id": 808,
+      "function": "projection",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/rule-composition.js",
+      "line": 578,
+      "selfMs": 0,
+      "inclusiveMs": 3082.7949999999914
+    },
+    {
+      "id": 809,
+      "function": "projectionInner",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/rule-composition.js",
+      "line": 582,
+      "selfMs": 1.5,
+      "inclusiveMs": 3082.7949999999914
+    },
+    {
+      "id": 763,
+      "function": "addLeaf",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/rule-composition.js",
+      "line": 1577,
+      "selfMs": 13.415000000000001,
+      "inclusiveMs": 3044.6279999999942
+    },
+    {
+      "id": 4692,
+      "function": "canShare",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/heuristic-decision-function.js",
+      "line": 108,
+      "selfMs": 1725.0339999999935,
+      "inclusiveMs": 2592.9139999999857
+    },
+    {
+      "id": 764,
+      "function": "fullLeafObservation",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/rule-composition.js",
+      "line": 1553,
+      "selfMs": 0,
+      "inclusiveMs": 2567.9519999999957
+    },
+    {
+      "id": 4602,
+      "function": "",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/outcome-model.js",
+      "line": 537,
+      "selfMs": 2.541,
+      "inclusiveMs": 2349.830999999991
+    },
+    {
+      "id": 4608,
+      "function": "",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/outcome-model.js",
+      "line": 542,
+      "selfMs": 30.997000000000003,
+      "inclusiveMs": 2346.998999999991
+    },
+    {
+      "id": 4609,
+      "function": "createDecisionObservation",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/outcome-model.js",
+      "line": 405,
+      "selfMs": 2.917,
+      "inclusiveMs": 2316.001999999991
+    },
+    {
+      "id": 765,
+      "function": "projection",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/rule-composition.js",
+      "line": 578,
+      "selfMs": 1.5,
+      "inclusiveMs": 2290.4619999999954
+    },
+    {
+      "id": 766,
+      "function": "projectionInner",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/rule-composition.js",
+      "line": 582,
+      "selfMs": 0,
+      "inclusiveMs": 2288.9619999999954
+    },
+    {
+      "id": 966,
+      "function": "committedProjection",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/rule-composition.js",
+      "line": 560,
+      "selfMs": 1.459,
+      "inclusiveMs": 2015.4279999999962
+    },
+    {
+      "id": 1127,
+      "function": "projectState",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/production-kernel.js",
+      "line": 1539,
+      "selfMs": 2.959,
+      "inclusiveMs": 1772.4659999999976
+    },
+    {
+      "id": 755,
+      "function": "projection",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/rule-composition.js",
+      "line": 578,
+      "selfMs": 0,
+      "inclusiveMs": 1671.924999999998
+    },
+    {
+      "id": 756,
+      "function": "projectionInner",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/rule-composition.js",
+      "line": 582,
+      "selfMs": 0,
+      "inclusiveMs": 1671.924999999998
+    },
+    {
+      "id": 4612,
+      "function": "createOutcomeProjection",
+      "file": "file:///private/tmp/seti-runezu-panel-fix-20260913.XyRaVv/randomizer/game/ai/outcome-model.js",
+      "line": 325,
+      "selfMs": 9.997000000000002,
+      "inclusiveMs": 1464.209999999998
+    }
+  ]
+}
