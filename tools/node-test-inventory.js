@@ -12,7 +12,7 @@ module.exports = Object.freeze({
     entry("randomizer/app/income-target-classification.test.js", "policy/heuristic-policy", "收入目标只准入真正增加永久收入的牌", "一次性收入角资源被误当作永久收入或真实收入牌被排除"),
     entry("tools/robot-report-replay.test.js", "training/reporting", "重放失败显式抛错，元数据刷新保持所有历史行动及得分正文", "部分重放或任意选项冒充成功并覆盖原报告，刷新元数据触发规则重放"),
     entry("tools/robot-report-link.test.js", "training/reporting", "版本复盘页研究链接解析到正式研究文件，无记录页不虚构链接", "重复目录前缀导致离线报告链接指向不存在的文件"),
-    entry("randomizer/game/ai/public-card-goal.test.js", "policy/heuristic-policy", "指定公共牌目标贯穿根准入、选择、实际入手完成、叶目的与复用", "把尚未取得当离手完成、盲抽代替指定牌、同槽替换漏检或用后来入手掩盖根交易失败"),
+    entry("randomizer/game/ai/public-card-goal.test.js", "policy/heuristic-policy", "指定公共牌目标贯穿根准入、成本代表、选择、实际入手完成、叶目的与复用", "错误完成、盲抽代替指定牌、成本代表不稳定、误删公司或未知支付、同槽替换漏检"),
     entry("randomizer/game/ai/quick-timing-contract.test.js", "architecture/policy-host", "主行动阶段及移动时机观察与正式执行、转动和恢复一致且读取无副作用", "过滤control后无法辨认阶段，未完成付款就计算时机收益，或恢复沿用旧转动缓存"),
     entry("randomizer/game/ai/turing-active-tech.test.js", "policy/heuristic-policy", "图灵重复永久能力在启用和选择处剪枝，保留失效科技与其他公司", "读取根科技或显示文案误删真实能力、强制Decision变空"),
     entry("randomizer/game/ai/turing-immediate-expiry.test.js", "policy/heuristic-policy", "图灵刚借完科技不搜索立即结束回合，保留其他后继与正式根选择", "空借跨回合占用队列或误删其他公司的结束动作"),

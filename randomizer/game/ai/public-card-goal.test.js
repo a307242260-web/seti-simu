@@ -148,3 +148,37 @@ for (const fixture of [
     legalActions: [corner], routeTargetId: targetId, routePlanId: targetId }), false);
 }
 console.log("public card publicity preparation boundaries passed");
+
+// 同一目标的普通交易择一，公司收益不能被资源成本替代。
+const transactionIds = ["credits-for-card", "energy-for-card", "publicity-for-card", "cards-for-pick-card"];
+const transactions = transactionIds.map(id => ({ ...trade, actionId: id, target: { tradeId: id } }));
+const companySource = { family: "industry", phase: "quick", actorId: "p1", actionId: "company-pick",
+  target: { abilityId: "mission_publicity_pick_income" }, payload: {} };
+function acquisitionSelection(own, actions) {
+  return evaluator.selectSecondaryAgentSuccessors({ branchObservation: own, focalSeatId: "p1",
+    currentAction: { family: "end_turn", phase: "turn_control" }, routeTargetId: targetId,
+    routePlanId: targetId, legalSuccessors: actions }).map(a => a.actionId).sort();
+}
+const paymentObservation = structuredClone(before);
+paymentObservation.publicState.roundNumber = 4;
+paymentObservation.selfState.hand = [{ id: "pay1", cardId: "b_1.webp" }, { id: "pay2", cardId: "b_2.webp" }];
+const unchanged = JSON.stringify(paymentObservation);
+assert.deepEqual(acquisitionSelection(paymentObservation, [...transactions, companySource]),
+  ["company-pick", "energy-for-card"]);
+assert.deepEqual(acquisitionSelection(paymentObservation, [...transactions].reverse()), ["energy-for-card"]);
+assert.deepEqual(acquisitionSelection(paymentObservation, transactions.filter(a => a.actionId !== "energy-for-card")),
+  ["credits-for-card"], "首选不合法时沿成本选择剩余来源");
+const firstRound = structuredClone(paymentObservation);
+firstRound.publicState.roundNumber = 1;
+assert.deepEqual(acquisitionSelection(firstRound, transactions), ["cards-for-pick-card"], "平价按actionId稳定选择");
+firstRound.selfState.hand = firstRound.selfState.hand.map(c => ({ ...c, kind: "alien" }));
+assert.deepEqual(acquisitionSelection(firstRound, transactions), ["publicity-for-card"], "外星牌不能按普通牌成本估计");
+const hiddenPayment = structuredClone(paymentObservation);
+hiddenPayment.selfState.hand[0] = { id: "hidden-pay", hidden: true };
+assert.deepEqual(acquisitionSelection(hiddenPayment, transactions), ["cards-for-pick-card", "energy-for-card"],
+  "未知手牌付款分支保留，不推断隐藏牌价");
+assert.equal(JSON.stringify(paymentObservation), unchanged);
+const greedyRoots = evaluator.enumerateSecondaryAgentRootTargets({ rootObservation: paymentObservation,
+  focalSeatId: "p1", legalActions: transactions }).find(t => t.targetId === targetId);
+assert.deepEqual(greedyRoots.compatibleActionIds, ["energy-for-card"]);
+console.log("public card trade cost representative tests passed");

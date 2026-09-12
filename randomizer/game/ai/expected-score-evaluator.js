@@ -1184,7 +1184,34 @@
 
   function selectPublicCardGoalActions(observation, legalActions, seatId) {
     const direct = legalActions.filter(isPublicCardAcquisitionAction);
-    if (direct.length) return direct;
+    if (direct.length) {
+      const round = observation?.publicState?.roundNumber || 1;
+      const finalRound = observation?.outcomeProjection?.progress?.finalRoundNumber || 4;
+      const hand = observation?.selfState?.playerId === seatId ? observation.selfState.hand : null;
+      const knownHand = Array.isArray(hand) && hand.every(card => card && !card.hidden
+        && card.faceUp !== false && (card.cardId || outcomeModel.isAlienCard(card)));
+      const handCosts = knownHand ? hand.map(card => resourceUnitValue(
+        outcomeModel.isAlienCard(card) ? "alienCard" : "ordinaryCard", round, finalRound,
+      )).sort((a, b) => a - b) : [];
+      const priced = [], retained = [];
+      for (const action of direct) {
+        // 公司可能带额外奖励；未知手牌不能假定为低价普通牌。
+        if (action.family !== "quick_trade") { retained.push(action); continue; }
+        const cost = quickTrades.getTradeAction(action.target.tradeId).cost;
+        const handCount = cost.handSize || 0;
+        if (handCount && (!knownHand || handCosts.length < handCount)) {
+          retained.push(action); continue;
+        }
+        const price = ["credits", "energy", "publicity"].reduce((total, key) => (
+          total + finite(cost[key]) * resourceUnitValue(key, round, finalRound)
+        ), handCosts.slice(0, handCount).reduce((total, value) => total + value, 0));
+        priced.push({ action, price });
+      }
+      // 剩余资源不同，不是等价去重；这里只选择成本代表，正式付款选择仍执行规则。
+      priced.sort((a, b) => a.price - b.price || String(a.action.actionId).localeCompare(String(b.action.actionId)));
+      const selected = new Set([...retained, ...(priced.length ? [priced[0].action] : [])]);
+      return direct.filter(action => selected.has(action));
+    }
     const company = observation?.selfState?.companyState;
     const round = observation?.publicState?.roundNumber;
     const companyCost = company?.roundMarkRound !== round
