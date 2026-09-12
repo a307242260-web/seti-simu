@@ -1,0 +1,174 @@
+{
+  "base": "1e3cc2e6",
+  "scope": "334共同状态正式12步前缀，分别执行符文族粉1/4位，检查规则要求的符号领取",
+  "cases": [
+    {
+      "position": 1,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:846d9651",
+        "actorId": "player-blue",
+        "stateVersion": 164,
+        "decisionVersion": 5,
+        "target": {
+          "choiceId": "trace:2:pink:runezu:1",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 2,
+          "traceType": "pink",
+          "speciesId": "runezu",
+          "position": 1
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 2 粉1号位"
+      },
+      "slotId": "panel_1",
+      "symbolId": "symbol_2",
+      "countsBefore": {
+        "symbol_1": 0,
+        "symbol_2": 0,
+        "symbol_3": 0,
+        "symbol_4": 0,
+        "symbol_5": 0,
+        "symbol_6": 0,
+        "symbol_7": 0
+      },
+      "countsAfter": {
+        "symbol_1": 0,
+        "symbol_2": 1,
+        "symbol_3": 0,
+        "symbol_4": 1,
+        "symbol_5": 0,
+        "symbol_6": 0,
+        "symbol_7": 0
+      },
+      "panelBefore": {
+        "sequence": 1,
+        "slotId": "panel_1",
+        "symbolId": "symbol_2"
+      },
+      "panelAfter": {
+        "sequence": 1,
+        "slotId": "panel_1",
+        "symbolId": "symbol_5"
+      },
+      "bagBefore": [
+        "symbol_5",
+        "symbol_4",
+        "symbol_6",
+        "symbol_1",
+        "symbol_3",
+        "symbol_3",
+        "symbol_1",
+        "symbol_4",
+        "symbol_7",
+        "symbol_2",
+        "symbol_1",
+        "symbol_5",
+        "symbol_7",
+        "symbol_3"
+      ],
+      "bagAfter": [
+        "symbol_4",
+        "symbol_6",
+        "symbol_1",
+        "symbol_3",
+        "symbol_3",
+        "symbol_1",
+        "symbol_4",
+        "symbol_7",
+        "symbol_2",
+        "symbol_1",
+        "symbol_5",
+        "symbol_7",
+        "symbol_3"
+      ],
+      "scoreDelta": 3,
+      "missingSymbol": false
+    },
+    {
+      "position": 4,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:d4839b8f",
+        "actorId": "player-blue",
+        "stateVersion": 164,
+        "decisionVersion": 5,
+        "target": {
+          "choiceId": "trace:2:pink:runezu:4",
+          "kind": "planet-reward-alien-trace",
+          "alienSlotId": 2,
+          "traceType": "pink",
+          "speciesId": "runezu",
+          "position": 4
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "外星人 2 粉4号位"
+      },
+      "slotId": "panel_4",
+      "symbolId": "symbol_7",
+      "countsBefore": {
+        "symbol_1": 0,
+        "symbol_2": 0,
+        "symbol_3": 0,
+        "symbol_4": 0,
+        "symbol_5": 0,
+        "symbol_6": 0,
+        "symbol_7": 0
+      },
+      "countsAfter": {
+        "symbol_1": 0,
+        "symbol_2": 0,
+        "symbol_3": 0,
+        "symbol_4": 1,
+        "symbol_5": 0,
+        "symbol_6": 0,
+        "symbol_7": 1
+      },
+      "panelBefore": {
+        "sequence": 4,
+        "slotId": "panel_4",
+        "symbolId": "symbol_7"
+      },
+      "bagBefore": [
+        "symbol_5",
+        "symbol_4",
+        "symbol_6",
+        "symbol_1",
+        "symbol_3",
+        "symbol_3",
+        "symbol_1",
+        "symbol_4",
+        "symbol_7",
+        "symbol_2",
+        "symbol_1",
+        "symbol_5",
+        "symbol_7",
+        "symbol_3"
+      ],
+      "bagAfter": [
+        "symbol_5",
+        "symbol_4",
+        "symbol_6",
+        "symbol_1",
+        "symbol_3",
+        "symbol_3",
+        "symbol_1",
+        "symbol_4",
+        "symbol_7",
+        "symbol_2",
+        "symbol_1",
+        "symbol_5",
+        "symbol_7",
+        "symbol_3"
+      ],
+      "scoreDelta": 10,
+      "missingSymbol": false
+    }
+  ]
+}

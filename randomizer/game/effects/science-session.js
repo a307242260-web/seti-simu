@@ -1685,6 +1685,20 @@
         if (!actor || !result?.ok) return result || fail("SCIENCE_TRACE_ACTOR_STALE", "外星人痕迹放置者已失效");
         const spawnedEffects = [];
         let irreversible = null;
+        if (result.reward?.panelSymbol) {
+          if (!result.reward.panelSymbolSlotId) {
+            return fail("SCIENCE_TRACE_PANEL_SYMBOL_INVALID", "痕迹符号奖励缺少面板位置");
+          }
+          const refill = Boolean(result.reward.refillPanelSymbol);
+          const taken = aliens.runezu.takePanelSymbol(
+            getWorkingSlice(root, "aliens"), result.reward.panelSymbolSlotId, actor,
+            { refill, random: () => nextCommittedRandom(root) },
+          );
+          if (!taken.ok) return fail("SCIENCE_TRACE_PANEL_SYMBOL_FAILED", taken.message);
+          if (refill && taken.refilledSymbolId) {
+            irreversible = { code: "hidden_symbol_reveal", reason: "符文痕迹奖励补充了隐藏面板符号" };
+          }
+        }
         // 物种位置奖励（含虫族面板化石）→ 计入对应颜色踪迹得分来源。
         if (result.reward?.gain && Object.keys(result.reward.gain).some((key) => Number(result.reward.gain[key]) !== 0)) {
           const traceType = String(choice?.target?.traceType || "yellow");

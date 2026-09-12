@@ -16,11 +16,11 @@
 符文族状态挂在 `alienGameState.runezu`：
 
 - `revealedSlotId`：当前揭示到的外星人槽位。
-- `symbolBag`：剩余符号池，7 种 symbol 各 5 个。
-- `sourceSymbols`：星球、具名星云扇区、带 2 分首取 bonus 的科技板块上的符号。
-- `panelSymbols`：正面 6 个白色圆框上的符号。
-- `faceSlots`：7 个黑圈的正式已放置符号与玩家归属。
-- `traceGrid`：三色痕迹各 1-4 号位；1 号位支持叠放，2/3/4 号位单占用。
+- `availableSymbols`：已洗好的剩余符号池，初始化为7种 symbol 各5个。
+- `sourceSymbolSlots`：星球、具名星云扇区、带2分首取 bonus 的科技板块上的符号。
+- `panelSymbolSlots`：正面6个白色圆框上的符号。
+- `faceSymbolSlots`：7个黑圈的正式已放置符号与玩家归属。
+- `traceSlotsByAlienSlotId`：按外星人槽存放三色痕迹各1-4号位；1号位支持叠放，2/3/4号位单占用。
 - `cardDeck` / `displayedCardIndex`：符文族牌堆和展示牌；卡牌实例序号统一由 canonical `meta.sequences.alienEntity` 分配。
 
 玩家持有的符号记录在 `player.runezuSymbols`，通过 `getPlayerSymbolCounts`读取；已放入黑圈的符号会从玩家库存扣除。
@@ -46,6 +46,12 @@
 - 2 号位给 2 分和 1 张符文族牌。
 - 3 号位给 3 分和 1 张符文族牌。
 - 4 号位给 7 分和对应白色圆框符号，不补回。
+
+共享 Science 痕迹结算消费物种返回的 `panelSymbolSlotId`，通过正式
+`takePanelSymbol` 发放库存并更新面板；缺失面板符号显式失败，不提交工作状态。
+1号位补充从已洗好的池首取，补出的符号构成新信息边界；池空时沿用原语的随机
+补充规则，显式注入 Science 已提交RNG，禁止使用环境随机数。4号位不消耗补充随机数。
+三色映射由物种奖励提供，Science 不另维护位置映射。
 
 符文族牌获取会弹出“拿展示牌 / 盲抽 / 取消”。拿展示牌后刷新展示牌，盲抽会从牌堆随机拿牌；两者都属于新信息边界。
 
