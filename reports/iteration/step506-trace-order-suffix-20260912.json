@@ -1,0 +1,1040 @@
+{
+  "source": "/Users/bilibili/code/seti-simu/seti-saves/seti-save-research-frontier-materialization-20260912-eee63294-full-v285.json",
+  "codeCommit": "312f70af0572495ab5a88e146cb1ecbca2cdbb1a",
+  "orders": [
+    [
+      "trace:2:pink:chong:2",
+      "trace:2:yellow:chong:2"
+    ],
+    [
+      "trace:2:yellow:chong:2",
+      "trace:2:pink:chong:2"
+    ]
+  ],
+  "verifiedSteps": 82,
+  "legalActionsEqual": true,
+  "allRecordedAfterEqual": true,
+  "fullStateEqualExceptTwoTraceSequencesAndTheirSessionCopies": true,
+  "differencesByStep": [
+    {
+      "step": 515,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 516,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 517,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/2/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/2/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 518,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/2/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/2/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/3/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/3/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 519,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 520,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 521,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 522,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 523,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 524,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 525,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 526,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 527,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 528,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 529,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 530,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 531,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 532,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 533,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 534,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 535,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 536,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 537,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 538,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 539,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 540,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/2/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/2/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/3/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/3/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 541,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 542,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 543,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 544,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 545,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 546,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 547,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 548,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 549,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 550,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 551,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 552,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 553,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 554,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 555,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 556,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 557,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 558,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 559,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 560,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 561,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 562,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 563,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 564,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 565,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 566,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 567,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 568,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/2/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/2/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/3/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/3/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 569,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 570,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 571,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 572,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 573,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 574,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 575,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 576,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 577,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 578,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 579,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 580,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 581,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 582,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 583,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 584,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 585,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 586,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 587,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 588,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 589,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 590,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/1/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 591,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 592,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 593,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 594,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/baseState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/workingState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/session/session/undoFrames/0/stateBefore/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 595,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 596,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    },
+    {
+      "step": 597,
+      "paths": [
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/pink/2/sequence",
+        "/committedState/aliens/chong/traceSlotsByAlienSlotId/2/yellow/2/sequence"
+      ]
+    }
+  ],
+  "finalScores": [
+    {
+      "baseScore": 54,
+      "cardScore": 2,
+      "cards": [
+        {
+          "cardId": "b_33.webp",
+          "rule": {
+            "kind": "techCount",
+            "scorePer": 2,
+            "techType": "blue"
+          },
+          "score": 2
+        }
+      ],
+      "jiuzheCardScore": 0,
+      "jiuzheCards": [],
+      "jiuzhePenaltyApplied": false,
+      "jiuzhePenaltyScore": 0,
+      "jiuzheThreat": 0,
+      "playerId": "player-blue",
+      "prePenaltyTotalScore": 75,
+      "runezuSymbolScore": 0,
+      "tileScore": 19,
+      "tileScoresById": {
+        "a": 16,
+        "b": 0,
+        "c": 0,
+        "d": 3
+      },
+      "tiles": [
+        {
+          "baseValue": 2,
+          "formulaId": "a2",
+          "multiplier": 8,
+          "score": 16,
+          "slotIndex": 2,
+          "tileId": "a",
+          "variant": 2
+        },
+        {
+          "baseValue": 1,
+          "formulaId": "d2",
+          "multiplier": 3,
+          "score": 3,
+          "slotIndex": 3,
+          "tileId": "d",
+          "variant": 2
+        }
+      ],
+      "totalScore": 75
+    },
+    {
+      "baseScore": 89,
+      "cardScore": 0,
+      "cards": [],
+      "jiuzheCardScore": 0,
+      "jiuzheCards": [],
+      "jiuzhePenaltyApplied": false,
+      "jiuzhePenaltyScore": 0,
+      "jiuzheThreat": 0,
+      "playerId": "player-green",
+      "prePenaltyTotalScore": 125,
+      "runezuSymbolScore": 0,
+      "tileScore": 36,
+      "tileScoresById": {
+        "a": 22,
+        "b": 8,
+        "c": 0,
+        "d": 6
+      },
+      "tiles": [
+        {
+          "baseValue": 2,
+          "formulaId": "a2",
+          "multiplier": 11,
+          "score": 22,
+          "slotIndex": 1,
+          "tileId": "a",
+          "variant": 2
+        },
+        {
+          "baseValue": 1,
+          "formulaId": "b1",
+          "multiplier": 8,
+          "score": 8,
+          "slotIndex": 1,
+          "tileId": "b",
+          "variant": 1
+        },
+        {
+          "baseValue": 2,
+          "formulaId": "d2",
+          "multiplier": 3,
+          "score": 6,
+          "slotIndex": 3,
+          "tileId": "d",
+          "variant": 2
+        }
+      ],
+      "totalScore": 125
+    },
+    {
+      "baseScore": 68,
+      "cardScore": 3,
+      "cards": [
+        {
+          "cardId": "dlc_10.png",
+          "rule": {
+            "kind": "remainingResource",
+            "resource": "publicity",
+            "scorePer": 1
+          },
+          "score": 3
+        }
+      ],
+      "jiuzheCardScore": 0,
+      "jiuzheCards": [],
+      "jiuzhePenaltyApplied": false,
+      "jiuzhePenaltyScore": 0,
+      "jiuzheThreat": 0,
+      "playerId": "player-brown",
+      "prePenaltyTotalScore": 102,
+      "runezuSymbolScore": 0,
+      "tileScore": 31,
+      "tileScoresById": {
+        "a": 10,
+        "b": 0,
+        "c": 0,
+        "d": 21
+      },
+      "tiles": [
+        {
+          "baseValue": 2,
+          "formulaId": "a2",
+          "multiplier": 5,
+          "score": 10,
+          "slotIndex": 3,
+          "tileId": "a",
+          "variant": 2
+        },
+        {
+          "baseValue": 3,
+          "formulaId": "d2",
+          "multiplier": 7,
+          "score": 21,
+          "slotIndex": 1,
+          "tileId": "d",
+          "variant": 2
+        }
+      ],
+      "totalScore": 102
+    },
+    {
+      "baseScore": 69,
+      "cardScore": 0,
+      "cards": [],
+      "jiuzheCardScore": 0,
+      "jiuzheCards": [],
+      "jiuzhePenaltyApplied": false,
+      "jiuzhePenaltyScore": 0,
+      "jiuzheThreat": 0,
+      "playerId": "player-white",
+      "prePenaltyTotalScore": 89,
+      "runezuSymbolScore": 0,
+      "tileScore": 20,
+      "tileScoresById": {
+        "a": 5,
+        "b": 0,
+        "c": 0,
+        "d": 15
+      },
+      "tiles": [
+        {
+          "baseValue": 1,
+          "formulaId": "a2",
+          "multiplier": 5,
+          "score": 5,
+          "slotIndex": 3,
+          "tileId": "a",
+          "variant": 2
+        },
+        {
+          "baseValue": 3,
+          "formulaId": "d2",
+          "multiplier": 5,
+          "score": 15,
+          "slotIndex": 2,
+          "tileId": "d",
+          "variant": 2
+        }
+      ],
+      "totalScore": 89
+    }
+  ],
+  "initialDiagnosticFailure": "第一版仅归一化committed顶层，在517步发现Session历史也保留两处痕迹序号；改为逐处比较并报告所有差异，没有改生产代码。",
+  "scope": "固定原轨迹双路线执行到终局；没有AI搜索，不证明所有可选未来均等价。"
+}
