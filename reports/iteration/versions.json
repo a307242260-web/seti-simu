@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "probe-trade-greedy-20260912",
+      "name": "probe-trade-greedy-20260912",
+      "date": "2026-09-12",
+      "baseline": "income-target-fix-20260912",
+      "head": "18a0d75b",
+      "commits": [
+        "99a53b74",
+        "033b244a",
+        "cefcdc97",
+        "18a0d75b"
+      ],
+      "summary": "直接探测目标资源准备沿既有最小成本排序择一，根和后继共用，保留指定公牌及非探测需求，预算不变",
+      "records": {
+        "364f3d65.18a0d75b.full.json": { "note": "540步自然终局，save-final 92/110/98/80均95；战略144769节点，执行截断38（战略31/control7）、队列36，失败为空。本项门槛通过，专项未完成；验收见probe-trade-full-acceptance-20260912.md。" }
+      },
+      "roadmap": null
+    },
+    {
       "id": "income-target-fix-20260912",
       "name": "income-target-fix-20260912",
       "date": "2026-09-12",
