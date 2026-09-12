@@ -22,3 +22,17 @@ PASS：公共牌付款、quick-timing、probe-source-binding、符文相关unit�
 最佳80.75分超过play_card根新最佳76.25。原基线该根73.5；76.25不是原叶单独评分。
 本轮先复用此定位证据，若组合首次分歧或路径受规则变化影响则补对应单决策证据。
 验收后合主、更新并核验报告中心，暂缓收入候选不带入，预算专项仍未完成。
+
+## 完整局前门槛
+
+实现e1137a06。公共牌付款、quick-timing十项、probe-source-binding、play-domain、
+residual-domain-session与唯一full-flow全部通过；语法与diff检查通过。
+457冷决策96338退出0：战略13216.318708ms（门槛17055.695833），交易558（基线681），
+错误为空、预算4096/256不变；旧最佳leaf:08f170ed完整18动作叶仍在搜索且以28分胜出。
+检查点输出adhoc/public-card-457-e1137a06-20260913.json。
+
+共同输入5433退出0，196/264/303/428/430/445/452/508/564全部搜索错误为零；
+输出adhoc/runezu-error-inputs-20260913/verified-<step>-e1137a06.json。
+主目录--list查重155条，独立目录无记录，无本组合完整局。提交门槛证据后启动
+public-card-runezu-greedy-20260913唯一完整局，baseline=runezu-effect-fix-20260913。
+运行中不改生产代码或推进HEAD，保留实时stdout；终局前不接受、不合主。
