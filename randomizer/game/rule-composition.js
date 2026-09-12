@@ -1055,6 +1055,8 @@
       // 需要从 fork 当前（分支）状态重建完整叶观测——闭包层的 projection(viewer) 投影的
       // 是 root 状态，不是分支状态。
       let activeForkComposition = null;
+      let activeFullLeafProjection = null;
+      const activeMaskedLeafProjections = new Map();
       const now = () => (
         typeof performance !== "undefined" && typeof performance.now === "function"
           ? performance.now()
@@ -1564,14 +1566,17 @@
             `COUNTERFACTUAL_LEAF_OBSERVATION_FAILED: 无可用 fork composition（root=${origin.rootAction?.actionId || ""} chain=${(origin.chain || []).join("→")}）`,
           );
         }
-        const fullProjection = activeForkComposition.projection(viewer).state;
-        return origin.informationMasked
-          ? sanitizeHiddenInformationObservation(
-            rootObservation,
-            fullProjection,
-            origin.informationBarrier || null,
-          )
-          : fullProjection;
+        // executeNode返回后的origin循环不再推进规则；只在本物理节点内复用完整投影。
+        const fullProjection = activeFullLeafProjection
+          || (activeFullLeafProjection = activeForkComposition.projection(viewer).state);
+        if (!origin.informationMasked) return fullProjection;
+        const barrier = origin.informationBarrier || null;
+        if (!activeMaskedLeafProjections.has(barrier)) {
+          activeMaskedLeafProjections.set(barrier, sanitizeHiddenInformationObservation(
+            rootObservation, fullProjection, barrier,
+          ));
+        }
+        return activeMaskedLeafProjections.get(barrier);
       }
 
       function addLeaf(origin, leafObservation, successors, nextInspection, nextCheckpoints) {
@@ -2368,6 +2373,8 @@
             (attemptedNodeCountByFamily.get(attemptedFamily) || 0) + 1);
           sharedPhysicalExecutionOriginCount += Math.max(0, node.origins.length - 1);
           if (budgetedNode) expandedSearchNodeCount += 1;
+          activeFullLeafProjection = null;
+          activeMaskedLeafProjections.clear();
           const execution = executeNode(node);
           checkDeadline();
           if (execution.failed) {
