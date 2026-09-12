@@ -700,4 +700,52 @@ for (const [incomeCode, emptyDeck] of [[0, false], [1, false], [2, false], [3, f
   assert.equal(executor.resolveDecision(root, effect, choices[0], { state: root }).code, "SCIENCE_INCOME_STALE");
   assert.deepEqual(root, after, "重复收入选择不得再次扣牌或发奖");
 }
+// 虫族面板痕迹完整领奖；直接调用正式执行器，覆盖奖励派发而不复刻实现。
+for (const fossilId of aliens.chong.FOSSIL_IDS) for (const position of [1, 2, 3, 4, 5, 6, 7]) {
+  const { root } = createCanonicalState();
+  const actor = root.players.players[0];
+  root.meta.sequences.alienEntity = 1;
+  root.aliens = aliens.createDefaultAlienState();
+  const slot = aliens.getAlienSlot(root.aliens, 2);
+  slot.revealed = true;
+  slot.alienId = slot.assignedAlienId = "虫";
+  slot.traces.blue.firstPlaced = true;
+  assert.equal(aliens.chong.initializeChongReveal(root.aliens, 2, actor, () => 0).ok, true);
+  root.aliens.chong.panelFossilSlots[position] = fossilId;
+  root.aliens.chong.unlockedBluePositions = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  actor.hand = [];
+  actor.resources.handSize = 0;
+  actor.resources.availableData = 0;
+  actor.dataState = { poolTokens: [], placedTokens: [], discardedCount: 0 };
+  root.cards.drawPileCardIds = ["b_2.webp", "b_3.webp"];
+  const executors = new Map();
+  scienceSession.createScienceDomain({ runtime: { registerExecutor(type, executor) {
+    executors.set(type, executor);
+  } }, commitWorkingState(state) { return state; } });
+  const executor = executors.get(scienceSession.EFFECT_TYPES.ALIEN_TRACE);
+  const effect = { ownerId: actor.id, payload: { traceType: "blue" } };
+  const choice = executor.getLegalChoices(root, effect, { state: root })
+    .find(a => a.target.speciesId === "chong" && a.target.position === position);
+  assert(choice);
+  const before = structuredClone(root);
+  const reward = aliens.chong.getFossilReward(fossilId);
+  const result = executor.resolveDecision(root, effect, choice, { state: root });
+  assert.equal(result.ok, true, `${fossilId} 蓝${position}`);
+  for (const key of ["score", "credits", "energy", "publicity"]) {
+    assert.equal(actor.resources[key] - before.players.players[0].resources[key], reward.gain[key] || 0);
+  }
+  assert.equal(actor.hand.length, reward.drawCards);
+  assert.equal(actor.resources.availableData, reward.dataCount);
+  assert.equal(Boolean(result.irreversible), Boolean(reward.drawCards));
+  assert.equal(result.spawnedEffects.filter(row => row.effect.type === scienceSession.EFFECT_TYPES.PICK_CARD).length,
+    Number(reward.pickCard));
+  assert.equal(root.aliens.chong.panelFossilSlots[position], fossilId, "领奖不移除面板化石");
+  const restored = structuredClone(before);
+  const replayed = executor.resolveDecision(restored, effect, choice, { state: restored });
+  assert.equal(replayed.ok, true);
+  assert.deepEqual(restored, root, "恢复后资源、牌、RNG与实体序号一致");
+  const after = structuredClone(root);
+  assert.equal(executor.resolveDecision(root, effect, choice, { state: root }).ok, false);
+  assert.deepEqual(root, after, "重复选择不得再次领奖");
+}
 console.log("science scan and blue reward tests passed");

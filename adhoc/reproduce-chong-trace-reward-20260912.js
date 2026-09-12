@@ -3,6 +3,7 @@ const fs = require("node:fs"), assert = require("node:assert/strict");
 const { execFileSync } = require("node:child_process");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const chong = require("../randomizer/game/aliens/chong");
+const { createHash } = require("node:crypto");
 const commit = execFileSync("git", ["rev-parse", "--short=8", "HEAD"], { encoding: "utf8" }).trim();
 const output = `reports/iteration/chong-trace-reward-repro-${commit}-20260912.json`;
 if (fs.existsSync(output)) { console.log(`已有证据：${output}`); process.exit(0); }
@@ -31,7 +32,11 @@ try {
   assert.equal(env.step(action).ok, true);
   const after = env.observe("player-white");
   const actualDrawCount = after.selfState.hand.length - before.selfState.hand.length;
+  const testedFiles = ["randomizer/game/aliens/chong.js", "randomizer/game/effects/science-session.js"];
   const result = { commit, source, step: 514, fossilId, expectedReward,
+    codeHashes: Object.fromEntries(testedFiles.map(file => [file,
+      createHash("sha256").update(fs.readFileSync(file)).digest("hex")])),
+    productionDirty: Boolean(execFileSync("git", ["diff", "HEAD", "--", ...testedFiles], { encoding: "utf8" }).trim()),
     beforeHandCount: before.selfState.hand.length, afterHandCount: after.selfState.hand.length,
     actualDrawCount, pass: actualDrawCount === 2,
     scope: "真实规则输入的单次蓝7放置，非AI搜索或全盘实验；断言失败显式退出。" };

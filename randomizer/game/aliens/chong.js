@@ -409,16 +409,13 @@
 
   function getTraceReward(alienState, traceType, position) {
     const normalizedPosition = normalizePosition(traceType, position);
-    if (traceType === "blue" && LOCKED_BLUE_POSITIONS.includes(normalizedPosition)) {
+    if (traceType === "blue" && (LOCKED_BLUE_POSITIONS.includes(normalizedPosition)
+      || normalizedPosition === PANEL_FOSSIL_INITIAL_POSITION)) {
       const fossilId = alienState?.chong?.panelFossilSlots?.[normalizedPosition];
-      return fossilId ? { ...getFossilReward(fossilId), fossilId, fossilPanel: false } : null;
+      const reward = getFossilReward(fossilId);
+      return reward ? { ...reward, fossilId, fossilPanel: normalizedPosition === PANEL_FOSSIL_INITIAL_POSITION } : null;
     }
-    const reward = cloneReward(TRACE_REWARDS[traceType]?.[normalizedPosition]);
-    if (reward?.fossilPanel) {
-      const fossilId = alienState?.chong?.panelFossilSlots?.[normalizedPosition];
-      reward.fossilId = fossilId || null;
-    }
-    return reward;
+    return cloneReward(TRACE_REWARDS[traceType]?.[normalizedPosition]);
   }
 
   function placeChongTrace(alienState, alienSlotId, traceType, position, player, options = {}) {
@@ -432,6 +429,7 @@
     const normalizedPosition = placementCheck.position;
     const grid = ensureTraceGrid(alienState, alienSlotId);
     const reward = getTraceReward(alienState, traceType, normalizedPosition);
+    if (!reward) return { ok: false, code: "CHONG_TRACE_REWARD_MISSING", message: "虫族痕迹缺少有效位置奖励" };
     const entry = createTraceEntry(alienState, player, traceType, normalizedPosition, {
       rewardApplied: Boolean(reward),
       sequence: options.sequence,

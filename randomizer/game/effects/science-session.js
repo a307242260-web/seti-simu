@@ -1685,7 +1685,7 @@
         if (!actor || !result?.ok) return result || fail("SCIENCE_TRACE_ACTOR_STALE", "外星人痕迹放置者已失效");
         const spawnedEffects = [];
         let irreversible = null;
-        // 阿米巴痕迹位置分值奖励（2/4 号位 +1 分等）→ 计入对应颜色踪迹得分来源
+        // 物种位置奖励（含虫族面板化石）→ 计入对应颜色踪迹得分来源。
         if (result.reward?.gain && Object.keys(result.reward.gain).some((key) => Number(result.reward.gain[key]) !== 0)) {
           const traceType = String(choice?.target?.traceType || "yellow");
           players.gainResources(
@@ -1693,6 +1693,25 @@
             result.reward.gain,
             `alienTrace${traceType[0].toUpperCase()}${traceType.slice(1)}Score`,
           );
+        }
+        for (let index = 0; index < (result.reward?.dataCount || 0); index += 1) {
+          const gained = data.gainData(actor, { source: "alien_trace_reward", root });
+          // 正式数据原语在池满时记录弃置；只有该正常溢出可继续领奖。
+          if (!gained.ok && !gained.discarded) return gained;
+        }
+        if (result.reward?.drawCards) {
+          const drawContext = cards.createCardDrawContext(
+            getWorkingSlice(root, "cards"), getWorkingSlice(root, "players"),
+            () => nextCommittedRandom(root), { root },
+          );
+          for (let index = 0; index < result.reward.drawCards; index += 1) {
+            const drawn = drawContext.blindDraw(actor);
+            if (!drawn.ok) return drawn;
+          }
+          irreversible = { code: "hidden_card_draw", reason: "外星人痕迹奖励盲抽翻开隐藏牌" };
+        }
+        if (result.reward?.pickCard) {
+          spawnedEffects.push(scanDecisionEffect(EFFECT_TYPES.PICK_CARD, effect.ownerId, {}, "choose_card"));
         }
         // 痕迹位置奖励：选一张当前外星人的牌（pickAlienCard，如黄色/粉色痕迹 3/4 号位）。
         // 从放置的槽位推断物种，不能写死阿米巴（虫族等同样有 pickAlienCard 奖励）。

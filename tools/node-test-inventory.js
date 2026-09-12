@@ -97,7 +97,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/aliens/amiba.test.js", "rules/aliens", "阿米巴物种奖励与机会规则", "未满足条件仍产生物种收益"),
     entry("randomizer/game/aliens/aomomo.test.js", "rules/aliens", "奥陌陌物种轨迹与奖励规则", "非法轨迹或重复奖励成功"),
     entry("randomizer/game/aliens/banrenma.test.js", "rules/aliens", "半人马物种机会与目标规则", "非 owner 或未知目标被接受"),
-    entry("randomizer/game/aliens/chong.test.js", "rules/aliens", "虫族任务与化石选择规则", "未达任务或 stale 选择领奖"),
+    entry("randomizer/game/aliens/chong.test.js", "rules/aliens", "虫族任务、化石选择与蓝1–7完整奖励解析", "未达任务或 stale 选择领奖、蓝7只有化石标签无正式奖励"),
     entry("randomizer/game/aliens/fangzhou.test.js", "rules/aliens", "方舟物种奖励与位置规则", "非法位置或重复占位获得奖励"),
     entry("randomizer/game/aliens/jiuzhe.test.js", "rules/aliens", "九折物种机会队列与卡牌规则", "跳序、重复机会或未知卡牌执行"),
     entry("randomizer/game/aliens/runezu.test.js", "rules/aliens", "符文族 symbol 与分支规则", "未知 symbol 或已消费分支重放"),

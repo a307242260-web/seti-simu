@@ -165,6 +165,19 @@ assert.equal(completedBlueReward.pickCard, Boolean(completedFossilReward.pickCar
 
 assert.equal(chong.getFossilReward("fossil_01").gain.publicity, 3);
 assert.equal(chong.getFossilReward("fossil_04").drawCards, 2);
+for (const fossilId of chong.FOSSIL_IDS) {
+  for (const position of [1, 2, 3, 4, 5, 6, 7]) {
+    const rewardState = createState();
+    rewardState.chong.panelFossilSlots[position] = fossilId;
+    assert.deepEqual(chong.getTraceReward(rewardState, "blue", position), {
+      ...chong.getFossilReward(fossilId), fossilId, fossilPanel: position === 7,
+    });
+  }
+}
+const missingFossilState = createState();
+assert.equal(chong.getTraceReward(missingFossilState, "blue", 7), null);
+assert.equal(chong.placeChongTrace(missingFossilState, 2, "blue", 7, white,
+  nextAlienIdentity()).code, "CHONG_TRACE_REWARD_MISSING");
 assert.equal(chong.createAlienCard(2, 1).cardTypeCode, 3);
 const chong0Effects = chongPlayEffects(0);
 assert.equal(chong0Effects.length, 2);
