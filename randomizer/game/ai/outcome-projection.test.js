@@ -107,3 +107,21 @@ for (const searchCompleteness of [
   check(1);
 }
 console.log("outcome projection tests passed");
+{
+  const { sanitizePublicPlayer, sanitizeSelfPlayer } = require("../../app/simulation-contract");
+  const player = { id: "p1", initialSelection: { industry: "未来跨度研究所" },
+    industryRoundMarkRound: 2, industryRoundMarkTurn: 4,
+    industryFutureSpan: { card: { id: "parked", cardId: "b_117.webp", secretExtra: "omit" },
+      targetScore: 20, playing: false }, industryStrategyPassiveSlots: { yellow: true, red: false, blue: false } };
+  const snapshot = structuredClone(player);
+  const self = sanitizeSelfPlayer(player);
+  assert.equal(self.companyState.abilityId, "future_span_pick_advance");
+  assert.equal(self.companyState.roundMarkRound, 2);
+  assert.equal(self.companyState.roundMarkTurn, 4);
+  assert.equal(self.companyState.futureSpan.targetScore, 20);
+  assert.equal(self.companyState.futureSpan.card.id, "parked");
+  assert.equal(self.companyState.futureSpan.card.secretExtra, undefined);
+  assert.equal(sanitizePublicPlayer(player).companyState, undefined, "停放私有牌不泄露给其他席位");
+  self.companyState.strategyPassiveSlots.yellow = false;
+  assert.deepEqual(player, snapshot, "只读投影及副本修改不得改变公司正式状态");
+}

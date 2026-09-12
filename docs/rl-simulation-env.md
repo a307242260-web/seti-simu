@@ -49,6 +49,10 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
 `card:acquire:<实例id>`计划从支付前绑定公共牌身份；选牌使用最新原生合法descriptor，
 规划器附加的route元数据不提交给Decision。目标以该牌正式进入本席手牌完成；盲抽、
 同槽其他牌和其他席位持牌不能替代。该扩展不改变Action、Observation或plan外层schema。
+同席`selfState.companyState`提供给本席策略的字段为abilityId、roundMarkRound/Turn、
+futureSpan（sanitizeCard后的停放牌、targetScore、playing）和strategyPassiveSlots；
+不进入其他席位的publicPlayer。取牌步骤通过company-acquisition依赖检查上述公司
+事实及本席钱/电/宣传/手牌，覆盖公司根之后的付款或交换选择；不是仅靠动作仍合法复用。
 自由main/quick步骤还带`futureDependencies`，保存剩余具名scope在当前步骤的预期
 存在性与事实；强制奖励与完成后的下一次投入不跨边界。旧v2/v3计划显式拒绝。
 

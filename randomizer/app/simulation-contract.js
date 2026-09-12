@@ -123,6 +123,17 @@ function sanitizeSelfPlayer(player) {
     industryId: player.industryId,
     industryCardId: player.industryCardId,
     industryAbilityUsed: player.industryAbilityUsed,
+    companyState: {
+      abilityId: industryCatalog.getIndustryDefinition(player.initialSelection?.industry)?.activeAbilityId ?? null,
+      roundMarkRound: Number(player.industryRoundMarkRound) || 0,
+      roundMarkTurn: Number(player.industryRoundMarkTurn) || 0,
+      futureSpan: player.industryFutureSpan ? {
+        card: sanitizeCard(player.industryFutureSpan.card),
+        targetScore: player.industryFutureSpan.targetScore ?? null,
+        playing: Boolean(player.industryFutureSpan.playing),
+      } : null,
+      strategyPassiveSlots: clone(player.industryStrategyPassiveSlots ?? null),
+    },
     privateAlienCards: clone(player.alienCards || player.privateAlienCards || []),
     taskState: clone(player.taskState || {}),
     oneTimeAbilities: clone(player.oneTimeAbilities || {}),

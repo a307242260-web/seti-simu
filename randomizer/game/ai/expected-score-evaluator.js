@@ -1152,14 +1152,23 @@
     return action.family === "industry" && action.target?.abilityId === "huanyu_free_moves";
   }
 
+  const PUBLIC_CARD_COMPANY_ABILITIES = new Set([
+    "mission_publicity_pick_income", "fenwick_publicity_pick_corner", "deepspace_swap_cards",
+    "future_span_pick_advance", "strategy_pick_card",
+  ]);
+  function isPublicCardAcquisitionAction(action) {
+    return (action.family === "quick_trade"
+      && quickTrades.getTradeAction(action.target?.tradeId)?.gain?.handSize === 1)
+      || (action.family === "industry" && PUBLIC_CARD_COMPANY_ABILITIES.has(action.target?.abilityId));
+  }
+
   function allowsQuickActionTiming({ observation, action, legalActions = [], routeTargetId, routePlanId }) {
     if (action.phase === "conditional" || CONDITIONAL_FAMILIES.has(action.family)
       || CONTROL_FAMILIES.has(action.family)) return true;
     if (publicPlayerOf(observation, action.actorId)?.mainActionCompleted !== true) return true;
     if (String(routeTargetId || "").startsWith("card:acquire:")) {
       const cardId = routeTargetId.slice("card:acquire:".length);
-      return action.family === "quick_trade"
-        && quickTrades.getTradeAction(action.target?.tradeId)?.gain?.handSize === 1
+      return isPublicCardAcquisitionAction(action)
         && (observation?.publicState?.board?.publicCards || []).some(card => String(card?.id) === cardId);
     }
     const goal = (rawProbeRequirements(observation)?.candidates || []).find(candidate => (
@@ -2082,12 +2091,11 @@
     ]));
     const round = input.rootObservation?.publicState?.roundNumber || 1;
     const finalRound = input.rootObservation?.outcomeProjection?.progress?.finalRoundNumber || 4;
-    const cardTrades = legalActions.filter(action => action.family === "quick_trade"
-      && quickTrades.getTradeAction(action.target?.tradeId)?.gain?.handSize === 1);
+    const cardSources = legalActions.filter(isPublicCardAcquisitionAction);
     for (const card of input.rootObservation?.publicState?.board?.publicCards || []) {
       if (!card || ordinaryCardEffectValue([card], Math.max(0, finalRound - round), round, finalRound) <= 0) continue;
       const targetId = `card:acquire:${card.id}`;
-      add(targetId, targetId, cardTrades);
+      add(targetId, targetId, cardSources);
     }
     return [...targets.values()].sort((left, right) => {
       const leftProbe = probeByPlanId.get(left.planId);
@@ -2969,9 +2977,14 @@
           if (choices) return bindRoute(choices, input.routeTargetId, input.routePlanId);
         }
         if (String(input.routeTargetId || "").startsWith("card:acquire:")
-          && successors.every(action => action.target?.kind === "trade-card-selection")) {
+          && !(input.branchObservation?.selfState?.hand || []).some(card =>
+            String(card.id) === input.routeTargetId.slice("card:acquire:".length))
+          && successors.every(action => action.family === "choose_card" && (
+            action.target?.kind === "trade-card-selection"
+            || (Number.isInteger(action.target?.slotIndex) && action.target?.cardInstanceId)))) {
           const cardId = input.routeTargetId.slice("card:acquire:".length);
-          return bindRoute(successors.filter(action => action.target?.source === "public"
+          return bindRoute(successors.filter(action => (action.target?.source === "public"
+            || (action.target?.kind !== "trade-card-selection" && Number.isInteger(action.target?.slotIndex)))
             && String(action.target.cardInstanceId) === cardId), input.routeTargetId, input.routePlanId);
         }
         if (isProbeMovementDecision(input.branchObservation, successors)) {
@@ -3354,8 +3367,7 @@
       if (String(input.routeTargetId || "").startsWith("card:acquire:")) {
         const cardId = input.routeTargetId.slice("card:acquire:".length);
         if (!(input.branchObservation?.publicState?.board?.publicCards || []).some(card => card?.id === cardId)) return [];
-        return bindRoute(successors.filter(action => action.family === "quick_trade"
-          && quickTrades.getTradeAction(action.target?.tradeId)?.gain?.handSize === 1), input.routeTargetId, input.routePlanId);
+        return bindRoute(successors.filter(isPublicCardAcquisitionAction), input.routeTargetId, input.routePlanId);
       }
       if (String(input.routeTargetId || "").startsWith("tech:gain:")) {
         const requirements = rawTechGainRequirements(input.branchObservation);

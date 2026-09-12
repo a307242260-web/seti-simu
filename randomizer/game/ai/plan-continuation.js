@@ -730,6 +730,11 @@ function capturePlanStep({ observation, action }) {
   const sectorRequirements = observation.sectorWinRequirements
     || observation.outcomeProjection?.progress?.sectorWinRequirements;
   const facts = {
+    companyAcquisition: String(observation.selfState?.playerId || "") === actorId ? {
+      company: structuredClone(observation.selfState.companyState ?? null),
+      credits: self.credits, energy: self.energy, publicity: self.publicity,
+      hand: structuredClone(observation.selfState.hand || []),
+    } : null,
     movementContext: structuredClone(probe?.movementContext ?? null),
     movementSources: (board.rockets || []).map((rocket) => ({
       id: rocket.id, playerId: rocket.playerId, surface: rocket.surface,
@@ -802,6 +807,9 @@ function stepScopes(step, segment) {
   const scopes = new Map();
   const add = (kind, id) => scopes.set(`${kind}:${id}`, { kind, id: String(id) });
   if (step.action.family === "pass") add("pass-decision", "self");
+  if (String(step.routeTargetId || "").startsWith("card:acquire:")) {
+    add("company-acquisition", "self");
+  }
   function addRoute(targetId) {
     const candidates = step.facts.routes.filter((route) => route.targetId === targetId);
     // 公共选择依赖覆盖同一目标；路线身份仍只在当前来源子段内寻找。
@@ -907,6 +915,7 @@ function stepScopes(step, segment) {
 }
 
 function scopedFact(facts, scope) {
+  if (scope.kind === "company-acquisition") return facts.companyAcquisition ?? undefined;
   if (scope.kind === "pass-decision") return facts.passDecision;
   if (scope.kind === "movement-context") return facts.movementContext ?? undefined;
   if (scope.kind === "movement-source") {

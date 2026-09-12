@@ -44,12 +44,17 @@ try {
       const legal = comp.inputPort.enumerateActions({ actorId });
       const action = legal.find(a => a.family === "industry");
       assert(action, `${label}应有正式合法入口`);
-      const wanted = root.cards.publicCards.at(-1);
+      const catalog = evaluator.enumerateSecondaryAgentRootTargets({ rootObservation: before,
+        focalSeatId: actorId, legalActions: legal });
+      const acquisition = catalog.find(target => target.targetId.startsWith("card:acquire:")
+        && target.compatibleActionIds.includes(action.actionId));
+      assert(acquisition, `${label}必须由真实根目录进入取牌目标`);
+      const wanted = root.cards.publicCards.find(card => `card:acquire:${card?.id}` === acquisition.targetId);
       assert(wanted);
       const routeTargetId = `card:acquire:${wanted.id}`;
       const allowed = evaluator.allowsQuickActionTiming({ observation: before, action,
         legalActions: legal, routeTargetId, routePlanId: routeTargetId });
-      assert.equal(allowed, false, "当前诊断记录尚未接入的来源");
+      assert.equal(allowed, true, "正式公司来源必须通过时机准入");
       assert.equal(comp.inputPort.submitAction(action).ok, true);
       const steps = [];
       while (comp.inspect().session) {
@@ -58,9 +63,15 @@ try {
         const decision = inspection.session.decision;
         assert(decision, "正式提交应排到输入边界");
         const phase = inspection.session.currentEffect.payload.step;
-        const selected = ["public_card", "swap_public"].includes(phase)
-          ? decision.choices.find(choice => choice.target.cardInstanceId === wanted.id)
-          : decision.choices.find(choice => choice.target.skip === true) || decision.choices[0];
+        const successors = evaluator.selectSecondaryAgentSuccessors({ branchObservation: comp.projection(viewer).state,
+          focalSeatId: actorId, currentAction: steps.at(-1)?.action || action,
+          routeTargetId, routePlanId: acquisition.planId, legalSuccessors: decision.choices });
+        if (["public_card", "swap_public"].includes(phase)) {
+          assert.equal(successors.length, 1);
+          assert.equal(successors[0].target.cardInstanceId, wanted.id);
+        }
+        const planned = successors.find(choice => choice.target.skip === true) || successors[0];
+        const selected = decision.choices.find(choice => choice.actionId === planned?.actionId);
         assert(selected, `${label}/${phase}必须有合法选项`);
         steps.push({ phase, action: selected });
         const result = comp.inputPort.submitDecision({ decisionId: decision.decisionId,
@@ -87,7 +98,7 @@ try {
     } finally { comp.dispose(); }
   }
   fs.writeFileSync(output, JSON.stringify({ gitCommit, scriptHash, source, beforeStep: 48,
-    scope: "正式回放边界的隔离公司变体，合法Action/Decision执行及指定牌入手；人工选择目标和条件项，不是AI决策或完整局。",
+    scope: "正式回放边界的隔离公司变体；真实根目录、时机与后继选择器指定公共牌，正式Action/Decision执行。多个交换手牌/奖励候选仍取首项或skip，不是完整AI搜索或整局。",
     cases }, null, 2) + "\n", { flag: "wx" });
   process.stdout.write(`${JSON.stringify(cases.map(c => ({ label: c.label, allowed: c.allowed,
     steps: c.steps.map(s => s.phase), targetInHand: c.targetInHand })), null, 2)}\ncheckpoint=${output}\n`);
