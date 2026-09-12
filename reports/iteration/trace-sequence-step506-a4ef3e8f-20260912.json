@@ -1,0 +1,1447 @@
+{
+  "commit": "a4ef3e8f8bf3b1a8557c48c3f3a46d77ed7e238f",
+  "source": "reports/iteration/budget-before-step506-20260912.json",
+  "scope": "第506步冷计划普通生产决策；无CPU采样，无额外路线trace，不是整局实验",
+  "wallMs": 21558.420875,
+  "selectedActionId": "move:547412a6",
+  "searches": [
+    {
+      "kind": "control",
+      "diagnostics": {
+        "budgetLimits": {
+          "leaves": {
+            "enabled": true,
+            "limit": 1,
+            "reached": true,
+            "truncated": false,
+            "prunedOriginCount": 0
+          },
+          "frontier": {
+            "enabled": false,
+            "limit": 256,
+            "peak": 1,
+            "reached": false,
+            "truncated": false,
+            "trimCount": 0
+          },
+          "execution": {
+            "enabled": true,
+            "limit": 1,
+            "used": 1,
+            "reached": true,
+            "truncated": false,
+            "remainingFrontierNodeCount": 0
+          }
+        },
+        "executedNodeCount": 1,
+        "maxExecutionNodes": 1,
+        "executionLimitReached": false,
+        "beamPrunedOriginCount": 0,
+        "successfulInputSubmissionCount": 1,
+        "attemptedNodeCountByFamily": {
+          "pass": 1
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "pass": 1
+        },
+        "executedNodeCountByDecisionKind": {
+          "pass:main": 1
+        },
+        "executedNodeCountByActionSummary": {
+          "pass:PASS": 1
+        },
+        "executedOriginCountByTarget": {
+          "<unbound>": 1
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "<unbound> -> pass:main": 1
+        },
+        "frontierOriginCountByFamily": {},
+        "totalMilliseconds": 17.578457999999983
+      }
+    },
+    {
+      "kind": "strategic",
+      "diagnostics": {
+        "budgetLimits": {
+          "leaves": {
+            "enabled": false,
+            "limit": 8,
+            "reached": false,
+            "truncated": false,
+            "prunedOriginCount": 0
+          },
+          "frontier": {
+            "enabled": true,
+            "limit": 256,
+            "peak": 256,
+            "reached": true,
+            "truncated": true,
+            "trimCount": 1849
+          },
+          "execution": {
+            "enabled": true,
+            "limit": 4096,
+            "used": 4096,
+            "reached": true,
+            "truncated": true,
+            "remainingFrontierNodeCount": 256
+          }
+        },
+        "executedNodeCount": 4096,
+        "maxExecutionNodes": 4096,
+        "executionLimitReached": true,
+        "beamPrunedOriginCount": 7765,
+        "successfulInputSubmissionCount": 4647,
+        "attemptedNodeCountByFamily": {
+          "analyze": 26,
+          "card_corner": 83,
+          "choose_card": 756,
+          "choose_payment": 122,
+          "choose_target": 2339,
+          "end_turn": 18,
+          "industry": 33,
+          "land": 105,
+          "move": 215,
+          "orbit": 62,
+          "pass": 24,
+          "place_data": 112,
+          "play_card": 5,
+          "quick_trade": 120,
+          "research_tech": 4,
+          "scan": 72
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "analyze": 26,
+          "card_corner": 83,
+          "choose_card": 756,
+          "choose_payment": 122,
+          "choose_target": 2339,
+          "end_turn": 18,
+          "industry": 33,
+          "land": 105,
+          "move": 215,
+          "orbit": 62,
+          "pass": 24,
+          "place_data": 112,
+          "play_card": 5,
+          "quick_trade": 120,
+          "research_tech": 4,
+          "scan": 72
+        },
+        "executedNodeCountByDecisionKind": {
+          "analyze:main": 26,
+          "card_corner:quick": 83,
+          "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 466,
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 61,
+          "choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 67,
+          "choose_card:conditional/decision=choose_card/effect=science_domain_income": 83,
+          "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 12,
+          "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 59,
+          "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 8,
+          "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 122,
+          "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 13,
+          "choose_target:conditional/decision=choose_target/effect=probe_land_choice": 271,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 1238,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_research": 12,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4": 274,
+          "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 531,
+          "end_turn:turn_control": 18,
+          "industry:quick": 33,
+          "land:main": 105,
+          "move:quick": 215,
+          "orbit:main": 62,
+          "pass:main": 24,
+          "place_data:quick": 112,
+          "play_card:main": 5,
+          "quick_trade:quick": 120,
+          "research_tech:main": 4,
+          "scan:main": 72
+        },
+        "executedNodeCountByActionSummary": {
+          "choose_target:扫描 织女一": 331,
+          "choose_card:盲抽阿米巴牌": 233,
+          "choose_card:获得展示的物理表征": 201,
+          "choose_target:获得任意外星人标记 2/2 → 外星人 2 蓝7号位（化石奖励）": 130,
+          "choose_target:获得任意外星人标记 2/2 → 外星人 2 黄2号位（5分）": 126,
+          "choose_target:获得任意外星人标记 2/2 → 外星人 1 粉1号位": 124,
+          "choose_target:获得任意外星人标记 2/2 → 外星人 2 粉2号位（5分）": 118,
+          "choose_target:扫描 巴纳德": 112,
+          "place_data:放置数据": 112,
+          "choose_target:获得任意外星人标记 2/2 → 外星人 1 黄4号位（1分+外星人牌）": 110,
+          "land:登陆": 105,
+          "move:移动探测器 11 向外": 94,
+          "move:移动探测器 11 逆时针": 75,
+          "scan:扫描": 72,
+          "quick_trade:2张牌 → 1信用点": 66,
+          "choose_card:b_129.webp": 61,
+          "choose_payment:弃 1 张移动牌": 61,
+          "choose_payment:消耗 1 能量": 61,
+          "choose_target:移动 11 向外": 57,
+          "choose_target:移动 11 逆时针": 57,
+          "choose_target:移动 11 顺时针": 57,
+          "choose_target:跳过": 57,
+          "orbit:环绕海王星 - 奖励：首次环绕：额外获得 3 分；获得 7 分；获得 4 个数据；织女一/绘架座β扫描（R11，1信用点 + 1能量）": 57,
+          "choose_card:b_123.webp → 开普勒22": 55,
+          "choose_target:登陆土卫二（土星）｜奖励：获得 13 分；红色星云扫描；蓝色星云扫描；黄色星云扫描": 55,
+          "choose_target:登陆土卫六（土星）｜奖励：获得 7 分；获得任意外星人标记 1/2；获得任意外星人标记 2/2": 55,
+          "choose_target:获得任意外星人标记 1/2 → 外星人 1 粉1号位": 55,
+          "choose_target:获得任意外星人标记 1/2 → 外星人 1 黄4号位（1分+外星人牌）": 55,
+          "choose_target:获得任意外星人标记 1/2 → 外星人 2 粉2号位（5分）": 55,
+          "choose_target:获得任意外星人标记 1/2 → 外星人 2 蓝7号位（化石奖励）": 55,
+          "choose_target:获得任意外星人标记 1/2 → 外星人 2 黄2号位（5分）": 55,
+          "choose_target:扫描 开普勒22": 47,
+          "choose_target:移动 11 向内": 46,
+          "move:移动探测器 11 顺时针": 46,
+          "choose_target:扫描 天狼星A": 41,
+          "card_corner:amiba_2.webp：弃牌角标": 40,
+          "choose_target:获得任意外星人标记 2/2 → 外星人 1 黄3号位（外星人牌）": 40,
+          "choose_target:登陆木卫一（木星）｜奖励：获得 10 分；获得 4 能量": 33,
+          "choose_target:登陆木卫三（木星）｜奖励：获得 12 分；获得 5 宣传": 33,
+          "choose_target:登陆木卫二（木星）｜奖励：获得 7 分；获得黄色外星人标记 1/2；获得黄色外星人标记 2/2": 33,
+          "choose_target:登陆木卫四（木星）｜奖励：获得 13 分；获得 4 个数据": 33,
+          "choose_target:获得黄色外星人标记 1/2 → 外星人 1 黄4号位（1分+外星人牌）": 33,
+          "choose_target:获得黄色外星人标记 1/2 → 外星人 2 黄2号位（5分）": 33,
+          "industry:深空探测 1x 行动": 33,
+          "choose_card:获得展示的起源地": 32,
+          "choose_target:获得任意外星人标记 2/2 → 外星人 2 粉1号位（4分）": 32,
+          "choose_target:获得任意外星人标记 2/2 → 外星人 2 黄1号位（4分）": 32,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）": 29,
+          "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄2号位（5分）": 29,
+          "analyze:分析": 26,
+          "choose_target:外星人 2 蓝7号位（化石奖励）": 26,
+          "choose_target:获得黄色外星人标记 2/2 → 外星人 1 黄3号位（外星人牌）": 24,
+          "choose_target:获得黄色外星人标记 2/2 → 外星人 2 黄2号位（5分）": 24,
+          "pass:PASS": 24,
+          "choose_target:获得黄色外星人标记 2/2 → 外星人 1 黄4号位（1分+外星人牌）": 22,
+          "quick_trade:2张牌 → 1能量": 22,
+          "card_corner:chong_8.webp：弃牌角标": 21,
+          "choose_target:获得黄色外星人标记 2/2 → 外星人 2 黄1号位（4分）": 19,
+          "choose_card:b_123.webp": 18,
+          "choose_card:收入 b_135.webp": 18,
+          "choose_card:收入 b_18.webp": 18,
+          "end_turn:结束回合": 18,
+          "choose_card:收入 b_111.webp": 17,
+          "choose_target:登陆火星（主星）｜奖励：首次登陆：额外获得 2 个数据；获得 6 分；获得 1 个黄色外星人标记": 17,
+          "quick_trade:2能量 → 1信用点": 15,
+          "choose_target:结束移动": 13,
+          "choose_card:b_78.webp": 11,
+          "choose_card:amiba_1.webp": 10,
+          "choose_card:amiba_2.webp": 10,
+          "choose_card:b_111.webp": 10,
+          "choose_card:收入 amiba_2.webp": 10,
+          "choose_card:收入 chong_8.webp": 10,
+          "choose_card:b_135.webp": 9,
+          "card_corner:amiba_1.webp：弃牌角标": 8,
+          "choose_target:登陆木星（主星）｜奖励：首次登陆：额外获得 2 个数据；获得 7 分；获得 1 个黄色外星人标记": 8,
+          "quick_trade:2张牌 → 精选1张牌": 8,
+          "card_corner:b_18.webp：弃牌角标": 7,
+          "choose_card:chong_2.webp": 7,
+          "choose_target:外星人 1 粉1号位": 6,
+          "choose_target:外星人 2 粉2号位（5分）": 6,
+          "card_corner:chong_2.webp：弃牌角标": 5,
+          "choose_card:b_18.webp": 5,
+          "choose_card:chong_8.webp": 5,
+          "choose_card:收入 amiba_1.webp": 5,
+          "choose_card:收入 chong_2.webp": 5,
+          "play_card:amiba_2.webp": 5,
+          "quick_trade:2能量 → 1张牌": 5,
+          "choose_target:登陆土星（主星）｜奖励：首次登陆：额外获得 2 个数据；获得 8 分；获得 1 个黄色外星人标记": 4,
+          "choose_target:研究 blue1（蓝槽 1）": 4,
+          "choose_target:研究 blue2（蓝槽 1）": 4,
+          "choose_target:研究 blue3（蓝槽 1）": 4,
+          "orbit:环绕金星 - 奖励：获得 6 分；获得 1 次收入（R11，1信用点 + 1能量）": 4,
+          "quick_trade:3宣传 → 精选1张牌": 4,
+          "research_tech:研究科技": 4,
+          "choose_card:b_129.webp → 天狼星A": 2,
+          "choose_card:b_78.webp → 开普勒22": 2,
+          "card_corner:b_123.webp：弃牌角标": 1,
+          "card_corner:b_78.webp：弃牌角标": 1,
+          "choose_card:b_128.webp": 1,
+          "choose_card:b_21.webp": 1,
+          "orbit:环绕火星 - 奖励：精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R11，1信用点 + 1能量）": 1
+        },
+        "executedOriginCountByTarget": {
+          "land:saturn:satellite:titan": 1624,
+          "sector:win:sector-2-a:2": 833,
+          "land:saturn:satellite:enceladus": 452,
+          "land:jupiter:satellite:europa": 448,
+          "orbit:neptune:planet:": 306,
+          "land:jupiter:satellite:callisto": 177,
+          "land:jupiter:satellite:ganymede": 177,
+          "land:jupiter:satellite:io": 177,
+          "card:acquire:card-96-0": 133,
+          "income:gain:4,3,0,0,3,1": 125,
+          "data:analyze": 116,
+          "land:mars:planet:": 107,
+          "<unbound>": 61,
+          "land:jupiter:planet:": 50,
+          "tech:gain:blue3": 48,
+          "card:resolve:alien-amiba-2-21": 40,
+          "tech:gain:blue1": 38,
+          "tech:gain:blue2": 38,
+          "land:saturn:planet:": 25,
+          "orbit:venus:planet:": 24,
+          "card:resolve:alien-amiba-1-2": 16,
+          "card:resolve:alien-chong-2-6": 10,
+          "decision:choose_card:0625c2a2": 3,
+          "decision:choose_card:1ef51634": 3,
+          "decision:choose_card:440d59d8": 3,
+          "decision:choose_card:74195d8c": 3,
+          "decision:choose_card:77fb0c7c": 3,
+          "decision:choose_card:ce2cdcac": 3,
+          "tech:gain:blue4": 2
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "land:saturn:satellite:titan -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 987,
+          "land:saturn:satellite:titan -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 340,
+          "sector:win:sector-2-a:2 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 331,
+          "sector:win:sector-2-a:2 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4": 274,
+          "land:jupiter:satellite:europa -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 155,
+          "land:saturn:satellite:enceladus -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 143,
+          "land:saturn:satellite:enceladus -> move:quick": 118,
+          "land:saturn:satellite:titan -> move:quick": 118,
+          "land:jupiter:satellite:europa -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 116,
+          "orbit:neptune:planet: -> move:quick": 84,
+          "land:jupiter:satellite:callisto -> move:quick": 74,
+          "land:jupiter:satellite:europa -> move:quick": 74,
+          "land:jupiter:satellite:ganymede -> move:quick": 74,
+          "land:jupiter:satellite:io -> move:quick": 74,
+          "sector:win:sector-2-a:2 -> scan:main": 72,
+          "income:gain:4,3,0,0,3,1 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 60,
+          "land:saturn:satellite:enceladus -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 60,
+          "land:saturn:satellite:titan -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 60,
+          "orbit:neptune:planet: -> quick_trade:quick": 60,
+          "sector:win:sector-2-a:2 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 59,
+          "orbit:neptune:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 57,
+          "orbit:neptune:planet: -> orbit:main": 57,
+          "land:saturn:satellite:enceladus -> choose_target:conditional/decision=choose_target/effect=probe_land_choice": 55,
+          "land:saturn:satellite:enceladus -> land:main": 55,
+          "land:saturn:satellite:titan -> choose_target:conditional/decision=choose_target/effect=probe_land_choice": 55,
+          "land:saturn:satellite:titan -> land:main": 55,
+          "data:analyze -> place_data:quick": 52,
+          "sector:win:sector-2-a:2 -> place_data:quick": 50,
+          "card:acquire:card-96-0 -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 49,
+          "card:acquire:card-96-0 -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 49,
+          "orbit:neptune:planet: -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 48,
+          "card:resolve:alien-amiba-2-21 -> card_corner:quick": 40,
+          "land:jupiter:satellite:callisto -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 34,
+          "land:jupiter:satellite:europa -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 34,
+          "land:jupiter:satellite:ganymede -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 34,
+          "land:jupiter:satellite:io -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 34,
+          "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 34,
+          "land:jupiter:satellite:callisto -> choose_target:conditional/decision=choose_target/effect=probe_land_choice": 33,
+          "land:jupiter:satellite:callisto -> land:main": 33,
+          "land:jupiter:satellite:europa -> choose_target:conditional/decision=choose_target/effect=probe_land_choice": 33,
+          "land:jupiter:satellite:europa -> land:main": 33,
+          "land:jupiter:satellite:ganymede -> choose_target:conditional/decision=choose_target/effect=probe_land_choice": 33,
+          "land:jupiter:satellite:ganymede -> land:main": 33,
+          "land:jupiter:satellite:io -> choose_target:conditional/decision=choose_target/effect=probe_land_choice": 33,
+          "land:jupiter:satellite:io -> land:main": 33,
+          "tech:gain:blue1 -> card_corner:quick": 30,
+          "tech:gain:blue2 -> card_corner:quick": 30,
+          "tech:gain:blue3 -> card_corner:quick": 28,
+          "sector:win:sector-2-a:2 -> quick_trade:quick": 27,
+          "data:analyze -> analyze:main": 26,
+          "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 26,
+          "<unbound> -> pass:main": 24,
+          "<unbound> -> industry:quick": 23,
+          "land:mars:planet: -> move:quick": 21,
+          "income:gain:4,3,0,0,3,1 -> place_data:quick": 20,
+          "card:acquire:card-96-0 -> quick_trade:quick": 17,
+          "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=probe_land_choice": 17,
+          "land:mars:planet: -> land:main": 17,
+          "land:jupiter:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 16,
+          "land:jupiter:planet: -> move:quick": 16,
+          "sector:win:sector-2-a:2 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 15,
+          "income:gain:4,3,0,0,3,1 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 12,
+          "land:saturn:satellite:enceladus -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 12,
+          "tech:gain:blue3 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 12,
+          "card:acquire:card-96-0 -> industry:quick": 10,
+          "income:gain:4,3,0,0,3,1 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4": 10,
+          "income:gain:4,3,0,0,3,1 -> end_turn:turn_control": 10,
+          "land:mars:planet: -> choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision": 10,
+          "land:saturn:satellite:enceladus -> quick_trade:quick": 9,
+          "land:saturn:satellite:titan -> quick_trade:quick": 9,
+          "<unbound> -> end_turn:turn_control": 8,
+          "card:acquire:card-96-0 -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 8,
+          "card:resolve:alien-amiba-1-2 -> card_corner:quick": 8,
+          "card:resolve:alien-amiba-1-2 -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 8,
+          "land:jupiter:planet: -> choose_target:conditional/decision=choose_target/effect=probe_land_choice": 8,
+          "land:jupiter:planet: -> land:main": 8,
+          "land:mars:planet: -> choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment": 8,
+          "land:saturn:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 8,
+          "land:saturn:planet: -> move:quick": 8,
+          "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 8,
+          "orbit:venus:planet: -> move:quick": 8,
+          "income:gain:4,3,0,0,3,1 -> quick_trade:quick": 7,
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 6,
+          "data:analyze -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 6,
+          "<unbound> -> play_card:main": 5,
+          "card:resolve:alien-chong-2-6 -> card_corner:quick": 5,
+          "card:resolve:alien-chong-2-6 -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 5,
+          "sector:win:sector-2-a:2 -> end_turn:turn_control": 5,
+          "income:gain:4,3,0,0,3,1 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 4,
+          "land:saturn:planet: -> choose_target:conditional/decision=choose_target/effect=probe_land_choice": 4,
+          "land:saturn:planet: -> land:main": 4,
+          "orbit:venus:planet: -> orbit:main": 4,
+          "orbit:venus:planet: -> quick_trade:quick": 4,
+          "tech:gain:blue1 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 4,
+          "tech:gain:blue1 -> research_tech:main": 4,
+          "tech:gain:blue2 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 4,
+          "tech:gain:blue2 -> research_tech:main": 4,
+          "tech:gain:blue3 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 4,
+          "tech:gain:blue3 -> research_tech:main": 4,
+          "land:jupiter:satellite:callisto -> quick_trade:quick": 3,
+          "land:jupiter:satellite:europa -> quick_trade:quick": 3,
+          "land:jupiter:satellite:ganymede -> quick_trade:quick": 3,
+          "land:jupiter:satellite:io -> quick_trade:quick": 3,
+          "decision:choose_card:0625c2a2 -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 2,
+          "decision:choose_card:1ef51634 -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 2,
+          "decision:choose_card:440d59d8 -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 2,
+          "decision:choose_card:74195d8c -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 2,
+          "decision:choose_card:77fb0c7c -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 2,
+          "decision:choose_card:ce2cdcac -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_public/ability=deepspace_swap_cards": 2,
+          "income:gain:4,3,0,0,3,1 -> scan:main": 2,
+          "land:jupiter:planet: -> quick_trade:quick": 2,
+          "tech:gain:blue4 -> card_corner:quick": 2,
+          "<unbound> -> orbit:main": 1,
+          "decision:choose_card:0625c2a2 -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 1,
+          "decision:choose_card:1ef51634 -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 1,
+          "decision:choose_card:440d59d8 -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 1,
+          "decision:choose_card:74195d8c -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 1,
+          "decision:choose_card:77fb0c7c -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 1,
+          "decision:choose_card:ce2cdcac -> choose_card:conditional/decision=choose_card/effect=residual_company_decision/step=swap_hand/ability=deepspace_swap_cards": 1,
+          "land:saturn:planet: -> quick_trade:quick": 1
+        },
+        "frontierOriginCountByFamily": {
+          "end_turn": 221,
+          "card_corner": 22,
+          "choose_target": 20,
+          "choose_payment": 4,
+          "choose_card": 3,
+          "research_tech": 3
+        },
+        "totalMilliseconds": 16683.325834000003
+      }
+    }
+  ],
+  "plan": {
+    "schemaVersion": "seti-action-plan-v4",
+    "nextActionId": "choose_payment:abbb51f1",
+    "steps": [
+      {
+        "actionId": "choose_payment:abbb51f1",
+        "actionKey": "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+        "routeTargetId": "land:saturn:satellite:titan",
+        "routePlanId": "probe:rocket:11:land:saturn:satellite:titan",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:yellow"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:saturn:satellite:titan",
+              "sourceId": "rocket:11"
+            },
+            "fact": [
+              {
+                "targetId": "land:saturn:satellite:titan",
+                "requirementId": "rocket:11:land:saturn:satellite:titan",
+                "sourceId": "rocket:11",
+                "rocketId": 11,
+                "movementSteps": 3,
+                "movementNextSteps": [
+                  {
+                    "family": "move",
+                    "rocketId": 11,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  },
+                  {
+                    "family": "move",
+                    "rocketId": 11,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  }
+                ],
+                "moveTiming": null,
+                "paidMovementPoints": 3,
+                "requiredCost": {
+                  "credits": 0,
+                  "energy": 4
+                },
+                "endpointFacts": {
+                  "rewards": [
+                    {
+                      "type": "gain_resources",
+                      "label": "获得 7 分",
+                      "icon": "score",
+                      "options": {
+                        "gain": {
+                          "score": 7
+                        }
+                      },
+                      "id": "planet-reward-0",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 1/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-1",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 2/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-2",
+                      "status": "pending"
+                    }
+                  ],
+                  "cost": {
+                    "energy": 1
+                  },
+                  "ownMarkers": {
+                    "orbitMarkers": [],
+                    "landingMarkers": [],
+                    "satelliteLandings": []
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "futureDependencies": []
+      },
+      {
+        "actionId": "move:fdcc25b2",
+        "actionKey": "{\"family\":\"move\",\"payload\":{\"direction\":\"out\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":0,\"deltaY\":1,\"rocketId\":11}}",
+        "routeTargetId": "land:saturn:satellite:titan",
+        "routePlanId": "probe:rocket:11:land:saturn:satellite:titan",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:yellow"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:saturn:satellite:titan",
+              "sourceId": "rocket:11"
+            },
+            "fact": [
+              {
+                "targetId": "land:saturn:satellite:titan",
+                "requirementId": "rocket:11:land:saturn:satellite:titan",
+                "sourceId": "rocket:11",
+                "rocketId": 11,
+                "movementSteps": 2,
+                "movementNextSteps": [
+                  {
+                    "family": "move",
+                    "rocketId": 11,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "family": "move",
+                    "rocketId": 11,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ],
+                "moveTiming": null,
+                "paidMovementPoints": 2,
+                "requiredCost": {
+                  "credits": 0,
+                  "energy": 3
+                },
+                "endpointFacts": {
+                  "rewards": [
+                    {
+                      "type": "gain_resources",
+                      "label": "获得 7 分",
+                      "icon": "score",
+                      "options": {
+                        "gain": {
+                          "score": 7
+                        }
+                      },
+                      "id": "planet-reward-0",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 1/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-1",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 2/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-2",
+                      "status": "pending"
+                    }
+                  ],
+                  "cost": {
+                    "energy": 1
+                  },
+                  "ownMarkers": {
+                    "orbitMarkers": [],
+                    "landingMarkers": [],
+                    "satelliteLandings": []
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "futureDependencies": []
+      },
+      {
+        "actionId": "choose_payment:26bed956",
+        "actionKey": "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":0,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[\"alien-chong-2-6\"],\"choiceId\":\"alien-chong-2-6\",\"kind\":\"move-payment\"}}",
+        "routeTargetId": "land:saturn:satellite:titan",
+        "routePlanId": "probe:rocket:11:land:saturn:satellite:titan",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:yellow"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:saturn:satellite:titan",
+              "sourceId": "rocket:11"
+            },
+            "fact": [
+              {
+                "targetId": "land:saturn:satellite:titan",
+                "requirementId": "rocket:11:land:saturn:satellite:titan",
+                "sourceId": "rocket:11",
+                "rocketId": 11,
+                "movementSteps": 2,
+                "movementNextSteps": [
+                  {
+                    "family": "move",
+                    "rocketId": 11,
+                    "deltaX": 0,
+                    "deltaY": 1
+                  },
+                  {
+                    "family": "move",
+                    "rocketId": 11,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ],
+                "moveTiming": null,
+                "paidMovementPoints": 2,
+                "requiredCost": {
+                  "credits": 0,
+                  "energy": 3
+                },
+                "endpointFacts": {
+                  "rewards": [
+                    {
+                      "type": "gain_resources",
+                      "label": "获得 7 分",
+                      "icon": "score",
+                      "options": {
+                        "gain": {
+                          "score": 7
+                        }
+                      },
+                      "id": "planet-reward-0",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 1/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-1",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 2/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-2",
+                      "status": "pending"
+                    }
+                  ],
+                  "cost": {
+                    "energy": 1
+                  },
+                  "ownMarkers": {
+                    "orbitMarkers": [],
+                    "landingMarkers": [],
+                    "satelliteLandings": []
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "futureDependencies": []
+      },
+      {
+        "actionId": "move:547412a6",
+        "actionKey": "{\"family\":\"move\",\"payload\":{\"direction\":\"ccw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":-1,\"deltaY\":0,\"rocketId\":11}}",
+        "routeTargetId": "land:saturn:satellite:titan",
+        "routePlanId": "probe:rocket:11:land:saturn:satellite:titan",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:yellow"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:saturn:satellite:titan",
+              "sourceId": "rocket:11"
+            },
+            "fact": [
+              {
+                "targetId": "land:saturn:satellite:titan",
+                "requirementId": "rocket:11:land:saturn:satellite:titan",
+                "sourceId": "rocket:11",
+                "rocketId": 11,
+                "movementSteps": 1,
+                "movementNextSteps": [
+                  {
+                    "family": "move",
+                    "rocketId": 11,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ],
+                "moveTiming": null,
+                "paidMovementPoints": 1,
+                "requiredCost": {
+                  "credits": 0,
+                  "energy": 2
+                },
+                "endpointFacts": {
+                  "rewards": [
+                    {
+                      "type": "gain_resources",
+                      "label": "获得 7 分",
+                      "icon": "score",
+                      "options": {
+                        "gain": {
+                          "score": 7
+                        }
+                      },
+                      "id": "planet-reward-0",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 1/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-1",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 2/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-2",
+                      "status": "pending"
+                    }
+                  ],
+                  "cost": {
+                    "energy": 1
+                  },
+                  "ownMarkers": {
+                    "orbitMarkers": [],
+                    "landingMarkers": [],
+                    "satelliteLandings": []
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "futureDependencies": []
+      },
+      {
+        "actionId": "choose_payment:abbb51f1",
+        "actionKey": "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+        "routeTargetId": "land:saturn:satellite:titan",
+        "routePlanId": "probe:rocket:11:land:saturn:satellite:titan",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:yellow"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:saturn:satellite:titan",
+              "sourceId": "rocket:11"
+            },
+            "fact": [
+              {
+                "targetId": "land:saturn:satellite:titan",
+                "requirementId": "rocket:11:land:saturn:satellite:titan",
+                "sourceId": "rocket:11",
+                "rocketId": 11,
+                "movementSteps": 1,
+                "movementNextSteps": [
+                  {
+                    "family": "move",
+                    "rocketId": 11,
+                    "deltaX": -1,
+                    "deltaY": 0
+                  }
+                ],
+                "moveTiming": null,
+                "paidMovementPoints": 1,
+                "requiredCost": {
+                  "credits": 0,
+                  "energy": 2
+                },
+                "endpointFacts": {
+                  "rewards": [
+                    {
+                      "type": "gain_resources",
+                      "label": "获得 7 分",
+                      "icon": "score",
+                      "options": {
+                        "gain": {
+                          "score": 7
+                        }
+                      },
+                      "id": "planet-reward-0",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 1/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-1",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 2/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-2",
+                      "status": "pending"
+                    }
+                  ],
+                  "cost": {
+                    "energy": 1
+                  },
+                  "ownMarkers": {
+                    "orbitMarkers": [],
+                    "landingMarkers": [],
+                    "satelliteLandings": []
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "futureDependencies": []
+      },
+      {
+        "actionId": "land:d5ee03a2",
+        "actionKey": "{\"family\":\"land\",\"payload\":{},\"target\":{\"select\":true}}",
+        "routeTargetId": "land:saturn:satellite:titan",
+        "routePlanId": "probe:rocket:11:land:saturn:satellite:titan",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:yellow"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:saturn:satellite:titan",
+              "sourceId": "rocket:11"
+            },
+            "fact": [
+              {
+                "targetId": "land:saturn:satellite:titan",
+                "requirementId": "rocket:11:land:saturn:satellite:titan",
+                "sourceId": "rocket:11",
+                "rocketId": 11,
+                "movementSteps": 0,
+                "movementNextSteps": [
+                  {
+                    "family": "land",
+                    "rocketId": 11,
+                    "planetId": "saturn",
+                    "target": {
+                      "type": "satellite",
+                      "satelliteId": "titan",
+                      "rocketId": 11
+                    }
+                  }
+                ],
+                "moveTiming": null,
+                "paidMovementPoints": 0,
+                "requiredCost": {
+                  "credits": 0,
+                  "energy": 1
+                },
+                "endpointFacts": {
+                  "rewards": [
+                    {
+                      "type": "gain_resources",
+                      "label": "获得 7 分",
+                      "icon": "score",
+                      "options": {
+                        "gain": {
+                          "score": 7
+                        }
+                      },
+                      "id": "planet-reward-0",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 1/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-1",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 2/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-2",
+                      "status": "pending"
+                    }
+                  ],
+                  "cost": {
+                    "energy": 1
+                  },
+                  "ownMarkers": {
+                    "orbitMarkers": [],
+                    "landingMarkers": [],
+                    "satelliteLandings": []
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "futureDependencies": []
+      },
+      {
+        "actionId": "choose_target:6469aa62",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"energyCost\":1},\"target\":{\"choiceId\":\"land:11:saturn:satellite:titan\",\"landTarget\":{\"rocketId\":11,\"satelliteId\":\"titan\",\"type\":\"satellite\"},\"planetId\":\"saturn\",\"rocketId\":11}}",
+        "routeTargetId": "land:saturn:satellite:titan",
+        "routePlanId": "probe:rocket:11:land:saturn:satellite:titan",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:yellow"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          },
+          {
+            "scope": {
+              "kind": "route",
+              "id": "land:saturn:satellite:titan",
+              "sourceId": "rocket:11"
+            },
+            "fact": [
+              {
+                "targetId": "land:saturn:satellite:titan",
+                "requirementId": "rocket:11:land:saturn:satellite:titan",
+                "sourceId": "rocket:11",
+                "rocketId": 11,
+                "movementSteps": 0,
+                "movementNextSteps": [
+                  {
+                    "family": "land",
+                    "rocketId": 11,
+                    "planetId": "saturn",
+                    "target": {
+                      "type": "satellite",
+                      "satelliteId": "titan",
+                      "rocketId": 11
+                    }
+                  }
+                ],
+                "moveTiming": null,
+                "paidMovementPoints": 0,
+                "requiredCost": {
+                  "credits": 0,
+                  "energy": 1
+                },
+                "endpointFacts": {
+                  "rewards": [
+                    {
+                      "type": "gain_resources",
+                      "label": "获得 7 分",
+                      "icon": "score",
+                      "options": {
+                        "gain": {
+                          "score": 7
+                        }
+                      },
+                      "id": "planet-reward-0",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 1/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-1",
+                      "status": "pending"
+                    },
+                    {
+                      "type": "alien_trace",
+                      "label": "获得任意外星人标记 2/2",
+                      "icon": "alien_any",
+                      "needsUserChoice": true,
+                      "options": {
+                        "traceType": null
+                      },
+                      "id": "planet-reward-2",
+                      "status": "pending"
+                    }
+                  ],
+                  "cost": {
+                    "energy": 1
+                  },
+                  "ownMarkers": {
+                    "orbitMarkers": [],
+                    "landingMarkers": [],
+                    "satelliteLandings": []
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "futureDependencies": []
+      },
+      {
+        "actionId": "choose_target:4861c8d0",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"alienSlotId\":2,\"choiceId\":\"trace:2:yellow:chong:2\",\"kind\":\"planet-reward-alien-trace\",\"position\":2,\"speciesId\":\"chong\",\"traceType\":\"yellow\"}}",
+        "routeTargetId": "land:saturn:satellite:titan",
+        "routePlanId": "probe:rocket:11:land:saturn:satellite:titan",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            }
+          },
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:yellow"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          }
+        ],
+        "futureDependencies": []
+      },
+      {
+        "actionId": "choose_target:84f5ee90",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"alienSlotId\":2,\"choiceId\":\"trace:2:pink:chong:2\",\"kind\":\"planet-reward-alien-trace\",\"position\":2,\"speciesId\":\"chong\",\"traceType\":\"pink\"}}",
+        "routeTargetId": "land:saturn:satellite:titan",
+        "routePlanId": "probe:rocket:11:land:saturn:satellite:titan",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "alien",
+              "id": "2:pink"
+            },
+            "fact": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "white"
+            }
+          }
+        ],
+        "futureDependencies": []
+      },
+      {
+        "actionId": "end_turn:b2f9b29d",
+        "actionKey": "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "routeTargetId": null,
+        "routePlanId": null,
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [],
+        "futureDependencies": []
+      },
+      {
+        "actionId": "research_tech:806ccfc8",
+        "actionKey": "{\"family\":\"research_tech\",\"payload\":{\"skipBonus\":false,\"skipCost\":false,\"skipRotate\":false},\"target\":{\"kind\":\"research-tech\"}}",
+        "routeTargetId": "tech:gain:blue3",
+        "routePlanId": "tech:blue3:1",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "1"
+            },
+            "fact": {
+              "id": "card-26-pass-2-2",
+              "cardId": "b_78.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "blue3"
+            },
+            "fact": {
+              "tileId": "blue3",
+              "techType": "blue",
+              "stackIndex": 3,
+              "bonusId": "bonus_1c",
+              "remaining": 4,
+              "depleted": false
+            }
+          }
+        ],
+        "futureDependencies": []
+      },
+      {
+        "actionId": "choose_target:ad894514",
+        "actionKey": "{\"family\":\"choose_target\",\"payload\":{\"skipBonus\":false,\"skipCost\":false,\"skipRotate\":false},\"target\":{\"blueSlot\":1,\"choiceId\":\"tech:blue3:slot:1\",\"tileId\":\"blue3\"}}",
+        "routeTargetId": "tech:gain:blue3",
+        "routePlanId": "tech:blue3:1",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "1"
+            },
+            "fact": {
+              "id": "card-26-pass-2-2",
+              "cardId": "b_78.webp"
+            }
+          },
+          {
+            "scope": {
+              "kind": "tech",
+              "id": "blue3"
+            },
+            "fact": {
+              "tileId": "blue3",
+              "techType": "blue",
+              "stackIndex": 3,
+              "bonusId": "bonus_1c",
+              "remaining": 4,
+              "depleted": false
+            }
+          }
+        ],
+        "futureDependencies": []
+      },
+      {
+        "actionId": "choose_card:dde6882a",
+        "actionKey": "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-26-pass-2-2\",\"choiceId\":\"pick:card-26-pass-2-2\",\"publicSlotIndex\":1}}",
+        "routeTargetId": "tech:gain:blue3",
+        "routePlanId": "tech:blue3:1",
+        "actorId": "player-white",
+        "revealedCount": 2,
+        "valid": true,
+        "reason": null,
+        "dependencies": [
+          {
+            "scope": {
+              "kind": "card-slot",
+              "id": "1"
+            },
+            "fact": {
+              "id": "card-26-pass-2-2",
+              "cardId": "b_78.webp"
+            }
+          }
+        ],
+        "futureDependencies": []
+      }
+    ]
+  },
+  "timingGatePassed": true,
+  "passed": false,
+  "pending": "仍须结合物理节点复用证据判断，不以耗时一个指标自动通过"
+}

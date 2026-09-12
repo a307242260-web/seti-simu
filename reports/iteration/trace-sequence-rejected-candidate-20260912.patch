@@ -1,0 +1,287 @@
+diff --git a/docs/ai-design.md b/docs/ai-design.md
+index 1ca73c12..ce498661 100644
+--- a/docs/ai-design.md
++++ b/docs/ai-design.md
+@@ -700,7 +700,14 @@ Production的地球坐标、探测路线context及正式Action context直接读
+ 非终局条件决策优先更少实际提交；叶内选择和跨候选排序一致。它只消除取消再重选等无效
+ 绕行，不增加动作分，不能压过收益，也不改变终局正式分的稳定排序。
+ 
+-完整 future state、Session、RNG、Decision owner 和下一 action 相同的分支可以共享一次物理
++搜索身份对虫族、阿米巴正面痕迹的编号集合按稳定位置重新排列，Session工作状态及撤销
++快照使用同一规则；只改身份副本，不改正式状态、编号分配或计划证据。归属、位置、奖励
++状态、编号集合、其他实体ID、RNG、Decision和历史差异仍保留。分支采样种子也用此身份，
++根canonical种子和真实游戏RNG不变；固定反事实采样可能变化，不是固定轨迹无损优化。
++开启目标路线trace时，原生诊断`tracePermutationReuse`区分编号排列造成的队列合并事件
++与已处理节点跳过事件；前者可能随后被队列裁剪，不直接当作节省的执行节点。普通搜索
++该字段为null，不产生归因计数开销。原有`transpositionHitCount`仍包含精确状态复用。
++归一化后的future state、Session、RNG、Decision owner 和下一 action 相同的分支可以共享一次物理
+ 执行；不同奖励、手牌身份、科技、收入或盘面不能作为规则等价合并。仅在资源目标内部，等量弃牌
+ 支付和终局 PASS 后只影响未纳入终点评估的普通牌身份 choice 会稳定保留一个代表，并通过
+ `targetEquivalentChoicePrunedCount` 显式报告。这是终点事实抽象，不得描述为规则无损。
+diff --git a/randomizer/game/effects/search-root-attribution.test.js b/randomizer/game/effects/search-root-attribution.test.js
+index 7ed51c3c..9344cabc 100644
+--- a/randomizer/game/effects/search-root-attribution.test.js
++++ b/randomizer/game/effects/search-root-attribution.test.js
+@@ -5,10 +5,10 @@ const assert = require("node:assert/strict");
+ const stateStoreApi = require("../state/state-store");
+ const effectRuntimeApi = require("./session-runtime");
+ const standardDomain = require("./standard-action-session");
+-const { createRuleComposition } = require("../rule-composition");
++const { createRuleComposition, normalizeSearchTraceSequences } = require("../rule-composition");
+ 
+ const families = ["launch", "scan", "place_data", "analyze"];
+-function createComposition(continueAfterScore = false) {
++function createComposition(continueAfterScore = false, tracePermutation = false) {
+   return createRuleComposition({
+     stateStoreApi, effectRuntimeApi,
+     createInitialState: () => stateStoreApi.createCommittedGameState({
+@@ -34,6 +34,11 @@ function createComposition(continueAfterScore = false) {
+         validate: (root, action) => actions(root).some((item) => item.actionId === action.actionId)
+           ? { ok: true } : { ok: false, code: "STANDARD_ACTION_STALE" },
+         execute(root, action) {
++          if (tracePermutation && root.match.stage === 0) {
++            root.aliens = traceState(action.family === "scan").aliens;
++            root.match.stage = 2;
++            return { ok: true };
++          }
+           root.match.stage = action.family === "scan" ? 1 : action.family === "analyze" ? 3 : 2;
+           if (action.family === "analyze") root.match.score += 3;
+           return { ok: true };
+@@ -43,7 +48,7 @@ function createComposition(continueAfterScore = false) {
+     effectDomains: [{ create: standardDomain.createStandardActionDomain, families,
+       options: { actionFamilies: families } }],
+     createCounterfactualFork(envelope) {
+-      const fork = createComposition(continueAfterScore);
++      const fork = createComposition(continueAfterScore, tracePermutation);
+       assert.equal(fork.lifecycle.restore(envelope).ok, true);
+       return fork;
+     },
+@@ -155,3 +160,60 @@ assert.equal(ordinary.leaves.length, 1);
+ assert.equal(ordinary.leaves[0].observation.score, 0);
+ assert.deepEqual(continuing.lifecycle.save().envelope, continuingBefore);
+ console.log("search root attribution tests passed");
++
++function traceState(reverse = false) {
++  const marker = (position, sequence) => ({ traceType: "pink", position, sequence,
++    playerId: "p1", playerColor: "white", rewardApplied: true });
++  return { meta: { sequences: { alienEntity: 3 }, rngState: { state: 7 } },
++    aliens: { chong: { traceSlotsByAlienSlotId: { 2: { pink: {
++      1: marker(1, reverse ? 2 : 1), 2: marker(2, reverse ? 1 : 2),
++    } } } } }, cards: { hand: [{ id: "alien-chong-1-3" }] } };
++}
++const forwardState = traceState();
++const reverseState = traceState(true);
++const originalReverse = structuredClone(reverseState);
++const normalized = normalizeSearchTraceSequences(reverseState);
++assert.deepEqual(normalized, forwardState);
++assert.deepEqual(reverseState, originalReverse, "不得修改正式状态");
++assert.strictEqual(normalizeSearchTraceSequences(normalized), normalized, "已归一化状态不复制");
++const sessionA = { session: { workingState: forwardState, undoFrames: [{ stateBefore: forwardState }] } };
++const sessionB = { session: { workingState: reverseState, undoFrames: [{ stateBefore: reverseState }] } };
++assert.deepEqual(normalizeSearchTraceSequences(sessionB), sessionA, "Session历史使用同一编号规则");
++for (const mutate of [
++  state => { state.aliens.chong.traceSlotsByAlienSlotId[2].pink[1].playerId = "p2"; },
++  state => { state.aliens.chong.traceSlotsByAlienSlotId[2].pink[1].rewardApplied = false; },
++  state => { state.aliens.chong.traceSlotsByAlienSlotId[2].pink[1].sequence = 4; },
++  state => { state.meta.sequences.alienEntity = 5; },
++  state => { state.meta.rngState.state = 8; },
++  state => { state.cards.hand[0].id = "alien-chong-1-4"; },
++  state => { state.aliens.amiba = { symbolsById: { a: { sequence: 5 } } }; },
++]) {
++  const different = structuredClone(reverseState);
++  mutate(different);
++  assert.notDeepEqual(normalizeSearchTraceSequences(different), normalized, "有行为差异不可合并");
++}
++const differentHistory = structuredClone(sessionB);
++differentHistory.session.undoFrames[0].stateBefore.meta.rngState.state = 9;
++assert.notDeepEqual(normalizeSearchTraceSequences(differentHistory), sessionA);
++const otherSpecies = { meta: {}, aliens: { fangzhou: reverseState.aliens.chong } };
++assert.strictEqual(normalizeSearchTraceSequences(otherSpecies), otherSpecies, "范围外物种不归一化");
++const permuted = createComposition(false, true);
++const permutedBefore = permuted.lifecycle.save().envelope;
++const permutedOutcomes = permuted.counterfactualPort.evaluate(permuted.inputPort.enumerateActions(), {
++  viewer: { playerId: "p1", role: "player" }, maxExecutionNodes: 32, maxFrontierNodes: 16,
++  traceGoalClusters: true,
++  secondaryAgentSearch: { focalSeatId: "p1", maxProxyDepth: 1,
++    selectRouteTarget: () => "score:3",
++    completesRouteTarget: ({ branchObservation }) => branchObservation.score === 3,
++    selectSuccessors: ({ legalSuccessors }) => legalSuccessors },
++});
++for (const outcome of permutedOutcomes) {
++  assert.equal(outcome.status, "settled");
++  assert(outcome.leaves.some(leaf => leaf.observation.score === 3 && leaf.actionChain[0] === outcome.actionId));
++}
++assert.equal(permuted.counterfactualPort.getDiagnostics().executedNodeCount, 3,
++  "两个根加一个共享后继，不应执行两次相同奖励后继");
++assert(permuted.counterfactualPort.getDiagnostics().tracePermutationReuse.frontierMergeEvents > 0);
++assert.deepEqual(permuted.lifecycle.save().envelope, permutedBefore);
++permuted.dispose();
++console.log("trace permutation search identity tests passed");
+diff --git a/randomizer/game/rule-composition.js b/randomizer/game/rule-composition.js
+index f23c3494..df749f9b 100644
+--- a/randomizer/game/rule-composition.js
++++ b/randomizer/game/rule-composition.js
+@@ -77,6 +77,57 @@
+     return stableHashSerialized(stableSerialize(value));
+   }
+ 
++  // 仅用于搜索身份副本：痕迹编号排列不决定这两个物种的位置奖励。
++  // 保留编号集合（不置零）、其他实体编号及分配器；绝不修改正式状态。
++  function normalizeSearchTraceSequences(value, cache = new WeakMap()) {
++    if (value == null || typeof value !== "object") return value;
++    if (cache.has(value)) return cache.get(value);
++    let result = value;
++    if (value.meta && value.aliens) {
++      const entries = [];
++      for (const species of ["amiba", "chong"]) {
++        const grids = value.aliens[species]?.traceSlotsByAlienSlotId;
++        for (const slotId of Object.keys(grids || {}).sort()) {
++          for (const color of Object.keys(grids[slotId]).sort()) {
++            for (const position of Object.keys(grids[slotId][color]).sort()) {
++              const entry = grids[slotId][color][position];
++              if (entry) entries.push({ species, slotId, color, position, entry });
++            }
++          }
++        }
++      }
++      const sequences = entries.map(item => item.entry.sequence).sort((a, b) => a - b);
++      if (entries.some((item, index) => item.entry.sequence !== sequences[index])) {
++        result = { ...value, aliens: { ...value.aliens } };
++        for (const species of ["amiba", "chong"]) {
++          const state = value.aliens[species];
++          if (!state?.traceSlotsByAlienSlotId) continue;
++          result.aliens[species] = { ...state, traceSlotsByAlienSlotId: {} };
++          for (const [slotId, grid] of Object.entries(state.traceSlotsByAlienSlotId)) {
++            result.aliens[species].traceSlotsByAlienSlotId[slotId] = Object.fromEntries(
++              Object.entries(grid).map(([color, row]) => [color, { ...row }]),
++            );
++          }
++        }
++        entries.forEach(({ species, slotId, color, position, entry }, index) => {
++          result.aliens[species].traceSlotsByAlienSlotId[slotId][color][position] = {
++            ...entry, sequence: sequences[index],
++          };
++        });
++      }
++    } else {
++      for (const [key, child] of Object.entries(value)) {
++        const normalized = normalizeSearchTraceSequences(child, cache);
++        if (normalized !== child) {
++          if (result === value) result = Array.isArray(value) ? [...value] : { ...value };
++          result[key] = normalized;
++        }
++      }
++    }
++    cache.set(value, result);
++    return result;
++  }
++
+   function isHiddenInformationBarrier(barrier) {
+     const code = String(barrier?.code || "");
+     return HIDDEN_INFORMATION_BARRIER_CODES.has(code)
+@@ -1076,6 +1127,7 @@
+       const parsedStateByBytes = new Map();
+       const stateHashByBytes = new Map();
+       const envelopeHashByObject = new WeakMap();
++      const normalizedSearchStateCache = new WeakMap();
+       function getTrustedState(envelope) {
+         const bytes = envelope.committedState;
+         if (!parsedStateByBytes.has(bytes)) {
+@@ -1087,7 +1139,10 @@
+         if (!envelopeHashByObject.has(envelope)) {
+           const bytes = envelope.committedState;
+           if (!stateHashByBytes.has(bytes)) {
+-            stateHashByBytes.set(bytes, stableHashSerialized(bytes));
++            const state = getTrustedState(envelope);
++            const normalized = normalizeSearchTraceSequences(state, normalizedSearchStateCache);
++            stateHashByBytes.set(bytes, normalized === state
++              ? stableHashSerialized(bytes) : stableHash(normalized));
+           }
+           envelopeHashByObject.set(envelope, stableHash({
+             schemaVersion: "seti-counterfactual-envelope-key-v2",
+@@ -1100,12 +1155,11 @@
+       // session 键哈希：排除 baseState/committedState/commitResult（trusted fork 下与
+       // envelope 的 committedState 同一对象，其哈希已由 committedStateHash 覆盖；
+       // awaiting session 的 committedState/commitResult 恒为 null）。排除后哈希保持
+-      // 注入性：同 committedStateHash 且同剩余 session 内容 ⇔ 同完整 session，转置合并
+-      // 关系不变，只是省去每节点对全量状态的二次序列化（决策 232 实测 ~1400ms → ~700ms）。
+-      function sessionKeyHash(checkpoint) {
++      // 剩余Session与committed状态采用同一痕迹编号归一化；其他状态/历史差异仍区分。
++      function sessionKeyHash(checkpoint, normalize = true) {
+         if (checkpoint == null) return stableHash(null);
+         const session = checkpoint.session || null;
+-        return stableHash({
++        const identity = {
+           schemaVersion: checkpoint.schemaVersion,
+           replayCursor: checkpoint.replayCursor,
+           session: session == null ? null : {
+@@ -1114,7 +1168,15 @@
+             committedState: null,
+             commitResult: null,
+           },
+-        });
++        };
++        return stableHash(normalize ? normalizeSearchTraceSequences(identity, normalizedSearchStateCache) : identity);
++      }
++      const exactEnvelopeIdentityCache = new WeakMap();
++      function exactEnvelopeIdentity(envelope) {
++        if (!exactEnvelopeIdentityCache.has(envelope)) {
++          exactEnvelopeIdentityCache.set(envelope, `${stableHashSerialized(envelope.committedState)}:${sessionKeyHash(envelope.session, false)}`);
++        }
++        return exactEnvelopeIdentityCache.get(envelope);
+       }
+       function branchKey(envelope, actionId) {
+         return stableHash({
+@@ -1191,6 +1253,9 @@
+       const failedNodeCountByCode = new Map();
+       let expandedSearchNodeCount = 0;
+       let transpositionHitCount = 0;
++      // 仅显式路线诊断采集；不影响普通搜索排序、预算或剪枝。
++      const tracePermutationReuse = traceGoalClusters ? { frontierMergeEvents: 0, processedSkipEvents: 0 } : null;
++      const processedExactIdentities = traceGoalClusters ? new Map() : null;
+       let prunedNodeCount = 0;
+       let beamPrunedOriginCount = 0;
+       let frontierTrimCount = 0;
+@@ -1424,6 +1489,9 @@
+           return;
+         }
+         transpositionHitCount += 1;
++        if (tracePermutationReuse && exactEnvelopeIdentity(existing.envelope) !== exactEnvelopeIdentity(node.envelope)) {
++          tracePermutationReuse.frontierMergeEvents += 1;
++        }
+         if (compareSearchPriorities(node.priority, existing.priority) < 0) {
+           existing.priority = node.priority;
+         }
+@@ -2353,6 +2421,9 @@
+             const freshOrigins = node.origins.filter((o) => !processedOriginKeys.has(`${key}|${originKey(o)}`));
+             if (!freshOrigins.length) {
+               transpositionHitCount += 1;
++              if (tracePermutationReuse && processedExactIdentities.get(key) !== exactEnvelopeIdentity(node.envelope)) {
++                tracePermutationReuse.processedSkipEvents += 1;
++              }
+               continue;
+             }
+             node.origins = freshOrigins;
+@@ -2360,6 +2431,7 @@
+             transpositionHitCount += 1;
+           } else {
+             processedNodeKeys.add(key);
++            if (processedExactIdentities) processedExactIdentities.set(key, exactEnvelopeIdentity(node.envelope));
+             for (const o of node.origins) processedOriginKeys.add(`${key}|${originKey(o)}`);
+           }
+           executedNodeCount += 1;
+@@ -3236,6 +3308,7 @@
+         maxRetainedFrontierSize,
+         maxFrontierOriginCount,
+         transpositionHitCount,
++        tracePermutationReuse,
+         sharedPhysicalExecutionOriginCount,
+         targetEquivalentChoicePrunedCount,
+         unreachableRouteOriginCount,
+@@ -3449,5 +3522,5 @@
+     });
+   }
+ 
+-  return Object.freeze({ SAVE_SCHEMA_VERSION, createRuleComposition });
++  return Object.freeze({ SAVE_SCHEMA_VERSION, createRuleComposition, normalizeSearchTraceSequences });
+ });

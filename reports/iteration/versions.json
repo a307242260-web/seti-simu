@@ -7,6 +7,22 @@
   },
   "versions": [
     {
+      "id": "trace-sequence-rejected-20260912",
+      "name": "痕迹编号去重（未通过，不入生产）",
+      "date": "2026-09-12",
+      "baseline": "frontier-materialization-20260912",
+      "head": "7ee12271",
+      "commits": [
+        "a4ef3e8f",
+        "edbe40b5",
+        "85027458",
+        "7ee12271"
+      ],
+      "summary": "虫族与阿米巴痕迹编号排列用于搜索身份和分支采样；候选补丁及验收记录见 reports/iteration/trace-sequence-search-plan-20260912.md",
+      "records": {},
+      "roadmap": null
+    },
+    {
       "id": "frontier-materialization-20260912",
       "name": "删除无用中途结果构造",
       "date": "2026-09-12",
