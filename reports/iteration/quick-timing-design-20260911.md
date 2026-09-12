@@ -3,6 +3,9 @@
 2026-09-11；起点615bb175；独立目录
 `/tmp/seti-quick-timing-20260911.3uuamI`。整体计划第三项；前两项已验收合回。
 
+当前实施状态（2026-09-12）：阶段观察接口及行为测试已落地；移动/精选时机、
+扫描准备和统一消费者接入尚未完成，整项未验收、未合回。下文基线证据对应各自记录版本。
+
 ## 目标与必要性
 
 主行动前的快速行动用于具体目标的资源、前置条件或腾容量；主行动后一般延后，
@@ -109,7 +112,7 @@
 `quick-public-pick-evidence-20260912.json`记录3个公共选项及该状态的完整目标目录。
 这是精确取得指定牌的接口证据，不证明该牌值得获取；没有重跑AI。
 
-同一边界正式mainActionCompleted=true，但公共玩家与私有观察都没有该字段。
+该基线边界正式mainActionCompleted=true，但当时公共玩家与私有观察都没有该字段。
 `heuristic-decision-function.js::policyOutcomeActions`先过滤control，再调用目标枚举，
 所以不能以传入目标枚举的合法集是否有end_turn推断主行动阶段。
 该边界的目标目录只有probe/income/tech，energy-for-card不属于任何目标；新增精选
@@ -120,11 +123,20 @@
 恢复发射后快照，规则阶段依次为false/true/false/true；当前观察四处均缺失字段，
 定向命令`node tools/run_node_tests.js --match quick-timing-contract`按预期失败。
 此为本迭代尚未实现的新契约红测，不是已通过验收，也不与原有两项失败混算。
-测试同时验证读阶段不改变committed state或RNG；目前留在隔离目录，生产代码未改。
+测试同时验证读阶段不改变committed state或RNG；该红测记录对应接口实施前版本。
+
+阶段观察接口实施边界（2026-09-12）：本项矩阵中该行已闭合，单一owner为
+sanitizePublicPlayer，增加Boolean(player.mainActionCompleted)的只读公开字段。
+不修改正式状态、阶段推进、RNG/id/sequence或Decision，不新增fallback/规则分支，
+不改其余尚待闭合的时机算法。AI设计与Simulation契约同步更新；此接口是整体迭代
+的实施步骤，不独立登记已验收机器人版本、不提前合回，也不代表QUICK-TIMING-01通过。
+实施后阶段测试通过，并增加during-payment检查；主行动前/后、付款中、下一自己turn、
+恢复后的布尔值分别为false/true/true/false/true。plan-continuation、simulation-host-contract、
+唯一standard-flow及V输入审计通过，语法和diff检查通过；未运行新的机器人全盘实验。
 
 ### 必须一并实现的消费者矩阵
 
-以下是代码审查后的实施义务，不代表已经落地；生产设计尚需闭合后两段列出的数据来源。
+以下是代码审查后的实施义务；阶段观察已落地，其余尚未完成，仍需闭合后两段的数据来源。
 
 | 边界 | 唯一来源/owner | 修改义务 | 可证伪验证 |
 | --- | --- | --- | --- |

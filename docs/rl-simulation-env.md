@@ -81,6 +81,11 @@ Composition drain，不伪装成策略动作。
 
 ## Observation
 
+`publicState.players[].mainActionCompleted`为正式玩家主行动标记的布尔投影；正式开局
+未设置标记时为false，与规则判定一致。Browser/Simulation共用sanitizePublicPlayer，
+不从可能已过滤control的合法动作集猜测阶段。此字段不替代Decision owner或合法性
+校验；活跃Session读取working state，稳定边界与恢复读取正式状态，不新增存档字段。
+
 `dataAnalyzeRequirements.acquisitionPlans`中的card计划可携带`selection: { cardInstanceId }`，
 表示打牌后必须精选的公共数据角标来源。计划ID为`data:card:<打出实例>:pick:<精选实例>`；
 kind、nextStep及nextCost沿用card计划契约。该嵌套引用参与反事实隐藏牌过滤，不能只保留

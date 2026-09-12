@@ -37,6 +37,9 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   （`plan-continuation.js#buildPlanFromSnapshot`），供 simulation 复用判断。
   当前实现：`heuristic-decision-function.js`（反事实搜索 + 直调启发式 Policy，
   从 winning leaf 构建 plan）；Learned Policy 实现同一输出契约即可参与复用。
+- 观察中的`publicState.players[].mainActionCompleted`直接来自正式玩家标记，区分
+  主行动前后；不能从目标枚举收到的合法子集是否包含end_turn猜测阶段。该公开字段
+  不改变动作合法性或强制Decision流程；快速行动时机策略的接入仍属QUICK-TIMING-01。
 - **方案内部链路**（未命中时才走）：`heuristic-decision-function` 经
   composition.counterfactualPort 生成 actionOutcomes -> Policy Port -> Policy
   -> PolicyDecision -> 提交。Browser 与 Simulation 完全同一份实现（同一协调器、

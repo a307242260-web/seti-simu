@@ -109,6 +109,7 @@ function sanitizePublicPlayer(player, finalScoreSummary) {
       ordinaryCards: (player?.hand || []).filter((card) => card.blueBonusOwnerId === player.id).length,
     },
     passed: Boolean(player?.passed),
+    mainActionCompleted: Boolean(player?.mainActionCompleted),
   };
 }
 

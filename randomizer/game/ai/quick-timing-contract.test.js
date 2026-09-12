@@ -46,6 +46,12 @@ try {
   assert.equal(fork.inspect().session, null);
   capture("after-main");
   const checkpoint = fork.lifecycle.save().envelope;
+  const move = fork.inputPort.enumerateActions({}).find(a => a.family === "move");
+  assert(move);
+  assert.equal(fork.inputPort.submitAction(move).ok, true);
+  assert.equal(fork.inspect().phase, "awaiting_input");
+  capture("during-payment");
+  assert.equal(fork.lifecycle.restore(checkpoint).ok, true);
   const end = fork.inputPort.enumerateActions({}).find(a => a.family === "end_turn");
   assert(end);
   assert.equal(fork.inputPort.submitAction(end).ok, true);
@@ -53,7 +59,7 @@ try {
   capture("next-own-turn");
   assert.equal(fork.lifecycle.restore(checkpoint).ok, true);
   capture("restored-after-main");
-  assert.deepEqual(observed.map(s => s.expected), [false, true, false, true]);
+  assert.deepEqual(observed.map(s => s.expected), [false, true, true, false, true]);
   assert.deepEqual(observed.map(s => ({ label: s.label, completed: s.actual })),
     observed.map(s => ({ label: s.label, completed: s.expected })),
     "主行动前后与恢复后的公开阶段必须跟随正式状态，不依赖已过滤的合法动作集");
