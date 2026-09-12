@@ -1,13 +1,13 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-12T15:54:18.432Z",
+  "builtAt": "2026-09-12T17:05:51.364Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "4508d4da",
-  "currentBaseline": "probe-owner-cache-20260912",
+  "headCommit": "af3420c4",
+  "currentBaseline": "runezu-effect-fix-20260913",
   "worktreeDirty": true,
   "bestOf": {
     "bestWhite": {
@@ -116,6 +116,440 @@
     ]
   },
   "versions": [
+    {
+      "id": "runezu-effect-fix-20260913",
+      "name": "runezu-effect-fix-20260913",
+      "date": "2026-09-13",
+      "baseline": "probe-owner-cache-20260912",
+      "head": "f105f8ea",
+      "commits": [
+        {
+          "hash": "f105f8ea",
+          "date": "2026-09-13",
+          "subject": "修复符文分支执行与任务位置奖励并验证恢复一致性"
+        }
+      ],
+      "summary": "补齐符文卡牌分支和位置奖励执行器，任务奖励共用正式结算且不增加符号库存",
+      "diffStat": "23 files changed, 142244 insertions(+), 54 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/compare-probe-owner-full-20260912.js",
+          "insertions": 56,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/move-choice-and-cache-review-20260912.md",
+          "insertions": 23,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/move-path-and-plan-audit-20260912.json",
+          "insertions": 599,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/reproduce-runezu-play-20260913.js",
+          "insertions": 22,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-effect-plan-20260913.md",
+          "insertions": 15,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-play-baseline-detail-20260913.json",
+          "insertions": 573,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/runezu-play-candidate-20260913.json",
+          "insertions": 1155,
+          "deletions": 0
+        },
+        {
+          "file": "assets/aliens/符文族/implementation.md",
+          "insertions": 7,
+          "deletions": 3
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.js",
+          "insertions": 33,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/cards/play-domain.test.js",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/effects/residual-domain-session.js",
+          "insertions": 0,
+          "deletions": 6
+        },
+        {
+          "file": "randomizer/game/effects/residual-domain-session.test.js",
+          "insertions": 31,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-owner-cache-20260912/6502f820.40ce8e97.full.action-log.html",
+          "insertions": 2206,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-owner-cache-acceptance-20260912.md",
+          "insertions": 61,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/probe-owner-full-comparison-40ce8e97-20260912.json",
+          "insertions": 66575,
+          "deletions": 0
+        },
+        {
+          "file": "reports/iteration/registry.json",
+          "insertions": 433,
+          "deletions": 4
+        },
+        {
+          "file": "reports/iteration/versions.json",
+          "insertions": 21,
+          "deletions": 1
+        },
+        {
+          "file": "reports/research/6502f820.40ce8e97.full.json",
+          "insertions": 28115,
+          "deletions": 0
+        },
+        {
+          "file": "reports/robot-iteration.html",
+          "insertions": 433,
+          "deletions": 4
+        },
+        {
+          "file": "reports/seti-current-base-robot-strategy-20260911.html",
+          "insertions": 34,
+          "deletions": 34
+        },
+        {
+          "file": "seti-saves/seti-save-research-probe-owner-cache-20260912-40ce8e97-full-v291.json",
+          "insertions": 41779,
+          "deletions": 0
+        },
+        {
+          "file": "tools/node-test-inventory.js",
+          "insertions": 2,
+          "deletions": 2
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "e16bc101.f105f8ea.full.json",
+          "recordPath": "reports/research/e16bc101.f105f8ea.full.json",
+          "mode": "full",
+          "steps": 589,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 947015,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "f105f8ea",
+          "createdAt": "2026-09-12T16:58:53.777Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "note": "规则修复验收通过；589步自然终局，save-final 97/123/127/84，均107.75，与基线逐步action/after差异0；共同9个报错输入在本版错误归零。执行截断52、队列55未变，不算预算优化；详见runezu-effect-acceptance-20260913.md。",
+          "scores": {
+            "player-blue": 97,
+            "player-green": 123,
+            "player-brown": 127,
+            "player-white": 84
+          },
+          "avgScore": 107.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 97,
+              "base": 72,
+              "tile": 18,
+              "card": 7,
+              "tileScoresById": {
+                "a": 8,
+                "b": 0,
+                "c": 4,
+                "d": 6
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 4,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 6,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 2
+                },
+                {
+                  "cardId": "dlc_10.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "publicity",
+                    "scorePer": 1
+                  },
+                  "score": 5
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 0,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 16,
+                "blueTechScore": 2,
+                "cardEffectScore": 3,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 22,
+                "orbitScore": 6,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 9
+              }
+            },
+            "player-green": {
+              "total": 123,
+              "base": 81,
+              "tile": 42,
+              "card": 0,
+              "tileScoresById": {
+                "a": 33,
+                "b": 6,
+                "c": 0,
+                "d": 3
+              },
+              "tiles": [
+                {
+                  "baseValue": 3,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 33,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 6,
+                  "score": 6,
+                  "slotIndex": 2,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 3,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 3,
+                "blueTechScore": 0,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 12,
+                "orbitScore": 30,
+                "scanScore": 7,
+                "taskCardScore": 2,
+                "techBonusScore": 6
+              }
+            },
+            "player-brown": {
+              "total": 127,
+              "base": 71,
+              "tile": 41,
+              "card": 15,
+              "tileScoresById": {
+                "a": 5,
+                "b": 8,
+                "c": 0,
+                "d": 28
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 5,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 4,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 28,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 15
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 6,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 4,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 4,
+                "cardEffectScore": 3,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 20,
+                "orbitScore": 6,
+                "scanScore": 0,
+                "taskCardScore": 0,
+                "techBonusScore": 13
+              }
+            },
+            "player-white": {
+              "total": 84,
+              "base": 64,
+              "tile": 20,
+              "card": 0,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 0,
+                "d": 10
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 10,
+                "alienTracePinkScore": 11,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 6,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 0,
+                "orbitScore": 0,
+                "scanScore": 13,
+                "taskCardScore": 4,
+                "techBonusScore": 4
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-runezu-effect-fix-20260913-f105f8ea-full-v291.json",
+          "reportPath": "reports/iteration/runezu-effect-fix-20260913/e16bc101.f105f8ea.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "e16bc101.f105f8ea.full",
+            "path": "reports/iteration/runezu-effect-fix-20260913/e16bc101.f105f8ea.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "probe-owner-cache-20260912",
       "name": "probe-owner-cache-20260912",
@@ -531,7 +965,7 @@
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

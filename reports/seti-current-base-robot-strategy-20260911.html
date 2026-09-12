@@ -194,7 +194,7 @@
       <h1>当前 Base 机器人策略<br>全景报告</h1>
       <p class="lede">从可见状态、目标准入、反事实执行、叶估值、稳定决胜到计划复用，本报告说明当前机器人的完整决策流程。核心策略是：<strong>先确定值得完成的目标，再搜索能推进目标的动作</strong>。</p>
       <div class="stamp-row">
-        <span class="stamp good">Base: probe-owner-cache-20260912</span>
+        <span class="stamp good">Base: runezu-effect-fix-20260913</span>
         <span class="stamp">Policy: seti-heuristic-policy-v0</span>
         <span class="stamp">Rollout: secondary-agent-rollout-v21</span>
         <span class="stamp warn">进行中：预算与耗时专项；无目标普通搜索暂缓</span>
@@ -209,7 +209,7 @@
         <div class="card metric"><strong class="accent">107.75</strong><span>固定盘面完整终局均分</span></div>
         <div class="card metric"><strong>589</strong><span>自然终局正式输入步数</span></div>
         <div class="card metric"><strong class="amber">45</strong><span>战略搜索达到 4096 节点上限</span></div>
-        <div class="card metric"><strong>963.1s</strong><span>完整局墙钟耗时</span></div>
+        <div class="card metric"><strong>947.0s</strong><span>完整局墙钟耗时</span></div>
       </div>
       <div class="grid grid-3" style="margin-top:16px">
         <div class="card"><h3>策略范式</h3><p>目标引导 + 需求引导。探测、分析、扇区、收入、科技先形成具名目标，再绑定主动作和资源准备动作。</p></div>
@@ -225,9 +225,9 @@
         <table>
           <thead><tr><th>层次</th><th>标识</th><th>含义</th></tr></thead>
           <tbody>
-            <tr><td>版本登记</td><td class="mono">probe-owner-cache-20260912</td><td>探测路线缓存绑定本席实际合法来源，隔离同编号同位置但归属不同的反事实分支；估值、贪心与预算不变。</td></tr>
-            <tr><td>生产行为快照</td><td class="mono">40ce8e97</td><td>本报告描述的策略代码提交，也是完整局记录绑定的代码版本。</td></tr>
-            <tr><td>完整局记录</td><td class="mono">6502f820.40ce8e97.full.json</td><td>本生产版本唯一完整局、存档和逐步复盘；从初始盘面自然完成。</td></tr>
+            <tr><td>版本登记</td><td class="mono">runezu-effect-fix-20260913</td><td>补齐符文分支和位置奖励执行，任务共用正式结算且不增加符号库存；估值、贪心与预算不变。</td></tr>
+            <tr><td>生产行为快照</td><td class="mono">f105f8ea</td><td>本报告描述的策略代码提交，也是完整局记录绑定的代码版本。</td></tr>
+            <tr><td>完整局记录</td><td class="mono">e16bc101.f105f8ea.full.json</td><td>本生产版本唯一完整局、存档和逐步复盘；从初始盘面自然完成。</td></tr>
             <tr><td>Policy provenance</td><td class="mono">heuristic / v0 / laughable</td><td><code>laughable</code> 当前只进入 provenance/config checksum，生产策略中没有按难度分叉。</td></tr>
             <tr><td>实验盘面</td><td class="mono">seti-free-analyze-v1</td><td>4 席固定盘面，flags 为空，完整自然终局。</td></tr>
           </tbody>
@@ -433,7 +433,7 @@
         </div></div>
       </div>
       <div class="callout warn" style="margin-top:16px"><strong>原始记录口径澄清：</strong> <code>metrics.budgetHits.length=52</code> 中，45次战略4096节点截断、7次control截断。全部195次搜索执行217,662节点；战略8叶未启用，256队列截断55次。</div>
-      <p>本版589步自然终局，正式97/123/127/84，均107.75，执行错误为空。前68步与基线一致，第69步恢复打dlc23原计划；后续109步仍有计划偏离，原因待查。总耗时646.8→963.1秒，战略节点144,769→217,578，执行/队列截断52/55。均分95→107.75不掩盖性能增长；下一热点457蓝色发射，交易681节点。详见<a href="iteration/probe-owner-cache-acceptance-20260912.md">缓存修复验收</a>。</p>
+      <p>本版589步自然终局，正式97/123/127/84，均107.75，执行错误为空。与缓存修复基线逐步action/after差异为0；9个既有报错输入在本版搜索错误归零，规则修复另有针对性测试。战略节点217,578、执行/队列截断52/55未变，不计预算优化贡献。下一热点仍为457蓝色发射。详见<a href="iteration/runezu-effect-acceptance-20260913.md">符文规则修复验收</a>。</p>
     </section>
 
     <p>外星拿牌在当前席位、同物种完整Decision中优先展示牌；后继只对无绑定或资源/探测目标择一。具体card/decision身份、未知绑定及多展示牌保留非取消分支。此为有损贪心，不读取隐藏牌序、不计等价省略。</p>
@@ -473,10 +473,10 @@
       <details><summary>版本、文档与完整局</summary><ul>
         <li><a href="iteration/strategy-todo-20260911.md">机器人策略迭代 TODO</a>：策略审阅中的待改进项与验收方向。</li>
         <li><a href="../docs/ai-design.md">docs/ai-design.md</a>：机器玩家设计参考；本报告的具体策略以所标注提交的生产源码为准。</li>
-        <li><a href="research/6502f820.40ce8e97.full.json">完整局研究记录</a>：589步、搜索诊断、动作计数与运行元数据；总耗时约963.1秒。</li>
+        <li><a href="research/e16bc101.f105f8ea.full.json">完整局研究记录</a>：589步、搜索诊断、动作计数与运行元数据；总耗时约947.0秒。</li>
         <li><a href="iteration/quick-timing-acceptance-20260912.md">快速行动时机验收</a>：五项行为目标、正式案例、完整局效果及已知边界。</li>
-        <li><a href="iteration/probe-owner-cache-20260912/6502f820.40ce8e97.full.action-log.html">逐步行动复盘</a>：按玩家回合聚合的可视化回放。</li>
-        <li><a href="../seti-saves/seti-save-research-probe-owner-cache-20260912-40ce8e97-full-v291.json">完整局存档</a>：正式终局分及拆分来源。</li>
+        <li><a href="iteration/runezu-effect-fix-20260913/e16bc101.f105f8ea.full.action-log.html">逐步行动复盘</a>：按玩家回合聚合的可视化回放。</li>
+        <li><a href="../seti-saves/seti-save-research-runezu-effect-fix-20260913-f105f8ea-full-v291.json">完整局存档</a>：正式终局分及拆分来源。</li>
       </ul></details>
       <div class="callout"><strong>证据优先级：</strong> 生产源码与版本化实验记录优先于叙述性文档；报告中所有“当前已生效”判断均按提交快照逐项核对。</div>
     </section>
