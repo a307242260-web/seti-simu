@@ -2406,6 +2406,12 @@
     if (String(input.routeTargetId || "").startsWith("card:acquire:")) {
       return { targetId: input.routeTargetId, planId: input.routePlanId };
     }
+    if (String(input.routeTargetId || "").startsWith("sector:win:")) {
+      return (rawSectorWinRequirements(input.branchObservation)?.candidates || [])
+        .some(candidate => candidate.targetId === input.routeTargetId)
+        ? { targetId: input.routeTargetId, planId: input.routePlanId }
+        : null;
+    }
     if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
       // 目标完成判定统一在 completesSecondaryAgentRouteTarget（analyze/place_data
       // 都算推进一步 → 收束），这里不再特判：analyze 完成时 completes 已返回 true，

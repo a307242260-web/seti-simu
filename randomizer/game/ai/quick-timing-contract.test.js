@@ -219,3 +219,24 @@ test("机会资源准备只补第一步缺口，已满足时不为未来终点�
   assert.equal(evaluator.allowsQuickActionTiming(input), false,
     "没有窗口不能仅因资源不足放行交易");
 });
+
+test("扫描准备保留仍有效的扇区目标，不因填数据改做分析", () => {
+  const f = timingFixture;
+  const observation = structuredClone(f.observation);
+  const candidate = observation.sectorWinRequirements.candidates[0];
+  assert(candidate);
+  observation.dataAnalyzeRequirements = { computerPlacedCount: 5, availableData: 4, nextStep: "place_data" };
+  const own = observation.publicState.players.find(p => p.playerId === f.actorId);
+  own.availableData = 4;
+  own.dataProgress.computerSlots = [1, 2, 3, 4, 5];
+  const input = { rootObservation: observation, branchObservation: observation,
+    focalSeatId: f.actorId, currentAction: f.place,
+    routeTargetId: candidate.targetId, routePlanId: `sector:standard-scan:${candidate.sectorId}` };
+  assert.deepEqual(evaluator.selectSecondaryAgentRouteTarget(input),
+    { targetId: input.routeTargetId, planId: input.routePlanId });
+  assert.equal(evaluator.selectSecondaryAgentRouteTarget({ ...input, routeTargetId: null, routePlanId: null }),
+    "data:analyze", "不在本步骤改变无绑定的数据启发式");
+  observation.sectorWinRequirements.candidates = [];
+  assert.equal(evaluator.selectSecondaryAgentRouteTarget(input), null,
+    "已消失的结算目标不能被准备动作重新激活");
+});

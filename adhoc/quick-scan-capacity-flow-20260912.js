@@ -34,6 +34,15 @@ try {
         assert.equal(placedBefore, 4, "保留正式回放已有的四个计算机数据");
         for (let index = 0; index < pool; index += 1) assert.equal(data.gainData(player, { root: base }).ok, true);
         assert.equal(comp.lifecycle.restore({ ...envelope, committedState: JSON.stringify(base) }).ok, true);
+        const viewer = { role: "player", playerId: actorId };
+        const preparationObservation = comp.projection(viewer).state;
+        const initialScan = comp.inputPort.enumerateActions({}).find(a => a.family === "scan");
+        const scanTarget = policyChoices ? evaluator.enumerateSecondaryAgentRootTargets({
+          rootObservation: preparationObservation, focalSeatId: actorId,
+          legalActions: comp.inputPort.enumerateActions({}),
+        }).find(target => target.targetId.startsWith("sector:win:")
+          && target.compatibleActionIds.includes(initialScan?.actionId)) : null;
+        if (policyChoices) assert(scanTarget, "正式扫描必须有可检验的扇区目标");
         const actionsTaken = [];
         const selectionEvidence = [];
         function decide(decision, choice) {
@@ -50,16 +59,17 @@ try {
           const decision = comp.inspect().session.decision;
           decide(decision, decision.choices.find(c => c.target.target === "computer"));
           assert.equal(comp.inspect().session, null, "第五/六个计算机位置不应留下待选奖励");
+          if (policyChoices) {
+            assert.deepEqual(evaluator.selectSecondaryAgentRouteTarget({
+              rootObservation: preparationObservation, branchObservation: comp.projection(viewer).state,
+              focalSeatId: actorId, currentAction: place,
+              routeTargetId: scanTarget.targetId, routePlanId: scanTarget.planId,
+            }), { targetId: scanTarget.targetId, planId: scanTarget.planId },
+            "为扫描腾容量不能被数据分析启发式改绑为另一个主行动目标");
+          }
         }
         const scan = comp.inputPort.enumerateActions({}).find(a => a.family === "scan");
         assert(scan);
-        const viewer = { role: "player", playerId: actorId };
-        const scanTarget = policyChoices ? evaluator.enumerateSecondaryAgentRootTargets({
-          rootObservation: comp.projection(viewer).state, focalSeatId: actorId,
-          legalActions: comp.inputPort.enumerateActions({}),
-        }).find(target => target.targetId.startsWith("sector:win:")
-          && target.compatibleActionIds.includes(scan.actionId)) : null;
-        if (policyChoices) assert(scanTarget, "正式扫描必须有可检验的扇区目标");
         assert.equal(comp.inputPort.submitAction(scan).ok, true);
         actionsTaken.push({ family: scan.family, target: scan.target });
         let currentAction = scan;
