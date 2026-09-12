@@ -3,10 +3,14 @@
 const assert = require("node:assert/strict");
 const { createSimulationEnv } = require("../../app/simulation-env");
 const turnFlow = require("../turn-flow");
+const test = require("node:test");
+const evaluator = require("./expected-score-evaluator");
+const continuation = require("./plan-continuation");
 
 // 窄接口义务：策略观察必须携带正式主行动阶段；不验证得分或完整局轨迹。
 const env = createSimulationEnv();
 let fork;
+let timingFixture;
 try {
   env.reset({ seed: "quick-timing-stage-contract", activePlayerCount: 4, offlineTeacher: true });
   const opening = new Map();
@@ -97,8 +101,68 @@ try {
   assert.deepEqual(observed.map(s => ({ label: s.label, completed: s.actual })),
     observed.map(s => ({ label: s.label, completed: s.expected })),
     "主行动前后与恢复后的公开阶段必须跟随正式状态，不依赖已过滤的合法动作集");
+  const observation = fork.projection(viewer).state;
+  const legalActions = fork.inputPort.enumerateActions({});
+  const rootTargets = evaluator.enumerateSecondaryAgentRootTargets({
+    rootObservation: observation, focalSeatId: actorId,
+    legalActions: legalActions.filter(a => !["end_turn", "pass"].includes(a.family)),
+  });
+  const place = legalActions.find(a => a.family === "place_data");
+  assert(place, "该正式开局须保留合法放数据动作，以验证策略而非规则合法性过滤");
+  const incomeTarget = "income:gain:2,3,0,0,1,0";
+  const incomePlan = "income:data:computer-slot-4";
+  const steps = continuation.compilePlanSteps([{
+    ...continuation.capturePlanStep({ observation, action: place }),
+    routeTargetId: incomeTarget, routePlanId: incomePlan,
+  }]);
+  assert.equal(steps[0].valid, true, "反例计划须先具备完整身份与依赖证据");
+  timingFixture = { observation, legalActions, rootTargets, actorId, place,
+    incomeTarget, incomePlan, goals,
+    plan: { schemaVersion: continuation.PLAN_SCHEMA_VERSION, nextActionId: place.actionId, steps } };
   console.log("quick timing phase observation contract passed");
 } finally {
   fork?.dispose();
   env.dispose();
 }
+
+test("主行动后根目录保留真实转动窗口与指定公共牌，不放行普通准备", () => {
+  const f = timingFixture;
+  const windowTargets = f.rootTargets.filter(t => f.goals.some(g => (
+    t.planId === `probe:${g.requirementId}` && g.moveTiming?.some(m => (
+      m.comparable && m.earlyMovementPoints < m.delayedMovementPoints
+    ))
+  )));
+  assert(windowTargets.length > 0, "先走能减少下一次转动成本的目标不能被全部删除");
+  assert(f.rootTargets.some(t => t.targetId.startsWith("card:acquire:")),
+    "可见公共牌的明确获取目标须保留");
+  assert.equal(f.rootTargets.some(t => t.compatibleActionIds.includes(f.place.actionId)), false,
+    "当前放数据只是后续研究/收入准备，不属于主行动后的机会窗口");
+});
+
+test("主行动后已绑定的普通准备延至下一turn，保留原目标", () => {
+  const f = timingFixture;
+  const selected = evaluator.selectSecondaryAgentSuccessors({
+    branchObservation: f.observation, focalSeatId: f.actorId,
+    legalSuccessors: f.legalActions, routeTargetId: f.incomeTarget, routePlanId: f.incomePlan,
+  });
+  assert.deepEqual(selected.map(a => a.family), ["end_turn"],
+    "绑定收入目标不能让可延后的放数据立即执行，也不能直接变成无后继");
+  assert.equal(selected[0].routeTargetId, f.incomeTarget);
+  assert.equal(selected[0].routePlanId, f.incomePlan);
+});
+
+test("目标完成后的未绑定后继不能重新引入主行动后普通准备", () => {
+  const f = timingFixture;
+  const selected = evaluator.selectSecondaryAgentSuccessors({
+    branchObservation: f.observation, focalSeatId: f.actorId, legalSuccessors: f.legalActions,
+  });
+  assert.equal(selected.some(a => a.actionId === f.place.actionId), false);
+  assert(selected.some(a => a.family === "end_turn"));
+});
+
+test("计划身份和盘面依赖未变化也不能绕过主行动后时机判断", () => {
+  const f = timingFixture;
+  const reused = continuation.planReuseCheck(f.plan, f.observation, f.legalActions);
+  assert.equal(reused.hit, false, "可延后的旧计划步骤应重新决策，而非继续立即放数据");
+  assert.equal(reused.reason, "quick-timing-no-current-window");
+});
