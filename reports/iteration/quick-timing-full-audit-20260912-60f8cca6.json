@@ -1,0 +1,254 @@
+{
+  "source": "reports/research/7bb2c6d4.60f8cca6.full.json",
+  "save": "seti-saves/seti-save-research-quick-timing-20260912-60f8cca6-full-v261.json",
+  "baseline": {
+    "source": "reports/research/885906e7.31a2e43b.full.json",
+    "gitCommit": "31a2e43b",
+    "steps": 541,
+    "summary": {
+      "round": 4,
+      "terminal": true,
+      "scores": {
+        "player-blue": 77,
+        "player-green": 96,
+        "player-brown": 91,
+        "player-white": 93
+      },
+      "avgScore": 89.25
+    },
+    "wallMs": 831102,
+    "resumeStep": 24,
+    "resumedFrom": "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-quick-24-v2.json",
+    "kinds": {
+      "control": {
+        "searches": 76,
+        "nodes": 76,
+        "failures": 0,
+        "limits": {
+          "leaves": {
+            "enabled": 76,
+            "reached": 72,
+            "truncated": 0
+          },
+          "frontier": {
+            "enabled": 0,
+            "reached": 0,
+            "truncated": 0
+          },
+          "execution": {
+            "enabled": 76,
+            "reached": 76,
+            "truncated": 4
+          }
+        }
+      },
+      "strategic": {
+        "searches": 104,
+        "nodes": 195984,
+        "failures": 0,
+        "limits": {
+          "leaves": {
+            "enabled": 0,
+            "reached": 0,
+            "truncated": 0
+          },
+          "frontier": {
+            "enabled": 104,
+            "reached": 55,
+            "truncated": 54
+          },
+          "execution": {
+            "enabled": 104,
+            "reached": 38,
+            "truncated": 38
+          }
+        }
+      }
+    }
+  },
+  "current": {
+    "source": "reports/research/7bb2c6d4.60f8cca6.full.json",
+    "gitCommit": "60f8cca6",
+    "steps": 513,
+    "summary": {
+      "round": 4,
+      "terminal": true,
+      "scores": {
+        "player-blue": 83,
+        "player-green": 83,
+        "player-brown": 72,
+        "player-white": 83
+      },
+      "avgScore": 80.25
+    },
+    "wallMs": 708288,
+    "resumeStep": 24,
+    "resumedFrom": "seti-saves/seti-save-research-quick-timing-20260912-60f8cca6-quick-24-v2.json",
+    "kinds": {
+      "control": {
+        "searches": 80,
+        "nodes": 80,
+        "failures": 0,
+        "limits": {
+          "leaves": {
+            "enabled": 80,
+            "reached": 75,
+            "truncated": 0
+          },
+          "frontier": {
+            "enabled": 0,
+            "reached": 0,
+            "truncated": 0
+          },
+          "execution": {
+            "enabled": 80,
+            "reached": 80,
+            "truncated": 5
+          }
+        }
+      },
+      "strategic": {
+        "searches": 87,
+        "nodes": 153933,
+        "failures": 0,
+        "limits": {
+          "leaves": {
+            "enabled": 0,
+            "reached": 0,
+            "truncated": 0
+          },
+          "frontier": {
+            "enabled": 87,
+            "reached": 39,
+            "truncated": 39
+          },
+          "execution": {
+            "enabled": 87,
+            "reached": 30,
+            "truncated": 30
+          }
+        }
+      }
+    }
+  },
+  "replayTerminal": true,
+  "counts": {
+    "before-main:place_data": 52,
+    "before-main:industry": 8,
+    "before-main:quick_trade": 14,
+    "after-main:move": 3,
+    "before-main:move": 13,
+    "before-main:card_corner": 7,
+    "after-main:quick_trade": 1,
+    "after-main:industry": 1
+  },
+  "late": [
+    {
+      "step": 88,
+      "actor": "player-green",
+      "family": "move",
+      "target": {
+        "rocketId": 3,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payload": {
+        "direction": "out",
+        "requiredMovePoints": 1
+      },
+      "compatibleTargets": [
+        {
+          "targetId": "land:jupiter:planet:",
+          "planId": "probe:rocket:3:land:jupiter:planet:"
+        }
+      ]
+    },
+    {
+      "step": 103,
+      "actor": "player-brown",
+      "family": "move",
+      "target": {
+        "rocketId": 5,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payload": {
+        "direction": "out",
+        "requiredMovePoints": 1
+      },
+      "compatibleTargets": [
+        {
+          "targetId": "land:jupiter:planet:",
+          "planId": "probe:rocket:5:land:jupiter:planet:"
+        }
+      ]
+    },
+    {
+      "step": 286,
+      "actor": "player-blue",
+      "family": "quick_trade",
+      "target": {
+        "tradeId": "credits-for-card"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "handSize": 1
+        }
+      },
+      "compatibleTargets": [
+        {
+          "targetId": "card:acquire:card-66-0",
+          "planId": "card:acquire:card-66-0"
+        },
+        {
+          "targetId": "card:acquire:card-67-0",
+          "planId": "card:acquire:card-67-0"
+        }
+      ]
+    },
+    {
+      "step": 327,
+      "actor": "player-white",
+      "family": "industry",
+      "target": {
+        "companyId": "深空探测",
+        "abilityId": "deepspace_swap_cards"
+      },
+      "payload": {},
+      "compatibleTargets": [
+        {
+          "targetId": "card:acquire:card-69-0",
+          "planId": "card:acquire:card-69-0"
+        }
+      ]
+    },
+    {
+      "step": 413,
+      "actor": "player-white",
+      "family": "move",
+      "target": {
+        "rocketId": 13,
+        "deltaX": -1,
+        "deltaY": 0
+      },
+      "payload": {
+        "direction": "ccw",
+        "requiredMovePoints": 1
+      },
+      "compatibleTargets": [
+        {
+          "targetId": "land:venus:planet:",
+          "planId": "probe:rocket:13:land:venus:planet:"
+        },
+        {
+          "targetId": "orbit:venus:planet:",
+          "planId": "probe:rocket:13:orbit:venus:planet:"
+        }
+      ]
+    }
+  ],
+  "scope": "只重放正式输入，不调用AI；主行动标记读取每步正式状态。compatibleTargets证明当时存在准入目标，不证明原获胜计划绑定了其中某个目标。"
+}
