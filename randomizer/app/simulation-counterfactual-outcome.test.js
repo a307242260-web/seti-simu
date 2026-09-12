@@ -545,7 +545,7 @@ try {
 {
   const sandbox = createSimulationEnv();
   try {
-    sandbox.reset({ seed: "seti-mars-orbit-counterfactual", activePlayerCount: 4 });
+    sandbox.reset({ seed: "seti-mars-orbit-counterfactual", activePlayerCount: 4, traceCounterfactualGoalClusters: true });
     const { checkpoint, playerId } = createMarsOrbitCheckpoint(sandbox);
     sandbox.loadCheckpoint(checkpoint);
     const orbit = sandbox.legalActions().find((action) => (
@@ -570,10 +570,25 @@ try {
     assert.equal(routeOutcome.leaves.some((leaf) => (
       leaf.rootRouteTargetId === "orbit:mars:planet:"
     )), true, "首个真实动作执行前必须已经选择火星环绕目标");
-    assert.equal(routeOutcome.leaves.some((leaf) => (
+    const hasDeeperLeaf = routeOutcome.leaves.some((leaf) => (
       Number(leaf.secondaryAgentDepth || 0) > 1
       || leaf.actionChain.some((actionId) => String(actionId).startsWith("end_turn:"))
-    )), true, "取得环绕收益后必须继续搜索后续次级代理，不能把一级目标当作路线终点");
+    ));
+    const diagnostics = sandbox.getCounterfactualDiagnostics();
+    const executedFollowup = diagnostics.goalClusters.some(cluster => (
+      cluster.parentPath[0] === "orbit:mars:planet:" && cluster.executedOriginCount > 0
+    ));
+    const queuedFollowup = diagnostics.frontierNodeBreakdown.some(node => (
+      node.originCount === 1 && node.rootActionIds.includes(orbit.actionId)
+      && node.proxyDepth >= 1 && node.chainDepth >= 4
+    ));
+    assert.equal(hasDeeperLeaf || executedFollowup || queuedFollowup, true,
+      "环绕后须有更深结果、已执行后继或该根实际排队的后继，不能把一级目标当终点");
+    if (!hasDeeperLeaf) {
+      assert.equal(routeOutcome.searchCompleteness.status, "incomplete");
+      assert.equal(routeOutcome.searchCompleteness.reasons.includes("node-budget"), true);
+      assert.equal(diagnostics.budgetLimits.execution.truncated, true);
+    }
   } finally {
     sandbox.dispose();
   }

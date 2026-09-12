@@ -3111,6 +3111,7 @@
         frontierNodeBreakdown.push({
           action: `${node.action?.family || "?"}:${String(node.action?.summary || "").slice(0, 40)}`,
           originCount: node.origins.length,
+          rootActionIds: [...new Set(node.origins.map(origin => origin.rootAction.actionId))].sort(),
           routeTargetId: origin?.routeTargetId || null,
           routePlanId: origin?.routePlanId || null,
           proxyDepth: Number(origin?.proxyDepth) || 0,
