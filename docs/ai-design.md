@@ -37,10 +37,10 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
   从 winning leaf 构建 plan）；Learned Policy 实现同一输出契约即可参与复用。
 - 观察中的`publicState.players[].mainActionCompleted`直接来自正式玩家标记，区分
   主行动前后；不能从目标枚举收到的合法子集是否包含end_turn猜测阶段。该公开字段
-  不改变动作合法性或强制Decision流程；快速行动时机策略的接入仍属QUICK-TIMING-01。
+  不改变动作合法性或强制Decision流程；QUICK-TIMING-01用该事实统一判断时机。
 - 主行动后的普通移动目录提供`moveTiming`：同一探测器同一目标，比较下一次转动
   后再走的移动点与先走一步再转动的总移动点。此为只读风险事实，不是额外估值；
-  不预测对手，不把丢失路线换成虚构收益。候选筛选及复用接入仍在QUICK-TIMING-01内实施。
+  不预测对手，不把丢失路线换成虚构收益。候选筛选及计划复用共用该风险事实。
 - **方案内部链路**（未命中时才走）：`heuristic-decision-function` 经
   composition.counterfactualPort 生成 actionOutcomes -> Policy Port -> Policy
   -> PolicyDecision -> 提交。Browser 与 Simulation 完全同一份实现（同一协调器、
@@ -71,7 +71,7 @@ Simulation 共用一份实现）编排：**复用优先**，未命中才调用**
 公共选牌只保留目标id，盲抽不能替代。叶目的检查读取根交易完整结算后的入手证据，
 计划从支付前就依赖该公共牌身份，牌消失或被替换会失效。牌面潜力复用V的
 ordinaryCardEffectValue，数值不变；普通牌入手不新增primary收益，仍须后续实际用途
-或原有预期支持，完成后可继续形成其他目标。完整快速行动时机门控仍在迭代中。
+或原有预期支持，完成后可继续形成其他目标。根、后继及复用均使用统一时机门控。
 公司公共选择按正式slotIndex/cardInstanceId识别，深空交换手牌保留不同手牌候选；
 目标已入手后的角标奖励、额外选牌及免费移动不再过滤为原公共牌，仍按正式条件链结算。
 取牌计划每步检查同席公司状态、资源和手牌，覆盖公司额度、停放目标分与奖励槽变化。
@@ -95,7 +95,8 @@ conditional付款/奖励和control不受该准入裁剪。计划步骤保存目�
 完整叶及最终动作在primary相同时先比较同席根叶的dataDiscardDelta（越少越好），
 再按既有交易数/目标深度排序，非终局最后优先执行步骤更少的方案；终局不使用
 数据浪费作为优先项。无主要收益仍不可选，不为防溢出增分。所有准备分支共用
-现有全局搜索预算；单决策及完整局效果尚待验收，其他必要准备来源也尚未完成。
+现有全局搜索预算；单决策、完整局及必要准备的验收证据见
+[QUICK-TIMING-01验收](../reports/iteration/quick-timing-acceptance-20260912.md)。
 数据溢出的正式累计事实通过publicState.players[].dataProgress.discardedCount进入
 标准progress与strategicFacts；用于区分同样装满数据池的不同真实结果。它不参与
 当前V或primary计分，不将历史丢弃重复扣分；后续准备比较须取同席前后增量。
