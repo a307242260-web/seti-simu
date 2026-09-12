@@ -4,6 +4,8 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const data = require("../randomizer/game/data");
+const evaluator = require("../randomizer/game/ai/expected-score-evaluator");
+const policyChoices = process.argv.includes("--policy-choices");
 const source = "seti-saves/seti-save-research-turn-boundary-20260911-31a2e43b-full-v276.json";
 const save = JSON.parse(fs.readFileSync(source, "utf8"));
 const env = createSimulationEnv();
@@ -32,6 +34,7 @@ try {
         for (let index = 0; index < pool; index += 1) assert.equal(data.gainData(player, { root: base }).ok, true);
         assert.equal(comp.lifecycle.restore({ ...envelope, committedState: JSON.stringify(base) }).ok, true);
         const actionsTaken = [];
+        const selectionEvidence = [];
         function decide(decision, choice) {
           assert(choice);
           assert.equal(comp.inputPort.submitDecision({ decisionId: decision.decisionId,
@@ -49,15 +52,40 @@ try {
         }
         const scan = comp.inputPort.enumerateActions({}).find(a => a.family === "scan");
         assert(scan);
+        const viewer = { role: "player", playerId: actorId };
+        const scanTarget = policyChoices ? evaluator.enumerateSecondaryAgentRootTargets({
+          rootObservation: comp.projection(viewer).state, focalSeatId: actorId,
+          legalActions: comp.inputPort.enumerateActions({}),
+        }).find(target => target.targetId.startsWith("sector:win:")
+          && target.compatibleActionIds.includes(scan.actionId)) : null;
+        if (policyChoices) assert(scanTarget, "正式扫描必须有可检验的扇区目标");
         assert.equal(comp.inputPort.submitAction(scan).ok, true);
         actionsTaken.push({ family: scan.family, target: scan.target });
+        let currentAction = scan;
         for (let index = scanStep; comp.inspect().session; index += 1) {
+          assert(index - scanStep < 40, "只读窄扫描案例不得无限执行条件选择");
           const inspection = comp.inspect();
           assert.equal(inspection.phase, "awaiting_input");
-          const recorded = save.replaySteps[index]?.action;
-          assert.equal(recorded?.phase, "conditional");
-          decide(inspection.session.decision, inspection.session.decision.choices
-            .find(c => c.actionId === recorded.actionId));
+          const decision = inspection.session.decision;
+          let selected;
+          if (policyChoices) {
+            const candidates = evaluator.selectSecondaryAgentSuccessors({
+              branchObservation: comp.projection(viewer).state, focalSeatId: actorId,
+              legalSuccessors: decision.choices, currentAction,
+              routeTargetId: scanTarget.targetId, routePlanId: scanTarget.planId,
+            });
+            assert.equal(candidates.length, 1,
+              "该窄案例必须由现有选择器唯一决定，不能用取第一项隐藏未解析分支");
+            selected = decision.choices.find(choice => choice.actionId === candidates[0].actionId);
+            selectionEvidence.push({ targetId: scanTarget.targetId, legalCount: decision.choices.length,
+              selectedActionId: selected?.actionId, selectedTarget: selected?.target });
+          } else {
+            const recorded = save.replaySteps[index]?.action;
+            assert.equal(recorded?.phase, "conditional");
+            selected = decision.choices.find(c => c.actionId === recorded.actionId);
+          }
+          decide(decision, selected);
+          currentAction = selected;
         }
         const after = JSON.parse(comp.lifecycle.save().envelope.committedState);
         const result = after.players.players.find(p => p.id === actorId);
@@ -70,12 +98,15 @@ try {
         assert.equal(result.mainActionCompleted, true);
         assert(comp.inputPort.enumerateActions({}).some(a => a.family === "end_turn"));
         cases.push({ poolBefore: pool, placedBefore, prepared: prepare, poolAfter, placedAfter, discarded,
-          mainActionCompleted: true, actionsTaken });
+          mainActionCompleted: true, actionsTaken,
+          ...(policyChoices ? { scanTarget, selectionEvidence } : {}) });
       } finally { comp.dispose(); }
     }
   }
   console.log(JSON.stringify({ source, scanStep, actorId,
     fixture: "从既有正式扫描前状态起，用正式gainData构造池4/5/6；后续放置、扫描和条件选择全部经共享inputPort。",
-    scope: "固定同一可见扫描选择链的容量必要性；不预测其他可选扫描、隐藏补牌或对手，不证明AI会主动先放数据。",
+    scope: policyChoices
+      ? "现有目标目录中首个扫描扇区目标，条件链由现有后继选择器唯一决定，原生descriptor正式提交；准备数量仍为外部指定，不证明AI会主动准备，也不外推其他科技或可选扫描。"
+      : "固定同一可见扫描选择链的容量必要性；不预测其他可选扫描、隐藏补牌或对手，不证明AI会主动先放数据。",
     cases }, null, 2));
 } finally { env.dispose(); }
