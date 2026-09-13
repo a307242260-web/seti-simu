@@ -47,3 +47,25 @@ observation.probeRouteRequirements.movementContext = { phase: "card", cardRemain
 assert.deepEqual(selected(free).map(a => a.actionId).sort(), free.map(a => a.actionId).sort(),
   "免费条件移动不在本次普通move筛选范围");
 console.log("probe move greedy tests passed");
+const skip = {actionId:"choose_target:skip",family:"choose_target",phase:"conditional",actorId:seatId,target:{skip:true}};
+const secondMoves = [1,-1].map((dx,i)=>({actionId:`choose_target:second-${i}`,family:"choose_target",phase:"conditional",actorId:seatId,
+  target:{rocketId:2,deltaX:dx,deltaY:0}}));
+const secondary = secondMoves.map((action,i)=>({...goal,requirementId:`rocket:2:${i?"land":"orbit"}:venus:planet:`,
+  targetId:`${i?"land":"orbit"}:venus:planet:`,sourceId:"rocket:2",rocketId:2,planetId:"venus",endpointFamily:i?"land":"orbit",
+  targetBenefit:{score:i?10:30,grossEquivalentValue:i?10:30},
+  nextStep:{family:"choose_target",...action.target},movementNextSteps:[{family:"choose_target",...action.target}]}));
+const companyObservation = structuredClone(observation);
+companyObservation.probeRouteRequirements = {movementContext:{phase:"company",companyRemaining:1,usedRocketIds:[1]},
+  candidates:[{...goal,movementNextSteps:[{family:"choose_target",skip:true}]},...secondary]};
+const selectCompany = (actions,state=companyObservation) => evaluator.selectSecondaryAgentSuccessors({focalSeatId:seatId,
+  branchObservation:state,legalSuccessors:actions,routeTargetId:goal.targetId,routePlanId:`probe:${goal.requirementId}`});
+const companyActions=[skip,...secondMoves];
+const frozenInput=JSON.stringify(companyObservation);
+assert.deepEqual(selectCompany(companyActions).map(a=>a.actionId),[skip.actionId,secondMoves[0].actionId]);
+assert.deepEqual(selectCompany([...companyActions].reverse()).map(a=>a.actionId),[skip.actionId,secondMoves[0].actionId]);
+assert.deepEqual(selectCompany([skip,secondMoves[1]]).map(a=>a.actionId),[skip.actionId,secondMoves[1].actionId]);
+assert.deepEqual(selectCompany([skip]).map(a=>a.actionId),[skip.actionId]);
+assert(selectCompany(companyActions).every(a=>a.routePlanId===`probe:${goal.requirementId}` && !a.targetEquivalentChoiceCount));
+assert.equal(selectCompany(companyActions)[1].movementPreparation.rocketId,2);
+assert.equal(JSON.stringify(companyObservation),frozenInput);
+console.log("secondary company probe greedy contracts passed");

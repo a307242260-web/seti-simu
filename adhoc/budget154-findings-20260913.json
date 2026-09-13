@@ -1,0 +1,1532 @@
+{
+  "source": "adhoc/budget154-trace-ea9efe16-20260913.json",
+  "fullSource": "reports/research/b235ff5f.bddcdae9.full.json",
+  "world": {
+    "schemaVersion": "seti-initial-world-identity-v1",
+    "seed": "seti-free-analyze-v1",
+    "worldVersion": "human-405-world-v1",
+    "activePlayerCount": 4,
+    "fingerprint": "2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c",
+    "components": {
+      "aliens": "46dbcc69e2fca49b3b1fd3d6e93cbdf73ec6695f58026c25eae294c6af482de2",
+      "cards": "e5427e2ac14ea93859f820681a6957c5cdf3bb5f0c61a504927a7b3442a04d4a",
+      "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+      "finalScoring": "e8a14ecc0f4b523158eefbae19cee10874f65083ef2cb060aa6badf9540da7f4",
+      "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+      "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+      "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+      "players": "81760effc03c474b420cd154875a98942f428d4e82643d3f4c1d65b8a4358482",
+      "solarSystem": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
+      "tech": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
+      "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
+      "initialOffers": "76eacd007efd30ddff4d1a2e72ee375e3b45ea420b83a9fcc31ff87ae7e90879",
+      "initialRandom": "748c814e83ed7ffbc0d68c14175649c97eef71a94eeeff4605b52f779e729399"
+    }
+  },
+  "actionId": "quick_trade:38002215",
+  "wallMs": 19462.209208,
+  "sameActionAndFamilyNodeCounts": true,
+  "executedNodeCount": 4096,
+  "budgetLimits": {
+    "leaves": {
+      "enabled": false,
+      "limit": 8,
+      "reached": false,
+      "truncated": false,
+      "prunedOriginCount": 0
+    },
+    "frontier": {
+      "enabled": true,
+      "limit": 256,
+      "peak": 256,
+      "reached": true,
+      "truncated": true,
+      "trimCount": 912
+    },
+    "execution": {
+      "enabled": true,
+      "limit": 4096,
+      "used": 4096,
+      "reached": true,
+      "truncated": true,
+      "remainingFrontierNodeCount": 256
+    }
+  },
+  "topPhysicalActionSummaries": [
+    [
+      "quick_trade:2张牌 → 1能量",
+      663
+    ],
+    [
+      "quick_trade:2信用点 → 1能量",
+      240
+    ],
+    [
+      "quick_trade:3宣传 → 精选1张牌",
+      184
+    ],
+    [
+      "end_turn:结束回合",
+      177
+    ],
+    [
+      "choose_target:移动 4 向外",
+      149
+    ],
+    [
+      "choose_card:收入 amiba_0.webp",
+      148
+    ],
+    [
+      "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+      140
+    ],
+    [
+      "choose_target:获得 1 个黄色外星人标记 → 外星人 2 黄4号位（5分+外星人牌）",
+      140
+    ],
+    [
+      "land:登陆",
+      140
+    ],
+    [
+      "move:移动探测器 7 逆时针",
+      135
+    ],
+    [
+      "choose_payment:消耗 1 能量",
+      133
+    ],
+    [
+      "place_data:放置数据",
+      130
+    ],
+    [
+      "industry:寰宇动力 1x 行动",
+      117
+    ],
+    [
+      "choose_target:移动 4 逆时针",
+      113
+    ],
+    [
+      "choose_target:移动 4 顺时针",
+      113
+    ],
+    [
+      "choose_card:获得展示的轨道监测",
+      108
+    ],
+    [
+      "move:移动探测器 4 向外",
+      104
+    ],
+    [
+      "choose_card:获得展示的低重力研究",
+      102
+    ],
+    [
+      "choose_card:收入 dlc_34.png",
+      98
+    ],
+    [
+      "orbit:环绕金星 - 奖励：获得 6 分；获得 1 次收入（R7，1信用点 + 1能量）",
+      96
+    ]
+  ],
+  "routeExamples": [
+    {
+      "path": [
+        "card:acquire:card-51-0",
+        "land:venus:planet:"
+      ],
+      "executedOrigins": 2011,
+      "completedRouteVariants": 174,
+      "firstFour": [
+        [
+          {
+            "family": "launch",
+            "summary": "发射",
+            "target": {}
+          },
+          {
+            "family": "industry",
+            "summary": "寰宇动力 1x 行动",
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 7 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:7:ccw",
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 4 向外",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:4:out",
+              "rocketId": 4,
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          },
+          {
+            "family": "move",
+            "summary": "移动探测器 7 逆时针",
+            "target": {
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_payment",
+            "summary": "弃 1 张移动牌",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "card-47-0",
+              "cardIds": [
+                "card-47-0"
+              ]
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2信用点 → 1能量",
+            "target": {
+              "tradeId": "credits-for-energy"
+            }
+          },
+          {
+            "family": "land",
+            "summary": "登陆",
+            "target": {
+              "select": true
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+            "target": {
+              "choiceId": "trace:1:yellow:amiba:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "yellow",
+              "speciesId": "amiba",
+              "position": 4
+            }
+          },
+          {
+            "family": "choose_card",
+            "summary": "获得展示的低重力研究",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "amiba:display:9",
+              "source": "display",
+              "cardIndex": 9
+            }
+          }
+        ],
+        [
+          {
+            "family": "launch",
+            "summary": "发射",
+            "target": {}
+          },
+          {
+            "family": "industry",
+            "summary": "寰宇动力 1x 行动",
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 7 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:7:ccw",
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 4 向外",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:4:out",
+              "rocketId": 4,
+              "deltaX": 0,
+              "deltaY": 1
+            }
+          },
+          {
+            "family": "move",
+            "summary": "移动探测器 7 逆时针",
+            "target": {
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_payment",
+            "summary": "弃 1 张移动牌",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "card-47-0",
+              "cardIds": [
+                "card-47-0"
+              ]
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2信用点 → 1能量",
+            "target": {
+              "tradeId": "credits-for-energy"
+            }
+          },
+          {
+            "family": "land",
+            "summary": "登陆",
+            "target": {
+              "select": true
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄4号位（5分+外星人牌）",
+            "target": {
+              "choiceId": "trace:2:yellow:chong:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "yellow",
+              "speciesId": "chong",
+              "position": 4
+            }
+          },
+          {
+            "family": "choose_card",
+            "summary": "获得展示的轨道监测",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "chong:display:7",
+              "source": "display",
+              "cardIndex": 7
+            }
+          }
+        ],
+        [
+          {
+            "family": "launch",
+            "summary": "发射",
+            "target": {}
+          },
+          {
+            "family": "industry",
+            "summary": "寰宇动力 1x 行动",
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 7 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:7:ccw",
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 4 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:4:ccw",
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "move",
+            "summary": "移动探测器 7 逆时针",
+            "target": {
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_payment",
+            "summary": "弃 1 张移动牌",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "card-47-0",
+              "cardIds": [
+                "card-47-0"
+              ]
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2信用点 → 1能量",
+            "target": {
+              "tradeId": "credits-for-energy"
+            }
+          },
+          {
+            "family": "land",
+            "summary": "登陆",
+            "target": {
+              "select": true
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+            "target": {
+              "choiceId": "trace:1:yellow:amiba:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "yellow",
+              "speciesId": "amiba",
+              "position": 4
+            }
+          },
+          {
+            "family": "choose_card",
+            "summary": "获得展示的低重力研究",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "amiba:display:9",
+              "source": "display",
+              "cardIndex": 9
+            }
+          }
+        ],
+        [
+          {
+            "family": "launch",
+            "summary": "发射",
+            "target": {}
+          },
+          {
+            "family": "industry",
+            "summary": "寰宇动力 1x 行动",
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 7 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:7:ccw",
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 4 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:4:ccw",
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "move",
+            "summary": "移动探测器 7 逆时针",
+            "target": {
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_payment",
+            "summary": "弃 1 张移动牌",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "card-47-0",
+              "cardIds": [
+                "card-47-0"
+              ]
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2信用点 → 1能量",
+            "target": {
+              "tradeId": "credits-for-energy"
+            }
+          },
+          {
+            "family": "land",
+            "summary": "登陆",
+            "target": {
+              "select": true
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄4号位（5分+外星人牌）",
+            "target": {
+              "choiceId": "trace:2:yellow:chong:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "yellow",
+              "speciesId": "chong",
+              "position": 4
+            }
+          },
+          {
+            "family": "choose_card",
+            "summary": "获得展示的轨道监测",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "chong:display:7",
+              "source": "display",
+              "cardIndex": 7
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "path": [
+        "card:acquire:card-51-0",
+        "decision:choose_target:4c2795ab",
+        "land:venus:planet:"
+      ],
+      "executedOrigins": 772,
+      "completedRouteVariants": 26,
+      "firstFour": [
+        [
+          {
+            "family": "industry",
+            "summary": "寰宇动力 1x 行动",
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 7 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:7:ccw",
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 4 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:4:ccw",
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "move",
+            "summary": "移动探测器 7 逆时针",
+            "target": {
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_payment",
+            "summary": "消耗 1 能量",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2信用点 → 1能量",
+            "target": {
+              "tradeId": "credits-for-energy"
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2张牌 → 1能量",
+            "target": {
+              "tradeId": "cards-for-energy"
+            }
+          },
+          {
+            "family": "land",
+            "summary": "登陆",
+            "target": {
+              "select": true
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+            "target": {
+              "choiceId": "trace:1:yellow:amiba:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "yellow",
+              "speciesId": "amiba",
+              "position": 4
+            }
+          },
+          {
+            "family": "choose_card",
+            "summary": "获得展示的低重力研究",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "amiba:display:9",
+              "source": "display",
+              "cardIndex": 9
+            }
+          }
+        ],
+        [
+          {
+            "family": "industry",
+            "summary": "寰宇动力 1x 行动",
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 7 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:7:ccw",
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 4 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:4:ccw",
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "move",
+            "summary": "移动探测器 7 逆时针",
+            "target": {
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_payment",
+            "summary": "消耗 1 能量",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2信用点 → 1能量",
+            "target": {
+              "tradeId": "credits-for-energy"
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2张牌 → 1能量",
+            "target": {
+              "tradeId": "cards-for-energy"
+            }
+          },
+          {
+            "family": "land",
+            "summary": "登陆",
+            "target": {
+              "select": true
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄4号位（5分+外星人牌）",
+            "target": {
+              "choiceId": "trace:2:yellow:chong:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "yellow",
+              "speciesId": "chong",
+              "position": 4
+            }
+          },
+          {
+            "family": "choose_card",
+            "summary": "获得展示的轨道监测",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "chong:display:7",
+              "source": "display",
+              "cardIndex": 7
+            }
+          }
+        ],
+        [
+          {
+            "family": "move",
+            "summary": "移动探测器 7 逆时针",
+            "target": {
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_payment",
+            "summary": "消耗 1 能量",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            }
+          },
+          {
+            "family": "industry",
+            "summary": "寰宇动力 1x 行动",
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 7 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:7:ccw",
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 4 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:4:ccw",
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2信用点 → 1能量",
+            "target": {
+              "tradeId": "credits-for-energy"
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2张牌 → 1能量",
+            "target": {
+              "tradeId": "cards-for-energy"
+            }
+          },
+          {
+            "family": "land",
+            "summary": "登陆",
+            "target": {
+              "select": true
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+            "target": {
+              "choiceId": "trace:1:yellow:amiba:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "yellow",
+              "speciesId": "amiba",
+              "position": 4
+            }
+          },
+          {
+            "family": "choose_card",
+            "summary": "获得展示的低重力研究",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "amiba:display:9",
+              "source": "display",
+              "cardIndex": 9
+            }
+          }
+        ],
+        [
+          {
+            "family": "move",
+            "summary": "移动探测器 7 逆时针",
+            "target": {
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_payment",
+            "summary": "消耗 1 能量",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            }
+          },
+          {
+            "family": "industry",
+            "summary": "寰宇动力 1x 行动",
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 7 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:7:ccw",
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 4 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:4:ccw",
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2信用点 → 1能量",
+            "target": {
+              "tradeId": "credits-for-energy"
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2张牌 → 1能量",
+            "target": {
+              "tradeId": "cards-for-energy"
+            }
+          },
+          {
+            "family": "land",
+            "summary": "登陆",
+            "target": {
+              "select": true
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄4号位（5分+外星人牌）",
+            "target": {
+              "choiceId": "trace:2:yellow:chong:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "yellow",
+              "speciesId": "chong",
+              "position": 4
+            }
+          },
+          {
+            "family": "choose_card",
+            "summary": "获得展示的轨道监测",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "chong:display:7",
+              "source": "display",
+              "cardIndex": 7
+            }
+          }
+        ]
+      ]
+    },
+    {
+      "path": [
+        "card:acquire:card-51-0",
+        "decision:choose_target:dcc1004f",
+        "land:venus:planet:"
+      ],
+      "executedOrigins": 774,
+      "completedRouteVariants": 28,
+      "firstFour": [
+        [
+          {
+            "family": "industry",
+            "summary": "寰宇动力 1x 行动",
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 7 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:7:ccw",
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 4 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:4:ccw",
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "move",
+            "summary": "移动探测器 7 逆时针",
+            "target": {
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_payment",
+            "summary": "消耗 1 能量",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2信用点 → 1能量",
+            "target": {
+              "tradeId": "credits-for-energy"
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2张牌 → 1能量",
+            "target": {
+              "tradeId": "cards-for-energy"
+            }
+          },
+          {
+            "family": "land",
+            "summary": "登陆",
+            "target": {
+              "select": true
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+            "target": {
+              "choiceId": "trace:1:yellow:amiba:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "yellow",
+              "speciesId": "amiba",
+              "position": 4
+            }
+          },
+          {
+            "family": "choose_card",
+            "summary": "获得展示的低重力研究",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "amiba:display:9",
+              "source": "display",
+              "cardIndex": 9
+            }
+          }
+        ],
+        [
+          {
+            "family": "industry",
+            "summary": "寰宇动力 1x 行动",
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 7 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:7:ccw",
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 4 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:4:ccw",
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "move",
+            "summary": "移动探测器 7 逆时针",
+            "target": {
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_payment",
+            "summary": "消耗 1 能量",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2信用点 → 1能量",
+            "target": {
+              "tradeId": "credits-for-energy"
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2张牌 → 1能量",
+            "target": {
+              "tradeId": "cards-for-energy"
+            }
+          },
+          {
+            "family": "land",
+            "summary": "登陆",
+            "target": {
+              "select": true
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄4号位（5分+外星人牌）",
+            "target": {
+              "choiceId": "trace:2:yellow:chong:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "yellow",
+              "speciesId": "chong",
+              "position": 4
+            }
+          },
+          {
+            "family": "choose_card",
+            "summary": "获得展示的轨道监测",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "chong:display:7",
+              "source": "display",
+              "cardIndex": 7
+            }
+          }
+        ],
+        [
+          {
+            "family": "move",
+            "summary": "移动探测器 7 逆时针",
+            "target": {
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_payment",
+            "summary": "消耗 1 能量",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            }
+          },
+          {
+            "family": "industry",
+            "summary": "寰宇动力 1x 行动",
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 7 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:7:ccw",
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 4 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:4:ccw",
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2信用点 → 1能量",
+            "target": {
+              "tradeId": "credits-for-energy"
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2张牌 → 1能量",
+            "target": {
+              "tradeId": "cards-for-energy"
+            }
+          },
+          {
+            "family": "land",
+            "summary": "登陆",
+            "target": {
+              "select": true
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "获得 1 个黄色外星人标记 → 外星人 1 黄4号位（1分+外星人牌）",
+            "target": {
+              "choiceId": "trace:1:yellow:amiba:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 1,
+              "traceType": "yellow",
+              "speciesId": "amiba",
+              "position": 4
+            }
+          },
+          {
+            "family": "choose_card",
+            "summary": "获得展示的低重力研究",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "amiba:display:9",
+              "source": "display",
+              "cardIndex": 9
+            }
+          }
+        ],
+        [
+          {
+            "family": "move",
+            "summary": "移动探测器 7 逆时针",
+            "target": {
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_payment",
+            "summary": "消耗 1 能量",
+            "target": {
+              "kind": "move-payment",
+              "choiceId": "energy",
+              "cardIds": []
+            }
+          },
+          {
+            "family": "industry",
+            "summary": "寰宇动力 1x 行动",
+            "target": {
+              "companyId": "寰宇动力",
+              "abilityId": "huanyu_free_moves"
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 7 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:7:ccw",
+              "rocketId": 7,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "移动 4 逆时针",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "move:4:ccw",
+              "rocketId": 4,
+              "deltaX": -1,
+              "deltaY": 0
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2信用点 → 1能量",
+            "target": {
+              "tradeId": "credits-for-energy"
+            }
+          },
+          {
+            "family": "quick_trade",
+            "summary": "2张牌 → 1能量",
+            "target": {
+              "tradeId": "cards-for-energy"
+            }
+          },
+          {
+            "family": "land",
+            "summary": "登陆",
+            "target": {
+              "select": true
+            }
+          },
+          {
+            "family": "choose_target",
+            "summary": "获得 1 个黄色外星人标记 → 外星人 2 黄4号位（5分+外星人牌）",
+            "target": {
+              "choiceId": "trace:2:yellow:chong:4",
+              "kind": "planet-reward-alien-trace",
+              "alienSlotId": 2,
+              "traceType": "yellow",
+              "speciesId": "chong",
+              "position": 4
+            }
+          },
+          {
+            "family": "choose_card",
+            "summary": "获得展示的轨道监测",
+            "target": {
+              "kind": "residual-domain",
+              "choiceId": "chong:display:7",
+              "source": "display",
+              "cardIndex": 7
+            }
+          }
+        ]
+      ]
+    }
+  ],
+  "winningPlan": [
+    {
+      "actionId": "choose_payment:fc71e610",
+      "action": {
+        "family": "choose_payment",
+        "payload": {},
+        "target": {
+          "cardInstanceId": "card-17-0",
+          "kind": "discard-hand-card",
+          "select": true
+        }
+      },
+      "routeTargetId": "card:acquire:card-51-0"
+    },
+    {
+      "actionId": "choose_payment:66e1e1cd",
+      "action": {
+        "family": "choose_payment",
+        "payload": {},
+        "target": {
+          "cardInstanceId": "card-20-pass-1-1",
+          "kind": "discard-hand-card",
+          "select": true
+        }
+      },
+      "routeTargetId": "card:acquire:card-51-0"
+    },
+    {
+      "actionId": "choose_payment:c54ec275",
+      "action": {
+        "family": "choose_payment",
+        "payload": {},
+        "target": {
+          "confirm": true,
+          "kind": "confirm"
+        }
+      },
+      "routeTargetId": "card:acquire:card-51-0"
+    },
+    {
+      "actionId": "choose_card:874537bb",
+      "action": {
+        "family": "choose_card",
+        "payload": {
+          "slotIndex": 1
+        },
+        "target": {
+          "cardInstanceId": "card-51-0",
+          "choiceId": "public:1",
+          "kind": "trade-card-selection",
+          "slotIndex": 1,
+          "source": "public"
+        }
+      },
+      "routeTargetId": "card:acquire:card-51-0"
+    },
+    {
+      "actionId": "end_turn:1f65daa3",
+      "action": {
+        "family": "end_turn",
+        "payload": {},
+        "target": {
+          "kind": "end-turn"
+        }
+      },
+      "routeTargetId": null
+    },
+    {
+      "actionId": "launch:70d77c1b",
+      "action": {
+        "family": "launch",
+        "payload": {},
+        "target": {}
+      },
+      "routeTargetId": null
+    },
+    {
+      "actionId": "end_turn:1f65daa3",
+      "action": {
+        "family": "end_turn",
+        "payload": {},
+        "target": {
+          "kind": "end-turn"
+        }
+      },
+      "routeTargetId": null
+    },
+    {
+      "actionId": "play_card:72a041a7",
+      "action": {
+        "family": "play_card",
+        "payload": {
+          "cost": {
+            "credits": 1
+          },
+          "handIndex": 1
+        },
+        "target": {
+          "cardInstanceId": "card-47-0"
+        }
+      },
+      "routeTargetId": null
+    },
+    {
+      "actionId": "choose_target:4c2795ab",
+      "action": {
+        "family": "choose_target",
+        "payload": {},
+        "target": {
+          "choiceId": "mars:orbit:0",
+          "index": 0,
+          "kind": "orbit",
+          "planetId": "mars"
+        }
+      },
+      "routeTargetId": "decision:choose_target:4c2795ab"
+    },
+    {
+      "actionId": "choose_card:6855faa1",
+      "action": {
+        "family": "choose_card",
+        "payload": {
+          "cardInstanceId": "card-43-0"
+        },
+        "target": {
+          "choiceId": "public:0",
+          "slotIndex": 0,
+          "source": "public"
+        }
+      },
+      "routeTargetId": "decision:choose_target:4c2795ab"
+    },
+    {
+      "actionId": "end_turn:1f65daa3",
+      "action": {
+        "family": "end_turn",
+        "payload": {},
+        "target": {
+          "kind": "end-turn"
+        }
+      },
+      "routeTargetId": null
+    },
+    {
+      "actionId": "move:edac1a87",
+      "action": {
+        "family": "move",
+        "payload": {
+          "direction": "ccw",
+          "requiredMovePoints": 1
+        },
+        "target": {
+          "deltaX": -1,
+          "deltaY": 0,
+          "rocketId": 7
+        }
+      },
+      "routeTargetId": "orbit:venus:planet:"
+    },
+    {
+      "actionId": "choose_payment:41f43654",
+      "action": {
+        "family": "choose_payment",
+        "payload": {
+          "energyCost": 0,
+          "requiredMovePoints": 1
+        },
+        "target": {
+          "cardIds": [
+            "card-43-0"
+          ],
+          "choiceId": "card-43-0",
+          "kind": "move-payment"
+        }
+      },
+      "routeTargetId": "orbit:venus:planet:"
+    },
+    {
+      "actionId": "industry:5bda1856",
+      "action": {
+        "family": "industry",
+        "payload": {},
+        "target": {
+          "abilityId": "huanyu_free_moves",
+          "companyId": "寰宇动力"
+        }
+      },
+      "routeTargetId": "orbit:venus:planet:"
+    },
+    {
+      "actionId": "choose_target:c44781a6",
+      "action": {
+        "family": "choose_target",
+        "payload": {
+          "direction": "ccw"
+        },
+        "target": {
+          "choiceId": "move:7:ccw",
+          "deltaX": -1,
+          "deltaY": 0,
+          "kind": "residual-domain",
+          "rocketId": 7
+        }
+      },
+      "routeTargetId": "orbit:venus:planet:"
+    },
+    {
+      "actionId": "choose_target:49d31bca",
+      "action": {
+        "family": "choose_target",
+        "payload": {},
+        "target": {
+          "choiceId": "skip",
+          "kind": "residual-domain",
+          "skip": true
+        }
+      },
+      "routeTargetId": "orbit:venus:planet:"
+    },
+    {
+      "actionId": "orbit:aeea46f1",
+      "action": {
+        "family": "orbit",
+        "payload": {},
+        "target": {
+          "planetId": "venus",
+          "rocketId": 7
+        }
+      },
+      "routeTargetId": "orbit:venus:planet:"
+    },
+    {
+      "actionId": "choose_card:21dceec6",
+      "action": {
+        "family": "choose_card",
+        "payload": {},
+        "target": {
+          "cardInstanceId": "card-51-0",
+          "choiceId": "income:card-51-0"
+        }
+      },
+      "routeTargetId": "orbit:venus:planet:"
+    }
+  ],
+  "caveat": "目标来源计数可一节点多目标，不作为互斥物理节点占比。相似摘要和移动顺序不是状态等价证明；尚未修改贪心。"
+}

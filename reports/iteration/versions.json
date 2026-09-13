@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "secondary-probe-greedy-20260913",
+      "name": "secondary-probe-greedy-20260913",
+      "date": "2026-09-13",
+      "baseline": "fixed-world-405-20260913",
+      "head": "c47eaa17",
+      "commits": [
+        "ea9efe16",
+        "40433a1c",
+        "e750f8e8",
+        "c47eaa17"
+      ],
+      "summary": "寰宇第二探测器准备择一并保留结束；154交易1098→761，旧最佳完整计划及依赖一致。561步action/after完全同基线，均96.75不变；节点与截断未降，合计924819→928501ms。局部目标通过，不宣称整体提速；下一热点485。",
+      "records": {
+        "0bce679f.c47eaa17.quick-40.json": {},
+        "0bce679f.c47eaa17.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "fixed-world-405-20260913",
       "name": "fixed-world-405-20260913",
       "date": "2026-09-13",

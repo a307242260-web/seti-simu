@@ -3153,11 +3153,14 @@
             const secondaryGoals = selectHeuristicProbeGoals(input.branchObservation,
               requirements.candidates.filter((goal) => goal.rocketId !== primary.rocketId
                 && !movement.usedRocketIds.includes(goal.rocketId)
-                && probeGoalResourceReachable(input.branchObservation, goal, focalSeatId)));
-            for (const action of successors) {
-              if (action.target?.skip === true) continue;
-              const goal = secondaryGoals.find((candidate) => actionAdvancesProbeGoal(action, candidate));
-              if (!goal) continue;
+                && probeGoalResourceReachable(input.branchObservation, goal, focalSeatId)))
+              .sort((left, right) => compareProbeRouteGoals(input.branchObservation, left, right, focalSeatId));
+            // 次要位置不同，不作等价合并：沿已有目标排序和路线方向择一，保留结束移动。
+            for (const goal of secondaryGoals) {
+              const action = (goal.movementNextSteps || [goal.nextStep])
+                .map(step => successors.find(candidate => candidate.target?.skip !== true
+                  && actionMatchesProbeStep(candidate, step))).find(Boolean);
+              if (!action) continue;
               selected.push(...bindRoute([{
                 ...action,
                 movementPreparation: {
@@ -3167,6 +3170,7 @@
                   rocketId: goal.rocketId,
                 },
               }], input.routeTargetId, input.routePlanId));
+              break;
             }
           }
           return selected;

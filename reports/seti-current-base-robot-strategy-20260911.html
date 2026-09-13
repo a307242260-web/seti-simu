@@ -194,7 +194,7 @@
       <h1>当前 Base 机器人策略<br>全景报告</h1>
       <p class="lede">从可见状态、目标准入、反事实执行、叶估值、稳定决胜到计划复用，本报告说明当前机器人的完整决策流程。核心策略是：<strong>先确定值得完成的目标，再搜索能推进目标的动作</strong>。</p>
       <div class="stamp-row">
-        <span class="stamp good">Base: fixed-world-405-20260913</span>
+        <span class="stamp good">Base: secondary-probe-greedy-20260913</span>
         <span class="stamp">Policy: seti-heuristic-policy-v0</span>
         <span class="stamp">Rollout: secondary-agent-rollout-v21</span>
         <span class="stamp warn">进行中：预算与耗时专项；无目标普通搜索暂缓</span>
@@ -209,7 +209,7 @@
         <div class="card metric"><strong class="accent">96.75</strong><span>固定盘面完整终局均分</span></div>
         <div class="card metric"><strong>561</strong><span>自然终局正式输入步数</span></div>
         <div class="card metric"><strong class="amber">45</strong><span>战略搜索达到 4096 节点上限</span></div>
-        <div class="card metric"><strong>924.8s</strong><span>完整局墙钟耗时</span></div>
+        <div class="card metric"><strong>928.5s</strong><span>完整局墙钟耗时（quick加续跑）</span></div>
       </div>
       <div class="grid grid-3" style="margin-top:16px">
         <div class="card"><h3>策略范式</h3><p>目标引导 + 需求引导。探测、分析、扇区、收入、科技先形成具名目标，再绑定主动作和资源准备动作。</p></div>
@@ -225,11 +225,11 @@
         <table>
           <thead><tr><th>层次</th><th>标识</th><th>含义</th></tr></thead>
           <tbody>
-            <tr><td>版本登记</td><td class="mono">fixed-world-405-20260913</td><td>真实世界按种子固定，免电分析继承405分局已知配置；未知物种及方舟奖励使用独立假设，资源可参与本大轮后续规划。预算与估值权重不变。</td></tr>
-            <tr><td>生产行为快照</td><td class="mono">bddcdae9</td><td>本报告描述的策略代码提交，也是完整局记录绑定的代码版本。</td></tr>
-            <tr><td>完整局记录</td><td class="mono">b235ff5f.bddcdae9.full.json</td><td>本世界首份完整局，quick40步后续跑至自然终局，不重复前40步。</td></tr>
+            <tr><td>版本登记</td><td class="mono">secondary-probe-greedy-20260913</td><td>寰宇主探测器移动后，第二探测器准备沿已有目标排序择一，保留结束和主绑定；明确为有损贪心，预算与估值权重不变。</td></tr>
+            <tr><td>生产行为快照</td><td class="mono">c47eaa17</td><td>本报告描述的策略代码提交，也是完整局记录绑定的代码版本。</td></tr>
+            <tr><td>完整局记录</td><td class="mono">0bce679f.c47eaa17.full.json</td><td>quick40步后续跑至自然终局，不重复前40步；561步动作与结果完全同固定世界基线。</td></tr>
             <tr><td>Policy provenance</td><td class="mono">heuristic / v0 / laughable</td><td><code>laughable</code> 当前只进入 provenance/config checksum，生产策略中没有按难度分叉。</td></tr>
-            <tr><td>实验盘面</td><td class="mono">seti-free-analyze-v1</td><td>4席，human-405-world-v1，阿米巴和虫；新世界首个基线，不与历史未知世界计算涨跌。</td></tr>
+            <tr><td>实验盘面</td><td class="mono">seti-free-analyze-v1</td><td>4席，human-405-world-v1，阿米巴和虫；与固定世界基线同指纹，不与历史未知世界计算涨跌。</td></tr>
           </tbody>
         </table>
       </div>
@@ -418,7 +418,7 @@
             <tr><td>平均节点</td><td>1,923.5</td></tr>
             <tr><td>触发 beam 裁剪</td><td>52 次</td></tr>
             <tr><td>达到 4,096 上限</td><td>45 次</td></tr>
-            <tr><td>战略搜索累计耗时</td><td>722.1s（quick加续跑总墙钟的78.1%）</td></tr>
+            <tr><td>战略搜索累计耗时</td><td>724.1s（quick加续跑总墙钟的78.0%）</td></tr>
           </tbody>
         </table></div></div>
         <div class="card"><h3>正式动作构成（Top 10）</h3><div class="bar-list">
@@ -435,7 +435,7 @@
         </div></div>
       </div>
       <div class="callout warn" style="margin-top:16px"><strong>原始记录口径澄清：</strong> <code>metrics.budgetHits.length=51</code>：45次战略执行截断、6次control执行截断。全部193次搜索执行209,742节点；战略8叶未启用，256队列实际截断52次。战略执行/队列截断并集53次，加入控制后共59次。</div>
-      <p>本版561步自然终局，正式82/116/65/124，均96.75，搜索错误0。新世界首次基线，不用旧世界成绩计算策略涨跌。完整世界指纹为<code>2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c</code>。下一预算热点为154步绿色交易，4096节点18.36秒。详见<a href="iteration/fixed-world-405-acceptance-20260913.md">固定世界验收证据</a>。未知身份与方舟奖励按公开信息生成独立假设样本；所得资源可进入后续行动，经过隐藏边界的叶标低置信度。不是精确概率期望，也不读取真实未知奖励顺序。</p>
+      <p>本版561步自然终局，正式82/116/65/124，均96.75，搜索错误0。与基线全部action/after一致，分差0。完整世界指纹为<code>2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c</code>。154共同输入准备分支4→2、交易1098→761，旧最佳完整计划与依赖保留；全局节点及截断未降，924.8→928.5秒，不能宣称整体提速。下一热点485步绿色，4096节点18.05秒，目标选择1400为最大头。详见<a href="iteration/secondary-probe-acceptance-20260913.md">本项验收证据</a>。未知身份与方舟奖励按公开信息生成独立假设样本；所得资源可进入后续行动，经过隐藏边界的叶标低置信度。不是精确概率期望，也不读取真实未知奖励顺序。</p>
     </section>
 
     <p>外星拿牌在当前席位、同物种完整Decision中优先展示牌；后继只对无绑定或资源/探测目标择一。具体card/decision身份、未知绑定及多展示牌保留非取消分支。此为有损贪心，不读取隐藏牌序、不计等价省略。</p>
@@ -475,10 +475,10 @@
       <details><summary>版本、文档与完整局</summary><ul>
         <li><a href="iteration/strategy-todo-20260911.md">机器人策略迭代 TODO</a>：策略审阅中的待改进项与验收方向。</li>
         <li><a href="../docs/ai-design.md">docs/ai-design.md</a>：机器玩家设计参考；本报告的具体策略以所标注提交的生产源码为准。</li>
-        <li><a href="research/b235ff5f.bddcdae9.full.json">完整局研究记录</a>：561步、搜索诊断、动作计数与世界指纹；记录耗时为续跑895.1秒，quick加续跑共924.8秒。</li>
+        <li><a href="research/0bce679f.c47eaa17.full.json">完整局研究记录</a>：561步、搜索诊断、动作计数与世界指纹；记录耗时为续跑898.8秒，quick加续跑共928.5秒。</li>
         <li><a href="iteration/quick-timing-acceptance-20260912.md">快速行动时机验收</a>：五项行为目标、正式案例、完整局效果及已知边界。</li>
-        <li><a href="iteration/fixed-world-405-20260913/b235ff5f.bddcdae9.full.action-log.html">逐步行动复盘</a>：按玩家回合聚合的可视化回放。</li>
-        <li><a href="../seti-saves/seti-save-research-fixed-world-405-20260913-bddcdae9-full-v264.json">完整局存档</a>：正式终局分及拆分来源。</li>
+        <li><a href="iteration/secondary-probe-greedy-20260913/0bce679f.c47eaa17.full.action-log.html">逐步行动复盘</a>：按玩家回合聚合的可视化回放。</li>
+        <li><a href="../seti-saves/seti-save-research-secondary-probe-greedy-20260913-c47eaa17-full-v264.json">完整局存档</a>：正式终局分及拆分来源。</li>
       </ul></details>
       <div class="callout"><strong>证据优先级：</strong> 生产源码与版本化实验记录优先于叙述性文档；报告中所有“当前已生效”判断均按提交快照逐项核对。</div>
     </section>

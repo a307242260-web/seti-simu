@@ -1,0 +1,25 @@
+{
+  "baseline": "adhoc/budget154-trace-ea9efe16-20260913.json",
+  "candidate": "adhoc/secondary-probe154-e750f8e8-20260913.json",
+  "matchingCompleteLeaves": 2,
+  "exactWinningPlanAndDependencyFacts": true,
+  "selectedActionUnchanged": true,
+  "boundaryChoices": [
+    4,
+    2
+  ],
+  "quickTradeNodes": [
+    1098,
+    761
+  ],
+  "wallMs": [
+    19462.209208,
+    17611.754459
+  ],
+  "nodes": [
+    4096,
+    4096
+  ],
+  "clarification": "首份候选诊断误将原始capturePlanStep.action.actionId读成actionId，导致planSteps为null、oldBestLeaf=-1。未重跑搜索；以已保存完整优胜plan及真实leaf.actionChain纠正判读。评分函数未改、优胜计划和逐步事实一致；未另补造原始叶分数。",
+  "scope": "仅此共同输入的原最佳完整路线保留与局部缩减通过；全局最优及终局得分不由此推出。"
+}
