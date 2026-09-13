@@ -1,5 +1,9 @@
 # 奥陌陌实现说明
 
+`createInitialConfiguration(random)` 单独生成随机牌序与随机配件，不冻结揭示时的
+玩家分数、地球位置或可用科技。开局保存到物种的initialConfiguration，揭示只复制读取，
+缺配置显式报错，不临时补抽。跨宿主与恢复验证仍在进行。
+
 机制来源：`face_detail.md`。通用外星人生命周期见 `docs/alien-design.md`。
 
 ## 代码入口
@@ -71,6 +75,9 @@
 含奥陌陌牌奖励的痕迹会在放置后打开奥陌陌牌选择。消耗化石的痕迹会先校验当前玩家化石数量。
 
 ## 奥陌陌牌
+
+盲抽与展示补牌均取已有牌堆顶牌，不再次随机选牌；耗尽不回洗、不重建。
+最后展示牌仍可领取，展示与牌堆全部耗尽后只可取消；共用契约见 `docs/alien-design.md`。
 
 奥陌陌牌 0-9 由 `aomomo.js` 生成，并在 `randomizer/game/cards/effects.js` 中登记任务与实时效果：
 

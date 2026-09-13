@@ -1,0 +1,161 @@
+{
+  "baselineCommit": "329bd8a0",
+  "baselinePath": "/tmp/seti-fixed-world-baseline-20260913.gtqsgt",
+  "originalSeed": "seti-simulation",
+  "currentSeed": "seti-107",
+  "setup": {
+    "phase": "selecting",
+    "currentPlayerId": "player-white",
+    "playerIds": [
+      "player-white",
+      "player-green",
+      "player-blue",
+      "player-brown"
+    ],
+    "confirmedPlayerIds": [],
+    "offersByPlayerId": {
+      "player-white": {
+        "playerId": "player-white",
+        "industryOptions": [
+          {
+            "id": "industry:寰宇动力.png",
+            "kind": "industry",
+            "value": "寰宇动力.png"
+          },
+          {
+            "id": "industry:异星实验室.png",
+            "kind": "industry",
+            "value": "异星实验室.png"
+          }
+        ],
+        "initialOptions": [
+          {
+            "id": "initial:10",
+            "kind": "initial",
+            "value": 10
+          },
+          {
+            "id": "initial:21",
+            "kind": "initial",
+            "value": 21
+          },
+          {
+            "id": "initial:12",
+            "kind": "initial",
+            "value": 12
+          }
+        ],
+        "selectedIndustryId": null,
+        "selectedInitialIds": [],
+        "confirmed": false
+      },
+      "player-green": {
+        "playerId": "player-green",
+        "industryOptions": [
+          {
+            "id": "industry:芬威克研究中心.png",
+            "kind": "industry",
+            "value": "芬威克研究中心.png"
+          },
+          {
+            "id": "industry:深空探测.png",
+            "kind": "industry",
+            "value": "深空探测.png"
+          }
+        ],
+        "initialOptions": [
+          {
+            "id": "initial:15",
+            "kind": "initial",
+            "value": 15
+          },
+          {
+            "id": "initial:1",
+            "kind": "initial",
+            "value": 1
+          },
+          {
+            "id": "initial:17",
+            "kind": "initial",
+            "value": 17
+          }
+        ],
+        "selectedIndustryId": null,
+        "selectedInitialIds": [],
+        "confirmed": false
+      },
+      "player-blue": {
+        "playerId": "player-blue",
+        "industryOptions": [
+          {
+            "id": "industry:赫利昂联合体.png",
+            "kind": "industry",
+            "value": "赫利昂联合体.png"
+          },
+          {
+            "id": "industry:图灵系统.png",
+            "kind": "industry",
+            "value": "图灵系统.png"
+          }
+        ],
+        "initialOptions": [
+          {
+            "id": "initial:8",
+            "kind": "initial",
+            "value": 8
+          },
+          {
+            "id": "initial:16",
+            "kind": "initial",
+            "value": 16
+          },
+          {
+            "id": "initial:4",
+            "kind": "initial",
+            "value": 4
+          }
+        ],
+        "selectedIndustryId": null,
+        "selectedInitialIds": [],
+        "confirmed": false
+      },
+      "player-brown": {
+        "playerId": "player-brown",
+        "industryOptions": [
+          {
+            "id": "industry:任务中继站.png",
+            "kind": "industry",
+            "value": "任务中继站.png"
+          },
+          {
+            "id": "industry:宇宙战略集团.png",
+            "kind": "industry",
+            "value": "宇宙战略集团.png"
+          }
+        ],
+        "initialOptions": [
+          {
+            "id": "initial:2",
+            "kind": "initial",
+            "value": 2
+          },
+          {
+            "id": "initial:18",
+            "kind": "initial",
+            "value": 18
+          },
+          {
+            "id": "initial:3",
+            "kind": "initial",
+            "value": 3
+          }
+        ],
+        "selectedIndustryId": null,
+        "selectedInitialIds": [],
+        "confirmed": false
+      }
+    }
+  },
+  "setupHash": "ad83e182818f982232dea3dea84f395d2a505aeab7d72933c0e85acefd38aed8",
+  "scope": "仅起始选择定义；不证明其他随机配置、得分与所有页面行为"
+}

@@ -17,7 +17,7 @@ function createState() {
         traces: {},
       },
     },
-    amiba: amiba.createAmibaState(),
+    amiba: { ...amiba.createAmibaState(), initialConfiguration: amiba.createInitialConfiguration(() => 0) },
   };
 }
 

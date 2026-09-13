@@ -2,6 +2,7 @@
   "use strict";
 
   let catalog = root.SetiAlienCatalog;
+  const fixedWorld = typeof require === "function" ? require("../state/fixed-world-config") : root.SetiFixedWorldConfig;
   let placement = root.SetiAlienPlacement;
   let state = root.SetiAlienState;
   let jiuzhe = root.SetiAlienJiuzhe;
@@ -27,13 +28,13 @@
     runezu = runezu || require("./runezu");
   }
 
-  const api = factory(catalog, placement, state, jiuzhe, yichangdian, fangzhou, banrenma, chong, amiba, aomomo, runezu);
+  const api = factory(catalog, placement, state, jiuzhe, yichangdian, fangzhou, banrenma, chong, amiba, aomomo, runezu, fixedWorld);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
-  if (typeof module === "undefined") root.SetiAlienRandomizer = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, jiuzhe, yichangdian, fangzhou, banrenma, chong, amiba, aomomo, runezu) {
+  if (typeof module === "undefined") root.SetiAlienRandomizer = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, jiuzhe, yichangdian, fangzhou, banrenma, chong, amiba, aomomo, runezu, fixedWorld) {
   "use strict";
 
   const MIN_ALIEN_REVEAL_POOL_SIZE = Math.max(2, placement.ALIEN_SLOT_IDS.length);
@@ -117,10 +118,27 @@
     if (!poolResult.ok) return poolResult;
 
     const assignments = {};
+    const pool = [...poolResult.alienPoolIds];
+    const fixed = fixedWorld.getFixedWorldConfig(options.seed)?.assignments;
+    const random = options.random;
+    if (!fixed && typeof random !== "function") throw new TypeError("外星人初始分配需要显式随机源");
 
     for (const alienSlotId of placement.ALIEN_SLOT_IDS) {
+      let index;
+      if (fixed) {
+        index = pool.indexOf(fixed[alienSlotId]);
+        if (index < 0) throw new Error("固定盘面物种与可选池冲突");
+      } else {
+        const value = random();
+        if (!Number.isFinite(value) || value < 0 || value >= 1) {
+          throw new RangeError("外星人初始分配随机值必须在[0,1)内");
+        }
+        index = Math.floor(value * pool.length);
+      }
+      const [alienId] = pool.splice(index, 1);
       alienState.aliens[alienSlotId] = state.createDefaultAlienSlotState();
-      assignments[alienSlotId] = null;
+      alienState.aliens[alienSlotId].assignedAlienId = alienId;
+      assignments[alienSlotId] = alienId;
     }
     resetAlienSpecificStates(alienState);
 
@@ -128,7 +146,7 @@
       ok: true,
       assignments,
       alienPoolIds: poolResult.alienPoolIds,
-      message: "外星人槽位已重置；主动发现时从已选外星人中随机揭示，两个外星人不会重复",
+      message: "两个外星人已分配至隐藏槽位，主动发现时揭示既定身份",
     };
   }
 
@@ -162,8 +180,11 @@
     if (!pool.length) {
       return { ok: false, message: "外星人池不足以揭示不重复物种" };
     }
-    const index = Math.max(0, Math.min(pool.length - 1, Math.floor(random() * pool.length)));
-    return { ok: true, alienId: pool[index], pool };
+    const alienId = alienSlot.assignedAlienId;
+    if (!alienId || !pool.includes(alienId)) {
+      return { ok: false, code: "ALIEN_ASSIGNMENT_INVALID", message: "缺少有效的开局外星人分配" };
+    }
+    return { ok: true, alienId, pool };
   }
 
   function revealRandomAlien(alienState, alienSlotId, random = Math.random) {

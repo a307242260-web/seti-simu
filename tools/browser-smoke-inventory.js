@@ -458,6 +458,20 @@ module.exports = Object.freeze([
           && !document.querySelector("#action-play-card-button")?.dataset.actionId
         ), "取消手牌选择后禁用顶部打牌按钮");
       }
+      // 本场景先验2钱换电，再通过真实UI补回发射缺口；不依赖初始资源额外送钱。
+      const creditSequence = window.SetiRandomizer.inspect().input.submissionSequence;
+      if (document.querySelector("#action-quick-button")?.getAttribute("aria-expanded") !== "true") {
+        document.querySelector("#action-quick-button")?.click();
+      }
+      await waitFor(() => Boolean(document.querySelector(
+        '[data-quick-trade="energy-for-credit"]:not(:disabled)[data-action-id]',
+      )), "发射前换回信用点");
+      document.querySelector('[data-quick-trade="energy-for-credit"]:not(:disabled)[data-action-id]').click();
+      await waitFor(() => {
+        const next = window.SetiRandomizer.inspect();
+        return next.input.submissionSequence > creditSequence
+          && next.input.lastResult?.kind === "action" && next.projection.source.phase === "idle";
+      }, "补资源快速行动进入Standard Action端口");
       const beforeInspect = window.SetiRandomizer.inspect();
       const inputSequence = beforeInspect.input.submissionSequence;
       await waitFor(() => {

@@ -32,7 +32,7 @@
 - `blueBonusResources`：蓝槽发放的钱/电尚未消费量，用于AI来源估值；正式支付优先扣减该
   留存，但不改变实际费用。蓝3精选的卡实例带`blueBonusOwnerId`，普通精选不带。
   两者是随正式状态保存/撤销的来源信息，不是新增资源或额外奖励，详见`docs/ai-design.md`。
-- 起始手牌：每名玩家开局从 140 张普通牌和 42 张 DLC 牌组成的牌库中随机盲抽 4 张，不按牌库前几张固定发牌。
+- 起始手牌：140 张普通牌和 42 张 DLC 牌在开局按种子生成完整牌序，再依次给每名玩家发 4 张；不是按未洗牌卡表顺序发牌，发牌时不重新抽随机位置。
 - 公共牌区：进入初始选择时立即补满 3 张公共牌，玩家选择公司和初始牌时即可看到这 3 张牌。
 - `techState`：玩家已拥有科技 `ownedTiles`，以及蓝色科技放置位 `blueBoardSlots`。
 - `dataState`：由数据模块懒初始化，包含 `poolTokens`、`placedTokens`、`discardedCount`；当前 schema 恢复后若 `resources.availableData` 大于数据池 token 数，会按可用数据数量补齐 `poolTokens` 以保持状态栏和玩家面板一致。旧或不完整 schema 在恢复端口前直接拒绝。
@@ -271,7 +271,7 @@ UI 布局：
 - 第 2/3/4 轮开始时，所有启用玩家统一按自己的收入栏获得 1 次收入资源；收入属于新一轮轮初阶段，不计入上一轮最后一名玩家的“回合结束”。第 1 轮使用公司牌与两张初始牌结算后的正式初始资源，不额外获得轮初收入。
 - 轮初数据收入在共享 `residual-domain-session` 中按该席收入数量逐个调用 `data.gainData`，创建池内 token 并同步 `resources.availableData`；不得只累加资源数字。实体编号使用 committed `meta.sequences.dataToken`，池满按正式规则弃置且不消耗编号；非弃置失败显式返回。轮初收入随已确认 Effect Session 保存，恢复完成后的 checkpoint 不再次发放。
 - **插入牌到收入列**（收入行动）统一走 `players.gainIncome`：把一张牌作为收入 = **收入栏对应资源增长** + **立即获得一次该卡的收入效果**（资源/数据/盲抽，经 `createCardDrawContext` 统一抽牌）。覆盖所有「当收入」来源：初始收入牌、打牌转收入、收入角标、放置数据到计算机奖励位置（4 号位数据覆盖 = 获得 1 次收入行动）、赫利昂 1x 收入牌。收入牌一律插入起始收入牌下方并**移出游戏**（`addRemovedFromGame`，不进弃牌堆、不会被洗回主牌库）。**注意区分**：任务中继站精选牌获得的是「**获得角标奖励**」（一次性角标效果，复用 `applyCornerGainReward` 原语：只发牌面角标奖励，不插入收入列、不增长收入栏，牌保留在手牌），与「插入牌到收入列」不同。
-- 新局会准备 3 叠 PASS 预留牌，对应第 1/2/3 轮；每叠数量为启用玩家数 + 1。PASS 预留牌与玩家初始手牌、公共牌区和后续盲抽共用同一普通牌库，正常情况下不会发出重复牌；只有普通牌库抽空后，弃牌堆才会洗回可抽牌堆。每轮玩家依次从剩余预留牌中选 1 张，所有玩家 PASS 进入下一轮时，本轮剩余的最后 1 张预留牌弃入弃牌堆。
+- 新局会准备 3 叠 PASS 预留牌，对应第 1/2/3 轮；每叠数量为启用玩家数 + 1。PASS 预留牌与玩家初始手牌、公共牌区和后续盲抽共用开局生成的普通牌序，不会发出重复牌；牌库耗尽后不回洗弃牌。每轮玩家依次从剩余预留牌中选 1 张，所有玩家 PASS 进入下一轮时，本轮剩余的最后 1 张预留牌弃入弃牌堆。
 - PASS 预留精选由不可跳过的标准 Decision 表示；关闭或重建 DOM 不会取消 Session 中的待选状态。
 - 第 1/2/3 轮 PASS 链上的弃牌、旋转、预留精选节点不能跳过；在 PASS 链结算（自动推进回合）前，仍可按当前行动撤销规则回滚已完成的可撤销步骤；推进跨过不可撤销屏障（如外星人揭示、预留精选后的隐藏信息）后不能回滚到屏障之前。
 - “撤销”由 Effect Session undo frame 恢复 working state、队列、revision 和 journal；不可撤销效果形成 barrier，不能越过屏障撤销更早步骤。
@@ -312,7 +312,8 @@ UI 布局：
 
 - “收入”按现有收入效果处理：玩家插入 1 张手牌到收入列，按该牌收入角标增加收入。
 - “精选”按现有精选处理：从公共牌区拿 1 张牌；所有精选效果都允许盲抽，只有明确声明 `allowBlindDraw: false` 的来源例外（如公共牌区扫描、只要求亮明公共牌的角标精选）。
-- 普通牌库分为可抽牌堆与弃牌堆：玩家打出的非保留牌、手牌弃牌、公共牌区被弃掉的牌，以及每轮剩余 PASS 预留牌都会进入弃牌堆。在当前可抽牌堆全部抽完前，弃牌堆里的牌不会再次被盲抽或补到公共牌区；只有可抽牌堆为空时，才把当时的弃牌堆洗回为新的可抽牌堆。洗回后新产生的弃牌仍留在弃牌堆，等新的可抽牌堆再次抽空才会参与下一次洗牌。
+- 公共牌角标选择不枚举空位，合法选择保留实际槽位下标。`b_23.webp` 按牌面数量选齐本批公共牌（不足三张时取实际张数），同时弃除后补牌，再按所选顺序结算角标；本批新补出的牌不参加本次弃牌或奖励。
+- 普通牌库分为可抽牌堆与弃牌堆：玩家打出的非保留牌、手牌弃牌、公共牌区被弃掉的牌，以及每轮剩余 PASS 预留牌都会进入弃牌堆。可抽牌堆在开局一次性随机排列并写入权威状态；盲抽与公共补牌均取顶牌，不再随机选择剩余卡牌。牌库耗尽即停止，不回洗、不重建、不从卡表补牌（2026-09-13用户确认）。公开牌位补不满时保持空位；缺少牌堆字段与正常耗尽不同，须显式报错。
 - 盲抽奖励使用 `assets/symbol/effect/blind_card.webp`。
 - 奖励效果和通用资源效果图标统一从 `assets/symbol/effect/` 读取；新增图标应使用语义化文件名。
 - 固定星球扇区扫描使用 `assets/symbol/effect/normal_scan.webp`，并在效果按钮上显示星球名角标；天王星/海王星的织女一/绘架座β二选一扫描使用 `black_scan.webp`；红/蓝/黄星云扫描分别使用 `red_scan.webp`、`blue_scan.webp`、`yellow_scan.webp`。
@@ -488,7 +489,7 @@ journal 统一处理。
   不产生发射事件或分配探测器序号。上限未满时正常执行；直接发射主行动仍不可超限，
   其他内核执行失败仍显式暴露，不能通过禁止整张牌或吞错处理。
 
-- **获得牌统一**：盲抽与精选全部收敛到 `cards/deck.js` 唯一内核——盲抽 `cards.blindDraw`（→ `takeRandomEntryForDraw` 洗回+抽牌 → `createCommittedCardInstance` 进手牌）、精选 `cards.pickFromPublic`（公共牌区取牌 + `replenishPublicSlot` 补牌）。效果会话内路径（卡牌效果、研究科技、收入、公司能力、外星人/任务触发、快速交易获得牌、初始结算/初始收入盲抽）全部经统一上下文 `cards.createCardDrawContext`（封装 random 与 createCardInstance 装配）执行；无任何绕过内核的第二套抽牌/选牌实现。外星物种牌堆（阿米巴/虫/… `blindDrawCard`）是物种独立牌堆，不属主牌库盲抽范围。
+- **获得牌统一**：盲抽与精选全部收敛到 `cards/deck.js` 唯一内核——盲抽 `cards.blindDraw`（→ `takeNextEntryForDraw` 取顶牌 → `createCommittedCardInstance` 进手牌）、精选 `cards.pickFromPublic`（公共牌区取牌 + `replenishPublicSlot` 补牌）。效果会话内路径（卡牌效果、研究科技、收入、公司能力、外星人/任务触发、快速交易获得牌、初始结算/初始收入盲抽）全部经统一上下文 `cards.createCardDrawContext` 执行；取牌不消费随机数，随机排列只在共享 Production 开局调用 `initializeDrawPile`。外星物种牌堆（阿米巴/虫/… `blindDrawCard`）是物种独立牌堆，不属主牌库盲抽范围。
 - 人工卡牌描述转可执行 DSL 的规范参考：`docs\card-modeling-dsl-spec.md`。后续新增卡牌模型时，先按该文档约束人工描述和 agent 转换，尤其要明确效果节点 `kind`、费用策略、任务类型和队列结束结算时机。
 - 卡牌源数据保持 CSV，方便手工校对和继续补内容。`assets/cards/card_model.csv` 承载资产编号、费用、角标和切图元数据；浏览器加载的 `randomizer/game/card-catalog.js` 和 Node 使用的 `assets/cards/card_model.json` 由 `python tools/build_card_catalog_js.py` 生成，改 CSV 后必须同步生成。
 - `randomizer/game/cards/effects.js` 维护卡牌来源映射与可执行模型；实现状态以该文件和当前测试 inventory 为准。

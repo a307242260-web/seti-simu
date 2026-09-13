@@ -1,0 +1,20 @@
+{
+  "scope": "正式Simulation.reset的初态：fresh A/A、同实例A/A和A/B/A，不运行AI。不是全部运行期随机独立性证明。",
+  "seed": "seti-free-analyze-v1",
+  "initialHash": "449fc9301f7005458c2949329db9189e6c2add2c80ecb986a0505e4669a0b4ca",
+  "techHash": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
+  "solarHash": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
+  "passPilesHash": "6ff5fbb83f04668588fdeb14c5fe79117c3c75d1d23677bf960cd441283b0ccb",
+  "publicCardsHash": "e9afbfcfce9baa0987156baacf8a8cc0107155c0a43cd7f289b2b975c44de370",
+  "passPileSizes": {
+    "1": 5,
+    "2": 5,
+    "3": 5
+  },
+  "ordinaryDeckLength": 148,
+  "alienAssignments": [
+    null,
+    null
+  ],
+  "conclusion": "初始科技/基础盘面/三轮末预留牌的重复初始化核验通过；完整固定世界是否达成还需核对牌序、物种预分配与运行期隔离。"
+}

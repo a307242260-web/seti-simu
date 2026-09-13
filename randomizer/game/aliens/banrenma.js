@@ -406,8 +406,7 @@
 
   function drawDisplayedCardIndex(alienState, random = Math.random) {
     const banrenma = ensureBanrenmaState(alienState);
-    if (!banrenma.cardDeck.length) banrenma.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
-    const index = banrenma.cardDeck.shift();
+    const index = banrenma.cardDeck.shift() ?? null;
     banrenma.displayedCardIndex = index;
     return index;
   }
@@ -415,6 +414,9 @@
   function takeDisplayedCard(alienState, random = Math.random, options = {}) {
     const banrenma = ensureBanrenmaState(alienState);
     if (banrenma.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
+    if (banrenma.displayedCardIndex == null) {
+      return { ok: false, code: "ALIEN_CARD_DECK_EMPTY", card: null, message: "半人马牌已耗尽" };
+    }
     const card = createAlienCard(banrenma.displayedCardIndex, options.sequence);
     drawDisplayedCardIndex(alienState, random);
     return { ok: Boolean(card), card, message: card ? `获得半人马牌：${definitionName(card)}` : "没有可获得的半人马牌" };
@@ -422,9 +424,10 @@
 
   function blindDrawCard(alienState, random = Math.random, options = {}) {
     const banrenma = ensureBanrenmaState(alienState);
-    if (!banrenma.cardDeck.length) banrenma.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
-    const pickIndex = Math.floor(random() * banrenma.cardDeck.length);
-    const [index] = banrenma.cardDeck.splice(pickIndex, 1);
+    if (!banrenma.cardDeck.length) {
+      return { ok: false, code: "ALIEN_CARD_DECK_EMPTY", card: null, message: "半人马盲抽牌堆已耗尽" };
+    }
+    const index = banrenma.cardDeck.shift();
     const card = createAlienCard(index, options.sequence);
     if (banrenma.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
     return { ok: Boolean(card), card, message: card ? `盲抽半人马牌：${definitionName(card)}` : "没有可盲抽的半人马牌" };
@@ -525,6 +528,11 @@
     return BONUS_POSITIONS.filter((position) => !slots[position]);
   }
 
+  function createInitialConfiguration(random) {
+    if (typeof random !== "function") throw new TypeError("半人马配置需要显式随机源");
+    return { cardDeck: shuffle(CARD_DEFINITIONS.map((card) => card.index), random) };
+  }
+
   function initializeBanrenmaReveal(
     alienState,
     alienSlotId,
@@ -544,13 +552,15 @@
       };
     }
 
+    if (!banrenma.initialConfiguration) throw new Error("banrenma缺少开局随机配置");
+    const configuration = structuredClone(banrenma.initialConfiguration);
     banrenma.revealedSlotId = Number(alienSlotId);
     banrenma.revealedByPlayerId = triggerPlayer?.id || null;
     banrenma.revealedByPlayerColor = getPlayerColor(triggerPlayer);
     banrenma.revealInitialized = true;
     delete banrenma.traceSlotsByAlienSlotId[String(alienSlotId)];
     ensureTraceGrid(alienState, alienSlotId);
-    banrenma.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
+    banrenma.cardDeck = configuration.cardDeck;
     banrenma.displayedCardIndex = drawDisplayedCardIndex(alienState, random);
     banrenma.bonusSlots = {};
 
@@ -614,6 +624,7 @@
     listTraceEntries,
     getTraceEntries,
     initializeBanrenmaReveal,
+    createInitialConfiguration,
     getCardSrc,
     getPlayerMarkSrc,
     createAlienCard,

@@ -1,0 +1,259 @@
+{
+  "quickPath": "reports/research/b235ff5f.bddcdae9.quick-40.json",
+  "fullPath": "reports/research/b235ff5f.bddcdae9.full.json",
+  "savePath": "seti-saves/seti-save-research-fixed-world-405-20260913-bddcdae9-full-v264.json",
+  "world": {
+    "schemaVersion": "seti-initial-world-identity-v1",
+    "seed": "seti-free-analyze-v1",
+    "worldVersion": "human-405-world-v1",
+    "activePlayerCount": 4,
+    "fingerprint": "2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c",
+    "components": {
+      "aliens": "46dbcc69e2fca49b3b1fd3d6e93cbdf73ec6695f58026c25eae294c6af482de2",
+      "cards": "e5427e2ac14ea93859f820681a6957c5cdf3bb5f0c61a504927a7b3442a04d4a",
+      "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+      "finalScoring": "e8a14ecc0f4b523158eefbae19cee10874f65083ef2cb060aa6badf9540da7f4",
+      "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+      "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+      "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+      "players": "81760effc03c474b420cd154875a98942f428d4e82643d3f4c1d65b8a4358482",
+      "solarSystem": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
+      "tech": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
+      "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
+      "initialOffers": "76eacd007efd30ddff4d1a2e72ee375e3b45ea420b83a9fcc31ff87ae7e90879",
+      "initialRandom": "748c814e83ed7ffbc0d68c14175649c97eef71a94eeeff4605b52f779e729399"
+    }
+  },
+  "steps": 561,
+  "preservedPrefixSteps": 40,
+  "failures": [],
+  "realAliens": {
+    "1": {
+      "assigned": "阿米巴",
+      "revealed": true,
+      "alienId": "阿米巴"
+    },
+    "2": {
+      "assigned": "虫",
+      "revealed": true,
+      "alienId": "虫"
+    }
+  },
+  "finalScores": [
+    {
+      "baseScore": 56,
+      "cardScore": 6,
+      "cards": [
+        {
+          "cardId": "b_33.webp",
+          "rule": {
+            "kind": "techCount",
+            "scorePer": 2,
+            "techType": "blue"
+          },
+          "score": 6
+        }
+      ],
+      "jiuzheCardScore": 0,
+      "jiuzheCards": [],
+      "jiuzhePenaltyApplied": false,
+      "jiuzhePenaltyScore": 0,
+      "jiuzheThreat": 0,
+      "playerId": "player-blue",
+      "prePenaltyTotalScore": 82,
+      "runezuSymbolScore": 0,
+      "tileScore": 20,
+      "tileScoresById": {
+        "a": 5,
+        "b": 0,
+        "c": 0,
+        "d": 15
+      },
+      "tiles": [
+        {
+          "baseValue": 1,
+          "formulaId": "a2",
+          "multiplier": 5,
+          "score": 5,
+          "slotIndex": 3,
+          "tileId": "a",
+          "variant": 2
+        },
+        {
+          "baseValue": 3,
+          "formulaId": "d2",
+          "multiplier": 5,
+          "score": 15,
+          "slotIndex": 2,
+          "tileId": "d",
+          "variant": 2
+        }
+      ],
+      "totalScore": 82
+    },
+    {
+      "baseScore": 75,
+      "cardScore": 0,
+      "cards": [],
+      "jiuzheCardScore": 0,
+      "jiuzheCards": [],
+      "jiuzhePenaltyApplied": false,
+      "jiuzhePenaltyScore": 0,
+      "jiuzheThreat": 0,
+      "playerId": "player-green",
+      "prePenaltyTotalScore": 116,
+      "runezuSymbolScore": 0,
+      "tileScore": 41,
+      "tileScoresById": {
+        "a": 22,
+        "b": 16,
+        "c": 0,
+        "d": 3
+      },
+      "tiles": [
+        {
+          "baseValue": 2,
+          "formulaId": "a2",
+          "multiplier": 11,
+          "score": 22,
+          "slotIndex": 1,
+          "tileId": "a",
+          "variant": 2
+        },
+        {
+          "baseValue": 2,
+          "formulaId": "b1",
+          "multiplier": 8,
+          "score": 16,
+          "slotIndex": 1,
+          "tileId": "b",
+          "variant": 1
+        },
+        {
+          "baseValue": 1,
+          "formulaId": "d2",
+          "multiplier": 3,
+          "score": 3,
+          "slotIndex": 3,
+          "tileId": "d",
+          "variant": 2
+        }
+      ],
+      "totalScore": 116
+    },
+    {
+      "baseScore": 54,
+      "cardScore": 0,
+      "cards": [],
+      "jiuzheCardScore": 0,
+      "jiuzheCards": [],
+      "jiuzhePenaltyApplied": false,
+      "jiuzhePenaltyScore": 0,
+      "jiuzheThreat": 0,
+      "playerId": "player-brown",
+      "prePenaltyTotalScore": 65,
+      "runezuSymbolScore": 0,
+      "tileScore": 11,
+      "tileScoresById": {
+        "a": 8,
+        "b": 0,
+        "c": 0,
+        "d": 3
+      },
+      "tiles": [
+        {
+          "baseValue": 1,
+          "formulaId": "a2",
+          "multiplier": 8,
+          "score": 8,
+          "slotIndex": 2,
+          "tileId": "a",
+          "variant": 2
+        },
+        {
+          "baseValue": 1,
+          "formulaId": "d2",
+          "multiplier": 3,
+          "score": 3,
+          "slotIndex": 3,
+          "tileId": "d",
+          "variant": 2
+        }
+      ],
+      "totalScore": 65
+    },
+    {
+      "baseScore": 74,
+      "cardScore": 15,
+      "cards": [
+        {
+          "cardId": "b_63.webp",
+          "rule": {
+            "color": "yellow",
+            "kind": "sectorWinsByColor",
+            "scorePer": 3
+          },
+          "score": 6
+        },
+        {
+          "cardId": "dlc_8.png",
+          "rule": {
+            "kind": "remainingResource",
+            "resource": "availableData",
+            "scorePer": 3
+          },
+          "score": 9
+        }
+      ],
+      "jiuzheCardScore": 0,
+      "jiuzheCards": [],
+      "jiuzhePenaltyApplied": false,
+      "jiuzhePenaltyScore": 0,
+      "jiuzheThreat": 0,
+      "playerId": "player-white",
+      "prePenaltyTotalScore": 124,
+      "runezuSymbolScore": 0,
+      "tileScore": 35,
+      "tileScoresById": {
+        "a": 10,
+        "b": 0,
+        "c": 4,
+        "d": 21
+      },
+      "tiles": [
+        {
+          "baseValue": 2,
+          "formulaId": "a2",
+          "multiplier": 5,
+          "score": 10,
+          "slotIndex": 3,
+          "tileId": "a",
+          "variant": 2
+        },
+        {
+          "baseValue": 1,
+          "formulaId": "c1",
+          "multiplier": 4,
+          "score": 4,
+          "slotIndex": 1,
+          "tileId": "c",
+          "variant": 1
+        },
+        {
+          "baseValue": 3,
+          "formulaId": "d2",
+          "multiplier": 7,
+          "score": 21,
+          "slotIndex": 1,
+          "tileId": "d",
+          "variant": 2
+        }
+      ],
+      "totalScore": 124
+    }
+  ],
+  "quickMilliseconds": 29721,
+  "continuationMilliseconds": 895098,
+  "combinedMilliseconds": 924819,
+  "scope": "同代码同世界续跑完整终局、历史前缀及真实牌序/配置保全。不是与旧世界成绩的受控比较或预算归零证明。"
+}

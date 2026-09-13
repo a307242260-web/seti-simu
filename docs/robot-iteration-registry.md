@@ -51,6 +51,28 @@ seti-saves/*.json（存档，可选）    │      └→ reports/iteration/regi
 `node tools/robot_iterate.js build --refresh-report-metadata`刷新，保留历史行动和得分正文，
 不运行规则重放或AI，不能补回运行时未记录的字段。需要重建正文时才使用
 `build --reports --force-reports`；存档不能按当前规则完整重放时显式报错，不覆盖失败报告。
+固定世界启用后，正文重建先核对committed meta中的seed及worldVersion：免电局要求
+human-405-world-v1，其他种子要求seeded-world-v1。缺失或不匹配时以
+REPORT_REPLAY_WORLD_VERSION_UNSUPPORTED拒绝，不自动补标签、不重新生成历史盘面。
+可重放存档按自身种子和turn.activePlayerCount初始化同一内核及起始RNG状态；不能
+把所有存档的随机源固定成免电局。旧报告仍可只刷新元数据，历史行动和得分正文不变。
+
+新研究记录的`world`为`seti-initial-world-identity-v1`：记录世界版本、种子、人数、
+SHA-256总指纹及分域哈希。`tools/fixed-world-identity.js`通过正式内核创建开局，
+只执行“开始初始选择”以取得完整开局选项，不运行AI；哈希覆盖初始各规则域、隐藏
+牌序和两物种配置、起始选项、初始随机状态。排除运行时间、游戏ID和代码/策略版本；
+代码版本仍单独进入实验去重指纹。世界身份同时进入去重载荷，新报告显示其版本和
+完整指纹。原始隐藏配置不写入world记录，也不交给Policy。旧记录缺world时标未知，
+不能为历史成绩用当前代码倒算补标签。同世界指纹是初态一致证据，不是规则版本一致
+或终局得分必然一致的证明。当前已有旧报告仅刷新元数据时不重建正文，保持原内容。
+研究快速存档续跑保留源committed state、进行中的session和全部browserReplaySteps；
+继续执行只追加新记录，不重建牌序。读取器不改写原存档的RNG算法标签，未知算法
+由Simulation恢复入口明确拒绝，并保留已有对局进度。
+
+总览最佳成绩以最新登记版本的世界指纹为比较范围，只纳入同指纹且已自然终局的
+full记录；不同世界、缺少世界身份的历史记录及roadmap不参与当前排名。当前世界
+只有quick记录时显示尚无完整成绩，不回退到旧世界。最新版本缺世界身份时仅显示
+“历史成绩（世界身份未核验）”，不能解释为同盘面策略涨跌。原始记录保留不改写。
 
 ### 2.1 迭代 loop 统一规范（2026-09-11 用户确认）
 

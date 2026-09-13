@@ -18,6 +18,10 @@
 
 ## Symbol 系统
 
+`createInitialConfiguration(random)` 只生成完整 `cardDeck` 与 `symbolOrder`，不发奖、
+不揭示、不创建活跃标记；开局保存到initialConfiguration，揭示只复制读取，
+缺配置显式报错，不临时补抽。跨宿主与恢复验证仍在进行。
+
 - 上方面板有 9 个 symbol 位。
 - 外圈按顺时针命名：`orange_1`、`orange_2`、`blue_1`、`blue_2`、`red_1`、`red_2`。
 - 内圈按顺时针命名：`orange_3`、`blue_3`、`red_3`。
@@ -36,6 +40,9 @@
 - 揭示时随机 symbol 初始化属于不可逆边界；单次 symbol 移动本身是确定性结算，应使用快照撤销。
 
 ## 阿米巴牌
+
+盲抽与展示补牌均取已有牌堆顶牌，不再次随机选牌；耗尽不回洗、不重建。
+最后展示牌仍可领取，展示与牌堆全部耗尽后只可取消；共用契约见 `docs/alien-design.md`。
 
 - 由 `assets/aliens/阿米巴/card_model.csv` 建模，图片为 `assets/aliens/阿米巴/cards/0.webp`-`9.webp`。
 - 揭示时，玩家在该外星人 state 面板拥有几个首痕迹，就自动从阿米巴牌堆获得几张阿米巴牌到手牌。

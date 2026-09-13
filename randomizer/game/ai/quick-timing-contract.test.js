@@ -7,6 +7,7 @@ const test = require("node:test");
 const evaluator = require("./expected-score-evaluator");
 const continuation = require("./plan-continuation");
 const outcomeModel = require("./outcome-model");
+const rockets = require("../rockets");
 
 // 窄接口义务：策略观察必须携带正式主行动阶段；不验证得分或完整局轨迹。
 const env = createSimulationEnv();
@@ -33,6 +34,15 @@ try {
     assert.equal(env.step(selected || actions[0]).ok, true);
   }
   fork = env.createCounterfactualFork().composition;
+  // 本测试验证阶段，不依赖随机起始公司是否已发满探测器或消耗资源。
+  const openingEnvelope = fork.lifecycle.save().envelope;
+  const openingState = JSON.parse(openingEnvelope.committedState);
+  const focalPlayer = openingState.players.players.find(p => p.id === openingState.turn.currentPlayerId);
+  focalPlayer.resources.credits = 5;
+  focalPlayer.resources.energy = 5;
+  openingState.pieces = rockets.createRocketState();
+  assert.equal(fork.lifecycle.restore({ ...openingEnvelope,
+    committedState: JSON.stringify(openingState) }).ok, true);
   const launch = fork.inputPort.enumerateActions({}).find(a => a.family === "launch");
   assert(launch);
   const actorId = launch.actorId;

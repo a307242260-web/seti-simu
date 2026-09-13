@@ -9,6 +9,7 @@ const highCouplingStateApi = loadProductionDependency("./state/high-coupling-sli
 const effectRuntimeApi = loadProductionDependency("./effects/session-runtime", "SetiEffectSession");
 const standardActionApi = loadProductionDependency("./actions/standard-action", "SetiStandardAction");
 const initialGameStateApi = loadProductionDependency("./state/initial-game-state", "SetiInitialGameState");
+const fixedWorldApi = loadProductionDependency("./state/fixed-world-config", "SetiFixedWorldConfig");
 const players = loadProductionDependency("./players", "SetiPlayers");
 const solar = loadProductionDependency("../solar-system/core", "SetiSolarSystem");
 const rockets = loadProductionDependency("./rockets", "SetiRocketActions");
@@ -69,6 +70,30 @@ function createCounterfactualRandomFromState(initialState) {
 
 function createCounterfactualRandom(seed) {
   return createCounterfactualRandomFromState(hashCounterfactualSeed(seed));
+}
+
+function createHiddenAlienHypothesis(root, publicSeed) {
+  const speciesKeys = ["amiba", "chong", "aomomo", "banrenma", "runezu", "yichangdian", "jiuzhe", "fangzhou"];
+  const slots = Object.entries(root.aliens.aliens).sort(([left], [right]) => Number(left) - Number(right));
+  const knownIds = new Set(slots.filter(([, slot]) => slot.revealed).map(([, slot]) => slot.alienId));
+  const pool = aliens.getAlienRevealPool(root.aliens).filter(id => !knownIds.has(id));
+  const random = createCounterfactualRandom(`alien-hypothesis-v1:${publicSeed}`);
+  const assignments = [];
+  for (const [slotId, slot] of slots) {
+    if (slot.revealed) continue;
+    if (!pool.length) throw new Error("COUNTERFACTUAL_ALIEN_POOL_EXHAUSTED");
+    const [alienId] = pool.splice(Math.floor(random() * pool.length), 1);
+    const key = speciesKeys.find(key => aliens[key].ALIEN_ID === alienId);
+    if (!key) throw new Error(`COUNTERFACTUAL_ALIEN_MODULE_MISSING: ${alienId}`);
+    assignments.push({ slotId, alienId, key, configuration: aliens[key].createInitialConfiguration(
+      createCounterfactualRandom(`alien-configuration-hypothesis-v1:${publicSeed}:${slotId}:${key}`),
+      root.players.players,
+    ) });
+  }
+  return {
+    assignments,
+    unknownKeys: speciesKeys.filter(key => !knownIds.has(aliens[key].ALIEN_ID)),
+  };
 }
 const SIMULATION_FAMILY_CONTRACTS = Object.freeze([
   { family: "launch", obligation: "生产发射规则枚举、校验并提交火箭" },
@@ -253,7 +278,6 @@ function randomizeBoard(workingState, random) {
   data.clearNebulaData(workingState.data);
   data.fillAllNebulaData(workingState.data, { source: "setup", root: workingState });
   finalScoring.randomizeTileVariants(workingState.finalScoring, DEFAULT_FINAL_SCORE_IDS, random);
-  aliens.randomizeAlienAssignments(workingState.aliens);
   tech.boardState.setupBoardBonuses(workingState.tech, random);
 }
 
@@ -1369,7 +1393,9 @@ function createCardGame(workingState, random, handCount = 5) {
   }
   workingState.cards.publicCards = Array.from({ length: cards.PUBLIC_CARD_COUNT }, () => null);
   workingState.cards.discardPile = [];
-  workingState.cards.drawPileCardIds = [];
+  cards.initializeDrawPile(workingState.cards, random);
+  const fixedWorld = fixedWorldApi.getFixedWorldConfig(workingState.meta.seed);
+  if (fixedWorld) workingState.cards.drawPileCardIds = [...fixedWorld.ordinaryDeck];
   for (const player of activePlayers(workingState)) {
     cards.drawCardsToHand(
       workingState.cards,
@@ -1487,9 +1513,53 @@ function createProductionHostComposition(options = {}) {
   }
 
   const hostRuleOptions = {
+    prepareCounterfactualEnvelope(envelope, { publicSeed }) {
+      // 一次搜索只构造一次假设世界；后继/复用 fork 恢复该世界的真实执行快照。
+      // session 的工作副本与撤销副本同样隔离，不能从恢复路径重新读回真实牌堆。
+      const prepared = clone(envelope);
+      const committed = JSON.parse(prepared.committedState);
+      const session = prepared.session?.session;
+      const hypothesis = createHiddenAlienHypothesis(session?.workingState || committed, publicSeed);
+      const snapshots = [committed, ...(session ? [session.baseState, session.workingState,
+        session.committedState, ...session.undoFrames.map(frame => frame.stateBefore)] : [])];
+      for (const state of snapshots) {
+        if (state == null) continue;
+        // 分配按根已知信息计算一次，各快照共用；不能因旧base尚未揭示而重抽已知物种。
+        for (const key of hypothesis.unknownKeys) state.aliens[key].initialConfiguration = null;
+        for (const { slotId, alienId, key, configuration } of hypothesis.assignments) {
+          state.aliens.aliens[slotId].assignedAlienId = alienId;
+          state.aliens[key].initialConfiguration = clone(configuration);
+        }
+        aliens.fangzhou.sampleHiddenRewards(state.aliens, publicSeed);
+      }
+      prepared.committedState = JSON.stringify(committed);
+      return prepared;
+    },
+    validateSessionRestore(session, committedState) {
+      const snapshots = [
+        ["baseState", session.baseState],
+        ["workingState", session.workingState],
+        ...(session.committedState == null ? [] : [["committedState", session.committedState]]),
+        ...session.undoFrames.map((frame, index) => [`undoFrames[${index}].stateBefore`, frame?.stateBefore]),
+      ];
+      for (const [path, state] of snapshots) {
+        const validation = fixedWorldApi.validateWorldVersion(state);
+        if (!validation.ok) return { ok: false, code: validation.errors[0].code,
+          message: `行动恢复快照${path}的世界配置无效`, path, errors: validation.errors };
+        if (state.meta.seed !== committedState.meta.seed) return { ok: false,
+          code: "WORLD_SESSION_SEED_MISMATCH", message: `行动恢复快照${path}不属于当前存档世界`, path };
+      }
+      return { ok: true };
+    },
     stateStoreApi: {
       createStateStore(initialState, storeOptions) {
-        return highCouplingStateApi.createHighCouplingStateStore(initialState, storeOptions);
+        return highCouplingStateApi.createHighCouplingStateStore(initialState, {
+          ...storeOptions,
+          invariantValidators: [
+            ...(storeOptions?.invariantValidators || []),
+            fixedWorldApi.validateWorldVersion,
+          ],
+        });
       },
     },
     effectRuntimeApi,

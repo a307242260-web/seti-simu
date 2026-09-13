@@ -1,0 +1,1383 @@
+{
+  "inputSha256": "6c905f29b4707eff3fc7858268183416e36791bd341c932721c1e4959a6443e3",
+  "historicalCommit": "4fe33887",
+  "checkpointCount": 517,
+  "ordinaryGenerationOrder": [
+    {
+      "sequence": 1,
+      "cardId": "b_66.webp",
+      "instanceId": "card-1-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 2,
+      "cardId": "b_33.webp",
+      "instanceId": "card-2-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 3,
+      "cardId": "dlc_23.png",
+      "instanceId": "card-3-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 4,
+      "cardId": "b_106.webp",
+      "instanceId": "card-4-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 5,
+      "cardId": "dlc_35.png",
+      "instanceId": "card-5-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 6,
+      "cardId": "b_115.webp",
+      "instanceId": "card-6-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 7,
+      "cardId": "dlc_11.png",
+      "instanceId": "card-7-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 8,
+      "cardId": "b_75.webp",
+      "instanceId": "card-8-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 9,
+      "cardId": "b_109.webp",
+      "instanceId": "card-9-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 10,
+      "cardId": "b_12.webp",
+      "instanceId": "card-10-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 11,
+      "cardId": "b_65.webp",
+      "instanceId": "card-11-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 12,
+      "cardId": "b_139.webp",
+      "instanceId": "card-12-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 13,
+      "cardId": "b_117.webp",
+      "instanceId": "card-13-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 14,
+      "cardId": "dlc_22.png",
+      "instanceId": "card-14-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 15,
+      "cardId": "dlc_9.png",
+      "instanceId": "card-15-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 16,
+      "cardId": "b_97.webp",
+      "instanceId": "card-16-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 17,
+      "cardId": "b_2.webp",
+      "instanceId": "card-17-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 18,
+      "cardId": "b_48.webp",
+      "instanceId": "card-18-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 19,
+      "cardId": "dlc_21.png",
+      "instanceId": "card-19-0",
+      "firstStep": -1
+    },
+    {
+      "sequence": 20,
+      "cardId": "dlc_4.png",
+      "instanceId": "card-20-pass-1-1",
+      "firstStep": -1
+    },
+    {
+      "sequence": 21,
+      "cardId": "b_24.webp",
+      "instanceId": "card-21-pass-1-2",
+      "firstStep": -1
+    },
+    {
+      "sequence": 22,
+      "cardId": "b_49.webp",
+      "instanceId": "card-22-pass-1-3",
+      "firstStep": -1
+    },
+    {
+      "sequence": 23,
+      "cardId": "b_80.webp",
+      "instanceId": "card-23-pass-1-4",
+      "firstStep": -1
+    },
+    {
+      "sequence": 24,
+      "cardId": "dlc_5.png",
+      "instanceId": "card-24-pass-1-5",
+      "firstStep": -1
+    },
+    {
+      "sequence": 25,
+      "cardId": "dlc_18.png",
+      "instanceId": "card-25-pass-2-1",
+      "firstStep": -1
+    },
+    {
+      "sequence": 26,
+      "cardId": "b_78.webp",
+      "instanceId": "card-26-pass-2-2",
+      "firstStep": -1
+    },
+    {
+      "sequence": 27,
+      "cardId": "b_7.webp",
+      "instanceId": "card-27-pass-2-3",
+      "firstStep": -1
+    },
+    {
+      "sequence": 28,
+      "cardId": "b_53.webp",
+      "instanceId": "card-28-pass-2-4",
+      "firstStep": -1
+    },
+    {
+      "sequence": 29,
+      "cardId": "b_101.webp",
+      "instanceId": "card-29-pass-2-5",
+      "firstStep": -1
+    },
+    {
+      "sequence": 30,
+      "cardId": "b_111.webp",
+      "instanceId": "card-30-pass-3-1",
+      "firstStep": -1
+    },
+    {
+      "sequence": 31,
+      "cardId": "dlc_12.png",
+      "instanceId": "card-31-pass-3-2",
+      "firstStep": -1
+    },
+    {
+      "sequence": 32,
+      "cardId": "b_32.webp",
+      "instanceId": "card-32-pass-3-3",
+      "firstStep": -1
+    },
+    {
+      "sequence": 33,
+      "cardId": "b_55.webp",
+      "instanceId": "card-33-pass-3-4",
+      "firstStep": -1
+    },
+    {
+      "sequence": 34,
+      "cardId": "b_138.webp",
+      "instanceId": "card-34-pass-3-5",
+      "firstStep": -1
+    },
+    {
+      "sequence": 35,
+      "cardId": "b_86.webp",
+      "instanceId": "card-35-0",
+      "firstStep": 16
+    },
+    {
+      "sequence": 36,
+      "cardId": "b_71.webp",
+      "instanceId": "card-36-0",
+      "firstStep": 16
+    },
+    {
+      "sequence": 37,
+      "cardId": "b_114.webp",
+      "instanceId": "card-37-0",
+      "firstStep": 19
+    },
+    {
+      "sequence": 38,
+      "cardId": "b_87.webp",
+      "instanceId": "card-38-0",
+      "firstStep": 20
+    },
+    {
+      "sequence": 39,
+      "cardId": "dlc_38.png",
+      "instanceId": "card-39-0",
+      "firstStep": 22
+    },
+    {
+      "sequence": 40,
+      "cardId": "dlc_40.png",
+      "instanceId": "card-40-0",
+      "firstStep": 36
+    },
+    {
+      "sequence": 41,
+      "cardId": "dlc_39.png",
+      "instanceId": "card-41-0",
+      "firstStep": 39
+    },
+    {
+      "sequence": 42,
+      "cardId": "dlc_37.png",
+      "instanceId": "card-42-0",
+      "firstStep": 61
+    },
+    {
+      "sequence": 43,
+      "cardId": "dlc_36.png",
+      "instanceId": "card-43-0",
+      "firstStep": 61
+    },
+    {
+      "sequence": 44,
+      "cardId": "b_11.webp",
+      "instanceId": "card-44-0",
+      "firstStep": 61
+    },
+    {
+      "sequence": 45,
+      "cardId": "b_63.webp",
+      "instanceId": "card-45-0",
+      "firstStep": 61
+    },
+    {
+      "sequence": 46,
+      "cardId": "dlc_34.png",
+      "instanceId": "card-46-0",
+      "firstStep": 61
+    },
+    {
+      "sequence": 47,
+      "cardId": "b_13.webp",
+      "instanceId": "card-47-0",
+      "firstStep": 61
+    },
+    {
+      "sequence": 48,
+      "cardId": "dlc_33.png",
+      "instanceId": "card-48-0",
+      "firstStep": 61
+    },
+    {
+      "sequence": 49,
+      "cardId": "dlc_32.png",
+      "instanceId": "card-49-0",
+      "firstStep": 75
+    },
+    {
+      "sequence": 50,
+      "cardId": "b_14.webp",
+      "instanceId": "card-50-0",
+      "firstStep": 75
+    },
+    {
+      "sequence": 51,
+      "cardId": "dlc_31.png",
+      "instanceId": "card-51-0",
+      "firstStep": 105
+    },
+    {
+      "sequence": 52,
+      "cardId": "dlc_30.png",
+      "instanceId": "card-52-0",
+      "firstStep": 105
+    },
+    {
+      "sequence": 53,
+      "cardId": "b_10.webp",
+      "instanceId": "card-53-0",
+      "firstStep": 105
+    },
+    {
+      "sequence": 54,
+      "cardId": "b_62.webp",
+      "instanceId": "card-54-0",
+      "firstStep": 105
+    },
+    {
+      "sequence": 55,
+      "cardId": "dlc_29.png",
+      "instanceId": "card-55-0",
+      "firstStep": 105
+    },
+    {
+      "sequence": 56,
+      "cardId": "b_15.webp",
+      "instanceId": "card-56-0",
+      "firstStep": 105
+    },
+    {
+      "sequence": 57,
+      "cardId": "dlc_28.png",
+      "instanceId": "card-57-0",
+      "firstStep": 105
+    },
+    {
+      "sequence": 58,
+      "cardId": "dlc_27.png",
+      "instanceId": "card-58-0",
+      "firstStep": 138
+    },
+    {
+      "sequence": 59,
+      "cardId": "dlc_26.png",
+      "instanceId": "card-59-0",
+      "firstStep": 145
+    },
+    {
+      "sequence": 60,
+      "cardId": "dlc_25.png",
+      "instanceId": "card-60-0",
+      "firstStep": 164
+    },
+    {
+      "sequence": 61,
+      "cardId": "dlc_24.png",
+      "instanceId": "card-61-0",
+      "firstStep": 167
+    },
+    {
+      "sequence": 62,
+      "cardId": "dlc_20.png",
+      "instanceId": "card-62-0",
+      "firstStep": 168
+    },
+    {
+      "sequence": 63,
+      "cardId": "dlc_19.png",
+      "instanceId": "card-63-0",
+      "firstStep": 189
+    },
+    {
+      "sequence": 64,
+      "cardId": "b_16.webp",
+      "instanceId": "card-64-0",
+      "firstStep": 189
+    },
+    {
+      "sequence": 65,
+      "cardId": "dlc_17.png",
+      "instanceId": "card-65-0",
+      "firstStep": 207
+    },
+    {
+      "sequence": 66,
+      "cardId": "dlc_16.png",
+      "instanceId": "card-66-0",
+      "firstStep": 228
+    },
+    {
+      "sequence": 67,
+      "cardId": "dlc_15.png",
+      "instanceId": "card-67-0",
+      "firstStep": 245
+    },
+    {
+      "sequence": 68,
+      "cardId": "dlc_14.png",
+      "instanceId": "card-68-0",
+      "firstStep": 245
+    },
+    {
+      "sequence": 69,
+      "cardId": "b_9.webp",
+      "instanceId": "card-69-0",
+      "firstStep": 245
+    },
+    {
+      "sequence": 70,
+      "cardId": "b_60.webp",
+      "instanceId": "card-70-0",
+      "firstStep": 245
+    },
+    {
+      "sequence": 71,
+      "cardId": "dlc_13.png",
+      "instanceId": "card-71-0",
+      "firstStep": 245
+    },
+    {
+      "sequence": 72,
+      "cardId": "b_17.webp",
+      "instanceId": "card-72-0",
+      "firstStep": 245
+    },
+    {
+      "sequence": 73,
+      "cardId": "dlc_10.png",
+      "instanceId": "card-73-0",
+      "firstStep": 245
+    },
+    {
+      "sequence": 74,
+      "cardId": "dlc_8.png",
+      "instanceId": "card-74-0",
+      "firstStep": 269
+    },
+    {
+      "sequence": 75,
+      "cardId": "b_18.webp",
+      "instanceId": "card-75-0",
+      "firstStep": 269
+    },
+    {
+      "sequence": 76,
+      "cardId": "dlc_7.png",
+      "instanceId": "card-76-0",
+      "firstStep": 283
+    },
+    {
+      "sequence": 77,
+      "cardId": "dlc_6.png",
+      "instanceId": "card-77-0",
+      "firstStep": 314
+    },
+    {
+      "sequence": 78,
+      "cardId": "dlc_3.png",
+      "instanceId": "card-78-0",
+      "firstStep": 320
+    },
+    {
+      "sequence": 79,
+      "cardId": "dlc_2.png",
+      "instanceId": "card-79-0",
+      "firstStep": 345
+    },
+    {
+      "sequence": 80,
+      "cardId": "dlc_1.png",
+      "instanceId": "card-80-0",
+      "firstStep": 351
+    },
+    {
+      "sequence": 81,
+      "cardId": "b_140.webp",
+      "instanceId": "card-81-0",
+      "firstStep": 386
+    },
+    {
+      "sequence": 82,
+      "cardId": "b_137.webp",
+      "instanceId": "card-82-0",
+      "firstStep": 392
+    },
+    {
+      "sequence": 83,
+      "cardId": "b_136.webp",
+      "instanceId": "card-83-0",
+      "firstStep": 407
+    },
+    {
+      "sequence": 84,
+      "cardId": "b_135.webp",
+      "instanceId": "card-84-0",
+      "firstStep": 414
+    },
+    {
+      "sequence": 85,
+      "cardId": "dlc_41.png",
+      "instanceId": "card-85-0",
+      "firstStep": 418
+    },
+    {
+      "sequence": 86,
+      "cardId": "b_134.webp",
+      "instanceId": "card-86-0",
+      "firstStep": 422
+    },
+    {
+      "sequence": 87,
+      "cardId": "b_133.webp",
+      "instanceId": "card-87-0",
+      "firstStep": 450
+    },
+    {
+      "sequence": 88,
+      "cardId": "b_132.webp",
+      "instanceId": "card-88-0",
+      "firstStep": 452
+    },
+    {
+      "sequence": 89,
+      "cardId": "b_131.webp",
+      "instanceId": "card-89-0",
+      "firstStep": 473
+    },
+    {
+      "sequence": 90,
+      "cardId": "b_56.webp",
+      "instanceId": "card-90-0",
+      "firstStep": 486
+    },
+    {
+      "sequence": 91,
+      "cardId": "b_130.webp",
+      "instanceId": "card-91-0",
+      "firstStep": 493
+    },
+    {
+      "sequence": 92,
+      "cardId": "b_129.webp",
+      "instanceId": "card-92-0",
+      "firstStep": 501
+    },
+    {
+      "sequence": 93,
+      "cardId": "b_128.webp",
+      "instanceId": "card-93-0",
+      "firstStep": 502
+    },
+    {
+      "sequence": 94,
+      "cardId": "b_127.webp",
+      "instanceId": "card-94-0",
+      "firstStep": 511
+    }
+  ],
+  "missingOrdinarySequences": [],
+  "initial": {
+    "solarSystem": {
+      "rotation": {
+        "wheel1Steps": 0,
+        "wheel2Steps": -21,
+        "wheel3Steps": -17,
+        "wheel4Steps": -10,
+        "rotationCount": 0
+      },
+      "sectorBySlot": {
+        "1": 3,
+        "2": 1,
+        "3": 2,
+        "4": 4
+      },
+      "aomomoActive": false
+    },
+    "tech": {
+      "stacks": {
+        "blue1": {
+          "tileId": "blue1",
+          "techType": "blue",
+          "stackIndex": 1,
+          "bonusQueue": [
+            "bonus_3f",
+            "bonus_1p",
+            "bonus_1c",
+            "bonus_1m"
+          ],
+          "bonusIndex": 0,
+          "bonusId": "bonus_3f",
+          "remaining": 4,
+          "firstTakeClaimedBy": null,
+          "depleted": false
+        },
+        "blue2": {
+          "tileId": "blue2",
+          "techType": "blue",
+          "stackIndex": 2,
+          "bonusQueue": [
+            "bonus_1c",
+            "bonus_1p",
+            "bonus_3f",
+            "bonus_1m"
+          ],
+          "bonusIndex": 0,
+          "bonusId": "bonus_1c",
+          "remaining": 4,
+          "firstTakeClaimedBy": null,
+          "depleted": false
+        },
+        "blue3": {
+          "tileId": "blue3",
+          "techType": "blue",
+          "stackIndex": 3,
+          "bonusQueue": [
+            "bonus_1c",
+            "bonus_1m",
+            "bonus_1p",
+            "bonus_3f"
+          ],
+          "bonusIndex": 0,
+          "bonusId": "bonus_1c",
+          "remaining": 4,
+          "firstTakeClaimedBy": null,
+          "depleted": false
+        },
+        "blue4": {
+          "tileId": "blue4",
+          "techType": "blue",
+          "stackIndex": 4,
+          "bonusQueue": [
+            "bonus_1p",
+            "bonus_1c",
+            "bonus_3f",
+            "bonus_1m"
+          ],
+          "bonusIndex": 0,
+          "bonusId": "bonus_1p",
+          "remaining": 4,
+          "firstTakeClaimedBy": null,
+          "depleted": false
+        },
+        "orange1": {
+          "tileId": "orange1",
+          "techType": "orange",
+          "stackIndex": 1,
+          "bonusQueue": [
+            "bonus_1c",
+            "bonus_1m",
+            "bonus_1p",
+            "bonus_3f"
+          ],
+          "bonusIndex": 0,
+          "bonusId": "bonus_1c",
+          "remaining": 4,
+          "firstTakeClaimedBy": null,
+          "depleted": false
+        },
+        "orange2": {
+          "tileId": "orange2",
+          "techType": "orange",
+          "stackIndex": 2,
+          "bonusQueue": [
+            "bonus_1p",
+            "bonus_1m",
+            "bonus_1c",
+            "bonus_3f"
+          ],
+          "bonusIndex": 0,
+          "bonusId": "bonus_1p",
+          "remaining": 4,
+          "firstTakeClaimedBy": null,
+          "depleted": false
+        },
+        "orange3": {
+          "tileId": "orange3",
+          "techType": "orange",
+          "stackIndex": 3,
+          "bonusQueue": [
+            "bonus_3f",
+            "bonus_1m",
+            "bonus_1c",
+            "bonus_1p"
+          ],
+          "bonusIndex": 0,
+          "bonusId": "bonus_3f",
+          "remaining": 4,
+          "firstTakeClaimedBy": null,
+          "depleted": false
+        },
+        "orange4": {
+          "tileId": "orange4",
+          "techType": "orange",
+          "stackIndex": 4,
+          "bonusQueue": [
+            "bonus_1p",
+            "bonus_1m",
+            "bonus_1c",
+            "bonus_3f"
+          ],
+          "bonusIndex": 0,
+          "bonusId": "bonus_1p",
+          "remaining": 4,
+          "firstTakeClaimedBy": null,
+          "depleted": false
+        },
+        "purple1": {
+          "tileId": "purple1",
+          "techType": "purple",
+          "stackIndex": 1,
+          "bonusQueue": [
+            "bonus_1m",
+            "bonus_1p",
+            "bonus_1c",
+            "bonus_3f"
+          ],
+          "bonusIndex": 0,
+          "bonusId": "bonus_1m",
+          "remaining": 4,
+          "firstTakeClaimedBy": null,
+          "depleted": false
+        },
+        "purple2": {
+          "tileId": "purple2",
+          "techType": "purple",
+          "stackIndex": 2,
+          "bonusQueue": [
+            "bonus_1m",
+            "bonus_1c",
+            "bonus_3f",
+            "bonus_1p"
+          ],
+          "bonusIndex": 0,
+          "bonusId": "bonus_1m",
+          "remaining": 4,
+          "firstTakeClaimedBy": null,
+          "depleted": false
+        },
+        "purple3": {
+          "tileId": "purple3",
+          "techType": "purple",
+          "stackIndex": 3,
+          "bonusQueue": [
+            "bonus_1c",
+            "bonus_1p",
+            "bonus_1m",
+            "bonus_3f"
+          ],
+          "bonusIndex": 0,
+          "bonusId": "bonus_1c",
+          "remaining": 4,
+          "firstTakeClaimedBy": null,
+          "depleted": false
+        },
+        "purple4": {
+          "tileId": "purple4",
+          "techType": "purple",
+          "stackIndex": 4,
+          "bonusQueue": [
+            "bonus_1m",
+            "bonus_1c",
+            "bonus_1p",
+            "bonus_3f"
+          ],
+          "bonusIndex": 0,
+          "bonusId": "bonus_1m",
+          "remaining": 4,
+          "firstTakeClaimedBy": null,
+          "depleted": false
+        }
+      }
+    },
+    "finalScoring": {
+      "thresholds": [
+        25,
+        50,
+        70
+      ],
+      "tiles": {
+        "a": {
+          "id": "a",
+          "marks": []
+        },
+        "b": {
+          "id": "b",
+          "marks": []
+        },
+        "c": {
+          "id": "c",
+          "marks": []
+        },
+        "d": {
+          "id": "d",
+          "marks": []
+        }
+      },
+      "tileVariants": {
+        "a": 2,
+        "b": 1,
+        "c": 1,
+        "d": 2
+      }
+    },
+    "passReservePiles": {
+      "1": [
+        {
+          "id": "card-20-pass-1-1",
+          "cardId": "dlc_4.png",
+          "set": "space-agency",
+          "faceUp": true,
+          "price": 1,
+          "cardTypeCode": 0,
+          "discardActionCode": 0,
+          "scanActionCode": 3,
+          "incomeCode": 0
+        },
+        {
+          "id": "card-21-pass-1-2",
+          "cardId": "b_24.webp",
+          "set": "basic",
+          "faceUp": true,
+          "price": 1,
+          "cardTypeCode": 0,
+          "discardActionCode": 0,
+          "scanActionCode": 0,
+          "incomeCode": 1
+        },
+        {
+          "id": "card-22-pass-1-3",
+          "cardId": "b_49.webp",
+          "set": "basic",
+          "faceUp": true,
+          "price": 1,
+          "cardTypeCode": 0,
+          "discardActionCode": 0,
+          "scanActionCode": 0,
+          "incomeCode": 0
+        },
+        {
+          "id": "card-23-pass-1-4",
+          "cardId": "b_80.webp",
+          "set": "basic",
+          "faceUp": true,
+          "price": 1,
+          "cardTypeCode": 1,
+          "discardActionCode": 2,
+          "scanActionCode": 2,
+          "incomeCode": 2
+        },
+        {
+          "id": "card-24-pass-1-5",
+          "cardId": "dlc_5.png",
+          "set": "space-agency",
+          "faceUp": true,
+          "price": 1,
+          "cardTypeCode": 0,
+          "discardActionCode": 0,
+          "scanActionCode": 2,
+          "incomeCode": 0
+        }
+      ],
+      "2": [
+        {
+          "id": "card-25-pass-2-1",
+          "cardId": "dlc_18.png",
+          "set": "space-agency",
+          "faceUp": true,
+          "price": 2,
+          "cardTypeCode": 0,
+          "discardActionCode": 1,
+          "scanActionCode": 1,
+          "incomeCode": 0
+        },
+        {
+          "id": "card-26-pass-2-2",
+          "cardId": "b_78.webp",
+          "set": "basic",
+          "faceUp": true,
+          "price": 1,
+          "cardTypeCode": 1,
+          "discardActionCode": 0,
+          "scanActionCode": 0,
+          "incomeCode": 2
+        },
+        {
+          "id": "card-27-pass-2-3",
+          "cardId": "b_7.webp",
+          "set": "basic",
+          "faceUp": true,
+          "price": 2,
+          "cardTypeCode": 0,
+          "discardActionCode": 0,
+          "scanActionCode": 3,
+          "incomeCode": 1
+        },
+        {
+          "id": "card-28-pass-2-4",
+          "cardId": "b_53.webp",
+          "set": "basic",
+          "faceUp": true,
+          "price": 1,
+          "cardTypeCode": 2,
+          "discardActionCode": 2,
+          "scanActionCode": 1,
+          "incomeCode": 2
+        },
+        {
+          "id": "card-29-pass-2-5",
+          "cardId": "b_101.webp",
+          "set": "basic",
+          "faceUp": true,
+          "price": 3,
+          "cardTypeCode": 2,
+          "discardActionCode": 2,
+          "scanActionCode": 0,
+          "incomeCode": 2
+        }
+      ],
+      "3": [
+        {
+          "id": "card-30-pass-3-1",
+          "cardId": "b_111.webp",
+          "set": "basic",
+          "faceUp": true,
+          "price": 2,
+          "cardTypeCode": 1,
+          "discardActionCode": 1,
+          "scanActionCode": 1,
+          "incomeCode": 1
+        },
+        {
+          "id": "card-31-pass-3-2",
+          "cardId": "dlc_12.png",
+          "set": "space-agency",
+          "faceUp": true,
+          "price": 1,
+          "cardTypeCode": 0,
+          "discardActionCode": 1,
+          "scanActionCode": 0,
+          "incomeCode": 0
+        },
+        {
+          "id": "card-32-pass-3-3",
+          "cardId": "b_32.webp",
+          "set": "basic",
+          "faceUp": true,
+          "price": 1,
+          "cardTypeCode": 0,
+          "discardActionCode": 1,
+          "scanActionCode": 0,
+          "incomeCode": 2
+        },
+        {
+          "id": "card-33-pass-3-4",
+          "cardId": "b_55.webp",
+          "set": "basic",
+          "faceUp": true,
+          "price": 2,
+          "cardTypeCode": 0,
+          "discardActionCode": 2,
+          "scanActionCode": 0,
+          "incomeCode": 2
+        },
+        {
+          "id": "card-34-pass-3-5",
+          "cardId": "b_138.webp",
+          "set": "basic",
+          "faceUp": true,
+          "price": 3,
+          "cardTypeCode": 1,
+          "discardActionCode": 0,
+          "scanActionCode": 1,
+          "incomeCode": 2
+        }
+      ]
+    },
+    "publicCards": [
+      {
+        "id": "card-17-0",
+        "cardId": "b_2.webp",
+        "set": "basic",
+        "faceUp": true,
+        "price": 1,
+        "cardTypeCode": 1,
+        "discardActionCode": 0,
+        "scanActionCode": 2,
+        "incomeCode": 2
+      },
+      {
+        "id": "card-18-0",
+        "cardId": "b_48.webp",
+        "set": "basic",
+        "faceUp": true,
+        "price": 1,
+        "cardTypeCode": 0,
+        "discardActionCode": 0,
+        "scanActionCode": 0,
+        "incomeCode": 1
+      },
+      {
+        "id": "card-19-0",
+        "cardId": "dlc_21.png",
+        "set": "space-agency",
+        "faceUp": true,
+        "price": 0,
+        "cardTypeCode": 1,
+        "discardActionCode": 1,
+        "scanActionCode": 2,
+        "incomeCode": 2
+      }
+    ]
+  },
+  "firstReveal": {
+    "amiba": {
+      "step": 115,
+      "state": {
+        "revealedSlotId": 1,
+        "revealedByPlayerId": "player-white",
+        "revealedByPlayerColor": "white",
+        "traceSlotsByAlienSlotId": {
+          "1": {
+            "pink": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            },
+            "yellow": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            },
+            "blue": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            }
+          }
+        },
+        "symbolSlots": {
+          "orange_1": "symbol_4",
+          "orange_2": "symbol_2",
+          "blue_3": "symbol_1",
+          "red_1": "symbol_5",
+          "red_2": "symbol_3"
+        },
+        "symbolsById": {
+          "symbol_4": {
+            "symbolId": "symbol_4",
+            "slotId": "orange_1",
+            "sequence": 1
+          },
+          "symbol_2": {
+            "symbolId": "symbol_2",
+            "slotId": "orange_2",
+            "sequence": 2
+          },
+          "symbol_1": {
+            "symbolId": "symbol_1",
+            "slotId": "blue_3",
+            "sequence": 3
+          },
+          "symbol_5": {
+            "symbolId": "symbol_5",
+            "slotId": "red_1",
+            "sequence": 4
+          },
+          "symbol_3": {
+            "symbolId": "symbol_3",
+            "slotId": "red_2",
+            "sequence": 5
+          }
+        },
+        "displayedCardIndex": 9,
+        "cardDeck": [
+          5,
+          2,
+          6,
+          4,
+          8,
+          7
+        ],
+        "revealInitialized": true
+      }
+    },
+    "chong": {
+      "step": 208,
+      "state": {
+        "revealedSlotId": 2,
+        "revealedByPlayerId": "player-white",
+        "revealedByPlayerColor": "white",
+        "traceSlotsByAlienSlotId": {
+          "2": {
+            "pink": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            },
+            "yellow": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null
+            },
+            "blue": {
+              "1": null,
+              "2": null,
+              "3": null,
+              "4": null,
+              "5": null,
+              "6": null,
+              "7": null,
+              "8": null,
+              "9": null
+            }
+          }
+        },
+        "displayedCardIndex": 9,
+        "cardDeck": [
+          5,
+          1,
+          6,
+          4,
+          8,
+          3
+        ],
+        "revealInitialized": true,
+        "fossilsById": {
+          "fossil_02": {
+            "fossilId": "fossil_02",
+            "location": "planet",
+            "planetId": "jupiter",
+            "status": "available",
+            "visibleToPlayerIds": [],
+            "carriedByPlayerId": null,
+            "carriedByPlayerColor": null,
+            "rocketId": null,
+            "taskCardId": null,
+            "destinationPlanetId": null
+          },
+          "fossil_05": {
+            "fossilId": "fossil_05",
+            "location": "planet",
+            "planetId": "jupiter",
+            "status": "available",
+            "visibleToPlayerIds": [],
+            "carriedByPlayerId": null,
+            "carriedByPlayerColor": null,
+            "rocketId": null,
+            "taskCardId": null,
+            "destinationPlanetId": null
+          },
+          "fossil_03": {
+            "fossilId": "fossil_03",
+            "location": "planet",
+            "planetId": "jupiter",
+            "status": "available",
+            "visibleToPlayerIds": [],
+            "carriedByPlayerId": null,
+            "carriedByPlayerColor": null,
+            "rocketId": null,
+            "taskCardId": null,
+            "destinationPlanetId": null
+          },
+          "fossil_06": {
+            "fossilId": "fossil_06",
+            "location": "planet",
+            "planetId": "saturn",
+            "status": "available",
+            "visibleToPlayerIds": [],
+            "carriedByPlayerId": null,
+            "carriedByPlayerColor": null,
+            "rocketId": null,
+            "taskCardId": null,
+            "destinationPlanetId": null
+          },
+          "fossil_01": {
+            "fossilId": "fossil_01",
+            "location": "planet",
+            "planetId": "saturn",
+            "status": "available",
+            "visibleToPlayerIds": [],
+            "carriedByPlayerId": null,
+            "carriedByPlayerColor": null,
+            "rocketId": null,
+            "taskCardId": null,
+            "destinationPlanetId": null
+          },
+          "fossil_07": {
+            "fossilId": "fossil_07",
+            "location": "planet",
+            "planetId": "saturn",
+            "status": "available",
+            "visibleToPlayerIds": [],
+            "carriedByPlayerId": null,
+            "carriedByPlayerColor": null,
+            "rocketId": null,
+            "taskCardId": null,
+            "destinationPlanetId": null
+          },
+          "fossil_04": {
+            "fossilId": "fossil_04",
+            "location": "panel",
+            "planetId": null,
+            "status": "panel",
+            "visibleToPlayerIds": [],
+            "carriedByPlayerId": null,
+            "carriedByPlayerColor": null,
+            "rocketId": null,
+            "taskCardId": null,
+            "destinationPlanetId": null
+          }
+        },
+        "planetFossilIds": {
+          "jupiter": [
+            "fossil_02",
+            "fossil_05",
+            "fossil_03"
+          ],
+          "saturn": [
+            "fossil_06",
+            "fossil_01",
+            "fossil_07"
+          ]
+        },
+        "panelFossilSlots": {
+          "7": "fossil_04"
+        },
+        "unlockedBluePositions": [
+          7,
+          8,
+          9
+        ],
+        "transportTasksByRocketId": {},
+        "completedTransports": []
+      }
+    }
+  },
+  "alienEvents": [
+    {
+      "step": 115,
+      "kind": "card-instance",
+      "id": "alien-amiba-0-1",
+      "cardId": "amiba_0.webp"
+    },
+    {
+      "step": 115,
+      "kind": "card-instance",
+      "id": "alien-amiba-1-2",
+      "cardId": "amiba_1.webp"
+    },
+    {
+      "step": 115,
+      "kind": "card-instance",
+      "id": "alien-amiba-3-3",
+      "cardId": "amiba_3.webp"
+    },
+    {
+      "step": 115,
+      "kind": "display",
+      "species": "amiba",
+      "cardIndex": 9
+    },
+    {
+      "step": 161,
+      "kind": "card-instance",
+      "id": "alien-amiba-7-5",
+      "cardId": "amiba_7.webp"
+    },
+    {
+      "step": 208,
+      "kind": "card-instance",
+      "id": "alien-chong-0-6",
+      "cardId": "chong_0.webp"
+    },
+    {
+      "step": 208,
+      "kind": "card-instance",
+      "id": "alien-chong-7-7",
+      "cardId": "chong_7.webp"
+    },
+    {
+      "step": 208,
+      "kind": "card-instance",
+      "id": "alien-chong-2-8",
+      "cardId": "chong_2.webp"
+    },
+    {
+      "step": 208,
+      "kind": "display",
+      "species": "chong",
+      "cardIndex": 9
+    },
+    {
+      "step": 228,
+      "kind": "card-instance",
+      "id": "alien-chong-3-10",
+      "cardId": "chong_3.webp"
+    },
+    {
+      "step": 238,
+      "kind": "card-instance",
+      "id": "alien-chong-8-12",
+      "cardId": "chong_8.webp"
+    },
+    {
+      "step": 241,
+      "kind": "card-instance",
+      "id": "alien-chong-4-14",
+      "cardId": "chong_4.webp"
+    },
+    {
+      "step": 260,
+      "kind": "card-instance",
+      "id": "alien-chong-6-16",
+      "cardId": "chong_6.webp"
+    },
+    {
+      "step": 292,
+      "kind": "card-instance",
+      "id": "alien-chong-1-18",
+      "cardId": "chong_1.webp"
+    },
+    {
+      "step": 296,
+      "kind": "card-instance",
+      "id": "alien-amiba-9-20",
+      "cardId": "amiba_9.webp"
+    },
+    {
+      "step": 296,
+      "kind": "display",
+      "species": "amiba",
+      "cardIndex": 5
+    },
+    {
+      "step": 412,
+      "kind": "card-instance",
+      "id": "alien-amiba-5-24",
+      "cardId": "amiba_5.webp"
+    },
+    {
+      "step": 412,
+      "kind": "display",
+      "species": "amiba",
+      "cardIndex": 2
+    },
+    {
+      "step": 417,
+      "kind": "card-instance",
+      "id": "alien-amiba-8-26",
+      "cardId": "amiba_8.webp"
+    },
+    {
+      "step": 427,
+      "kind": "card-instance",
+      "id": "alien-amiba-4-28",
+      "cardId": "amiba_4.webp"
+    },
+    {
+      "step": 448,
+      "kind": "card-instance",
+      "id": "alien-amiba-6-30",
+      "cardId": "amiba_6.webp"
+    }
+  ],
+  "scope": "从核验过的历史重放提取事实；外星牌首次展示与入手是不同事件，尚未合成为新牌堆。"
+}

@@ -13,6 +13,7 @@ const machinePlayerCoordinatorModule = require("../game/ai/machine-player-coordi
 const heuristicDecisionFunctionModule = require("../game/ai/heuristic-decision-function");
 const vGuidedDecisionFunctionModule = require("../game/ai/v-guided-decision-function");
 const finalScoring = require("../game/final-scoring");
+const { getWorldVersion } = require("../game/state/fixed-world-config");
 
 const CHECKPOINT_SCHEMA_VERSION = "seti-rl-checkpoint-v1";
 const REPLAY_SCHEMA_VERSION = "seti-rl-replay-v1";
@@ -395,10 +396,8 @@ function createSimulationEnv() {
         ),
       });
       composition = kernel.composition;
-      // meta.seed 固定为用户档的 "seti-simulation"（science 域/外星人 RNG 由 meta.seed
-      // 派生，用户 405 档 = 阿米巴+虫）；盘面 seed 只用于主 RNG（seededRandom），
-      // 不再直接写进 meta.seed，保证外星人序列与用户档同源。
-      const newGameResult = kernel.newGame({ ...config, seed: "seti-simulation" });
+      // 盘面与权威状态使用同一个实际种子；物种身份不再依赖运行期随机游标。
+      const newGameResult = kernel.newGame(config);
       if (newGameResult?.ok === false) {
         throw new Error(newGameResult.message || newGameResult.code || "simulation newGame 失败");
       }
@@ -818,44 +817,42 @@ function createSimulationEnv() {
       if (checkpoint?.coreState?.version !== CORE_STATE_VERSION) {
         throw new Error("checkpoint coreState 反序列化失败：RECOVERY_SNAPSHOT_VERSION_UNSUPPORTED");
       }
-      this.reset(checkpoint.config || { seed: checkpoint.replayCursor?.seed });
       let committed;
       try {
         committed = JSON.parse(checkpoint.coreState.committedState);
       } catch (error) {
         throw new Error(`checkpoint coreState 反序列化失败：${error?.message || "STATE_DESERIALIZE_FAILED"}`);
       }
-      if (Array.isArray(checkpoint.replaySteps)) {
-        for (const [index, replayStep] of checkpoint.replaySteps.entries()) {
-          const result = this.step(replayStep.action);
-          if (!result.ok) throw new Error(`checkpoint replay 第 ${index} 步失败：${result.error || "未知错误"}`);
-        }
-        const rebuilt = JSON.parse(this.createCheckpoint().coreState.committedState);
-        if (JSON.stringify(rebuilt.meta?.sequences) !== JSON.stringify(committed.meta?.sequences)) {
-          throw new Error("checkpoint replay 后唯一序列与 committed meta 不一致");
-        }
-        const rngState = committed.meta?.rngState;
-        if (rngState?.algorithm !== RNG_ALGORITHM || !Number.isSafeInteger(rngState.state)) {
-          throw new Error("checkpoint coreState 缺少可恢复的 simulation RNG 状态");
-        }
-        seededRandom.setState(rngState.state);
-        environmentEvents = clone(checkpoint.environmentEvents || []);
-        browserReplayHistory = clone(checkpoint.browserReplaySteps || []);
-
-        cachedLegal = null;
-        selectors = new Map();
-        return this.observe();
+      const restoreConfig = checkpoint.config || { seed: checkpoint.replayCursor?.seed };
+      const worldVersion = getWorldVersion(restoreConfig.seed);
+      if (committed.meta?.worldVersion !== worldVersion) {
+        throw new Error("checkpoint coreState 反序列化失败：WORLD_VERSION_UNSUPPORTED");
+      }
+      if (committed.meta?.seed !== restoreConfig.seed) {
+        throw new Error("checkpoint coreState 反序列化失败：WORLD_SEED_MISMATCH");
       }
       const envelope = checkpoint.coreState.compositionEnvelope;
       if (!envelope || envelope.committedState !== checkpoint.coreState.committedState) {
         throw new Error("checkpoint coreState 反序列化失败：RULE_COMPOSITION_ENVELOPE_INVALID");
       }
-      const restore = composition.lifecycle.restore(envelope);
-      if (!restore.ok) throw new Error(`checkpoint coreState 反序列化失败：${restore.code || restore.message}`);
       const rngState = committed.meta?.rngState;
       if (rngState?.algorithm !== RNG_ALGORITHM || !Number.isSafeInteger(rngState.state)) {
         throw new Error("checkpoint coreState 缺少可恢复的 simulation RNG 状态");
       }
+      // 已有对局先用共享恢复校验预检，不能reset后才发现行动快照来自另一世界。
+      if (composition) {
+        const validation = composition.lifecycle.validateRestore(envelope);
+        if (!validation.ok) throw new Error(`checkpoint coreState 反序列化失败：${validation.code || validation.message}`);
+      }
+      this.reset(restoreConfig);
+      const initialSequences = JSON.parse(saveEnvelope().committedState).meta.sequences;
+      if (stableSerialize(Object.keys(initialSequences).sort())
+        !== stableSerialize(Object.keys(committed.meta?.sequences || {}).sort())) {
+        throw new Error("checkpoint 唯一序列目录与 committed meta 不一致");
+      }
+      // 检查点是权威状态；replaySteps仅恢复记录，不重新执行或替换隐藏世界。
+      const restore = composition.lifecycle.restore(envelope);
+      if (!restore.ok) throw new Error(`checkpoint coreState 反序列化失败：${restore.code || restore.message}`);
       seededRandom.setState(rngState.state);
       replaySteps = clone(checkpoint.replaySteps || []);
       browserReplayHistory = clone(checkpoint.browserReplaySteps || []);

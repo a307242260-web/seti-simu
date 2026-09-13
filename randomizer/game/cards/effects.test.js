@@ -1338,7 +1338,7 @@ function createAomomoAlienState(triggerPlayer) {
     aliens: {
       1: { revealed: true, alienId: aomomo.ALIEN_ID, assignedAlienId: aomomo.ALIEN_ID },
     },
-    aomomo: aomomo.createAomomoState(),
+    aomomo: { ...aomomo.createAomomoState(), initialConfiguration: aomomo.createInitialConfiguration(() => 0) },
   };
   const result = aomomo.initializeAomomoReveal(aliensState, 1, triggerPlayer, () => 0);
   assert.equal(result.ok, true);

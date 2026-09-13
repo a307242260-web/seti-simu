@@ -7,6 +7,7 @@ const cards = require("../game/cards/deck");
 const cardEffects = require("../game/cards/effects");
 const initialCards = require("../game/initial-cards");
 const players = require("../game/players");
+const data = require("../game/data");
 const solar = require("../solar-system/core");
 const { createSimulationEnv } = require("../app/simulation-env");
 const { createSimulationRuleComposition } = require("./simulation-rule-composition");
@@ -538,6 +539,8 @@ for (const family of ["scan", "place_data"]) {
     ];
     state.meta.sequences.rocket = 9200;
     player.resources.energy = 10;
+    // PASS 门槛的对照须明确持有可放数据，不依赖起始卡恰好提供数据。
+    assert.equal(data.gainData(player, { source: "pass-gate-fixture", root: state }).ok, true);
   });
   const playerId = baseState.turn.currentPlayerId;
   const player = baseState.players.players.find((entry) => entry.id === playerId);

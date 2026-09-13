@@ -59,7 +59,8 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 
   <!-- 顶部：现在的 best version -->
   <section class="best-panel">
-    <h2>当前最佳（固定盘面 · 全盘运行）</h2>
+    <h2 id="best-title">完整终局成绩</h2>
+    <p class="note" id="world-scope"></p>
     <div class="best-grid" id="best-grid"></div>
     <div class="top3" id="top3"></div>
   </section>
@@ -107,6 +108,10 @@ function primaryResult(v){
 
 function bestGrid(){
   const b=REGISTRY.bestOf;
+  document.getElementById("best-title").textContent=b.world?"当前世界最佳（完整终局）":"历史成绩（世界身份未核验）";
+  document.getElementById("world-scope").textContent=b.world?
+    `${b.world.worldVersion} · ${b.world.fingerprint}。只比较同世界指纹的完整终局；其他世界和缺少身份的历史成绩不参与排名。`:
+    "当前版本没有世界身份记录；以下为历史汇总，不能据此判断同盘面策略涨跌。";
   const card=(label,value,sub,src,srcCls)=>
     `<div class="best-card"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div><span class="src ${srcCls||""}">${src}</span></div>`;
   const summaryOf=(x)=>{

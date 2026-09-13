@@ -1,0 +1,266 @@
+{
+  "commit": "329bd8a0cd3b8bf4ae34cd1daf390097f5aeefb5",
+  "seed": "seti-free-analyze-v1",
+  "scope": "受控primitive反例：同有序牌库/同seed，额外消费随机数后再抽牌或揭示。不是完整游戏轨迹，不据此证明某条实际行动调用了几次随机数。",
+  "cases": {
+    "normalCards": [
+      {
+        "skip": 0,
+        "orderedBefore": [
+          "b_1.webp",
+          "b_2.webp",
+          "b_3.webp",
+          "b_4.webp",
+          "b_5.webp",
+          "b_6.webp",
+          "b_7.webp",
+          "b_8.webp",
+          "b_9.webp",
+          "b_10.webp",
+          "b_11.webp",
+          "b_12.webp"
+        ],
+        "drawn": "b_5.webp",
+        "remaining": [
+          "b_1.webp",
+          "b_2.webp",
+          "b_3.webp",
+          "b_4.webp",
+          "b_6.webp",
+          "b_7.webp",
+          "b_8.webp",
+          "b_9.webp",
+          "b_10.webp",
+          "b_11.webp",
+          "b_12.webp"
+        ]
+      },
+      {
+        "skip": 1,
+        "orderedBefore": [
+          "b_1.webp",
+          "b_2.webp",
+          "b_3.webp",
+          "b_4.webp",
+          "b_5.webp",
+          "b_6.webp",
+          "b_7.webp",
+          "b_8.webp",
+          "b_9.webp",
+          "b_10.webp",
+          "b_11.webp",
+          "b_12.webp"
+        ],
+        "drawn": "b_12.webp",
+        "remaining": [
+          "b_1.webp",
+          "b_2.webp",
+          "b_3.webp",
+          "b_4.webp",
+          "b_5.webp",
+          "b_6.webp",
+          "b_7.webp",
+          "b_8.webp",
+          "b_9.webp",
+          "b_10.webp",
+          "b_11.webp"
+        ]
+      },
+      {
+        "skip": 2,
+        "orderedBefore": [
+          "b_1.webp",
+          "b_2.webp",
+          "b_3.webp",
+          "b_4.webp",
+          "b_5.webp",
+          "b_6.webp",
+          "b_7.webp",
+          "b_8.webp",
+          "b_9.webp",
+          "b_10.webp",
+          "b_11.webp",
+          "b_12.webp"
+        ],
+        "drawn": "b_7.webp",
+        "remaining": [
+          "b_1.webp",
+          "b_2.webp",
+          "b_3.webp",
+          "b_4.webp",
+          "b_5.webp",
+          "b_6.webp",
+          "b_8.webp",
+          "b_9.webp",
+          "b_10.webp",
+          "b_11.webp",
+          "b_12.webp"
+        ]
+      },
+      {
+        "skip": 3,
+        "orderedBefore": [
+          "b_1.webp",
+          "b_2.webp",
+          "b_3.webp",
+          "b_4.webp",
+          "b_5.webp",
+          "b_6.webp",
+          "b_7.webp",
+          "b_8.webp",
+          "b_9.webp",
+          "b_10.webp",
+          "b_11.webp",
+          "b_12.webp"
+        ],
+        "drawn": "b_12.webp",
+        "remaining": [
+          "b_1.webp",
+          "b_2.webp",
+          "b_3.webp",
+          "b_4.webp",
+          "b_5.webp",
+          "b_6.webp",
+          "b_7.webp",
+          "b_8.webp",
+          "b_9.webp",
+          "b_10.webp",
+          "b_11.webp"
+        ]
+      }
+    ],
+    "alienCards": [
+      {
+        "skip": 0,
+        "orderedBefore": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "drawn": "amiba_3.webp",
+        "remaining": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      {
+        "skip": 1,
+        "orderedBefore": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "drawn": "amiba_9.webp",
+        "remaining": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      {
+        "skip": 2,
+        "orderedBefore": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "drawn": "amiba_5.webp",
+        "remaining": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      {
+        "skip": 3,
+        "orderedBefore": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "drawn": "amiba_9.webp",
+        "remaining": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      }
+    ],
+    "alienReveal": [
+      {
+        "skip": 0,
+        "assignedBefore": null,
+        "revealed": "异常点"
+      },
+      {
+        "skip": 1,
+        "assignedBefore": null,
+        "revealed": "阿米巴"
+      },
+      {
+        "skip": 2,
+        "assignedBefore": null,
+        "revealed": "方舟"
+      },
+      {
+        "skip": 3,
+        "assignedBefore": null,
+        "revealed": "阿米巴"
+      }
+    ]
+  },
+  "verdict": "三类均未满足动作无关的固定底层盘面契约；此脚本断言复现旧缺陷，不是修复通过测试。"
+}

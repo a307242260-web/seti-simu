@@ -8,6 +8,7 @@
 // 地球扫描补满扇区 → 水星扫描跳过 → 手牌扫描命中已满的地球扇区（额外标记）。
 
 const assert = require("node:assert/strict");
+const cards = require("../cards/deck");
 const scienceSession = require("./science-session");
 const standardAction = require("../actions/standard-action");
 const stateStoreApi = require("../state/state-store");
@@ -143,7 +144,7 @@ function createCanonicalState() {
   const root = {
     meta,
     players: { players: [player] },
-    cards: { discardPile: [], publicCards: [] },
+    cards: cards.createCardState(),
     pieces: rockets.createRocketState(),
     solarSystem,
     data: dataState,
@@ -208,7 +209,7 @@ function submitDecision(composition, choice) {
     ownerId: decision.ownerId,
     choice,
   });
-  assert.equal(result.ok, true, `决策必须可提交: ${result.code || result.message || ""}`);
+  assert.equal(result.ok, true, `决策必须可提交: ${JSON.stringify(result)}`);
   return result;
 }
 
@@ -713,6 +714,7 @@ for (const [fossilId, position, mode] of fossilCases) {
   slot.revealed = true;
   slot.alienId = slot.assignedAlienId = "虫";
   slot.traces.blue.firstPlaced = true;
+  aliens.chong.ensureChongState(root.aliens).initialConfiguration = aliens.chong.createInitialConfiguration(() => 0);
   assert.equal(aliens.chong.initializeChongReveal(root.aliens, 2, actor, () => 0).ok, true);
   root.aliens.chong.panelFossilSlots[position] = fossilId;
   root.aliens.chong.unlockedBluePositions = [1, 2, 3, 4, 5, 6, 7, 8, 9];

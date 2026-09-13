@@ -67,4 +67,69 @@ assert.throws(
   /Rule Composition lifecycle 缺少 save/,
 );
 
+const kernels = require("../game/production-kernel");
+const { createSeededRandom, RNG_ALGORITHM } = require("../game/random");
+const { buildRuleObservation } = require("./rule-observation");
+for (const factory of [kernels.createBrowserProductionKernel, kernels.createSimulationRuleComposition]) {
+  for (const seed of ["recovery-world-gate", "seti-free-analyze-v1"]) {
+    const random = createSeededRandom(seed);
+    const kernel = factory({ seed, random, activePlayerCount: 4,
+      projectBrowserState: state => buildRuleObservation(state, seed, "player-white", []),
+      rngState: { algorithm: RNG_ALGORITHM, state: random.getState() } });
+    const liveView = viewApi.createViewStateStore();
+    const adapter = recovery.createBrowserCheckpointAdapter({
+      ruleLifecycle: kernel.composition.lifecycle,
+      viewStateStore: liveView,
+      viewSchemaVersion: viewApi.SCHEMA_VERSION,
+    });
+    try {
+      const saved = adapter.capture();
+      assert.equal(saved.ok, true);
+      const before = kernel.composition.lifecycle.save().envelope;
+      for (const worldVersion of [undefined, "unknown-world-v1",
+        seed === "seti-free-analyze-v1" ? "seeded-world-v1" : "human-405-world-v1"]) {
+        const broken = structuredClone(saved.envelope);
+        const state = JSON.parse(broken.rules.envelope.committedState);
+        state.meta.worldVersion = worldVersion;
+        broken.rules.envelope.committedState = JSON.stringify(state);
+        const result = adapter.restore(broken);
+        assert.equal(result.ok, false);
+        assert.equal(result.code, "WORLD_VERSION_UNSUPPORTED");
+        assert.deepEqual(kernel.composition.lifecycle.save().envelope, before,
+          "世界版本错误必须在改变当前游戏之前拒绝");
+        assert.deepEqual(liveView.getSnapshot(), saved.envelope.view.state);
+      }
+      assert.equal(adapter.restore(saved.envelope).ok, true);
+      assert.deepEqual(kernel.composition.lifecycle.save().envelope, before);
+      assert.equal(kernel.newGame({ seed, initialize: true, activePlayerCount: 4 }).ok, true);
+      const start = kernel.composition.inputPort.enumerateActions({})
+        .find(action => action.target?.kind === "start_initial_setup");
+      assert.ok(start);
+      assert.equal(kernel.composition.inputPort.submitAction(start).ok, true);
+      const active = adapter.capture().envelope;
+      const session = active.rules.envelope.session.session;
+      assert.equal(session.phase, "awaiting_input");
+      assert.ok(session.undoFrames.length > 0);
+      for (const field of ["baseState", "workingState", "committedState",
+        ...session.undoFrames.map((_, index) => `undo:${index}`)]) {
+        for (const change of ["version", "seed"]) {
+          const broken = structuredClone(active);
+          const changed = broken.rules.envelope.session.session;
+          if (field === "committedState") changed.committedState = structuredClone(changed.workingState);
+          const state = field.startsWith("undo:")
+            ? changed.undoFrames[Number(field.slice(5))].stateBefore : changed[field];
+          if (change === "version") state.meta.worldVersion = "unknown-world-v1";
+          else state.meta.seed = "another-normal-world";
+          const rejected = adapter.restore(broken);
+          assert.equal(rejected.ok, false, `${field}/${change}不能跨世界恢复`);
+          assert.deepEqual(kernel.composition.lifecycle.save().envelope, active.rules.envelope);
+          assert.deepEqual(liveView.getSnapshot(), active.view.state);
+        }
+      }
+      assert.equal(adapter.restore(active).ok, true);
+      assert.deepEqual(kernel.composition.lifecycle.save().envelope, active.rules.envelope);
+    } finally { kernel.composition.dispose(); }
+  }
+}
+
 console.log("game recovery composition lifecycle tests passed");

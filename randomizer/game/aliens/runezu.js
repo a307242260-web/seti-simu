@@ -343,12 +343,8 @@
   }
 
   function drawSymbol(runezuState, random = Math.random) {
-    if (!Array.isArray(runezuState.availableSymbols)) runezuState.availableSymbols = buildSymbolBag(random);
-    if (!runezuState.availableSymbols.length) {
-      const pick = Math.floor(random() * SYMBOL_IDS.length);
-      return SYMBOL_IDS[pick] || SYMBOL_IDS[0];
-    }
-    return runezuState.availableSymbols.shift();
+    if (!Array.isArray(runezuState.availableSymbols)) throw new Error("符文族缺少权威符号池");
+    return runezuState.availableSymbols.shift() ?? null;
   }
 
   function createTraceGrid() {
@@ -613,11 +609,9 @@
     for (const sectorId of SECTOR_SOURCE_IDS) {
       assignSourceSymbol(runezuState, "sector", sectorId, random);
     }
-    const techIds = Array.isArray(options.techTileIds)
-      ? options.techTileIds
-      : listAvailableFirstTakeTechTileIds(options.tech);
-    for (const tileId of techIds) {
-      if (TECH_SOURCE_IDS.includes(tileId)) assignSourceSymbol(runezuState, "tech", tileId, random);
+    // 固定位置顺序，不让揭示时可用科技数量改变后续位置的符号身份。
+    for (const tileId of TECH_SOURCE_IDS) {
+      assignSourceSymbol(runezuState, "tech", tileId, random);
     }
     return Object.values(runezuState.sourceSymbolSlots);
   }
@@ -634,6 +628,15 @@
     return Object.values(runezuState.panelSymbolSlots);
   }
 
+  function createInitialConfiguration(random) {
+    if (typeof random !== "function") throw new TypeError("符文族配置需要显式随机源");
+    const availableSymbols = buildSymbolBag(random);
+    return {
+      availableSymbols,
+      cardDeck: shuffle(CARD_DEFINITIONS.map((card) => card.index), random),
+    };
+  }
+
   function initializeRunezuReveal(alienState, alienSlotId, triggerPlayer, options = {}) {
     const runezu = ensureRunezuState(alienState);
     if (runezu.revealInitialized) {
@@ -645,18 +648,30 @@
       };
     }
     const random = options.random || Math.random;
+    if (!runezu.initialConfiguration) throw new Error("runezu缺少开局随机配置");
+    const configuration = structuredClone(runezu.initialConfiguration);
     runezu.revealedSlotId = Number(alienSlotId);
     runezu.revealedByPlayerId = triggerPlayer?.id || null;
     runezu.revealedByPlayerColor = triggerPlayer?.color || triggerPlayer?.playerColor || null;
     runezu.revealInitialized = true;
-    runezu.availableSymbols = buildSymbolBag(random);
+    runezu.availableSymbols = configuration.availableSymbols;
     runezu.faceSymbolSlots = {};
     delete runezu.traceSlotsByAlienSlotId[String(alienSlotId)];
     ensureTraceGrid(alienState, alienSlotId);
-    runezu.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
+    runezu.cardDeck = configuration.cardDeck;
     runezu.displayedCardIndex = drawDisplayedCardIndex(alienState, random);
-    const sources = initializeSourceSymbols(runezu, options);
+    initializeSourceSymbols(runezu, options);
     const panelSymbols = initializePanelSymbols(runezu, random);
+    const eligibleTech = new Set(Array.isArray(options.techTileIds)
+      ? options.techTileIds : listAvailableFirstTakeTechTileIds(options.tech));
+    // 未布置的科技符号按固定科技顺序归入剩余供应池，不损失或补造符号。
+    for (const tileId of TECH_SOURCE_IDS) {
+      if (eligibleTech.has(tileId)) continue;
+      const key = createSourceKey("tech", tileId);
+      runezu.availableSymbols.push(runezu.sourceSymbolSlots[key].symbolId);
+      delete runezu.sourceSymbolSlots[key];
+    }
+    const sources = Object.values(runezu.sourceSymbolSlots);
     return {
       ok: true,
       displayedCardIndex: runezu.displayedCardIndex,
@@ -726,6 +741,9 @@
   function takePanelSymbol(alienState, slotId, player, options = {}) {
     const runezu = ensureRunezuState(alienState);
     const entry = runezu.panelSymbolSlots?.[slotId];
+    if (options.refill && entry?.symbolId === null && runezu.availableSymbols.length === 0) {
+      return { ok: true, skipped: true, reason: "symbol_supply_empty", slotId, symbolId: null, refilledSymbolId: null };
+    }
     if (!entry?.symbolId) return { ok: false, message: "该符文位置没有 symbol" };
     const symbolId = entry.symbolId;
     gainPlayerSymbol(player, symbolId);
@@ -740,7 +758,7 @@
       slotId,
       symbolId,
       refilledSymbolId: options.refill ? entry.symbolId : null,
-      message: `获得${formatSymbolLabel(symbolId)}${options.refill ? "，已补充新 symbol" : ""}`,
+      message: `获得${formatSymbolLabel(symbolId)}${options.refill && entry.symbolId ? "，已补充新 symbol" : ""}`,
     };
   }
 
@@ -859,8 +877,7 @@
 
   function drawDisplayedCardIndex(alienState, random = Math.random) {
     const runezu = ensureRunezuState(alienState);
-    if (!runezu.cardDeck.length) runezu.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
-    const index = runezu.cardDeck.shift();
+    const index = runezu.cardDeck.shift() ?? null;
     runezu.displayedCardIndex = index;
     return index;
   }
@@ -868,6 +885,9 @@
   function takeDisplayedCard(alienState, random = Math.random, options = {}) {
     const runezu = ensureRunezuState(alienState);
     if (runezu.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
+    if (runezu.displayedCardIndex == null) {
+      return { ok: false, code: "ALIEN_CARD_DECK_EMPTY", card: null, message: "符文族牌已耗尽" };
+    }
     const card = createAlienCard(runezu.displayedCardIndex, options.sequence);
     drawDisplayedCardIndex(alienState, random);
     return { ok: Boolean(card), card, message: card ? `获得符文族牌：${definitionName(card)}` : "没有可获得的符文族牌" };
@@ -875,9 +895,10 @@
 
   function blindDrawCard(alienState, random = Math.random, options = {}) {
     const runezu = ensureRunezuState(alienState);
-    if (!runezu.cardDeck.length) runezu.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
-    const pickIndex = Math.floor(random() * runezu.cardDeck.length);
-    const [index] = runezu.cardDeck.splice(pickIndex, 1);
+    if (!runezu.cardDeck.length) {
+      return { ok: false, code: "ALIEN_CARD_DECK_EMPTY", card: null, message: "符文族盲抽牌堆已耗尽" };
+    }
+    const index = runezu.cardDeck.shift();
     const card = createAlienCard(index, options.sequence);
     if (runezu.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
     return { ok: Boolean(card), card, message: card ? `盲抽符文族牌：${definitionName(card)}` : "没有可盲抽的符文族牌" };
@@ -946,6 +967,7 @@
     countTraceMarkers,
     playerHasAllTraceColors,
     initializeRunezuReveal,
+    createInitialConfiguration,
     listPanelSymbols,
     listFaceSymbolSlots,
     listSourceSymbols,

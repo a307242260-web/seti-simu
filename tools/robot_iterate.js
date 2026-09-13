@@ -285,7 +285,7 @@ function printBestOf(registry) {
     const value = x.value != null ? x.value : (x.msPerStep != null ? `${x.msPerStep}ms/步` : fmtMs(x.wallMs));
     return `${label}: ${value}（${x.name} / ${x.versionId}${x.runKey ? " / " + x.runKey : ""} · ${x.steps ?? "?"} 步 · ${fmtMs(x.wallMs)} · 来源 ${x.provenance}${x.msPerStep ? ` · 每步 ${x.msPerStep}ms` : ""}）`;
   };
-  console.log("\n===== 固定盘面最佳（全盘运行）=====");
+  console.log(b.world ? `\n===== 当前世界最佳（完整终局 · ${b.world.worldVersion} · ${b.world.fingerprint}）=====` : "\n===== 历史成绩（世界身份未核验）=====");
   console.log(line("最佳白分", b.bestWhite));
   console.log(line("最佳均分", b.bestAvg));
   console.log(line("最快全盘（总耗时）", b.fastestWall));

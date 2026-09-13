@@ -1,0 +1,375 @@
+{
+  "base": "329bd8a0",
+  "head": "bddcdae9",
+  "mainRoot": "/Users/bilibili/code/seti-simu",
+  "scope": "只比较物理工作树字节，不使用共享暂存区；不执行合并。",
+  "counts": {
+    "base-unchanged": 91
+  },
+  "rows": [
+    {
+      "file": "adhoc/archive-human-405-evidence-20260913.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/audit-human-405-world-20260913.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/benchmark-fixed-world-decision-20260913.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/build-human-405-world-20260913.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/check-fixed-world-initial-20260913.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/dual-launch-opening-proof-20260913.json",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/extract-human-405-config-20260913.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/fixed-world-decision-d035a5e8-20260913.json",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/fixed-world-initial-20260913.json",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/fixed-world-initial-assignments-20260913.json",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/fixed-world-initial-ordinary-20260913.json",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/fixed-world-initial-target-20260913.json",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/fixed-world-plan-20260913.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/fixed-world-reproduction-20260913.json",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/human-405-config-evidence-20260913.json",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/human-405-fixed-config-20260913.json",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/human-405-history-evidence-20260913.json.gz",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/human-405-opening-proof-20260913.json",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/human-405-world-audit-20260913.json",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/reproduce-fixed-world-20260913.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/verify-dual-launch-opening-20260913.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "adhoc/verify-human-405-opening-20260913.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "assets/aliens/九折/implementation.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "assets/aliens/半人马/implementation.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "assets/aliens/奥陌陌/implementation.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "assets/aliens/异常点/implementation.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "assets/aliens/方舟/implementation.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "assets/aliens/符文族/implementation.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "assets/aliens/虫/implementation.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "assets/aliens/阿米巴/implementation.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "docs/ai-design.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "docs/alien-design.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "docs/effect-session-runtime.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "docs/fixed-boards.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "docs/mechanics-reference.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "docs/rl-simulation-env.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "docs/robot-iteration-registry.md",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/app/game-recovery.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/app/simulation-env.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/app/simulation-state-checkpoint.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/actions/actions.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/ai/expected-score-evaluator.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/ai/quick-timing-contract.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/ai/strategic-goal-evaluator.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/amiba.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/amiba.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/aomomo.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/aomomo.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/banrenma.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/banrenma.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/chong.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/chong.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/fangzhou.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/fangzhou.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/jiuzhe.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/jiuzhe.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/randomizer.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/reveal-card-grants.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/runezu.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/runezu.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/yichangdian.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/aliens/yichangdian.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/cards/deck.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/cards/deck.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/cards/effects.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/cards/fixed-world-decks.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/cards/play-domain.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/cards/play-domain.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/effects/residual-domain-session.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/effects/runezu-panel-trace.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/effects/science-scan-flow.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/effects/search-root-attribution.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/end-game-scoring.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/initial-setup.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/production-kernel.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/rule-composition.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/state/fixed-world-config.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/game/state/initial-game-state.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/index.html",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "randomizer/training/simulation-standard-action-composition.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "tools/alien-reveal-hidden.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "tools/browser-smoke-inventory.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "tools/fixed-world-identity.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "tools/fixed-world-identity.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "tools/node-test-inventory.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "tools/research-world-resume.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "tools/robot-iteration-lib.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "tools/robot-report-fixture.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "tools/robot-report-link.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "tools/robot-report-replay.test.js",
+      "status": "base-unchanged"
+    },
+    {
+      "file": "tools/run_research_validation.js",
+      "status": "base-unchanged"
+    }
+  ]
+}

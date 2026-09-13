@@ -9,6 +9,7 @@ let alienSequence = 1;
 const nextAlienIdentity = () => ({ sequence: alienSequence++ });
 
 const alienState = state.createDefaultAlienState();
+banrenma.ensureBanrenmaState(alienState).initialConfiguration = banrenma.createInitialConfiguration(() => 0);
 alienState.aliens[2].assignedAlienId = banrenma.ALIEN_ID;
 alienState.aliens[2].alienId = banrenma.ALIEN_ID;
 alienState.aliens[2].revealed = true;

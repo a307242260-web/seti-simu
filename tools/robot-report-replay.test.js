@@ -4,13 +4,31 @@ const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 const { REPO_ROOT, replaySaveEnriched, refreshActionLogReportMetadata, computeRegistry } = require("./robot-iteration-lib");
+const { createReportSave } = require("./robot-report-fixture");
 const savePath = "seti-saves/seti-save-research-quick-timing-20260912-60f8cca6-quick-24-v2.json";
-const original = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, savePath), "utf8"));
-assert(replaySaveEnriched(savePath) instanceof Map);
+assert.throws(() => replaySaveEnriched(savePath), /REPORT_REPLAY_WORLD_VERSION_UNSUPPORTED/,
+  "旧世界存档不得套用当前固定世界重放");
+const original = createReportSave();
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), "seti-report-replay-test-"));
 const fixture = path.join(temp, "invalid-save.json");
 const relativeFixture = path.relative(REPO_ROOT, fixture);
 try {
+  fs.writeFileSync(fixture, JSON.stringify(original));
+  assert(replaySaveEnriched(relativeFixture) instanceof Map);
+  for (const [seed, count] of [["seti-free-analyze-v1", 4], ["report-replay-fixture", 3]]) {
+    const save = createReportSave(seed, count);
+    assert.equal(JSON.parse(save.committedState).turn.activePlayerCount, count);
+    fs.writeFileSync(fixture, JSON.stringify(save));
+    assert(replaySaveEnriched(relativeFixture) instanceof Map, `${seed}/${count}人按本局配置重放`);
+  }
+  for (const version of [undefined, "unknown-world-v1", "human-405-world-v1"]) {
+    const broken = structuredClone(original);
+    const state = JSON.parse(broken.committedState);
+    state.meta.worldVersion = version;
+    broken.committedState = JSON.stringify(state);
+    fs.writeFileSync(fixture, JSON.stringify(broken));
+    assert.throws(() => replaySaveEnriched(relativeFixture), /REPORT_REPLAY_WORLD_VERSION_UNSUPPORTED/);
+  }
   fs.writeFileSync(fixture, JSON.stringify({ ...original, replaySteps: null }));
   assert.throws(() => replaySaveEnriched(relativeFixture), /REPORT_REPLAY_STEPS_MISSING/);
   fs.writeFileSync(fixture, JSON.stringify({ ...original, committedState: "invalid-json" }));
@@ -28,8 +46,8 @@ try {
       `${actor}不能以部分结果或第一合法选项掩盖失败`);
   }
   const failedSubmission = structuredClone(original);
-  assert.equal(failedSubmission.replaySteps[23].phase, "quick");
-  failedSubmission.replaySteps[23].action.actorId = "player-green";
+  assert.equal(failedSubmission.replaySteps.at(-1).phase, "quick");
+  failedSubmission.replaySteps.at(-1).action.actorId = "player-green";
   fs.writeFileSync(fixture, JSON.stringify(failedSubmission));
   assert.throws(() => replaySaveEnriched(relativeFixture), /REPORT_REPLAY_SUBMISSION_FAILED/);
 } finally {

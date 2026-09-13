@@ -343,8 +343,7 @@
     return { ...group, variant, markerId: `${prefix}_${variant}` };
   }
 
-  function createAnomaly(prefix, sectorX, random = Math.random) {
-    const variant = random() < 0.5 ? 1 : 2;
+  function createAnomaly(prefix, sectorX, variant) {
     const group = ANOMALY_GROUP_BY_PREFIX[prefix];
     const markerId = `${prefix}_${variant}`;
     return {
@@ -380,6 +379,15 @@
     return best?.sectorX ?? null;
   }
 
+  function createInitialConfiguration(random) {
+    if (typeof random !== "function") throw new TypeError("异常点配置需要显式随机源");
+    const anomalyVariants = ["a", "b", "c"].map(() => random() < 0.5 ? 1 : 2);
+    return {
+      anomalyVariants,
+      cardDeck: shuffle(CARD_DEFINITIONS.map((card) => card.index), random),
+    };
+  }
+
   function initializeYichangdianReveal(alienState, alienSlotId, triggerPlayer, earthX, random = Math.random) {
     const yichangdian = ensureYichangdianState(alienState);
     const normalizedEarthX = mod8(earthX);
@@ -395,6 +403,8 @@
       };
     }
 
+    if (!yichangdian.initialConfiguration) throw new Error("yichangdian缺少开局随机配置");
+    const configuration = structuredClone(yichangdian.initialConfiguration);
     yichangdian.revealedSlotId = Number(alienSlotId);
     yichangdian.revealedByPlayerId = triggerPlayer?.id || null;
     yichangdian.revealedByPlayerColor = getPlayerColor(triggerPlayer);
@@ -403,12 +413,12 @@
     delete yichangdian.traceSlotsByAlienSlotId[String(alienSlotId)];
     ensureTraceGrid(alienState, alienSlotId);
     yichangdian.anomalies = [
-      createAnomaly("a", normalizedEarthX, random),
-      createAnomaly("b", normalizedEarthX - 3, random),
-      createAnomaly("c", normalizedEarthX + 3, random),
+      createAnomaly("a", normalizedEarthX, configuration.anomalyVariants[0]),
+      createAnomaly("b", normalizedEarthX - 3, configuration.anomalyVariants[1]),
+      createAnomaly("c", normalizedEarthX + 3, configuration.anomalyVariants[2]),
     ];
     yichangdian.nextAnomalySectorX = getNextAnomalySectorX(alienState, normalizedEarthX);
-    yichangdian.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
+    yichangdian.cardDeck = configuration.cardDeck;
     yichangdian.displayedCardIndex = drawDisplayedCardIndex(alienState, random);
 
     return {
@@ -428,8 +438,7 @@
 
   function drawDisplayedCardIndex(alienState, random = Math.random) {
     const yichangdian = ensureYichangdianState(alienState);
-    if (!yichangdian.cardDeck.length) yichangdian.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
-    const index = yichangdian.cardDeck.shift();
+    const index = yichangdian.cardDeck.shift() ?? null;
     yichangdian.displayedCardIndex = index;
     return index;
   }
@@ -473,6 +482,9 @@
   function takeDisplayedCard(alienState, random = Math.random, options = {}) {
     const yichangdian = ensureYichangdianState(alienState);
     if (yichangdian.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
+    if (yichangdian.displayedCardIndex == null) {
+      return { ok: false, code: "ALIEN_CARD_DECK_EMPTY", card: null, message: "异常点牌已耗尽" };
+    }
     const card = createAlienCard(yichangdian.displayedCardIndex, options.sequence);
     drawDisplayedCardIndex(alienState, random);
     return { ok: Boolean(card), card, message: card ? `获得异常点牌：${definitionName(card)}` : "没有可获得的异常点牌" };
@@ -480,9 +492,10 @@
 
   function blindDrawCard(alienState, random = Math.random, options = {}) {
     const yichangdian = ensureYichangdianState(alienState);
-    if (!yichangdian.cardDeck.length) yichangdian.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
-    const pickIndex = Math.floor(random() * yichangdian.cardDeck.length);
-    const [index] = yichangdian.cardDeck.splice(pickIndex, 1);
+    if (!yichangdian.cardDeck.length) {
+      return { ok: false, code: "ALIEN_CARD_DECK_EMPTY", card: null, message: "异常点盲抽牌堆已耗尽" };
+    }
+    const index = yichangdian.cardDeck.shift();
     const card = createAlienCard(index, options.sequence);
     if (yichangdian.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
     return { ok: Boolean(card), card, message: card ? `盲抽异常点牌：${definitionName(card)}` : "没有可盲抽的异常点牌" };
@@ -531,6 +544,7 @@
     getAnomalyBySectorX,
     getNextAnomalySectorX,
     initializeYichangdianReveal,
+    createInitialConfiguration,
     updateNextAnomaly,
     drawDisplayedCardIndex,
     getCardSrc,

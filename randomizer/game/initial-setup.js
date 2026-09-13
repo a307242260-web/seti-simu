@@ -8,6 +8,8 @@
   let data = root.SetiData;
   let industry = root.SetiIndustry;
   let finalScoring = root.SetiFinalScoring;
+  const fixedWorldConfig = typeof require === "function"
+    ? require("./state/fixed-world-config") : root.SetiFixedWorldConfig;
   if ((!initialCards || !cards || !players || !solar || !data || !industry)
     && typeof require === "function") {
     initialCards = initialCards || require("./initial-cards");
@@ -19,7 +21,7 @@
     finalScoring = finalScoring || require("./final-scoring");
   }
 
-  const api = factory(initialCards, cards, players, solar, data, industry, finalScoring);
+  const api = factory(initialCards, cards, players, solar, data, industry, finalScoring, fixedWorldConfig);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiInitialSetup = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   initialCards,
@@ -29,6 +31,7 @@
   data,
   industry,
   finalScoring,
+  fixedWorldConfig,
 ) {
   "use strict";
 
@@ -122,26 +125,29 @@
       return { ok: false, code: "INITIAL_SETUP_ALREADY_ACTIVE", message: "初始选择已经开始" };
     }
     const playerIds = activePlayerIds(rootState);
+    const fixedOffers = fixedWorldConfig.getFixedInitialOffers(rootState.meta?.seed);
     const random = typeof suppliedRandom === "function"
       ? suppliedRandom
       : createRandom(`${rootState.meta?.seed || "browser-host"}:initial-setup`);
     const industryPool = [...INDUSTRY_CARD_FILES];
-    const industryDeck = industryPool.length >= playerIds.length * 2
+    const industryDeck = !fixedOffers && industryPool.length >= playerIds.length * 2
       ? shuffle(industryPool, random).slice(0, playerIds.length * 2)
       : null;
-    const initialDeck = shuffle(
+    const initialDeck = fixedOffers ? null : shuffle(
       Array.from({ length: initialCards.INITIAL_CARD_COUNT }, (_entry, index) => index + 1),
       random,
     );
     const offersByPlayerId = {};
     playerIds.forEach((playerId, index) => {
-      const companyFiles = industryDeck
+      const fixedOffer = fixedOffers?.[playerId];
+      if (fixedOffers && !fixedOffer) throw new Error(`固定世界缺少${playerId}的起始选项`);
+      const companyFiles = fixedOffer ? fixedOffer.industry : industryDeck
         ? industryDeck.slice(index * 2, index * 2 + 2)
         : shuffle(industryPool, random).slice(0, 2);
       offersByPlayerId[playerId] = {
         playerId,
         industryOptions: companyFiles.map((fileName) => createSelectionCard("industry", fileName)),
-        initialOptions: initialDeck.slice(index * 3, index * 3 + 3)
+        initialOptions: (fixedOffer ? fixedOffer.initial : initialDeck.slice(index * 3, index * 3 + 3))
           .map((number) => createSelectionCard("initial", number)),
         selectedIndustryId: null,
         selectedInitialIds: [],

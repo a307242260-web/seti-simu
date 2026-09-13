@@ -111,6 +111,7 @@ function createAomomoVisibleContextWithStalePlanetList() {
   });
   context.solarSystem.aomomoActive = true;
   const currentPlayer = players.getCurrentPlayer(context.players);
+  context.aliens.aomomo.initialConfiguration = aomomo.createInitialConfiguration(() => 0);
   aomomo.initializeAomomoReveal(context.aliens, 1, currentPlayer);
   const planet = solar.createSolarSnapshot(context.solarSystem)
     .planetLocations

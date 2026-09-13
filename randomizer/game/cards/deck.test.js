@@ -1,6 +1,26 @@
 const assert = require("node:assert/strict");
 require("../card-catalog");
 const cards = require("./deck");
+const { createSeededRandom } = require("../random");
+
+{
+  const left = cards.createCardState(), right = cards.createCardState();
+  cards.initializeDrawPile(left, createSeededRandom("fixed-deck"));
+  cards.initializeDrawPile(right, createSeededRandom("fixed-deck"));
+  assert.deepEqual(left.drawPileCardIds, right.drawPileCardIds);
+  assert.deepEqual([...left.drawPileCardIds].sort(), cards.CARD_CATALOG.map(x => x.card_id).sort());
+  const order = [...left.drawPileCardIds];
+  const p = { id: "deck-exhaustion", hand: [], resources: { handSize: 0 } };
+  const ps = { players: [p] }, canonical = { meta: { sequences: { card: 1 } } };
+  const noRandom = () => { throw new Error("取牌不能改变随机序列"); };
+  for (const expected of order) {
+    const result = cards.blindDraw(left, ps, p, noRandom, { root: canonical });
+    assert.equal(result.card.cardId, expected);
+  }
+  assert.equal(cards.blindDraw(left, ps, p, noRandom, { root: canonical }).card, null);
+  assert.equal(p.hand.length, order.length);
+  assert.deepEqual(left.drawPileCardIds, []);
+}
 
 function createRoot() {
   return { meta: { sequences: { card: 1 } } };
@@ -74,6 +94,7 @@ assert.equal(catalogSetCounts.basic, 140);
 assert.equal(catalogSetCounts["space-agency"], 42);
 
 const openingHandState = cards.createCardState();
+cards.initializeDrawPile(openingHandState, () => 0.999999);
 const openingHandPlayers = ["white", "blue", "green", "brown"].map((color) => ({
   id: `player-${color}`,
   hand: [],
@@ -267,51 +288,28 @@ function createDrawCycleScenario(discardCount, freshCount) {
   assert.equal(cycle.state.discardPile.length, 1);
   assert.equal(cycle.state.discardPile[0].cardId, cycle.discardEntries[0].card_id);
 
-  const recycledDraw = cards.blindDraw(
+  const exhaustedDraw = cards.blindDraw(
     cycle.state, cycle.players, cycle.drawPlayer, () => 0, { root: cycle.root },
   );
-  assert.equal(recycledDraw.ok, true);
-  assert.equal(recycledDraw.reshuffled, true);
-  assert.equal(recycledDraw.card.cardId, cycle.discardEntries[0].card_id);
-  assert.equal(cycle.state.discardPile.length, 0);
+  assert.equal(exhaustedDraw.ok, false);
+  assert.equal(exhaustedDraw.card, null);
+  assert.equal(cycle.state.discardPile.length, 1);
   assert.deepEqual(cards.getDrawPileCardIds(cycle.state), []);
 }
 
 {
   const cycle = createDrawCycleScenario(2, 0);
-  const firstRecycled = cards.blindDraw(
-    cycle.state, cycle.players, cycle.drawPlayer, () => 0, { root: cycle.root },
-  );
-  assert.equal(firstRecycled.ok, true);
-  assert.equal(firstRecycled.reshuffled, true);
-  assert.equal(firstRecycled.card.cardId, cycle.discardEntries[0].card_id);
-  assert.deepEqual(cards.getDrawPileCardIds(cycle.state), [cycle.discardEntries[1].card_id]);
-
-  const [newDiscard] = cycle.drawPlayer.hand.splice(
-    cycle.drawPlayer.hand.findIndex((card) => card.id === firstRecycled.card.id),
-    1,
-  );
-  cycle.drawPlayer.resources.handSize = cycle.drawPlayer.hand.length;
-  cards.addToDiscardPile(cycle.state, newDiscard);
-  assert.deepEqual(
-    cards.getAvailablePool(cycle.state, cycle.players).map((entry) => entry.card_id),
-    [cycle.discardEntries[1].card_id],
-  );
-
-  const secondRecycled = cards.blindDraw(
-    cycle.state, cycle.players, cycle.drawPlayer, () => 0, { root: cycle.root },
-  );
-  assert.equal(secondRecycled.ok, true);
-  assert.equal(secondRecycled.card.cardId, cycle.discardEntries[1].card_id);
-  assert.deepEqual(cycle.state.discardPile.map((card) => card.cardId), [cycle.discardEntries[0].card_id]);
-
-  const thirdRecycled = cards.blindDraw(
-    cycle.state, cycle.players, cycle.drawPlayer, () => 0, { root: cycle.root },
-  );
-  assert.equal(thirdRecycled.ok, true);
-  assert.equal(thirdRecycled.reshuffled, true);
-  assert.equal(thirdRecycled.card.cardId, cycle.discardEntries[0].card_id);
-  assert.equal(cycle.state.discardPile.length, 0);
+  const before = structuredClone(cycle.state.discardPile);
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const result = cards.blindDraw(
+      cycle.state, cycle.players, cycle.drawPlayer,
+      () => { throw new Error("耗尽不应调用随机数"); }, { root: cycle.root },
+    );
+    assert.equal(result.ok, false);
+    assert.equal(result.card, null);
+    assert.deepEqual(cycle.state.discardPile, before);
+    assert.deepEqual(cards.getAvailablePool(cycle.state, cycle.players), []);
+  }
 }
 
 {
@@ -319,10 +317,9 @@ function createDrawCycleScenario(discardCount, freshCount) {
   const replenished = cards.replenishPublicSlot(
     cycle.state, cycle.players, 1, () => 0, { root: cycle.root },
   );
-  assert.ok(replenished);
-  assert.equal(replenished.cardId, cycle.discardEntries[0].card_id);
-  assert.equal(cycle.state.publicCards[1].cardId, cycle.discardEntries[0].card_id);
-  assert.equal(cycle.state.discardPile.length, 0);
+  assert.equal(replenished, null);
+  assert.equal(cycle.state.publicCards[1], null);
+  assert.equal(cycle.state.discardPile.length, 1);
 }
 
 const delayedFillState = cards.createCardState();

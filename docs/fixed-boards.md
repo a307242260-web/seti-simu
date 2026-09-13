@@ -12,6 +12,9 @@ RNG 起点契约：任何 seed 的盘面都从 `hashSeed(seed)` 开始（`create
 ### 1. `seti-107` —— 双发盘面（推荐主盘面）
 - boardId：`seti-107-board-v1`
 - 白色（人类）初始 2 选 1：**寰宇动力 / 异星实验室**
+- 四席起始公司/起始卡选项由共享`getFixedInitialOffers("seti-107")`保留既有定义，
+  与329bd8a0四人局逐项相等；证据`adhoc/dual-launch-opening-proof-20260913.json`。
+  其他随机配置仍按真实seed生成，不恢复旧通用meta.seed。
 - 特点：**寰宇动力 = 双发**（被动火箭上限 +1 可造第二个探测器；主动能力两个探测器
   各走一步、必须选不同火箭）；异星实验室三色板块复用正式发射/扫描/科技行动
 - 训练侧默认固定盘面（`FIXED_BOARD_CONFIG`）
@@ -20,6 +23,21 @@ RNG 起点契约：任何 seed 的盘面都从 `hashSeed(seed)` 开始（`create
 
 ### 2. `seti-free-analyze-v1` —— 免电分析盘面
 - boardId：`seti-free-analyze-board-v1`
+- 固定世界的隐藏身份定义：槽位1阿米巴、槽位2虫（2026-09-13对齐的目标局）。
+  由共享 `state/fixed-world-config.js` 保存405分对局的已知配置，版本
+  `human-405-world-v1`：94张已知普通牌生成前缀、88张确定性未知尾部、两种外星牌序
+  与首次揭示配件。来源为 `seti-save-537-merged.json`，历史内核516步重放及提取证据
+  见 `adhoc/human-405-config-evidence-20260913.json`。不依赖谁先揭示。
+  原始517个历史检查点及当时的严格重放工具已压缩归档为
+  `adhoc/human-405-history-evidence-20260913.json.gz`；运行
+  `node adhoc/archive-human-405-evidence-20260913.js` 可独立核验解压后的检查点SHA256、
+  数量及重放工具源码哈希，不重新运行对局，也不依赖原临时目录。
+  四席起始公司与起始卡选项按原局席位固定，不替玩家确认选择；初始手牌、科技、
+  太阳系、终局板块、公共牌及PASS预留牌的历史逐项对照见
+  `adhoc/human-405-opening-proof-20260913.json`。补充的起始选项由共享initial-setup读取。
+  正常局使用 `seeded-world-v1`；版本写入 `meta.worldVersion`。恢复、隐藏身份与方舟
+  奖励隔离、报告指纹及首个完整局已验收，见
+  `reports/iteration/fixed-world-405-acceptance-20260913.md`。不能将历史成绩视为新世界成绩。
 - 白色（人类）初始 2 选 1：**异星实验室 / 深空探测**
 - 特点：**深空探测 = 分析免电**（被动 `deepspace_free_analyze`，数据分析不消耗能量）；
   异星实验室三色板块复用发射/扫描/科技

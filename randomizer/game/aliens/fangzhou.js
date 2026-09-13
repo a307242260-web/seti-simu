@@ -3,19 +3,20 @@
 
   let placement = root.SetiAlienPlacement;
   let state = root.SetiAlienState;
+  const randomApi = typeof require === "function" ? require("../random") : root.SetiRandom;
 
   if (typeof require === "function") {
     placement = placement || require("./placement");
     state = state || require("./state");
   }
 
-  const api = factory(placement, state);
+  const api = factory(placement, state, randomApi);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
-  if (typeof module === "undefined") root.SetiAlienFangzhou = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (placement, state) {
+  if (typeof module === "undefined") root.SetiAlienFangzhou = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (placement, state, randomApi) {
   "use strict";
 
   const ALIEN_ID = "方舟";
@@ -182,6 +183,7 @@
       card1Deck: CARD1_DEFINITIONS.map((card) => card.index),
       card1Revealed: [],
       card1RevealedSinceShuffle: 0,
+      card1ShuffleCount: 0,
       displayedCard1Index: null,
       revealInitialized: false,
     };
@@ -432,12 +434,56 @@
     return fangzhou.playerCard2ById[key];
   }
 
-  function dealPlayerCard2(alienState, player, random = Math.random) {
+  function createPlayerCard2Variants(random) {
+    return Object.fromEntries(TRACE_TYPES.map(traceType => [traceType, pickRandomVariant(random)]));
+  }
+
+  function createInitialConfiguration(random, players = []) {
+    if (typeof random !== "function") throw new TypeError("方舟配置需要显式随机源");
+    const card1Deck = shuffle(CARD1_DEFINITIONS.map((card) => card.index), random);
+    const playerCard2Variants = {};
+    for (const player of players) {
+      const key = getPlayerKey(player);
+      if (!key) throw new TypeError("方舟配置缺少玩家身份");
+      playerCard2Variants[key] = createPlayerCard2Variants(random);
+    }
+    return { card1Deck, playerCard2Variants, rewardShuffleSeed: Math.floor(random() * 4294967296) };
+  }
+
+  function getConfiguredPlayerCard2(alienState, player) {
+    const key = getPlayerKey(player);
+    const variants = alienState?.fangzhou?.initialConfiguration?.playerCard2Variants?.[key];
+    if (!key || !variants || TRACE_TYPES.some(color => !Number.isInteger(variants[color])
+      || variants[color] < 1 || variants[color] > CARD2_VARIANTS_PER_COLOR)) {
+      throw new Error(`方舟玩家解锁牌配置无效：${key || "missing-player"}`);
+    }
+    return variants;
+  }
+
+  // 仅用于隔离搜索世界的构造；真实执行仍消费开局固定的顺序。
+  // 从公开目录和已翻牌建立样本，绝不 shuffle 实际隐藏牌堆。
+  function sampleHiddenRewards(alienState, publicSeed) {
+    const fangzhou = alienState?.fangzhou;
+    if (!fangzhou?.initialConfiguration) return;
+    if (typeof publicSeed !== "string" || !publicSeed) throw new TypeError("方舟奖励采样需要公开种子");
+    const random = randomApi.createSeededRandom(`fangzhou-hypothesis-v1:${publicSeed}`);
+    const indices = CARD1_DEFINITIONS.map(card => card.index);
+    const revealed = fangzhou.revealInitialized ? fangzhou.card1Revealed : [];
+    if (!Array.isArray(revealed) || new Set(revealed).size !== revealed.length
+      || revealed.some(index => !indices.includes(index))) throw new Error("方舟已翻奖励记录无效");
+    fangzhou.initialConfiguration.card1Deck = shuffle(indices, random);
+    fangzhou.initialConfiguration.rewardShuffleSeed = Math.floor(random() * 4294967296);
+    fangzhou.card1Deck = fangzhou.revealInitialized
+      ? shuffle(indices.filter(index => !revealed.includes(index)), random)
+      : [...fangzhou.initialConfiguration.card1Deck];
+  }
+
+  function dealPlayerCard2(alienState, player) {
+    const selectedVariants = getConfiguredPlayerCard2(alienState, player);
     const playersState = ensurePlayerCard2State(alienState, player);
-    if (!playersState) return [];
     const dealt = [];
     for (const traceType of TRACE_TYPES) {
-      const variant = pickRandomVariant(random);
+      const variant = selectedVariants[traceType];
       playersState.cards[traceType] = {
         variant,
         status: "locked",
@@ -538,7 +584,13 @@
   function reshuffleCard1DeckIfNeeded(alienState, random = Math.random) {
     const fangzhou = ensureFangzhouState(alienState);
     if (fangzhou.card1RevealedSinceShuffle < CARD1_RESHUFFLE_THRESHOLD) return false;
-    fangzhou.card1Deck = shuffle(CARD1_DEFINITIONS.map((card) => card.index), random);
+    const seed = fangzhou.initialConfiguration?.rewardShuffleSeed;
+    if (!Number.isInteger(seed) || !Number.isSafeInteger(fangzhou.card1ShuffleCount)
+      || fangzhou.card1ShuffleCount < 0) throw new Error("方舟缺少有效的混洗种子或次数");
+    const count = fangzhou.card1ShuffleCount + 1;
+    const rewardRandom = randomApi.createSeededRandom(`fangzhou-reward-v1:${seed}:${count}`);
+    fangzhou.card1Deck = shuffle(CARD1_DEFINITIONS.map((card) => card.index), rewardRandom);
+    fangzhou.card1ShuffleCount = count;
     fangzhou.card1Revealed = [];
     fangzhou.card1RevealedSinceShuffle = 0;
     fangzhou.displayedCard1Index = null;
@@ -549,7 +601,7 @@
     const fangzhou = ensureFangzhouState(alienState);
     const reshuffled = reshuffleCard1DeckIfNeeded(alienState, random);
     if (!fangzhou.card1Deck.length) {
-      fangzhou.card1Deck = shuffle(CARD1_DEFINITIONS.map((card) => card.index), random);
+      throw new Error("方舟奖励池在混洗阈值前异常耗尽");
     }
     const index = fangzhou.card1Deck.shift();
     fangzhou.card1Revealed.push(index);
@@ -581,19 +633,22 @@
       };
     }
 
+    if (!fangzhou.initialConfiguration) throw new Error("fangzhou缺少开局随机配置");
+    const configuration = structuredClone(fangzhou.initialConfiguration);
+    for (const player of players || []) getConfiguredPlayerCard2(alienState, player);
     fangzhou.revealedSlotId = Number(alienSlotId);
     fangzhou.revealedByPlayerId = triggerPlayer?.id || null;
     fangzhou.revealedByPlayerColor = getPlayerColor(triggerPlayer);
     fangzhou.revealInitialized = true;
     delete fangzhou.traceSlotsByAlienSlotId[String(alienSlotId)];
     ensureTraceGrid(alienState, alienSlotId);
-    fangzhou.card1Deck = shuffle(CARD1_DEFINITIONS.map((card) => card.index), random);
+    fangzhou.card1Deck = configuration.card1Deck;
     fangzhou.card1Revealed = [];
     fangzhou.card1RevealedSinceShuffle = 0;
     fangzhou.displayedCard1Index = null;
 
     for (const player of players || []) {
-      dealPlayerCard2(alienState, player, random);
+      dealPlayerCard2(alienState, player);
     }
 
     return {
@@ -656,6 +711,8 @@
     flipCard1Reward,
     reshuffleCard1DeckIfNeeded,
     initializeFangzhouReveal,
+    createInitialConfiguration,
+    sampleHiddenRewards,
     markerBelongsToPlayer,
     getPlayerKeys,
     getPlayerKey,

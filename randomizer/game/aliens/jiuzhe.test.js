@@ -35,6 +35,7 @@ assert.equal(result.ok, true);
 assert.equal(result.reward.pickCard, true);
 assert.equal(jiuzhe.getThreat(alienState, white), 3);
 
+jiuzhe.ensureJiuzheState(alienState).initialConfiguration = jiuzhe.createInitialConfiguration(() => 0);
 jiuzhe.dealJiuzheCards(alienState, [white], () => 0);
 assert.equal(jiuzhe.getPlayerJiuzheCards(alienState, white).length, 3);
 
@@ -298,6 +299,7 @@ const revealState = {
   },
 };
 const blue = { id: "player-blue", color: "blue", resources: { score: 12 } };
+jiuzhe.ensureJiuzheState(revealState).initialConfiguration = jiuzhe.createInitialConfiguration(() => 0);
 const revealResult = jiuzhe.initializeJiuzheReveal(revealState, 1, white, [white, blue], () => 0);
 assert.equal(revealResult.ok, true, "Jiuzhe reveal should initialize");
 assert.equal(revealResult.freeScoreThreshold, 32, "free threshold should use the current highest score, not the trigger player's score");

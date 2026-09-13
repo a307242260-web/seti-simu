@@ -62,15 +62,29 @@ for (const position of [2, 3]) {
   assert.equal(result.ok, false); assert.equal(result.code, "SCIENCE_TRACE_PANEL_SYMBOL_FAILED");
   assert.equal(result.nextState, undefined, "失败不提交working state");
 }
-{
-  const root = fixture(), effect = { ownerId: "p1", payload: { traceType: "blue" } };
+for (const color of ["pink", "yellow", "blue"]) {
+  const root = fixture(), effect = { ownerId: "p1", payload: { traceType: color } };
   root.aliens.runezu.availableSymbols = [];
   const choice = executor.getLegalChoices(root, effect, { state: root }).find(a => a.target.speciesId === "runezu" && a.target.position === 1);
   const before = structuredClone(root);
-  assert.equal(executor.resolveDecision(root, effect, choice, { state: root }).ok, true);
-  assert.equal(root.meta.rngState.science.cursor, 1, "原语在池空时使用显式提供的已提交RNG");
+  const last = executor.resolveDecision(root, effect, choice, { state: root });
+  assert.equal(last.ok, true);
+  const slotId = `panel_${["pink", "yellow", "blue"].indexOf(color) + 1}`;
+  assert.equal(root.aliens.runezu.panelSymbolSlots[slotId].symbolId, null);
+  assert.deepEqual(root.meta.rngState, before.meta.rngState, "耗尽不消耗RNG或补造符号");
+  assert.equal(Boolean(last.irreversible), false, "没有补出隐藏符号，不制造新信息屏障");
   const replay = structuredClone(before);
   assert.equal(executor.resolveDecision(replay, effect, choice, { state: replay }).ok, true);
   assert.deepEqual(replay, root);
+  const afterLast = structuredClone(root);
+  const repeat = executor.getLegalChoices(root, effect, { state: root })
+    .find(a => a.target.speciesId === "runezu" && a.target.position === 1);
+  assert.ok(repeat, "符号耗尽不关闭顶部可重复痕迹位");
+  assert.equal(executor.resolveDecision(root, effect, repeat, { state: root }).ok, true);
+  assert.deepEqual(root.players, afterLast.players, "空位不再发符号、分数或其他玩家奖励");
+  assert.deepEqual(root.meta.rngState, afterLast.meta.rngState);
+  assert.equal(aliens.runezu.countTraceMarkers(root.aliens, root.players.players[0], color, 2),
+    aliens.runezu.countTraceMarkers(afterLast.aliens, afterLast.players.players[0], color, 2) + 1,
+    "实际痕迹仍须按规则记录");
 }
 console.log("runezu trace panel symbol rewards passed");

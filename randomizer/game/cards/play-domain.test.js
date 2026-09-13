@@ -146,7 +146,7 @@ function createCanonicalState(cardId) {
         mainActionCompleted: false,
       }],
     },
-    cards: { discardPile: [], publicCards: [] },
+    cards: cards.createCardState(),
     pieces: rockets.createRocketState(),
     solarSystem: solar.createBaselineState(),
     data: dataState,
@@ -325,7 +325,9 @@ function runFixedScan() {
   assert.equal(result.stateVersion, 1);
   assert.equal(counters.compareAndCommit, 1, "费用、迁牌与两个扫描 Effect 只能整体 CAS 一次");
   assert.equal(result.journal.actions.length, 1);
-  assert.equal(result.journal.effects.length, 5);
+  assert.equal(result.journal.effects.length, 6);
+  assert.equal(result.journal.effects.at(-1).type, scienceSession.EFFECT_TYPES.PUBLIC_REFILL,
+    "权威牌堆仍有牌时，公共补牌在串尾结算之后执行");
   assert.equal(
     result.journal.effects.filter((entry) => entry.type === scienceSession.EFFECT_TYPES.SETTLE).length,
     1,
@@ -431,6 +433,7 @@ function runDirectRewards() {
 
 function runDrawCards() {
   const { composition, counters } = createIntegratedComposition("b_83.webp");
+  const rngBefore = structuredClone(composition.stateSourcePort.getSnapshot().meta.rngState);
   const result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
   assert.equal(result.ok, true, JSON.stringify(result));
   assert.equal(result.phase, "completed");
@@ -442,7 +445,8 @@ function runDrawCards() {
   assert.equal(player.hand.length, 3);
   assert.deepEqual(player.hand.map((card) => card.id), ["card-100-0", "card-101-0", "card-102-0"]);
   assert.equal(committed.meta.sequences.card, 103);
-  assert.equal(committed.meta.rngState.cardPlay.cursor, 3);
+  assert.deepEqual(committed.meta.rngState, rngBefore, "抽三张既定顶牌不消耗运行期随机数");
+  assert.deepEqual(player.hand.map(card => card.cardId), cards.CARD_CATALOG.slice(0, 3).map(card => card.card_id));
   return semanticState(committed);
 }
 
@@ -996,6 +1000,7 @@ function runAmibaSingleSymbolReward() {
   root.players.players[0].hand = [amibaCard];
   root.players.players[0].resources.handSize = 1;
   // 揭示阿米巴（槽位1）：初始 symbol 槽含 blue_3
+  aliens.amiba.ensureAmibaState(root.aliens).initialConfiguration = aliens.amiba.createInitialConfiguration(() => 0.5);
   const initialized = aliens.amiba.initializeAmibaReveal(
     root.aliens,
     1,
@@ -1063,6 +1068,7 @@ function runAmibaRemoveTraceRegionReward() {
       const actor = root.players.players[0];
       actor.hand = [{ ...aliens.amiba.createAlienCard(3, 1), id: "instance:amiba_3.webp" }];
       root.aliens.aliens = { 1: { revealed: true, alienId: aliens.amiba.ALIEN_ID, traces: {} } };
+      aliens.amiba.ensureAmibaState(root.aliens).initialConfiguration = aliens.amiba.createInitialConfiguration(() => 0.5);
       aliens.amiba.initializeAmibaReveal(root.aliens, 1, actor, () => 0.5);
       assert.equal(aliens.amiba.placeAmibaTrace(root.aliens, 1, traceType, 2, actor, { sequence: 1 }).ok, true);
       setAmibaSymbolLayout(root, empty ? {} : {
@@ -1167,6 +1173,7 @@ function runCardTraceRegionAndRecovery(initialData = 0) {
   root.aliens = aliens.createDefaultAlienState();
   for (const type of aliens.TRACE_TYPES) assert.equal(aliens.placeFirstTrace(root.aliens, 1, type, "brown").ok, true);
   Object.assign(root.aliens.aliens[1], { revealed: true, alienId: aliens.amiba.ALIEN_ID });
+  aliens.amiba.ensureAmibaState(root.aliens).initialConfiguration = aliens.amiba.createInitialConfiguration(() => 0.5);
   assert.equal(aliens.amiba.initializeAmibaReveal(root.aliens, 1, actor, () => 0.5).ok, true);
   setAmibaSymbolLayout(root, { orange_1: "symbol_2", orange_2: "symbol_4" });
   root.cards.drawPile = [{ id: "trace-blind-card", cardId: "b_2.webp" }];
@@ -1279,6 +1286,7 @@ function runAlienCardTraceAndDeferredScore() {
   const actor = root.players.players[0];
   for (const type of aliens.TRACE_TYPES) assert.equal(aliens.placeFirstTrace(root.aliens, 1, type, "brown").ok, true);
   Object.assign(root.aliens.aliens[1], { revealed: true, alienId: aliens.amiba.ALIEN_ID });
+  aliens.amiba.ensureAmibaState(root.aliens).initialConfiguration = aliens.amiba.createInitialConfiguration(() => 0.5);
   assert.equal(aliens.amiba.initializeAmibaReveal(root.aliens, 1, actor, () => 0.5).ok, true);
   setAmibaSymbolLayout(root, {});
   const { composition } = createIntegratedComposition("b_36.webp", { state: root, residual: true });
@@ -1298,6 +1306,37 @@ function runAlienCardTraceAndDeferredScore() {
   submitTraceChoice(composition, () => true);
   assert.deepEqual(composition.lifecycle.save().envelope, after, "跨选牌边界仍保持后计分及隐藏信息恢复一致");
   composition.dispose();
+}
+
+// 卡牌 -> Science 痕迹 Decision -> CAS 与 lifecycle 恢复：符号池耗尽不补造。
+for (const empty of [false, true]) {
+  const root = createCanonicalState("b_32.webp");
+  const actor = root.players.players[0];
+  root.meta.sequences.alienEntity = 14;
+  root.aliens = aliens.createDefaultAlienState();
+  for (const type of aliens.TRACE_TYPES) assert.equal(aliens.placeFirstTrace(root.aliens, 1, type, "brown").ok, true);
+  Object.assign(root.aliens.aliens[1], { revealed: true, alienId: aliens.runezu.ALIEN_ID });
+  const species = aliens.runezu.ensureRunezuState(root.aliens);
+  species.initialConfiguration = aliens.runezu.createInitialConfiguration(() => 0.5);
+  assert.equal(aliens.runezu.initializeRunezuReveal(root.aliens, 1, actor, { techTileIds: [] }).ok, true);
+  species.availableSymbols = [];
+  species.panelSymbolSlots.panel_2.symbolId = empty ? null : "symbol_1";
+  const { composition, counters } = createIntegratedComposition("b_32.webp", { state: root });
+  try {
+    assert.equal(composition.inputPort.submitAction(getOnlyPlayAction(composition)).ok, true);
+    const saved = composition.lifecycle.save().envelope;
+    const result = submitTraceChoice(composition, c => c.target.speciesId === "runezu" && c.target.position === 1);
+    assert.equal(result.phase, "completed");
+    assert.equal(counters.compareAndCommit, 1);
+    const after = composition.lifecycle.save().envelope;
+    const state = composition.stateSourcePort.getSnapshot();
+    assert.equal(aliens.runezu.getPlayerSymbolCounts(state.players.players[0]).symbol_1 || 0, empty ? 0 : 1);
+    assert.equal(state.aliens.runezu.panelSymbolSlots.panel_2.symbolId, null);
+    assert.deepEqual(state.meta.rngState, root.meta.rngState);
+    assert.equal(composition.lifecycle.restore(saved).ok, true);
+    submitTraceChoice(composition, c => c.target.speciesId === "runezu" && c.target.position === 1);
+    assert.deepEqual(composition.lifecycle.save().envelope, after, "耗尽边界恢复后状态与journal一致");
+  } finally { composition.dispose(); }
 }
 
 runCardTraceRestrictions();
@@ -1341,6 +1380,40 @@ for (const cardId of ["b_41.webp", "b_42.webp", "b_139.webp", "dlc_32.png"]) {
 runIncomeAndTechCount();
 runResearchTech();
 runLaunchAndPick();
+
+// 牌库耗尽后公共区允许 null 空位；选择保留真实槽位下标。
+for (const { occupied, supply } of [[], [1], [0, 1, 2]].flatMap(occupied =>
+  [[], ["b_5.webp", "b_6.webp", "b_7.webp"]].map(supply => ({ occupied, supply })))) {
+  const state = createCanonicalState("b_23.webp");
+  state.cards.drawPileCardIds = [...supply];
+  state.cards.publicCards = [null, null, null];
+  for (const index of occupied) {
+    state.cards.publicCards[index] = { id: `public:${index}`, cardId: "b_2.webp" };
+  }
+  const { composition } = createIntegratedComposition("b_23.webp", { state });
+  let result = composition.inputPort.submitAction(getOnlyPlayAction(composition));
+  const chosen = [];
+  while (result.ok && composition.inspect().phase === "awaiting_input") {
+    const decision = composition.inspect().session.decision;
+    assert.deepEqual(decision.choices.map(choice => choice.target.index),
+      occupied.filter(index => !chosen.includes(index)));
+    const choice = decision.choices[0];
+    chosen.push(choice.target.index);
+    result = composition.inputPort.submitDecision({ decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice });
+    assert.ok(chosen.length <= occupied.length, "不选择空位或重新生成公共牌");
+  }
+  assert.equal(result.ok, true, JSON.stringify(result));
+  assert.equal(result.phase, "completed");
+  assert.deepEqual(chosen, occupied);
+  const after = composition.stateSourcePort.getSnapshot();
+  assert.deepEqual(after.cards.publicCards.map(card => card?.cardId || null),
+    [0, 1, 2].map(index => occupied.includes(index) ? supply[occupied.indexOf(index)] || null : null));
+  assert.equal(after.players.players[0].resources.publicity, occupied.length,
+    "每张原有公共牌结算一次角标，新补牌不产生奖励");
+  assert.deepEqual(after.cards.drawPileCardIds, supply.slice(occupied.length));
+  composition.dispose();
+}
 
 const exhaustiveCardIds = Object.keys(cardEffects.CARD_REFERENCE_MAP).sort();
 const exhaustiveEffectTypes = new Set();

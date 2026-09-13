@@ -27,7 +27,7 @@ function createState() {
         },
       },
     },
-    chong: chong.createChongState(),
+    chong: { ...chong.createChongState(), initialConfiguration: chong.createInitialConfiguration(() => 0) },
   };
 }
 

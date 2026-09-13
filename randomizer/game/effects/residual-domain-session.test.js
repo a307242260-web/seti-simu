@@ -5,6 +5,7 @@ const residual = require("./residual-domain-session");
 const probeTurn = require("./probe-turn-session");
 const finalScoring = require("../final-scoring");
 const cardEffects = require("../cards/effects");
+const cards = require("../cards/deck");
 const aliens = require("../aliens");
 const data = require("../data");
 const solar = require("../../solar-system/core");
@@ -72,7 +73,7 @@ function createRoot() {
       cardTurnEventBonuses: [],
       visitedPlanetsByPlayerId: {},
     },
-    cards: { publicCards: [], drawPile: [], discardPile: [] },
+    cards: cards.createCardState(),
     aliens: {},
     finalScoring: finalScoring.createFinalScoringState(),
     pieces: { rockets: [] },
@@ -426,6 +427,10 @@ function settleFinalMarkEffects(owner, root, spawnedEffects) {
   for (const speciesId of residual.SPECIES_IDS) {
     const root = createRoot();
     root.aliens = aliens.createDefaultAlienState();
+    const module = aliens[speciesId];
+    const title = speciesId[0].toUpperCase() + speciesId.slice(1);
+    module[`ensure${title}State`](root.aliens).initialConfiguration =
+      module.createInitialConfiguration(() => 0, root.players.players);
     for (const traceType of aliens.TRACE_TYPES) {
       assert.equal(aliens.placeFirstTrace(
         root.aliens,
@@ -868,6 +873,24 @@ for (const speciesId of ["yichangdian", "banrenma", "chong", "amiba", "aomomo", 
     assert.deepEqual(settled.spawnedEffects, []);
     assert.equal(settled.irreversible, null);
     assert.equal((settled.events || []).length, 0);
+    if (hasCards) {
+      root.aliens[speciesId].cardDeck = [];
+      const lastChoices = executor.getLegalChoices(root, effect, { state: root });
+      assert.equal(lastChoices.some(action => action.target.source === "blind"), false);
+      const rngBefore = structuredClone(root.meta.rngState);
+      const sequenceBefore = root.meta.sequences.alienEntity;
+      const picked = executor.resolveDecision(root, effect,
+        lastChoices.find(action => action.target.source === "display"), { state: root });
+      assert.equal(picked.ok, true);
+      assert.equal(root.players.players[0].hand.at(-1).alienCardId, 2);
+      assert.equal(root.meta.sequences.alienEntity, sequenceBefore + 1);
+      assert.deepEqual(root.meta.rngState, rngBefore, "按序领取展示牌不消费RNG");
+      const emptyChoices = executor.getLegalChoices(root, effect, { state: root });
+      assert.deepEqual(emptyChoices.map(action => action.target.source), ["cancel"]);
+      const exhaustedRoot = structuredClone(root);
+      assert.equal(executor.resolveDecision(root, effect, emptyChoices[0], { state: root }).ok, true);
+      assert.deepEqual(root, exhaustedRoot, "正式耗尽路径不补牌、不分配序号、不改随机数");
+    }
   }
 }
 

@@ -389,10 +389,17 @@
     return result;
   }
 
-  function initializeSymbols(amibaState, random = Math.random) {
+  function createInitialConfiguration(random) {
+    if (typeof random !== "function") throw new TypeError("阿米巴配置需要显式随机源");
+    return {
+      cardDeck: shuffle(CARD_DEFINITIONS.map((card) => card.index), random),
+      symbolOrder: shuffle(SYMBOL_IDS, random),
+    };
+  }
+
+  function initializeSymbols(amibaState, shuffledSymbols) {
     amibaState.symbolSlots = {};
     amibaState.symbolsById = {};
-    const shuffledSymbols = shuffle(SYMBOL_IDS, random);
     INITIAL_SYMBOL_SLOTS.forEach((slotId, index) => {
       const symbolId = shuffledSymbols[index];
       amibaState.symbolSlots[slotId] = symbolId;
@@ -415,15 +422,17 @@
         message: "阿米巴已初始化",
       };
     }
+    if (!amiba.initialConfiguration) throw new Error("amiba缺少开局随机配置");
+    const configuration = structuredClone(amiba.initialConfiguration);
     amiba.revealedSlotId = Number(alienSlotId);
     amiba.revealedByPlayerId = triggerPlayer?.id || null;
     amiba.revealedByPlayerColor = getPlayerColor(triggerPlayer);
     amiba.revealInitialized = true;
     delete amiba.traceSlotsByAlienSlotId[String(alienSlotId)];
     ensureTraceGrid(alienState, alienSlotId);
-    amiba.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
+    amiba.cardDeck = configuration.cardDeck;
     amiba.displayedCardIndex = drawDisplayedCardIndex(alienState, random);
-    const symbols = initializeSymbols(amiba, random);
+    const symbols = initializeSymbols(amiba, configuration.symbolOrder);
     return {
       ok: true,
       displayedCardIndex: amiba.displayedCardIndex,
@@ -481,8 +490,7 @@
 
   function drawDisplayedCardIndex(alienState, random = Math.random) {
     const amiba = ensureAmibaState(alienState);
-    if (!amiba.cardDeck.length) amiba.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
-    const index = amiba.cardDeck.shift();
+    const index = amiba.cardDeck.shift() ?? null;
     amiba.displayedCardIndex = index;
     return index;
   }
@@ -490,6 +498,9 @@
   function takeDisplayedCard(alienState, random = Math.random, options = {}) {
     const amiba = ensureAmibaState(alienState);
     if (amiba.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
+    if (amiba.displayedCardIndex == null) {
+      return { ok: false, code: "ALIEN_CARD_DECK_EMPTY", card: null, message: "阿米巴牌已耗尽" };
+    }
     const card = createAlienCard(amiba.displayedCardIndex, options.sequence);
     drawDisplayedCardIndex(alienState, random);
     return { ok: Boolean(card), card, message: card ? `获得阿米巴牌：${definitionName(card)}` : "没有可获得的阿米巴牌" };
@@ -497,9 +508,10 @@
 
   function blindDrawCard(alienState, random = Math.random, options = {}) {
     const amiba = ensureAmibaState(alienState);
-    if (!amiba.cardDeck.length) amiba.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
-    const pickIndex = Math.floor(random() * amiba.cardDeck.length);
-    const [index] = amiba.cardDeck.splice(pickIndex, 1);
+    if (!amiba.cardDeck.length) {
+      return { ok: false, code: "ALIEN_CARD_DECK_EMPTY", card: null, message: "阿米巴盲抽牌堆已耗尽" };
+    }
+    const index = amiba.cardDeck.shift();
     const card = createAlienCard(index, options.sequence);
     if (amiba.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
     return { ok: Boolean(card), card, message: card ? `盲抽阿米巴牌：${definitionName(card)}` : "没有可盲抽的阿米巴牌" };
@@ -715,6 +727,7 @@
     removePlayerTrace,
     listPlayerTraceOptions,
     initializeAmibaReveal,
+    createInitialConfiguration,
     getCardSrc,
     getSymbolSrc,
     createAlienCard,

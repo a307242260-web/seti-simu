@@ -70,7 +70,8 @@ for (const [traceType, variants] of Object.entries(card2CornerExpectations)) {
 const lockedState = createDebugState();
 lockedState.fangzhou.revealedSlotId = 2;
 lockedState.fangzhou.revealInitialized = true;
-fangzhou.dealPlayerCard2(lockedState, white, () => 0);
+lockedState.fangzhou.initialConfiguration = fangzhou.createInitialConfiguration(() => 0, [white]);
+fangzhou.dealPlayerCard2(lockedState, white);
 fangzhou.ensureTraceGrid(lockedState, 2);
 assert.equal(fangzhou.getUnlockCount(lockedState, white), 0);
 const locked = fangzhou.canPlaceFangzhouTrace(lockedState, 2, "pink", 2, white);
@@ -92,7 +93,8 @@ assert.deepEqual(unlockTraceReward.gain, { score: 3 });
 const unlockTraceState = createDebugState();
 unlockTraceState.fangzhou.revealedSlotId = 2;
 unlockTraceState.fangzhou.revealInitialized = true;
-fangzhou.dealPlayerCard2(unlockTraceState, white, () => 0);
+unlockTraceState.fangzhou.initialConfiguration = fangzhou.createInitialConfiguration(() => 0, [white]);
+fangzhou.dealPlayerCard2(unlockTraceState, white);
 assert.equal(alienState.countTraceMarkersForPlayerOnSlot(unlockTraceState, 2, white, "pink"), 1);
 const stateExtraTrace = alienState.addExtraTrace(unlockTraceState, 2, "pink", white.color);
 assert.equal(stateExtraTrace.ok, true);
@@ -126,11 +128,13 @@ const initState = {
   },
   fangzhou: fangzhou.createFangzhouState(),
 };
+fangzhou.ensureFangzhouState(initState).initialConfiguration = fangzhou.createInitialConfiguration(() => 0, [white]);
 const init = fangzhou.initializeFangzhouReveal(initState, 2, white, [white], () => 0);
 assert.equal(init.ok, true);
 assert.equal(initState.fangzhou.playerCard2ById.white.cards.pink.variant, 1);
 
 const flipWrapper = { fangzhou: fangzhou.createFangzhouState() };
+flipWrapper.fangzhou.initialConfiguration = fangzhou.createInitialConfiguration(() => 0);
 for (let index = 0; index < 5; index += 1) {
   const flip = fangzhou.flipCard1Reward(flipWrapper, "basic", () => 0);
   assert.equal(flip.ok, true);
@@ -146,5 +150,35 @@ assert.equal(sixth.reshuffled, true);
 assert.equal(flipWrapper.fangzhou.card1RevealedSinceShuffle, 1);
 assert.equal(flipWrapper.fangzhou.card1Revealed.length, 1);
 assert.equal(flipWrapper.fangzhou.card1Deck.length, 8);
+
+// 搜索样本只由公开种子、公开已翻奖励决定；隐藏牌序/后续混洗种子不参与。
+for (const initialized of [false, true]) {
+  const variants = [false, true].map(reverse => {
+    const hypothetical = createDebugState();
+    hypothetical.fangzhou.initialConfiguration = fangzhou.createInitialConfiguration(() => 0, [white]);
+    hypothetical.fangzhou.revealInitialized = initialized;
+    if (initialized) {
+      hypothetical.fangzhou.card1Revealed = [2, 4, 7, 8];
+      hypothetical.fangzhou.card1RevealedSinceShuffle = 4;
+      hypothetical.fangzhou.card1Deck = [0, 1, 3, 5, 6];
+    }
+    if (reverse) {
+      hypothetical.fangzhou.card1Deck.reverse();
+      hypothetical.fangzhou.initialConfiguration.card1Deck.reverse();
+      hypothetical.fangzhou.initialConfiguration.rewardShuffleSeed = 12345;
+    }
+    fangzhou.sampleHiddenRewards(hypothetical, "public-reward-test");
+    if (!initialized) fangzhou.initializeFangzhouReveal(hypothetical, 2, white, [white]);
+    const seen = [];
+    for (let i = 0; i < 12; i += 1) {
+      const flipped = fangzhou.flipCard1Reward(hypothetical);
+      if (initialized && i === 0) assert.ok(![2, 4, 7, 8].includes(flipped.index));
+      seen.push(flipped);
+    }
+    return { hypothetical, seen };
+  });
+  assert.deepEqual(variants[0], variants[1], "包括重复混洗后的奖励序列也不能受真实隐藏配置影响");
+}
+assert.throws(() => fangzhou.sampleHiddenRewards(initState, ""), /公开种子/);
 
 console.log("fangzhou.test.js: all tests passed");

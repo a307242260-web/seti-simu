@@ -8,6 +8,7 @@ let alienSequence = 1;
 const nextAlienIdentity = () => ({ sequence: alienSequence++ });
 
 const alienState = state.createDefaultAlienState();
+yichangdian.ensureYichangdianState(alienState).initialConfiguration = yichangdian.createInitialConfiguration(() => 0);
 alienState.aliens[2].assignedAlienId = yichangdian.ALIEN_ID;
 alienState.aliens[2].alienId = yichangdian.ALIEN_ID;
 alienState.aliens[2].revealed = true;
@@ -95,6 +96,7 @@ assert.equal(anomalyReward.traceType, "yellow");
 assert.equal(anomalyReward.pickCard, true);
 
 const stateTraceTaskState = state.createDefaultAlienState();
+yichangdian.ensureYichangdianState(stateTraceTaskState).initialConfiguration = yichangdian.createInitialConfiguration(() => 0);
 state.placeFirstTrace(stateTraceTaskState, 1, "pink", "white");
 state.placeFirstTrace(stateTraceTaskState, 1, "yellow", "white");
 state.addExtraTrace(stateTraceTaskState, 1, "yellow");

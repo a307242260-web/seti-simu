@@ -36,6 +36,10 @@ function createReadyAlienState(alienId) {
 }
 
 function initializeAlienModule(alienState, module, players) {
+  const keys = { "异常点": "yichangdian", "半人马": "banrenma", "虫": "chong", "阿米巴": "amiba", "奥陌陌": "aomomo", "符文族": "runezu" };
+  const key = keys[module.ALIEN_ID];
+  const title = key[0].toUpperCase() + key.slice(1);
+  module[`ensure${title}State`](alienState).initialConfiguration = module.createInitialConfiguration(() => 0, players);
   const triggerPlayer = players[0];
   if (module === yichangdian) return module.initializeYichangdianReveal(alienState, 1, triggerPlayer, 4, () => 0);
   if (module === banrenma) {

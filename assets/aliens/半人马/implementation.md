@@ -1,5 +1,9 @@
 # 半人马实现说明
 
+`createInitialConfiguration(random)` 单独生成随机牌序与随机配件，不冻结揭示时的
+玩家分数、地球位置或可用科技。开局保存到物种的initialConfiguration，揭示只复制读取，
+缺配置显式报错，不临时补抽。跨宿主与恢复验证仍在进行。
+
 机制来源：`face_detail.md`。通用外星人生命周期见 `docs/alien-design.md`。
 
 ## 机制入口
@@ -40,6 +44,9 @@
 - 奖励位坐标在 `BANRENMA_BONUS_MARKER_SLOTS`；显示尺寸由 `BANRENMA_BONUS_TOKEN_DISPLAY_SCALE` 控制。
 
 ## 半人马牌
+
+盲抽与展示补牌均取已有牌堆顶牌，不再次随机选牌；耗尽不回洗、不重建。
+最后展示牌仍可领取，展示与牌堆全部耗尽后只可取消；共用契约见 `docs/alien-design.md`。
 
 - 图片为 `assets/aliens/半人马/cards/0.webp`-`9.webp`。
 - 揭示时，玩家在该外星人 state 面板拥有几个首痕迹，就自动从半人马牌堆获得几张半人马牌到手牌。

@@ -90,6 +90,28 @@ for (const result of stopped) {
 }
 assert.deepEqual(composition.lifecycle.save().envelope, before);
 const continuing = createComposition(true);
+{
+  const evaluator = require("../ai/expected-score-evaluator");
+  const finishedInputs = [];
+  const [result] = continuing.counterfactualPort.evaluate(
+    continuing.inputPort.enumerateActions().filter(action => action.family === "launch"), {
+      viewer: { playerId: "p1", role: "player" }, maxExecutionNodes: 8, maxFrontierNodes: 8,
+      secondaryAgentSearch: {
+        focalSeatId: "p1", maxProxyDepth: 2,
+        selectRouteTarget: () => "data:analyze",
+        completesRouteTarget: evaluator.completesSecondaryAgentRouteTarget,
+        selectSuccessors(input) {
+          if (input.branchObservation.score === 3) {
+            finishedInputs.push({ target: input.routeTargetId, plan: input.routePlanId });
+            return [];
+          }
+          return input.legalSuccessors;
+        },
+      },
+    });
+  assert.deepEqual(finishedInputs, [{ target: null, plan: null }], "分析完成后内核清除目标及计划绑定");
+  assert.ok(result.leaves.some(leaf => leaf.observation.score === 3 && leaf.terminalReason === "goal-completed"));
+}
 // 完成后选择器无后继，与未完成停止必须区分；默认无合法后继出口同样区分。
 for (const hasSuccessors of [false, true]) {
   const endpoint = createComposition(hasSuccessors);

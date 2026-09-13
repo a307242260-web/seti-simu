@@ -10,6 +10,9 @@
   const TERMINAL_PHASES = new Set(["completed", "aborted", "irreversible_locked"]);
   const HIDDEN_INFORMATION_BARRIER_CODES = new Set([
     "alien_revealed",
+    "alien_reveal",
+    "alien_reveal_turn_end",
+    "fangzhou_reward_reveal",
     "hidden_alien_card",
     "hidden_alien_card_reveal",
     "hidden_card_draw",
@@ -226,7 +229,7 @@
       "plans",
     );
     sanitized.techGainRequirements = sanitizeRequirementPlans(
-      leafObservation.techGainRequirements,
+      sanitizeRequirementPlans(leafObservation.techGainRequirements, knownCardIds, "publicityPreparationPlans"),
       knownCardIds,
       "plans",
     );
@@ -841,6 +844,10 @@
       if (envelope.session != null) {
         restoredSession = runtime.restoreCheckpoint(envelope.session);
         if (!restoredSession?.ok) return deepFreeze(clone(restoredSession));
+        if (typeof options.validateSessionRestore === "function") {
+          const validation = options.validateSessionRestore(restoredSession.session, loaded.state);
+          if (validation?.ok === false) return deepFreeze(clone(validation));
+        }
         if (restoredSession.session.baseVersion !== loaded.state.meta.stateVersion) {
           return fail("RULE_COMPOSITION_SESSION_STALE", "Effect Session checkpoint 与 committed state 版本不一致", {
             baseVersion: restoredSession.session.baseVersion,
@@ -1006,6 +1013,11 @@
       }
       const canonicalBefore = stableSerialize(saved.envelope);
       const canonicalEnvelopeHash = stableHashSerialized(canonicalBefore);
+      const searchEnvelope = typeof options.prepareCounterfactualEnvelope === "function"
+        ? options.prepareCounterfactualEnvelope(saved.envelope, {
+          publicSeed: stableHash(rootObservation),
+        })
+        : saved.envelope;
       const maxDepth = Math.max(1, Number(evaluateOptions.maxDepth) || 4);
       const maxLeaves = Math.max(1, Number(evaluateOptions.maxLeaves) || 12);
       const maxNodes = Math.max(legalActions.length, Number(evaluateOptions.maxNodes) || 128);
@@ -1128,7 +1140,7 @@
       }
       if (options.reuseCounterfactualFork === true) {
         const forkStartedAt = now();
-        reusableFork = options.createCounterfactualFork(saved.envelope, {
+        reusableFork = options.createCounterfactualFork(searchEnvelope, {
           branchKey: stableHash({
             schemaVersion: "seti-counterfactual-branch-key-v2",
             canonicalEnvelopeHash,
@@ -2176,10 +2188,10 @@
           const routeResultTargetIds = clone(routeTarget?.resultTargetIds || (
             routeTargetId ? [routeTargetId] : []
           ));
-          recordRouteEntry(routeTargetId, routePlanId, saved.envelope);
+          recordRouteEntry(routeTargetId, routePlanId, searchEnvelope);
           recordGoalClusterEntry([[]], routeTargetId);
           mergeNode(initialFrontierByKey, {
-            envelope: saved.envelope,
+            envelope: searchEnvelope,
             action,
             depth: 0,
             priority: 0,
@@ -3152,7 +3164,7 @@
           },
           confidence: status === "failed"
             ? "none"
-            : state.pruned || state.failures.length
+            : state.pruned || state.failures.length || state.incompleteReasons.has("information-barrier")
               ? "low"
               : (evaluateOptions.confidence || "high"),
           code: state.pruned
@@ -3162,6 +3174,7 @@
           reasonCodes: [
             state.pruned ? "counterfactual-search-pruned" : null,
             state.failures.length ? "counterfactual-branch-failed" : null,
+            state.incompleteReasons.has("information-barrier") ? "counterfactual-hidden-information" : null,
           ].filter(Boolean),
           rootObservation,
           leaves: allLeaves.sort((left, right) => (

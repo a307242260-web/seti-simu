@@ -35,7 +35,7 @@ function createState(traces = createTraceSlots()) {
         traces,
       },
     },
-    aomomo: aomomo.createAomomoState(),
+    aomomo: { ...aomomo.createAomomoState(), initialConfiguration: aomomo.createInitialConfiguration(() => 0) },
   };
 }
 

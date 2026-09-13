@@ -337,6 +337,11 @@
     return 0;
   }
 
+  function createInitialConfiguration(random) {
+    if (typeof random !== "function") throw new TypeError("九折配置需要显式随机源");
+    return { cardDeck: shuffle(CARD_DEFINITIONS.map((card) => card.index), random) };
+  }
+
   function dealJiuzheCards(alienState, players, random = Math.random, options = {}) {
     const jiuzhe = ensureJiuzheState(alienState);
     if (jiuzhe.cardsDealt) {
@@ -349,7 +354,8 @@
       : 3;
     const extraCardsByPlayer = options.extraCardsByPlayer || options.revealOpportunityCounts || {};
     const cardCountsByPlayer = {};
-    const deck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
+    if (!jiuzhe.initialConfiguration) throw new Error("jiuzhe缺少开局随机配置");
+    const deck = [...jiuzhe.initialConfiguration.cardDeck];
     for (const player of targetPlayers) {
       const playersState = getPlayerJiuzheState(alienState, player, true);
       const playerKey = getPlayerKey(player);
@@ -852,6 +858,7 @@
     placeJiuzheTrace,
     countRevealOpportunitiesByPlayer,
     initializeJiuzheReveal,
+    createInitialConfiguration,
     dealJiuzheCards,
     getCardSrc,
     getPlayerJiuzheState,

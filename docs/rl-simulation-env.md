@@ -16,13 +16,27 @@ Standard Action、Decision、Effect Session 和机器玩家协调器（`machine-
 
 `createSimulationEnv()` 暴露：
 
-- `reset(config)`：按 seed 创建当前 schema 的新局并推进到首个策略边界。
+- `reset(config)`：按 seed 创建当前 schema 的新局并推进到首个策略边界。实际 seed 同时传入 Production 权威状态，不再把内部 `meta.seed` 固定为 `seti-simulation`。隐藏物种分配使用独立开局随机流，不改变基础盘面和普通牌的随机游标；固定世界版本与盘面身份见 `docs/fixed-boards.md`，完整局与续跑验收见 `reports/iteration/fixed-world-405-acceptance-20260913.md`。
+  开局构造的当前席位必须属于有效席位集合；人数少于全部席位时，不将尚未入选的默认
+  颜色强写为当前玩家。随后盘面初始化按正式顺序选取该局席位，三人局同样支持非零检查点恢复。
+  Production状态校验统一拒绝缺失种子、未知世界版本及版本与种子不匹配的committed
+  state；Browser恢复适配器与Simulation内核均使用该门禁。非法committed state在
+  恢复前拒绝，不改变当前规则状态或ViewState。版本判断由fixed-world-config统一提供。
+  已有Simulation对局在reset前先调用共享`validateRestore`检查整个规则envelope，
+  包括行动中的世界快照；拒绝后保留原检查点和行动进度。尚未创建对局的环境在初始化
+  后由同一恢复入口拒绝非法快照，不将失败结果作为成功恢复返回。
 - `observe(viewerPlayerId?)`：返回 viewer-safe observation。
 - `legalActions(viewerPlayerId?)`：返回当前 owner 的完整、稳定排序 Action descriptor。
 - `step(action)`：复核 schema、identity、owner、state/decision version 后提交 Action 或 Decision。
 - `isTerminal()`：读取 Production Composition 的终局事实。
 - `getReplay()` / `loadReplay()`：读写已确认策略输入与环境事件。
 - `createCheckpoint()` / `loadCheckpoint()`：保存和恢复当前 composition envelope、RNG 与 replay cursor。
+  恢复检查点直接读取权威 envelope，包括剩余牌序、外星人初始配置及活跃 Decision；
+  `replaySteps` 只恢复为记录，不重新执行。需要从头重放时使用 `loadReplay()`。
+  解析、世界版本、seed、envelope 一致性及 RNG 检查在重置当前环境前完成；
+  世界版本须匹配该 seed 的当前定义，缺失或不支持时报 `WORLD_VERSION_UNSUPPORTED`，
+  seed 不一致时报 `WORLD_SEED_MISMATCH`。随后校验唯一序列目录并交共享 lifecycle 恢复；
+  不把缺少世界配置的旧检查点静默转换成新盘面。
   卡牌痕迹与标准痕迹共用 Science Decision；新 pending 保存来源卡牌、颜色和目标限制。
   旧卡牌专用痕迹 pending 不自动转换，恢复/推进显式失败，须从该次奖励开始前重新选择
   （见 `docs/save-replay-guide.md`）。Action/Observation 外层 schema 不变。

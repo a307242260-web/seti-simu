@@ -7,6 +7,42 @@
   },
   "versions": [
     {
+      "id": "fixed-world-405-20260913",
+      "name": "fixed-world-405-20260913",
+      "date": "2026-09-13",
+      "baseline": null,
+      "head": "bddcdae9",
+      "commits": [
+        "53029ad7",
+        "e32aeab5",
+        "33d384a1",
+        "acc624a2",
+        "67c844a3",
+        "42798ef4",
+        "fe858c57",
+        "ed8b5633",
+        "05a66fe3",
+        "7e2edf76",
+        "569633e4",
+        "e3c1ea8c",
+        "ca924bc2",
+        "184135fb",
+        "b5d39ae7",
+        "d035a5e8",
+        "bddcdae9"
+      ],
+      "summary": "按种子固定真实世界；免电分析继承405分局已知配置；隔离搜索未知物种和方舟奖励。新世界运行验收，不与旧盘面成绩直接比较。",
+      "records": {
+        "b235ff5f.bddcdae9.quick-40.json": {
+          "note": "新固定世界首个40步检查点；full从此续跑，不重复前40步。非终局成绩。"
+        },
+        "b235ff5f.bddcdae9.full.json": {
+          "note": "FIXED-WORLD-01自身验收通过：561步自然终局82/116/65/124，均96.75；阿米巴和虫；搜索错误0。新世界首份基线，不与旧世界计算涨跌。记录wallMs为续跑段，quick+full合计924819ms。战略53次、控制6次实际截断仍待预算专项；详见fixed-world-405-acceptance-20260913.md。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "runezu-panel-node-projection-20260913",
       "name": "runezu-panel-node-projection-20260913",
       "date": "2026-09-13",

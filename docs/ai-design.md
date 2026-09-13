@@ -365,12 +365,24 @@ Decision 链只通过 active Effect Session 暴露的标准 choice 继续。主 
 只有正式提交才能写进度和发奖励。此接口是需求式移动的前置，生产根目标与移动
 候选尚未接入访问需求，不代表已消除无目标展开。
 
-分支数/深度超过安全上限时返回 `unresolved`，不把已结算一半的状态伪装为 leaf。Simulation 随机
-分支从 root identity 与 actionId 派生独立 RNG；一旦消费随机数，outcome 标为
-`low-confidence/COUNTERFACTUAL_RANDOM_SAMPLE`。Browser 无法安全聚合随机期望时同样返回
-low confidence。固定 RNG 只用于让规则结果可复现，不授权 Policy 读取本局未来信息：公共牌补牌、
+分支数/深度超过安全上限且没有真实叶时返回 `unresolved`，不把已结算一半的状态伪装为 leaf。
+搜索 fork 有独立 RNG，但其种子当前使用完整规则 envelope 哈希与 actionId；这不是
+仅基于玩家已知信息的随机采样。outcome 的 confidence 由失败、裁剪、信息屏障及调用参数决定；
+经过信息屏障的结果为 low，并带 `counterfactual-hidden-information` 原因。
+没有通用随机消费检测或 `COUNTERFACTUAL_RANDOM_SAMPLE` 运行时标记。
+Production 的 `prepareCounterfactualEnvelope` 在搜索根构造假设世界，种子只取根玩家观察
+的稳定哈希。未揭示物种从公开候选池无放回抽取（排除根已揭示物种），只为假设选中的物种
+生成初始配置；真实预分配身份与配置不参与。已揭示物种身份及现有状态保留；同一假设分配
+应用到 committed 和 session 各状态副本，不按旧base的揭示状态另抽已知物种。
+方舟奖励另调用 `sampleHiddenRewards`，从公开9张
+奖励目录扣除本次混洗后已翻牌，再生成剩余顺序和未来混洗种子，不读取真实隐藏顺序/种子。
+同次搜索所有候选共享这一个样本，后继和复用 fork 恢复样本执行后的快照，不重复采样。
+正式翻牌/资源结算函数不变，假设奖励的钱电等可参与本大轮后续行动；真实揭示后仍须通过
+计划依赖校验再复用。单样本不是概率期望或全局最优保证；已揭示物种的剩余隐藏牌堆、
+普通牌和科技等其他隐藏域仍须按各自信息边界验收，不能由该测试推断全域已完成。
+固定 RNG 只用于让规则结果可复现，不授权 Policy 读取本局未来信息。现有牌面遮蔽行为是：公共牌补牌、
 盲抽、外星揭示等隐藏信息出现后，反事实仍继续搜索，但新身份在后续 observation、目标 requirement
-和 legal successor 中保持 opaque。搜索可以继续使用已兑现的分数、资源与牌张数量，也可以把未知牌
+和 legal successor 中保持 opaque。搜索继续使用假设分支已兑现的分数、资源与牌张数量，也可以把未知牌
 用于身份无关的通用弃牌支付；移动牌支付和开局插收入牌依赖牌面，不享有该豁免。
 普通后继与唯一支付自动结算共用此信息边界；不得用未知牌面建立打牌、卡角、
 定向扫描或物种能力路线。
@@ -831,7 +843,8 @@ node tools/run_browser_smokes.js
 - legal descriptor 经 PolicyDecision 回到公共 input port；
 - 每个 legal action 的 outcome 等于同根标准执行，交换枚举顺序结果不变；
 - 执行全部 fork 后 canonical bytes、RNG、sequence、active session、journal、history 与 replay 不变；
-- 随机候选只使用独立分支并显式 low-confidence；
+- 随机候选不得读取本局隐藏未来；仅有独立 fork RNG 或 low confidence 标签不足以证明隔离。
+  方舟奖励须通过隐藏顺序/种子差分、连续混洗和奖励资源后继行动测试；不得由此推断所有隐藏域均已隔离；
 - stale/deadline/duplicate/illegal response 零提交；
 - Browser 与 Simulation 不加载旧模块；
 - legacy 全局 export、script、resolved module、context binding、fallback、alias 与测试依赖归零；

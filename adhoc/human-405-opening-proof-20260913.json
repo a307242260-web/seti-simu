@@ -1,0 +1,169 @@
+{
+  "source": "/tmp/seti-human-405-history-20260913.6wxLds/human-405-history-checkpoints-20260913.jsonl",
+  "initialRecordHash": "afed0a51bcbc59975df1928ed685b6662573aa9b0fe416977e7faad83dd4f7fd",
+  "openingHash": "6a91429d1ef12560a7b3d7ed0e6f670c3b8140799c2e0a2da72c133eadbfc9f5",
+  "worldVersion": "human-405-world-v1",
+  "opening": {
+    "phase": "selecting",
+    "currentPlayerId": "player-white",
+    "playerIds": [
+      "player-white",
+      "player-green",
+      "player-blue",
+      "player-brown"
+    ],
+    "confirmedPlayerIds": [],
+    "offersByPlayerId": {
+      "player-white": {
+        "playerId": "player-white",
+        "industryOptions": [
+          {
+            "id": "industry:异星实验室.png",
+            "kind": "industry",
+            "value": "异星实验室.png"
+          },
+          {
+            "id": "industry:深空探测.png",
+            "kind": "industry",
+            "value": "深空探测.png"
+          }
+        ],
+        "initialOptions": [
+          {
+            "id": "initial:7",
+            "kind": "initial",
+            "value": 7
+          },
+          {
+            "id": "initial:21",
+            "kind": "initial",
+            "value": 21
+          },
+          {
+            "id": "initial:1",
+            "kind": "initial",
+            "value": 1
+          }
+        ],
+        "selectedIndustryId": null,
+        "selectedInitialIds": [],
+        "confirmed": false
+      },
+      "player-green": {
+        "playerId": "player-green",
+        "industryOptions": [
+          {
+            "id": "industry:寰宇动力.png",
+            "kind": "industry",
+            "value": "寰宇动力.png"
+          },
+          {
+            "id": "industry:任务中继站.png",
+            "kind": "industry",
+            "value": "任务中继站.png"
+          }
+        ],
+        "initialOptions": [
+          {
+            "id": "initial:14",
+            "kind": "initial",
+            "value": 14
+          },
+          {
+            "id": "initial:20",
+            "kind": "initial",
+            "value": 20
+          },
+          {
+            "id": "initial:18",
+            "kind": "initial",
+            "value": 18
+          }
+        ],
+        "selectedIndustryId": null,
+        "selectedInitialIds": [],
+        "confirmed": false
+      },
+      "player-blue": {
+        "playerId": "player-blue",
+        "industryOptions": [
+          {
+            "id": "industry:图灵系统.png",
+            "kind": "industry",
+            "value": "图灵系统.png"
+          },
+          {
+            "id": "industry:未来跨度研究所.png",
+            "kind": "industry",
+            "value": "未来跨度研究所.png"
+          }
+        ],
+        "initialOptions": [
+          {
+            "id": "initial:10",
+            "kind": "initial",
+            "value": 10
+          },
+          {
+            "id": "initial:5",
+            "kind": "initial",
+            "value": 5
+          },
+          {
+            "id": "initial:4",
+            "kind": "initial",
+            "value": 4
+          }
+        ],
+        "selectedIndustryId": null,
+        "selectedInitialIds": [],
+        "confirmed": false
+      },
+      "player-brown": {
+        "playerId": "player-brown",
+        "industryOptions": [
+          {
+            "id": "industry:赫利昂联合体.png",
+            "kind": "industry",
+            "value": "赫利昂联合体.png"
+          },
+          {
+            "id": "industry:宇宙战略集团.png",
+            "kind": "industry",
+            "value": "宇宙战略集团.png"
+          }
+        ],
+        "initialOptions": [
+          {
+            "id": "initial:17",
+            "kind": "initial",
+            "value": 17
+          },
+          {
+            "id": "initial:19",
+            "kind": "initial",
+            "value": 19
+          },
+          {
+            "id": "initial:6",
+            "kind": "initial",
+            "value": 6
+          }
+        ],
+        "selectedIndustryId": null,
+        "selectedInitialIds": [],
+        "confirmed": false
+      }
+    }
+  },
+  "verified": [
+    "solarSystem",
+    "tech",
+    "finalScoring",
+    "publicCards",
+    "passReservePiles",
+    "fourPlayerHands",
+    "initialSetup"
+  ],
+  "scope": "仅核验原局已知开局信息；不证明所有未来随机事件、隐藏信息隔离或终局分数"
+}

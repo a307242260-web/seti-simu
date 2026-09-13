@@ -463,8 +463,7 @@
 
   function drawDisplayedCardIndex(alienState, random = Math.random) {
     const aomomo = ensureAomomoState(alienState);
-    if (!aomomo.cardDeck.length) aomomo.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
-    const index = aomomo.cardDeck.shift();
+    const index = aomomo.cardDeck.shift() ?? null;
     aomomo.displayedCardIndex = index;
     return index;
   }
@@ -472,6 +471,9 @@
   function takeDisplayedCard(alienState, random = Math.random, options = {}) {
     const aomomo = ensureAomomoState(alienState);
     if (aomomo.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
+    if (aomomo.displayedCardIndex == null) {
+      return { ok: false, code: "ALIEN_CARD_DECK_EMPTY", card: null, message: "奥陌陌牌已耗尽" };
+    }
     const card = createAlienCard(aomomo.displayedCardIndex, options.sequence);
     drawDisplayedCardIndex(alienState, random);
     return { ok: Boolean(card), card, message: card ? `获得奥陌陌牌：${definitionName(card)}` : "没有可获得的奥陌陌牌" };
@@ -479,12 +481,18 @@
 
   function blindDrawCard(alienState, random = Math.random, options = {}) {
     const aomomo = ensureAomomoState(alienState);
-    if (!aomomo.cardDeck.length) aomomo.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
-    const pickIndex = Math.floor(random() * aomomo.cardDeck.length);
-    const [index] = aomomo.cardDeck.splice(pickIndex, 1);
+    if (!aomomo.cardDeck.length) {
+      return { ok: false, code: "ALIEN_CARD_DECK_EMPTY", card: null, message: "奥陌陌盲抽牌堆已耗尽" };
+    }
+    const index = aomomo.cardDeck.shift();
     const card = createAlienCard(index, options.sequence);
     if (aomomo.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
     return { ok: Boolean(card), card, message: card ? `盲抽奥陌陌牌：${definitionName(card)}` : "没有可盲抽的奥陌陌牌" };
+  }
+
+  function createInitialConfiguration(random) {
+    if (typeof random !== "function") throw new TypeError("奥陌陌配置需要显式随机源");
+    return { cardDeck: shuffle(CARD_DEFINITIONS.map((card) => card.index), random) };
   }
 
   function initializeAomomoReveal(alienState, alienSlotId, triggerPlayer, random = Math.random) {
@@ -499,13 +507,15 @@
       };
     }
 
+    if (!aomomo.initialConfiguration) throw new Error("aomomo缺少开局随机配置");
+    const configuration = structuredClone(aomomo.initialConfiguration);
     aomomo.revealedSlotId = Number(alienSlotId);
     aomomo.revealedByPlayerId = triggerPlayer?.id || null;
     aomomo.revealedByPlayerColor = getPlayerColor(triggerPlayer);
     aomomo.revealInitialized = true;
     delete aomomo.traceSlotsByAlienSlotId[String(alienSlotId)];
     ensureTraceGrid(alienState, alienSlotId);
-    aomomo.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
+    aomomo.cardDeck = configuration.cardDeck;
     aomomo.displayedCardIndex = drawDisplayedCardIndex(alienState, random);
     aomomo.orbitMarkers = [];
     aomomo.landingMarkers = [];
@@ -579,6 +589,7 @@
     countOrbitMarkers,
     countLandingMarkers,
     initializeAomomoReveal,
+    createInitialConfiguration,
     getCardSrc,
     getCardDefinition,
     createAlienCard,

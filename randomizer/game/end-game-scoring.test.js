@@ -213,6 +213,7 @@ const aomomoMarkerState = {
   },
   aomomo: aomomo.createAomomoState(),
 };
+aomomoMarkerState.aomomo.initialConfiguration = aomomo.createInitialConfiguration(() => 0);
 aomomo.initializeAomomoReveal(aomomoMarkerState, 1, white, () => 0);
 aomomo.addOrbitMarker(aomomoMarkerState, white, nextAlienIdentity());
 aomomo.addLandingMarker(aomomoMarkerState, white, nextAlienIdentity());
@@ -362,6 +363,7 @@ const threatPlayerB = player({
   color: "blue",
   resources: { score: 80 },
 });
+jiuzheState.jiuzhe.initialConfiguration = jiuzhe.createInitialConfiguration(() => 0);
 jiuzhe.dealJiuzheCards(jiuzheState, [threatPlayerA, threatPlayerB], () => 0);
 jiuzhe.getPlayerJiuzheCards(jiuzheState, threatPlayerA)[0] = {
   index: 13,
@@ -489,6 +491,7 @@ const banrenmaTraceState = {
   },
   banrenma: banrenma.createBanrenmaState(),
 };
+banrenmaTraceState.banrenma.initialConfiguration = banrenma.createInitialConfiguration(() => 0);
 banrenma.initializeBanrenmaReveal(
   banrenmaTraceState,
   1,
@@ -540,6 +543,7 @@ const aomomoSharedTraceState = {
   },
   aomomo: aomomo.createAomomoState(),
 };
+aomomoSharedTraceState.aomomo.initialConfiguration = aomomo.createInitialConfiguration(() => 0);
 aomomo.initializeAomomoReveal(aomomoSharedTraceState, 1, white, () => 0);
 aomomo.placeAomomoTrace(aomomoSharedTraceState, 1, "yellow", 1, white, nextAlienIdentity());
 aomomo.placeAomomoTrace(aomomoSharedTraceState, 1, "yellow", 1, white, nextAlienIdentity());
@@ -563,6 +567,7 @@ const runezuSharedTraceState = {
   },
   runezu: runezu.createRunezuState(),
 };
+runezuSharedTraceState.runezu.initialConfiguration = runezu.createInitialConfiguration(() => 0);
 runezu.initializeRunezuReveal(runezuSharedTraceState, 1, white, { random: () => 0, techTileIds: [] });
 runezu.placeRunezuTrace(runezuSharedTraceState, 1, "yellow", 1, white, nextAlienIdentity());
 runezu.placeRunezuTrace(runezuSharedTraceState, 1, "yellow", 1, white, nextAlienIdentity());
@@ -594,6 +599,7 @@ const chongState = {
   },
   chong: chong.createChongState(),
 };
+chongState.chong.initialConfiguration = chong.createInitialConfiguration(() => 0);
 chong.initializeChongReveal(chongState, 2, white, () => 0);
 chong.placeChongTrace(chongState, 2, "pink", 1, white, nextAlienIdentity());
 chong.placeChongTrace(chongState, 2, "yellow", 1, white, nextAlienIdentity());
@@ -624,6 +630,7 @@ const aomomoState = {
   },
   aomomo: aomomo.createAomomoState(),
 };
+aomomoState.aomomo.initialConfiguration = aomomo.createInitialConfiguration(() => 0);
 aomomo.initializeAomomoReveal(aomomoState, 1, white, () => 0);
 aomomo.placeAomomoTrace(aomomoState, 1, "blue", 2, white, nextAlienIdentity());
 const aomomoPlayer = player({

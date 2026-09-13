@@ -1,0 +1,19 @@
+{
+  "scope": "正式Simulation.reset的初态：fresh A/A、同实例A/A和A/B/A，不运行AI。不是全部运行期随机独立性证明。",
+  "seed": "seti-free-analyze-v1",
+  "initialHash": "c81c001946f4f2b12dd40e8b9ae96adaded9473761a46ff878e627bcd236c781",
+  "techHash": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
+  "solarHash": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
+  "passPilesHash": "6ff5fbb83f04668588fdeb14c5fe79117c3c75d1d23677bf960cd441283b0ccb",
+  "passPileSizes": {
+    "1": 5,
+    "2": 5,
+    "3": 5
+  },
+  "ordinaryDeckLength": 0,
+  "alienAssignments": [
+    null,
+    null
+  ],
+  "conclusion": "初始科技/基础盘面/三轮末预留牌已有确定性；普通剩余牌库为空、未揭示物种未预分配，固定世界契约仍未满足。"
+}

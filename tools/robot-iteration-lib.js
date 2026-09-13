@@ -17,8 +17,9 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync, spawn } = require("node:child_process");
-const { createSeededRandom, hashSeed } = require("../randomizer/game/random");
+const { createSeededRandom } = require("../randomizer/game/random");
 const { createSimulationRuleComposition } = require("../randomizer/game/production-kernel");
+const { getWorldVersion } = require("../randomizer/game/state/fixed-world-config");
 
 const REPO_ROOT = path.resolve(__dirname, "..");
 const RESEARCH_DIR = path.join(REPO_ROOT, "reports", "research");
@@ -262,6 +263,7 @@ function resolveVersionResults(version, recordsByFile) {
       createdAt: rec.createdAt,
       resumeStep: rec.resumeStep,
       seed: rec.seed,
+      world: rec.world || null,
       note: meta?.note || null,
     };
     // 分数来源优先级：save-final（完整终局）> record-summary；键统一为 player-<color>
@@ -299,15 +301,20 @@ function resolveVersionResults(version, recordsByFile) {
 
 // 汇总各版本结果 + roadmap 条目，计算固定盘面最佳指标（仅全盘/完整终局口径）。
 function computeBestOf(versions, resolvedMap) {
+  // versions 按登记顺序由新到旧。最新版本定义比较世界；缺身份不能借用旧版本身份。
+  const currentResults = versions.length ? (resolvedMap[versions[0].id] || []) : [];
+  const world = currentResults.find((r) => !r.missingRecord && r.world?.fingerprint)?.world || null;
   const fullRuns = [];
   const roadmapEntries = [];
   for (const v of versions) {
     for (const r of resolvedMap[v.id] || []) {
       if (r.missingRecord) continue;
       if (r.mode !== "full") continue;
+      if (!r.terminal) continue;
+      if (world && r.world?.fingerprint !== world.fingerprint) continue;
       fullRuns.push({ version: v, result: r });
     }
-    if (v.roadmap) roadmapEntries.push({ version: v, roadmap: v.roadmap });
+    if (!world && v.roadmap) roadmapEntries.push({ version: v, roadmap: v.roadmap });
   }
 
   const whiteOf = (x) => {
@@ -361,6 +368,8 @@ function computeBestOf(versions, resolvedMap) {
   allPlayerScores.sort((a, b) => b.score - a.score);
 
   return {
+    world,
+    comparisonScope: world ? "current-world" : "historical-unverified",
     bestWhite: byWhite.length ? { value: whiteOf(byWhite[0]), ...describe(byWhite[0]) } : null,
     bestAvg: byAvg.length ? { value: avgOf(byAvg[0]), ...describe(byAvg[0]) } : null,
     bestPlayer: allPlayerScores.length
@@ -600,22 +609,30 @@ function replaySaveEnriched(savePath) {
     st0 = JSON.parse(st0);
   }
   if (!st0 || typeof st0 !== "object") throw new Error(`REPORT_REPLAY_STATE_MISSING: ${savePath}`);
-  const SEED = "seti-free-analyze-v1";
-  const random = createSeededRandom(SEED);
-  random.setState(hashSeed(SEED));
+  const seed = st0.meta?.seed;
+  if (typeof seed !== "string" || !seed) throw new Error(`REPORT_REPLAY_SEED_MISSING: ${savePath}`);
+  const worldVersion = getWorldVersion(seed);
+  if (st0.meta?.worldVersion !== worldVersion) {
+    throw new Error(`REPORT_REPLAY_WORLD_VERSION_UNSUPPORTED: ${savePath} expected=${worldVersion} actual=${st0.meta?.worldVersion}`);
+  }
+  const activePlayerCount = st0.turn?.activePlayerCount;
+  if (![3, 4].includes(activePlayerCount)) throw new Error(`REPORT_REPLAY_PLAYER_COUNT_INVALID: ${savePath}`);
+  const random = createSeededRandom(seed);
+  const initialRngState = { algorithm: "seti-simulation-mulberry32-v1", state: random.getState() };
   const kernel = createSimulationRuleComposition({
-    seed: st0?.meta?.seed || SEED,
+    seed,
     random,
-    activePlayerCount: 4,
+    rngState: initialRngState,
+    activePlayerCount,
     trustedProjectionReader: true,
   });
   let replayError = null;
   try {
     kernel.composition.lifecycle.newGame({
-      seed: st0?.meta?.seed || SEED,
-      activePlayerCount: 4,
+      seed,
+      activePlayerCount,
       initialize: true,
-      rngState: { algorithm: "seti-simulation-mulberry32-v1", state: hashSeed(SEED) },
+      rngState: initialRngState,
     });
     kernel.composition.inputPort.beginDrain({ metadata: { source: "report-enrich" } });
 
@@ -826,6 +843,9 @@ function buildActionLogReport(opts) {
   const enrichMap = replaySaveEnriched(opts.savePath);
   const relRecord = opts.recordRelPath || (opts.recordFile ? relRecordPath(opts.recordFile) : null);
   const research = relRecord ? readJson(path.join(REPO_ROOT, relRecord)) : null;
+  const worldText = research?.world?.fingerprint
+    ? `${research.world.worldVersion} · ${research.world.fingerprint}`
+    : "未记录，不能仅凭同 seed 确认同盘面";
   const searchBudgetSection = renderSearchBudgetReport(research?.metrics?.searches);
 
   // 逐玩家前序资源，计算每步分数/资源变化
@@ -1194,6 +1214,7 @@ code{background:#f0f2f6;padding:1px 4px;border-radius:3px;font-size:12px}
   <span class="eyebrow">SETI · 机器人行动复盘（纯重放存档 replaySteps，无 AI 重跑）</span>
   <h1><span class="version-badge">${escapeHtml(opts.versionId)}</span> ${escapeHtml(opts.runKey || "")}</h1>
   <div class="meta">seed=${escapeHtml(save.seed || "?")} · gitCommit=${escapeHtml(opts.gitCommit || "?")} · policy=${escapeHtml(opts.policyVersion || "?")} · flags=${escapeHtml(flagsText(opts.flags))} · 模式=${escapeHtml(opts.mode || "?")} · 步数 ${steps.length} · 耗时 ${fmtMs(opts.wallMs)}</div>
+  <div class="meta">世界指纹：${escapeHtml(worldText)}</div>
   <div class="links">${relRecord ? `记录: <a href="${escapeHtml(path.posix.relative(path.posix.join("reports","iteration",opts.versionId), relRecord))}">${escapeHtml(opts.recordFile)}</a>` : ""} · 存档: <code>${escapeHtml(opts.savePath)}</code></div>
   ${finalSection}
   ${searchBudgetSection}

@@ -42,6 +42,7 @@ const { execFileSync } = require("node:child_process");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const heuristicPolicy = require("../randomizer/game/ai/heuristic-policy");
 const { createStepProgressReporter } = require("./progress");
+const { buildWorldIdentity } = require("./fixed-world-identity");
 
 const RECORD_SCHEMA_VERSION = "seti-research-validation-record-v1";
 const DEFAULT_SEED = "seti-free-analyze-v1";
@@ -119,6 +120,7 @@ function buildIdentity(options) {
   for (const key of FLAG_KEYS) {
     if (config[key] !== undefined) identity.flags[key] = config[key];
   }
+  identity.world = buildWorldIdentity(identity);
   return identity;
 }
 
@@ -130,6 +132,7 @@ function fingerprintOf(identity) {
   // 记录天然隔离（2026-08-20 缺陷修复——此前指纹不含 commit，行为变化会静默
   // 覆盖旧记录或拒绝重跑，无法追溯每条记录对应的精确代码版本）。
   payload.gitCommit = identity.gitCommit || "dirty";
+  payload.world = identity.world;
   return sha256(stableSerialize(payload));
 }
 
@@ -320,9 +323,6 @@ function buildSavePath(options, name, mode, stateVersion) {
 // 从浏览器存档构建 checkpoint（与 tools/load_save_simulation.js 同构）。
 function checkpointFromSave(save, resetConfig) {
   const state = JSON.parse(save.committedState);
-  if (state?.meta?.rngState) {
-    state.meta.rngState.algorithm = "seti-simulation-mulberry32-v1";
-  }
   const committed = JSON.stringify(state);
   return {
     schemaVersion: "seti-rl-checkpoint-v1",
@@ -397,6 +397,7 @@ function runValidation(options) {
   }
 
   // ---- 运行 ----
+  console.log(`[world] ${identity.world.worldVersion} ${identity.world.fingerprint}`);
   const env = createSimulationEnv();
   const resetConfig = {
     seed: identity.seed,
@@ -479,6 +480,7 @@ function runValidation(options) {
       mode,
       seed: identity.seed,
       activePlayerCount: identity.activePlayerCount,
+      world: identity.world,
       aiDifficulty: identity.aiDifficulty,
       policyVersion: identity.policyVersion,
       flags: identity.flags,
@@ -638,4 +640,4 @@ function main() {
 }
 
 if (require.main === module) main();
-module.exports = { createCollector, collectBudgetHits, seedCollectorFrom };
+module.exports = { createCollector, collectBudgetHits, seedCollectorFrom, checkpointFromSave, buildIdentity, fingerprintOf };

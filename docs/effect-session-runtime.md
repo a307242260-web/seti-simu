@@ -13,6 +13,18 @@ game Domain Pack 安装；宿主只提交 Action/Decision、读取可见投影�
 
 ## 数据契约
 
+外部存档经Rule Composition的`validateRestore`恢复时，在runtime结构校验之后调用
+Production提供的`validateSessionRestore(session, committedState)`。该入口检查
+`baseState`、`workingState`、非空`committedState`及所有`undoFrames[].stateBefore`
+的固定世界版本与种子：版本须有效，种子须与外层committed state一致；错误在安装
+session之前拒绝。此为外部恢复校验，不在逐搜索节点执行；隔离内存fork保持原有
+trusted恢复契约。它不证明隐藏配置内容或世界指纹一致，后者须另行验证。
+
+反事实搜索的隐藏屏障识别包含正式外星owner的`alien_reveal`、
+`alien_reveal_turn_end`和`fangzhou_reward_reveal`。屏障后的观察按根状态知识遮蔽
+新物种身份及新牌；科技要求中的`publicityPreparationPlans`与普通`plans`都需过滤
+引用未知牌的方案。已知牌的合法宣传准备继续保留，不能仅遮住手牌展示而留下收益路线。
+
 所有公开 envelope 使用 `schemaVersion=seti-effect-session-v1`。
 
 ### Effect Group

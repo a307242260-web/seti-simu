@@ -2530,9 +2530,8 @@
         : null;
     }
     if (input.routeTargetId === DATA_ANALYZE_ROUTE_TARGET) {
-      // 目标完成判定统一在 completesSecondaryAgentRouteTarget（analyze/place_data
-      // 都算推进一步 → 收束），这里不再特判：analyze 完成时 completes 已返回 true，
-      // completedGoal 收束后不会继续绑定本目标。
+      // analyze完成由completesSecondaryAgentRouteTarget判定，place_data只算准备。
+      // 搜索内核等待奖励Decision排空后释放目标，再向后继选择器传入null。
       return rawDataAnalyzeRequirements(input.branchObservation)?.nextStep === "acquire_data"
         ? null
         : DATA_ANALYZE_ROUTE_TARGET;

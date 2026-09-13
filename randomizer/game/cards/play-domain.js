@@ -1596,7 +1596,8 @@
     }
 
     function listCardChoices(cardsToList, family = "choose_card", extra = {}) {
-      return (cardsToList || []).map((card, index) => ({
+      // 公共牌堆耗尽后 null 是合法空位；先保留下标，再剔除空位。
+      return (cardsToList || []).map((card, index) => card === null ? null : ({
         ...makeChoice(
           family,
           card.id,
@@ -1608,7 +1609,7 @@
         ...(cards.getCardPickPresentation(card) ? {
           presentation: cards.getCardPickPresentation(card),
         } : {}),
-      }));
+      })).filter((choice) => choice !== null);
     }
 
     function cornerEffects(card, repeat = 1) {
@@ -2054,7 +2055,8 @@
       if (effect.type === cardEffects.EFFECT_TYPES.DISCARD_PUBLIC_CORNER_REWARDS) {
         return listCardChoices(
           getWorkingSlice(root, "cards").publicCards || [],
-        );
+        ).filter((choice) => !(sessionEffect.payload.selectedPublicCardIds || [])
+          .includes(choice.target.cardInstanceId));
       }
       if ([
         cardEffects.EFFECT_TYPES.HAND_SCAN,
@@ -2394,11 +2396,28 @@
           }
         }
       } else if (effect.type === cardEffects.EFFECT_TYPES.DISCARD_PUBLIC_CORNER_REWARDS) {
-        const index = cardsState.publicCards.findIndex((card) => card?.id === legal.target.cardInstanceId);
-        const card = cardsState.publicCards[index];
-        cardsState.publicCards[index] = null;
-        cards.addToDiscardPile(cardsState, card);
-        spawnedEffects = spawnCardEffects(cornerEffects(card), sessionEffect);
+        const selectedPublicCardIds = [
+          ...(sessionEffect.payload.selectedPublicCardIds || []), legal.target.cardInstanceId,
+        ];
+        const remainingEffect = { ...sessionEffect, payload: {
+          ...sessionEffect.payload, selectedPublicCardIds,
+        } };
+        if (selectedPublicCardIds.length < options.count && listGenericChoices(root, remainingEffect).length) {
+          return cardEffectResult(state, root, sessionEffect, {
+            spawnedEffects: [{ priority: "direct", effect: {
+              type: genericEffectRuntimeType(effect.type, true), kind: "decision",
+              decisionKind: "choose_card", ownerId: actor.id, payload: clone(remainingEffect.payload),
+            } }],
+            historyType: "card_effect_decision",
+            history: { choiceId: legal.target.choiceId, selectedPublicCardIds },
+          });
+        }
+        // 先选齐本批原有公共牌并同时弃除，再补牌；新补的牌不属于本批奖励。
+        const indices = selectedPublicCardIds.map((id) => cardsState.publicCards.findIndex((card) => card?.id === id));
+        const discarded = indices.map((index) => cardsState.publicCards[index]);
+        for (const index of indices) cardsState.publicCards[index] = null;
+        for (const card of discarded) cards.addToDiscardPile(cardsState, card);
+        spawnedEffects = spawnCardEffects(discarded.flatMap((card) => cornerEffects(card)), sessionEffect);
         // 统一抽牌上下文：公共牌补牌共用 cards.createCardDrawContext
         const drawCtx = cards.createCardDrawContext(
           cardsState,
@@ -2406,7 +2425,7 @@
           () => nextCommittedRandom(root),
           { root },
         );
-        cards.replenishPublicSlot(
+        for (const index of indices) cards.replenishPublicSlot(
           cardsState,
           getWorkingSlice(root, "players"),
           index,

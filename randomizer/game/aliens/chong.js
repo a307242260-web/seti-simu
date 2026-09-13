@@ -520,8 +520,7 @@
 
   function drawDisplayedCardIndex(alienState, random = Math.random) {
     const chong = ensureChongState(alienState);
-    if (!chong.cardDeck.length) chong.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
-    const index = chong.cardDeck.shift();
+    const index = chong.cardDeck.shift() ?? null;
     chong.displayedCardIndex = index;
     return index;
   }
@@ -529,6 +528,9 @@
   function takeDisplayedCard(alienState, random = Math.random, options = {}) {
     const chong = ensureChongState(alienState);
     if (chong.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
+    if (chong.displayedCardIndex == null) {
+      return { ok: false, code: "ALIEN_CARD_DECK_EMPTY", card: null, message: "虫族牌已耗尽" };
+    }
     const card = createAlienCard(chong.displayedCardIndex, options.sequence);
     drawDisplayedCardIndex(alienState, random);
     return { ok: Boolean(card), card, message: card ? `获得虫族牌：${definitionName(card)}` : "没有可获得的虫族牌" };
@@ -536,9 +538,10 @@
 
   function blindDrawCard(alienState, random = Math.random, options = {}) {
     const chong = ensureChongState(alienState);
-    if (!chong.cardDeck.length) chong.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
-    const pickIndex = Math.floor(random() * chong.cardDeck.length);
-    const [index] = chong.cardDeck.splice(pickIndex, 1);
+    if (!chong.cardDeck.length) {
+      return { ok: false, code: "ALIEN_CARD_DECK_EMPTY", card: null, message: "虫族盲抽牌堆已耗尽" };
+    }
+    const index = chong.cardDeck.shift();
     const card = createAlienCard(index, options.sequence);
     if (chong.displayedCardIndex == null) drawDisplayedCardIndex(alienState, random);
     return { ok: Boolean(card), card, message: card ? `盲抽虫族牌：${definitionName(card)}` : "没有可盲抽的虫族牌" };
@@ -559,8 +562,15 @@
     };
   }
 
-  function initializeFossils(chong, random = Math.random) {
-    const ids = shuffle(FOSSIL_IDS, random);
+  function createInitialConfiguration(random) {
+    if (typeof random !== "function") throw new TypeError("虫族配置需要显式随机源");
+    return {
+      cardDeck: shuffle(CARD_DEFINITIONS.map((card) => card.index), random),
+      fossilOrder: shuffle(FOSSIL_IDS, random),
+    };
+  }
+
+  function initializeFossils(chong, ids) {
     const jupiter = ids.slice(0, 3);
     const saturn = ids.slice(3, 6);
     const panel = ids[6];
@@ -591,17 +601,19 @@
         message: "虫族已初始化",
       };
     }
+    if (!chong.initialConfiguration) throw new Error("chong缺少开局随机配置");
+    const configuration = structuredClone(chong.initialConfiguration);
     chong.revealedSlotId = Number(alienSlotId);
     chong.revealedByPlayerId = triggerPlayer?.id || null;
     chong.revealedByPlayerColor = getPlayerColor(triggerPlayer);
     chong.revealInitialized = true;
     delete chong.traceSlotsByAlienSlotId[String(alienSlotId)];
     ensureTraceGrid(alienState, alienSlotId);
-    chong.cardDeck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
+    chong.cardDeck = configuration.cardDeck;
     chong.displayedCardIndex = drawDisplayedCardIndex(alienState, random);
     chong.transportTasksByRocketId = {};
     chong.completedTransports = [];
-    const fossils = initializeFossils(chong, random);
+    const fossils = initializeFossils(chong, configuration.fossilOrder);
     return {
       ok: true,
       displayedCardIndex: chong.displayedCardIndex,
@@ -1020,6 +1032,7 @@
     getTraceEntries,
     getPositionsForTraceType,
     initializeChongReveal,
+    createInitialConfiguration,
     getCardSrc,
     getFossilSrc,
     createAlienCard,

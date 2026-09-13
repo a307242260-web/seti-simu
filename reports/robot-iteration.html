@@ -59,7 +59,8 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 
   <!-- 顶部：现在的 best version -->
   <section class="best-panel">
-    <h2>当前最佳（固定盘面 · 全盘运行）</h2>
+    <h2 id="best-title">完整终局成绩</h2>
+    <p class="note" id="world-scope"></p>
     <div class="best-grid" id="best-grid"></div>
     <div class="top3" id="top3"></div>
   </section>
@@ -78,122 +79,594 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-09-12T20:42:02.203Z",
+  "builtAt": "2026-09-13T00:57:17.279Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "ec10d1a1",
+  "headCommit": "329bd8a0",
   "currentBaseline": "runezu-panel-node-projection-20260913",
   "worktreeDirty": true,
   "bestOf": {
+    "world": {
+      "schemaVersion": "seti-initial-world-identity-v1",
+      "seed": "seti-free-analyze-v1",
+      "worldVersion": "human-405-world-v1",
+      "activePlayerCount": 4,
+      "fingerprint": "2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c",
+      "components": {
+        "aliens": "46dbcc69e2fca49b3b1fd3d6e93cbdf73ec6695f58026c25eae294c6af482de2",
+        "cards": "e5427e2ac14ea93859f820681a6957c5cdf3bb5f0c61a504927a7b3442a04d4a",
+        "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+        "finalScoring": "e8a14ecc0f4b523158eefbae19cee10874f65083ef2cb060aa6badf9540da7f4",
+        "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+        "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+        "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+        "players": "81760effc03c474b420cd154875a98942f428d4e82643d3f4c1d65b8a4358482",
+        "solarSystem": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
+        "tech": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
+        "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
+        "initialOffers": "76eacd007efd30ddff4d1a2e72ee375e3b45ea420b83a9fcc31ff87ae7e90879",
+        "initialRandom": "748c814e83ed7ffbc0d68c14175649c97eef71a94eeeff4605b52f779e729399"
+      }
+    },
+    "comparisonScope": "current-world",
     "bestWhite": {
-      "value": 152,
-      "versionId": "rules-baseline-20260908",
-      "name": "规则修复保留、未通过筛选撤下（基线验收）",
-      "runKey": "6e4b4248.ee3ea52f.full",
+      "value": 124,
+      "versionId": "fixed-world-405-20260913",
+      "name": "fixed-world-405-20260913",
+      "runKey": "b235ff5f.bddcdae9.full",
       "provenance": "save-final",
-      "steps": 666,
-      "wallMs": 672750,
-      "msPerStep": 1010,
-      "scoreSourceNote": "666步终局82/120/90/152，均111；全部动作、逐步摘要与终局状态同addcef7f。140614物理节点、190403输入、672750ms，28战略及5控制截断，规则失败0。单点b33价值85与正式计划一致，独立规则修复及公开观察保留。新组合达到108.5分门槛，但未提速、未消除截断；白方历史下降因果未全部闭合。"
+      "steps": 561,
+      "wallMs": 895098,
+      "msPerStep": 1596,
+      "scoreSourceNote": "FIXED-WORLD-01自身验收通过：561步自然终局82/116/65/124，均96.75；阿米巴和虫；搜索错误0。新世界首份基线，不与旧世界计算涨跌。记录wallMs为续跑段，quick+full合计924819ms。战略53次、控制6次实际截断仍待预算专项；详见fixed-world-405-acceptance-20260913.md。"
     },
     "bestAvg": {
-      "value": 123.75,
-      "versionId": "trigger-scan-mapping-20260907",
-      "name": "触发扫描正式映射（当前基线）",
-      "runKey": "7dfcf27e.aaaed8d0.full",
+      "value": 96.75,
+      "versionId": "fixed-world-405-20260913",
+      "name": "fixed-world-405-20260913",
+      "runKey": "b235ff5f.bddcdae9.full",
       "provenance": "save-final",
-      "steps": 690,
-      "wallMs": 572316,
-      "msPerStep": 829,
-      "scoreSourceNote": "690步正式终局87/147/121/140，均123.75；全部动作、after摘要及终局完整状态与646858ac一致。规则执行失败1→0，142383节点不变、成功正式输入180947→180948；耗时572316ms，较前版增加15781ms，不宣称提速。27次4096策略截断及11次控制截断仍在。三色奖励、满扇区结算与恢复一致性通过；610冷搜索14.42秒、24输入计划重放正确。2026-09-08复核e6923ed1→aaaed8d0涨分与规则边界，未发现新增bug，提升为当前baseline；整体性能Goal仍未通过。"
+      "steps": 561,
+      "wallMs": 895098,
+      "msPerStep": 1596,
+      "scoreSourceNote": "FIXED-WORLD-01自身验收通过：561步自然终局82/116/65/124，均96.75；阿米巴和虫；搜索错误0。新世界首份基线，不与旧世界计算涨跌。记录wallMs为续跑段，quick+full合计924819ms。战略53次、控制6次实际截断仍待预算专项；详见fixed-world-405-acceptance-20260913.md。"
     },
     "bestPlayer": {
-      "value": 152,
+      "value": 124,
       "playerColor": "白",
-      "versionId": "rules-baseline-20260908",
-      "name": "规则修复保留、未通过筛选撤下（基线验收）",
-      "runKey": "6e4b4248.ee3ea52f.full",
+      "versionId": "fixed-world-405-20260913",
+      "name": "fixed-world-405-20260913",
+      "runKey": "b235ff5f.bddcdae9.full",
       "provenance": "save-final",
-      "steps": 666,
-      "wallMs": 672750,
-      "msPerStep": 1010,
-      "scoreSourceNote": "666步终局82/120/90/152，均111；全部动作、逐步摘要与终局状态同addcef7f。140614物理节点、190403输入、672750ms，28战略及5控制截断，规则失败0。单点b33价值85与正式计划一致，独立规则修复及公开观察保留。新组合达到108.5分门槛，但未提速、未消除截断；白方历史下降因果未全部闭合。"
+      "steps": 561,
+      "wallMs": 895098,
+      "msPerStep": 1596,
+      "scoreSourceNote": "FIXED-WORLD-01自身验收通过：561步自然终局82/116/65/124，均96.75；阿米巴和虫；搜索错误0。新世界首份基线，不与旧世界计算涨跌。记录wallMs为续跑段，quick+full合计924819ms。战略53次、控制6次实际截断仍待预算专项；详见fixed-world-405-acceptance-20260913.md。"
     },
     "fastestWall": {
-      "versionId": "probe-source-r3p1-20260906",
-      "name": "探测来源与登陆修复（第三轮未通过）",
-      "runKey": "c9b29e5a.d969b727.full",
+      "versionId": "fixed-world-405-20260913",
+      "name": "fixed-world-405-20260913",
+      "runKey": "b235ff5f.bddcdae9.full",
       "provenance": "save-final",
-      "steps": 543,
-      "wallMs": 88647,
-      "msPerStep": 163,
-      "scoreSourceNote": "543步正式终局76/90/70/141，均94.25，较前候选105.5低11.25，较已通过R2e基线106.75低12.5，第三轮未通过。真实反例改为两牌换电后1号火星登陆，六步计划复用与正式完成验证通过；棕方慢样本9.84秒过门槛，Node74/76及唯一full-flow通过，两项指定既有失败保留。首处分歧在索引23：白方b_117改为直接发射；尚未证明整局下降原因，不以局部反例通过替代整局验收。"
+      "steps": 561,
+      "wallMs": 895098,
+      "msPerStep": 1596,
+      "scoreSourceNote": "FIXED-WORLD-01自身验收通过：561步自然终局82/116/65/124，均96.75；阿米巴和虫；搜索错误0。新世界首份基线，不与旧世界计算涨跌。记录wallMs为续跑段，quick+full合计924819ms。战略53次、控制6次实际截断仍待预算专项；详见fixed-world-405-acceptance-20260913.md。"
     },
     "fastestPerStep": {
-      "versionId": "probe-source-r3p1-20260906",
-      "name": "探测来源与登陆修复（第三轮未通过）",
-      "runKey": "c9b29e5a.d969b727.full",
+      "versionId": "fixed-world-405-20260913",
+      "name": "fixed-world-405-20260913",
+      "runKey": "b235ff5f.bddcdae9.full",
       "provenance": "save-final",
-      "steps": 543,
-      "wallMs": 88647,
-      "msPerStep": 163,
-      "scoreSourceNote": "543步正式终局76/90/70/141，均94.25，较前候选105.5低11.25，较已通过R2e基线106.75低12.5，第三轮未通过。真实反例改为两牌换电后1号火星登陆，六步计划复用与正式完成验证通过；棕方慢样本9.84秒过门槛，Node74/76及唯一full-flow通过，两项指定既有失败保留。首处分歧在索引23：白方b_117改为直接发射；尚未证明整局下降原因，不以局部反例通过替代整局验收。"
+      "steps": 561,
+      "wallMs": 895098,
+      "msPerStep": 1596,
+      "scoreSourceNote": "FIXED-WORLD-01自身验收通过：561步自然终局82/116/65/124，均96.75；阿米巴和虫；搜索错误0。新世界首份基线，不与旧世界计算涨跌。记录wallMs为续跑段，quick+full合计924819ms。战略53次、控制6次实际截断仍待预算专项；详见fixed-world-405-acceptance-20260913.md。"
     },
     "topByAvg": [
       {
-        "value": 123.75,
-        "white": 140,
+        "value": 96.75,
+        "white": 124,
         "bestPlayer": {
-          "color": "绿",
-          "score": 147
+          "color": "白",
+          "score": 124
         },
-        "versionId": "trigger-scan-mapping-20260907",
-        "name": "触发扫描正式映射（当前基线）",
-        "runKey": "7dfcf27e.aaaed8d0.full",
+        "versionId": "fixed-world-405-20260913",
+        "name": "fixed-world-405-20260913",
+        "runKey": "b235ff5f.bddcdae9.full",
         "provenance": "save-final",
-        "steps": 690,
-        "wallMs": 572316,
-        "msPerStep": 829,
-        "scoreSourceNote": "690步正式终局87/147/121/140，均123.75；全部动作、after摘要及终局完整状态与646858ac一致。规则执行失败1→0，142383节点不变、成功正式输入180947→180948；耗时572316ms，较前版增加15781ms，不宣称提速。27次4096策略截断及11次控制截断仍在。三色奖励、满扇区结算与恢复一致性通过；610冷搜索14.42秒、24输入计划重放正确。2026-09-08复核e6923ed1→aaaed8d0涨分与规则边界，未发现新增bug，提升为当前baseline；整体性能Goal仍未通过。"
-      },
-      {
-        "value": 123.75,
-        "white": 140,
-        "bestPlayer": {
-          "color": "绿",
-          "score": 147
-        },
-        "versionId": "hidden-reward-boundary-20260907",
-        "name": "hidden-reward-boundary-20260907",
-        "runKey": "78020346.646858ac.full",
-        "provenance": "save-final",
-        "steps": 690,
-        "wallMs": 556535,
-        "msPerStep": 807,
-        "scoreSourceNote": "690步正式终局87/147/121/140，均123.75；较4212b427蓝0绿+7棕-20白+38，棕方下降待归因。142383节点、180947正式提交、556535ms，较前版节点-6.96%、耗时-9.64%；27次4096策略截断及11次控制截断。第610步棕方搜索有1次EFFECT_EXECUTOR_NOT_REGISTERED，零失败门禁未通过，不因均分提升自动验收，不合dev。318真实单点12.70秒，35输入计划完整结算，49分与收入正式重放一致；针对性回归通过。运行时生产代码干净，期间只编辑只读汇总脚本及验收文档。详见hidden-reward-boundary-design-20260907.md。"
-      },
-      {
-        "value": 117.5,
-        "white": 102,
-        "bestPlayer": {
-          "color": "棕",
-          "score": 141
-        },
-        "versionId": "alien-trace-greedy-20260907",
-        "name": "alien-trace-greedy-20260907",
-        "runKey": "9e486f54.4212b427.full",
-        "provenance": "save-final",
-        "steps": 648,
-        "wallMs": 615895,
-        "msPerStep": 950,
-        "scoreSourceNote": "648步正式终局87/140/141/102，均117.5，较现行规则基线107.25提高10.25；蓝-3绿-6尚待归因。痕迹选位31540→14103，但总节点136483→153040、正式提交169320→196162、耗时563481→615895ms；29策略4096截断及9控制截断，规则失败0。单点正式计划重放通过，性能未通过，未合回dev。运行时生产代码干净，仅有未提交诊断脚本和证据，不混淆生产版本。"
+        "steps": 561,
+        "wallMs": 895098,
+        "msPerStep": 1596,
+        "scoreSourceNote": "FIXED-WORLD-01自身验收通过：561步自然终局82/116/65/124，均96.75；阿米巴和虫；搜索错误0。新世界首份基线，不与旧世界计算涨跌。记录wallMs为续跑段，quick+full合计924819ms。战略53次、控制6次实际截断仍待预算专项；详见fixed-world-405-acceptance-20260913.md。"
       }
     ]
   },
   "versions": [
+    {
+      "id": "fixed-world-405-20260913",
+      "name": "fixed-world-405-20260913",
+      "date": "2026-09-13",
+      "baseline": null,
+      "head": "bddcdae9",
+      "commits": [
+        {
+          "hash": "53029ad7",
+          "date": "2026-09-13",
+          "subject": "建立固定世界修复契约并复现牌序与物种受行动随机游标影响"
+        },
+        {
+          "hash": "e32aeab5",
+          "date": "2026-09-13",
+          "subject": "按用户确认取消回洗假设并加入牌库耗尽不再产牌的验收"
+        },
+        {
+          "hash": "33d384a1",
+          "date": "2026-09-13",
+          "subject": "登记固定牌序与耗尽回归红灯并核验科技轮末牌初态稳定性"
+        },
+        {
+          "hash": "acc624a2",
+          "date": "2026-09-13",
+          "subject": "普通牌开局固化完整牌序并取消运行期随机抽取与弃牌回洗"
+        },
+        {
+          "hash": "67c844a3",
+          "date": "2026-09-13",
+          "subject": "外星展示与盲抽按既定牌序消费并验证耗尽不重建"
+        },
+        {
+          "hash": "42798ef4",
+          "date": "2026-09-13",
+          "subject": "固定世界候选：继承405对局配置并修复牌堆、恢复与报告重放边界（尚待整体验收）"
+        },
+        {
+          "hash": "fe858c57",
+          "date": "2026-09-13",
+          "subject": "固定世界候选：统一校验两种宿主的已提交存档版本"
+        },
+        {
+          "hash": "ed8b5633",
+          "date": "2026-09-13",
+          "subject": "固定世界候选：拒绝跨世界行动快照并保护失败读档前的进度"
+        },
+        {
+          "hash": "05a66fe3",
+          "date": "2026-09-13",
+          "subject": "固定世界候选：记录独立世界指纹并在新复盘报告展示"
+        },
+        {
+          "hash": "7e2edf76",
+          "date": "2026-09-13",
+          "subject": "固定世界候选：验证研究续跑保真并拒绝未知随机算法"
+        },
+        {
+          "hash": "569633e4",
+          "date": "2026-09-13",
+          "subject": "固定世界候选：修复外星揭示屏障漏识别与隐藏牌宣传路线泄漏"
+        },
+        {
+          "hash": "e3c1ea8c",
+          "date": "2026-09-13",
+          "subject": "固定世界候选：扩展八物种隐藏差分并记录方舟随机收益泄漏红项"
+        },
+        {
+          "hash": "ca924bc2",
+          "date": "2026-09-13",
+          "subject": "固定世界候选：核实隐藏奖励高置信度泄漏并纠正随机采样文档"
+        },
+        {
+          "hash": "184135fb",
+          "date": "2026-09-13",
+          "subject": "固定世界候选：隔离方舟奖励假设并保留资源后继规划"
+        },
+        {
+          "hash": "b5d39ae7",
+          "date": "2026-09-13",
+          "subject": "固定世界候选：隔离未知物种身份与揭示奖励类型"
+        },
+        {
+          "hash": "d035a5e8",
+          "date": "2026-09-13",
+          "subject": "固定世界候选：归档405分历史检查点与严格重放源码"
+        },
+        {
+          "hash": "bddcdae9",
+          "date": "2026-09-13",
+          "subject": "固定世界候选：留存条件决策证据并准备主行动性能检查"
+        }
+      ],
+      "summary": "按种子固定真实世界；免电分析继承405分局已知配置；隔离搜索未知物种和方舟奖励。新世界运行验收，不与旧盘面成绩直接比较。",
+      "diffStat": "3 files changed, 8071 insertions(+)",
+      "diffFiles": [
+        {
+          "file": "adhoc/benchmark-fixed-world-decision-20260913.js",
+          "insertions": 53,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/fixed-world-decision-d035a5e8-20260913.json",
+          "insertions": 8010,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/fixed-world-plan-20260913.md",
+          "insertions": 8,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "b235ff5f.bddcdae9.quick-40.json",
+          "recordPath": "reports/research/b235ff5f.bddcdae9.quick-40.json",
+          "mode": "quick-40",
+          "steps": 40,
+          "stepsLimit": 40,
+          "terminal": false,
+          "wallMs": 29721,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "bddcdae9",
+          "createdAt": "2026-09-13T00:30:48.437Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "world": {
+            "schemaVersion": "seti-initial-world-identity-v1",
+            "seed": "seti-free-analyze-v1",
+            "worldVersion": "human-405-world-v1",
+            "activePlayerCount": 4,
+            "fingerprint": "2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c",
+            "components": {
+              "aliens": "46dbcc69e2fca49b3b1fd3d6e93cbdf73ec6695f58026c25eae294c6af482de2",
+              "cards": "e5427e2ac14ea93859f820681a6957c5cdf3bb5f0c61a504927a7b3442a04d4a",
+              "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+              "finalScoring": "e8a14ecc0f4b523158eefbae19cee10874f65083ef2cb060aa6badf9540da7f4",
+              "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+              "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+              "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+              "players": "81760effc03c474b420cd154875a98942f428d4e82643d3f4c1d65b8a4358482",
+              "solarSystem": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
+              "tech": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
+              "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
+              "initialOffers": "76eacd007efd30ddff4d1a2e72ee375e3b45ea420b83a9fcc31ff87ae7e90879",
+              "initialRandom": "748c814e83ed7ffbc0d68c14175649c97eef71a94eeeff4605b52f779e729399"
+            }
+          },
+          "note": "新固定世界首个40步检查点；full从此续跑，不重复前40步。非终局成绩。",
+          "scores": {
+            "player-blue": 7,
+            "player-green": 10,
+            "player-brown": 8,
+            "player-white": 6
+          },
+          "avgScore": 7.75,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-fixed-world-405-20260913-bddcdae9-quick-40-v9.json",
+          "reportPath": "reports/iteration/fixed-world-405-20260913/b235ff5f.bddcdae9.quick-40.action-log.html",
+          "reportExists": true
+        },
+        {
+          "recordFile": "b235ff5f.bddcdae9.full.json",
+          "recordPath": "reports/research/b235ff5f.bddcdae9.full.json",
+          "mode": "full",
+          "steps": 561,
+          "stepsLimit": null,
+          "terminal": true,
+          "wallMs": 895098,
+          "flags": {},
+          "policyVersion": "seti-heuristic-policy-v0",
+          "gitCommit": "bddcdae9",
+          "createdAt": "2026-09-13T00:46:51.111Z",
+          "resumeStep": 40,
+          "seed": "seti-free-analyze-v1",
+          "world": {
+            "schemaVersion": "seti-initial-world-identity-v1",
+            "seed": "seti-free-analyze-v1",
+            "worldVersion": "human-405-world-v1",
+            "activePlayerCount": 4,
+            "fingerprint": "2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c",
+            "components": {
+              "aliens": "46dbcc69e2fca49b3b1fd3d6e93cbdf73ec6695f58026c25eae294c6af482de2",
+              "cards": "e5427e2ac14ea93859f820681a6957c5cdf3bb5f0c61a504927a7b3442a04d4a",
+              "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+              "finalScoring": "e8a14ecc0f4b523158eefbae19cee10874f65083ef2cb060aa6badf9540da7f4",
+              "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+              "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+              "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+              "players": "81760effc03c474b420cd154875a98942f428d4e82643d3f4c1d65b8a4358482",
+              "solarSystem": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
+              "tech": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
+              "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
+              "initialOffers": "76eacd007efd30ddff4d1a2e72ee375e3b45ea420b83a9fcc31ff87ae7e90879",
+              "initialRandom": "748c814e83ed7ffbc0d68c14175649c97eef71a94eeeff4605b52f779e729399"
+            }
+          },
+          "note": "FIXED-WORLD-01自身验收通过：561步自然终局82/116/65/124，均96.75；阿米巴和虫；搜索错误0。新世界首份基线，不与旧世界计算涨跌。记录wallMs为续跑段，quick+full合计924819ms。战略53次、控制6次实际截断仍待预算专项；详见fixed-world-405-acceptance-20260913.md。",
+          "scores": {
+            "player-blue": 82,
+            "player-green": 116,
+            "player-brown": 65,
+            "player-white": 124
+          },
+          "avgScore": 96.75,
+          "scoreSource": "save-final",
+          "finalBreakdown": {
+            "player-blue": {
+              "total": 82,
+              "base": 56,
+              "tile": 20,
+              "card": 6,
+              "tileScoresById": {
+                "a": 5,
+                "b": 0,
+                "c": 0,
+                "d": 15
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 5,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 5,
+                  "score": 15,
+                  "slotIndex": 2,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_33.webp",
+                  "rule": {
+                    "kind": "techCount",
+                    "scorePer": 2,
+                    "techType": "blue"
+                  },
+                  "score": 6
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 0,
+                "alienTraceBlueScore": 5,
+                "alienTracePinkScore": 0,
+                "alienTraceYellowScore": 9,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 15,
+                "orbitScore": 9,
+                "scanScore": 2,
+                "taskCardScore": 0,
+                "techBonusScore": 5
+              }
+            },
+            "player-green": {
+              "total": 116,
+              "base": 75,
+              "tile": 41,
+              "card": 0,
+              "tileScoresById": {
+                "a": 22,
+                "b": 16,
+                "c": 0,
+                "d": 3
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 11,
+                  "score": 22,
+                  "slotIndex": 1,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 2,
+                  "formulaId": "b1",
+                  "multiplier": 8,
+                  "score": 16,
+                  "slotIndex": 1,
+                  "tileId": "b",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 3,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 4,
+                "alienTraceBlueScore": 3,
+                "alienTracePinkScore": 8,
+                "alienTraceYellowScore": 10,
+                "blueTechScore": 6,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 7,
+                "landScore": 13,
+                "orbitScore": 15,
+                "scanScore": 6,
+                "taskCardScore": 0,
+                "techBonusScore": 3
+              }
+            },
+            "player-brown": {
+              "total": 65,
+              "base": 54,
+              "tile": 11,
+              "card": 0,
+              "tileScoresById": {
+                "a": 8,
+                "b": 0,
+                "c": 0,
+                "d": 3
+              },
+              "tiles": [
+                {
+                  "baseValue": 1,
+                  "formulaId": "a2",
+                  "multiplier": 8,
+                  "score": 8,
+                  "slotIndex": 2,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "d2",
+                  "multiplier": 3,
+                  "score": 3,
+                  "slotIndex": 3,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 10,
+                "alienTraceBlueScore": 4,
+                "alienTracePinkScore": 1,
+                "alienTraceYellowScore": 4,
+                "blueTechScore": 4,
+                "cardEffectScore": 0,
+                "cardQuickScore": 0,
+                "industryEffectScore": 0,
+                "initialScore": 8,
+                "landScore": 5,
+                "orbitScore": 6,
+                "scanScore": 5,
+                "taskCardScore": 0,
+                "techBonusScore": 7
+              }
+            },
+            "player-white": {
+              "total": 124,
+              "base": 74,
+              "tile": 35,
+              "card": 15,
+              "tileScoresById": {
+                "a": 10,
+                "b": 0,
+                "c": 4,
+                "d": 21
+              },
+              "tiles": [
+                {
+                  "baseValue": 2,
+                  "formulaId": "a2",
+                  "multiplier": 5,
+                  "score": 10,
+                  "slotIndex": 3,
+                  "tileId": "a",
+                  "variant": 2
+                },
+                {
+                  "baseValue": 1,
+                  "formulaId": "c1",
+                  "multiplier": 4,
+                  "score": 4,
+                  "slotIndex": 1,
+                  "tileId": "c",
+                  "variant": 1
+                },
+                {
+                  "baseValue": 3,
+                  "formulaId": "d2",
+                  "multiplier": 7,
+                  "score": 21,
+                  "slotIndex": 1,
+                  "tileId": "d",
+                  "variant": 2
+                }
+              ],
+              "cards": [
+                {
+                  "cardId": "b_63.webp",
+                  "rule": {
+                    "color": "yellow",
+                    "kind": "sectorWinsByColor",
+                    "scorePer": 3
+                  },
+                  "score": 6
+                },
+                {
+                  "cardId": "dlc_8.png",
+                  "rule": {
+                    "kind": "remainingResource",
+                    "resource": "availableData",
+                    "scorePer": 3
+                  },
+                  "score": 9
+                }
+              ],
+              "scoreSources": {
+                "alienCardQuickScore": 0,
+                "alienEffectScore": 8,
+                "alienTraceBlueScore": 8,
+                "alienTracePinkScore": 5,
+                "alienTraceYellowScore": 0,
+                "blueTechScore": 8,
+                "cardEffectScore": 0,
+                "cardQuickScore": 1,
+                "industryEffectScore": 0,
+                "initialScore": 6,
+                "landScore": 6,
+                "orbitScore": 6,
+                "scanScore": 11,
+                "taskCardScore": 0,
+                "techBonusScore": 15
+              }
+            }
+          },
+          "savePath": "seti-saves/seti-save-research-fixed-world-405-20260913-bddcdae9-full-v264.json",
+          "reportPath": "reports/iteration/fixed-world-405-20260913/b235ff5f.bddcdae9.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "b235ff5f.bddcdae9.quick-40",
+            "path": "reports/iteration/fixed-world-405-20260913/b235ff5f.bddcdae9.quick-40.action-log.html",
+            "mode": "quick-40"
+          },
+          {
+            "runKey": "b235ff5f.bddcdae9.full",
+            "path": "reports/iteration/fixed-world-405-20260913/b235ff5f.bddcdae9.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "runezu-panel-node-projection-20260913",
       "name": "runezu-panel-node-projection-20260913",
@@ -561,6 +1034,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T20:21:51.661Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "两项自身验收通过，待主目录交付：482步自然终局67/93/70/81，均77.75，搜索错误为空。相对基线均分下降24，整局1209700→756474ms，全部节点242983→166159，执行截断55→39、队列截断61→42。性能证据为同334输入65.12→23.56秒及6701叶等价，不把整局缩短全算作优化贡献。首次可见分歧231已追溯到186：仅符文修复即改变收入后继；叠加投影优化后全部根最佳评分/行动链及非耗时搜索诊断一致。首处分歧归因不等于完整解释整局降分，长期趋势继续观察。相关4项unit、唯一full-flow与V输入审计通过；验收明细见runezu-panel-node-acceptance-20260913.md。",
           "scores": {
             "player-blue": 67,
@@ -994,6 +1468,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T19:01:35.141Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "修复验收通过并合主：629步正式88/126/91/102，均101.75；全部搜索错误为空。前151步一致，152棕色标记A→D：旧A估8，扣除公司初始收入后正式0，D为7，两版Policy复现。战略节点190662→242870，执行截断45→55，队列48→61，耗时905304→1209700ms；本项不是预算优化。完整局不重跑，缺失模板补回后单独build完成报告。主目录21个链接与113份历史报告正文通过核验，入口adhoc/verify-final-income-delivery-20260913.js。",
           "scores": {
             "player-blue": 88,
@@ -1450,6 +1925,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T18:15:50.849Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "局部目标通过并合主：551步自然终局，70/135/76/90，均92.75；所有搜索错误为空。执行截断50→45，队列53→48，战略节点208030→190662；均分99→92.75。前316步一致；315共同输入原获胜完整链仍实际保留，新链36.5分替代29.6667分，导致317从扫描改角标。新链41实际执行步的兑现风险另查；不外推全局最优保留。报告中心核验入口adhoc/verify-data-trade-delivery-20260913.js。",
           "scores": {
             "player-blue": 70,
@@ -1997,6 +2473,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T17:32:13.229Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "局部门槛通过；608步正式84/141/86/85均99，搜索错误为空；战略208030节点，执行截断50、队列53。总耗时996582ms高于基线947015ms，均分低于107.75，不宣称整体加速。45旧最佳完整链仍实际保留，80.75新路线替代；详见public-card-runezu-acceptance-20260913.md。",
           "scores": {
             "player-blue": 84,
@@ -2422,6 +2899,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T16:58:53.777Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "规则修复验收通过；589步自然终局，save-final 97/123/127/84，均107.75，与基线逐步action/after差异0；共同9个报错输入在本版错误归零。执行截断52、队列55未变，不算预算优化；详见runezu-effect-acceptance-20260913.md。",
           "scores": {
             "player-blue": 97,
@@ -2851,6 +3329,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T15:48:30.359Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 97,
@@ -3320,6 +3799,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T14:33:46.519Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "540步自然终局，save-final 92/110/98/80均95；战略144769节点，执行截断38（战略31/control7）、队列36，失败为空。本项门槛通过，专项未完成；验收见probe-trade-full-acceptance-20260912.md。",
           "scores": {
             "player-blue": 92,
@@ -3756,6 +4236,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T14:06:49.391Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 91,
@@ -4223,6 +4704,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T13:40:17.678Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 101,
@@ -4626,6 +5108,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T13:08:00.739Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "on-head：624步自然终局，正式84/103/83/149均104.75；单决策外星拿牌548→275，本项通过。全局战略节点217815、执行/队列截断54/56，预算专项未完成。前184步一致，185收入选牌分叉；整局978.6秒，单局趋势不外推稳定提升。运行后新增的只读比较脚本不改变受测生产代码。",
           "scores": {
             "player-blue": 84,
@@ -5112,6 +5595,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T12:35:36.177Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 75,
@@ -5519,6 +6003,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T11:53:50.308Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "本项单步与边界门槛达到；完整局597步，75/125/102/89，均97.75。542步额外痕迹节点686→411，战略总节点233665不变，执行/队列截断54/60；整局1099.970秒，未实现全局提速。仅587步改选额外痕迹槽。交付核验见overflow-trace-full-acceptance-20260912.md，预算专项继续。",
           "scores": {
             "player-blue": 75,
@@ -6036,6 +6521,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T11:22:48.864Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "本项候选与单决策门槛达到，交付核验见 trace-score-full-acceptance-20260912.md；597步自然终局75/125/102/89，均97.75，与基线完整拆分相同。战略233665节点不变，耗时803395.686373ms；队列截断60、执行截断54，预算专项未完成。初版原生观察输入错误已插入修正；中止实验不计成绩。",
           "scores": {
             "player-blue": 75,
@@ -6855,6 +7341,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T10:21:55.466Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "本项已验收合回，主报告中心核验通过。597步动作与after摘要全等，正式75/125/102/89，均97.75；整局1135.162秒，比基线减少5.85%，战略累计减少7.44%；执行/队列截断54/60未变，无执行失败。",
           "scores": {
             "player-blue": 75,
@@ -7257,6 +7744,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T09:00:47.301Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "QUICK-TIMING-01五条行为目标通过技术验收，已以43c28152合回并完成主目录回归；本项报告中心记录/存档/复盘及20条链接已核验；历史正文保留的元数据刷新已实施。597步自然终局75/125/102/89，均97.75，较上一候选80.25增加17.5，较TURN基线89.25增加8.5。耗时1205.691秒。203次搜索、233757节点；战略执行截断48、队列截断60，control执行截断6；失败节点0。战略8叶未启用。597步正式重放自然终局，后置快速行动5次（精选交易3、公司取牌1、移动1），均存在当前准入目标，无后置放数据。完整局没有实际后置移动角标，其准入/收益/后继/复用使用定向正式案例证明；不把涨分说成预算改善。",
           "scores": {
             "player-blue": 75,
@@ -7959,6 +8447,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T08:21:24.265Z",
           "resumeStep": 24,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "QUICK-TIMING-01待验收、未合回：513步自然终局83/83/72/83，均80.25，较基线下降9分。167次搜索、154013节点；战略执行截断30、队列截断39，control执行截断5；搜索失败节点0。战略8叶未启用。续跑708.288秒，不含24步前缀。正式513步重放验证主行动后快速行动5次（移动3、取牌交易1、公司取牌1），均存在当前准入目标，但尚不作为原计划绑定的证据。剩余来源覆盖及降分归因审查中；不因降分直接回滚，也不宣称整项通过。",
           "scores": {
             "player-blue": 83,
@@ -8217,6 +8706,7 @@ const REGISTRY = {
           "createdAt": "2026-09-12T08:08:53.965Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "QUICK-TIMING-01待验收：24步前缀约14.4秒，未终局，均分7仅为进度；4096执行/256队列截断已记录。完整局从本存档续跑，不重跑前缀。版本贡献从隔离起点615bb175之后计，不含TURN-BOUNDARY-01的三次报告收口提交。",
           "scores": {
             "player-blue": 7,
@@ -8413,6 +8903,7 @@ const REGISTRY = {
           "createdAt": "2026-09-11T10:48:03.284Z",
           "resumeStep": 24,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "TURN-BOUNDARY-01：541步自然终局77/96/91/93，均89.25，与上一版相同。180次搜索（104战略），196060节点，执行截断42、队列截断54、规则失败节点0；较上一版搜索+2、节点+18，预算截断未改善。前缀13.867秒+续跑831.102秒，总844.969秒；单次运行不据此宣称稳定性能提升。正式多席及可信fork证明新turn旧end_turn非法；共享协调器退出条件相同时跨turn复用PASS、正确消费步骤；资源和机会变化失效。unit82通过、2项既有基线失败、唯一fullFlow及V输入审计通过。已合回主目录，报告中心最终核验通过。",
           "scores": {
             "player-blue": 77,
@@ -8669,6 +9160,7 @@ const REGISTRY = {
           "createdAt": "2026-09-11T10:34:02.435Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "24步前缀，战略4096节点约10.862秒；完整局由此存档续跑，未重复前缀。",
           "scores": {
             "player-blue": 7,
@@ -8850,6 +9342,7 @@ const REGISTRY = {
           "createdAt": "2026-09-11T10:12:47.821Z",
           "resumeStep": 24,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "ALIEN-VALUE-01：用户确认统一外星牌12分，数值调优不在本阶段。541步自然终局77/96/91/93，均89.25；前缀14.2秒+续跑840.9秒；178次搜索、196042节点，执行截断42、frontier截断54，规则失败节点0。较归属修复版均分-5.5，节点增加51269，保留性能退化证据供后续预算专项；不以涨分替代框架验收。unit82通过/两项已确认基线失败、fullFlow通过；六种真实发牌及待获得/持有/使用交接测试通过。",
           "scores": {
             "player-blue": 77,
@@ -9106,6 +9599,7 @@ const REGISTRY = {
           "createdAt": "2026-09-11T09:58:34.800Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "24步前缀包含真实4096节点搜索，14.2秒，无执行异常；完整局由存档续跑，不重复前缀。",
           "scores": {
             "player-blue": 7,
@@ -9277,6 +9771,7 @@ const REGISTRY = {
           "createdAt": "2026-09-11T09:49:47.170Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "已被统一12分方案替代，不作为通过版本或最终策略；仅24步前缀，未运行完整局。",
           "scores": {
             "player-blue": 7,
@@ -9498,6 +9993,7 @@ const REGISTRY = {
           "createdAt": "2026-09-11T09:35:53.497Z",
           "resumeStep": 1,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "ALIEN-FACTS-01 插入式归属修复：从 a41129fa 开工，598步自然终局，98/130/73/78，均94.75，654.9秒；159次搜索，执行截断35、frontier截断36、规则失败节点0。unit82通过/2项已确认基线失败，fullFlow通过。只修事实归属，固定外星溢价尚未修复；完整矩阵见 alien-value-20260911-design.md。比较基线f607c6e5与开工点之间含诊断和文档变更，不将提交区间全部计为本项贡献。",
           "scores": {
             "player-blue": 98,
@@ -9755,6 +10251,7 @@ const REGISTRY = {
           "createdAt": "2026-09-11T09:24:45.201Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "1步开局检查；完整局从该存档续跑，不重复前缀。该记录不是完整局或战略搜索性能验收。",
           "scores": {
             "player-blue": 0,
@@ -10036,6 +10533,7 @@ const REGISTRY = {
           "createdAt": "2026-09-09T06:26:28.953Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 69,
@@ -10532,6 +11030,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T21:02:05.544Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "613步终局74/105/115/113、均101.75，逐步记录与4bc44eb2完全一致；143252节点、172次搜索，执行截断38、队列裁剪35、并集43（25%），规则失败0，572153ms。原版队列指标缺失，不宣称完整性改善。两张数量移动牌未在本局打出；规则行为由正式0/2/部分展示、恢复重放、34张跨批次、隐藏牌替换与三条真实UI路径验证。本轮为规则修复通过，不是第五轮节点/均分/完整性效果通过。见counted-card-reveal-full-comparison-20260909.json。",
           "scores": {
             "player-blue": 74,
@@ -11140,6 +11639,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T19:14:31.317Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "613步正式终局74/105/115/113，均101.75与dev相同；物理节点143252、执行截断38不变，失败0，耗时565487ms。队列截断未记录，不能证明完整性改善。首次差异326白方将付1电移动延后到下一次打牌扫描之后；347起动作一致，不声称全盘逐步一致。两路正式重放到347：完整状态仅一艘探测器slotIndex/angleDegrees不同，其他域含资源、牌堆、RNG和序列一致；槽位参与占位分配，不能作为纯显示字段删除。两张数量移动牌实际未打出，其规则依据和行为由正式夹具验证。尚未合dev，继续相关顺序与信息边界核对；不重跑本版本。详见counted-card-move-progress-20260909.md、state347及full-comparison JSON。",
           "scores": {
             "player-blue": 74,
@@ -11580,6 +12080,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T16:22:10.053Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "整体未通过：608步正式终局蓝102/绿125/棕72/白112，均102.75，直接前版100.5。节点139422→167098，执行截断27→36、执行或前沿截断并集41→49，耗时626199→740816ms；规则失败0。蓝+39但棕−34待归因；首差79研究紫2改橙2，不能把整局回升全部归因99单点保留资源。搜索228→199但棕调用50不变、节点+14635。与dev均101.75及组合108.75均有独立对照，见route-leaf-eligibility-full-progress-20260909.md及对应full-comparison.json。棕方首差四次交叉：旧107盘面两版均橙2，新105两版均紫4，均无截断；节点增长集中R2/R4，见route-leaf-brown-progress-20260909.md。补采156/182：3958/4096物理节点，队列裁掉2371/4607来源，均0规则失败；156未触执行上限仍被队列截断。奖励映射纠正为橙2由1电变1宣传；旧首拿2分与金星环绕9分对应首轮11分差，但全部34分尚未归因。正式fork重放旧橙2路线：旧107完成16步得29过程分，新105前15步后仅1钱0电，缺1电不能环绕；旧方案在新盘面不可直接执行，非仍有效却被删除。全部34分仍未归因。已核对计划边界：156计划在182因外星人揭示0→1失效；182计划在206因地球扫描位置4→3失效，其余检查步骤正常复用。以brown156/brown182-plan-boundary-v2为证，首版诊断回合初始化错误已作废留档。206冷搜652节点无裁剪，环绕19.1667胜扫描18.5，207—212计划全兑现；213正常耗尽。第二轮旧8/新6、第三轮旧28/新12，下一步聚焦第三轮收益链。第三轮旧394入口4/6+蓝2，新369入口0/6无蓝2；新369至399计划全兑现。旧401+6为红区4+2奖励，事务粉槽另+1，已正式核对，非拿牌虚增。下一步查第三轮前段科技/资源选择。346同盘面两版均选同45步、33.6667且包含分析。294计划因白307取走DLC21、346计划因白356取走b61分别在346/369失效；不是没有规划分析。正式前缀和计划边界已核对，继续收敛终局损失关联。终局条件已核对：A8→5、B16→0（新粉痕迹0）、D6→10、物理表征4→0。566仅3节点全搜正确选A。归因证据阶段留档，不等于裁剪无损或整体通过；回到已登记第五轮完整设计与节点收益。未合生产，不重跑本版本、不调权重补分。",
           "scores": {
             "player-blue": 102,
@@ -11919,6 +12420,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T15:33:54.344Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "未通过：689步，正式终局蓝63/绿121/棕106/白112，均100.5；相对直接组合均108.75下降8.25。物理节点149072→139422，执行截断39→27、执行或前沿截断并集46→41，但搜索调用201→228、耗时595966→626199ms。实际规则失败0。首个全局分歧74绿方，蓝方首个自身行动分歧77；蓝方100→63优先归因，不调权重补分、不重跑本版本、生产未合dev。新增77归因：绿75占用计划未来黄色首位触发重搜；新研究计划99因白86拿走扫描公共牌再失效；旧打牌首动作在两版同盘面均无目标绑定，已排除前沿裁剪造成其未估值，见suffix-blue77-attribution-20260908.md。99补证：17节点无裁剪的海王星准备链无法完成，却因宣传预期3.5被选中并耗尽电/牌；见suffix-blue99-attribution-20260908.md，独立检查叶可选性，不改权重。详见route-suffix-facts-full-progress-20260908.md及route-suffix-facts-full-comparison-20260908.json。",
           "scores": {
             "player-blue": 63,
@@ -12357,6 +12859,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T14:30:08.034Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "组合完整局未通过，生产未合dev。688步终局100/124/90/121、均108.75（dev101.75、独立修复93.5）；拿牌11495→6453（−43.9%），总节点143252→149072，耗时571832→595966ms，规则失败0。战略搜索88→111，执行截断战略30→31、控制8→8；38战略前沿截断，全部截断并集46，dev前沿未知。白方节点+16578、绿+7450、蓝+2480、棕−20688。棕方相对dev仍−25待归因，均分上涨不替代检查；相对独立修复首差139绿方精选改结束回合。详见alien-pick-disabled-tech-full-progress-20260908.md与full-comparison原始对照。本版本不追认旧候选通过，普通牌估值和重复准备仍未完成。追加归因：白方第3轮战略次数同为7而节点10188→22551；棕方284标记4选项全展开，当前A11>D5，未发现该处漏搜。详见combined-attribution-progress-20260908.md，过程分下降仍待归因。327同盘面交叉两版同40输入获胜链；341首次重搜仅金星环绕计数3→4，路线和正式奖励不变，见white327-cross-progress-20260908.md。已定位保守依赖，未恢复旧等额奖励候选。",
           "scores": {
             "player-blue": 100,
@@ -12965,6 +13468,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T13:49:40.515Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "独立修复a6812efe，正确性反例通过，完整局效果未通过，未合dev；不含拿牌贪心。643步，终局82/108/88/96、均93.5（基线101.75），分差蓝+8/绿+3/棕-27/白-17；规则失败0。节点143252→131571，耗时571832→554186ms，战略执行截断30/88→26/80、控制8/84→5/79；候选34战略beam、截断并集39，旧beam未记录。首差127公司能力改发射来自95计划：两版239节点、分类相同且无执行/队列截断。旧路线研究紫4后使其失效，仍计30科技+18收入−2.5宣传=45.5；修复后旧路线15.5，保留紫4路线27.5，因此首差符合修复预期。尚未解释全局33分下降；不恢复已确认虚假科技收益，也不调权重补分。79/81 unit、1/1 full-flow及V审计通过，两项历史断言失败保留。详见disabled-tech-value-progress-20260908.md和disabled-tech-brown95-summary-20260908.json。 组合单点57a360e0在两盘面均选环绕37.8333、研究30，新链紫2保持有效；尚无组合完整局，原效果结论不变。见alien-pick-disabled-tech-progress-20260908.md。",
           "scores": {
             "player-blue": 82,
@@ -13549,6 +14053,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T12:59:11.789Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "独立候选aa277dac，未合dev，完整性门槛未通过。691步，终局95/127/101/122、均111.25（正确基线101.75）；外星拿牌11495→8021（-30.2%），全部选牌33294→31189，总节点143252→154098，耗时571832→655617ms。战略执行截断30/88→31/91，控制8/84→3/85；执行合计38→34，但候选40次战略beam、并集43次，旧beam未记录，不能声称搜索整体更完整。规则失败0。棕方115→101待归因，首个全局动作差142绿方快速交易改结束回合；这不是棕方降分因果结论。单点101拿牌38→21、失败0、计划依赖有效；79/81 unit及1/1 full-flow，两项已知失败保留。完整证据见alien-card-pick-greedy-full-comparison-20260908.json与进度文档，不追认旧未通过候选。 后续第186步四次交叉已确认两盘面均由新搜索改选研究；赫利昂使紫2失效后仍计20科技未来值的独立缺陷已复现。修复a6812efe另行验证中，不能据此宣称解释棕方全部14分下降；见alien-pick-brown-cross-summary-20260908.json。 组合单点57a360e0在两盘面均选环绕37.8333、研究30，新链紫2保持有效；尚无组合完整局，原效果结论不变。见alien-pick-disabled-tech-progress-20260908.md。",
           "scores": {
             "player-blue": 95,
@@ -14102,6 +14607,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T12:08:21.470Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "独立候选6319beb1，效果未达标，未合dev。完整613步与正确基线逐步记录完全一致，终局74/105/115/113、均101.75；143252节点、战略执行截断30/88、控制8/84均未减少，规则失败0。候选另记录35次战略beam裁剪，与执行截断合计43次；旧版缺beam字段，不按0比较。第24步指定多余扫描后继54→6，实际减少48物理节点，预算用于其他分支；全盘只在24/52/503三次搜索触发配对，撤销102来源。耗时571832→564178ms，不据单次约1.3%差异宣称提速。新增unit、相关搜索回归、唯一full-flow和V审计通过；全量79/81 unit，两项既有失败留档。见data-demand-pair-full-comparison-20260908.json与data-demand-pair-progress-20260908.md。",
           "scores": {
             "player-blue": 74,
@@ -14715,6 +15221,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T10:36:02.067Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "异常传播独立验收通过，实验70043d34合入本地dev 7b4ce37f。613步终局74/105/115/113，均101.75；全部replaySteps和逐次非耗时搜索统计与正确基线相同。143252节点、182804输入、战略执行截断30/88、控制8/84、规则失败0，前沿字段未保存不记为0。耗时579822→571832ms不据单次差异宣称提速。故障注入、5项搜索回归、唯一完整流程及第24步正常路径通过。证据route-selection-full-comparison-20260908.json；不包含未通过的顺序/身份候选，不代表第五轮三项效果门槛通过。",
           "scores": {
             "player-blue": 74,
@@ -15068,6 +15575,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T09:17:57.480Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "整体未通过，未合入dev。635步终局96/89/103/110，均99.5；直接候选99.25→99.5，但低于正确基线101.75。138008节点、176619输入、659435ms；直接候选116318节点/486150ms。战略执行截断27/109、控制5/83，前沿裁剪35次；执行或前沿裁剪并集战略35+控制5=40（直接候选42），规则失败0。白方+31、绿方-48；6次交叉确认绿方首差主要由盘面变化触发，旧盘面两版均填数80，新盘面两版填数均28。正式重放进一步定位：少一次旋转使地球扫描从开普勒22变为比邻星，旧填数长链在第8个输入不可执行。蓝方首次重搜旧116步火星路线2→3移动、新114步紫2奖励被白方领取后改变，均有真实依赖变化。首次全局差来自蓝方49步计划中77步额外借科技后结束，无即时收益但新旧计划均有此冗余，不据此解释整局下降。战略搜索净增17：白+7、蓝+9、棕+4、绿-3；完整归因未完成，证据identity-attribution-20260908.json及counterfactual-identity-progress-20260908.md。同根CPU采样定位规范化含子调用约0.58秒，共同复制自身约3.9秒，恢复分项未变慢；见identity-cpu-summary-20260908.json，不将单点采样外推整局或冒充优化通过。不以机制去重或分数微升宣称达成Goal。生产冻结0b01af15，运行期间仅补测试/文档。",
           "scores": {
             "player-blue": 96,
@@ -15542,6 +16050,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T08:24:28.890Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "效果未通过，候选未合入dev，降分归因进行中。583步终局83/137/98/79，均99.25，比直接基线101.75低2.5；116318节点（减少18.8%），486150ms（减少16.2%）。战略执行截断22/92、控制11/79，战略前沿裁剪31次，失败0；基线前沿字段缺失不能比较为0。单点21对后序重复消除，前序94入口保留。同盘面交叉确认白方首次扫描目标变化随盘面变化，新盘面候选最佳扫描计划35.5低于旧搜索40.83。补采定位旧计划前20动作均执行，后续科技准备被256前沿beam-budget裁掉，并非顺序直接删除该链；未证明终局下降全部原因。",
           "scores": {
             "player-blue": 83,
@@ -15972,6 +16481,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T07:34:42.765Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "613步终局74/105/115/113，均101.75；与直接基线全部replaySteps一致。143252节点，182804输入，战略执行截断30/88、控制8/84，规则失败0；全盘前沿裁剪字段未保存，不能记0。单点证明拨款精选数据后分析可达；按均分不变且逻辑补全通过，未实现第五轮提分/减节点/少截断目标。生产等同1501ebfd，dev合入3d42ba22。",
           "scores": {
             "player-blue": 74,
@@ -16400,6 +16910,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T06:57:40.957Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "613步终局74/105/115/113，均101.75；143252节点、182814输入、576539ms，战略截断30/88、控制截断8/84，规则失败0。第24步放数据92胜过发射88，错误a2待标记22分已消除。直接前版109.75同轨迹正确重计分102.5，本轮新轨迹低0.75；历史123.75同轨迹正确重计分115.25，原记录保留。该缺陷历史a7d65847已修，当前基线未带回；本轮独立补回并验证收入屏障组合，按规则bug例外通过，不称性能或第五轮通过。临时分支670441bc实验，已以e511d0a9合入dev。",
           "scores": {
             "player-blue": 74,
@@ -17013,6 +17524,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T06:20:02.123Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "608步终局114/103/88/134，均109.75（基线123.75，下降14）；138721物理节点、171560输入、536633ms；战略截断28/96、控制截断9/79，规则失败0。前23步一致，第24步白方放数据改发射。补采获胜叶确认：发射95.5包含公司默认收入未扣除造成的a2预估22分，去除此错误即低于捕获的放数据92；既有计分bug待独立修复，尚不证明整局下降全部由此导致，详见step24-income-boundary-attribution-20260908.md。仅收入屏障修复，尚未实施第五轮贪心，不冒充效果通过。生产目录相对aaaed8d0仅science-session收入修复及其测试有差异，历史中间提交不归属本版本。",
           "scores": {
             "player-blue": 114,
@@ -17630,6 +18142,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T02:54:44.323Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "666步终局82/120/90/152，均111；全部动作、逐步摘要与终局状态同addcef7f。140614物理节点、190403输入、672750ms，28战略及5控制截断，规则失败0。单点b33价值85与正式计划一致，独立规则修复及公开观察保留。新组合达到108.5分门槛，但未提速、未消除截断；白方历史下降因果未全部闭合。",
           "scores": {
             "player-blue": 82,
@@ -18018,6 +18531,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T02:31:10.003Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "622步终局56/134/88/104，均95.5；动作、逐步摘要与最终状态均与父版一致。115070物理节点、156142输入、545330ms，22战略及7控制截断，规则失败0。正式快速移动任务、事件资源一次性、错误提交及存档恢复通过；固定局未选择快速交易移动，本局只证明无连带回归。独立规则修复通过，性能Goal未完成，不合入父版未通过策略。",
           "scores": {
             "player-blue": 56,
@@ -18418,6 +18932,7 @@ const REGISTRY = {
           "createdAt": "2026-09-08T01:06:00.467Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "622步正式终局56/134/88/104，均95.5；全部动作、逐步摘要和最终状态与直接父版一致。115070物理节点、156142输入，541080ms（父版545396ms），22战略4096截断及7控制截断，实际规则失败0。固定盘面为阿米巴/虫族，本局验证无跨流程回归，方舟9种奖励由正式事务测试覆盖；隐藏信息/根隔离/撤销与Chrome代表性打牌均通过，按独立规则bug修复通过。单点50为13.36秒、4096节点、5101输入、优胜计划正式执行成功，节点未减少。整体仍未达108.5和零截断，不合并父版未通过策略，不称性能通过。两个既有Node断言失败已在父版复现；详见fangzhou-major-full-review-20260908.md。",
           "scores": {
             "player-blue": 56,
@@ -18848,6 +19363,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T22:53:51.425Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "622步正式终局56/134/88/104，均95.5，较父版106.25下降10.75；蓝-19、绿+20、棕+1、白-45，未过108.5。115070物理节点、156142输入、545396ms；22战略截断、7控制截断，实际规则失败0。正式终局重算与完整明细一致。536同根4071→3632节点、18.47→16.55秒、优胜价值15→22并正式执行通过，仍1872个beam裁剪来源。完整局前49步一致，第50步蓝方从打b33改为发射，两版均4096节点，降分待归因；不把单点提高或整局约21%提速当作通过。两个图灵unit、唯一full-flow、V审计通过；不合dev生产、不追加剪枝，先查第50步。详见turing-immediate-expiry-full-review-20260908.md。",
           "scores": {
             "player-blue": 56,
@@ -19228,6 +19744,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T21:45:10.824Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "644步，正式终局75/114/87/149，均106.25，较父版111下降4.75，四席-7/-6/-3/-3，未过108.5。145504物理节点、196543输入、690358ms；26次战略截断、4次控制截断，实际规则失败0。161节点4096→3654、17.53→15.85秒、优胜计划和正式终态不变；536节点4096→4071，但优胜价值18→15。前559步动作/摘要一致，560蓝方痕迹改选。父版23步价值18计划在本版正式执行终态相同，借紫2不是重复能力；536旧路径经正式内核遮蔽诊断，21节点/23输入、20个后继均准入、逐步计划不变，评分仍18；已排除沿路径误删及评分下降，全局追踪与原4071节点/5296输入及优胜计划一致：旧路径走到借紫2后结束回合，b8已准入但后续前缀未再出现；队列追踪已确认执行计数2649时258项中b8排名257，被256容量beam删除，尚未执行；是现有有限队列的牵连，不以恢复重复借用或调评分补分。560正式重放已确认：白方552占用计划中的阿米巴蓝2，返回step-not-legal，父版虫族化石计划仍命中；正常占位失效，不修改复用器。相关unit、正式输入回归、唯一full-flow、V审计及终局重算通过；整体效果/性能未通过，不合dev，不进入下一项剪枝。全盘metrics无beam计数，不误报为0。详见turing-active-tech-full-review-20260908.md。",
           "scores": {
             "player-blue": 75,
@@ -19656,6 +20173,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T21:12:22.231Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "666步，正式终局82/120/90/152，均111；四席较父版+5/+6/+3/+3，正式重算与完整明细一致。140614物理节点、190403输入、672876ms；28次战略4096截断、5次控制截断，实际规则失败0。冷/热缓存、借用切换与到期unit、正式输入回归、唯一full-flow、V输入审计通过；161单点17.53秒，4096节点，优胜27步及正式终态不变。前559步动作/摘要一致，560蓝方痕迹改选；新版本复用536计划，未逐叶归因该首差。不改评分与预算。缓存修复验证通过，整体Goal未完成，需求式借科技尚未实施。运行期间仅新增只读汇总脚本。详见borrowed-probe-cache-full-review-20260908.md。",
           "scores": {
             "player-blue": 82,
@@ -20069,6 +20587,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T20:15:16.310Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "648步，正式终局77/114/87/149，均106.75；逐席完整breakdown与修复后正式计分器一致。147031物理节点、198796输入、687322ms；28次战略4096截断、5次控制截断，实际规则执行失败0。真实公司身份规则unit、两局旧终局重算、32组观察/预览检查、193冷根24步正式计划和唯一full-flow通过。规则修复不维持虚增历史分；前版旧终局诊断重算均100.75不等于新策略实验。前61步Action/after一致，第62步棕方打b65改弃b109角标；不能直接据此归因整局各席变化。规则修复验证通过，性能及108.5总目标未完成；蓝棕相对旧终局诊断仍下降，后续不得用均分掩盖。完整局运行期间仅新增只读审计/汇总脚本，无生产改动。详见company-base-income-full-review-20260908.md。",
           "scores": {
             "player-blue": 77,
@@ -20492,6 +21011,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T19:33:28.219Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "645步，历史原始终局108/119/102/116，均111.25（前版105.25），含已复现的公司初始收入计分缺陷，不作为正确规则下达标证据。蓝+22、绿-12、棕+15、白-1，下降待因果核对。前230步Action/after一致；231白方研究改换能量。137670节点、183320输入、646918ms，较前版节点+10.87%、耗时+13.45%；战略4096截断25不变，控制4→10，实际规则失败0。非满额战略搜索63→83次是节点增量主要来源。绿方A2按收入增加量最小值计分，不按环绕数；总收入6/4/4→8/2/2。独立计分缺陷使两局绿方均虚增11分，不能解释相对下降12分。相同终局状态诊断重算均94.75→100.75，不是修复后完整局，不覆盖历史分数。候选生产未合dev；独立修复未实施。详见chong-blue-card-order-full-review-20260908.md及green-income-company-base-review-20260908.md。",
           "scores": {
             "player-blue": 108,
@@ -21078,6 +21598,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T19:00:07.921Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "605步，正式终局86/131/87/117、均105.25，与bb028006全部Action/after及完整终局状态一致。124171物理节点不变，正式输入164055→163973，耗时566738→570199ms；25次战略4096截断及4次控制截断不变，实际规则失败0。469旧目标来源225→53但仍满额；局部失效目标修复有效，未达108.5且无整局提速，不判性能通过。候选生产未合dev，运行期间仅新增只读汇总脚本。详见expired-sector-goal-full-review-20260908.md。",
           "scores": {
             "player-blue": 86,
@@ -21486,6 +22007,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T17:42:22.584Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "605步，正式终局86/131/87/117、均105.25；较直接基线101.75提高3.5，仍低于108.5。124171节点、164055输入、566738ms；25次战略4096截断、4次控制截断、实际规则失败0。356消除重搜且前369步动作/状态一致；370绿方继续环绕计划取代重搜后扫描，绿方终局下降5待归因。节点下降12.76%，耗时仅下降0.11%，性能未通过。详见route-reward-dependency-full-review-20260908.md。",
           "scores": {
             "player-blue": 86,
@@ -22019,6 +22541,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T17:08:56.733Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "640步，终局85/136/82/104，均101.75；与0b9837be逐步动作、after、完整终局状态及非耗时搜索统计一致。567380ms，142337节点/188152输入，实际规则失败0，27次4096战略截断及6次1节点控制截断。本项规则修复通过；整体低于108.5，性能Goal未通过，候选生产未合dev。详见aomomo-reward-ordinal-full-review-20260908.md。运行中仅修改只读汇总脚本。",
           "scores": {
             "player-blue": 85,
@@ -22522,6 +23045,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T16:03:10.556Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "640步完整终局85/136/82/104，均101.75；较直接基线88/131/118/108下降9.5，未达108.5门槛。前232步Action/after一致；231提前发现奖励牌变化并重搜3319战略节点，233改选b11且无重搜，吻合单点。物理节点145146→142337，输入191470→188152，耗时582602→573592ms；战略4096截断29→27，控制7→6，规则失败0。单点正确性通过、整轮效果未通过；棕方下降36优先归因，生产未合dev，不调权重补分。本局仅跑一次，运行期间只编辑汇总脚本、生产代码始终0b9837be。详见reward-plan-full-review-20260907.md。",
           "scores": {
             "player-blue": 85,
@@ -22965,6 +23489,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T15:07:54.554Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "621步完整终局88/131/118/108，均111.25；较直接基线79/128/116/108全席不降、均分+3.5。前411步Action/after一致，412提前发现扫描依赖变化，改为两牌换钱，与单点验证一致。本项正确性与终局门槛通过；物理节点142907→145146，成功输入188957→191470，耗时577672→582602ms，不宣称提速。4096策略截断29不变，控制截断9→7，实际规则失败0。历史数据融合相对123.75的下降尚未解释，整体Goal未完成，候选生产未合dev。本局仅跑一次；运行期间仅编辑只读汇总脚本，生产代码始终为36994979。",
           "scores": {
             "player-blue": 88,
@@ -23392,6 +23917,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T14:27:30.908Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "625步完整终局79/128/116/108，均107.75，低于108.5门槛；较直接基线82/132/118/104下降1.25。物理节点163129→142907，成功输入217232→188957，耗时677229→577672ms；4096策略截断34→29，控制截断5→9，实际规则失败0。前411步Action/after相同，第412步蓝方旧版重搜换钱，新版继续计划使用卡牌角标。蓝方过程分+5、板块-6、计分牌-2。单点正式复现：379生成计划，410时后续扫描依赖的公共牌和地球已变化，仍先借科技/弃牌/填数据，415才发现依赖失效；见blue-plan-412-review-20260907.md，尚未证明全部降分因果。局部误失效修复及全盘提速成立，整体未通过，生产未合dev；生产同8f058cc7，本局只运行一次。",
           "scores": {
             "player-blue": 79,
@@ -23954,6 +24480,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T13:57:59.398Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "622步完整终局82/132/118/104，均109；较基线87/147/121/140全席下降，白方下降36。节点142383→163129，成功输入180948→217232，4096策略截断27→34，控制截断11→5；耗时572316→677229ms，实际规则失败0。第131步出现首个动作/after差异；蓝方489/491/493/495连续放数据均4096截断，须核对计划复用。未通过，不合dev生产；均分高于108.5不替代相对退化归因。生产同8ba9b8d8，后续提交仅证据与文档；本局只运行一次。",
           "scores": {
             "player-blue": 82,
@@ -24431,6 +24958,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T12:31:09.862Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "690步正式终局87/147/121/140，均123.75；全部动作、after摘要及终局完整状态与646858ac一致。规则执行失败1→0，142383节点不变、成功正式输入180947→180948；耗时572316ms，较前版增加15781ms，不宣称提速。27次4096策略截断及11次控制截断仍在。三色奖励、满扇区结算与恢复一致性通过；610冷搜索14.42秒、24输入计划重放正确。2026-09-08复核e6923ed1→aaaed8d0涨分与规则边界，未发现新增bug，提升为当前baseline；整体性能Goal仍未通过。",
           "scores": {
             "player-blue": 87,
@@ -24969,6 +25497,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T11:42:01.072Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "690步正式终局87/147/121/140，均123.75；较4212b427蓝0绿+7棕-20白+38，棕方下降待归因。142383节点、180947正式提交、556535ms，较前版节点-6.96%、耗时-9.64%；27次4096策略截断及11次控制截断。第610步棕方搜索有1次EFFECT_EXECUTOR_NOT_REGISTERED，零失败门禁未通过，不因均分提升自动验收，不合dev。318真实单点12.70秒，35输入计划完整结算，49分与收入正式重放一致；针对性回归通过。运行时生产代码干净，期间只编辑只读汇总脚本及验收文档。详见hidden-reward-boundary-design-20260907.md。",
           "scores": {
             "player-blue": 87,
@@ -25387,6 +25916,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T10:50:36.816Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "648步正式终局87/140/141/102，均117.5，较现行规则基线107.25提高10.25；蓝-3绿-6尚待归因。痕迹选位31540→14103，但总节点136483→153040、正式提交169320→196162、耗时563481→615895ms；29策略4096截断及9控制截断，规则失败0。单点正式计划重放通过，性能未通过，未合回dev。运行时生产代码干净，仅有未提交诊断脚本和证据，不混淆生产版本。",
           "scores": {
             "player-blue": 87,
@@ -26044,6 +26574,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T10:02:37.372Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "611步，正式终局90/146/112/81、均107.25；563481ms，136483节点、169320输入、182次搜索，27次4096策略及8次控制截断，规则失败0。旧代码反例、五种收入码、先弃后奖、pending恢复与真实285输入验证通过；真实冷搜索13.94秒，13输入优胜计划正式重放一致。本局未实际打出重组，搜索含105个该效果选择节点；卡牌规则正确性主要由局部正式输入证据覆盖。按用户明确的规则bug例外，本项通过，不要求维持含错误收益的历史分数；不是性能或整体Goal通过。满额搜索节点占81.03%，外星痕迹选择占全部23.11%/满额25.37%。详见reorganization-resource-design-20260907.md及reorganization-full-review-20260907.json。",
           "scores": {
             "player-blue": 90,
@@ -26558,6 +27089,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T08:20:02.529Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "604步，正式终局83/151/111/89、均108.5（较前候选+16.75，仍低于已通过109.5）；527641ms，124980节点、161563提交、31截断、0规则失败。缓存冷热反例25→0，171单决策33输入正式重放通过；首次动作差异124为棕方公司收入b139→b2，已复现旧蓝50写缓存→棕122命中→历史整段计划，并验证修复后同调用顺序与冷启动一致。首次改选因果已证实，不外推此前第二轮收入分歧及全部降分。与scan-earth的耗时差异主要来自R4搜索空间扩大后的节点量增长；旧版连续隔离重跑约3.5万节点、当前12.5万节点，但旧版原恢复轨迹无精确逐次节点统计。缓存修复自身节点-6.84%、耗时-0.45%，不是性能回退来源。当前按用户要求聚焦109.5→108.5的白方137→89：191搜索原发射候选仍有343叶，评分21.67，研究开头多回合方案62.67胜出；214因土星路线依赖变化重新搜索，并非盲目续用。逐轮白方过程分基线18/26/40/83、当前18/33/45/68，下降集中第四轮：少20过程分收益，终局另少33板块分；继续核对第四轮缺少的两次登陆及收入/板块差距。绿42旧方案保留且正式重放通过，提升来源暂不深挖。详见current-white-score-gap-20260907.md。缓存局部修复通过，整体Goal未通过。",
           "scores": {
             "player-blue": 83,
@@ -26992,6 +27524,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T07:00:06.836Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "571步，正式终局59/129/79/100，均91.75，较前版99.25下降7.5，低于109.5。134155节点、168976正式输入、30策略及5控制截断、0规则失败，530019ms。首次分歧163绿方结束回合改立即启用公司；局部省牌反例及第二艘验证通过，但整局效果未通过，继续归因，不推进其他优化。",
           "scores": {
             "player-blue": 59,
@@ -27531,6 +28064,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T06:40:32.200Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "592步，正式终局68/130/108/91，均99.25，较前版93.5回升5.75，仍低于109.5。137837节点、178426正式输入、26策略及7控制截断、0规则失败，耗时550378ms。局部卡牌结束候选修复验证通过，完整局效果和性能未通过；首次分歧162绿方弃牌角标改发射，继续移动归因，不转放数据。",
           "scores": {
             "player-blue": 68,
@@ -27938,6 +28472,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T05:51:55.588Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "592步，正式终局93/113/80/88，均93.5，较前版100.5下降7且低于109.5门槛。124085节点、156953正式输入、33截断、0规则失败；未绑定move归零，普通move4372→2598。首次行动分歧72；效果未通过，移动降分归因进行中，暂停放数据预研。",
           "scores": {
             "player-blue": 93,
@@ -28362,6 +28897,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T05:34:34.339Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "584步，正式终局101/124/97/80，均100.5；全部replay与终局状态同77d36854，136381节点、174587正式输入、27策略及7控制截断、0规则失败。公司未来额度反例修复通过；完整局仍低于109.5，整体效果与Goal未通过，不宣称提速或查明此前降分原因。",
           "scores": {
             "player-blue": 101,
@@ -28959,6 +29495,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T05:02:10.948Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "未通过：584步，正式终局101/124/97/80，均100.5低于基线109.5；136381节点、566004ms，27策略+7控制截断，0规则执行失败。公司移动选择7672→279，但整体未提速。另已正式复现未来公司额度漏算：当前不能启用被误当作后半段无额度；下一轮独立修复。该缺陷与整局降分的因果关系尚未证明，不调权补分。运行开始时生产树干净，运行中仅新增验证脚本和报告。",
           "scores": {
             "player-blue": 101,
@@ -29401,6 +29938,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T01:17:57.651Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "596步，终局100/86/115/137，均109.5。全程动作、完整终局状态及全部非耗时搜索统计与18839186相同；184次搜索、135649节点、171604正式输入，0规则失败，节点分类完整且无none/undefined标签，必需计数有效。仍28次4096策略截断+8控制截断，501885ms（前版502852ms），不视为提速。正式b124打牌费用与恢复、owner隔离和缓存验证通过；按均分不变且规则合理通过本项修复。原两项Node断言失败仍在；需求式移动、数据合并及整体零异常/零截断Goal未完成。运行中只新增离线核验脚本，生产固定96e60c14。",
           "scores": {
             "player-blue": 100,
@@ -29816,6 +30354,7 @@ const REGISTRY = {
           "createdAt": "2026-09-07T00:32:35.099Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "596步，终局100/86/115/137，均109.5。全部动作、完整终局状态及非分类非时间搜索字段与1585d689相同；184次搜索、135649节点、171604正式输入，0规则失败，分类全部有正式来源。仍28策略4096截断+8控制截断，502852ms（前版503652ms），不算提速。满额节点中外星痕迹选择20196（17.61%），寰宇免费移动7146（6.23%）。分类修复验收通过，移动需求、place_data合并及整体Goal未完成。运行期间仅新增对照脚本并更新测试的旧分类key，生产实现固定18839186。原两项Node断言失败仍在。",
           "scores": {
             "player-blue": 100,
@@ -30286,6 +30825,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T23:55:23.064Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "596步，正式终局100/86/115/137，均109.5，与前版逐步动作、状态摘要、完整终局状态及全部非时间搜索诊断一致。184次搜索、135649节点、171604输入、503652ms（前版504581ms）、0规则失败、28策略+8控制截断仍在。18模型432事件前后等价；共享只读判定提取通过，未新增访问目标或减少移动节点。全量Node仍有两项既有失败。运行中仅修订adhoc地球访问事件原型及新增只读报告脚本，生产代码保持1585d689。整体移动、place_data、零截断及零异常Goal未完成。",
           "scores": {
             "player-blue": 100,
@@ -30701,6 +31241,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T23:13:47.344Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "生产修复bdf6478d，c555bc33仅补充诊断证据。596步，终局100/86/115/137，均109.5，比前版112.75下降3.25；184次搜索、135649节点、171604输入、504581ms、0规则失败；28次4096策略截断+8次1节点控制截断，合计36。局部字段/规则/恢复验证通过，效果与整体Goal未通过。首次动作差异272：蓝方收入由阿米巴0改为b7，因果待查；不调权重补分。移动需求式、place_data及全局none/undefined门禁未完成。",
           "scores": {
             "player-blue": 100,
@@ -31206,6 +31747,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T22:52:35.134Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "两项独立规则提交的组合验证，不拆推各自贡献。582步，终局113/91/135/112，均112.75，较前版113.75下降1分，效果待因果核对；160次搜索、116744节点、143127正式输入、413614ms、0规则失败，23次4096策略截断和9次1节点控制截断仍在。首次复盘差异410：绿方移动支付由弃card-79-0改为1能量，尚未证明下降原因。正式规则/恢复局部验证通过；移动需求式、place_data及none/undefined全覆盖未完成，整体Goal未通过。",
           "scores": {
             "player-blue": 113,
@@ -31581,6 +32123,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T22:10:14.878Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "581步终局113/95/135/112、均113.75，与def25c80全部动作及终局状态一致。167次搜索、124241节点、152813正式输入（减少7）、0规则失败、23策略+9控制截断共32次。440588ms对444391ms，不据单次差异宣称提速。普通扫描payload边界反例修复，8模型扫描、9正式场景、16次Decision恢复及42的30输入计划重放通过；本轮范围修正按均分不变且边界合理通过。整体Goal仍未通过：any扫描空目录及同扇区重复义务待独立修复，none/undefined全面核验、目的式移动和place_data合并未完成。",
           "scores": {
             "player-blue": 113,
@@ -32106,6 +32649,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T21:52:28.752Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "固定581步终局113/95/135/112、均113.75；167次搜索、124241节点、152820正式输入、0规则失败，32次截断，444391ms。较前版均分+6.75，但节点、截断与耗时均增加。首次动作分歧433：白方由b17改打b58，不据此推断全部涨分因果。8模型规则、9个正式composition场景及16次Decision恢复验证通过；42冷决策14.889秒、4096节点/4804输入、0规则失败、30计划输入重放成功。复查发现generic扫描Decision额外透传卡牌身份也覆盖非probe模式，超出本轮边界，须单独收紧并用新版本验收；当前候选不通过。none/undefined全面核验、目的式移动、place_data合并和第一Goal均未完成。",
           "scores": {
             "player-blue": 113,
@@ -32526,6 +33070,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T20:36:36.281Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "真实516四个首选的支付/取消/保存恢复及完整计划通过，失败确认不再枚举。固定572步终局112/96/118/102、均107，与7613a096全部动作及完整终局状态一致。178次搜索、116451节点（减少1）、142797成功输入不变，规则失败1→0；22策略+9控制截断共31次不变。416701ms对427207ms，单次波动不宣称稳定提速。修复行为通过，但未达108.5/零截断/none完整分类门槛，第一Goal继续。",
           "scores": {
             "player-blue": 112,
@@ -33011,6 +33556,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T20:17:57.458Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "正式环绕访问触发、逐次选槽、取消及保存恢复验证通过。固定572步终局112/96/118/102、均107，较前版105.5增加1.5，仍低于108.5；178次搜索、116452节点、142797成功输入，22策略+9控制截断，共31次，较前版29次增加；427207ms对376209ms，无提速。第516步1次QUICK_TRADE_DISCARD_INCOMPLETE，正式复现为带禁用标记的确认进入候选；独立待修。首个实际动作差异410（能量支付改为弃移动牌），因果尚未闭合，不能用涨分代替正确性审查。移动需求式、none分类与第一Goal均未完成。",
           "scores": {
             "player-blue": 112,
@@ -33406,6 +33952,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T19:28:05.726Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "正式卡牌0/2/4数据、邻接旋转、多探测器、溢出与恢复验证通过。固定562步终局109/88/118/107、均105.5，与前版全部动作及终局状态相同；179次搜索、105127节点、129506成功输入、0规则失败，21策略+8控制截断不变；376209ms对375879ms，未证明提速。仍低于108.5且分类none未清理，第一Goal未通过；不调整权重补分。",
           "scores": {
             "player-blue": 109,
@@ -33842,6 +34389,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T18:55:04.769Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "562步，正式終局109/88/118/107、均105.5；与b8be61a5全部实际动作、终局状态一致。179次搜索、105127节点、129506成功输入、规则失败0；21次4096策略截断和8次1节点控制截断不变。375879ms，比378516ms减少0.70%，单次测量不声称稳定提速。正式终局/AI观察/页面的位置卡13分回归通过；本盘四席终局均未保留b82。整体Goal仍未通过，继续需求式移动主线。",
           "scores": {
             "player-blue": 109,
@@ -34278,6 +34826,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T18:38:31.545Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "562步，正式终局109/88/118/107、均105.5，低于108.5；全部实际动作与终局状态同b10ae543。179次搜索、105127节点、129506次成功输入、规则失败0；21次4096策略截断及8次1节点控制截断仍在。378516ms，比前版372277ms增加1.68%，无性能收益结论。正式位置任务红绿回归及真实42完整计划重放通过；独立终局位置计分漏13分已复现、待下轮修复。整体Goal未通过。",
           "scores": {
             "player-blue": 109,
@@ -34714,6 +35263,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T18:03:42.375Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "562步，正式终局109/88/118/107、均105.5，低于108.5；实际动作和终局完整状态与744c5cf9相同。179次搜索、105127节点、129506次成功输入，规则失败2→0；21次4096策略截断及8次1节点控制截断仍在。372277ms。规则修复验证通过，整体Goal未通过。",
           "scores": {
             "player-blue": 109,
@@ -35110,6 +35660,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T17:34:47.060Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "562步，正式终局109/88/118/107、均105.5，低于108.5；与61cc94af全部动作、终局完整状态及179次非时间搜索诊断相同。105127节点、129504次成功规则输入、21次满额，433仍有2次规则失败；376016ms。投影隔离行为验证通过，整体Goal未通过。",
           "scores": {
             "player-blue": 109,
@@ -35531,6 +36082,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T17:16:39.839Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "562步正式109/88/118/107、均105.5，低于108.5门槛；前470步与上版完全一致，471由拿展示牌变为取消。取消状态守恒与六物种验证通过，规则执行失败3→2（余433两次）。105127节点/129504规则执行/21满额，380303ms。效果未通过，保留正确取消修复，另查取消排序原因，不调权重补分。详见alien-card-cancel-full-review-20260907.md。",
           "scores": {
             "player-blue": 109,
@@ -36042,6 +36594,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T16:56:27.334Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "569步正式121/88/118/109、均109；全replay、完整终局状态与171次非时间诊断相同。107100节点/132190规则执行/21满额/3失败不变。单42耗时16.915→14.393秒，但整局375302→387053ms（+3.13%），不宣称整局提速；正确性与效果门槛通过，整体性能收益未证实。详见shared-leaf-full-review-20260907.md。",
           "scores": {
             "player-blue": 121,
@@ -36627,6 +37180,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T15:53:56.206Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "569步，正式终局121/88/118/109、均109；全部replay、终局完整状态及171次非时间搜索诊断与795cd6eb一致。107100节点、132190提交、21次满额、原有3次分支失败均不变。总耗时398875→375302ms（-5.91%），搜索内部263033→263155ms基本不变；按均分不变、实现合理且实耗改善通过。单决策42为23.032→16.915秒，评价及29步计划相同；不外推所有状态等比例提速。详见policy-plan-full-review-20260906.md。",
           "scores": {
             "player-blue": 121,
@@ -37072,6 +37626,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T14:44:35.463Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "569步，正式终局121/88/118/109、均109，全部569步replay与553e19c6一致；按均分不变且实现合理通过。398875ms、107100节点、132190成功提交、21次策略满额，失败795→3；剩余433步2次打牌与471步1次选牌失败。运行期间生产保持795cd6eb，仅只读报告脚本和记录变动。详见amiba-data-overflow-review-20260906.md。",
           "scores": {
             "player-blue": 121,
@@ -37522,6 +38077,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T14:14:32.997Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "569步，正式终局121/88/118/109，均109，超过108.5门槛0.5；398848ms，107100节点、131422成功提交、21次策略4096满额。仍有795次执行失败，其中404步738次，不宣称全部分支正确。生产代码全程保持553e19c6；运行期间仅新增只读取证脚本与报告。见company-free-move-review-20260906.md。",
           "scores": {
             "player-blue": 121,
@@ -37912,6 +38468,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T11:26:45.029Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步，阶段均24.75，153182ms。与be6bd7b6的完整200步replay相同，47727节点、59203次提交；不是终局验收。运行期间生产代码与6cd56452一致，仅记录、文档和只读核对脚本有变动。",
           "scores": {
             "player-blue": 43,
@@ -37939,6 +38496,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T11:34:02.088Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "629步，正式终局106/87/130/106、均107.25，较上一版106.25提高1，但低于108.5门槛1.25，未通过效果验收。快速153182+续跑406149=559331ms；31次策略4096满额。抛异常类别清零，仍有5813次EFFECT_EXECUTION_FAILED，不宣称所有分支正确。见card-trace-full-review-20260906.md。",
           "scores": {
             "player-blue": 106,
@@ -38774,6 +39332,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T05:06:27.449Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步，阶段均24.75、168427ms。前189步动作及状态摘要与基线相同；第190步开始选法不同。54次搜索、47727节点，与旧快速阶段总数相同。代码与be6bd7b6一致，运行期间仅有文档、诊断脚本及记录产物变动。",
           "scores": {
             "player-blue": 43,
@@ -38801,6 +39360,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T05:15:11.888Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "639步，正式终局106/89/124/106、均106.25，低于基线108.5计2.25；规则行为验证通过，效果验收未通过。总耗时668031ms（快速168427+续跑499604），旧547927ms；152074节点、32次策略4096满额。阿米巴细胞器选择39197→11，但其他分支增加，整局未提速。详见amiba-region-full-review-20260906.md；保留正确规则，不以调权重或恢复非法奖励补分。",
           "scores": {
             "player-blue": 106,
@@ -39347,6 +39907,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T02:42:05.329Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步，阶段均25.25，144.7秒；动作及状态摘要与213f34db完全一致。54次实际搜索、47727节点，10次满额搜索贡献85.82%节点。此版仅补统计，不作为提速成果。",
           "scores": {
             "player-blue": 43,
@@ -39374,6 +39935,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T02:49:10.033Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "702步，正式终局96/84/130/124、均108.5；全部动作及状态摘要与基线一致。191次搜索、148749节点，32次4096策略满额贡献88.12%节点。总模拟547927ms，较基线增加3.88%；只完成统计观测验收，无提速成果。详见search-statistics-full-review-20260906.md。",
           "scores": {
             "player-blue": 96,
@@ -39980,6 +40542,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T00:06:41.877Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步，阶段均25.25，137841ms；与6d67a974前200步完整轨迹一致。",
           "scores": {
             "player-blue": 43,
@@ -40007,6 +40570,7 @@ const REGISTRY = {
           "createdAt": "2026-09-06T00:13:21.013Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "702步，正式终局96/84/130/124、均108.5，较R2e基线106.75提高1.75；总模拟527450ms。第三/第四轮当前累计实现验收通过，见ai-rounds-final-review-20260906.md；历史失败候选不改判，旧30秒超时根因未明，整局提速未完成。",
           "scores": {
             "player-blue": 96,
@@ -40613,6 +41177,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T22:09:36.148Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步，阶段均25.25，138940ms；同版本终局续跑在第二轮绿方触发30秒搜索超时，无完整终局。最后进度202步不等于准确失败步数；见round-data-income-r4-full-failure-20260906.json。第三/第四轮未通过。",
           "scores": {
             "player-blue": 43,
@@ -40974,6 +41539,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T21:37:37.323Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步，阶段均21，144137ms；同提交续跑，不作终局成绩。",
           "scores": {
             "player-blue": 23,
@@ -41001,6 +41567,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T21:43:35.963Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "579步，正式终局74/118/116/108、均104，较上一候选+2.5，低于R2e基线2.75；总模拟495050ms。第三/第四轮未通过。",
           "scores": {
             "player-blue": 74,
@@ -41615,6 +42182,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T21:14:13.279Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步，144806ms，阶段均21；同提交存档续跑全盘，不作终局成绩。",
           "scores": {
             "player-blue": 23,
@@ -41642,6 +42210,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T21:20:08.013Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "584步，正式终局75/113/121/97、均101.5，低于R2e基线5.25；续跑344417ms，总模拟489223ms。第三、第四轮未通过。",
           "scores": {
             "player-blue": 75,
@@ -42901,6 +43470,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T19:55:47.473Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步阶段均29，非终局；完整局同提交从该存档续跑，前200步动作和状态摘要一致。",
           "scores": {
             "player-blue": 18,
@@ -42928,6 +43498,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T19:57:23.354Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "543步正式终局76/90/70/141，均94.25，较前候选105.5低11.25，较已通过R2e基线106.75低12.5，第三轮未通过。真实反例改为两牌换电后1号火星登陆，六步计划复用与正式完成验证通过；棕方慢样本9.84秒过门槛，Node74/76及唯一full-flow通过，两项指定既有失败保留。首处分歧在索引23：白方b_117改为直接发射；尚未证明整局下降原因，不以局部反例通过替代整局验收。",
           "scores": {
             "player-blue": 76,
@@ -43524,6 +44095,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T19:18:04.529Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步阶段均38.5，非终局；动作和状态摘要与收入准备候选完全一致。完整局同提交从该存档续跑。",
           "scores": {
             "player-blue": 35,
@@ -43551,6 +44123,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T19:20:24.990Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "583步正式终局79/104/101/138，均105.5，仍低于已通过R2e基线106.75达1.25分，第三轮未通过。卡牌收入身份与owner/恢复/后继效果验证通过；前200步动作摘要及第201至235步已有失败前动作一致，第236步正确通过原报错点。相对上一完成候选89.25的提升包含收入准备与接口修复，不单独归因于本接口提交；收入准备原候选没有终局可比较。两个指定既有测试失败保留。",
           "scores": {
             "player-blue": 79,
@@ -44147,6 +44720,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T19:07:31.824Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步阶段均38.5，非终局。完整局同提交续跑第236步棕方卡牌插收入选择缺actionId/actorId等正式字段，搜索报错；没有full结果、没有终局成绩，候选未验收。失败日志和正式checkpoint见income-reserve-full-failure-20260906-v2.json。收入准备局部真实搜索已出现正式收入价值20的完成叶；相关unit/V通过，慢样本9.73秒。原两项指定测试失败保留；卡牌Decision契约另行定位修复，不把快速分数提高当作通过。",
           "scores": {
             "player-blue": 35,
@@ -44508,6 +45082,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T18:37:19.993Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步阶段均32.75，非终局；完整局同提交从该存档续跑，不重跑前200步。",
           "scores": {
             "player-blue": 23,
@@ -44535,6 +45110,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T18:39:51.752Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "529步完整终局64/82/102/109，均89.25；低于上一候选S2的95.75达6.5分，低于已通过R2e基线106.75达17.5分，未通过效果门禁。正式扫描反例、前置准备/绑定后作用域、缺事实拒绝、紫1八方位和正式费用顺序通过。首次动作分歧为第80步绿方换能改研究；补证定位实际失效在第74步准备扫描前（地球预计x=5、实际x=3），仅移除新增依赖即hit，继续旧计划则正式扣费后预定扇区已不合法。该处失效符合预期，但不证明全部终局分差，继续查重搜候选与计划兑现，不凭局部验证接受候选。真实棕方22根评分除新增字段回显外一致，9821.75ms/4096节点；两个指定既有测试失败保留。",
           "scores": {
             "player-blue": 64,
@@ -45114,6 +45690,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T17:52:01.337Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步阶段均33.25，动作与状态摘要和R3-T1相同；非终局。完整局同提交从此存档续跑，未重跑前200步。",
           "scores": {
             "player-blue": 19,
@@ -45141,6 +45718,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T17:55:21.738Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "612步完整终局62/96/89/136，均95.75；与修复前R3-T1全程动作、状态摘要和正式终局明细一致。冷热目录、正式水星付费/缺宣传/跳过、竞争与结算验证证明局部实现按预期修正，独立修复按均分不变且逻辑合理保留；第三轮仍低于已通过R2e基线106.75达11分，未通过。不能把未改变本盘轨迹的目录修复说成解释了降分。续跑190.7秒，后段仍有慢决策；2项指定旧测试失败保留。",
           "scores": {
             "player-blue": 62,
@@ -45728,6 +46306,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T17:24:42.194Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步阶段均33.25，非终局；同提交完整局从此存档续跑，未重复前200步。",
           "scores": {
             "player-blue": 19,
@@ -45755,6 +46334,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T17:28:08.642Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "仍未通过：612步完整终局62/96/89/136，均95.75；比R3原候选92.25提高3.5，仍低于已通过R2e基线106.75达11分。真实样本终局板块被误认科技导致的提前失效已修正，评分与节点不变；不以得分改善推断其他计划逻辑均正确。后段仍有慢决策，局部性能门槛不代表全局性能。",
           "scores": {
             "player-blue": 62,
@@ -46471,6 +47051,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T16:08:15.406Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步阶段均分33.25，非终局；同提交全盘从此存档续跑，未重复前200步。",
           "scores": {
             "player-blue": 19,
@@ -46498,6 +47079,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T16:10:21.115Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "未通过：593步完整终局，蓝/绿/棕/白63/100/82/124，均分92.25，较R2e基线106.75下降14.5。实现偏差与连带影响尚待因果定位，不凭测试通过认定逻辑完全正确。",
           "scores": {
             "player-blue": 63,
@@ -46865,6 +47447,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T14:26:15.303Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步阶段均30.75，非终局；作为同提交全盘续跑存档，不能代替终局验收。",
           "scores": {
             "player-blue": 34,
@@ -46892,6 +47475,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T14:29:36.566Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "同提交从200步续跑至667步，正式终局79/134/117/97、均106.75；比修正前S1均98.5提高8.25，比最近通过R1均99.75提高7。蓝科技重复估值修正符合公式，第二轮按固定盘面验收通过；47次搜索触顶及两项既有测试失败仍显式保留，不外推整体搜索完备性。",
           "scores": {
             "player-blue": 79,
@@ -47341,6 +47925,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T14:10:02.713Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步阶段均24，非终局；与修复前首次动作分歧为第46步绿色扫描，旧选择为弃牌角标。存档用于同提交全盘续跑，不据阶段分评价终局。",
           "scores": {
             "player-blue": 18,
@@ -47368,6 +47953,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T14:14:08.182Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "同提交从200步续跑，584步正式终局82/84/109/119、均98.5；较独立修复前R2c均81.75提高16.75，较最近通过R1均99.75仍低1.25，第二轮未通过。搜索结果保留符合单步边界预期，不证明第二轮全部降分由此造成；44次触顶记录保留，未宣称完整搜索。",
           "scores": {
             "player-blue": 82,
@@ -48052,6 +48638,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T13:15:48.914Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步阶段均分34.25，非终局；与c1b7bd49前200步动作和after摘要完全一致。四次搜索触及4096节点上限；连续放置数据对应不同格位，不是循环。",
           "scores": {
             "player-blue": 18,
@@ -48079,6 +48666,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T13:17:41.111Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "同提交从200步续跑，469步正式终局80/114/46/87、均81.75，较验收基线99.75下降18，未通过。第201至203步完成弃牌确认，原支付循环消除。棕色第四轮首动PASS：单步诊断显示4096节点触顶，六个已搜索非PASS根均无叶，只有PASS可选；继续修订搜索结果保留机制。",
           "scores": {
             "player-blue": 80,
@@ -48657,6 +49245,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T12:53:42.886Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步阶段均分34.25，非终局；同提交续跑在R2第10回合反复点选choose_payment:638816f7，至至少420步无回合推进后停止。未取得完整终局，未通过；保留快速存档和中止日志，不重跑同版本。",
           "scores": {
             "player-blue": 18,
@@ -48883,6 +49472,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T10:33:24.310Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "200步非终局均分22.5，基线同期23.5；仅用于阶段复盘，不作终局验收。",
           "scores": {
             "player-blue": 15,
@@ -48910,6 +49500,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T10:36:03.160Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "未通过：固定免电分析盘面464步完整终局64/90/83/91，save-final均分82，较验收基线99.75下降17.75；从同提交200步存档续跑。保留失败候选，不作为通过版本。",
           "scores": {
             "player-blue": 64,
@@ -49345,6 +49936,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T09:18:52.014Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 11,
@@ -49372,6 +49964,7 @@ const REGISTRY = {
           "createdAt": "2026-09-05T09:23:41.181Z",
           "resumeStep": 200,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 25,
@@ -49836,6 +50429,7 @@ const REGISTRY = {
           "createdAt": "2026-08-22T02:20:18.492Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 56,
@@ -50157,6 +50751,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T22:46:15.593Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "on-head：535 步，完整终局 25/144/147/83 均 99.75（历史最高，save-final），有存档有复盘报告",
           "scores": {
             "player-blue": 25,
@@ -50434,6 +51029,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T22:25:03.708Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 59,
@@ -50713,6 +51309,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T22:20:20.067Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 63,
@@ -50964,6 +51561,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T22:01:25.874Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 25,
@@ -51241,6 +51839,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T21:49:41.721Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 63,
@@ -51492,6 +52091,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T21:43:14.337Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 63,
@@ -51753,6 +52353,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T21:36:08.863Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 63,
@@ -52004,6 +52605,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T21:09:31.375Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 46,
@@ -52064,6 +52666,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T20:47:21.717Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 54,
@@ -52124,6 +52727,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T20:44:03.256Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 44,
@@ -52184,6 +52788,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T20:38:58.455Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 44,
@@ -52244,6 +52849,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T20:33:56.433Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 72,
@@ -52304,6 +52910,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T20:30:07.961Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 72,
@@ -52364,6 +52971,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T20:25:32.907Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 54,
@@ -52424,6 +53032,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T20:21:02.235Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 66,
@@ -52484,6 +53093,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T20:16:30.454Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 66,
@@ -52569,6 +53179,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T20:10:18.491Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 66,
@@ -52669,6 +53280,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T17:47:53.620Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": null,
           "scores": {
             "player-blue": 26,
@@ -52814,6 +53426,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T13:11:43.454Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "on-head：587 步，完整终局 134/67/90/86 均 94.25；耗时 275s（去 cancel 后 3 倍提速，行为与 65c36004 一字不变）",
           "scores": {
             "player-blue": 134,
@@ -53034,6 +53647,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T10:54:19.605Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "on-head：393 步，完整终局 70/59/116/20 均 66.25；单局分数无参考意义（开局改动换局），修复重点是插收入逻辑正确",
           "scores": {
             "player-blue": 70,
@@ -53144,6 +53758,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T08:49:41.833Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "on-head：436 步，完整终局 45/63/73/77 均 64.5，行动族分布/研究步点与 v1-simplify 逐项一致（行为不变确认）",
           "scores": {
             "player-blue": 45,
@@ -53319,6 +53934,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T08:39:23.210Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "on-head：436 步，完整终局 45/63/73/77 均 64.5（与 v0 基线逐席一致，行为不变确认）",
           "scores": {
             "player-blue": 45,
@@ -53504,6 +54120,7 @@ const REGISTRY = {
           "createdAt": "2026-08-21T08:20:31.668Z",
           "resumeStep": 0,
           "seed": "seti-free-analyze-v1",
+          "world": null,
           "note": "v0 默认装配（fastPath 开）全盘 436 步，完整终局 45/63/73/77 均 64.5，有存档有复盘报告",
           "scores": {
             "player-blue": 45,
@@ -53863,6 +54480,10 @@ function primaryResult(v){
 
 function bestGrid(){
   const b=REGISTRY.bestOf;
+  document.getElementById("best-title").textContent=b.world?"当前世界最佳（完整终局）":"历史成绩（世界身份未核验）";
+  document.getElementById("world-scope").textContent=b.world?
+    `${b.world.worldVersion} · ${b.world.fingerprint}。只比较同世界指纹的完整终局；其他世界和缺少身份的历史成绩不参与排名。`:
+    "当前版本没有世界身份记录；以下为历史汇总，不能据此判断同盘面策略涨跌。";
   const card=(label,value,sub,src,srcCls)=>
     `<div class="best-card"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div><span class="src ${srcCls||""}">${src}</span></div>`;
   const summaryOf=(x)=>{
