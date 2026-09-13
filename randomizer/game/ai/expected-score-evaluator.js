@@ -1639,6 +1639,32 @@
     ))[0] || null;
   }
 
+  function selectDataAcquisitionPlans(observation, plans, actions, seatId) {
+    const hand = new Map((observation?.selfState?.hand || []).map(card => [String(card.id), card]));
+    const representatives = new Map();
+    const groupByPlan = new Map();
+    for (const plan of plans) {
+      if (plan.kind !== "card_corner") continue;
+      const card = hand.get(String(plan.cardInstanceId));
+      const action = actions.find(candidate => candidate.family === "card_corner"
+        && candidate.actorId === seatId && candidate.payload?.kind === "resource"
+        && String(candidate.target?.cardInstanceId) === String(plan.cardInstanceId));
+      if (!card?.cardId || !action) continue;
+      const reward = cards.getDiscardActionRewardForCard(card);
+      if (!(reward?.dataCount > 0)) continue;
+      // 相同角标收益和持牌类别仍不代表牌面用途等价；仅为分析准备择一。
+      // 完整reward/payload分组保留不同收益、倍率和使用方式，不创建状态合并或剪枝计数。
+      const key = JSON.stringify([reward, action.payload, outcomeModel.isAlienCard(card)]);
+      groupByPlan.set(plan, key);
+      const previous = representatives.get(key);
+      if (!previous || String(action.actionId).localeCompare(String(previous.actionId)) < 0) {
+        representatives.set(key, { plan, actionId: action.actionId });
+      }
+    }
+    return plans.filter(plan => !groupByPlan.has(plan)
+      || representatives.get(groupByPlan.get(plan)).plan === plan);
+  }
+
   function selectDataResourcePreparation(observation, successors, seatId) {
     const requirements = rawDataAnalyzeRequirements(observation);
     // 同一数据目标沿既有成本排序择一；剩余资源不同，是有损贪心而非等价省略。
@@ -2013,7 +2039,8 @@
           add(DATA_ANALYZE_ROUTE_TARGET, `data:${dataRequirements.nextStep}`, candidates);
         }
       }
-      for (const plan of dataRequirements.acquisitionPlans || []) {
+      for (const plan of selectDataAcquisitionPlans(input.rootObservation,
+        dataRequirements.acquisitionPlans || [], legalActions, input.focalSeatId)) {
         if (!["scan", "card", "card_corner"].includes(plan.kind)) continue;
         let actions = [];
         if (plan.kind === "scan") {
@@ -3634,7 +3661,7 @@
           ));
           const plans = exactPlan
             ? [exactPlan]
-            : availablePlans;
+            : selectDataAcquisitionPlans(input.branchObservation, availablePlans, successors, input.focalSeatId);
           const selected = [];
           for (const plan of plans) {
             let actions = [];

@@ -857,6 +857,43 @@ function observation({
   assert.equal(allSourceTargets.some((target) => (
     target.targetId === "card:resolve:card-data"
   )), false, "获得数据的打牌只能绑定分析结果，不能建立兑现卡牌目标");
+  const cornerCards = [
+    { id: "alien-a", cardId: "amiba_5.webp", set: "alien:阿米巴", discardActionCode: 4 },
+    { id: "alien-b", cardId: "amiba_2.webp", set: "alien:阿米巴", discardActionCode: 4 },
+    { id: "ordinary-c", cardId: "b_1.webp", set: "basic", discardActionCode: 4 },
+  ];
+  const cornerActions = [...cornerCards, { id: "unknown-d" }].map(card => ({
+    ...dataCorner, actionId: `corner:${card.id}`, target: { cardInstanceId: card.id },
+    payload: { kind: "resource", multiplier: 1 },
+  }));
+  const cornerObservation = {
+    ...multiSourceObservation,
+    selfState: { ...multiSourceObservation.selfState, hand: cornerCards },
+    dataAnalyzeRequirements: { ...multiSourceObservation.dataAnalyzeRequirements,
+      acquisitionPlans: cornerActions.map(a => ({ kind: "card_corner", dataCount: 1,
+        cardInstanceId: a.target.cardInstanceId, planId: `data:corner:${a.target.cardInstanceId}`,
+        resultTargetIds: ["data:analyze"] })),
+    },
+  };
+  const cornerRoots = actions => evaluator.enumerateSecondaryAgentRootTargets({
+    focalSeatId: seatId, rootObservation: cornerObservation, legalActions: actions,
+  }).filter(t => t.targetId === "data:analyze").flatMap(t => t.compatibleActionIds).sort();
+  const cornerSuccessors = (actions, routePlanId = "data:scan") => evaluator.selectSecondaryAgentSuccessors({
+    focalSeatId: seatId, branchObservation: cornerObservation, legalSuccessors: actions,
+    routeTargetId: "data:analyze", routePlanId,
+  });
+  assert.deepEqual(cornerRoots(cornerActions), ["corner:alien-a", "corner:ordinary-c", "corner:unknown-d"],
+    "分析同收益同牌类别角标择一；普通牌和未知牌不与外星牌合并");
+  assert.deepEqual(cornerRoots([...cornerActions].reverse()), cornerRoots(cornerActions), "根代表不依赖输入顺序");
+  assert.deepEqual(cornerSuccessors(cornerActions).map(a => a.actionId).sort(), cornerRoots(cornerActions),
+    "根和未锁定来源后继使用同一角标代表");
+  assert.deepEqual(cornerSuccessors(cornerActions, "data:corner:alien-b").map(a => a.actionId), ["corner:alien-b"],
+    "已绑定具体角标不得被另一个代表替换");
+  const doubledCorners = cornerActions.map(a => a.actionId === "corner:alien-b"
+    ? { ...a, payload: { kind: "resource", multiplier: 2 } } : a);
+  assert.equal(cornerRoots(doubledCorners).length, 4, "不同倍率的实际收益保留");
+  assert(cornerSuccessors(cornerActions).every(a => a.targetEquivalentChoiceCount === undefined),
+    "有损贪心不记为规则等价省略");
   const dataChoices = [{
     ...action("choose:data-blue", "choose_target"),
     phase: "conditional",

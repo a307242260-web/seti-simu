@@ -1,0 +1,905 @@
+{
+  "source": "reports/research/44713766.236c6969.full.json",
+  "world": {
+    "schemaVersion": "seti-initial-world-identity-v1",
+    "seed": "seti-free-analyze-v1",
+    "worldVersion": "human-405-world-v1",
+    "activePlayerCount": 4,
+    "fingerprint": "2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c",
+    "components": {
+      "aliens": "46dbcc69e2fca49b3b1fd3d6e93cbdf73ec6695f58026c25eae294c6af482de2",
+      "cards": "e5427e2ac14ea93859f820681a6957c5cdf3bb5f0c61a504927a7b3442a04d4a",
+      "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+      "finalScoring": "e8a14ecc0f4b523158eefbae19cee10874f65083ef2cb060aa6badf9540da7f4",
+      "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+      "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+      "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+      "players": "81760effc03c474b420cd154875a98942f428d4e82643d3f4c1d65b8a4358482",
+      "solarSystem": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
+      "tech": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
+      "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
+      "initialOffers": "76eacd007efd30ddff4d1a2e72ee375e3b45ea420b83a9fcc31ff87ae7e90879",
+      "initialRandom": "748c814e83ed7ffbc0d68c14175649c97eef71a94eeeff4605b52f779e729399"
+    }
+  },
+  "gitCommit": "236c6969",
+  "selectionRule": "战略/控制均只看实际截断；先按执行节点数，最大节点数并列时按耗时选择调查入口，不猜未执行节点数。",
+  "strategicSearches": 91,
+  "truncatedSearches": 43,
+  "allTruncatedSearches": 47,
+  "controlTruncatedSearches": [
+    {
+      "step": 198,
+      "searchIndex": 0,
+      "seat": "player-brown",
+      "action": "end_turn:d59ab08c",
+      "kind": "control",
+      "diagnostics": {
+        "budgetLimits": {
+          "leaves": {
+            "enabled": true,
+            "limit": 1,
+            "reached": false,
+            "truncated": false,
+            "prunedOriginCount": 0
+          },
+          "frontier": {
+            "enabled": false,
+            "limit": 256,
+            "peak": 4,
+            "reached": false,
+            "truncated": false,
+            "trimCount": 0
+          },
+          "execution": {
+            "enabled": true,
+            "limit": 1,
+            "used": 1,
+            "reached": true,
+            "truncated": true,
+            "remainingFrontierNodeCount": 4
+          }
+        },
+        "executedNodeCount": 1,
+        "maxExecutionNodes": 1,
+        "executionLimitReached": true,
+        "beamPrunedOriginCount": 0,
+        "successfulInputSubmissionCount": 1,
+        "attemptedNodeCountByFamily": {
+          "end_turn": 1
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "end_turn": 1
+        },
+        "executedNodeCountByDecisionKind": {
+          "end_turn:turn_control": 1
+        },
+        "executedNodeCountByActionSummary": {
+          "end_turn:结束回合": 1
+        },
+        "executedOriginCountByTarget": {
+          "<unbound>": 1
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "<unbound> -> end_turn:turn_control": 1
+        },
+        "frontierOriginCountByFamily": {
+          "choose_target": 4
+        },
+        "totalMilliseconds": 10.629500000039116
+      }
+    },
+    {
+      "step": 212,
+      "searchIndex": 0,
+      "seat": "player-white",
+      "action": "end_turn:b2f9b29d",
+      "kind": "control",
+      "diagnostics": {
+        "budgetLimits": {
+          "leaves": {
+            "enabled": true,
+            "limit": 1,
+            "reached": false,
+            "truncated": false,
+            "prunedOriginCount": 0
+          },
+          "frontier": {
+            "enabled": false,
+            "limit": 256,
+            "peak": 4,
+            "reached": false,
+            "truncated": false,
+            "trimCount": 0
+          },
+          "execution": {
+            "enabled": true,
+            "limit": 1,
+            "used": 1,
+            "reached": true,
+            "truncated": true,
+            "remainingFrontierNodeCount": 4
+          }
+        },
+        "executedNodeCount": 1,
+        "maxExecutionNodes": 1,
+        "executionLimitReached": true,
+        "beamPrunedOriginCount": 0,
+        "successfulInputSubmissionCount": 1,
+        "attemptedNodeCountByFamily": {
+          "end_turn": 1
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "end_turn": 1
+        },
+        "executedNodeCountByDecisionKind": {
+          "end_turn:turn_control": 1
+        },
+        "executedNodeCountByActionSummary": {
+          "end_turn:结束回合": 1
+        },
+        "executedOriginCountByTarget": {
+          "<unbound>": 1
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "<unbound> -> end_turn:turn_control": 1
+        },
+        "frontierOriginCountByFamily": {
+          "choose_target": 4
+        },
+        "totalMilliseconds": 10.004917000012938
+      }
+    },
+    {
+      "step": 457,
+      "searchIndex": 0,
+      "seat": "player-blue",
+      "action": "end_turn:320f2608",
+      "kind": "control",
+      "diagnostics": {
+        "budgetLimits": {
+          "leaves": {
+            "enabled": true,
+            "limit": 1,
+            "reached": false,
+            "truncated": false,
+            "prunedOriginCount": 0
+          },
+          "frontier": {
+            "enabled": false,
+            "limit": 256,
+            "peak": 3,
+            "reached": false,
+            "truncated": false,
+            "trimCount": 0
+          },
+          "execution": {
+            "enabled": true,
+            "limit": 1,
+            "used": 1,
+            "reached": true,
+            "truncated": true,
+            "remainingFrontierNodeCount": 3
+          }
+        },
+        "executedNodeCount": 1,
+        "maxExecutionNodes": 1,
+        "executionLimitReached": true,
+        "beamPrunedOriginCount": 0,
+        "successfulInputSubmissionCount": 1,
+        "attemptedNodeCountByFamily": {
+          "end_turn": 1
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "end_turn": 1
+        },
+        "executedNodeCountByDecisionKind": {
+          "end_turn:turn_control": 1
+        },
+        "executedNodeCountByActionSummary": {
+          "end_turn:结束回合": 1
+        },
+        "executedOriginCountByTarget": {
+          "<unbound>": 1
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "<unbound> -> end_turn:turn_control": 1
+        },
+        "frontierOriginCountByFamily": {
+          "choose_target": 3
+        },
+        "totalMilliseconds": 13.23908400000073
+      }
+    },
+    {
+      "step": 520,
+      "searchIndex": 0,
+      "seat": "player-brown",
+      "action": "end_turn:d59ab08c",
+      "kind": "control",
+      "diagnostics": {
+        "budgetLimits": {
+          "leaves": {
+            "enabled": true,
+            "limit": 1,
+            "reached": false,
+            "truncated": false,
+            "prunedOriginCount": 0
+          },
+          "frontier": {
+            "enabled": false,
+            "limit": 256,
+            "peak": 3,
+            "reached": false,
+            "truncated": false,
+            "trimCount": 0
+          },
+          "execution": {
+            "enabled": true,
+            "limit": 1,
+            "used": 1,
+            "reached": true,
+            "truncated": true,
+            "remainingFrontierNodeCount": 3
+          }
+        },
+        "executedNodeCount": 1,
+        "maxExecutionNodes": 1,
+        "executionLimitReached": true,
+        "beamPrunedOriginCount": 0,
+        "successfulInputSubmissionCount": 1,
+        "attemptedNodeCountByFamily": {
+          "end_turn": 1
+        },
+        "failedNodeCountByFamily": {},
+        "failedNodeCountByCode": {},
+        "executedNodeCountByFamily": {
+          "end_turn": 1
+        },
+        "executedNodeCountByDecisionKind": {
+          "end_turn:turn_control": 1
+        },
+        "executedNodeCountByActionSummary": {
+          "end_turn:结束回合": 1
+        },
+        "executedOriginCountByTarget": {
+          "<unbound>": 1
+        },
+        "executedOriginCountByTargetAndDecisionKind": {
+          "<unbound> -> end_turn:turn_control": 1
+        },
+        "frontierOriginCountByFamily": {
+          "choose_target": 3
+        },
+        "totalMilliseconds": 13.004707999993116
+      }
+    }
+  ],
+  "executionTruncated": 35,
+  "frontierTruncated": 43,
+  "maxNodeTies": [
+    {
+      "step": 37,
+      "kind": "strategic",
+      "seat": "player-green",
+      "action": "industry:5bda1856",
+      "milliseconds": 18102.984792
+    },
+    {
+      "step": 467,
+      "kind": "strategic",
+      "seat": "player-white",
+      "action": "industry:e887dc52",
+      "milliseconds": 17931.318708000006
+    },
+    {
+      "step": 395,
+      "kind": "strategic",
+      "seat": "player-green",
+      "action": "launch:70d77c1b",
+      "milliseconds": 17164.662666999968
+    },
+    {
+      "step": 397,
+      "kind": "strategic",
+      "seat": "player-blue",
+      "action": "play_card:bc20e6f4",
+      "milliseconds": 16960.44404199999
+    },
+    {
+      "step": 405,
+      "kind": "strategic",
+      "seat": "player-white",
+      "action": "play_card:bc648ade",
+      "milliseconds": 16716.64954100002
+    },
+    {
+      "step": 320,
+      "kind": "strategic",
+      "seat": "player-blue",
+      "action": "place_data:01c038e2",
+      "milliseconds": 16491.272457999992
+    },
+    {
+      "step": 493,
+      "kind": "strategic",
+      "seat": "player-brown",
+      "action": "industry:2259bbe0",
+      "milliseconds": 16303.607457999955
+    },
+    {
+      "step": 269,
+      "kind": "strategic",
+      "seat": "player-green",
+      "action": "launch:70d77c1b",
+      "milliseconds": 16141.68737499998
+    },
+    {
+      "step": 157,
+      "kind": "strategic",
+      "seat": "player-blue",
+      "action": "play_card:fdddf014",
+      "milliseconds": 16137.344583999977
+    },
+    {
+      "step": 459,
+      "kind": "strategic",
+      "seat": "player-brown",
+      "action": "play_card:4254a515",
+      "milliseconds": 16075.204999999958
+    },
+    {
+      "step": 160,
+      "kind": "strategic",
+      "seat": "player-brown",
+      "action": "play_card:3e8e8ea5",
+      "milliseconds": 15979.564834000019
+    },
+    {
+      "step": 331,
+      "kind": "strategic",
+      "seat": "player-white",
+      "action": "research_tech:806ccfc8",
+      "milliseconds": 15872.162499999977
+    },
+    {
+      "step": 500,
+      "kind": "strategic",
+      "seat": "player-white",
+      "action": "place_data:8fd12fd3",
+      "milliseconds": 15777.62645900005
+    },
+    {
+      "step": 297,
+      "kind": "strategic",
+      "seat": "player-green",
+      "action": "industry:5bda1856",
+      "milliseconds": 15651.547542000015
+    },
+    {
+      "step": 173,
+      "kind": "strategic",
+      "seat": "player-green",
+      "action": "place_data:dbe01b29",
+      "milliseconds": 15548.437542
+    },
+    {
+      "step": 387,
+      "kind": "strategic",
+      "seat": "player-white",
+      "action": "scan:2d21a323",
+      "milliseconds": 14812.734625000041
+    },
+    {
+      "step": 522,
+      "kind": "strategic",
+      "seat": "player-white",
+      "action": "pass:a1f33c73",
+      "milliseconds": 14610.46658300003
+    },
+    {
+      "step": 385,
+      "kind": "strategic",
+      "seat": "player-brown",
+      "action": "launch:c1616852",
+      "milliseconds": 14587.353958000022
+    },
+    {
+      "step": 347,
+      "kind": "strategic",
+      "seat": "player-white",
+      "action": "industry:e887dc52",
+      "milliseconds": 14530.90316700004
+    },
+    {
+      "step": 263,
+      "kind": "strategic",
+      "seat": "player-brown",
+      "action": "scan:0ca111ac",
+      "milliseconds": 14435.949167000013
+    },
+    {
+      "step": 267,
+      "kind": "strategic",
+      "seat": "player-white",
+      "action": "launch:c94cda79",
+      "milliseconds": 14252.917499999981
+    },
+    {
+      "step": 163,
+      "kind": "strategic",
+      "seat": "player-white",
+      "action": "place_data:8fd12fd3",
+      "milliseconds": 13957.665542000002
+    },
+    {
+      "step": 234,
+      "kind": "strategic",
+      "seat": "player-white",
+      "action": "pass:a1f33c73",
+      "milliseconds": 13881.872458000027
+    },
+    {
+      "step": 261,
+      "kind": "strategic",
+      "seat": "player-blue",
+      "action": "launch:a4087d46",
+      "milliseconds": 13800.630874999973
+    },
+    {
+      "step": 188,
+      "kind": "strategic",
+      "seat": "player-brown",
+      "action": "industry:2259bbe0",
+      "milliseconds": 13775.102499999979
+    },
+    {
+      "step": 142,
+      "kind": "strategic",
+      "seat": "player-brown",
+      "action": "launch:c1616852",
+      "milliseconds": 12853.641999999993
+    },
+    {
+      "step": 72,
+      "kind": "strategic",
+      "seat": "player-green",
+      "action": "land:1cbade2c",
+      "milliseconds": 12644.097709000009
+    },
+    {
+      "step": 144,
+      "kind": "strategic",
+      "seat": "player-white",
+      "action": "play_card:82f71b32",
+      "milliseconds": 12611.701707999979
+    },
+    {
+      "step": 147,
+      "kind": "strategic",
+      "seat": "player-green",
+      "action": "place_data:dbe01b29",
+      "milliseconds": 12491.917916000006
+    },
+    {
+      "step": 44,
+      "kind": "strategic",
+      "seat": "player-green",
+      "action": "quick_trade:38002215",
+      "milliseconds": 12193.946208
+    },
+    {
+      "step": 135,
+      "kind": "strategic",
+      "seat": "player-green",
+      "action": "scan:1b66b805",
+      "milliseconds": 11721.897833999974
+    },
+    {
+      "step": 87,
+      "kind": "strategic",
+      "seat": "player-green",
+      "action": "place_data:dbe01b29",
+      "milliseconds": 11502.303041000006
+    },
+    {
+      "step": 50,
+      "kind": "strategic",
+      "seat": "player-blue",
+      "action": "play_card:6eb4a6de",
+      "milliseconds": 11078.134416
+    },
+    {
+      "step": 24,
+      "kind": "strategic",
+      "seat": "player-white",
+      "action": "place_data:8fd12fd3",
+      "milliseconds": 10409.551708
+    },
+    {
+      "step": 53,
+      "kind": "strategic",
+      "seat": "player-brown",
+      "action": "place_data:50a9ac16",
+      "milliseconds": 9570.867291999995
+    }
+  ],
+  "selected": {
+    "step": 37,
+    "searchIndex": 1,
+    "seat": "player-green",
+    "action": "industry:5bda1856",
+    "kind": "strategic",
+    "diagnostics": {
+      "budgetLimits": {
+        "leaves": {
+          "enabled": false,
+          "limit": 8,
+          "reached": false,
+          "truncated": false,
+          "prunedOriginCount": 0
+        },
+        "frontier": {
+          "enabled": true,
+          "limit": 256,
+          "peak": 256,
+          "reached": true,
+          "truncated": true,
+          "trimCount": 818
+        },
+        "execution": {
+          "enabled": true,
+          "limit": 4096,
+          "used": 4096,
+          "reached": true,
+          "truncated": true,
+          "remainingFrontierNodeCount": 255
+        }
+      },
+      "executedNodeCount": 4096,
+      "maxExecutionNodes": 4096,
+      "executionLimitReached": true,
+      "beamPrunedOriginCount": 1937,
+      "successfulInputSubmissionCount": 6286,
+      "attemptedNodeCountByFamily": {
+        "accept_optional_effect": 2,
+        "analyze": 33,
+        "card_corner": 15,
+        "choose_card": 986,
+        "choose_target": 781,
+        "end_turn": 345,
+        "industry": 47,
+        "land": 84,
+        "launch": 28,
+        "move": 248,
+        "orbit": 124,
+        "pass": 42,
+        "place_data": 262,
+        "play_card": 26,
+        "quick_trade": 829,
+        "research_tech": 38,
+        "scan": 206
+      },
+      "failedNodeCountByFamily": {},
+      "failedNodeCountByCode": {},
+      "executedNodeCountByFamily": {
+        "accept_optional_effect": 2,
+        "analyze": 33,
+        "card_corner": 15,
+        "choose_card": 986,
+        "choose_target": 781,
+        "end_turn": 345,
+        "industry": 47,
+        "land": 84,
+        "launch": 28,
+        "move": 248,
+        "orbit": 124,
+        "pass": 42,
+        "place_data": 262,
+        "play_card": 26,
+        "quick_trade": 829,
+        "research_tech": 38,
+        "scan": 206
+      },
+      "executedNodeCountByDecisionKind": {
+        "accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger": 2,
+        "analyze:main": 33,
+        "card_corner:quick": 15,
+        "choose_card:conditional/decision=choose_card/effect=science_domain_income": 194,
+        "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 306,
+        "choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 266,
+        "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 220,
+        "choose_target:conditional/decision=choose_target/effect=probe_land_choice": 1,
+        "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 75,
+        "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 194,
+        "choose_target:conditional/decision=choose_target/effect=science_domain_research": 114,
+        "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 397,
+        "end_turn:turn_control": 345,
+        "industry:quick": 47,
+        "land:main": 84,
+        "launch:main": 28,
+        "move:quick": 248,
+        "orbit:main": 124,
+        "pass:main": 42,
+        "place_data:quick": 262,
+        "play_card:main": 26,
+        "quick_trade:quick": 829,
+        "research_tech:main": 38,
+        "scan:main": 206
+      },
+      "executedNodeCountByActionSummary": {
+        "choose_target:扫描 南河三": 397,
+        "end_turn:结束回合": 345,
+        "quick_trade:2张牌 → 1能量": 344,
+        "place_data:放置数据": 262,
+        "quick_trade:3宣传 → 精选1张牌": 241,
+        "choose_card:b_87.webp": 206,
+        "scan:扫描": 206,
+        "choose_card:dlc_21.png → 南河三": 150,
+        "quick_trade:2张牌 → 1信用点": 133,
+        "move:移动探测器 3 逆时针": 132,
+        "choose_card:dlc_38.png": 102,
+        "choose_card:b_87.webp → 比邻星": 92,
+        "choose_target:获得 1 个黄色外星人标记 → 外星人 1 黄色痕迹": 84,
+        "land:登陆": 84,
+        "choose_card:dlc_39.png": 79,
+        "quick_trade:2张牌 → 精选1张牌": 79,
+        "choose_target:外星人 1 粉色痕迹": 77,
+        "choose_card:dlc_21.png": 72,
+        "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（R3，1信用点 + 1能量）": 58,
+        "move:移动探测器 3 向外": 55,
+        "choose_card:收入 b_115.webp": 52,
+        "orbit:环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）": 50,
+        "choose_card:dlc_37.png": 48,
+        "industry:寰宇动力 1x 行动": 47,
+        "choose_card:收入 dlc_35.png": 44,
+        "pass:PASS": 42,
+        "choose_card:收入 dlc_11.png": 39,
+        "choose_target:研究 blue1（蓝槽 1）": 38,
+        "choose_target:研究 blue2（蓝槽 1）": 38,
+        "choose_target:研究 orange3": 38,
+        "research_tech:研究科技": 38,
+        "analyze:分析": 33,
+        "choose_target:外星人 1 蓝色痕迹": 33,
+        "quick_trade:2信用点 → 1能量": 32,
+        "move:移动探测器 2 逆时针": 31,
+        "launch:发射": 28,
+        "move:移动探测器 2 向内": 28,
+        "choose_target:移动 1 向外": 25,
+        "choose_target:移动 2 向外": 25,
+        "choose_target:结束移动": 25,
+        "choose_card:b_2.webp → 南河三": 24,
+        "choose_card:收入 b_2.webp": 23,
+        "choose_card:收入 b_87.webp": 20,
+        "choose_card:收入 dlc_21.png": 16,
+        "choose_card:dlc_40.png": 12,
+        "orbit:环绕火星 - 奖励：精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R2，1信用点 + 1能量）": 12,
+        "play_card:dlc_35.png": 10,
+        "choose_card:b_2.webp": 7,
+        "play_card:b_115.webp": 7,
+        "card_corner:b_115.webp：弃牌角标": 6,
+        "card_corner:dlc_11.png：弃牌角标": 6,
+        "play_card:b_2.webp": 4,
+        "play_card:dlc_11.png": 4,
+        "card_corner:dlc_35.png：弃牌角标": 3,
+        "accept_optional_effect:结算 b_2.webp": 2,
+        "move:移动探测器 2 向外": 2,
+        "orbit:环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R2，1信用点 + 1能量）": 2,
+        "orbit:环绕金星 - 奖励：首次环绕：额外获得 3 分；获得 6 分；获得 1 次收入（R2，1信用点 + 1能量）": 2,
+        "choose_target:登陆火星（主星）｜奖励：首次登陆：额外获得 2 个数据；获得 6 分；获得 1 个黄色外星人标记": 1,
+        "play_card:b_87.webp": 1
+      },
+      "executedOriginCountByTarget": {
+        "land:mars:planet:": 1015,
+        "orbit:venus:planet:": 921,
+        "sector:win:sector-1-a:1": 888,
+        "orbit:mars:planet:": 734,
+        "data:analyze": 340,
+        "income:gain:5,1,0,0,2,0": 263,
+        "<unbound>": 253,
+        "card:acquire:card-38-0": 252,
+        "tech:gain:blue2": 230,
+        "tech:gain:blue1": 116,
+        "tech:gain:orange3": 116,
+        "decision:choose_card:a677d061": 63,
+        "decision:choose_card:cb33e16c": 57,
+        "decision:choose_card:e78c82ab": 46,
+        "income:gain:5,1,0,0,1,0": 12,
+        "decision:choose_card:6225123f": 6,
+        "decision:choose_card:7b0ed0bc": 5
+      },
+      "executedOriginCountByTargetAndDecisionKind": {
+        "orbit:venus:planet: -> quick_trade:quick": 261,
+        "sector:win:sector-1-a:1 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 228,
+        "orbit:venus:planet: -> move:quick": 191,
+        "land:mars:planet: -> end_turn:turn_control": 186,
+        "land:mars:planet: -> quick_trade:quick": 183,
+        "sector:win:sector-1-a:1 -> scan:main": 177,
+        "sector:win:sector-1-a:1 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 176,
+        "<unbound> -> end_turn:turn_control": 167,
+        "card:acquire:card-38-0 -> quick_trade:quick": 161,
+        "orbit:mars:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 156,
+        "orbit:mars:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 156,
+        "orbit:venus:planet: -> end_turn:turn_control": 140,
+        "orbit:mars:planet: -> quick_trade:quick": 136,
+        "sector:win:sector-1-a:1 -> place_data:quick": 127,
+        "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 117,
+        "land:mars:planet: -> land:main": 117,
+        "tech:gain:blue2 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 114,
+        "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 110,
+        "land:mars:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 105,
+        "income:gain:5,1,0,0,2,0 -> place_data:quick": 104,
+        "card:acquire:card-38-0 -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 91,
+        "land:mars:planet: -> move:quick": 90,
+        "data:analyze -> quick_trade:quick": 83,
+        "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 75,
+        "orbit:mars:planet: -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=free_move/ability=huanyu_free_moves": 75,
+        "sector:win:sector-1-a:1 -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 73,
+        "data:analyze -> place_data:quick": 71,
+        "sector:win:sector-1-a:1 -> quick_trade:quick": 66,
+        "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 63,
+        "orbit:venus:planet: -> orbit:main": 60,
+        "orbit:mars:planet: -> orbit:main": 52,
+        "orbit:mars:planet: -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 48,
+        "land:mars:planet: -> industry:quick": 47,
+        "orbit:mars:planet: -> industry:quick": 47,
+        "<unbound> -> pass:main": 42,
+        "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 42,
+        "decision:choose_card:a677d061 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 39,
+        "income:gain:5,1,0,0,2,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 39,
+        "tech:gain:blue1 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 38,
+        "tech:gain:blue1 -> research_tech:main": 38,
+        "tech:gain:blue2 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 38,
+        "tech:gain:blue2 -> research_tech:main": 38,
+        "tech:gain:orange3 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 38,
+        "tech:gain:orange3 -> research_tech:main": 38,
+        "tech:gain:blue1 -> place_data:quick": 37,
+        "tech:gain:blue2 -> place_data:quick": 37,
+        "tech:gain:orange3 -> place_data:quick": 37,
+        "data:analyze -> analyze:main": 36,
+        "land:mars:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 36,
+        "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 36,
+        "orbit:mars:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 36,
+        "orbit:venus:planet: -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 36,
+        "orbit:venus:planet: -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 36,
+        "decision:choose_card:cb33e16c -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 35,
+        "sector:win:sector-1-a:1 -> end_turn:turn_control": 29,
+        "income:gain:5,1,0,0,2,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 27,
+        "<unbound> -> play_card:main": 26,
+        "income:gain:5,1,0,0,2,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 26,
+        "income:gain:5,1,0,0,2,0 -> end_turn:turn_control": 26,
+        "income:gain:5,1,0,0,2,0 -> scan:main": 26,
+        "orbit:mars:planet: -> end_turn:turn_control": 26,
+        "decision:choose_card:e78c82ab -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 24,
+        "land:mars:planet: -> launch:main": 22,
+        "orbit:venus:planet: -> launch:main": 22,
+        "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 18,
+        "data:analyze -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 18,
+        "data:analyze -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 18,
+        "data:analyze -> end_turn:turn_control": 18,
+        "data:analyze -> scan:main": 18,
+        "income:gain:5,1,0,0,2,0 -> quick_trade:quick": 14,
+        "<unbound> -> orbit:main": 12,
+        "data:analyze -> card_corner:quick": 12,
+        "decision:choose_card:a677d061 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 12,
+        "decision:choose_card:a677d061 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 12,
+        "sector:win:sector-1-a:1 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 12,
+        "decision:choose_card:cb33e16c -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 11,
+        "decision:choose_card:cb33e16c -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 11,
+        "decision:choose_card:e78c82ab -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 11,
+        "decision:choose_card:e78c82ab -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 11,
+        "<unbound> -> launch:main": 6,
+        "data:analyze -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 6,
+        "income:gain:5,1,0,0,1,0 -> place_data:quick": 5,
+        "decision:choose_card:6225123f -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 4,
+        "decision:choose_card:7b0ed0bc -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 3,
+        "income:gain:5,1,0,0,1,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_income": 3,
+        "tech:gain:blue1 -> card_corner:quick": 3,
+        "tech:gain:blue2 -> card_corner:quick": 3,
+        "tech:gain:orange3 -> card_corner:quick": 3,
+        "orbit:mars:planet: -> move:quick": 2,
+        "orbit:venus:planet: -> accept_optional_effect:conditional/decision=accept_optional_effect/effect=residual_card_decision/kind=trigger": 2,
+        "decision:choose_card:6225123f -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 1,
+        "decision:choose_card:6225123f -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 1,
+        "decision:choose_card:7b0ed0bc -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 1,
+        "decision:choose_card:7b0ed0bc -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 1,
+        "income:gain:5,1,0,0,1,0 -> choose_card:conditional/decision=choose_card/effect=science_domain_scan_step": 1,
+        "income:gain:5,1,0,0,1,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_scan_step": 1,
+        "income:gain:5,1,0,0,1,0 -> end_turn:turn_control": 1,
+        "income:gain:5,1,0,0,1,0 -> scan:main": 1,
+        "income:gain:5,1,0,0,2,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace": 1,
+        "land:mars:planet: -> choose_target:conditional/decision=choose_target/effect=probe_land_choice": 1
+      },
+      "frontierOriginCountByFamily": {
+        "choose_card": 88,
+        "end_turn": 58,
+        "choose_target": 42,
+        "move": 28,
+        "quick_trade": 24,
+        "place_data": 23,
+        "orbit": 9,
+        "industry": 8,
+        "play_card": 3,
+        "scan": 3,
+        "pass": 2
+      },
+      "totalMilliseconds": 18102.984792
+    }
+  },
+  "topFamilies": [
+    [
+      "choose_card",
+      986
+    ],
+    [
+      "quick_trade",
+      829
+    ],
+    [
+      "choose_target",
+      781
+    ],
+    [
+      "end_turn",
+      345
+    ],
+    [
+      "place_data",
+      262
+    ],
+    [
+      "move",
+      248
+    ],
+    [
+      "scan",
+      206
+    ],
+    [
+      "orbit",
+      124
+    ],
+    [
+      "land",
+      84
+    ],
+    [
+      "industry",
+      47
+    ],
+    [
+      "pass",
+      42
+    ],
+    [
+      "research_tech",
+      38
+    ],
+    [
+      "analyze",
+      33
+    ],
+    [
+      "launch",
+      28
+    ],
+    [
+      "play_card",
+      26
+    ],
+    [
+      "card_corner",
+      15
+    ],
+    [
+      "accept_optional_effect",
+      2
+    ]
+  ]
+}

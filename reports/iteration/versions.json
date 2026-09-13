@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "data-corner-greedy-20260913",
+      "name": "data-corner-greedy-20260913",
+      "date": "2026-09-13",
+      "baseline": "scan-free-cost-20260913",
+      "head": "236c6969",
+      "commits": [
+        "74c8bb1b",
+        "00f3150d",
+        "236c6969"
+      ],
+      "summary": "分析同收益同类别数据角标择一；467最大分析簇1488→381，旧最佳完整计划与依赖保留。542步均87.25不变，仅526/530交换两牌角标顺序、所有after相同；节点175200→174015，实际截断仍47，774832→797118ms。不宣称整体提速，局部目标通过并合回。",
+      "records": {
+        "44713766.236c6969.quick-40.json": {},
+        "44713766.236c6969.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "scan-free-cost-20260913",
       "name": "scan-free-cost-20260913",
       "date": "2026-09-13",

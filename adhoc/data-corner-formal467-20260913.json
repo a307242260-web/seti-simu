@@ -1,0 +1,385 @@
+{
+  "source": "adhoc/budget467-input-20260913.json",
+  "rows": [
+    {
+      "id": "alien-amiba-5-22",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:0309b87e",
+        "actorId": "player-white",
+        "stateVersion": 236,
+        "decisionVersion": 8,
+        "target": {
+          "cardInstanceId": "alien-amiba-5-22"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "amiba_5.webp：弃牌角标"
+      },
+      "reward": {
+        "code": 4,
+        "label": "弃牌换1数据+1分",
+        "gain": {
+          "score": 1
+        },
+        "dataCount": 1
+      },
+      "playEffects": [
+        {
+          "id": "amiba-5-pick",
+          "type": "pick_card",
+          "label": "阿米巴5：精选1张牌",
+          "icon": "pick_card",
+          "options": {
+            "count": 1,
+            "repeat": 1
+          },
+          "status": "pending"
+        },
+        {
+          "id": "amiba-5-red-symbol",
+          "type": "amiba_choose_symbol_reward",
+          "label": "阿米巴5：红色区域 symbol 奖励",
+          "icon": "alien_trace",
+          "options": {
+            "region": "red",
+            "repeat": 1
+          },
+          "status": "pending"
+        }
+      ],
+      "publicPlayerAfter": {
+        "playerId": "player-white",
+        "industryAbilityId": "deepspace_swap_cards",
+        "color": "white",
+        "playerLabel": "白色玩家",
+        "score": 62,
+        "finalScore": 83,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 9,
+        "reservedCount": 1,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 2,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [
+            {
+              "tileId": "blue2",
+              "slot": 1,
+              "occupied": false,
+              "unlocked": false
+            }
+          ],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true,
+            "orange2": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 3,
+          "handSize": 4,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 2,
+          "energy": 2,
+          "handSize": 1,
+          "additionalPublicScan": 1
+        },
+        "securedEndGameBonus": 21
+      },
+      "remainingHandIds": [
+        "alien-amiba-1-2",
+        "alien-chong-9-8",
+        "alien-amiba-3-3",
+        "card-34-pass-3-5",
+        "card-77-0",
+        "card-79-0",
+        "card-80-0",
+        "alien-amiba-7-16",
+        "alien-amiba-2-18"
+      ]
+    },
+    {
+      "id": "alien-amiba-2-18",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:97ef9c64",
+        "actorId": "player-white",
+        "stateVersion": 236,
+        "decisionVersion": 8,
+        "target": {
+          "cardInstanceId": "alien-amiba-2-18"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "amiba_2.webp：弃牌角标"
+      },
+      "reward": {
+        "code": 4,
+        "label": "弃牌换1数据+1分",
+        "gain": {
+          "score": 1
+        },
+        "dataCount": 1
+      },
+      "playEffects": [
+        {
+          "id": "amiba-2-draw",
+          "type": "draw_cards",
+          "label": "阿米巴2：2盲抽",
+          "icon": "blind_card",
+          "options": {
+            "count": 2,
+            "repeat": 1
+          },
+          "status": "pending"
+        }
+      ],
+      "publicPlayerAfter": {
+        "playerId": "player-white",
+        "industryAbilityId": "deepspace_swap_cards",
+        "color": "white",
+        "playerLabel": "白色玩家",
+        "score": 62,
+        "finalScore": 83,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 9,
+        "reservedCount": 1,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 2,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [
+            {
+              "tileId": "blue2",
+              "slot": 1,
+              "occupied": false,
+              "unlocked": false
+            }
+          ],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true,
+            "orange2": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 3,
+          "handSize": 4,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 2,
+          "energy": 2,
+          "handSize": 1,
+          "additionalPublicScan": 1
+        },
+        "securedEndGameBonus": 21
+      },
+      "remainingHandIds": [
+        "alien-amiba-1-2",
+        "alien-chong-9-8",
+        "alien-amiba-3-3",
+        "card-34-pass-3-5",
+        "card-77-0",
+        "card-79-0",
+        "card-80-0",
+        "alien-amiba-7-16",
+        "alien-amiba-5-22"
+      ]
+    },
+    {
+      "id": "alien-amiba-7-16",
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:c61a4a69",
+        "actorId": "player-white",
+        "stateVersion": 236,
+        "decisionVersion": 8,
+        "target": {
+          "cardInstanceId": "alien-amiba-7-16"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "amiba_7.webp：弃牌角标"
+      },
+      "reward": {
+        "code": 4,
+        "label": "弃牌换1数据+1分",
+        "gain": {
+          "score": 1
+        },
+        "dataCount": 1
+      },
+      "playEffects": [
+        {
+          "id": "amiba-7-pick",
+          "type": "pick_card",
+          "label": "阿米巴7：精选1张牌",
+          "icon": "pick_card",
+          "options": {
+            "count": 1,
+            "repeat": 1
+          },
+          "status": "pending"
+        },
+        {
+          "id": "amiba-7-blue-symbol",
+          "type": "amiba_choose_symbol_reward",
+          "label": "阿米巴7：蓝色区域 symbol 奖励",
+          "icon": "alien_trace",
+          "options": {
+            "region": "blue",
+            "repeat": 1
+          },
+          "status": "pending"
+        }
+      ],
+      "publicPlayerAfter": {
+        "playerId": "player-white",
+        "industryAbilityId": "deepspace_swap_cards",
+        "color": "white",
+        "playerLabel": "白色玩家",
+        "score": 62,
+        "finalScore": 83,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 0,
+        "energy": 0,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 9,
+        "reservedCount": 1,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 2,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [
+            {
+              "tileId": "blue2",
+              "slot": 1,
+              "occupied": false,
+              "unlocked": false
+            }
+          ],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {
+            "blue2": 1
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue2": true,
+            "orange2": true,
+            "purple2": true,
+            "purple4": true
+          }
+        },
+        "income": {
+          "additionalPublicScan": 1,
+          "availableData": 0,
+          "credits": 4,
+          "energy": 3,
+          "handSize": 4,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 2,
+          "energy": 2,
+          "handSize": 1,
+          "additionalPublicScan": 1
+        },
+        "securedEndGameBonus": 21
+      },
+      "remainingHandIds": [
+        "alien-amiba-1-2",
+        "alien-chong-9-8",
+        "alien-amiba-3-3",
+        "card-34-pass-3-5",
+        "card-77-0",
+        "card-79-0",
+        "card-80-0",
+        "alien-amiba-2-18",
+        "alien-amiba-5-22"
+      ]
+    }
+  ],
+  "scope": "三个本席正式合法角标分别执行后公开玩家事实相同，均+1分+1数据、少1手牌；剩余牌身份与打牌效果不同，仅支持有损代表，不证明后续状态等价。"
+}

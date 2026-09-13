@@ -1,0 +1,89 @@
+{
+  "records": [
+    "874d71c3.de73734c.full.json",
+    "44713766.236c6969.full.json"
+  ],
+  "steps": 542,
+  "differences": [
+    {
+      "step": 526,
+      "baseline": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:de958113",
+        "actorId": "player-green",
+        "stateVersion": 267,
+        "decisionVersion": 9,
+        "target": {
+          "cardInstanceId": "card-84-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "b_135.webp：弃牌角标"
+      },
+      "candidate": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:1adff536",
+        "actorId": "player-green",
+        "stateVersion": 267,
+        "decisionVersion": 9,
+        "target": {
+          "cardInstanceId": "card-96-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "b_116.webp：弃牌角标"
+      }
+    },
+    {
+      "step": 530,
+      "baseline": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:1adff536",
+        "actorId": "player-green",
+        "stateVersion": 269,
+        "decisionVersion": 9,
+        "target": {
+          "cardInstanceId": "card-96-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "b_116.webp：弃牌角标"
+      },
+      "candidate": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "card_corner",
+        "phase": "quick",
+        "actionId": "card_corner:de958113",
+        "actorId": "player-green",
+        "stateVersion": 269,
+        "decisionVersion": 9,
+        "target": {
+          "cardInstanceId": "card-84-0"
+        },
+        "payload": {
+          "kind": "resource",
+          "multiplier": 1
+        },
+        "decision": null,
+        "summary": "b_135.webp：弃牌角标"
+      }
+    }
+  ],
+  "allAfterEqual": true,
+  "scope": "完整动作差异只有两张普通角标交换使用顺序，所有记录after逐项相同；after不含全部牌序与隐藏状态，不冒充完整中间状态等价。正式终局分另由full-comparison核验。"
+}
