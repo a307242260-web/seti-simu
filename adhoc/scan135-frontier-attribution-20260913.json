@@ -1,0 +1,103 @@
+{
+  "sources": [
+    "scan-cost135-d89a9838-20260913.json",
+    "scan-cost135-de73734c-20260913.json",
+    "scan135-admission-d89a9838-20260913.json"
+  ],
+  "conclusion": "新优胜收入扫描路线在旧版已入队，停在第3个宏动作公共牌dlc_21的选择；4096执行预算耗尽时仍在frontier。不是该路线被判不可达或被贪心删除。旧版扫描的986个不可达叶属于其他已执行路线，不能代表这条未执行路线。",
+  "pending": [
+    {
+      "action": "choose_card:dlc_21.png → 南河三",
+      "originCount": 1,
+      "rootActionIds": [
+        "scan:1b66b805"
+      ],
+      "routeTargetId": "income:gain:5,2,0,0,2,0",
+      "routePlanId": "income:data:computer-slot-4",
+      "proxyDepth": 0,
+      "chainDepth": 2,
+      "isConditional": true
+    }
+  ],
+  "old": {
+    "executed": 4096,
+    "clusters": [
+      {
+        "targetId": "tech:gain:orange2",
+        "executedOriginCount": 2,
+        "completedTransitionCount": 0
+      },
+      {
+        "targetId": "tech:gain:orange3",
+        "executedOriginCount": 2,
+        "completedTransitionCount": 0
+      },
+      {
+        "targetId": "tech:gain:purple2",
+        "executedOriginCount": 2,
+        "completedTransitionCount": 0
+      },
+      {
+        "targetId": "land:venus:planet:",
+        "executedOriginCount": 56,
+        "completedTransitionCount": 10
+      },
+      {
+        "targetId": "orbit:venus:planet:",
+        "executedOriginCount": 76,
+        "completedTransitionCount": 30
+      },
+      {
+        "targetId": "income:gain:5,2,0,0,2,0",
+        "executedOriginCount": 6,
+        "completedTransitionCount": 3
+      },
+      {
+        "targetId": "sector:win:sector-3-a:1",
+        "executedOriginCount": 3994,
+        "completedTransitionCount": 0
+      }
+    ]
+  },
+  "next": {
+    "executed": 4096,
+    "clusters": [
+      {
+        "targetId": "tech:gain:orange2",
+        "executedOriginCount": 2,
+        "completedTransitionCount": 0
+      },
+      {
+        "targetId": "tech:gain:orange3",
+        "executedOriginCount": 2,
+        "completedTransitionCount": 0
+      },
+      {
+        "targetId": "tech:gain:purple2",
+        "executedOriginCount": 2,
+        "completedTransitionCount": 0
+      },
+      {
+        "targetId": "land:venus:planet:",
+        "executedOriginCount": 56,
+        "completedTransitionCount": 10
+      },
+      {
+        "targetId": "orbit:venus:planet:",
+        "executedOriginCount": 76,
+        "completedTransitionCount": 30
+      },
+      {
+        "targetId": "income:gain:5,2,0,0,2,0",
+        "executedOriginCount": 110,
+        "completedTransitionCount": 33
+      },
+      {
+        "targetId": "sector:win:sector-3-a:1",
+        "executedOriginCount": 2964,
+        "completedTransitionCount": 0
+      }
+    ]
+  },
+  "boundary": "已定位旧优胜候选受预算挤压的具体位置；不据此声称新增免费移动字段如何改变全部竞争分支的排序，也不将全局掉分视为已解决。"
+}

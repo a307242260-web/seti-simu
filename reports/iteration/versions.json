@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "scan-free-cost-20260913",
+      "name": "scan-free-cost-20260913",
+      "date": "2026-09-13",
+      "baseline": "secondary-probe-greedy-20260913",
+      "head": "de73734c",
+      "commits": [
+        "7a184f01",
+        "093a25c6",
+        "3bc2a7b0",
+        "de73734c"
+      ],
+      "summary": "紫4免费移动额度输入修正局部目标通过并合回。542步均87.25，较同世界基线-9.5；旧发射19.67完整叶保留，新扫描46.33取胜，其旧版第三步仍在预算等待队列。实际计划因对手揭示失效；白色-40已分账，PASS381普通留牌用途评分缺口有全候选证据，关联EFFECT-02/04。不是整体策略变强或预算专项通过。",
+      "records": {
+        "874d71c3.de73734c.quick-40.json": {},
+        "874d71c3.de73734c.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "secondary-probe-greedy-20260913",
       "name": "secondary-probe-greedy-20260913",
       "date": "2026-09-13",

@@ -155,10 +155,14 @@ firstMovementPoints来自正式当前位置移动成本，时机准备只补这�
 计划编译保留routeTargetId/routePlanId并采集moveTiming，复用使用与搜索相同的
 当前时机判断；阶段和时机过滤不改变原生合法descriptor或条件Decision结算。
 
-`probeRouteRequirements.movementContext`描述当前普通/公司/卡牌移动阶段：
-`phase`、`cardRemaining`、`companyAvailable`、`companyRemaining`、`usedRocketIds`，
+`probeRouteRequirements.movementContext`描述当前普通/公司/卡牌/扫描移动阶段：
+`phase`、`cardRemaining`、`scanRemaining`、`companyAvailable`、`companyRemaining`、`usedRocketIds`，
 卡牌阶段另有`cardInstanceId`。四种Card Play移动effect复用正式枚举的
 `getMovementAllowance(effect, workingState)`读取剩余点；地球扇区数量在首次执行时计算。
+紫4正式Effect待选且归本席时为`phase=scan, scanRemaining=1`，其他阶段及观察席位
+该额度为0。已有探测器路线扣除这一次免费点，跳过即耗尽，后续恢复普通付费；缓存
+身份包含阶段和额度。本字段不改变紫4合法方向/跳过/发射选择，不代表目录已建模
+紫4发射的优惠费用与派生扫描，也不自动启用方向贪心。
 手牌数量移动先进入`phase=card-reveal`、`cardRemaining=0`的展示阶段；正式choose_card
 的`target.kind=counted-move-reveal`包含待展示的cardInstanceId或finish=true结束项。
 Effect payload的revealedCardInstanceIds记录已展示身份，结束后才将张数冻结为remaining。

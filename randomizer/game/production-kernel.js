@@ -382,6 +382,7 @@ const REQUIREMENTS_CACHE_MAX = 4096;
 function readProbeMovementContext(workingState, player, session) {
   const effect = session?.currentEffect;
   const ownedEffect = effect?.ownerId === player.id ? effect : null;
+  const scanPending = ownedEffect?.type === scienceSession.EFFECT_TYPES.SCAN_ACTION_4;
   const companyPending = ownedEffect?.payload?.abilityId === "huanyu_free_moves"
     && ownedEffect.payload.step === "free_move";
   const allowance = cardPlayDomain.getMovementAllowance(ownedEffect, workingState);
@@ -394,8 +395,9 @@ function readProbeMovementContext(workingState, player, session) {
     throw new TypeError("PROBE_COMPANY_ALLOWANCE_MISSING: 公司移动缺少剩余额度或已用来源");
   }
   return {
-    phase: companyPending ? "company" : cardReveal ? "card-reveal" : allowance != null ? "card" : "ordinary",
+    phase: scanPending ? "scan" : companyPending ? "company" : cardReveal ? "card-reveal" : allowance != null ? "card" : "ordinary",
     cardRemaining: allowance ?? 0,
+    scanRemaining: scanPending ? 1 : 0,
     companyAvailable,
     companyRemaining: companyPending ? ownedEffect.payload.remaining : companyAllowance,
     usedRocketIds: companyPending ? [...ownedEffect.payload.usedRocketIds] : [],
@@ -469,7 +471,8 @@ function buildTopologyBody(workingState, player, context, sources) {
       movePoints: 0,
       paidPoints: 0,
       publicityStops: 0,
-      cardRemaining: source.launchRequired ? 0 : movement.cardRemaining,
+      // 卡牌与扫描阶段共享一次性免费点搜索；公开额度仍按来源分别记录。
+      cardRemaining: source.launchRequired ? 0 : movement.cardRemaining + movement.scanRemaining,
       companyAvailable: !source.launchRequired && movement.companyRemaining > 0
         && !movement.usedRocketIds.includes(source.rocketId),
       companyPending: !source.launchRequired && movement.phase === "company",

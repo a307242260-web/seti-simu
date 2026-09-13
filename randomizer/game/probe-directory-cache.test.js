@@ -117,7 +117,51 @@ try {
         "无自有探测器且发射位可用时保留发射来源");
     }
   }
-  console.log("probe directory borrowed-tech and owner cache tests passed");
+  // 紫4已获得的一点免费移动必须进入当前探测路线成本，而非继续按普通付费估算。
+  const scanState = structuredClone(base);
+  const scanner = scanState.players.players.find(p => p.id === actorId);
+  scanner.resources.credits = 10;
+  scanner.resources.energy = 10;
+  assert.equal(techBoard.consumeStartupTileWithoutRewards(scanState.tech,"purple4").ok,true);
+  assert.equal(playerTech.recordPlayerTake(scanner.techState,"purple4").ok,true);
+  scanner.mainActionCompleted = false;
+  assert.equal(rockets.launchRocketAtSector(scanState.pieces, {x:3,y:1},
+    {root:scanState,playerId:actorId,color:scanner.color}).ok,true);
+  project(scanState);
+  const scanAction = fork.inputPort.enumerateActions({}).find(a=>a.family==="scan");
+  assert(scanAction);
+  assert.equal(fork.inputPort.submitAction(scanAction).ok,true);
+  for(let i=0;i<12&&!fork.inspect().session?.decision?.choices.some(a=>a.target?.choiceId?.startsWith("scan4:"));i++) {
+    const d=fork.inspect().session?.decision;
+    assert(d,"扫描必须经过紫4正式选择");
+    assert.equal(fork.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,
+      ownerId:d.ownerId,choice:d.choices[0]}).ok,true);
+  }
+  const scanEnvelope=fork.lifecycle.save().envelope;
+  const pending=fork.projection({role:"player",playerId:actorId}).state.probeRouteRequirements;
+  assert.equal(pending.movementContext.phase,"scan");
+  assert.equal(pending.movementContext.scanRemaining,1);
+  const observer=base.players.players.find(p=>p.id!==actorId).id;
+  assert.equal(fork.projection({role:"player",playerId:observer}).state.probeRouteRequirements.movementContext.scanRemaining,0);
+  const choices=fork.inspect().session.decision.choices;
+  const remaining=new Map();
+  for(const action of choices.filter(a=>["move","skip"].includes(a.target?.mode))) {
+    assert.equal(fork.lifecycle.restore(scanEnvelope).ok,true);
+    const d=fork.inspect().session.decision;
+    assert.equal(fork.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,
+      ownerId:d.ownerId,choice:action}).ok,true);
+    const after=fork.projection({role:"player",playerId:actorId}).state.probeRouteRequirements;
+    assert.equal(after.movementContext.scanRemaining,0);
+    for(const g of after.candidates) remaining.set(g.requirementId,
+      Math.min(remaining.get(g.requirementId)??Infinity,g.required.energy));
+  }
+  assert(pending.candidates.some(g=>g.movementNextSteps.some(s=>s.family==="choose_target"&&!s.skip)));
+  for(const g of pending.candidates.filter(g=>g.sourceId!=="launch")) {
+    assert.equal(g.required.energy,remaining.get(g.requirementId),`免费一步后正式最小余费：${g.requirementId}`);
+  }
+  assert.equal(fork.lifecycle.restore(scanEnvelope).ok,true);
+  assert.deepEqual(fork.projection({role:"player",playerId:actorId}).state.probeRouteRequirements,pending,"扫描/普通阶段切换缓存隔离");
+  console.log("probe directory borrowed-tech, owner cache and scan allowance tests passed");
 } finally {
   fork?.dispose();
   env.dispose();

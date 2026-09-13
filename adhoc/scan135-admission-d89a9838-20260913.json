@@ -1,0 +1,423 @@
+{
+  "commit": "d89a9838",
+  "source": "adhoc/scan-cost135-de73734c-20260913.json",
+  "scope": "正式隔离fork重放已保存新计划前12步，检查同绑定局部后继准入；不证明全局beam顺序或隐藏后继。",
+  "rows": [
+    {
+      "index": 0,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:a2b5645b",
+        "actorId": "player-green",
+        "stateVersion": 60,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "nebula:sector-1-a",
+          "nebulaId": "sector-1-a",
+          "sectorX": 5
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 南河三"
+      },
+      "routeTargetId": "income:gain:5,2,0,0,2,0",
+      "routePlanId": "income:data:computer-slot-4",
+      "admitted": true,
+      "selectedIds": [
+        "choose_target:a2b5645b"
+      ],
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      }
+    },
+    {
+      "index": 1,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:f8db866c",
+        "actorId": "player-green",
+        "stateVersion": 60,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "public:card-19-0:sector-1-a",
+          "cardInstanceId": "card-19-0",
+          "publicSlotIndex": 2,
+          "nebulaId": "sector-1-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "dlc_21.png → 南河三",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-19-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_21.png",
+          "imageAlt": "dlc_21.png"
+        }
+      },
+      "routeTargetId": "income:gain:5,2,0,0,2,0",
+      "routePlanId": "income:data:computer-slot-4",
+      "admitted": true,
+      "selectedIds": [
+        "choose_card:f8db866c"
+      ],
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      }
+    },
+    {
+      "index": 2,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:a4e3e3d6",
+        "actorId": "player-green",
+        "stateVersion": 60,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "scan4:skip",
+          "mode": "skip"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "跳过"
+      },
+      "routeTargetId": "income:gain:5,2,0,0,2,0",
+      "routePlanId": "income:data:computer-slot-4",
+      "admitted": true,
+      "selectedIds": [
+        "choose_target:a4e3e3d6",
+        "choose_target:dbdce216"
+      ],
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      }
+    },
+    {
+      "index": 3,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:1f65daa3",
+        "actorId": "player-green",
+        "stateVersion": 61,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      },
+      "routeTargetId": "income:gain:5,2,0,0,2,0",
+      "routePlanId": "income:data:computer-slot-4",
+      "admitted": true,
+      "selectedIds": [
+        "end_turn:1f65daa3"
+      ],
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      }
+    },
+    {
+      "index": 4,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 63,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "routeTargetId": "income:gain:5,2,0,0,2,0",
+      "routePlanId": "income:data:computer-slot-4",
+      "admitted": true,
+      "selectedIds": [
+        "place_data:dbe01b29"
+      ],
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      }
+    },
+    {
+      "index": 5,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:52efd39a",
+        "actorId": "player-green",
+        "stateVersion": 63,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 1"
+      },
+      "routeTargetId": "income:gain:5,2,0,0,2,0",
+      "routePlanId": "income:data:computer-slot-4",
+      "admitted": true,
+      "selectedIds": [
+        "choose_target:52efd39a"
+      ],
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      }
+    },
+    {
+      "index": 6,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "place_data",
+        "phase": "quick",
+        "actionId": "place_data:dbe01b29",
+        "actorId": "player-green",
+        "stateVersion": 64,
+        "decisionVersion": 2,
+        "target": {
+          "kind": "place-data"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "放置数据"
+      },
+      "routeTargetId": "income:gain:5,2,0,0,2,0",
+      "routePlanId": "income:data:computer-slot-4",
+      "admitted": true,
+      "selectedIds": [
+        "place_data:dbe01b29"
+      ],
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      }
+    },
+    {
+      "index": 7,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:52efd39a",
+        "actorId": "player-green",
+        "stateVersion": 64,
+        "decisionVersion": 2,
+        "target": {
+          "choiceId": "data:computer",
+          "target": "computer",
+          "blueSlot": null
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "第一排放置位 2"
+      },
+      "routeTargetId": "income:gain:5,2,0,0,2,0",
+      "routePlanId": "income:data:computer-slot-4",
+      "admitted": true,
+      "selectedIds": [
+        "choose_target:52efd39a"
+      ],
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      }
+    },
+    {
+      "index": 8,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "quick_trade",
+        "phase": "quick",
+        "actionId": "quick_trade:ee5652be",
+        "actorId": "player-green",
+        "stateVersion": 65,
+        "decisionVersion": 2,
+        "target": {
+          "tradeId": "credits-for-energy"
+        },
+        "payload": {
+          "cost": {
+            "credits": 2
+          },
+          "gain": {
+            "energy": 1
+          }
+        },
+        "decision": null,
+        "summary": "2信用点 → 1能量"
+      },
+      "routeTargetId": "income:gain:5,2,0,0,2,0",
+      "routePlanId": "income:data:computer-slot-4",
+      "admitted": true,
+      "selectedIds": [
+        "quick_trade:ee5652be",
+        "quick_trade:0037d2c5"
+      ],
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      }
+    },
+    {
+      "index": 9,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "scan",
+        "phase": "main",
+        "actionId": "scan:1b66b805",
+        "actorId": "player-green",
+        "stateVersion": 66,
+        "decisionVersion": 3,
+        "target": {
+          "kind": "standard-scan"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "扫描"
+      },
+      "routeTargetId": "income:gain:5,2,0,0,2,0",
+      "routePlanId": "income:data:computer-slot-4",
+      "admitted": true,
+      "selectedIds": [
+        "scan:1b66b805"
+      ],
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      }
+    },
+    {
+      "index": 10,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:a2b5645b",
+        "actorId": "player-green",
+        "stateVersion": 66,
+        "decisionVersion": 3,
+        "target": {
+          "choiceId": "nebula:sector-1-a",
+          "nebulaId": "sector-1-a",
+          "sectorX": 5
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 南河三"
+      },
+      "routeTargetId": "income:gain:5,2,0,0,2,0",
+      "routePlanId": "income:data:computer-slot-4",
+      "admitted": true,
+      "selectedIds": [
+        "choose_target:a2b5645b"
+      ],
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      }
+    },
+    {
+      "index": 11,
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:016f72e5",
+        "actorId": "player-green",
+        "stateVersion": 66,
+        "decisionVersion": 3,
+        "target": {
+          "choiceId": "public:card-42-0:sector-3-a",
+          "cardInstanceId": "card-42-0",
+          "publicSlotIndex": 1,
+          "nebulaId": "sector-3-a"
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "dlc_37.png → 开普勒22",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-42-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_37.png",
+          "imageAlt": "dlc_37.png"
+        }
+      },
+      "routeTargetId": "income:gain:5,2,0,0,2,0",
+      "routePlanId": "income:data:computer-slot-4",
+      "admitted": true,
+      "selectedIds": [
+        "choose_card:016f72e5"
+      ],
+      "movement": {
+        "phase": "ordinary",
+        "cardRemaining": 0,
+        "companyAvailable": true,
+        "companyRemaining": 2,
+        "usedRocketIds": []
+      }
+    }
+  ]
+}

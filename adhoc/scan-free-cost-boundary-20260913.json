@@ -1,0 +1,80 @@
+{
+  "source": "adhoc/budget485-scan4-20260913.json",
+  "legalChoicesUnchanged": true,
+  "movement": {
+    "phase": "scan",
+    "cardRemaining": 0,
+    "scanRemaining": 1,
+    "companyAvailable": false,
+    "companyRemaining": 0,
+    "usedRocketIds": []
+  },
+  "rows": [
+    {
+      "requirement": "rocket:13:orbit:uranus:planet:",
+      "previous": 7,
+      "current": 6,
+      "formalMinimum": 6
+    },
+    {
+      "requirement": "rocket:13:land:mercury:planet:",
+      "previous": 7,
+      "current": 6,
+      "formalMinimum": 6
+    },
+    {
+      "requirement": "rocket:13:land:uranus:planet:",
+      "previous": 9,
+      "current": 8,
+      "formalMinimum": 8
+    },
+    {
+      "requirement": "rocket:13:land:saturn:planet:",
+      "previous": 5,
+      "current": 4,
+      "formalMinimum": 4
+    },
+    {
+      "requirement": "rocket:13:orbit:neptune:planet:",
+      "previous": 5,
+      "current": 4,
+      "formalMinimum": 4
+    },
+    {
+      "requirement": "rocket:13:land:neptune:planet:",
+      "previous": 7,
+      "current": 6,
+      "formalMinimum": 6
+    },
+    {
+      "requirement": "rocket:13:orbit:mercury:planet:",
+      "previous": 5,
+      "current": 4,
+      "formalMinimum": 4
+    },
+    {
+      "requirement": "rocket:13:land:jupiter:planet:",
+      "previous": 7,
+      "current": 6,
+      "formalMinimum": 6
+    },
+    {
+      "requirement": "rocket:13:land:mars:planet:",
+      "previous": 4,
+      "current": 3,
+      "formalMinimum": 3
+    },
+    {
+      "requirement": "rocket:13:orbit:venus:planet:",
+      "previous": 3,
+      "current": 2,
+      "formalMinimum": 2
+    },
+    {
+      "requirement": "rocket:13:land:venus:planet:",
+      "previous": 4,
+      "current": 3,
+      "formalMinimum": 3
+    }
+  ]
+}
