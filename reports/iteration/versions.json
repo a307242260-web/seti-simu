@@ -7,6 +7,28 @@
   },
   "versions": [
     {
+      "id": "income-choice-greedy-20260913",
+      "name": "income-choice-greedy-20260913",
+      "date": "2026-09-13",
+      "baseline": "data-corner-greedy-20260913",
+      "head": "5ef60d81",
+      "commits": [
+        "9c679f08",
+        "53dca1c7",
+        "dec8589f",
+        "4032cf58",
+        "ea6ed08f",
+        "4338216c",
+        "5ef60d81"
+      ],
+      "summary": "收入奖励同收益选牌局部择一，保留不同收益、未知牌和指定牌目标，不改估值与预算",
+      "records": {
+        "ac7f0082.5ef60d81.quick-40.json": {},
+        "ac7f0082.5ef60d81.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "data-corner-greedy-20260913",
       "name": "data-corner-greedy-20260913",
       "date": "2026-09-13",

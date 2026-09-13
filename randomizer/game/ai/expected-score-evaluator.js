@@ -1909,10 +1909,32 @@
     return display.length ? display : withoutCancel;
   }
 
+  function selectGreedyIncomeChoices(observation, actions) {
+    const owner = observation?.perspectivePlayerId ?? observation?.viewer?.seatId;
+    if (!actions.length || !actions.every(action => action.family === "choose_card"
+      && action.phase === "conditional" && action.actorId === owner
+      && action.target?.choiceId === `income:${action.target?.cardInstanceId}`)) return actions;
+    const hand = new Map((observation?.selfState?.hand || []).map(card => [card.id, card]));
+    const keys = new Map();
+    const best = new Map();
+    for (const action of actions) {
+      const card = hand.get(action.target.cardInstanceId);
+      const gain = card?.cardId ? cards.getIncomeGainForCard(card) : null;
+      if (!gain) continue;
+      const key = JSON.stringify([Object.entries(gain).sort(), action.payload, outcomeModel.isAlienCard(card)]);
+      keys.set(action, key);
+      const previous = best.get(key);
+      if (!previous || String(action.actionId).localeCompare(String(previous.actionId)) < 0) best.set(key, action);
+    }
+    // 正式收入相同但移出的牌不同：有损代表，不计状态等价省略，不读取隐藏牌。
+    return actions.filter(action => !keys.has(action) || best.get(keys.get(action)) === action);
+  }
+
   function enumerateSecondaryAgentRootTargets(input = {}) {
     const legalActions = selectNonredundantTuringActions(input.rootObservation,
       selectGreedyAlienTracePositions(input.rootObservation,
-        selectGreedyAlienCardChoices(input.rootObservation, input.legalActions || [], true)))
+        selectGreedyIncomeChoices(input.rootObservation,
+          selectGreedyAlienCardChoices(input.rootObservation, input.legalActions || [], true))))
       .sort((left, right) => String(left.actionId).localeCompare(String(right.actionId)));
     const legalIds = new Set(legalActions.map((action) => action.actionId));
     const targets = new Map();
@@ -2881,7 +2903,10 @@
 
   function selectSecondaryAgentSuccessors(input = {}) {
     const successors = selectNonredundantTuringActions(input.branchObservation,
-      selectGreedyAlienTracePositions(input.branchObservation, input.legalSuccessors || []), input.currentAction)
+      selectGreedyAlienTracePositions(input.branchObservation,
+        String(input.routeTargetId || "").startsWith("card:")
+          ? input.legalSuccessors || []
+          : selectGreedyIncomeChoices(input.branchObservation, input.legalSuccessors || [])), input.currentAction)
       .sort((left, right) => String(left.actionId).localeCompare(String(right.actionId)));
     if (!successors.length) return [];
     const bindRoute = (

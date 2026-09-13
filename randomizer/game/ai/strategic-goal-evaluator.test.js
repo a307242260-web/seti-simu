@@ -6,6 +6,33 @@ const evaluator = require("./expected-score-evaluator");
 
 const seatId = "strategic-seat";
 
+// 同收入收益局部择一；手牌未来用途不同，不计等价省略。
+{
+  const hand = [
+    { id: "a", cardId: "dlc_35.png", incomeCode: 2 },
+    { id: "b", cardId: "dlc_11.png", incomeCode: 2 },
+    { id: "c", cardId: "b_115.webp", incomeCode: 0 },
+    { id: "unknown", cardId: "unknown-card" },
+  ];
+  const obs = observation({ hand });
+  const choices = hand.map(card => ({ actionId: `income:${card.id}`, actorId: seatId,
+    family: "choose_card", phase: "conditional", payload: {},
+    target: { choiceId: `income:${card.id}`, cardInstanceId: card.id } }));
+  const roots = actions => evaluator.selectSecondaryAgentRootActions({ focalSeatId: seatId,
+    rootObservation: obs, legalActions: actions });
+  const select = (actions, routeTargetId = "orbit:mars:planet:") => evaluator.selectSecondaryAgentSuccessors({
+    focalSeatId: seatId, branchObservation: obs, legalSuccessors: actions,
+    routeTargetId, routePlanId: routeTargetId });
+  for (const actions of [choices, [...choices].reverse()]) {
+    for (const result of [roots(actions), select(actions), select(actions, null)]) {
+      assert.deepEqual(result.map(a => a.actionId).sort(), ["income:a", "income:c", "income:unknown"]);
+      assert(result.every(a => !a.targetEquivalentChoiceCount));
+    }
+  }
+  assert.equal(select(choices, "card:resolve:bound").length, 4, "指定牌目标不折叠收入身份");
+  assert.equal(roots(choices.map(a => ({ ...a, actorId: "another-seat" }))).length, 4);
+}
+
 // 路线停止结果仍可诊断，但不能靠途中收益压过真实完成的前缀。
 {
   const candidate = action("launch:purpose", "launch");

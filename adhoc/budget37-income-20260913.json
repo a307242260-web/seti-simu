@@ -1,0 +1,4883 @@
+{
+  "summary": {
+    "prefixCount": 6,
+    "choiceCount": 24,
+    "gainGroups": 6,
+    "sameGainAlternatives": 18,
+    "boundary": "正式回放本席当前可见收入选择；相同收益组公开玩家结果一致，但剩余手牌身份不同，不证明状态等价或最优路线保留。"
+  },
+  "rows": [
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 2 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_2.webp",
+          "target": {
+            "choiceId": "pick:card-17-0",
+            "cardInstanceId": "card-17-0",
+            "publicSlotIndex": 0
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:6afd8cd2",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-5-0",
+          "cardInstanceId": "card-5-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_35.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-5-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_35.png",
+          "imageAlt": "dlc_35.png"
+        }
+      },
+      "card": {
+        "id": "card-5-0",
+        "cardId": "dlc_35.png",
+        "set": "space-agency",
+        "price": 1,
+        "cardTypeCode": 2,
+        "discardActionCode": 0,
+        "scanActionCode": 0,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-6-0",
+        "card-7-0",
+        "card-17-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 2 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_2.webp",
+          "target": {
+            "choiceId": "pick:card-17-0",
+            "cardInstanceId": "card-17-0",
+            "publicSlotIndex": 0
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:95c043de",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-17-0",
+          "cardInstanceId": "card-17-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_2.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-17-0",
+          "imageSrc": "../assets/cards/basic/split/b_2.webp",
+          "imageAlt": "b_2.webp"
+        }
+      },
+      "card": {
+        "id": "card-17-0",
+        "cardId": "b_2.webp",
+        "set": "basic",
+        "price": 1,
+        "cardTypeCode": 1,
+        "discardActionCode": 0,
+        "scanActionCode": 2,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-6-0",
+        "card-7-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 2 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_2.webp",
+          "target": {
+            "choiceId": "pick:card-17-0",
+            "cardInstanceId": "card-17-0",
+            "publicSlotIndex": 0
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:b0a3fa5c",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-6-0",
+          "cardInstanceId": "card-6-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_115.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-6-0",
+          "imageSrc": "../assets/cards/basic/split/b_115.webp",
+          "imageAlt": "b_115.webp"
+        }
+      },
+      "card": {
+        "id": "card-6-0",
+        "cardId": "b_115.webp",
+        "set": "basic",
+        "price": 2,
+        "cardTypeCode": 3,
+        "discardActionCode": 1,
+        "scanActionCode": 2,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-7-0",
+        "card-17-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 2 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_2.webp",
+          "target": {
+            "choiceId": "pick:card-17-0",
+            "cardInstanceId": "card-17-0",
+            "publicSlotIndex": 0
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:e72339e2",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-7-0",
+          "cardInstanceId": "card-7-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_11.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-7-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_11.png",
+          "imageAlt": "dlc_11.png"
+        }
+      },
+      "card": {
+        "id": "card-7-0",
+        "cardId": "dlc_11.png",
+        "set": "space-agency",
+        "price": 3,
+        "cardTypeCode": 2,
+        "discardActionCode": 1,
+        "scanActionCode": 1,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-6-0",
+        "card-17-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 2 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_87.webp",
+          "target": {
+            "choiceId": "pick:card-38-0",
+            "cardInstanceId": "card-38-0",
+            "publicSlotIndex": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:6afd8cd2",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-5-0",
+          "cardInstanceId": "card-5-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_35.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-5-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_35.png",
+          "imageAlt": "dlc_35.png"
+        }
+      },
+      "card": {
+        "id": "card-5-0",
+        "cardId": "dlc_35.png",
+        "set": "space-agency",
+        "price": 1,
+        "cardTypeCode": 2,
+        "discardActionCode": 0,
+        "scanActionCode": 0,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-6-0",
+        "card-7-0",
+        "card-38-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 2 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_87.webp",
+          "target": {
+            "choiceId": "pick:card-38-0",
+            "cardInstanceId": "card-38-0",
+            "publicSlotIndex": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:b0a3fa5c",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-6-0",
+          "cardInstanceId": "card-6-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_115.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-6-0",
+          "imageSrc": "../assets/cards/basic/split/b_115.webp",
+          "imageAlt": "b_115.webp"
+        }
+      },
+      "card": {
+        "id": "card-6-0",
+        "cardId": "b_115.webp",
+        "set": "basic",
+        "price": 2,
+        "cardTypeCode": 3,
+        "discardActionCode": 1,
+        "scanActionCode": 2,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-7-0",
+        "card-38-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 2 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_87.webp",
+          "target": {
+            "choiceId": "pick:card-38-0",
+            "cardInstanceId": "card-38-0",
+            "publicSlotIndex": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:e72339e2",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-7-0",
+          "cardInstanceId": "card-7-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_11.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-7-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_11.png",
+          "imageAlt": "dlc_11.png"
+        }
+      },
+      "card": {
+        "id": "card-7-0",
+        "cardId": "dlc_11.png",
+        "set": "space-agency",
+        "price": 3,
+        "cardTypeCode": 2,
+        "discardActionCode": 1,
+        "scanActionCode": 1,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-6-0",
+        "card-38-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 2 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_87.webp",
+          "target": {
+            "choiceId": "pick:card-38-0",
+            "cardInstanceId": "card-38-0",
+            "publicSlotIndex": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:f710a06a",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-38-0",
+          "cardInstanceId": "card-38-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_87.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-38-0",
+          "imageSrc": "../assets/cards/basic/split/b_87.webp",
+          "imageAlt": "b_87.webp"
+        }
+      },
+      "card": {
+        "id": "card-38-0",
+        "cardId": "b_87.webp",
+        "set": "basic",
+        "price": 2,
+        "cardTypeCode": 0,
+        "discardActionCode": 1,
+        "scanActionCode": 1,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-6-0",
+        "card-7-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 2 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "dlc_21.png",
+          "target": {
+            "choiceId": "pick:card-19-0",
+            "cardInstanceId": "card-19-0",
+            "publicSlotIndex": 2
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:6afd8cd2",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-5-0",
+          "cardInstanceId": "card-5-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_35.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-5-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_35.png",
+          "imageAlt": "dlc_35.png"
+        }
+      },
+      "card": {
+        "id": "card-5-0",
+        "cardId": "dlc_35.png",
+        "set": "space-agency",
+        "price": 1,
+        "cardTypeCode": 2,
+        "discardActionCode": 0,
+        "scanActionCode": 0,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-6-0",
+        "card-7-0",
+        "card-19-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 2 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "dlc_21.png",
+          "target": {
+            "choiceId": "pick:card-19-0",
+            "cardInstanceId": "card-19-0",
+            "publicSlotIndex": 2
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:b0a3fa5c",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-6-0",
+          "cardInstanceId": "card-6-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_115.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-6-0",
+          "imageSrc": "../assets/cards/basic/split/b_115.webp",
+          "imageAlt": "b_115.webp"
+        }
+      },
+      "card": {
+        "id": "card-6-0",
+        "cardId": "b_115.webp",
+        "set": "basic",
+        "price": 2,
+        "cardTypeCode": 3,
+        "discardActionCode": 1,
+        "scanActionCode": 2,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-7-0",
+        "card-19-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 2 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "dlc_21.png",
+          "target": {
+            "choiceId": "pick:card-19-0",
+            "cardInstanceId": "card-19-0",
+            "publicSlotIndex": 2
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:c4a14946",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-19-0",
+          "cardInstanceId": "card-19-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_21.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-19-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_21.png",
+          "imageAlt": "dlc_21.png"
+        }
+      },
+      "card": {
+        "id": "card-19-0",
+        "cardId": "dlc_21.png",
+        "set": "space-agency",
+        "price": 0,
+        "cardTypeCode": 1,
+        "discardActionCode": 1,
+        "scanActionCode": 2,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-6-0",
+        "card-7-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 2 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:2:out",
+            "rocketId": 2,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "dlc_21.png",
+          "target": {
+            "choiceId": "pick:card-19-0",
+            "cardInstanceId": "card-19-0",
+            "publicSlotIndex": 2
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:e72339e2",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-7-0",
+          "cardInstanceId": "card-7-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_11.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-7-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_11.png",
+          "imageAlt": "dlc_11.png"
+        }
+      },
+      "card": {
+        "id": "card-7-0",
+        "cardId": "dlc_11.png",
+        "set": "space-agency",
+        "price": 3,
+        "cardTypeCode": 2,
+        "discardActionCode": 1,
+        "scanActionCode": 1,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 5,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-6-0",
+        "card-19-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "结束移动",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_2.webp",
+          "target": {
+            "choiceId": "pick:card-17-0",
+            "cardInstanceId": "card-17-0",
+            "publicSlotIndex": 0
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:6afd8cd2",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-5-0",
+          "cardInstanceId": "card-5-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_35.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-5-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_35.png",
+          "imageAlt": "dlc_35.png"
+        }
+      },
+      "card": {
+        "id": "card-5-0",
+        "cardId": "dlc_35.png",
+        "set": "space-agency",
+        "price": 1,
+        "cardTypeCode": 2,
+        "discardActionCode": 0,
+        "scanActionCode": 0,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-6-0",
+        "card-7-0",
+        "card-17-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "结束移动",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_2.webp",
+          "target": {
+            "choiceId": "pick:card-17-0",
+            "cardInstanceId": "card-17-0",
+            "publicSlotIndex": 0
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:95c043de",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-17-0",
+          "cardInstanceId": "card-17-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_2.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-17-0",
+          "imageSrc": "../assets/cards/basic/split/b_2.webp",
+          "imageAlt": "b_2.webp"
+        }
+      },
+      "card": {
+        "id": "card-17-0",
+        "cardId": "b_2.webp",
+        "set": "basic",
+        "price": 1,
+        "cardTypeCode": 1,
+        "discardActionCode": 0,
+        "scanActionCode": 2,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-6-0",
+        "card-7-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "结束移动",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_2.webp",
+          "target": {
+            "choiceId": "pick:card-17-0",
+            "cardInstanceId": "card-17-0",
+            "publicSlotIndex": 0
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:b0a3fa5c",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-6-0",
+          "cardInstanceId": "card-6-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_115.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-6-0",
+          "imageSrc": "../assets/cards/basic/split/b_115.webp",
+          "imageAlt": "b_115.webp"
+        }
+      },
+      "card": {
+        "id": "card-6-0",
+        "cardId": "b_115.webp",
+        "set": "basic",
+        "price": 2,
+        "cardTypeCode": 3,
+        "discardActionCode": 1,
+        "scanActionCode": 2,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-7-0",
+        "card-17-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "结束移动",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_2.webp",
+          "target": {
+            "choiceId": "pick:card-17-0",
+            "cardInstanceId": "card-17-0",
+            "publicSlotIndex": 0
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:e72339e2",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-7-0",
+          "cardInstanceId": "card-7-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_11.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-7-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_11.png",
+          "imageAlt": "dlc_11.png"
+        }
+      },
+      "card": {
+        "id": "card-7-0",
+        "cardId": "dlc_11.png",
+        "set": "space-agency",
+        "price": 3,
+        "cardTypeCode": 2,
+        "discardActionCode": 1,
+        "scanActionCode": 1,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-6-0",
+        "card-17-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "结束移动",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_87.webp",
+          "target": {
+            "choiceId": "pick:card-38-0",
+            "cardInstanceId": "card-38-0",
+            "publicSlotIndex": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:6afd8cd2",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-5-0",
+          "cardInstanceId": "card-5-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_35.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-5-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_35.png",
+          "imageAlt": "dlc_35.png"
+        }
+      },
+      "card": {
+        "id": "card-5-0",
+        "cardId": "dlc_35.png",
+        "set": "space-agency",
+        "price": 1,
+        "cardTypeCode": 2,
+        "discardActionCode": 0,
+        "scanActionCode": 0,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-6-0",
+        "card-7-0",
+        "card-38-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "结束移动",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_87.webp",
+          "target": {
+            "choiceId": "pick:card-38-0",
+            "cardInstanceId": "card-38-0",
+            "publicSlotIndex": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:b0a3fa5c",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-6-0",
+          "cardInstanceId": "card-6-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_115.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-6-0",
+          "imageSrc": "../assets/cards/basic/split/b_115.webp",
+          "imageAlt": "b_115.webp"
+        }
+      },
+      "card": {
+        "id": "card-6-0",
+        "cardId": "b_115.webp",
+        "set": "basic",
+        "price": 2,
+        "cardTypeCode": 3,
+        "discardActionCode": 1,
+        "scanActionCode": 2,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-7-0",
+        "card-38-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "结束移动",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_87.webp",
+          "target": {
+            "choiceId": "pick:card-38-0",
+            "cardInstanceId": "card-38-0",
+            "publicSlotIndex": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:e72339e2",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-7-0",
+          "cardInstanceId": "card-7-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_11.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-7-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_11.png",
+          "imageAlt": "dlc_11.png"
+        }
+      },
+      "card": {
+        "id": "card-7-0",
+        "cardId": "dlc_11.png",
+        "set": "space-agency",
+        "price": 3,
+        "cardTypeCode": 2,
+        "discardActionCode": 1,
+        "scanActionCode": 1,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-6-0",
+        "card-38-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "结束移动",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "b_87.webp",
+          "target": {
+            "choiceId": "pick:card-38-0",
+            "cardInstanceId": "card-38-0",
+            "publicSlotIndex": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:f710a06a",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-38-0",
+          "cardInstanceId": "card-38-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_87.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-38-0",
+          "imageSrc": "../assets/cards/basic/split/b_87.webp",
+          "imageAlt": "b_87.webp"
+        }
+      },
+      "card": {
+        "id": "card-38-0",
+        "cardId": "b_87.webp",
+        "set": "basic",
+        "price": 2,
+        "cardTypeCode": 0,
+        "discardActionCode": 1,
+        "scanActionCode": 1,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-6-0",
+        "card-7-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "结束移动",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "dlc_21.png",
+          "target": {
+            "choiceId": "pick:card-19-0",
+            "cardInstanceId": "card-19-0",
+            "publicSlotIndex": 2
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:6afd8cd2",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-5-0",
+          "cardInstanceId": "card-5-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_35.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-5-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_35.png",
+          "imageAlt": "dlc_35.png"
+        }
+      },
+      "card": {
+        "id": "card-5-0",
+        "cardId": "dlc_35.png",
+        "set": "space-agency",
+        "price": 1,
+        "cardTypeCode": 2,
+        "discardActionCode": 0,
+        "scanActionCode": 0,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-6-0",
+        "card-7-0",
+        "card-19-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "结束移动",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "dlc_21.png",
+          "target": {
+            "choiceId": "pick:card-19-0",
+            "cardInstanceId": "card-19-0",
+            "publicSlotIndex": 2
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:b0a3fa5c",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-6-0",
+          "cardInstanceId": "card-6-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 b_115.webp",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-6-0",
+          "imageSrc": "../assets/cards/basic/split/b_115.webp",
+          "imageAlt": "b_115.webp"
+        }
+      },
+      "card": {
+        "id": "card-6-0",
+        "cardId": "b_115.webp",
+        "set": "basic",
+        "price": 2,
+        "cardTypeCode": 3,
+        "discardActionCode": 1,
+        "scanActionCode": 2,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-7-0",
+        "card-19-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "结束移动",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "dlc_21.png",
+          "target": {
+            "choiceId": "pick:card-19-0",
+            "cardInstanceId": "card-19-0",
+            "publicSlotIndex": 2
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:c4a14946",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-19-0",
+          "cardInstanceId": "card-19-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_21.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-19-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_21.png",
+          "imageAlt": "dlc_21.png"
+        }
+      },
+      "card": {
+        "id": "card-19-0",
+        "cardId": "dlc_21.png",
+        "set": "space-agency",
+        "price": 0,
+        "cardTypeCode": 1,
+        "discardActionCode": 1,
+        "scanActionCode": 2,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-6-0",
+        "card-7-0",
+        "card-40-0"
+      ]
+    },
+    {
+      "prefix": [
+        {
+          "family": "industry",
+          "summary": "寰宇动力 1x 行动",
+          "target": {
+            "companyId": "寰宇动力",
+            "abilityId": "huanyu_free_moves"
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "移动 1 向外",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "move:1:out",
+            "rocketId": 1,
+            "deltaX": 0,
+            "deltaY": 1
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "结束移动",
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "skip",
+            "skip": true
+          }
+        },
+        {
+          "family": "orbit",
+          "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）",
+          "target": {
+            "rocketId": 1,
+            "planetId": "mars"
+          }
+        },
+        {
+          "family": "choose_card",
+          "summary": "dlc_21.png",
+          "target": {
+            "choiceId": "pick:card-19-0",
+            "cardInstanceId": "card-19-0",
+            "publicSlotIndex": 2
+          }
+        },
+        {
+          "family": "choose_target",
+          "summary": "扫描 南河三",
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          }
+        }
+      ],
+      "choice": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:e72339e2",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-7-0",
+          "cardInstanceId": "card-7-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_11.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-7-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_11.png",
+          "imageAlt": "dlc_11.png"
+        }
+      },
+      "card": {
+        "id": "card-7-0",
+        "cardId": "dlc_11.png",
+        "set": "space-agency",
+        "price": 3,
+        "cardTypeCode": 2,
+        "discardActionCode": 1,
+        "scanActionCode": 1,
+        "incomeCode": 2,
+        "faceUp": true
+      },
+      "incomeGain": {
+        "handSize": 1
+      },
+      "publicPlayerBefore": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "publicPlayerAfter": {
+        "playerId": "player-green",
+        "industryAbilityId": "huanyu_free_moves",
+        "color": "green",
+        "playerLabel": "绿色玩家",
+        "score": 12,
+        "finalScore": 12,
+        "scoreBreakdown": null,
+        "scoreSources": null,
+        "credits": 3,
+        "energy": 2,
+        "publicity": 4,
+        "availableData": 3,
+        "additionalPublicScan": 0,
+        "handCount": 4,
+        "reservedCount": 0,
+        "completedTaskCount": 0,
+        "dataProgress": {
+          "discardedCount": 0,
+          "computerSlots": [],
+          "blueBonusCount": 0,
+          "blueSlots": [],
+          "analyzeReady": false
+        },
+        "techState": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {}
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 5,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "blueBonusAssets": {
+          "credits": 0,
+          "energy": 0,
+          "ordinaryCards": 0
+        },
+        "passed": false,
+        "mainActionCompleted": true,
+        "companyBaseIncome": {
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1
+        },
+        "securedEndGameBonus": 0
+      },
+      "remainingHand": [
+        "card-5-0",
+        "card-6-0",
+        "card-19-0",
+        "card-40-0"
+      ]
+    }
+  ]
+}

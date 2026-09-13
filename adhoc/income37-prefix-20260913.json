@@ -1,0 +1,205 @@
+{
+  "scope": "只核验根已公开dlc21的精选与打出，以及收入分支删除；收入发生的真实盲抽不作为搜索评分证据，不证明整条假设链收益。",
+  "rows": [
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "industry",
+        "phase": "quick",
+        "actionId": "industry:5bda1856",
+        "actorId": "player-green",
+        "stateVersion": 8,
+        "decisionVersion": 0,
+        "target": {
+          "companyId": "寰宇动力",
+          "abilityId": "huanyu_free_moves"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "寰宇动力 1x 行动"
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:b849344b",
+        "actorId": "player-green",
+        "stateVersion": 8,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:1:out",
+          "rocketId": 1,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 1 向外"
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:96f6cb01",
+        "actorId": "player-green",
+        "stateVersion": 8,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "residual-domain",
+          "choiceId": "move:2:out",
+          "rocketId": 2,
+          "deltaX": 0,
+          "deltaY": 1
+        },
+        "payload": {
+          "direction": "out"
+        },
+        "decision": null,
+        "summary": "移动 2 向外"
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "orbit",
+        "phase": "main",
+        "actionId": "orbit:0b7a5527",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "rocketId": 1,
+          "planetId": "mars"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R1，1信用点 + 1能量）"
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:a677d061",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "pick:card-19-0",
+          "cardInstanceId": "card-19-0",
+          "publicSlotIndex": 2
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "dlc_21.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-19-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_21.png",
+          "imageAlt": "dlc_21.png"
+        }
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_target",
+        "phase": "conditional",
+        "actionId": "choose_target:a2b5645b",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "nebula:sector-1-a",
+          "nebulaId": "sector-1-a",
+          "sectorX": 5
+        },
+        "payload": {
+          "gainData": true
+        },
+        "decision": null,
+        "summary": "扫描 南河三"
+      }
+    },
+    {
+      "incomeChoices": [
+        "choose_card:6afd8cd2",
+        "choose_card:b0a3fa5c",
+        "choose_card:e72339e2",
+        "choose_card:c4a14946"
+      ],
+      "selected": [
+        "choose_card:6afd8cd2"
+      ]
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "choose_card",
+        "phase": "conditional",
+        "actionId": "choose_card:6afd8cd2",
+        "actorId": "player-green",
+        "stateVersion": 9,
+        "decisionVersion": 0,
+        "target": {
+          "choiceId": "income:card-5-0",
+          "cardInstanceId": "card-5-0"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "收入 dlc_35.png",
+        "presentation": {
+          "cardKind": "pick",
+          "cardId": "card-5-0",
+          "imageSrc": "../assets/cards/space-agency/split/dlc_35.png",
+          "imageAlt": "dlc_35.png"
+        }
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "end_turn",
+        "phase": "turn_control",
+        "actionId": "end_turn:1f65daa3",
+        "actorId": "player-green",
+        "stateVersion": 10,
+        "decisionVersion": 0,
+        "target": {
+          "kind": "end-turn"
+        },
+        "payload": {},
+        "decision": null,
+        "summary": "结束回合"
+      }
+    },
+    {
+      "action": {
+        "schemaVersion": "seti-standard-action-v1",
+        "family": "play_card",
+        "phase": "main",
+        "actionId": "play_card:e414fd00",
+        "actorId": "player-green",
+        "stateVersion": 12,
+        "decisionVersion": 0,
+        "target": {
+          "cardInstanceId": "card-19-0"
+        },
+        "payload": {
+          "cost": {},
+          "handIndex": 2
+        },
+        "decision": null,
+        "summary": "dlc_21.png"
+      }
+    }
+  ]
+}

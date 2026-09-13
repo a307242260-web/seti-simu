@@ -194,7 +194,7 @@
       <h1>当前 Base 机器人策略<br>全景报告</h1>
       <p class="lede">从可见状态、目标准入、反事实执行、叶估值、稳定决胜到计划复用，本报告说明当前机器人的完整决策流程。核心策略是：<strong>先确定值得完成的目标，再搜索能推进目标的动作</strong>。</p>
       <div class="stamp-row">
-        <span class="stamp good">Base: data-corner-greedy-20260913</span>
+        <span class="stamp good">Base: income-choice-greedy-20260913</span>
         <span class="stamp">Policy: seti-heuristic-policy-v0</span>
         <span class="stamp">Rollout: secondary-agent-rollout-v21</span>
         <span class="stamp warn">进行中：预算与耗时专项；无目标普通搜索暂缓</span>
@@ -206,10 +206,10 @@
       <h2>一句话判断</h2>
       <div class="callout"><strong>当前 base 采用目标引导与需求驱动的启发式策略。</strong> 机器人在共享规则内核中执行反事实路线，按真实结果与未来收益估值，并通过逐步依赖检查复用计划；搜索受固定节点、队列和深度预算约束。</div>
       <div class="grid grid-4" style="margin-top:16px">
-        <div class="card metric"><strong class="accent">87.25</strong><span>固定盘面完整终局均分（较前版不变）</span></div>
-        <div class="card metric"><strong>542</strong><span>自然终局正式输入步数</span></div>
-        <div class="card metric"><strong class="amber">35</strong><span>战略搜索达到 4096 节点上限</span></div>
-        <div class="card metric"><strong>797.1s</strong><span>完整局墙钟耗时（quick加续跑）</span></div>
+        <div class="card metric"><strong class="accent">86</strong><span>固定盘面完整终局均分（较前版下降1.25）</span></div>
+        <div class="card metric"><strong>529</strong><span>自然终局正式输入步数</span></div>
+        <div class="card metric"><strong class="amber">33</strong><span>战略搜索达到 4096 节点上限</span></div>
+        <div class="card metric"><strong>816.4s</strong><span>完整局墙钟耗时（quick加续跑）</span></div>
       </div>
       <div class="grid grid-3" style="margin-top:16px">
         <div class="card"><h3>策略范式</h3><p>目标引导 + 需求引导。探测、分析、扇区、收入、科技先形成具名目标，再绑定主动作和资源准备动作。</p></div>
@@ -225,9 +225,9 @@
         <table>
           <thead><tr><th>层次</th><th>标识</th><th>含义</th></tr></thead>
           <tbody>
-            <tr><td>版本登记</td><td class="mono">data-corner-greedy-20260913</td><td>分析取数据按正式角标收益、payload及普通/外星牌类别择一；既定来源不换牌，明确为有损贪心，规则和估值权重不变。</td></tr>
-            <tr><td>生产行为快照</td><td class="mono">236c6969</td><td>本报告描述的策略代码提交，也是完整局记录绑定的代码版本。</td></tr>
-            <tr><td>完整局记录</td><td class="mono">44713766.236c6969.full.json</td><td>quick40步后续跑至自然终局；542步中仅526/530交换两张角标使用顺序，全部after相同。</td></tr>
+            <tr><td>版本登记</td><td class="mono">income-choice-greedy-20260913</td><td>收入奖励按正式收益、payload及普通/外星牌类别择一；未知收益和指定牌目标保留。有损贪心，不改规则和估值。</td></tr>
+            <tr><td>生产行为快照</td><td class="mono">5ef60d81</td><td>本报告描述的策略代码提交，也是完整局记录绑定的代码版本。</td></tr>
+            <tr><td>完整局记录</td><td class="mono">ac7f0082.5ef60d81.full.json</td><td>quick40步后续跑至529步自然终局；前50步一致，51蓝色科技选择orange2→purple4。</td></tr>
             <tr><td>Policy provenance</td><td class="mono">heuristic / v0 / laughable</td><td><code>laughable</code> 当前只进入 provenance/config checksum，生产策略中没有按难度分叉。</td></tr>
             <tr><td>实验盘面</td><td class="mono">seti-free-analyze-v1</td><td>4席，human-405-world-v1，阿米巴和虫；与固定世界基线同指纹，不与历史未知世界计算涨跌。</td></tr>
           </tbody>
@@ -395,6 +395,7 @@
     <p>主行动前同一探测目标的普通移动，从合法最低成本首步中优先选择目录nextStep；不可用则取目录中的合法替代。不同目标独立选择；免费条件移动与主行动后窗口不减少。沿途奖励可能不同，因此是有损贪心，不是状态等价去重。</p>
 
     <p>永久收入目标只接纳正式增加收入轨的收入选择或本牌插收入；重组按收入角兑现的是一次性资源，不属于永久收入路线。其合法打牌与奖励规则未改。</p>
+    <p>收入奖励的本席完整选牌Decision按正式收益、payload及普通/外星类别分组，同组只留稳定代表；未知收益和绑定card身份目标保留。这是有损贪心：收入相同不代表剩余手牌用途相同，不计状态等价省略。</p>
 
     <p>同一直接探测目标的资源准备沿既有最小资源损失、最少步骤、终态资源排序仅保留首个合法动作；不同目标独立选择，指定公牌与非探测需求不受此筛选影响。可能放弃保留不同资源的方案，因此是有损贪心，不是状态等价去重。</p>
 
@@ -404,38 +405,38 @@
       <div class="section-kicker">09 / FULL-GAME EVIDENCE</div>
       <h2>唯一完整局告诉了我们什么</h2>
       <div class="score-strip">
-        <div class="score"><span><span class="blue-dot"></span>蓝</span><div class="total">82</div><div class="parts">base 56 · 板块 20 · 卡牌 6</div></div>
-        <div class="score"><span><span class="green-dot"></span>绿</span><div class="total">116</div><div class="parts">base 75 · 板块 41 · 卡牌 0</div></div>
-        <div class="score"><span><span class="brown-dot"></span>棕</span><div class="total">65</div><div class="parts">base 54 · 板块 11 · 卡牌 0</div></div>
-        <div class="score"><span><span class="white-dot"></span>白</span><div class="total">124</div><div class="parts">base 74 · 板块 35 · 卡牌 15</div></div>
+        <div class="score"><span><span class="blue-dot"></span>蓝</span><div class="total">75</div><div class="parts">base 47 · 板块 14 · 卡牌 14</div></div>
+        <div class="score"><span><span class="green-dot"></span>绿</span><div class="total">116</div><div class="parts">base 83 · 板块 33 · 卡牌 0</div></div>
+        <div class="score"><span><span class="brown-dot"></span>棕</span><div class="total">70</div><div class="parts">base 53 · 板块 17 · 卡牌 0</div></div>
+        <div class="score"><span><span class="white-dot"></span>白</span><div class="total">83</div><div class="parts">base 63 · 板块 20 · 卡牌 0</div></div>
       </div>
       <div class="grid grid-2" style="margin-top:16px">
         <div class="card"><h3>战略搜索负载</h3><div class="table-wrap"><table>
           <tbody>
-            <tr><td>战略搜索次数</td><td>91</td></tr>
-            <tr><td>累计执行节点</td><td>173,933</td></tr>
-            <tr><td>节点数中位 / P90</td><td>715 / 4,096<br><span class="amber">待观测 · <a href="iteration/strategy-todo-20260911.md">LOW-NODE-OBS-01</a>：后续迭代关注低节点搜索的类型与计划未复用原因；当前不额外处理。</span></td></tr>
-            <tr><td>平均节点</td><td>1,911.4</td></tr>
-            <tr><td>触发 beam 裁剪</td><td>43 次</td></tr>
-            <tr><td>达到 4,096 上限</td><td>35 次</td></tr>
-            <tr><td>战略搜索累计耗时</td><td>607.8s（quick加续跑总墙钟的76.2%）</td></tr>
+            <tr><td>战略搜索次数</td><td>90</td></tr>
+            <tr><td>累计执行节点</td><td>181,629</td></tr>
+            <tr><td>节点数中位 / P90</td><td>1,535 / 4,096<br><span class="amber">待观测 · <a href="iteration/strategy-todo-20260911.md">LOW-NODE-OBS-01</a>：后续迭代关注低节点搜索的类型与计划未复用原因；当前不额外处理。</span></td></tr>
+            <tr><td>平均节点</td><td>2,018.1</td></tr>
+            <tr><td>触发 beam 裁剪</td><td>44 次</td></tr>
+            <tr><td>达到 4,096 上限</td><td>33 次</td></tr>
+            <tr><td>战略搜索累计耗时</td><td>616.1s（quick加续跑总墙钟的75.5%）</td></tr>
           </tbody>
         </table></div></div>
         <div class="card"><h3>正式动作构成（Top 10）</h3><div class="bar-list">
-          <div class="bar-row"><span>choose_target</span><div class="bar-track"><div class="bar-fill" style="--w:100.0%"></div></div><b>141</b></div>
-          <div class="bar-row"><span>choose_card</span><div class="bar-track"><div class="bar-fill" style="--w:65.2%"></div></div><b>92</b></div>
-          <div class="bar-row"><span>end_turn</span><div class="bar-track"><div class="bar-fill" style="--w:53.2%"></div></div><b>75</b></div>
-          <div class="bar-row"><span>place_data</span><div class="bar-track"><div class="bar-fill" style="--w:43.3%"></div></div><b>61</b></div>
-          <div class="bar-row"><span>choose_payment</span><div class="bar-track"><div class="bar-fill" style="--w:22.0%"></div></div><b>31</b></div>
-          <div class="bar-row"><span>play_card</span><div class="bar-track"><div class="bar-fill" style="--w:12.1%"></div></div><b>17</b></div>
-          <div class="bar-row"><span>card_corner</span><div class="bar-track"><div class="bar-fill" style="--w:12.1%"></div></div><b>17</b></div>
-          <div class="bar-row"><span>move</span><div class="bar-track"><div class="bar-fill" style="--w:11.3%"></div></div><b>16</b></div>
-          <div class="bar-row"><span>pass</span><div class="bar-track"><div class="bar-fill" style="--w:11.3%"></div></div><b>16</b></div>
-          <div class="bar-row"><span>research_tech</span><div class="bar-track"><div class="bar-fill" style="--w:10.6%"></div></div><b>15</b></div>
+          <div class="bar-row"><span>choose_target</span><div class="bar-track"><div class="bar-fill" style="--w:100.0%"></div></div><b>120</b></div>
+          <div class="bar-row"><span>choose_card</span><div class="bar-track"><div class="bar-fill" style="--w:74.2%"></div></div><b>89</b></div>
+          <div class="bar-row"><span>end_turn</span><div class="bar-track"><div class="bar-fill" style="--w:58.3%"></div></div><b>70</b></div>
+          <div class="bar-row"><span>choose_payment</span><div class="bar-track"><div class="bar-fill" style="--w:40.8%"></div></div><b>49</b></div>
+          <div class="bar-row"><span>place_data</span><div class="bar-track"><div class="bar-fill" style="--w:40.0%"></div></div><b>48</b></div>
+          <div class="bar-row"><span>card_corner</span><div class="bar-track"><div class="bar-fill" style="--w:18.3%"></div></div><b>22</b></div>
+          <div class="bar-row"><span>move</span><div class="bar-track"><div class="bar-fill" style="--w:15.8%"></div></div><b>19</b></div>
+          <div class="bar-row"><span>quick_trade</span><div class="bar-track"><div class="bar-fill" style="--w:15.0%"></div></div><b>18</b></div>
+          <div class="bar-row"><span>play_card</span><div class="bar-track"><div class="bar-fill" style="--w:13.3%"></div></div><b>16</b></div>
+          <div class="bar-row"><span>pass</span><div class="bar-track"><div class="bar-fill" style="--w:13.3%"></div></div><b>16</b></div>
         </div></div>
       </div>
       <div class="callout warn" style="margin-top:16px"><strong>原始记录口径澄清：</strong> <code>metrics.budgetHits.length=39</code>：35次战略执行截断、4次control执行截断。全部173次搜索执行174,015节点；战略8叶未启用，256队列实际截断43次。战略执行/队列截断并集43次，加入控制后共47次。</div>
-      <p>本版542步自然终局，正式84/108/73/84，均87.25，与前版相同，搜索错误0。完整世界指纹为<code>2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c</code>。467共同输入旧最佳完整计划及具名依赖保留；最大分析簇执行来源1488→381，分析246→72。全局节点175200→174015，仅77/448/508执行数下降；实际截断仍47次，总耗时774.8→797.1秒，不宣称整体提速。526/530交换b_135与b_116角标顺序，全部542个after一致，但after不是完整隐藏状态。见<a href="iteration/data-corner-acceptance-20260913.md">本项验收证据</a>。下一热点37绿色industry，4096节点18.10秒，选牌986、交易829为最大头。已有PASS留牌用途缺口仍归EFFECT-02/04，不临时调权重。未知身份与方舟奖励仍按公开信息生成独立假设样本；所得资源可进入后续行动，隐藏边界叶标低置信度，不读取真实未知奖励顺序。</p>
+      <p>本版529步自然终局，正式75/116/70/83，均86（较前版−1.25），规则失败0。同一固定世界，原第50步橙路线73.5仍有完成叶，新紫路线74.5胜出；科技未来值60对36，但蓝色整局无标准扫描和紫4选择，兑现缺口已登记EFFECT-04/01。总节点174015→181713，战略/控制截断44/3，合计47未变，总耗时797.1→816.4秒，不宣称整体提速或变强。见<a href="iteration/income-choice-acceptance-20260913.md">本项验收证据</a>。下一热点448白色place_data，4096节点，正式搜索17.44秒。未知奖励仍使用独立假设样本，所得资源可进入后续规划，不读取真实隐藏顺序。</p>
     </section>
 
     <p>外星拿牌在当前席位、同物种完整Decision中优先展示牌；后继只对无绑定或资源/探测目标择一。具体card/decision身份、未知绑定及多展示牌保留非取消分支。此为有损贪心，不读取隐藏牌序、不计等价省略。</p>
@@ -475,10 +476,10 @@
       <details><summary>版本、文档与完整局</summary><ul>
         <li><a href="iteration/strategy-todo-20260911.md">机器人策略迭代 TODO</a>：策略审阅中的待改进项与验收方向。</li>
         <li><a href="../docs/ai-design.md">docs/ai-design.md</a>：机器玩家设计参考；本报告的具体策略以所标注提交的生产源码为准。</li>
-        <li><a href="research/44713766.236c6969.full.json">完整局研究记录</a>：542步、搜索诊断、动作计数与世界指纹；记录耗时为续跑759.5秒，quick加续跑共797.1秒。</li>
+        <li><a href="research/ac7f0082.5ef60d81.full.json">完整局研究记录</a>：529步、搜索诊断、动作计数与世界指纹；续跑785.3秒，quick加续跑共816.4秒。</li>
         <li><a href="iteration/quick-timing-acceptance-20260912.md">快速行动时机验收</a>：五项行为目标、正式案例、完整局效果及已知边界。</li>
-        <li><a href="iteration/data-corner-greedy-20260913/44713766.236c6969.full.action-log.html">逐步行动复盘</a>：按玩家回合聚合的可视化回放。</li>
-        <li><a href="../seti-saves/seti-save-research-data-corner-greedy-20260913-236c6969-full-v278.json">完整局存档</a>：正式终局分及拆分来源。</li>
+        <li><a href="iteration/income-choice-greedy-20260913/ac7f0082.5ef60d81.full.action-log.html">逐步行动复盘</a>：按玩家回合聚合的可视化回放。</li>
+        <li><a href="../seti-saves/seti-save-research-income-choice-greedy-20260913-5ef60d81-full-v272.json">完整局存档</a>：正式终局分及拆分来源。</li>
       </ul></details>
       <div class="callout"><strong>证据优先级：</strong> 生产源码与版本化实验记录优先于叙述性文档；报告中所有“当前已生效”判断均按提交快照逐项核对。</div>
     </section>

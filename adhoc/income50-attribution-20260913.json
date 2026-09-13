@@ -1,0 +1,106 @@
+{
+  "old": {
+    "score": 73.5,
+    "actual": 28,
+    "tech": 36,
+    "income": 0,
+    "alien": 12,
+    "publicity": -2.5,
+    "sortKey": [
+      73.5,
+      0,
+      0,
+      -3,
+      -19
+    ],
+    "techs": [
+      "orange2",
+      "orange3"
+    ]
+  },
+  "candidate": {
+    "score": 74.5,
+    "actual": 9,
+    "tech": 60,
+    "income": 0,
+    "alien": 12,
+    "publicity": -6.5,
+    "sortKey": [
+      74.5,
+      0,
+      -1,
+      -4,
+      -13
+    ],
+    "techs": [
+      "purple2",
+      "purple4"
+    ]
+  },
+  "oldBestRetained": {
+    "leafId": "leaf:49d4225d",
+    "terminalReason": "goal-completed",
+    "score": 73.5
+  },
+  "blueExecution": {
+    "standardScans": 0,
+    "purple4Choices": 0,
+    "scanRelated": [
+      {
+        "step": 467,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:d7a0e441",
+          "actorId": "player-blue",
+          "stateVersion": 236,
+          "decisionVersion": 14,
+          "target": {
+            "choiceId": "nebula:sector-3-b",
+            "nebulaId": "sector-3-b",
+            "sectorX": 0
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "扫描 比邻星"
+        }
+      },
+      {
+        "step": 468,
+        "action": {
+          "schemaVersion": "seti-standard-action-v1",
+          "family": "choose_target",
+          "phase": "conditional",
+          "actionId": "choose_target:d7a0e441",
+          "actorId": "player-blue",
+          "stateVersion": 236,
+          "decisionVersion": 14,
+          "target": {
+            "choiceId": "nebula:sector-3-b",
+            "nebulaId": "sector-3-b",
+            "sectorX": 0
+          },
+          "payload": {
+            "gainData": true
+          },
+          "decision": null,
+          "summary": "扫描 比邻星"
+        }
+      }
+    ]
+  },
+  "blueBaseScoreDelta": {
+    "alienTraceBlueScore": 2,
+    "alienTraceYellowScore": -4,
+    "blueTechScore": -2,
+    "landScore": 2,
+    "orbitScore": -9,
+    "scanScore": -2,
+    "taskCardScore": 4
+  },
+  "valuationSource": "expected-score-evaluator.js TECH_UNIT_VALUES purple2=10/purple4=10；techFutureValue乘剩余轮数，不检查实际利用；新60=(10+10)*3，旧36=(7+5)*3。",
+  "boundary": "原最优实际完成且被高1分路线替代，非贪心删除/预算挡住。科技利用未兑现是既有估值模型缺口；不把全部终局差异因果归于单一科技选择，也不宣称收入同收益状态等价。"
+}
