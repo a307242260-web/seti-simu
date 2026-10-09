@@ -1,0 +1,95 @@
+{
+  "step": 482,
+  "actionId": "industry:e887dc52",
+  "wallMs": 22306.492292000003,
+  "timing": {
+    "forkMilliseconds": 1069.3295729999993,
+    "executionMilliseconds": 2213.907186000027,
+    "projectionMilliseconds": 1552.0503589999244,
+    "identityMilliseconds": 7.539357999977938,
+    "checkpointMilliseconds": 1317.93135199997,
+    "frontierMilliseconds": 318.1273150000086,
+    "orchestrationMilliseconds": 10683.458232000088,
+    "totalMilliseconds": 17162.343374999997
+  },
+  "executedNodeCount": 4096,
+  "frontierTrimCount": 1101,
+  "remainingFrontierNodeCount": 244,
+  "topDecisionKinds": [
+    [
+      "choose_target:conditional/decision=choose_target/effect=science_domain_alien_trace",
+      1301
+    ],
+    [
+      "choose_card:conditional/decision=choose_card/effect=residual_alien_card_decision",
+      406
+    ],
+    [
+      "choose_target:conditional/decision=choose_target/effect=probe_land_choice",
+      335
+    ],
+    [
+      "move:quick",
+      332
+    ],
+    [
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_step",
+      270
+    ],
+    [
+      "quick_trade:quick",
+      250
+    ],
+    [
+      "choose_target:conditional/decision=choose_target/effect=science_domain_scan_action_4",
+      156
+    ],
+    [
+      "choose_payment:conditional/decision=choose_payment/effect=probe_turn_move_payment",
+      132
+    ],
+    [
+      "choose_card:conditional/decision=choose_card/effect=science_domain_income",
+      130
+    ],
+    [
+      "land:main",
+      113
+    ]
+  ],
+  "executedOriginCountByTarget": [
+    [
+      "land:saturn:satellite:titan",
+      1527
+    ],
+    [
+      "land:jupiter:satellite:europa",
+      924
+    ],
+    [
+      "land:jupiter:satellite:callisto",
+      700
+    ],
+    [
+      "land:jupiter:satellite:ganymede",
+      700
+    ],
+    [
+      "land:jupiter:satellite:io",
+      700
+    ],
+    [
+      "sector:win:sector-2-b:3",
+      501
+    ],
+    [
+      "land:saturn:satellite:enceladus",
+      248
+    ],
+    [
+      "orbit:venus:planet:",
+      185
+    ]
+  ],
+  "failedNodeCountByCode": {}
+}
