@@ -1,0 +1,1365 @@
+{
+  "source": "adhoc/budget448-input-20260913.json",
+  "step": 448,
+  "caps": [
+    {
+      "cap": 0,
+      "wallMs": 19722.179792,
+      "actionId": "place_data:8fd12fd3",
+      "planSteps": 17,
+      "planKeys": [
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-83-0\",\"choiceId\":\"income:card-83-0\"}}",
+        "{\"family\":\"launch\",\"payload\":{},\"target\":{}}",
+        "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "{\"family\":\"move\",\"payload\":{\"direction\":\"ccw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":-1,\"deltaY\":0,\"rocketId\":14}}",
+        "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+        "{\"family\":\"move\",\"payload\":{\"direction\":\"ccw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":-1,\"deltaY\":0,\"rocketId\":14}}",
+        "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+        "{\"family\":\"quick_trade\",\"payload\":{\"cost\":{\"credits\":2},\"gain\":{\"energy\":1}},\"target\":{\"tradeId\":\"credits-for-energy\"}}",
+        "{\"family\":\"orbit\",\"payload\":{},\"target\":{\"planetId\":\"venus\",\"rocketId\":14}}",
+        "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-85-0\",\"choiceId\":\"income:card-85-0\"}}"
+      ],
+      "executedNodeCount": 4096,
+      "executionTruncated": true,
+      "frontierTruncated": true,
+      "frontierTrimCount": 1596,
+      "remainingFrontierNodeCount": 256,
+      "macroChainCapPrunedCount": 0,
+      "leafCount": 1333,
+      "outcomeKeys": [
+        "schemaVersion",
+        "actionId",
+        "status",
+        "searchCompleteness",
+        "confidence",
+        "code",
+        "message",
+        "reasonCodes",
+        "leaves",
+        "rootObservation"
+      ],
+      "outcomeValues": [
+        {
+          "actionId": "launch:c94cda79",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:054a9bb1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6dce7aba",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1c4706bc",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:7c649e1c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:9bbfb81b",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6ebfddce",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:2c50f991",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:92e5b32a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:3e3bc318",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1b569197",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:dec85bfd",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:044776cc",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2c830fd2",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:f05f5549",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:6a748ec5",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:c53b978f",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:0c461bf1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2ff1dd01",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:206d157e",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:7eb20c3a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "status": "settled",
+          "value": null
+        }
+      ],
+      "failedCodes": {}
+    },
+    {
+      "cap": 20,
+      "wallMs": 20616.400875,
+      "actionId": "place_data:8fd12fd3",
+      "planSteps": 17,
+      "planKeys": [
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-83-0\",\"choiceId\":\"income:card-83-0\"}}",
+        "{\"family\":\"launch\",\"payload\":{},\"target\":{}}",
+        "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "{\"family\":\"move\",\"payload\":{\"direction\":\"ccw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":-1,\"deltaY\":0,\"rocketId\":14}}",
+        "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+        "{\"family\":\"move\",\"payload\":{\"direction\":\"ccw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":-1,\"deltaY\":0,\"rocketId\":14}}",
+        "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+        "{\"family\":\"quick_trade\",\"payload\":{\"cost\":{\"credits\":2},\"gain\":{\"energy\":1}},\"target\":{\"tradeId\":\"credits-for-energy\"}}",
+        "{\"family\":\"orbit\",\"payload\":{},\"target\":{\"planetId\":\"venus\",\"rocketId\":14}}",
+        "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-85-0\",\"choiceId\":\"income:card-85-0\"}}"
+      ],
+      "executedNodeCount": 4096,
+      "executionTruncated": true,
+      "frontierTruncated": true,
+      "frontierTrimCount": 1449,
+      "remainingFrontierNodeCount": 256,
+      "macroChainCapPrunedCount": 236,
+      "leafCount": 1184,
+      "outcomeKeys": [
+        "schemaVersion",
+        "actionId",
+        "status",
+        "searchCompleteness",
+        "confidence",
+        "code",
+        "message",
+        "reasonCodes",
+        "leaves",
+        "rootObservation"
+      ],
+      "outcomeValues": [
+        {
+          "actionId": "launch:c94cda79",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:054a9bb1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6dce7aba",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1c4706bc",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:7c649e1c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:9bbfb81b",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6ebfddce",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:2c50f991",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:92e5b32a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:3e3bc318",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1b569197",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:dec85bfd",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:044776cc",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2c830fd2",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:f05f5549",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:6a748ec5",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:c53b978f",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:0c461bf1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2ff1dd01",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:206d157e",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:7eb20c3a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "status": "settled",
+          "value": null
+        }
+      ],
+      "failedCodes": {}
+    },
+    {
+      "cap": 18,
+      "wallMs": 22866.695332999996,
+      "actionId": "place_data:8fd12fd3",
+      "planSteps": 17,
+      "planKeys": [
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-83-0\",\"choiceId\":\"income:card-83-0\"}}",
+        "{\"family\":\"launch\",\"payload\":{},\"target\":{}}",
+        "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "{\"family\":\"move\",\"payload\":{\"direction\":\"ccw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":-1,\"deltaY\":0,\"rocketId\":14}}",
+        "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+        "{\"family\":\"move\",\"payload\":{\"direction\":\"ccw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":-1,\"deltaY\":0,\"rocketId\":14}}",
+        "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+        "{\"family\":\"quick_trade\",\"payload\":{\"cost\":{\"credits\":2},\"gain\":{\"energy\":1}},\"target\":{\"tradeId\":\"credits-for-energy\"}}",
+        "{\"family\":\"orbit\",\"payload\":{},\"target\":{\"planetId\":\"venus\",\"rocketId\":14}}",
+        "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-85-0\",\"choiceId\":\"income:card-85-0\"}}"
+      ],
+      "executedNodeCount": 4096,
+      "executionTruncated": true,
+      "frontierTruncated": true,
+      "frontierTrimCount": 1113,
+      "remainingFrontierNodeCount": 256,
+      "macroChainCapPrunedCount": 750,
+      "leafCount": 860,
+      "outcomeKeys": [
+        "schemaVersion",
+        "actionId",
+        "status",
+        "searchCompleteness",
+        "confidence",
+        "code",
+        "message",
+        "reasonCodes",
+        "leaves",
+        "rootObservation"
+      ],
+      "outcomeValues": [
+        {
+          "actionId": "launch:c94cda79",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:054a9bb1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6dce7aba",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1c4706bc",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:7c649e1c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:9bbfb81b",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6ebfddce",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:2c50f991",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:92e5b32a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:3e3bc318",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1b569197",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:dec85bfd",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:044776cc",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2c830fd2",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:f05f5549",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:6a748ec5",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:c53b978f",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:0c461bf1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2ff1dd01",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:206d157e",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:7eb20c3a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "status": "settled",
+          "value": null
+        }
+      ],
+      "failedCodes": {}
+    },
+    {
+      "cap": 16,
+      "wallMs": 22480.162625000004,
+      "actionId": "place_data:8fd12fd3",
+      "planSteps": 17,
+      "planKeys": [
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-83-0\",\"choiceId\":\"income:card-83-0\"}}",
+        "{\"family\":\"launch\",\"payload\":{},\"target\":{}}",
+        "{\"family\":\"end_turn\",\"payload\":{},\"target\":{\"kind\":\"end-turn\"}}",
+        "{\"family\":\"move\",\"payload\":{\"direction\":\"ccw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":-1,\"deltaY\":0,\"rocketId\":14}}",
+        "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+        "{\"family\":\"move\",\"payload\":{\"direction\":\"ccw\",\"requiredMovePoints\":1},\"target\":{\"deltaX\":-1,\"deltaY\":0,\"rocketId\":14}}",
+        "{\"family\":\"choose_payment\",\"payload\":{\"energyCost\":1,\"requiredMovePoints\":1},\"target\":{\"cardIds\":[],\"choiceId\":\"energy\",\"kind\":\"move-payment\"}}",
+        "{\"family\":\"quick_trade\",\"payload\":{\"cost\":{\"credits\":2},\"gain\":{\"energy\":1}},\"target\":{\"tradeId\":\"credits-for-energy\"}}",
+        "{\"family\":\"orbit\",\"payload\":{},\"target\":{\"planetId\":\"venus\",\"rocketId\":14}}",
+        "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-85-0\",\"choiceId\":\"income:card-85-0\"}}"
+      ],
+      "executedNodeCount": 4096,
+      "executionTruncated": true,
+      "frontierTruncated": true,
+      "frontierTrimCount": 1030,
+      "remainingFrontierNodeCount": 253,
+      "macroChainCapPrunedCount": 1093,
+      "leafCount": 732,
+      "outcomeKeys": [
+        "schemaVersion",
+        "actionId",
+        "status",
+        "searchCompleteness",
+        "confidence",
+        "code",
+        "message",
+        "reasonCodes",
+        "leaves",
+        "rootObservation"
+      ],
+      "outcomeValues": [
+        {
+          "actionId": "launch:c94cda79",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:054a9bb1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6dce7aba",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1c4706bc",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:7c649e1c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:9bbfb81b",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6ebfddce",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:2c50f991",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:92e5b32a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:3e3bc318",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1b569197",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:dec85bfd",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:044776cc",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2c830fd2",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:f05f5549",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:6a748ec5",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:c53b978f",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:0c461bf1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2ff1dd01",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:206d157e",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:7eb20c3a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "status": "settled",
+          "value": null
+        }
+      ],
+      "failedCodes": {}
+    },
+    {
+      "cap": 14,
+      "wallMs": 22473.224457999997,
+      "actionId": "place_data:8fd12fd3",
+      "planSteps": 11,
+      "planKeys": [
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-83-0\",\"choiceId\":\"income:card-83-0\"}}",
+        "{\"family\":\"play_card\",\"payload\":{\"cost\":{\"credits\":3},\"handIndex\":5},\"target\":{\"cardInstanceId\":\"card-84-0\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{\"skipBonus\":false,\"skipCost\":true,\"skipRotate\":false},\"target\":{\"blueSlot\":null,\"choiceId\":\"tech:purple3\",\"tileId\":\"purple3\"}}",
+        "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-99-0\",\"choiceId\":\"pick:card-99-0\",\"publicSlotIndex\":1}}"
+      ],
+      "executedNodeCount": 4096,
+      "executionTruncated": true,
+      "frontierTruncated": true,
+      "frontierTrimCount": 813,
+      "remainingFrontierNodeCount": 254,
+      "macroChainCapPrunedCount": 1235,
+      "leafCount": 576,
+      "outcomeKeys": [
+        "schemaVersion",
+        "actionId",
+        "status",
+        "searchCompleteness",
+        "confidence",
+        "code",
+        "message",
+        "reasonCodes",
+        "leaves",
+        "rootObservation"
+      ],
+      "outcomeValues": [
+        {
+          "actionId": "launch:c94cda79",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:054a9bb1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6dce7aba",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1c4706bc",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:7c649e1c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:9bbfb81b",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6ebfddce",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:2c50f991",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:92e5b32a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:3e3bc318",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1b569197",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:dec85bfd",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:044776cc",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2c830fd2",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:f05f5549",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:6a748ec5",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:c53b978f",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:0c461bf1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2ff1dd01",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:206d157e",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:7eb20c3a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "status": "settled",
+          "value": null
+        }
+      ],
+      "failedCodes": {}
+    },
+    {
+      "cap": 12,
+      "wallMs": 25815.91837499998,
+      "actionId": "place_data:8fd12fd3",
+      "planSteps": 10,
+      "planKeys": [
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-83-0\",\"choiceId\":\"income:card-83-0\"}}",
+        "{\"family\":\"play_card\",\"payload\":{\"cost\":{\"credits\":3},\"handIndex\":5},\"target\":{\"cardInstanceId\":\"card-84-0\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{\"skipBonus\":false,\"skipCost\":true,\"skipRotate\":false},\"target\":{\"blueSlot\":null,\"choiceId\":\"tech:purple1\",\"tileId\":\"purple1\"}}"
+      ],
+      "executedNodeCount": 4096,
+      "executionTruncated": true,
+      "frontierTruncated": true,
+      "frontierTrimCount": 720,
+      "remainingFrontierNodeCount": 256,
+      "macroChainCapPrunedCount": 1409,
+      "leafCount": 522,
+      "outcomeKeys": [
+        "schemaVersion",
+        "actionId",
+        "status",
+        "searchCompleteness",
+        "confidence",
+        "code",
+        "message",
+        "reasonCodes",
+        "leaves",
+        "rootObservation"
+      ],
+      "outcomeValues": [
+        {
+          "actionId": "launch:c94cda79",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:054a9bb1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6dce7aba",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1c4706bc",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:7c649e1c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:9bbfb81b",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6ebfddce",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:2c50f991",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:92e5b32a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:3e3bc318",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1b569197",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:dec85bfd",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:044776cc",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2c830fd2",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:f05f5549",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:6a748ec5",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:c53b978f",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:0c461bf1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2ff1dd01",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:206d157e",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:7eb20c3a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "status": "settled",
+          "value": null
+        }
+      ],
+      "failedCodes": {}
+    },
+    {
+      "cap": 10,
+      "wallMs": 28845.163499999995,
+      "actionId": "place_data:8fd12fd3",
+      "planSteps": 10,
+      "planKeys": [
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"place_data\",\"payload\":{},\"target\":{\"kind\":\"place-data\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{},\"target\":{\"blueSlot\":null,\"choiceId\":\"data:computer\",\"target\":\"computer\"}}",
+        "{\"family\":\"choose_card\",\"payload\":{},\"target\":{\"cardInstanceId\":\"card-83-0\",\"choiceId\":\"income:card-83-0\"}}",
+        "{\"family\":\"play_card\",\"payload\":{\"cost\":{\"credits\":3},\"handIndex\":5},\"target\":{\"cardInstanceId\":\"card-84-0\"}}",
+        "{\"family\":\"choose_target\",\"payload\":{\"skipBonus\":false,\"skipCost\":true,\"skipRotate\":false},\"target\":{\"blueSlot\":null,\"choiceId\":\"tech:purple1\",\"tileId\":\"purple1\"}}"
+      ],
+      "executedNodeCount": 4096,
+      "executionTruncated": true,
+      "frontierTruncated": true,
+      "frontierTrimCount": 622,
+      "remainingFrontierNodeCount": 254,
+      "macroChainCapPrunedCount": 1897,
+      "leafCount": 461,
+      "outcomeKeys": [
+        "schemaVersion",
+        "actionId",
+        "status",
+        "searchCompleteness",
+        "confidence",
+        "code",
+        "message",
+        "reasonCodes",
+        "leaves",
+        "rootObservation"
+      ],
+      "outcomeValues": [
+        {
+          "actionId": "launch:c94cda79",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:054a9bb1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6dce7aba",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1c4706bc",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:7c649e1c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:9bbfb81b",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "play_card:6ebfddce",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:2c50f991",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:92e5b32a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:3e3bc318",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "play_card:1b569197",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "quick_trade:be9dd0cd",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:dec85bfd",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:044776cc",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2c830fd2",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:f05f5549",
+          "status": "settled",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:6a748ec5",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:c53b978f",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:0c461bf1",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:2ff1dd01",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:206d157e",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "card_corner:7eb20c3a",
+          "status": "unresolved",
+          "value": null
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "status": "settled",
+          "value": null
+        }
+      ],
+      "failedCodes": {}
+    }
+  ]
+}

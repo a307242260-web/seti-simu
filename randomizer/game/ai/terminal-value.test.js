@@ -183,4 +183,70 @@ for (const vStateValueEnabled of [false, true]) {
     }
   }
 }
+
+// CARD-TERMINAL-VALUE-01：手牌终局计分牌的 0.5 口径预期，且不与正式投影/reservedCards 重复。
+{
+  function handObservation({ hand = [], reservedCards = [], data = 0, publicity = 0,
+    yellowWins = 0, terminal = false } = {}) {
+    return outcomeModel.createDecisionObservation({
+      publicState: {
+        terminal,
+        roundNumber: 2,
+        players: [{
+          id: seatId,
+          resources: { score: 0, credits: 0, energy: 0, availableData: data, publicity },
+          techState: { ownedTiles: {} },
+        }],
+        board: {
+          aliens: {},
+          planets: {},
+          data: { sectorSettlements: { winsByPlayerId: {
+            [seatId]: Array.from({ length: yellowWins }, (_unused, index) => ({
+              sectorId: index % 2 === 0 ? "sector-4-a" : "sector-3-a",
+            })),
+          } } },
+        },
+      },
+      selfState: { id: seatId, hand, reservedCards },
+    }, { seatId, stateVersion: 1, decisionVersion: 1 });
+  }
+  const dlc8 = { id: "hand-dlc8", cardId: "dlc_8.png" };
+  const b63 = { id: "hand-b63", cardId: "b_63.webp" };
+  const base = expectedScore.evaluateStateValue(handObservation(), seatId);
+  const withDlc8 = expectedScore.evaluateStateValue(
+    handObservation({ hand: [dlc8], data: 3 }), seatId);
+  assert.equal(withDlc8.components.terminalCardValue, 4.5,
+    "dlc_8（剩余数据×3）手牌终局预期 = 3×3×0.5");
+  const componentSum = Object.values(withDlc8.components)
+    .reduce((sum, value) => sum + value, 0);
+  assert.equal(withDlc8.total, componentSum, "总分必须等于各分项之和（终局牌预期已进入 V）");
+  // 同一张牌标记 hidden 时只跳过终局预期（普通牌效路径不变），差值必须正好是终局项。
+  const hiddenClone = expectedScore.evaluateStateValue(
+    handObservation({ hand: [{ ...dlc8, hidden: true }], data: 3 }), seatId);
+  assert.equal(withDlc8.total - hiddenClone.total, 4.5, "终局牌预期的唯一增量必须来自终局公式项");
+  const withB63 = expectedScore.evaluateStateValue(
+    handObservation({ hand: [b63], yellowWins: 2 }), seatId);
+  assert.equal(withB63.components.terminalCardValue, 3,
+    "b_63（黄色扇区胜场×3）手牌终局预期 = 2×3×0.5");
+  const reservedOnly = expectedScore.evaluateStateValue(
+    handObservation({ reservedCards: [dlc8], data: 3 }), seatId);
+  assert.equal(reservedOnly.components.terminalCardValue, 0,
+    "已打出的终局牌只走正式 securedEndGameBonus，不得在牌值里重复计入");
+  const dataBase = expectedScore.evaluateStateValue(handObservation({ data: 3 }), seatId);
+  assert.equal(reservedOnly.total - dataBase.total, 7.5,
+    "reservedCards 只保留既有 0.25 普通牌效路径（dlc_8 的免费科技 30×0.25），终局公式不额外计入");
+  const hidden = expectedScore.evaluateStateValue(
+    handObservation({ hand: [{ id: "hidden-dlc8", cardId: "dlc_8.png", hidden: true }], data: 3 }), seatId);
+  assert.equal(hidden.components.terminalCardValue, 0, "隐藏牌不估终局公式");
+  const alien = expectedScore.evaluateStateValue(
+    handObservation({ hand: [{ id: "alien-card", cardId: "dlc_8.png", kind: "alien" }], data: 3 }), seatId);
+  assert.equal(alien.components.terminalCardValue, 0, "外星手牌沿用 alienValue 单价，不重复计终局公式");
+  const terminalObs = expectedScore.evaluateStateValue(
+    handObservation({ hand: [dlc8, b63], data: 3, yellowWins: 2, terminal: true }), seatId);
+  assert.equal(terminalObs.components.terminalCardValue, 0, "终局没有未来窗口，不再计未打出牌预期");
+  const noRule = expectedScore.evaluateStateValue(
+    handObservation({ hand: [{ id: "plain", cardId: "b_117.webp" }], data: 3 }), seatId);
+  assert.equal(noRule.components.terminalCardValue, 0, "无终局公式的普通牌不加终局分");
+}
+
 console.log("terminal value tests passed");

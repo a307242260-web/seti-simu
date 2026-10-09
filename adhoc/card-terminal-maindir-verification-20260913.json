@@ -1,0 +1,399 @@
+{
+  "source": "seti-saves/seti-save-research-income-choice-greedy-20260913-5ef60d81-full-v272.json",
+  "step": 147,
+  "scope": "CARD-TERMINAL-VALUE-01 合回主目录后的独立复验：第147步蓝席 card_corner 弃 b_63。",
+  "baselineActionId": "card_corner:d9c95165",
+  "blueHand": [
+    "amiba_9.webp",
+    "b_63.webp"
+  ],
+  "wallMs": 4546.900458,
+  "ok": true,
+  "actionId": "pass:c858282e",
+  "planKeys": [],
+  "diagnostics": {
+    "successfulInputSubmissionCount": 1134,
+    "attemptedNodeCountByFamily": {
+      "card_corner": 206,
+      "choose_card": 39,
+      "choose_target": 173,
+      "end_turn": 52,
+      "industry": 15,
+      "pass": 170,
+      "place_data": 171,
+      "play_card": 40,
+      "quick_trade": 35,
+      "research_tech": 1
+    },
+    "failedNodeCountByFamily": {},
+    "failedNodeCountByCode": {},
+    "candidateCount": 3,
+    "executedNodeCount": 902,
+    "expandedSearchNodeCount": 0,
+    "maxNodes": 128,
+    "maxExecutionNodes": 4096,
+    "maxFrontierNodes": 256,
+    "maxMilliseconds": 30000,
+    "executionLimitReached": false,
+    "budgetLimits": {
+      "leaves": {
+        "enabled": false,
+        "limit": 8,
+        "reached": false,
+        "truncated": false,
+        "prunedOriginCount": 0
+      },
+      "frontier": {
+        "enabled": true,
+        "limit": 256,
+        "peak": 175,
+        "reached": false,
+        "truncated": false,
+        "trimCount": 0
+      },
+      "execution": {
+        "enabled": true,
+        "limit": 4096,
+        "used": 902,
+        "reached": false,
+        "truncated": false,
+        "remainingFrontierNodeCount": 0
+      }
+    },
+    "remainingFrontierNodeCount": 0,
+    "remainingFrontierOriginCountByGoalDepth": {},
+    "frontierOriginCountByFamily": {},
+    "frontierNodeBreakdown": [],
+    "maxDepth": 15,
+    "maxProxyDepth": 15,
+    "secondaryAgentSearch": true,
+    "rootTargetCount": 6,
+    "rolloutVersion": "secondary-agent-rollout-v21",
+    "maxFrontierPerRoot": 1,
+    "maxFrontierSize": 175,
+    "maxRetainedFrontierSize": 175,
+    "maxFrontierOriginCount": 249,
+    "transpositionHitCount": 429,
+    "sharedPhysicalExecutionOriginCount": 429,
+    "targetEquivalentChoicePrunedCount": 0,
+    "unreachableRouteOriginCount": 589,
+    "completedGoalTransitionCount": 170,
+    "maxCompletedGoalDepth": 4,
+    "opponentExecutedNodeCount": 0,
+    "focalPlanningTurnAdvanceCount": 52,
+    "focalPassBoundaryLeafCount": 170,
+    "hiddenInformationFilteredActionCount": 0,
+    "hiddenInformationBarrierCountByCode": {
+      "hidden_card_reveal": 2,
+      "tech_bonus_reveal": 3
+    },
+    "executedNodeCountByFamily": {
+      "card_corner": 206,
+      "choose_card": 39,
+      "choose_target": 173,
+      "end_turn": 52,
+      "industry": 15,
+      "pass": 170,
+      "place_data": 171,
+      "play_card": 40,
+      "quick_trade": 35,
+      "research_tech": 1
+    },
+    "executedNodeCountByDecisionKind": {
+      "card_corner:quick": 206,
+      "choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 3,
+      "choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 36,
+      "choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 40,
+      "choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 89,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 41,
+      "choose_target:conditional/decision=choose_target/effect=science_domain_research": 3,
+      "end_turn:turn_control": 52,
+      "industry:quick": 15,
+      "pass:main": 170,
+      "place_data:quick": 171,
+      "play_card:main": 40,
+      "quick_trade:quick": 35,
+      "research_tech:main": 1
+    },
+    "executedNodeCountByActionSummary": {
+      "place_data:放置数据": 171,
+      "pass:PASS": 170,
+      "card_corner:dlc_39.png：弃牌角标": 110,
+      "end_turn:结束回合": 52,
+      "choose_target:第一排放置位 3": 41,
+      "card_corner:b_11.webp：弃牌角标": 40,
+      "choose_target:结束移动": 40,
+      "play_card:b_11.webp": 40,
+      "quick_trade:2张牌 → 精选1张牌": 34,
+      "choose_card:dlc_39.png": 29,
+      "card_corner:amiba_9.webp：弃牌角标": 28,
+      "card_corner:b_63.webp：弃牌角标": 28,
+      "choose_target:借用 orange1": 15,
+      "choose_target:借用 orange4": 15,
+      "choose_target:借用 purple1": 15,
+      "choose_target:借用 purple2": 15,
+      "choose_target:借用 purple3": 15,
+      "industry:图灵系统 1x 行动": 15,
+      "choose_target:借用 orange3": 14,
+      "choose_card:b_11.webp": 9,
+      "choose_card:dlc_36.png": 1,
+      "choose_target:研究 blue1（蓝槽 1）": 1,
+      "choose_target:研究 blue2（蓝槽 1）": 1,
+      "choose_target:研究 orange3": 1,
+      "quick_trade:3宣传 → 精选1张牌": 1,
+      "research_tech:研究科技": 1
+    },
+    "executedNodeCountByActor": {
+      "player-blue": 902
+    },
+    "executedOriginCountByTarget": {
+      "<unbound>": 277,
+      "income:gain:4,2,0,1,1,0": 212,
+      "tech:gain:blue1": 208,
+      "tech:gain:blue2": 197,
+      "tech:gain:orange3": 187,
+      "card:acquire:card-41-0": 56,
+      "decision:choose_target:b8c6e764": 40,
+      "tech:gain:orange4": 23,
+      "card:acquire:card-44-0": 16,
+      "decision:choose_target:1bbc6216": 15,
+      "decision:choose_target:a16ac402": 15,
+      "decision:choose_target:b8fbeffa": 15,
+      "decision:choose_target:dd16a166": 15,
+      "decision:choose_target:f70ace96": 15,
+      "decision:choose_target:01c733aa": 14,
+      "orbit:venus:planet:": 14,
+      "tech:gain:purple2": 12
+    },
+    "executedOriginCountByTargetAndDecisionKind": {
+      "tech:gain:blue1 -> card_corner:quick": 206,
+      "tech:gain:blue2 -> card_corner:quick": 192,
+      "tech:gain:orange3 -> card_corner:quick": 185,
+      "income:gain:4,2,0,1,1,0 -> place_data:quick": 171,
+      "<unbound> -> pass:main": 170,
+      "<unbound> -> end_turn:turn_control": 52,
+      "income:gain:4,2,0,1,1,0 -> choose_target:conditional/decision=choose_target/effect=science_domain_place_data": 41,
+      "<unbound> -> play_card:main": 40,
+      "decision:choose_target:b8c6e764 -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 40,
+      "card:acquire:card-41-0 -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 28,
+      "card:acquire:card-41-0 -> quick_trade:quick": 28,
+      "tech:gain:orange4 -> card_corner:quick": 23,
+      "<unbound> -> industry:quick": 15,
+      "decision:choose_target:1bbc6216 -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 15,
+      "decision:choose_target:a16ac402 -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 15,
+      "decision:choose_target:b8fbeffa -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 15,
+      "decision:choose_target:dd16a166 -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 15,
+      "decision:choose_target:f70ace96 -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 15,
+      "decision:choose_target:01c733aa -> choose_target:conditional/decision=choose_target/effect=residual_company_decision/step=turing_tech/ability=turing_borrow_tech": 14,
+      "tech:gain:purple2 -> card_corner:quick": 12,
+      "card:acquire:card-44-0 -> choose_card:conditional/decision=choose_card/effect=standard_action_session_decision/context=card_selection": 8,
+      "card:acquire:card-44-0 -> quick_trade:quick": 8,
+      "orbit:venus:planet: -> choose_target:conditional/decision=choose_target/effect=card_play_domain_effect:decision:card_move/cardEffect=card_move": 7,
+      "orbit:venus:planet: -> end_turn:turn_control": 7,
+      "tech:gain:blue2 -> choose_card:conditional/decision=choose_card/effect=science_domain_pick_card": 3,
+      "tech:gain:blue1 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 1,
+      "tech:gain:blue1 -> research_tech:main": 1,
+      "tech:gain:blue2 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 1,
+      "tech:gain:blue2 -> research_tech:main": 1,
+      "tech:gain:orange3 -> choose_target:conditional/decision=choose_target/effect=science_domain_research": 1,
+      "tech:gain:orange3 -> research_tech:main": 1
+    },
+    "routeEntryStatsByTarget": {
+      "income:gain:4,2,0,1,1,0": {
+        "bindingOriginCount": 119,
+        "distinctEntryStateCount": 119,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "tech:gain:blue1": {
+        "bindingOriginCount": 96,
+        "distinctEntryStateCount": 96,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      },
+      "tech:gain:blue2": {
+        "bindingOriginCount": 84,
+        "distinctEntryStateCount": 84,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 3,
+        "retainedCompletedTransitionCount": 3
+      },
+      "tech:gain:orange3": {
+        "bindingOriginCount": 84,
+        "distinctEntryStateCount": 84,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 1,
+        "retainedCompletedTransitionCount": 1
+      },
+      "card:acquire:card-41-0": {
+        "bindingOriginCount": 21,
+        "distinctEntryStateCount": 21,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 28,
+        "retainedCompletedTransitionCount": 28
+      },
+      "tech:gain:orange4": {
+        "bindingOriginCount": 14,
+        "distinctEntryStateCount": 14,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "tech:gain:purple2": {
+        "bindingOriginCount": 10,
+        "distinctEntryStateCount": 10,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 0,
+        "retainedCompletedTransitionCount": 0
+      },
+      "card:acquire:card-44-0": {
+        "bindingOriginCount": 8,
+        "distinctEntryStateCount": 8,
+        "maxBindingsPerEntryState": 1,
+        "completedTransitionCount": 8,
+        "retainedCompletedTransitionCount": 8
+      }
+    },
+    "completedRouteGroupsByTarget": {
+      "decision:choose_target:b8c6e764": [
+        {
+          "routeFamilies": [
+            "play_card"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 40,
+          "retainedCompletedTransitionCount": 40
+        }
+      ],
+      "card:acquire:card-41-0": [
+        {
+          "routeFamilies": [
+            "quick_trade"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 28,
+          "retainedCompletedTransitionCount": 28
+        }
+      ],
+      "decision:choose_target:1bbc6216": [
+        {
+          "routeFamilies": [
+            "industry"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 15,
+          "retainedCompletedTransitionCount": 15
+        }
+      ],
+      "decision:choose_target:a16ac402": [
+        {
+          "routeFamilies": [
+            "industry"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 15,
+          "retainedCompletedTransitionCount": 15
+        }
+      ],
+      "decision:choose_target:b8fbeffa": [
+        {
+          "routeFamilies": [
+            "industry"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 15,
+          "retainedCompletedTransitionCount": 15
+        }
+      ],
+      "decision:choose_target:dd16a166": [
+        {
+          "routeFamilies": [
+            "industry"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 15,
+          "retainedCompletedTransitionCount": 15
+        }
+      ],
+      "decision:choose_target:f70ace96": [
+        {
+          "routeFamilies": [
+            "industry"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 15,
+          "retainedCompletedTransitionCount": 15
+        }
+      ],
+      "decision:choose_target:01c733aa": [
+        {
+          "routeFamilies": [
+            "industry"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 14,
+          "retainedCompletedTransitionCount": 14
+        }
+      ],
+      "card:acquire:card-44-0": [
+        {
+          "routeFamilies": [
+            "quick_trade"
+          ],
+          "quickTradeCount": 1,
+          "completedTransitionCount": 8,
+          "retainedCompletedTransitionCount": 8
+        }
+      ],
+      "tech:gain:blue2": [
+        {
+          "routeFamilies": [
+            "card_corner",
+            "card_corner",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 3,
+          "retainedCompletedTransitionCount": 3
+        }
+      ],
+      "tech:gain:blue1": [
+        {
+          "routeFamilies": [
+            "card_corner",
+            "card_corner",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ],
+      "tech:gain:orange3": [
+        {
+          "routeFamilies": [
+            "card_corner",
+            "card_corner",
+            "research_tech"
+          ],
+          "quickTradeCount": 0,
+          "completedTransitionCount": 1,
+          "retainedCompletedTransitionCount": 1
+        }
+      ]
+    },
+    "goalClusters": [],
+    "prunedNodeCount": 0,
+    "beamPrunedOriginCount": 0,
+    "forkMilliseconds": 127.14525500000036,
+    "executionMilliseconds": 494.60696000000735,
+    "projectionMilliseconds": 308.1268790000013,
+    "identityMilliseconds": 2.9334589999934906,
+    "checkpointMilliseconds": 210.0071330000028,
+    "frontierMilliseconds": 13.679996000005758,
+    "orchestrationMilliseconds": 2034.8107759999893,
+    "totalMilliseconds": 3191.3104580000004
+  }
+}

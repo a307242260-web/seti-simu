@@ -8,6 +8,7 @@
   let alienChong = root.SetiAlienChong;
   let dataPlacement = root.SetiDataPlacement;
   let cards = root.SetiCards;
+  let endGameScoring = root.SetiEndGameScoring;
   if (typeof require === "function") {
     outcomeModel = outcomeModel || require("./outcome-model");
     quickTrades = quickTrades || require("../actions/quick-trades");
@@ -16,8 +17,9 @@
     alienChong = alienChong || require("../aliens/chong");
     dataPlacement = dataPlacement || require("../data/placement");
     cards = cards || require("../cards/deck");
+    endGameScoring = endGameScoring || require("../end-game-scoring");
   }
-  const api = factory(outcomeModel, quickTrades, cardEffects, alienState, dataPlacement, cards, alienChong);
+  const api = factory(outcomeModel, quickTrades, cardEffects, alienState, dataPlacement, cards, alienChong, endGameScoring);
   if (typeof module === "object" && module.exports) module.exports = api;
   if (typeof module === "undefined") root.SetiExpectedScoreEvaluator = api;})(typeof globalThis !== "undefined" ? globalThis : window, function (
   outcomeModel,
@@ -27,6 +29,7 @@
   dataPlacement,
   cards,
   alienChong,
+  endGameScoring,
 ) {
   "use strict";
 
@@ -323,6 +326,42 @@
     }, 0);
   }
 
+  // CARD-TERMINAL-VALUE-01（2026-09-13）：手牌中的终局计分牌预期。
+  // 第五轮牌值契约要求手牌终局预期按 0.5 口径计入
+  // （reports/iteration/round5-card-lifecycle-design-20260909.md「唯一计入位置」），
+  // 但 ordinaryCardEffectValue 只识别即时/资源类效果，终局公式没有分支，
+  // 导致 17 张终局牌（dlc_8/b_63/b_14/b_100/b_128/dlc_10/dlc_31/dlc_39 等）在手牌里估值 0。
+  // 这里按当前公开状态的可达数量 × scorePer 计值，只作用于手牌；已打出的终局牌
+  // 仍只由正式 scoring → securedEndGameBonus 计入（reservedCards 不走本函数），避免重复计分。
+  // 外星手牌沿用 alienValue 的统一单价，不在此重复计终局公式。
+  function terminalCardHandValue(observation, seatId) {
+    const self = observation?.selfState;
+    if (!self) return 0;
+    const selfPublic = (observation?.publicState?.players || []).find((player) => (
+      String(player?.playerId || player?.id || player?.color || "") === String(seatId)
+    ));
+    const formulaPlayer = {
+      ...(selfPublic || {}),
+      ...self,
+      resources: { ...(selfPublic?.resources || {}), ...(self?.resources || {}) },
+      techState: self?.techState || selfPublic?.techState || {},
+    };
+    const board = observation?.publicState?.board || {};
+    const context = {
+      aliens: board.aliens || {},
+      planets: board.planets || {},
+      data: board.data || {},
+    };
+    let total = 0;
+    for (const card of self.hand || []) {
+      if (!card || card.hidden || outcomeModel.isAlienCard(card)) continue;
+      const rule = endGameScoring.resolveCardEndGameRule(card, cardEffects);
+      if (!rule) continue;
+      total += Number(endGameScoring.scoreCardEndGameRule(rule, formulaPlayer, context)) || 0;
+    }
+    return total;
+  }
+
   function evaluateStateValue(observation, seatId) {
     const projection = observation?.outcomeProjection;
     if (!projection || projection.schemaVersion !== outcomeModel.PROJECTION_SCHEMA_VERSION) {
@@ -355,6 +394,7 @@
           techEfficiencyValue: 0,
           alienValue: 0,
           cardValue: 0,
+          terminalCardValue: 0,
           researchOptionValue: 0,
         },
       });
@@ -388,6 +428,9 @@
     const reservedCards = (selfState?.reservedCards || []).filter(Boolean);
     const handEffectValue = (cards) => ordinaryCardEffectValue(cards, remainingPayments, roundNumber, finalRoundNumber);
     // 手牌全价值但折半（未必全打出）+ 保留牌更低（要花行动取回）
+    // 手牌终局计分牌预期：数量型/条件型终局公式按当前可达数量 × 0.5 计入；
+    // 已打出（reservedCards）的终局牌只走正式 scoring 投影，不在此重复计入。
+    const terminalCardValue = terminalCardHandValue(observation, seatId) * 0.5;
     const cardValue = (
       handEffectValue(handCards) * 0.5
       + handEffectValue(reservedCards) * 0.25
@@ -395,7 +438,7 @@
 
     const researchOptionValue = researchPotential(stateValue);
     const total = scoreValue + liquidValue + incomeValue + techEfficiencyValue
-      + alienValue + cardValue + researchOptionValue;
+      + alienValue + cardValue + terminalCardValue + researchOptionValue;
     return deepFreeze({
       schemaVersion: "seti-state-value-v1",
       evaluationModel: EVALUATION_MODEL,
@@ -411,6 +454,7 @@
         techEfficiencyValue,
         alienValue,
         cardValue,
+        terminalCardValue,
         researchOptionValue,
       },
     });

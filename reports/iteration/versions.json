@@ -7,6 +7,27 @@
   },
   "versions": [
     {
+      "id": "card-terminal-value-20260913",
+      "name": "card-terminal-value-20260913",
+      "date": "2026-09-13",
+      "baseline": "income-choice-greedy-20260913",
+      "head": "22891395",
+      "commits": [
+        {
+          "hash": "22891395",
+          "date": "2026-09-13",
+          "subject": "手牌终局计分牌估值：数量型/条件型终局公式按可达数量×0.5计入V"
+        }
+      ],
+      "summary": "手牌终局计分牌估值：数量型/条件型终局公式按当前公开状态可达数量×0.5计入V（dlc_8/b_63/b_14/b_100/b_128/dlc_10/dlc_31/dlc_39等17张）；已打出仍只走正式scoring投影，reservedCards不重复计入；外星手牌沿用alienValue单价",
+      "records": {
+        "6d617096.22891395.full.json": {
+          "note": "578步自然终局，save-final 87/135/117/115，均113.5；同一世界human-405-world-v1指纹2d9f8f53…。搜索失败码0；有截断搜索60（战略54/控制6），执行截断49，最慢step482白色industry 4096节点29375ms。相对income-choice(均86)提高27.5；棕方保留dlc_8得18分。受测提交22891395（临时目录），合回主目录字节一致。单决策：step147蓝席card_corner由弃b_63改为pass，3.83秒、失败码空。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "income-choice-greedy-20260913",
       "name": "income-choice-greedy-20260913",
       "date": "2026-09-13",

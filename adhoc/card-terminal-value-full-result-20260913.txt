@@ -1,0 +1,9 @@
+total searches 190 truncated(any) 60
+strategic truncated 54 control truncated 6
+exec truncated 49
+worst 5 by ms:
+  step 482 player-white industry:e887dc52 nodes 4096 ms 29375
+  step 486 player-green research_tech:f86fc96a nodes 4096 ms 28430
+  step 475 player-brown research_tech:547c8803 nodes 4096 ms 27197
+  step 512 player-green industry:5bda1856 nodes 4096 ms 26879
+  step 567 player-green move:3d69e5b2 nodes 4096 ms 26472
