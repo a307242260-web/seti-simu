@@ -584,16 +584,20 @@
 
     function projectionInner(viewer = null) {
       if (!activeSession) return committedProjection(viewer);
+      // planEvidence：计划步骤捕获专用的一次性只读视图。capturePlanStep 同步复制它保留的
+      // 全部小事实（不跨步骤持有观察、不读 decision），因此同样跳过选择枚举与整棵
+      // clone+deepFreeze；遮蔽路径不使用本标记，仍走冻结完整观测（sanitizer 与其共享未改字段）。
+      const transientObservation = viewer?.cheap === true || viewer?.planEvidence === true;
       const observed = {
         ...runtime.observe(activeSession, clone(viewer), {
           // 搜索中间观测不消费 decision 字段（选择枚举见后提交 inspect），跳过重复枚举。
-          skipDecisionChoices: viewer?.cheap === true,
+          skipDecisionChoices: transientObservation,
         }),
         stateVersion: readStoreSnapshot().meta.stateVersion,
       };
       // 同上：cheap 中间观测跳过 deepFreeze，叶/根/宿主仍走冻结完整观测。
       // 完整快照先隔离working state引用，不能把仍待执行的规则状态一起冻结。
-      return viewer?.cheap === true ? observed : deepFreeze(clone(observed));
+      return transientObservation ? observed : deepFreeze(clone(observed));
     }
 
     function inspect(skipChoices = false) {
@@ -1736,7 +1740,12 @@
             ?.informationBarrier || null;
           function captureStep(action) {
             if (typeof evaluateOptions.capturePlanStep !== "function") return null;
-            const observation = composition.projection(viewer).state;
+            // 未遮蔽：capturePlanStep 立即复制所保留事实，无需为它整棵 clone+deepFreeze。
+            // 遮蔽：sanitizeHiddenInformationObservation 与"已冻结观测"共享未改字段，
+            // 必须保留冻结完整观测，否则会共享可变工作状态。
+            const observation = composition.projection(
+              planInformationMasked ? viewer : { ...viewer, planEvidence: true },
+            ).state;
             return evaluateOptions.capturePlanStep({
               action,
               observation: planInformationMasked

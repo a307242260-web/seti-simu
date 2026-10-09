@@ -7,17 +7,30 @@
   },
   "versions": [
     {
+      "id": "budget-clone-01-20260913",
+      "name": "budget-clone-01-20260913",
+      "date": "2026-09-13",
+      "baseline": "card-terminal-value-20260913",
+      "head": "c0189da2",
+      "commits": [
+        "c0189da2"
+      ],
+      "summary": "计划步骤捕获改用一次性只读投影（planEvidence）：未遮蔽路径不再为每个正式输入做整棵 clone+deepFreeze，capturePlanStep 同步复制其保留事实；遮蔽路径仍保留冻结完整观测",
+      "records": {
+        "0397dbca.c0189da2.full.json": {
+          "note": "578步自然终局，save-final 87/135/117/115，均113.5；与上一版card-terminal-value逐动作及after差异0（无损），整局耗时1297242→989470ms（-23.7%），每步2244→1712ms；搜索失败码0；截断仍49执行/54队列，最慢决策step512绿色industry 4096节点29375→19073ms。受测提交c0189da2（临时目录），合回主目录字节一致。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "card-terminal-value-20260913",
       "name": "card-terminal-value-20260913",
       "date": "2026-09-13",
       "baseline": "income-choice-greedy-20260913",
       "head": "22891395",
       "commits": [
-        {
-          "hash": "22891395",
-          "date": "2026-09-13",
-          "subject": "手牌终局计分牌估值：数量型/条件型终局公式按可达数量×0.5计入V"
-        }
+        "22891395"
       ],
       "summary": "手牌终局计分牌估值：数量型/条件型终局公式按当前公开状态可达数量×0.5计入V（dlc_8/b_63/b_14/b_100/b_128/dlc_10/dlc_31/dlc_39等17张）；已打出仍只走正式scoring投影，reservedCards不重复计入；外星手牌沿用alienValue单价",
       "records": {

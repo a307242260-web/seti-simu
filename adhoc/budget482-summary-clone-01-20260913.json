@@ -1,0 +1,19 @@
+{
+  "schema": "budget482-clone-01-verification",
+  "step": 482,
+  "actionId": "industry:e887dc52",
+  "wallMs": 20363.379999999997,
+  "timing": {
+    "forkMilliseconds": 1061.3851880000664,
+    "executionMilliseconds": 2148.8254799999995,
+    "projectionMilliseconds": 1549.0241259999661,
+    "identityMilliseconds": 7.369962000001834,
+    "checkpointMilliseconds": 1320.227075999997,
+    "frontierMilliseconds": 313.32266099994996,
+    "orchestrationMilliseconds": 9048.54663200002,
+    "totalMilliseconds": 15448.701125
+  },
+  "executedNodeCount": 4096,
+  "frontierTrimCount": 1101,
+  "failedNodeCountByCode": {}
+}
