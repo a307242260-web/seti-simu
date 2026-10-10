@@ -169,6 +169,9 @@ function createHeuristicDecisionFunction(options = {}) {
         ? { maxExecutionNodes: evaluateOptions.maxExecutionNodes }
         : {}),
       maxFrontierNodes: 256,
+      // BUDGET-LADDER-01：阶梯配额由 rule-composition 的默认值定义
+      // （50% 预算起 链12/入口16/队列4；75% 起 链10/入口4/队列2；87.5% 起 链8/入口1/队列1）。
+      // evaluateOptions.quotaTiers 可覆盖，仅供实验。
       maxMilliseconds: 30000,
       stopAtPassDecisionBoundary: evaluateOptions.stopAtPassDecisionBoundary === true,
       maxFrontierPerRoot: evaluateOptions.maxFrontierPerRoot
@@ -220,7 +223,10 @@ function createHeuristicDecisionFunction(options = {}) {
       "successfulInputSubmissionCount", "attemptedNodeCountByFamily", "failedNodeCountByFamily",
       "failedNodeCountByCode", "executedNodeCountByFamily", "executedNodeCountByDecisionKind",
       "executedNodeCountByActionSummary", "executedOriginCountByTarget",
-      "executedOriginCountByTargetAndDecisionKind", "frontierOriginCountByFamily", "totalMilliseconds"];
+      "executedOriginCountByTargetAndDecisionKind", "frontierOriginCountByFamily", "totalMilliseconds",
+      // BUDGET-LADDER-01 有损配额的显式计数（owner 要求：有损必须显式计数并留档）
+      "quotaTierReached", "macroChainCapPrunedCount", "targetEntryCapSkippedCount",
+      "targetBeamPrunedOriginCount", "quotaTiers"];
     searches.push({ kind: evaluateOptions.secondaryAgentSearch ? "strategic" : "control",
       diagnostics: diagnostics ? structuredClone(Object.fromEntries(fields.map(key => [key, diagnostics[key]]))) : null });
     return outcomes;

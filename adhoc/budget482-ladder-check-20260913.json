@@ -1,0 +1,16 @@
+{
+  "source": "adhoc/budget482-input-20260913.json",
+  "step": 482,
+  "wallMs": 11303.105291999998,
+  "actionId": "industry:e887dc52",
+  "planSteps": 13,
+  "executedNodeCount": 2493,
+  "executionTruncated": false,
+  "frontierTrimCount": 711,
+  "remainingFrontierNodeCount": 0,
+  "quotaTierReached": 0,
+  "chainPruned": 407,
+  "entrySkipped": 154,
+  "targetPruned": 368,
+  "failed": {}
+}

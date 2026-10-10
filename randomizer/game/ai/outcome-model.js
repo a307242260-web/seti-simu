@@ -18,9 +18,9 @@
   ]));
   const OUTCOME_CONFIDENCES = Object.freeze(new Set(["high", "low", "none"]));
   const SEARCH_INCOMPLETE_REASONS = new Set([
-    "node-budget", "beam-budget", "leaf-budget", "conditional-depth", "goal-depth",
+    "node-budget", "beam-budget", "beam-target-budget", "leaf-budget", "conditional-depth", "goal-depth",
     "untargeted-depth", "representative-choice", "information-barrier", "branch-failed",
-    "not-evaluated", "conditional-no-successor",
+    "not-evaluated", "conditional-no-successor", "macro-chain-cap",
   ]);
   const ASSET_PATHS = Object.freeze({
     credits: "outcomeProjection.assets.credits",

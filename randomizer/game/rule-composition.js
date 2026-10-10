@@ -1038,6 +1038,35 @@
         ? Math.max(maxNodes, Number(evaluateOptions.maxExecutionNodes) || maxNodes * 32)
         : maxNodes;
       const maxFrontierNodes = Number(evaluateOptions.maxFrontierNodes ?? 256);
+      // 实验配额（默认关闭）：目标级队列保留、每目标入口状态、宏步链长。
+      // 阶梯配额（BUDGET-LADDER-01）：搜索前段不设配额（小决策干净跑完，保持完整性契约）；
+      // 执行节点越过阈值仍未收敛时按阶梯收紧，最后一级保证队列能排空，
+      // 使战略搜索不再以“4096 用满 + 队列非空”结束。有损，逐级计数。
+      const quotaTiers = secondaryAgentSearch
+        ? (Array.isArray(evaluateOptions.quotaTiers) ? evaluateOptions.quotaTiers : [
+          { at: Math.floor(maxExecutionNodes * 0.5), chain: 12, entries: 16, perTarget: 4 },
+          { at: Math.floor(maxExecutionNodes * 0.75), chain: 10, entries: 4, perTarget: 2 },
+          { at: Math.floor(maxExecutionNodes * 0.875), chain: 8, entries: 1, perTarget: 1 },
+          // 最后一级"排空"配额：只剩不到 256 个执行节点时进一步收紧，
+          // 保证队列在 4096 之前排空（战略搜索不再以"预算用满＋队列非空"结束）。
+          { at: Math.max(1, maxExecutionNodes - 256), chain: 6, entries: 1, perTarget: 1 },
+        ])
+        : [];
+      function activeQuota() {
+        let active = null;
+        for (const tier of quotaTiers) {
+          if (executedNodeCount >= tier.at) active = tier;
+        }
+        return active;
+      }
+      function activeQuotaIndex() {
+        let index = -1;
+        for (let i = 0; i < quotaTiers.length; i += 1) {
+          if (executedNodeCount >= quotaTiers[i].at) index = i;
+        }
+        return index;
+      }
+      let maxQuotaTierReached = -1;
       const maxMilliseconds = Number(evaluateOptions.maxMilliseconds ?? 30000);
       if (secondaryAgentSearch && (
         !Number.isInteger(maxFrontierNodes) || maxFrontierNodes < legalActions.length
@@ -1211,6 +1240,10 @@
       let transpositionHitCount = 0;
       let prunedNodeCount = 0;
       let beamPrunedOriginCount = 0;
+      let targetBeamPrunedOriginCount = 0;
+      let targetEntryCapSkippedCount = 0;
+      let macroChainCapPrunedCount = 0;
+      const admittedEntryStatesByTarget = new Map();
       let frontierTrimCount = 0;
       let leafPrunedOriginCount = 0;
       let sharedPhysicalExecutionOriginCount = 0;
@@ -1226,6 +1259,28 @@
       let maxFrontierSize = legalActions.length;
       let maxRetainedFrontierSize = legalActions.length;
       let maxFrontierOriginCount = legalActions.length;
+      function admitsRouteEntry(routeKey, targetId, envelope) {
+        if (secondaryAgentSearch) maxQuotaTierReached = Math.max(maxQuotaTierReached, activeQuotaIndex());
+        if (!secondaryAgentSearch) return true;
+        // 保守边界：该正式路线还没有完成叶时不做入口配额。
+        if (routeKey && !routesWithCompletedLeaf.has(routeKey)) {
+          let pending = admittedEntryStatesByTarget.get(targetId);
+          if (!pending) { pending = new Set(); admittedEntryStatesByTarget.set(targetId, pending); }
+          pending.add(envelopeHash(envelope));
+          return true;
+        }
+        if (!targetId || !envelope) return true;
+        let states = admittedEntryStatesByTarget.get(targetId);
+        if (!states) { states = new Set(); admittedEntryStatesByTarget.set(targetId, states); }
+        const key = envelopeHash(envelope);
+        if (states.has(key)) return true;
+        const quota = activeQuota();
+        const maxEntries = quota ? Number(quota.entries) : Number.POSITIVE_INFINITY;
+        if (!Number.isFinite(maxEntries)) { states.add(key); return true; }
+        if (states.size >= maxEntries) return false;
+        states.add(key);
+        return true;
+      }
       const executedNodeCountByFamily = new Map();
       const executedNodeCountByDecisionKind = new Map();
       const executedNodeCountByActionSummary = new Map();
@@ -1595,7 +1650,14 @@
         return activeMaskedLeafProjections.get(barrier);
       }
 
+      // 有损配额的保守边界：以 (根动作, 根目标, 根计划) 为单位，某条正式路线还没有
+      // goal-completed 叶时三项配额都不对它生效——先保证每条候选路线至少能跑完一次，
+      // 配额只砍"完成之后的重复探索"。
+      const routesWithCompletedLeaf = new Set();
       function addLeaf(origin, leafObservation, successors, nextInspection, nextCheckpoints) {
+        if (origin?.terminalReason === "goal-completed" && origin?.rootAction?.actionId) {
+          routesWithCompletedLeaf.add(virtualRootKey(origin));
+        }
         const state = outcomeStateByActionId.get(origin.rootAction.actionId);
         const rootKey = virtualRootKey(origin);
         const leafCount = leafCountByVirtualRoot.get(rootKey) || 0;
@@ -2314,9 +2376,36 @@
             for (const origin of node.origins) coveredRoots.add(origin.rootAction.actionId);
           }
         }
+        const retainedPerTarget = new Map();
+        const targetKeyOf = (node) => {
+          const origin = node.origins[0];
+          if (!origin) return "<none>";
+          return [origin.rootAction?.actionId || "", origin.routeTargetId || "",
+            origin.routePlanId || "", node.action?.family || ""].join("|");
+        };
+        for (const key of [...retained]) {
+          const node = ordered.find((entry) => entry.key === key);
+          if (!node) continue;
+          const targetKey = targetKeyOf(node);
+          retainedPerTarget.set(targetKey, (retainedPerTarget.get(targetKey) || 0) + 1);
+        }
+        const targetQuotaSkipped = new Set();
         for (const node of ordered) {
           if (retained.size >= maxFrontierNodes) break;
+          if (retained.has(node.key)) continue;
+          // 该正式路线还没有完成叶时不套目标配额（先保证至少一条完整路线）。
+          const quota = activeQuota();
+          if (!quota || !routesWithCompletedLeaf.has(virtualRootKey(node.origins[0]))) {
+            retained.add(node.key);
+            continue;
+          }
+          const targetKey = targetKeyOf(node);
+          if ((retainedPerTarget.get(targetKey) || 0) >= Number(quota.perTarget)) {
+            targetQuotaSkipped.add(node.key);
+            continue;
+          }
           retained.add(node.key);
+          retainedPerTarget.set(targetKey, (retainedPerTarget.get(targetKey) || 0) + 1);
         }
         frontier = [];
         secondaryFrontierByKey.clear();
@@ -2325,7 +2414,12 @@
           if (retained.has(node.key)) pushSecondaryFrontier(node);
           else {
             beamPrunedOriginCount += node.origins.length;
-            markPruned(node.origins, "beam-budget");
+            if (targetQuotaSkipped.has(node.key)) {
+              targetBeamPrunedOriginCount += node.origins.length;
+              markPruned(node.origins, "beam-target-budget");
+            } else {
+              markPruned(node.origins, "beam-budget");
+            }
           }
         }
       }
@@ -2522,6 +2616,15 @@
               origin.rootActionSettledLegalSuccessors = execution.successors;
             }
             const nextChain = [...origin.chain, current.actionId];
+            const chainQuota = activeQuota();
+            if (chainQuota
+              && Number.isFinite(Number(chainQuota.chain))
+              && nextChain.length > Number(chainQuota.chain)
+              && routesWithCompletedLeaf.has(virtualRootKey(origin))) {
+              macroChainCapPrunedCount += 1;
+              markPruned([origin], "macro-chain-cap");
+              continue;
+            }
             const originNextProbeAction = nextProbeAction || origin.lastProbeAction;
             let routeTargetId = origin.routeTargetId || null;
             if (
@@ -2814,6 +2917,10 @@
               }
               for (const selectedRoute of conditionalRoutes) {
                 const successor = selectedRoute.action;
+                if (!admitsRouteEntry(virtualRootKey(origin), selectedRoute.routeTargetId, execution.childEnvelope)) {
+                  targetEntryCapSkippedCount += 1;
+                  continue;
+                }
                 mergeNode(nextFrontierByKey, {
                   envelope: execution.childEnvelope,
                   action: successor,
@@ -3030,6 +3137,11 @@
                 }
                 for (const selectedRoute of selectedRoutes) {
                   const successor = selectedRoute.action;
+                  if (completedGoal && nextActorIsFocal
+                    && !admitsRouteEntry(virtualRootKey(origin), selectedRoute.routeTargetId, execution.childEnvelope)) {
+                    targetEntryCapSkippedCount += 1;
+                    continue;
+                  }
                   if (completedGoal && nextActorIsFocal) {
                     recordRouteEntry(
                       selectedRoute.routeTargetId,
@@ -3219,6 +3331,11 @@
         maxNodes,
         maxExecutionNodes,
         maxFrontierNodes: secondaryAgentSearch ? maxFrontierNodes : null,
+        quotaTiers: quotaTiers.length ? quotaTiers : null,
+        quotaTierReached: maxQuotaTierReached,
+        targetBeamPrunedOriginCount,
+        targetEntryCapSkippedCount,
+        macroChainCapPrunedCount,
         maxMilliseconds: secondaryAgentSearch ? maxMilliseconds : null,
         executionLimitReached,
         budgetLimits: {
