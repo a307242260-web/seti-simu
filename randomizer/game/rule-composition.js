@@ -1042,8 +1042,10 @@
       // 阶梯配额（BUDGET-LADDER-01）：搜索前段不设配额（小决策干净跑完，保持完整性契约）；
       // 执行节点越过阈值仍未收敛时按阶梯收紧，最后一级保证队列能排空，
       // 使战略搜索不再以“4096 用满 + 队列非空”结束。有损，逐级计数。
-      const quotaTiers = secondaryAgentSearch
-        ? (Array.isArray(evaluateOptions.quotaTiers) ? evaluateOptions.quotaTiers : [
+      // BUDGET-LADDER-01 默认关闭（owner 2026-09-13：按预算比例一刀切会掉分，改为按需启用）：
+      // 只有显式传入 evaluateOptions.quotaTiers 才启用阶梯配额；默认保持无配额（均分最优）。
+      const quotaTiers = secondaryAgentSearch && Array.isArray(evaluateOptions.quotaTiers)
+        ? (evaluateOptions.quotaTiers.length ? evaluateOptions.quotaTiers : [
           { at: Math.floor(maxExecutionNodes * 0.5), chain: 12, entries: 16, perTarget: 4 },
           { at: Math.floor(maxExecutionNodes * 0.75), chain: 10, entries: 4, perTarget: 2 },
           { at: Math.floor(maxExecutionNodes * 0.875), chain: 8, entries: 1, perTarget: 1 },

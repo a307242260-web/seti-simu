@@ -1,8 +1,8 @@
 {
   "source": "adhoc/budget482-input-20260913.json",
-  "commit": "3b4abaf775f7f9322da1100921dbdad18823382a",
+  "commit": "4013d7895265e0e75fd3e47a35c956c8cbf07a66",
   "scope": "第482步白席 industry 最慢决策耗时剖析；只读诊断，策略与预算不改。",
-  "wallMs": 20363.379999999997,
+  "wallMs": 25246.999165999998,
   "ok": true,
   "actionId": "industry:e887dc52",
   "searches": [
@@ -60,7 +60,12 @@
           "<unbound> -> end_turn:turn_control": 1
         },
         "frontierOriginCountByFamily": {},
-        "totalMilliseconds": 21.396874999999994
+        "totalMilliseconds": 23.43016700000001,
+        "quotaTierReached": -1,
+        "macroChainCapPrunedCount": 0,
+        "targetEntryCapSkippedCount": 0,
+        "targetBeamPrunedOriginCount": 0,
+        "quotaTiers": null
       }
     },
     {
@@ -445,7 +450,12 @@
           "scan": 4,
           "choose_target": 1
         },
-        "totalMilliseconds": 15448.701125
+        "totalMilliseconds": 19328.419332999998,
+        "quotaTierReached": -1,
+        "macroChainCapPrunedCount": 0,
+        "targetEntryCapSkippedCount": 0,
+        "targetBeamPrunedOriginCount": 0,
+        "quotaTiers": null
       }
     }
   ],
@@ -1767,6 +1777,11 @@
     "maxNodes": 128,
     "maxExecutionNodes": 4096,
     "maxFrontierNodes": 256,
+    "quotaTiers": null,
+    "quotaTierReached": -1,
+    "targetBeamPrunedOriginCount": 0,
+    "targetEntryCapSkippedCount": 0,
+    "macroChainCapPrunedCount": 0,
     "maxMilliseconds": 30000,
     "executionLimitReached": true,
     "budgetLimits": {
@@ -5765,13 +5780,13 @@
     "goalClusters": [],
     "prunedNodeCount": 2947,
     "beamPrunedOriginCount": 3387,
-    "forkMilliseconds": 1061.3851880000664,
-    "executionMilliseconds": 2148.8254799999995,
-    "projectionMilliseconds": 1549.0241259999661,
-    "identityMilliseconds": 7.369962000001834,
-    "checkpointMilliseconds": 1320.227075999997,
-    "frontierMilliseconds": 313.32266099994996,
-    "orchestrationMilliseconds": 9048.54663200002,
-    "totalMilliseconds": 15448.701125
+    "forkMilliseconds": 1251.564951999991,
+    "executionMilliseconds": 2732.995948999894,
+    "projectionMilliseconds": 1915.4567140000538,
+    "identityMilliseconds": 11.339355999986765,
+    "checkpointMilliseconds": 1584.0105900000267,
+    "frontierMilliseconds": 510.40153099996036,
+    "orchestrationMilliseconds": 11322.650241000087,
+    "totalMilliseconds": 19328.419332999998
   }
 }
