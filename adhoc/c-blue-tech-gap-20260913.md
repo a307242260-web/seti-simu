@@ -188,3 +188,27 @@
 - 需要查清 SETI 里宣传的合法来源（扫描？卡牌效果？`quick_trade` 转换？公司能力？）；
 - 统计蓝席 vs 绿/棕在各来源上的次数与收益，找出蓝席系统性缺失的那一路；
 - 再改一处并验收（目标：蓝席宣传窗口与 techBonus 抬升、均分 ≥120）。
+
+## 追加（Round 34）：宣传收入归因——蓝 +10 vs 绿 +24，且是"分散的 +1"型缺口
+
+按步宣传增量归因（`after.p` 下标 3）：
+
+| 席位 | 宣传总收入 | 主要来源（次数×总量） |
+|---|---|---|
+| blue | **+10** | choose_payment×4=+4、choose_target×4=+4、card_corner×2=+2 |
+| green | **+24** | choose_target×10=+10、card_corner×4=+5、choose_payment×5=+5、play_card×3=+3、choose_card×1=+1 |
+| brown | +18 | choose_target×11=+12、choose_card×4=+4、card_corner×2=+2 |
+| white | +16 | choose_target×7=+7、choose_card×2=+5、card_corner×1=+2、choose_payment×2=+2 |
+
+逐笔看，绿席的宣传来自**很多个 +1**：`end_turn`（步 35 一次 +3、之后多次 +1）、`choose_target` 的移动/奖励结算
+（`move:N:out|ccw`、`data:computer`、`trace:*`）、`card_corner`（步 179–182 连拿 +5）、`play_card`、`choose_payment`（move-payment）。
+
+蓝席同类事件的**次数明显更少**：绿席光"宣传型 choose_target"就有 10 次，蓝席 4 次；绿席 `card_corner` 4 次、
+蓝席 2 次；绿席 `play_card` 带宣传 3 次、蓝席 0 次。
+
+**结论（修正前两轮的粗略表述）**：蓝席不是"漏了某一条宣传路"，而是**在几乎每一类会附带宣传的结算上次数都偏少**，
+累计差 14 个 +1。因此这不是"改一处"能补上的缺口，而是**策略层的分布性差异**：
+- 可查的下一步：`move-payment` / `end_turn` / `card_corner` 这几类 +1 的**触发条件**是什么
+  （读规则），再判断蓝席是"没触发"还是"触发条件相同但结算选择不同"；
+- 若属于"结算选择不同"（例如同样一次移动，选 A 得宣传、选 B 得资源），那就是**单点可改**的估值偏好问题，
+  有望用一个改动同时惠及多席。
