@@ -1,8 +1,8 @@
 {
   "source": "adhoc/budget482-input-20260913.json",
-  "commit": "4013d7895265e0e75fd3e47a35c956c8cbf07a66",
+  "commit": "618501e0774b7670a54a7628bd56780b274ff5ff",
   "scope": "第482步白席 industry 最慢决策耗时剖析；只读诊断，策略与预算不改。",
-  "wallMs": 25246.999165999998,
+  "wallMs": 31781.565125,
   "ok": true,
   "actionId": "industry:e887dc52",
   "searches": [
@@ -60,7 +60,7 @@
           "<unbound> -> end_turn:turn_control": 1
         },
         "frontierOriginCountByFamily": {},
-        "totalMilliseconds": 23.43016700000001,
+        "totalMilliseconds": 27.919457999999963,
         "quotaTierReached": -1,
         "macroChainCapPrunedCount": 0,
         "targetEntryCapSkippedCount": 0,
@@ -450,7 +450,7 @@
           "scan": 4,
           "choose_target": 1
         },
-        "totalMilliseconds": 19328.419332999998,
+        "totalMilliseconds": 23103.703791,
         "quotaTierReached": -1,
         "macroChainCapPrunedCount": 0,
         "targetEntryCapSkippedCount": 0,
@@ -5780,13 +5780,13 @@
     "goalClusters": [],
     "prunedNodeCount": 2947,
     "beamPrunedOriginCount": 3387,
-    "forkMilliseconds": 1251.564951999991,
-    "executionMilliseconds": 2732.995948999894,
-    "projectionMilliseconds": 1915.4567140000538,
-    "identityMilliseconds": 11.339355999986765,
-    "checkpointMilliseconds": 1584.0105900000267,
-    "frontierMilliseconds": 510.40153099996036,
-    "orchestrationMilliseconds": 11322.650241000087,
-    "totalMilliseconds": 19328.419332999998
+    "forkMilliseconds": 1438.2099290000351,
+    "executionMilliseconds": 3152.4065600000567,
+    "projectionMilliseconds": 2411.9782550000973,
+    "identityMilliseconds": 13.26818000002487,
+    "checkpointMilliseconds": 1762.0261910001657,
+    "frontierMilliseconds": 650.9412499999373,
+    "orchestrationMilliseconds": 13674.873425999682,
+    "totalMilliseconds": 23103.703791
   }
 }
