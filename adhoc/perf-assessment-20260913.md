@@ -38,3 +38,27 @@
 - 以现有机制，**≤5s 达不到**：所有"结构削减"要么掉分、要么不省节点；而 A 的天花板在 22s 以上。
 - 唯一可能同时满足"守分 + ≤5s"的方向是第 2 条（新的单调上界），属新建模，工作量与不确定性都高。
 - 现成可用的零截断配置仍是按需阶梯：**103 分 / 0 截断**（`budget-ladder-03`，opt-in）。
+
+## 附：A 路线第一处具体开销（Round 62 定位）
+
+`randomizer/game/ai/heuristic-decision-function.js` 的 `policyOutcomeView(outcomes)`（约 104-150 行）：
+
+- 对**每个叶**调用一次递归 `canShare(leaf.observation)`——它会遍历冻结对象的**全部键**做合规校验；
+- 之后对每个可共享叶再做一次 `JSON.stringify(leaf.observation)` 作为去重键。
+
+单个决策的叶数可达 **~1500**（482 实测 `leafValueSampleCount=1515`），因此这里是
+profile 中 `canShare` **4.0%**（外加 stringify 与 `copySerializable` 2.1%）的来源。
+
+### 两个候选优化（按安全性排序）
+
+1. **按对象身份跳过重复校验**：同一 `observation` 对象可能在多个叶间共享（该函数本身就要按 key 合并）。
+   在**跨调用**层面加一个 `WeakSet<object>` 缓存"已验证可共享"的对象，命中即直接返回 true——
+   纯加速，不改变判定结果。**风险低**，是首选。
+2. **去重键改为对象身份**（`WeakMap<object, object>` 代替 `JSON.stringify` 字符串键）：
+   省掉全部 stringify，但**去重粒度从"值相等"变为"同一对象"**，语义会变（不再合并值相等的不同对象）→
+   **属行为变化**，需单独验收，不作为首选。
+
+### 验收方式（A 路线门禁）
+
+482/448/485 冷决策**逐字对比**（动作 actionId + 计划步数 + after 状态）+ 完整局逐动作差异 0 + 均分 113.5 不变；
+计时用**同负载交替测量**（当前 loadavg ~4.5，适合做计时）。
