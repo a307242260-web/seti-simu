@@ -108,3 +108,42 @@ absolutePotential(facts) = valueFromStrategicFacts(facts).infrastructure.total
 深度上限、前沿宽度去重、展开宽度去重**全部失败**，因为"值不值得展开"无从判断。
 `absolutePotential` 提供的正是这个判断依据：它让"手里已有资源/科技/痕迹/路线进度"的节点
 **在优先级上被区分出来**，随后 beam 取舍与宽度去重才会真正生效。
+
+## 八、Round 56：管线已就位；**取值方式待修（已定位到精确改法）**
+
+### 已实现（默认不改变行为，单测全绿）
+
+- `evaluateSecondaryAgentSearchPriority` 内新增 `absolutePotential` 计算，并写入返回值；
+- `sortKey[2] = primaryValue + w × absolutePotential`，**w 默认 0**（`SETI_DIAG_ABS_POTENTIAL_W` 可开启）；
+- rule-composition 增加只读分桶计数 `absPotentialBuckets`（≤0 / ≤25 / ≤50 / ≤100 / >100）。
+
+### 实测：当前取值恒为 0（4092/4096 落在 ≤0）
+
+原因已定位：`infrastructureFrom(parts)` 返回的是**基础设施描述符**
+（`ownedTechIds/income/researchOptions/roundNumber/finalRoundNumber/traceCount/alienSlots/...`），
+**没有 `.total`**；`.total` 只由 `infrastructureDeltaValue(rootValue, leafValueState)` 产生。
+我按 `.total` 直接取，`finite(undefined)` → 0，所以恒为 0。
+
+### 精确改法（下一轮直接做）
+
+```
+absolutePotential(facts) =
+    infrastructureDeltaValue(emptyValue, branchValue).total    // emptyValue = 同轮次的"一无所有"基线
+  + researchPotential(branchValue)
+```
+
+其中 `emptyValue` 必须**保持 `roundNumber/finalRoundNumber` 与 branch 相同**（否则收入项会失真）：
+```
+emptyValue = {
+  terminal: false,
+  realizedScore: 0, securedEndGameBonus: 0,
+  resourceFacts: { credit:0, energy:0, publicity:0, ... },   // 各资源 0
+  infrastructure: { ownedTechIds: [], disabledTechIds: [], income: {},
+    researchOptions: [], blueBonusAssets: {}, traceCount: 0, alienSlots: [],
+    roundNumber: branchValue.infrastructure.roundNumber,
+    finalRoundNumber: branchValue.infrastructure.finalRoundNumber, ... },
+}
+```
+（`branchValue = valueFromStrategicFacts(branchFacts)`；两者均在函数作用域内可用。）
+
+修好后仍按原验收：先看 `absPotentialBuckets` 是否出现梯度（不再全 0），再用 w>0 跑 482/448/485 与完整局。
