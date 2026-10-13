@@ -183,3 +183,28 @@ return { ...clonedResult, nextState };
 1. 在克隆里**移除 415 的克隆**（改为存引用），跑 482/448/485；
 2. 门禁按补强后的协议：**动作 + 计划 + `diagnostics` 逐项 + after 状态**全部一致（不只是决策）；
 3. 若全绿且 profile 显示 `structuredClone` 占比下降 → 保留；任一不一致 → 立即回退并记录"该克隆确有必要（附差异证据）"。
+
+## 十四、Round 81：头号目标**实验完成 → 行为等价但无收益**（已还原）
+
+**实验**：移除 415 的 `clone(result)`（改存引用 + 浅拷贝返回），在隔离克隆里跑 482，并**比对全部 60 个诊断字段**。
+
+| 检查项 | 结果 |
+|---|---|
+| 动作 | `industry:e887dc52` → 同 ✓ |
+| 计划步数 / 内容 | 13 步 → 13 步，**逐项一致** ✓ |
+| 诊断字段集合 | 60 → 60，无增无减 ✓ |
+| **诊断值差异** | **8 个，全部是耗时字段**（execution/projection/identity/total/orchestration/frontier/checkpoint/fork 毫秒），**无任何计数或语义差异** ✓ |
+| 用时 | 19834ms → **20051ms**（噪声内，**无收益**） |
+
+### 两条结论
+
+1. **该改动是行为等价的**（决策、计划、全部计数一致）——说明"移除这个克隆"**在语义上安全**；
+2. **但它不省时间**：`clone(result)` **不是 `structuredClone` 的大头**。33~35% 的克隆开销在别处
+   （postSearch 投影 / `restoreCheckpoint` / `projectionInner` / `cloneShared` / `capturePlanStep`）。
+
+**处置：已还原**（不合并无收益的改动），并把这次实验的两个副产物保留下来：
+
+- **完整的诊断一致性门禁工具**：`adhoc/dump482.js`（转储动作/计划/60 个诊断字段），
+  后续任何 A 项都可以 `before`/`after` 两次运行后自动 diff——这正是 Round 79 补强的那条门禁的可执行版本；
+- **排除一个候选**：头号目标从清单里划掉，剩余候选回到 postSearch 投影（~7%）、`restoreCheckpoint`（3.8%）、
+  `projectionInner`（2.1%）、`cloneShared`（2.0%）、`capturePlanStep`（2.9%）。
