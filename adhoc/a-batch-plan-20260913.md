@@ -156,3 +156,30 @@ return { ...clonedResult, nextState };
 门禁必须增加一条：
 
 > **同一决策的 `diagnostics`（含各计数与 `budgetLimits`）与记录字段必须逐项一致**（不只是动作与计划）。
+
+## 十三、Round 80：调用链审计结果——"就地修改 result"**未找到证据**
+
+审计 `augmentEffectResult`（`randomizer/game/effects/residual-domain-session.js:1379`，production 唯一实现，
+经 `production-composition.js:987` 接到 `transformEffectResult`）：
+
+| 检查 | 结果 |
+|---|---|
+| `executorResult.<字段> = ...` 赋值 | **0 处**（全文 grep 无命中） |
+| 该函数返回形式 | 一律 `{ ...executorResult, spawnedEffects[, events] }` —— **新建外壳对象** |
+| 是否修改**状态** | 是：通过 `root` 调 `chong.markTransportedFossilDelivered`、`completeVisitOrbitFacts(root, ...)` 等 |
+
+因此第 488 行注释里"**原地增补 result**"的表述**与代码事实不符**（至少在这个实现里找不到对 result 对象的就地写）。
+真正发生的是**状态（`root`/`nextState`）被修改**。
+
+### 这对头号目标意味着什么
+
+- 415 处 `clone(result)` 的必要性，**不再有"result 被就地改写"这层理由**；
+- 剩下的是一个**语义判断**：终局事件（636 行发布）应当携带**修改前**还是**修改后**的状态快照。
+  由于 `lastActionResult` **唯一的读取点就是 636 行**（其余全是 `= null` 重置），
+  这件事**必须由运行时实验定论**，不能靠读代码断言。
+
+### 因此下一轮的实验（已具备全部条件）
+
+1. 在克隆里**移除 415 的克隆**（改为存引用），跑 482/448/485；
+2. 门禁按补强后的协议：**动作 + 计划 + `diagnostics` 逐项 + after 状态**全部一致（不只是决策）；
+3. 若全绿且 profile 显示 `structuredClone` 占比下降 → 保留；任一不一致 → 立即回退并记录"该克隆确有必要（附差异证据）"。
