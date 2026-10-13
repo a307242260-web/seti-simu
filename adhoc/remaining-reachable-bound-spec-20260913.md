@@ -53,3 +53,35 @@ RR(node) = Σ_{t ∈ pendingTargets(node)} unclaimedValue(t) × feasibility(node
 1. `RR` 若退化成"所有节点近似同值"，则既不能排序也不能剪枝 → 回到平原；
 2. `unclaimedValue(t)` 的口径若包含已被其他席位抢走的目标，会高估 → 上界仍成立（安全）但更松；
 3. 若最终"守分"要求 `RR` 极松（例如必须按全局理论上限），剪枝量归零 → 判定不可达并留曲线。
+
+## 六、Round 71 修正：**requirements 不在搜索内可得**，RR 必须改用"目标类型静态上限表"
+
+核查 `rule-composition.js` 的实际可得性：
+
+| 数据 | 搜索内是否可得 | 位置 |
+|---|---|---|
+| `origin.routeTargetId` / `origin.routePlanId` | **可得**（每个 origin 都带） | :1463、:2032-2062、:2173 |
+| `rawProbeRequirements` / `rawSectorWinRequirements` / `rawDataAnalyzeRequirements` | **不可得**（只在评估器/端口按需算） | 全文件无出现 |
+
+因此原规格里"**复用搜索已在算的 requirements**"这一条**不成立**——若照它实现，每节点都得做一次 requirements 计算（正是 Round 47 让 482 超时的原因）。
+
+### 修正后的 RR（更便宜，且仍是上界）
+
+```
+RR(node) = Σ_{t ∈ pendingTargets(node)} STATIC_VALUE[type(t)] × feasibilityFlag
+         + remainingIncomeValue(node)        // 投影 progress 即可，极廉价
+```
+
+- `t` 取自 **每个 origin 的 `routeTargetId`**（搜索内可得，零额外调用）；
+- `STATIC_VALUE[type]` 是一张**目标类型静态上限表**（如 `sector:win`≈8、`land:`≈12、`orbit:`≈5、
+  `data:`≈4、`tech:gain`≈5、`trace:`≈3、`card:acquire`≈3）；**每个值必须 ≥ 该类型目标的真实最大收益**，
+  这是它当上界的前提，由不变量校验来验证与修正（违例就抬高对应项）；
+- `feasibilityFlag` 初版可取 1（最松、最安全），后续再按剩余移动步数/资源缺口收紧。
+
+**成本**：每节点 O(origin 数) 次查表 + 一次投影读取 ⇒ 远低于 0.2ms ✓
+
+### 不变量校验的作用（比原先更重要）
+
+由于静态表是"拍出来的"，**第一步的只读不变量校验就是唯一的安全网**：
+对每个完成叶断言 `RR(任一祖先) ≥ 叶值`，**任何违例都直接指出是哪类目标的上限给低了**，
+按违例量抬高该类型后重测，直到零违例——这比"先证明再实现"更符合本项目的实证风格。
