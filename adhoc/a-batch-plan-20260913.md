@@ -86,3 +86,41 @@
 **结论**：非搜索的 **440ms/步** 不来自这处比较——排除它，避免了对"相等判定语义"做无谓改动。
 非搜索开销（整局 254s / 22.8%）的真实构成仍未定量，需要**整局级 profile**（约 20 分钟一次）才能定位；
 它**不影响最慢决策**，因此对 ≤5s 目标无贡献，优先级低于搜索侧克隆项（第 1/2/4/5 项）。
+
+## 十一、Round 78：A 批**头号目标**定位（每节点两次克隆，且同函数内有成功先例）
+
+在 `randomizer/game/rule-composition.js` 的动作执行路径（约 405-420 行）：
+
+```js
+const result = runWithWorkingStateContext(
+  workingContext,
+  () => actionRegistry.execute(workingContext, clone(action)),   // ← 每节点 1 次
+);
+...
+const clonedResult = clone(result);                                // ← 每节点 1 次（result 含 nextState）
+lastActionResult = clonedResult;
+return { ...clonedResult, nextState };
+```
+
+**每个执行节点（单决策 4096 个）都会做这两次克隆**，其中 `clone(result)` 会**连同 `nextState`（整份新状态）一起深拷贝**。
+
+### 为什么这是头号目标（有成功先例）
+
+同一函数的第 488 行附近，**已经有一处同类优化落地**，注释写得很清楚：
+
+> 性能：transformEffectResult … 此前每 effect 执行都整状态 structuredClone（**单决策 ~3552 次，实测 ~600ms/11% + GC 压力**）。
+> nextState 同引用时直接复用：… 仅当 transform 真的产出新状态对象时才防御性克隆。
+
+即：**"当引用已归自己所有时不再防御性克隆"这一手法在本文件里已被验证能省 ~11%**。
+上面那两处（`clone(action)`、`clone(result)`）是**同一模式、同样在每节点路径上**，尚未处理。
+
+### 改动方向（下一轮执行，风险中）
+
+1. **`clone(action)`**：确认 `actionRegistry.execute` 不就地修改 action（只读）→ 可传冻结引用；
+2. **`clone(result)`**：确认 `result` 与 `nextState` 的所有权——若 `nextState` 已由本调用链独占（trusted fork 下 `applyResult` 本就直接采用 `result.nextState`），
+   且 `lastActionResult` 只被诊断读取，则可改为"仅在需要隔离时才克隆"（与第 488 行的先例同构）；
+3. 门禁照旧：**482/448/485 逐字对比 → 单测 → profile 占比（`structuredClone` 应明显下降）→ 整局交替复跑**。
+
+### 预期
+
+若此处与先例同量级（~10%），**单项就可能带来整局 ~10% 的收益**，且属纯无损类改动——比前面所有微优化加起来都大。
