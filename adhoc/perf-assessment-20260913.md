@@ -62,3 +62,43 @@ profile 中 `canShare` **4.0%**（外加 stringify 与 `copySerializable` 2.1%�
 
 482/448/485 冷决策**逐字对比**（动作 actionId + 计划步数 + after 状态）+ 完整局逐动作差异 0 + 均分 113.5 不变；
 计时用**同负载交替测量**（当前 loadavg ~4.5，适合做计时）。
+
+## 附二：A 路线第二处目标——状态序列化/哈希（约 11%，且**可安全缓存**）
+
+profile 占比（482 单决策，Round 65）：
+
+| 项 | 占比 |
+|---|---|
+| `structuredClone` | 34.7% |
+| GC | 10.1% |
+| **`stableSerialize @ state-store`** | **5.1%** |
+| **`deepFreeze @ rule-composition`** | 2.9% |
+| `stableSerialize @ rule-composition` | 2.3% |
+| **`envelopeHash`** | 2.2% |
+| `copySerializable @ policy-port` | 2.3% |
+| **`stableHashSerialized`** | （Round 3 为 1.3%） |
+| `findParentPackageJSON` | 2.2% |
+
+即**"序列化 + 哈希"一组约 11%**，而它们对**同一份不可变状态**是可缓存的。
+
+### 实现（`randomizer/game/state/state-store.js:46` 的 `stableSerialize`）
+
+- 调用点：`serialize(candidate = committedState)`（:461）与 `serializeForkSnapshot()`（:465）——同一份状态会被重复序列化；
+- 状态由同文件的 `deepFreeze`（:39）冻结，**冻结对象不可变 → 序列化结果可安全缓存**；
+- 方案：在该函数内加 `const serializedCache = new WeakMap();`，并**仅在 `Object.isFrozen(value)` 时**读写缓存
+  （递归中的冻结子对象同样受益；非冻结的工作副本不走缓存，避免"可变对象被缓存后失效"的错误）；
+- **行为等价性**：输出字符串逐字节不变（缓存只是跳过重复计算），因此可用现有门禁验收。
+
+### 验收（按 Round 65 确立的方法）
+
+1. 单测 99/99 + full-flow 1/1；
+2. 482/448/485 冷决策**逐字对比**（动作 + 计划 + after）；
+3. **profile 占比**：`stableSerialize` + `envelopeHash` + `stableHashSerialized` 合计应从 ~8.6% 明显下降
+   （需多次采样取中位数，因单次 profile 有 ±0.5~1% 噪声）；
+4. 完整局：逐动作差异 0、均分 113.5、整局耗时可测（预期整局 −5~10%）。
+
+### 风险
+
+- 若 `serialize(candidate)` 传入**未冻结**的候选（工作副本），缓存不生效（按设计），不会出错；
+- 需确认 `deepFreeze` 覆盖全部进入序列化的状态对象（若某路径传入浅冻结对象而其后被就地修改，会读到陈旧缓存）——
+  **这一点必须在实现时用 `Object.isFrozen` 之外的方式再核一遍**（例如确认 store 的所有提交路径都经 `deepFreeze`）。
