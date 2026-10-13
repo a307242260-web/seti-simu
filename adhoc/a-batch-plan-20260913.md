@@ -208,3 +208,32 @@ return { ...clonedResult, nextState };
   后续任何 A 项都可以 `before`/`after` 两次运行后自动 diff——这正是 Round 79 补强的那条门禁的可执行版本；
 - **排除一个候选**：头号目标从清单里划掉，剩余候选回到 postSearch 投影（~7%）、`restoreCheckpoint`（3.8%）、
   `projectionInner`（2.1%）、`cloneShared`（2.0%）、`capturePlanStep`（2.9%）。
+
+## 十五、Round 83：候选 #3（`capturePlanStep` 2.9%）**不可削减——已否证**
+
+审计 `rule-composition.js` 的投影路径，第 587-600 行说得很明确：
+
+```
+// planEvidence：计划步骤捕获专用的一次性只读视图。capturePlanStep 同步复制它保留的
+// [事实]；遮蔽路径不使用本标记，仍走冻结完整观测…
+const transientObservation = viewer?.cheap === true || viewer?.planEvidence === true;
+...
+return transientObservation ? observed : deepFreeze(clone(observed));   // ← 第 600 行
+```
+
+即 **`capturePlanStep` 收到的 observation 在 planEvidence 路径上是"未冻结、未克隆的实时只读视图"**（这是 `8badab3e` 那版优化的设计：用"capturePlanStep 只同步复制它真正保留的事实"替代"整树 clone+deepFreeze"）。
+
+**因此它内部那 ~10 处 `structuredClone` 正是安全机制本身**——去掉它们会让计划事实与实时状态共享引用，
+下游一旦就地修改就会污染搜索分支。**该候选关闭**：不是"多余的克隆"，而是"已经优化过的必要复制"。
+
+### A 批清单更新
+
+| # | 候选 | 状态 |
+|---|---|---|
+| 3 | `capturePlanStep` 残留克隆（2.9%） | **关闭（本轮否证：设计必需）** |
+| — | `clone(result)`（每节点一次，含 nextState） | **关闭（Round 81：行为等价但零收益）** |
+| 1 | postSearch outcome 投影（~7%） | 待做 |
+| 2 | `restoreCheckpoint`（3.8%） | 待做 |
+| 4 | `projectionInner`（2.1%） | 待做 |
+| 5 | `cloneShared` / `buildRuleObservation`（2.0%/1.8%） | 待做 |
+| 7 | 非搜索每步 440ms（整局 22.8%） | 待做（需整局 profile 定位） |
