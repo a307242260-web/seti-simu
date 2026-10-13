@@ -115,3 +115,45 @@ B 需要先修"未来价值预估不自洽"（祖先口径差距实测 71.5）�
 **注意**：记录里的诊断字段是白名单子集，`targetEquivalentChoicePrunedCount`、`quotaTierReached`、
 `macroChainCapPrunedCount` 等**不在记录中**，所以"等价目标/交易去重到底做了多少"无法从记录判断，
 需要单决策诊断（跑一次 482 即可，等负载）。
+
+## 八、追加（Round 45）：482 单决策的真实计数（首次拿到，之前记录里看不到）
+
+（负载 43 下用 600s 期限跑的非计时诊断；动作 `industry:e887dc52`、13 步计划与基线一致 → 数据有效）
+
+| 计数 | 值 | 含义 |
+|---|---|---|
+| executedNodeCount | 4096 | 用满 |
+| **executionLimitReached** | **true** | 战略执行截断（队列非空） |
+| **remainingFrontierNodeCount** | **244** | 剩余队列节点 |
+| **remainingFrontierOriginCountByGoalDepth** | **{1: 24, 2: 336}** | 剩余来源 531 个，二级目标占 336 |
+| **maxFrontierSize / maxRetainedFrontierSize** | 263 / 256 | 前沿上限 256 已顶满 |
+| **beamPrunedOriginCount** | **3387** | beam 已裁掉 3387 个来源 |
+| prunedNodeCount | 2947 | |
+| **targetEquivalentChoicePrunedCount** | **7** | 等价目标去重**几乎没起作用**（≈0.2%） |
+| targetBeamPrunedOriginCount | 0 | 该机制未触发 |
+| macroChainCapPrunedCount / quotaTierReached | 0 / −1 | 阶梯配额未启用 |
+| frontierMilliseconds | 1823ms | 前沿维护占该决策 ~6% |
+
+### 剩余队列被谁占着（`frontierOriginCountByFamily`）
+
+| 族 | 来源数 |
+|---|---|
+| **move** | **96** |
+| **quick_trade** | **85** |
+| end_turn | 58 |
+| card_corner | 57 |
+| place_data | 19 |
+| pass | 18 |
+| research_tech | 12 |
+| industry | 6 |
+
+### 结论（C' 的确切靶点）
+
+1. **截断的直接原因是"前沿被手段类分支占满"**：队列里 move(96)/quick_trade(85)/card_corner(57)/end_turn(58)
+   这些"移动、交易、角标、结束回合"分支占了绝大多数，而它们本身不产分（分来自 scan/land/place_data/科技/痕迹）。
+2. **现有等价去重几乎无用**：`targetEquivalentChoicePrunedCount = 7`（≈0.2%），说明"等价目标/交易"这条路
+   **没有可观的现成空间**——我原先的猜测（4.2% 的同一交易变体是重复枚举）在这里没有得到支持。
+3. 因此最有效的动作是**按目标/按来源收紧前沿保留**（现有 `perTarget` 旋钮正是这个语义，且它**只在路线已有完成叶后生效**
+   ——保护"至少一条完整路线"）。这支持**优先跑 perTarget-only 单旋钮实验**。
+4. 阶梯的另外两个旋钮（chain / entries）在本决策下计数均为 0，说明它们不是本决策截断的直接原因；
+   `perTarget` 才是对口的那一个。
