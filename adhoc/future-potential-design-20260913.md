@@ -65,3 +65,46 @@ priority'(node) = primaryValue(node) + futurePotential(node)
 2. **若它让每节点成本上升 >30%** → 即使节点数下降，总时间可能不降 → 先做成本优化或改用更便宜的近似；
 3. **若破坏单调性** → 不能用于 B（上界），但**仍可用于 C' 的排序**（这条路独立有效）；
 4. 全程以"**均分 ≥113.5**"为硬门禁；任何掉分即按 owner 流程（原选择是否被剪/新选择是否新入队）自查，仍掉分则否决。
+
+## 七、Round 55 修正：**"剩余收入发放"作为梯度项无效；应改用"状态绝对潜力"**
+
+### 修正 1：收入项是常数，不产生梯度
+
+`remainingPayments × income` 在同一回合内**对所有节点是同一个值**（同一轮次、同一收入），
+把它加进优先级只会**整体平移**，不会拉开任何差距——**对"零值平原"毫无作用**。
+（它只有作为 B 的剪枝上界时才有意义，因为它会随回合推进单调下降。）
+
+**要产生梯度，加的项必须随状态变化。**
+
+### 修正 2：根因是"增量口径"，应改用"状态绝对潜力"
+
+现在排序键 `sortKey[2] = primaryValue`，而
+`primaryValue = 分差 + 基建差 + 宣传研究差` —— **全是相对根的增量**。
+所以"这条路径还没拿到任何东西"的节点**一律是 0**，与"手里已有 3 个科技/2 条痕迹"的节点**无法区分**。
+
+而评估器内部本来就有**绝对口径**：`valueFromStrategicFacts(facts)` 返回
+`{terminal, realizedScore, securedEndGameBonus, resourceFacts, infrastructure}`（绝对量），
+`infrastructureFrom({ownedTechIds, income, researchOptions, traceCount, alienSlots, sectorWinRequirements, dataProgress, ...})`
+也是绝对的。**只是从没被用于排序。**
+
+### 实现位置（重要，避免白做）
+
+`valueFromStrategicFacts` / `infrastructureFrom` / `researchPotential` **都没有导出**
+（导出清单里只有 `incomeFutureValue` 等相关项）。因此**不要在端口层拼装**，而应**在**
+`expectedScoreEvaluator.evaluateSecondaryAgentSearchPriority`（`expected-score-evaluator.js` 内，
+`rootFacts`/`branchFacts` 与全部内部函数都在作用域内）里加一项：
+
+```
+sortKey[2] = primaryValue + w × absolutePotential(branchFacts)
+absolutePotential(facts) = valueFromStrategicFacts(facts).infrastructure.total
+                         + researchPotential(valueFromStrategicFacts(facts))
+```
+
+要求：**开关默认关**（不改变默认行为与既有契约）；打开时**同时记录**分桶分布，
+以便用 Round 52 的指标验收：482 展开节点中优先级 ≤0 占比（基线 77%）应显著下降、>25 的节点（基线 0）应出现。
+
+### 为什么这条路值得做（与前三次否证的关系）
+
+深度上限、前沿宽度去重、展开宽度去重**全部失败**，因为"值不值得展开"无从判断。
+`absolutePotential` 提供的正是这个判断依据：它让"手里已有资源/科技/痕迹/路线进度"的节点
+**在优先级上被区分出来**，随后 beam 取舍与宽度去重才会真正生效。
