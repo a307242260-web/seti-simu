@@ -1,0 +1,12 @@
+{
+  "independentStateValue": "passed",
+  "standardAuditExitCode": 1,
+  "legacyFailure": "decisionObs: Cannot add property aomomo, object is not extensible",
+  "scope": "新路径通过；旧V失败保留，不修改旧策略",
+  "log": "state-value-input-audit-v1.log",
+  "sourceBase": "2bc7b88c",
+  "sourceHashes": {
+    "randomizer/game/ai/state-value.js": "fefa8dbc244b35a10b022e1828d522b4380bdea505134ff7fa266c4fc8956872",
+    "tools/audit_v_state_inputs.js": "84e90306ef8abf4e997b6377faaa7de0da60ff866259a6e96aa7b925257abaa7"
+  }
+}

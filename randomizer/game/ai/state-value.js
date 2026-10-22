@@ -1,0 +1,57 @@
+(function (root, factory) {
+  "use strict";
+  const api = factory();
+  if (typeof module === "object" && module.exports) module.exports = api;
+  else root.SetiStateValue = api;
+})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+  "use strict";
+
+  const MODEL_VERSION = "seti-linear-state-value-v1";
+  // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
+  const DEFAULT_WEIGHTS = Object.freeze({
+    credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1,
+  });
+
+  function number(value, path) {
+    if (typeof value !== "number" || !Number.isFinite(value)) throw new TypeError(`VALUE_NUMBER_INVALID: ${path}`);
+    return value;
+  }
+
+  function evaluateStateValue(observation, seatId, options = {}) {
+    const player = observation?.publicState?.players?.find(player => player.playerId === seatId);
+    if (!player) throw new TypeError(`VALUE_PLAYER_MISSING: ${seatId}`);
+    if (observation.selfState?.playerId !== seatId) throw new TypeError("VALUE_VIEWER_MISMATCH");
+    if (!Array.isArray(observation.selfState.hand)) throw new TypeError("VALUE_HAND_MISSING");
+    const terminal = observation.terminal ?? observation.outcomeProjection?.terminal;
+    if (typeof terminal !== "boolean") throw new TypeError("VALUE_TERMINAL_MISSING");
+    const realizedScore = number(player.score, "player.score");
+    const currentTotal = number(player.finalScore, "player.finalScore");
+    if (terminal) return Object.freeze({ modelVersion: MODEL_VERSION, total: currentTotal,
+      components: Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
+        resources: 0, hand: 0, income: 0 }), terminal: true });
+
+    const weights = { ...DEFAULT_WEIGHTS, ...options.weights };
+    for (const [key, value] of Object.entries(weights)) {
+      if (!Object.hasOwn(DEFAULT_WEIGHTS, key)) throw new TypeError(`VALUE_WEIGHT_UNKNOWN: ${key}`);
+      if (number(value, `weights.${key}`) < 0) throw new TypeError(`VALUE_WEIGHT_NEGATIVE: ${key}`);
+    }
+    const round = number(observation.publicState.roundNumber, "roundNumber");
+    if (!Number.isInteger(round) || round < 1 || round > 4) throw new TypeError("VALUE_ROUND_INVALID");
+    if (!player.income || typeof player.income !== "object") throw new TypeError("VALUE_INCOME_MISSING");
+    let resources = 0;
+    let income = 0;
+    for (const key of Object.keys(weights)) {
+      if (key !== "handSize") resources += number(player[key], `player.${key}`) * weights[key];
+      // 正式轮初收入发生于第2/3/4轮；插收入的立即奖励已进入当前资源，不能重复加。
+      income += number(player.income[key], `income.${key}`) * weights[key] * (4 - round);
+    }
+    const hand = observation.selfState.hand.length * weights.handSize;
+    const components = Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
+      resources, hand, income });
+    const total = Object.values(components).reduce((sum, value) => sum + value, 0);
+    number(total, "total");
+    return Object.freeze({ modelVersion: MODEL_VERSION, total, components, terminal: false });
+  }
+
+  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, evaluateStateValue });
+});

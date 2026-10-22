@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "seti-ai-foundation-devset-v1",
+  "sourceCommit": "2bc7b88c300c01db27bc47471b4f1d79653bb6ad",
+  "node": "v22.22.0",
+  "timingScope": "entire cold standard CLI process including game initialization, result writes and report generation",
+  "searchCoverage": "not-evaluated",
+  "runs": [
+    {
+      "name": "ai-foundation-dev-00-20261022",
+      "seed": "seti-free-analyze-v1",
+      "processWallMs": 10376.03025,
+      "exitCode": 1,
+      "recordPath": "reports/research/3558b009.2bc7b88c.full.json",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-00-20261022-2bc7b88c-full-v126.json",
+      "steps": 229,
+      "terminal": true,
+      "gameLoopWallMs": 7360,
+      "scores": {
+        "player-blue": 21,
+        "player-green": 21,
+        "player-brown": 19,
+        "player-white": 20
+      },
+      "fingerprint": "3558b00989161cea111fb9b66eb6eda2fd4720f79a03059d1b05f85afd66af13",
+      "status": "passed",
+      "reportPath": "reports/iteration/ai-foundation-dev-00-20261022/3558b009.2bc7b88c.full.action-log.html",
+      "reportRepaired": true,
+      "initialCommandExitCode": 1,
+      "initialCommandIssue": "Unrelated legacy save report rebuild failed; completed game was preserved, report rebuilt without rerunning AI after limiting snapshot registry scope",
+      "traceSha256": "4f90fbbe2ac8b07e4892c79c2f44e3c50270619af6e2252c8e2bd6ce33fe3742"
+    },
+    {
+      "name": "ai-foundation-dev-01-20261022",
+      "seed": "seti-107",
+      "processWallMs": 11886.871541,
+      "exitCode": 0,
+      "recordPath": "reports/research/1ed7c0bf.2bc7b88c.full.json",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-01-20261022-2bc7b88c-full-v128.json",
+      "steps": 250,
+      "terminal": true,
+      "gameLoopWallMs": 8110,
+      "scores": {
+        "player-blue": 38,
+        "player-green": 32,
+        "player-brown": 18,
+        "player-white": 48
+      },
+      "fingerprint": "1ed7c0bf85bd053eb36d4182420d7f26586b92fc7e99c1e1d4fa0e461ff4dc94",
+      "status": "passed",
+      "reportPath": "reports/iteration/ai-foundation-dev-01-20261022/1ed7c0bf.2bc7b88c.full.action-log.html",
+      "traceSha256": "c19f1b72148c6265d9d63c91cfafb0bdead066cb81f848735a1fe23f4f98b45e"
+    },
+    {
+      "name": "ai-foundation-dev-02-20261022",
+      "seed": "ai-dev-20261022-01",
+      "processWallMs": 11930.964292,
+      "exitCode": 0,
+      "recordPath": "reports/research/8cf00b93.2bc7b88c.full.json",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-02-20261022-2bc7b88c-full-v116.json",
+      "steps": 221,
+      "terminal": true,
+      "gameLoopWallMs": 7990,
+      "scores": {
+        "player-blue": 29,
+        "player-green": 37,
+        "player-brown": 27,
+        "player-white": 10
+      },
+      "fingerprint": "8cf00b9334cef6529c54d5ab2945e26d68272c8d2a62c2b099d5c88ba686edb8",
+      "status": "passed",
+      "reportPath": "reports/iteration/ai-foundation-dev-02-20261022/8cf00b93.2bc7b88c.full.action-log.html",
+      "traceSha256": "811acadab018a2aa880c189e9ce027f8e72bc485b6d74b727a24ee89ec22bed9"
+    },
+    {
+      "name": "ai-foundation-dev-03-20261022",
+      "seed": "ai-dev-20261022-02",
+      "processWallMs": 10272.145292,
+      "exitCode": 0,
+      "recordPath": "reports/research/801a83ba.2bc7b88c.full.json",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-03-20261022-2bc7b88c-full-v120.json",
+      "steps": 229,
+      "terminal": true,
+      "gameLoopWallMs": 7063,
+      "scores": {
+        "player-blue": 18,
+        "player-green": 19,
+        "player-brown": 23,
+        "player-white": 28
+      },
+      "fingerprint": "801a83bae1fe7ad9f888409fe1ddc3ff9791eb567667bcddd0b784df0a2a9a7b",
+      "status": "passed",
+      "reportPath": "reports/iteration/ai-foundation-dev-03-20261022/801a83ba.2bc7b88c.full.action-log.html",
+      "traceSha256": "e18be1caa4acbf041a0dd6dc384725a03a73336c9eefa6de3fb40c3bcf0d31cd"
+    },
+    {
+      "name": "ai-foundation-dev-04-20261022",
+      "seed": "ai-dev-20261022-03",
+      "processWallMs": 12863.198625,
+      "exitCode": 0,
+      "recordPath": "reports/research/199abbfb.2bc7b88c.full.json",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-04-20261022-2bc7b88c-full-v124.json",
+      "steps": 264,
+      "terminal": true,
+      "gameLoopWallMs": 8996,
+      "scores": {
+        "player-blue": 30,
+        "player-green": 28,
+        "player-brown": 25,
+        "player-white": 42
+      },
+      "fingerprint": "199abbfb3c58ecadb88137368a1a98f43de720ac9b5c942b41173a9eb8fc9643",
+      "status": "passed",
+      "reportPath": "reports/iteration/ai-foundation-dev-04-20261022/199abbfb.2bc7b88c.full.action-log.html",
+      "traceSha256": "dfd1e270d194930483a598702fd2fa27d6475105c1463c12ee0323904a0b4f2d"
+    },
+    {
+      "name": "ai-foundation-dev-05-20261022",
+      "seed": "ai-dev-20261022-04",
+      "processWallMs": 11908.079,
+      "exitCode": 0,
+      "recordPath": "reports/research/7cd473bf.2bc7b88c.full.json",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-05-20261022-2bc7b88c-full-v130.json",
+      "steps": 254,
+      "terminal": true,
+      "gameLoopWallMs": 8130,
+      "scores": {
+        "player-blue": 38,
+        "player-green": 21,
+        "player-brown": 45,
+        "player-white": 21
+      },
+      "fingerprint": "7cd473bf3e5948d5426a65d06ede734c274d429f8d57560690573bb37642e155",
+      "status": "passed",
+      "reportPath": "reports/iteration/ai-foundation-dev-05-20261022/7cd473bf.2bc7b88c.full.action-log.html",
+      "traceSha256": "b2b0461935dd66bb20f0ed427175fe0d6a4e2828b52a815a8e5ea2332c859982"
+    },
+    {
+      "name": "ai-foundation-dev-06-20261022",
+      "seed": "ai-dev-20261022-05",
+      "processWallMs": 12271.419625,
+      "exitCode": 0,
+      "recordPath": "reports/research/b15f4401.2bc7b88c.full.json",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-06-20261022-2bc7b88c-full-v126.json",
+      "steps": 264,
+      "terminal": true,
+      "gameLoopWallMs": 8661,
+      "scores": {
+        "player-blue": 15,
+        "player-green": 17,
+        "player-brown": 25,
+        "player-white": 27
+      },
+      "fingerprint": "b15f44013a59a683befd2e6fd879f6e5443fb40eac8f33a5f8614e8538c3b5da",
+      "status": "passed",
+      "reportPath": "reports/iteration/ai-foundation-dev-06-20261022/b15f4401.2bc7b88c.full.action-log.html",
+      "traceSha256": "8231f7c8f1bb5da6a73fc61f62df99acd23f125a30a20a1f19ff93a5635b4891"
+    },
+    {
+      "name": "ai-foundation-dev-07-20261022",
+      "seed": "ai-dev-20261022-06",
+      "processWallMs": 13400.366083,
+      "exitCode": 0,
+      "recordPath": "reports/research/3bbbc445.2bc7b88c.full.json",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-07-20261022-2bc7b88c-full-v122.json",
+      "steps": 253,
+      "terminal": true,
+      "gameLoopWallMs": 9018,
+      "scores": {
+        "player-blue": 21,
+        "player-green": 42,
+        "player-brown": 42,
+        "player-white": 27
+      },
+      "fingerprint": "3bbbc4459b150cec3649a53105d58cf83174227377d31a160e803a24e63ee456",
+      "status": "passed",
+      "reportPath": "reports/iteration/ai-foundation-dev-07-20261022/3bbbc445.2bc7b88c.full.action-log.html",
+      "traceSha256": "63b24102ea02604b1683692c9f9249eeef59e4da53cf7edd70a03a26d89a6ebd"
+    }
+  ],
+  "registryScope": "new foundation entries only; shared registry untouched",
+  "sourceManifest": "analysis-source-manifest-v2.json",
+  "cacheState": "fresh Node processes; no algorithm cache prewarming; OS file cache not flushed",
+  "runtimeScope": "completion baseline only; necessary search not implemented",
+  "machine": {
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M4",
+    "logicalCpuCount": 10,
+    "totalMemoryBytes": 17179869184,
+    "node": "v22.22.0"
+  }
+}

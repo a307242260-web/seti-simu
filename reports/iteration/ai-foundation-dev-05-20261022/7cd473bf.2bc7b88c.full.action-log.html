@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SETI 行动复盘 · ai-foundation-dev-05-20261022 · 7cd473bf.2bc7b88c.full</title>
+<style>
+:root{--bg:#f7f8fa;--panel:#fff;--line:#dde3ea;--text:#1c2333;--muted:#7a8494;--blue:#3d83d7;--green:#54a96b;--brown:#9a623f;--white:#333;--accent:#2f6fed;--good:#27ae60;--bad:#c0392b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.page{width:min(1280px,calc(100% - 32px));margin:auto;padding:30px 0 60px}
+.eyebrow{color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.08em}
+h1{margin:4px 0 10px;font-size:26px}
+.meta{color:var(--muted);font-size:12.5px;margin:6px 0 2px}
+.links{font-size:12.5px;margin:4px 0 18px}
+.links a{color:var(--accent);text-decoration:none}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:18px 0}
+.panel h2{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+th{background:#f0f2f6;font-weight:600;white-space:nowrap}
+td.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td.actor{white-space:nowrap;font-weight:600}
+td.sum{min-width:220px;word-break:break-word}
+.main-act{font-weight:600}
+.quick-list{margin-top:3px;font-size:11px;color:var(--muted);font-weight:400}
+.final-details{margin-top:10px;display:grid;gap:4px}
+.final-detail{font-size:12px;line-height:1.5}
+tr.round-head td{background:#eef2f9;font-weight:700;color:#4a5568}
+.avg-row td{background:#eaf7ea}
+.hero td:first-child{font-weight:700}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+.c-player-blue{background:var(--blue)}.c-player-green{background:var(--green)}.c-player-brown{background:var(--brown)}.c-player-white{background:var(--white)}
+.dp{color:var(--good);font-weight:700}.dm{color:var(--bad);font-weight:700}.d0{color:#c3c9d2}
+.ph{display:inline-block;padding:1px 6px;border-radius:4px;background:#eef1f6;color:#556;font-size:11px;margin-right:4px}
+.fam{font-weight:600}
+.muted{color:var(--muted)}
+code{background:#f0f2f6;padding:1px 4px;border-radius:3px;font-size:12px}
+.version-badge{display:inline-block;padding:2px 10px;border-radius:8px;background:#e8eefa;color:var(--accent);font-weight:700;font-size:14px}
+@media(max-width:760px){.page{width:100%;padding:16px 10px}table{font-size:11.5px}td.sum{min-width:0}}
+</style>
+</head>
+<body><main class="page">
+  <span class="eyebrow">SETI · 机器人行动复盘（纯重放存档 replaySteps，无 AI 重跑）</span>
+  <h1><span class="version-badge">ai-foundation-dev-05-20261022</span> 7cd473bf.2bc7b88c.full</h1>
+  <div class="meta">seed=ai-dev-20261022-04 · gitCommit=2bc7b88c · policy=seti-completion-agent-v1 · flags=compactReplay=true · 模式=full · 步数 254 · 耗时 8.1s</div>
+  <div class="meta">世界指纹：seeded-world-v1 · 9c3dcc6d2c923bf3a321220527ddcba31f34994d3e172f94da9cbf18ee0ffb1f</div>
+  <div class="links">记录: <a href="../../research/7cd473bf.2bc7b88c.full.json">7cd473bf.2bc7b88c.full.json</a> · 存档: <code>seti-saves/seti-save-research-ai-foundation-dev-05-20261022-2bc7b88c-full-v130.json</code></div>
+  <section class="panel final">
+        <h2>终局分数（完整终局口径，存档 finalScores）</h2>
+        <table><thead><tr><th>玩家</th><th>完整终局分</th><th>base</th><th>板块</th><th>卡牌</th></tr></thead><tbody><tr><td>蓝</td><td class="num"><b>38</b></td><td class="num">38</td><td class="num">0</td><td class="num">0</td></tr><tr><td>绿</td><td class="num"><b>21</b></td><td class="num">21</td><td class="num">0</td><td class="num">0</td></tr><tr><td>棕</td><td class="num"><b>45</b></td><td class="num">38</td><td class="num">7</td><td class="num">0</td></tr><tr class="hero"><td>白</td><td class="num"><b>21</b></td><td class="num">21</td><td class="num">0</td><td class="num">0</td></tr>
+        <tr class="avg-row"><td>均分</td><td class="num"><b>31.25</b></td><td colspan="3" class="muted">白色为人类席位（本轮评估侧重）</td></tr>
+        </tbody></table>
+        <div class="final-details"><div class="final-detail"><b>蓝</b>：base 38（外星痕迹·粉 8 + 初始 6 + 扫描 22 + 科技bonus 2）</div><div class="final-detail"><b>绿</b>：base 21（外星痕迹·粉 6 + 初始 3 + 扫描 7 + 科技bonus 5）</div><div class="final-detail"><b>棕</b>：base 38（外星痕迹·粉 6 + 外星痕迹·黄 5 + 初始 9 + 登陆 6 + 扫描 6 + 科技bonus 6） + 板块 7（每两个科技 7×1=7）</div><div class="final-detail"><b>白</b>：base 21（初始 5 + 扫描 9 + 科技bonus 7）</div></div>
+      </section>
+  <section class="panel"><h2>搜索触限记录</h2><p>共 0 次搜索；0 次缺少触限字段（未记录，不等于零次）。每次搜索分开记录叶数、队列及执行预算；计划复用不重复记数。未启用的限制不计触顶。</p><details><summary>展开全部搜索与触限明细</summary><table><thead><tr><th>步</th><th>席位</th><th>搜索</th><th>限制</th><th>上限</th><th>状态</th><th>实际计数</th><th>所选动作</th></tr></thead><tbody></tbody></table></details></section>
+  <section class="panel">
+      <h2><span class="dot c-player-blue"></span>蓝色玩家 · 1 个回合</h2>
+      <table>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <tbody><tr>
+      <td class="num">R?·T?</td>
+
+      <td class="sum"><div class="main-act">③ 扫描 扫描（主行动）</div><div class="quick-list">① 初始牌 7（1数据收入、海王星环绕器） · ② 初始牌 17（室女座61扫描两次） · ④ 放痕迹 外星人1·粉 · ⑤ 抽牌 突破讯息 · ⑥ 抽牌 近地小行星研究 · ⑦ 终局标记 a（第1槽/25分 · a2：每套收入） · ⑧ 抽牌 建造燃料箱 · ⑨ 放痕迹 外星人1·粉</div></td>
+      <td class="num">72 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">—</td>
+      <td class="res muted">—</td>
+    </tr>
+<tr class="round-head"><td colspan="6">终局结算（完整终局口径）</td></tr>
+<tr><td colspan="6" class="final-detail"><b>蓝</b>：base 38（外星痕迹·粉 8 + 初始 6 + 扫描 22 + 科技bonus 2）</td></tr></tbody>
+      </table>
+    </section>
+<section class="panel">
+      <h2><span class="dot c-player-green"></span>绿色玩家 · 1 个回合</h2>
+      <table>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <tbody><tr>
+      <td class="num">R?·T?</td>
+
+      <td class="sum"><div class="main-act">③ 扫描 扫描（主行动）</div><div class="quick-list">① 初始牌 6（织女一扫描一次、1额外公共扫描） · ② 初始牌 10（外星人2黄色痕迹） · ④ 放痕迹 外星人2·粉 · ⑤ 抽牌 案尔维会议 · ⑥ 抽牌 SETI@Home · ⑦ 抽牌 进入大气层 · ⑧ 放痕迹 外星人2·粉</div></td>
+      <td class="num">60 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">—</td>
+      <td class="res muted">—</td>
+    </tr>
+<tr class="round-head"><td colspan="6">终局结算（完整终局口径）</td></tr>
+<tr><td colspan="6" class="final-detail"><b>绿</b>：base 21（外星痕迹·粉 6 + 初始 3 + 扫描 7 + 科技bonus 5）</td></tr></tbody>
+      </table>
+    </section>
+<section class="panel">
+      <h2><span class="dot c-player-brown"></span>棕色玩家 · 1 个回合</h2>
+      <table>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <tbody><tr>
+      <td class="num">R?·T?</td>
+
+      <td class="sum"><div class="main-act">③ 研究 blue2，背面 bonus：1 能量（主行动）</div><div class="quick-list">① 初始牌 5（4分、2宣传、土星环绕器） · ② 初始牌 16（3分、3宣传） · ④ 抽牌 跟踪与数据中继卫星 · ⑤ 放痕迹 外星人2·粉 · ⑥ 放痕迹 外星人2·粉 · ⑦ 抽牌 专项研究 · ⑧ 放痕迹 外星人1·黄 · ⑨ 终局标记 d（第1槽/25分 · d2：每两个科技） · ⑩ 抽牌 太空电梯</div></td>
+      <td class="num">68 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">—</td>
+      <td class="res muted">—</td>
+    </tr>
+<tr class="round-head"><td colspan="6">终局结算（完整终局口径）</td></tr>
+<tr><td colspan="6" class="final-detail"><b>棕</b>：base 38（外星痕迹·粉 6 + 外星痕迹·黄 5 + 初始 9 + 登陆 6 + 扫描 6 + 科技bonus 6） + 板块 7（每两个科技 7×1=7）</td></tr></tbody>
+      </table>
+    </section>
+<section class="panel">
+      <h2><span class="dot c-player-white"></span>白色玩家 · 1 个回合</h2>
+      <table>
+        <thead><tr><th>轮/回合</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+        <tbody><tr>
+      <td class="num">R?·T?</td>
+
+      <td class="sum"><div class="main-act">③ 研究 orange1，背面 bonus：3 分（主行动）</div><div class="quick-list">① 初始牌 8（2分、2信用点、1宣传、水星环绕器） · ② 初始牌 12（巴纳德扇区扫描两次） · ④ 抽牌 潘多拉卫星 · ⑤ 抽牌 离子推迸系统 · ⑥ 抽牌 观测南河</div></td>
+      <td class="num">54 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">—</td>
+      <td class="res muted">—</td>
+    </tr>
+<tr class="round-head"><td colspan="6">终局结算（完整终局口径）</td></tr>
+<tr><td colspan="6" class="final-detail"><b>白</b>：base 21（初始 5 + 扫描 9 + 科技bonus 7）</td></tr></tbody>
+      </table>
+    </section>
+  <section class="panel">
+    <h2>全程依次复盘（4 个玩家回合 · 254 步）</h2>
+    <table>
+      <thead><tr><th>轮/回合</th><th>玩家</th><th>主行动</th><th>步数</th><th>分Δ</th><th>分数</th><th>钱/电/宣/手</th></tr></thead>
+      <tbody><tr>
+      <td class="num">R?·T?</td>
+      <td class="actor c-player-white">白</td>
+      <td class="sum"><div class="main-act">③ 研究 orange1，背面 bonus：3 分（主行动）</div><div class="quick-list">① 初始牌 8（2分、2信用点、1宣传、水星环绕器） · ② 初始牌 12（巴纳德扇区扫描两次） · ④ 抽牌 潘多拉卫星 · ⑤ 抽牌 离子推迸系统 · ⑥ 抽牌 观测南河</div></td>
+      <td class="num">54 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">—</td>
+      <td class="res muted">—</td>
+    </tr><tr>
+      <td class="num">R?·T?</td>
+      <td class="actor c-player-brown">棕</td>
+      <td class="sum"><div class="main-act">③ 研究 blue2，背面 bonus：1 能量（主行动）</div><div class="quick-list">① 初始牌 5（4分、2宣传、土星环绕器） · ② 初始牌 16（3分、3宣传） · ④ 抽牌 跟踪与数据中继卫星 · ⑤ 放痕迹 外星人2·粉 · ⑥ 放痕迹 外星人2·粉 · ⑦ 抽牌 专项研究 · ⑧ 放痕迹 外星人1·黄 · ⑨ 终局标记 d（第1槽/25分 · d2：每两个科技） · ⑩ 抽牌 太空电梯</div></td>
+      <td class="num">68 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">—</td>
+      <td class="res muted">—</td>
+    </tr><tr>
+      <td class="num">R?·T?</td>
+      <td class="actor c-player-green">绿</td>
+      <td class="sum"><div class="main-act">③ 扫描 扫描（主行动）</div><div class="quick-list">① 初始牌 6（织女一扫描一次、1额外公共扫描） · ② 初始牌 10（外星人2黄色痕迹） · ④ 放痕迹 外星人2·粉 · ⑤ 抽牌 案尔维会议 · ⑥ 抽牌 SETI@Home · ⑦ 抽牌 进入大气层 · ⑧ 放痕迹 外星人2·粉</div></td>
+      <td class="num">60 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">—</td>
+      <td class="res muted">—</td>
+    </tr><tr>
+      <td class="num">R?·T?</td>
+      <td class="actor c-player-blue">蓝</td>
+      <td class="sum"><div class="main-act">③ 扫描 扫描（主行动）</div><div class="quick-list">① 初始牌 7（1数据收入、海王星环绕器） · ② 初始牌 17（室女座61扫描两次） · ④ 放痕迹 外星人1·粉 · ⑤ 抽牌 突破讯息 · ⑥ 抽牌 近地小行星研究 · ⑦ 终局标记 a（第1槽/25分 · a2：每套收入） · ⑧ 抽牌 建造燃料箱 · ⑨ 放痕迹 外星人1·粉</div></td>
+      <td class="num">72 步</td>
+      <td class="num"><span class="d0">0</span></td>
+      <td class="num">—</td>
+      <td class="res muted">—</td>
+    </tr><tr class="round-head"><td colspan="7">终局结算（完整终局口径）</td></tr><tr><td colspan="7" class="final-detail">蓝：base 38（外星痕迹·粉 8 + 初始 6 + 扫描 22 + 科技bonus 2）</td></tr><tr><td colspan="7" class="final-detail">绿：base 21（外星痕迹·粉 6 + 初始 3 + 扫描 7 + 科技bonus 5）</td></tr><tr><td colspan="7" class="final-detail">棕：base 38（外星痕迹·粉 6 + 外星痕迹·黄 5 + 初始 9 + 登陆 6 + 扫描 6 + 科技bonus 6） + 板块 7（每两个科技 7×1=7）</td></tr><tr><td colspan="7" class="final-detail" style="font-weight:700">白：base 21（初始 5 + 扫描 9 + 科技bonus 7）</td></tr></tbody>
+    </table>
+  </section>
+  <section class="panel">
+    <h2>行动族统计</h2>
+    <table><thead><tr><th>行动族</th><th>次数</th></tr></thead><tbody><tr><td>选牌</td><td class="num">71</td></tr><tr><td>结束回合</td><td class="num">56</td></tr><tr><td>选择目标</td><td class="num">48</td></tr><tr><td>扫描</td><td class="num">23</td></tr><tr><td>打牌</td><td class="num">17</td></tr><tr><td>PASS</td><td class="num">16</td></tr><tr><td>研究科技</td><td class="num">11</td></tr><tr><td>支付选择</td><td class="num">7</td></tr><tr><td>发射</td><td class="num">4</td></tr><tr><td>land</td><td class="num">1</td></tr></tbody></table>
+  </section>
+</main></body></html>

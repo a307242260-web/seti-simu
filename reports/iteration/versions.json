@@ -7,6 +7,126 @@
   },
   "versions": [
     {
+      "id": "ai-foundation-dev-07-20261022",
+      "name": "ai-foundation-dev-07-20261022",
+      "date": "2026-10-22",
+      "baseline": "ai-foundation-20261022",
+      "head": "2bc7b88c",
+      "commits": [
+        "2bc7b88c"
+      ],
+      "summary": "新AI基础开发集完整局；无搜索；核对终局、动作与冷进程总耗时",
+      "records": {
+        "3bbbc445.2bc7b88c.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "ai-foundation-dev-06-20261022",
+      "name": "ai-foundation-dev-06-20261022",
+      "date": "2026-10-22",
+      "baseline": "ai-foundation-20261022",
+      "head": "2bc7b88c",
+      "commits": [
+        "2bc7b88c"
+      ],
+      "summary": "新AI基础开发集完整局；无搜索；核对终局、动作与冷进程总耗时",
+      "records": {
+        "b15f4401.2bc7b88c.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "ai-foundation-dev-05-20261022",
+      "name": "ai-foundation-dev-05-20261022",
+      "date": "2026-10-22",
+      "baseline": "ai-foundation-20261022",
+      "head": "2bc7b88c",
+      "commits": [
+        "2bc7b88c"
+      ],
+      "summary": "新AI基础开发集完整局；无搜索；核对终局、动作与冷进程总耗时",
+      "records": {
+        "7cd473bf.2bc7b88c.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "ai-foundation-dev-04-20261022",
+      "name": "ai-foundation-dev-04-20261022",
+      "date": "2026-10-22",
+      "baseline": "ai-foundation-20261022",
+      "head": "2bc7b88c",
+      "commits": [
+        "2bc7b88c"
+      ],
+      "summary": "新AI基础开发集完整局；无搜索；核对终局、动作与冷进程总耗时",
+      "records": {
+        "199abbfb.2bc7b88c.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "ai-foundation-dev-03-20261022",
+      "name": "ai-foundation-dev-03-20261022",
+      "date": "2026-10-22",
+      "baseline": "ai-foundation-20261022",
+      "head": "2bc7b88c",
+      "commits": [
+        "2bc7b88c"
+      ],
+      "summary": "新AI基础开发集完整局；无搜索；核对终局、动作与冷进程总耗时",
+      "records": {
+        "801a83ba.2bc7b88c.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "ai-foundation-dev-02-20261022",
+      "name": "ai-foundation-dev-02-20261022",
+      "date": "2026-10-22",
+      "baseline": "ai-foundation-20261022",
+      "head": "2bc7b88c",
+      "commits": [
+        "2bc7b88c"
+      ],
+      "summary": "新AI基础开发集完整局；无搜索；核对终局、动作与冷进程总耗时",
+      "records": {
+        "8cf00b93.2bc7b88c.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "ai-foundation-dev-01-20261022",
+      "name": "ai-foundation-dev-01-20261022",
+      "date": "2026-10-22",
+      "baseline": "ai-foundation-20261022",
+      "head": "2bc7b88c",
+      "commits": [
+        "2bc7b88c"
+      ],
+      "summary": "新AI基础开发集完整局；无搜索；核对终局、动作与冷进程总耗时",
+      "records": {
+        "1ed7c0bf.2bc7b88c.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
+      "id": "ai-foundation-dev-00-20261022",
+      "name": "ai-foundation-dev-00-20261022",
+      "date": "2026-10-22",
+      "baseline": "ai-foundation-20261022",
+      "head": "2bc7b88c",
+      "commits": [
+        "2bc7b88c"
+      ],
+      "summary": "新AI基础开发集完整局；无搜索；核对终局、动作与冷进程总耗时",
+      "records": {
+        "3558b009.2bc7b88c.full.json": {}
+      },
+      "roadmap": null
+    },
+    {
       "id": "ai-foundation-20261022",
       "name": "ai-foundation-20261022",
       "date": "2026-10-22",

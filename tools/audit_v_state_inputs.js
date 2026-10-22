@@ -8,6 +8,7 @@
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const outcomeModel = require("../randomizer/game/ai/outcome-model");
 const ev = require("../randomizer/game/ai/expected-score-evaluator");
+const independentValue = require("../randomizer/game/ai/state-value");
 
 const seed = process.argv[2] || "seti-104-official-v1";
 
@@ -88,6 +89,15 @@ allPass = auditObservation("env.observe(原始, 需装配)", rawObs, seatId, fal
 // 路径 2：createDecisionObservation 装配后（启发式/V 引导 root 用）—— 必须 PASS
 const stdObs = outcomeModel.createDecisionObservation(rawObs, { seatId, stateVersion: 0, decisionVersion: 0 });
 allPass = auditObservation("decisionObs(装配后)", stdObs, seatId) && allPass;
+try {
+  const rawValue = independentValue.evaluateStateValue(rawObs, seatId);
+  const standardValue = independentValue.evaluateStateValue(stdObs, seatId);
+  if (rawValue.total !== standardValue.total) throw new Error("原始与决策观察估值不一致");
+  console.log(`[PASS] independent-state-value: total=${standardValue.total} model=${standardValue.modelVersion}`);
+} catch (error) {
+  console.log(`[FAIL] independent-state-value: ${error.message}`);
+  allPass = false;
+}
 
 // 路径 3：启发式 actionOutcomes 的 leaf.observation —— 必须 PASS
 // （evaluateActionOutcomes 旧入口已删除；统一用真实决策 runHeuristicPolicyDecision

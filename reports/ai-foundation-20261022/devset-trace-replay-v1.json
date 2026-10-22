@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "seti-agent-trace-replay-audit-v1",
+  "sourceCommit": "2bc7b88c300c01db27bc47471b4f1d79653bb6ad",
+  "policyVersion": "seti-completion-agent-v1",
+  "runs": [
+    {
+      "name": "ai-foundation-dev-00-20261022",
+      "status": "passed",
+      "checkedDecisions": 229,
+      "traceSha256": "4f90fbbe2ac8b07e4892c79c2f44e3c50270619af6e2252c8e2bd6ce33fe3742"
+    },
+    {
+      "name": "ai-foundation-dev-01-20261022",
+      "status": "passed",
+      "checkedDecisions": 250,
+      "traceSha256": "c19f1b72148c6265d9d63c91cfafb0bdead066cb81f848735a1fe23f4f98b45e"
+    },
+    {
+      "name": "ai-foundation-dev-02-20261022",
+      "status": "passed",
+      "checkedDecisions": 221,
+      "traceSha256": "811acadab018a2aa880c189e9ce027f8e72bc485b6d74b727a24ee89ec22bed9"
+    },
+    {
+      "name": "ai-foundation-dev-03-20261022",
+      "status": "passed",
+      "checkedDecisions": 229,
+      "traceSha256": "e18be1caa4acbf041a0dd6dc384725a03a73336c9eefa6de3fb40c3bcf0d31cd"
+    },
+    {
+      "name": "ai-foundation-dev-04-20261022",
+      "status": "passed",
+      "checkedDecisions": 264,
+      "traceSha256": "dfd1e270d194930483a598702fd2fa27d6475105c1463c12ee0323904a0b4f2d"
+    },
+    {
+      "name": "ai-foundation-dev-05-20261022",
+      "status": "passed",
+      "checkedDecisions": 254,
+      "traceSha256": "b2b0461935dd66bb20f0ed427175fe0d6a4e2828b52a815a8e5ea2332c859982"
+    },
+    {
+      "name": "ai-foundation-dev-06-20261022",
+      "status": "passed",
+      "checkedDecisions": 264,
+      "traceSha256": "8231f7c8f1bb5da6a73fc61f62df99acd23f125a30a20a1f19ff93a5635b4891"
+    },
+    {
+      "name": "ai-foundation-dev-07-20261022",
+      "status": "passed",
+      "checkedDecisions": 253,
+      "traceSha256": "63b24102ea02604b1683692c9f9249eeef59e4da53cf7edd70a03a26d89a6ebd"
+    }
+  ],
+  "totalCheckedDecisions": 1964
+}

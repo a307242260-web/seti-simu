@@ -5,6 +5,7 @@ const { createSimulationRuleComposition } = require("../../training/simulation-r
 const { createSeededRandom, RNG_ALGORITHM } = require("../random");
 const { buildRuleObservation } = require("../../app/rule-observation");
 const { createSimulationEnv } = require("../../app/simulation-env");
+const { evaluateStateValue } = require("./state-value");
 
 const seed = "analysis-port-isolation-v1";
 const random = createSeededRandom(seed);
@@ -51,6 +52,7 @@ assert(!actions.some(action => action.target?.tradeId === "energy-for-move"),
 assert.equal(comp.lifecycle.restore(env.createCheckpoint().coreState.compositionEnvelope).ok, true);
 const mainPort = createAnalysisPort({ composition: comp, seatId: actions[0].actorId, maxCacheEntries: 1 });
 const mainRoot = mainPort.openRoot();
+assert(Number.isFinite(evaluateStateValue(mainRoot.observation, actions[0].actorId).total));
 const beforeMain = comp.lifecycle.save().envelope;
 const evaluated = mainRoot.legalActions.slice(0, 3).map(action => mainPort.expand(mainRoot, action.actionId));
 assert.equal(mainPort.getDiagnostics().cacheEntries, 1, "缓存容量有界");
@@ -78,6 +80,8 @@ const hiddenResult = mainPort.expand(pick, blind.actionId);
 assert.equal(hiddenResult.status, "information-barrier");
 assert.deepEqual(hiddenResult.legalActions, []);
 assert(hiddenResult.observation.selfState.hand.some(card => card.hidden === true));
+assert(Number.isFinite(evaluateStateValue(hiddenResult.observation, actions[0].actorId).total),
+  "遮蔽后的未知牌只按公开数量估值");
 assert.throws(() => mainPort.expand(hiddenResult, trade.actionId), /BOUNDARY_CLOSED/);
 
 // 改变真实隐藏牌序不能改变同一可见输入的搜索结果。
