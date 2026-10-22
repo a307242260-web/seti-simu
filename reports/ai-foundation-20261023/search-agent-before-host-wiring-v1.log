@@ -1,0 +1,17 @@
+Error: 没有可用的 AI factory: search
+    at environmentError (/Users/bilibili/code/seti-simu/randomizer/app/simulation-env.js:44:17)
+    at Object.reset (/Users/bilibili/code/seti-simu/randomizer/app/simulation-env.js:372:15)
+    at simulation (/Users/bilibili/code/seti-simu/randomizer/game/ai/search-agent.test.js:19:7)
+    at /Users/bilibili/code/seti-simu/randomizer/game/ai/search-agent.test.js:47:82
+    at Object.<anonymous> (/Users/bilibili/code/seti-simu/randomizer/game/ai/search-agent.test.js:120:3)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14) {
+  code: 'AGENT_FACTORY_MISSING'
+}
+SUMMARY unit passed=0 failed=1 total=1 time=0.62s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+FAIL randomizer/game/ai/search-agent.test.js status=1 signal=none

@@ -20,6 +20,9 @@
     const ruleObservation = context.ruleObservation
       || (typeof require === "function" ? require("./rule-observation") : null);
     const browserProjection = context.browserProjection;
+    if (typeof ruleObservation?.buildRuleObservation !== "function") {
+      throw new Error("createBrowserRuleComposition requires shared rule observation");
+    }
     if (!productionKernelApi?.createBrowserProductionKernel) {
       throw new Error("createBrowserRuleComposition requires game Production Browser factory");
     }
@@ -111,13 +114,13 @@
       // 规则观察信息层：与 Simulation buildRuleObservation 完全同源（同一份实现、
       // 同一 sanitize 纯函数）。机器协调器 createObservation(projection.state) 命中
       // 顶层 publicState/selfState，与 Simulation 机器席位观察同构。
-      if (ruleObservation?.buildRuleObservation) {
+      {
         const ruleObserved = ruleObservation.buildRuleObservation(
           canonicalState,
           context.seed || null,
           resolvedViewer.role === "player" ? resolvedViewer.playerId : null,
           [],
-          { cheap: false },
+          { cheap: false, spectator: resolvedViewer.role !== "player" },
         );
         visible.publicState = ruleObserved.publicState;
         visible.selfState = ruleObserved.selfState;

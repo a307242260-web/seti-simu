@@ -277,6 +277,24 @@ try {
         } finally { sectorPort.close(); }
       }
     } finally { sectorKernel.composition.dispose(); }
+    const searchFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+      "../adhoc/ai-decision-corpus-20261023-v1/case-003-20261023-v1.json")));
+    const searchEnv = createSimulationEnv();
+    try {
+      searchEnv.reset({ seed: searchFixture.source.seed, agentType: "search", compactReplay: true });
+      const checkpoint = searchEnv.createCheckpoint();
+      checkpoint.coreState.committedState = searchFixture.compositionEnvelope.committedState;
+      checkpoint.coreState.compositionEnvelope = searchFixture.compositionEnvelope;
+      searchEnv.loadCheckpoint(checkpoint);
+      const raw = searchEnv.observe(searchFixture.seatId);
+      const result = searchEnv.runAgentDecision();
+      const evaluate = independentValue.createStateValueEvaluator(searchFixture.seatId);
+      if (result.agentTrace.coverage !== "complete" || result.searches.length !== 1
+        || !result.searches[0].complete || evaluate(raw) !== evaluate(result.agentTrace.context.observation)) {
+        throw new Error("共享搜索玩家的输入或完成证据不一致");
+      }
+      console.log(`[PASS] independent-shared-search-agent: root=${evaluate(raw)} leaf=${result.searches[0].value}`);
+    } finally { searchEnv.dispose(); }
   } catch (error) {
     console.log(`[FAIL] independent-card-choice-equivalence: ${error.message}`);
     allPass = false;

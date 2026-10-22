@@ -2,6 +2,11 @@
 
 本文描述 Browser 与 Simulation 当前共用的机器玩家生产契约。
 
+新开发主线通过`createAgentDecisionFunction`注册completion与实验search factory，
+两端仍使用本文的同一协调器和正式输入端口。search使用独立analysis-port/decision-search/state-value，
+不调用下文旧heuristic的目标选择、估值或计划缓存；具体入口、完成证据与失败语义见
+[共享搜索玩家](ai-search-agent-contract-20261023.md)。实验search尚未通过复杂决策及整局速度验收。
+
 ## 1. 决策流程
 
 机器人每个决策点的生产由**协调器**（`machine-player-coordinator.js`，Browser/

@@ -1,0 +1,5 @@
+PASS production-start-button http://127.0.0.1:59616/randomizer/index.html
+PASS production-browser-full-parity http://127.0.0.1:59616/randomizer/index.html
+Error: production-search-agent-entry 操作异常：Uncaught (in promise) Error: 搜索玩家真实提交: {"generation":1,"seatId":"player-green","submittedCount":0,"diagnostics":null,"lastOutcomeSummary":null,"lastResult":{"ok":false,"code":"MACHINE_PLAYER_FAILED","message":"MACHINE_PLAYER_DECISION_FAILED: 座位 player-green 决策函数抛错: VALUE_PLAYER_MISSING: player-green","seatId":"player-green"}}
+    at runInteractiveSmoke (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/tools/run_browser_smokes.js:232:11)
+    at async main (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/tools/run_browser_smokes.js:294:11)

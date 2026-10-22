@@ -87,6 +87,9 @@ assert.equal(
 assert.ok(Array.isArray(projected.state.publicState?.board?.rockets),
   "publicState.board.rockets 必须可见");
 assert.equal(JSON.stringify(projected.state).includes("drawPileCardIds"), false);
+const spectator = composition.projectionSource.read({ role: "spectator", playerId: null }).state;
+assert.equal(spectator.selfState, null, "无席位观察不得回退到当前玩家的私有手牌");
+assert.equal(spectator.publicState.resident.initialSetup.offer, null, "无席位观察不得获得当前初始私有选项");
 
 assert.equal(
   new Set(standardAction.ALL_FAMILIES).size,

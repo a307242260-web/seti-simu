@@ -1,0 +1,4 @@
+Error: production-browser-full-parity 操作异常：Error: 等待超时: 机器席位经协调器提交标准输入 {"generation":1,"submittedCount":19,"previousSubmissionCount":18,"seatId":"player-green","lastResult":{"ok":true,"actionId":"place_data:dbe01b29"}}
+    at <anonymous>:396:15
+    at runInteractiveSmoke (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/tools/run_browser_smokes.js:232:11)
+    at async main (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/tools/run_browser_smokes.js:294:11)

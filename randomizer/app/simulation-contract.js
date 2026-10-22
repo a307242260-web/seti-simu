@@ -1,7 +1,12 @@
+(function (root, factory) {
+  "use strict";
+  const common = typeof module === "object" && module.exports;
+  const api = factory(common ? require("../game/data/placement") : root.SetiDataPlacement,
+    common ? require("../game/industry/catalog") : root.SetiIndustryCatalog);
+  if (common) module.exports = api;
+  else root.SetiSimulationContract = api;
+})(typeof globalThis !== "undefined" ? globalThis : window, function (dataPlacement, industryCatalog) {
 "use strict";
-
-const dataPlacement = require("../game/data/placement");
-const industryCatalog = require("../game/industry/catalog");
 
 const OBSERVATION_SCHEMA_VERSION = "seti-rl-observation-v1";
 
@@ -192,7 +197,7 @@ function containsForbiddenObservationKey(value) {
   return null;
 }
 
-module.exports = {
+return {
   OBSERVATION_SCHEMA_VERSION,
   TURN_ACTION_FAMILIES,
   CONDITIONAL_FAMILIES,
@@ -207,3 +212,4 @@ module.exports = {
   sanitizeFinalScoringState,
   containsForbiddenObservationKey,
 };
+});

@@ -635,3 +635,33 @@ search版本v16。增加[已筹足钱电的受限开局证明](ai-alien-opening-
 [本批验证](../reports/ai-foundation-20261023/alien-opening-validation-v1.json)记录独立快照全量119项unit、
 唯一full-flow及6个修改JavaScript的语法检查通过。新增开局与两个真实任务牌路径的原始/标准V一致；
 整体输入审计仍有同一旧估值器冻结aomomo失败。未修改Browser装配、输入或恢复入口，未重复Chrome检查。
+
+## 共享搜索玩家接入与真实页面观察（2026-10-23）
+
+增加search-agent factory，Browser的`?agent=search`与Simulation的`agentType:"search"`共用同一实现、
+固定256输入/600毫秒配置、独立估值及现有证明。默认旧策略不变，实验搜索未完成时明确失败。
+宿主只注入惰性可信分析端口；runtime不给算法composition、session或权威快照。
+单次执行返回完整搜索证据及覆盖，正式输入仍由同一协调器提交；失败保留cause和诊断，没有备用动作。
+具体输入、身份、释放与临时选择证据的契约见[共享搜索玩家](ai-search-agent-contract-20261023.md)。
+
+真实收入检查点在直接搜索、Browser与Simulation的动作、V及正式状态一致，26次模拟；
+主行动后数据窗口通过Simulation接入，137次模拟。每次正式执行仅新增一个replay事件。
+复杂开局仍在固定预算后失败，两端正式根、RNG及replay保持不变。
+实际付款中的两次完成证据命中与恢复后重算后缀一致；不导出opaque token，恢复/重置重建算法。
+
+首次Chrome检查揭示Node测试掩盖的装配缺口：rule-observation与simulation-contract仅有CommonJS导出，
+页面没有加载共享信息层。现提供同一函数体的浏览器导出并显式注入；缺失构建器直接拒绝启动。
+无席位观众另明确排除当前玩家私有手牌与初始选项，不改变Simulation默认当前owner的观察语义。
+Browser高频inspect排除原始actionOutcomes，保留结果摘要和本次行动结果；完整actionOutcomes仍由runOnce返回。
+新增大叶观察的回归用例在修改前失败，修正后该用例的状态查询不再携带原始叶观察。
+
+[改动前剖析](../reports/ai-foundation-20261023/alien-opening-profile-v1.json)绑定623d0e90源码：
+961次模拟中交易取牌选择190次、PASS预留选择105次，搜索本体约1.756秒，不含打开根。
+它用于定位下一轮优化，不是本轮提速数据或完整对局成绩。搜索与估值算法本轮没有改动，
+上一批八类固定预算检查4/8，复杂主行动及中后期仍需继续。没有运行新搜索整局，仍无其速度或分数。
+
+最终验证与残余限制见[本批记录](../reports/ai-foundation-20261023/shared-search-agent-validation-v1.json)。
+最终独立快照120项unit、唯一full-flow及18个JavaScript语法检查通过，三项直接相关Chrome检查通过。
+共享搜索的原始/标准V输入一致；整体输入审计仍有旧估值器冻结aomomo失败，不能报为全绿。
+旧heuristic完整页面检查曾因大量结果复制和长同步决策出现轮询误报及60秒外层超时，失败保留。
+不以增加功能检查的等待时间替代算法性能验收；最终Chrome验证范围为启动、新搜索和completion。

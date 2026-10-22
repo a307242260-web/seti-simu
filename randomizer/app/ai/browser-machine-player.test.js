@@ -122,6 +122,19 @@ function makePort(options = {}) {
 }
 
 (async () => {
+  // 高频inspect只返回摘要，完整图仍保留在本次执行结果，不能重复克隆到状态轮询。
+  {
+    const leaf = { observation: { publicState: { detail: "x".repeat(20000) } } };
+    const outcomes = [{ actionId: "pass:p1", family: "pass", status: "ready", leaves: Array(64).fill(leaf) }];
+    const { port } = makePort({ runDecisionResult: ({ seatId }) => ({ seatId, actionId: "pass:p1", source: "scheme",
+      decision: { decision: { actionId: "pass:p1" }, actionOutcomes: outcomes } }) });
+    const result = await port.runOnce();
+    assert.equal(result.actionOutcomes[0].leaves.length, 64);
+    const inspected = port.inspect();
+    assert.equal(Object.hasOwn(inspected.lastResult, "actionOutcomes"), false);
+    assert.equal(inspected.lastOutcomeSummary.actions[0].outcome.leaves, 64);
+    assert(JSON.stringify(inspected).length < 10000, "状态轮询不应随叶观察大小增长");
+  }
   // 1) 缺 seat：BROWSER_MACHINE_SEAT_MISSING
   {
     const { port } = makePort({

@@ -27,6 +27,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/state-value.test.js", "policy/state-value", "独立估值只读标准事实，未来收入窗口明确且终局只计正式分", "终局重复加资源、未知牌身份进入估值或缺字段被静默补零"),
     entry("randomizer/game/ai/analysis-port.test.js", "architecture/policy-host", "可信分支精确提交、结果缓存和权威根隔离", "策略取得权威envelope、同family代替动作或fork改变真实根/RNG"),
     entry("randomizer/game/ai/agent-runtime.test.js", "architecture/policy-host", "新AI接入只读席位输入、合法选择、多选完成与恢复复现", "私有session进入策略、异步或非法返回被提交、多选反复切换或恢复后选择漂移"),
+    entry("randomizer/game/ai/search-agent.test.js", "architecture/policy-host", "同一搜索玩家经Browser与Simulation共享接入，每次只提交一步、记录完整覆盖、续用及恢复一致，超预算无提交", "宿主调用不同算法、丢弃搜索诊断、复用临时token跨恢复或不完整搜索被当成合法行动提交"),
     entry("randomizer/game/cards/fixed-world-decks.test.js", "rules/cards", "既定牌序按顶牌消费且耗尽不重建；开局两种身份固定、揭示不重抽且公共观察隐藏身份", "抽牌重随机、空堆补造、揭示顺序改变物种或未揭示身份进入观察"),
     entry("randomizer/game/effects/runezu-panel-trace.test.js", "rules/alien-runezu", "三色痕迹1与4位领取符号、补充边界和恢复随机一致", "痕迹仅加分而漏符号、面板不更新或重放随机漂移"),
     entry("randomizer/game/ai/final-mark-input.test.js", "policy/heuristic-policy", "标记A1/A2扣公司初始收入且缺必需输入显式失败", "将公司初始收入当增长或缺数据时默认选标记"),

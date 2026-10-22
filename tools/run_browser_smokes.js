@@ -229,7 +229,7 @@ async function runInteractiveSmoke(cdp, smoke, getUncaughtException) {
     expression: smoke.actionExpression,
   }, 60000);
   if (evaluated.exceptionDetails) {
-    throw new Error(`${smoke.id} 操作异常：${evaluated.exceptionDetails.text || "unknown"}`);
+    throw new Error(`${smoke.id} 操作异常：${formatException(evaluated.exceptionDetails)}`);
   }
   await waitForExpression(cdp, smoke.successExpression, `${smoke.id} 等待操作结果`, getUncaughtException);
   return { href: (await cdp.send("Runtime.evaluate", {

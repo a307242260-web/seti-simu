@@ -208,6 +208,9 @@ const smokes = [
           if (predicate()) return;
           await new Promise((resolve) => setTimeout(resolve, 25));
         }
+        // 同步机器决策可能占满事件循环；功能检查报错前再读一次已完成的正式事实。
+        // 这不是推理耗时验收，单局/单决策速度仍由独立基准判定。
+        if (predicate()) return;
         throw new Error("等待超时: " + label);
       };
       document.querySelector("#start-screen-start-button").click();
@@ -595,9 +598,11 @@ const smokes = [
             > machineSubmissionCount
         ), "机器席位经协调器提交标准输入", 20000);
       } catch (error) {
-        throw new Error(error.message + " " + JSON.stringify(
-          window.SetiRandomizer.inspect().machinePlayer,
-        ));
+        const machine = window.SetiRandomizer.inspect().machinePlayer;
+        throw new Error(error.message + " " + JSON.stringify({ generation: machine.generation,
+          submittedCount: machine.submittedCount, previousSubmissionCount: machineSubmissionCount, seatId: machine.seatId,
+          lastResult: { ok: machine.lastResult?.ok, code: machine.lastResult?.code,
+            message: machine.lastResult?.message, actionId: machine.lastResult?.actionId } }));
       }
       const captured = window.SetiRandomizer.capture();
       if (!captured.ok) throw new Error("真实页面保存失败");
@@ -764,6 +769,56 @@ const smokes = [
 ];
 
 module.exports = Object.freeze([...smokes, Object.freeze({
+  id: "production-search-agent-entry",
+  file: "randomizer/index.html",
+  query: "agent=search",
+  readyExpression: "Boolean(window.SetiRandomizer && window.SetiSearchAgent && window.SetiAnalysisPort)",
+  actionExpression: `(async () => {
+    const waitFor = async (predicate, label) => {
+      const deadline = Date.now() + 12000;
+      while (Date.now() < deadline) {
+        if (predicate()) return;
+        await new Promise(resolve => setTimeout(resolve, 25));
+      }
+      throw new Error(label + ": " + JSON.stringify(window.SetiRandomizer.inspect().machinePlayer));
+    };
+    document.querySelector('#start-screen-start-button').click();
+    const clickChoice = async predicate => {
+      const find = () => [...document.querySelectorAll(
+        '#compositionDecisionRoot [data-decision-ui-intent="submit-choice"]:not(:disabled)',
+      )].find(predicate);
+      await waitFor(() => Boolean(find()), "人类初始选择");
+      const before = window.SetiRandomizer.inspect().projection.decision?.decisionId;
+      find().click();
+      await waitFor(() => window.SetiRandomizer.inspect().projection.decision?.decisionId !== before, "确认选择");
+    };
+    await clickChoice(button => Boolean(button.querySelector('.decision-ui-card-image-industry')));
+    for (let count = 0; count < 2; count += 1) await clickChoice(button =>
+      Boolean(button.querySelector('.decision-ui-card-image-initial')) && button.getAttribute('aria-pressed') !== 'true');
+    await clickChoice(button => button.textContent === '确认初始选择');
+    const completed = () => {
+      const machine = window.SetiRandomizer.inspect().machinePlayer;
+      return machine.submittedCount > 0 && machine.lastResult?.agentTrace?.policy.type === 'search'
+        && machine.lastResult.agentTrace.coverage === 'complete';
+    };
+    await waitFor(completed, "搜索玩家真实提交");
+    const first = window.SetiRandomizer.inspect().machinePlayer;
+    if (first.lastResult.agentTrace.search.selectionContinuation !== undefined
+      || !first.lastResult.searches?.length) throw new Error("搜索证据丢失或泄漏临时token");
+    const capture = window.SetiRandomizer.capture();
+    if (!capture.ok) throw new Error("搜索后保存失败");
+    const restored = window.SetiRandomizer.restore(capture.envelope);
+    if (!restored.ok) throw new Error("搜索后恢复失败: " + JSON.stringify(restored));
+    if (window.SetiRandomizer.inspect().machinePlayer.generation <= first.generation) throw new Error("恢复未清空算法状态");
+    await waitFor(completed, "恢复后共享搜索重新决策");
+    window.__setiSearchAgentSmoke = { ok: true, firstInputs: first.lastResult.searches[0].diagnostics.transitions,
+      restoredInputs: window.SetiRandomizer.inspect().machinePlayer.lastResult.searches[0].diagnostics.transitions,
+      wholeGames: 0 };
+  })()`,
+  successExpression: "window.__setiSearchAgentSmoke?.ok === true",
+  obligation: "search URL真实装配共享搜索、完成机器正式输入并在保存恢复后重建算法状态，记录覆盖证据",
+  counterexample: "脚本依赖顺序错误、旧AI代选、搜索图被丢弃或恢复仍携带临时计划token",
+}), Object.freeze({
   ...smokes.find(smoke => smoke.id === "production-browser-full-parity"),
   id: "production-completion-agent-parity",
   file: "randomizer/index.html",

@@ -5,7 +5,8 @@
 
 当前可以复用的基础是 Production 规则、按席位投影的观察、合法动作、隔离分支和存档恢复。
 新 AI 可以绕过旧启发式策略与目标系统，接入共享协调器的决策函数边界。
-宿主的通用注册、搜索服务的信息边界和统一诊断仍需补齐。
+2026-10-23更新：通用factory、可信分析端口、独立估值和搜索已提供；
+Browser/Simulation都可显式选择实验search玩家，未闭合仍失败，不代表整局能力已完成。
 新的开发顺序见 [AI 开发流程](ai-development-workflow.md)。
 
 ## 机器决策调用链
@@ -93,11 +94,12 @@ Policy context 会复制、校验和深冻结数据，但禁止字段名检查�
 | `createCounterfactualFork(envelope?, options?)` | 暴露底层隔离分支，含可信规则能力 |
 | `getDiagnostics()`、`dispose()` | 环境诊断与释放 |
 | `runHeuristicPolicyDecision()` | 选择并实际提交一步，内部固定创建旧决策函数 |
+| `runAgentDecision()` | 经共享factory与协调器选择并实际提交一步；支持completion、实验search和注入的custom |
 | `runVGuidedDecision(options)` | 只选择，返回 `{action,seatId,diagnostics,evaluations}`；调用方还要 step |
 
-两种 run 方法的提交语义不同，不能互换。当前 env 没有通用的 `registerAgent` 或
-`runAgentDecision`；外部可以用 observe/legalActions/step 做实验，但正式接入共享协调器
-仍需宿主提供注册能力。
+runVGuidedDecision只选择，其余上述run方法实际提交，不能互换。
+内置类型在reset的agentType选择；自定义factory通过createSimulationEnv({agentFactory})注入。
+搜索使用[共享玩家契约](ai-search-agent-contract-20261023.md)，不调用旧目标或估值模块。
 
 ## 当前 AI 实现的接入限制
 

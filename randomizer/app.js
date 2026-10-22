@@ -12,6 +12,9 @@
     heuristicDecisionFunction: heuristicDecisionFunctionModule,
     agentRuntime: agentRuntimeModule,
     completionAgent,
+    searchAgent,
+    analysisPort: analysisPortModule,
+    ruleObservation,
     browserAiBootstrap,
     trajectoryRecorder,
     trajectoryRecording: trajectoryRecordingModule,
@@ -827,6 +830,7 @@
   browserRandom.setState(1);
   const ruleComposition = browserRuleComposition.createBrowserRuleComposition({
     productionKernelApi: productionKernel,
+    ruleObservation,
     random: browserRandom,
     browserProjection: {
       visibilityPolicy: projectionAdapter.defaultVisibilityPolicy,
@@ -972,7 +976,7 @@
     ? new URLSearchParams(window.location.search)
     : new URLSearchParams(""));
   const browserAgentType = browserMachineFlags.get("agent") || "heuristic";
-  if (!["heuristic", "completion"].includes(browserAgentType)) {
+  if (!["heuristic", "completion", "search"].includes(browserAgentType)) {
     throw new Error(`未知 AI 类型: ${browserAgentType}`);
   }
   const browserAi = browserAiBootstrap.createBrowserAiBootstrap({
@@ -980,8 +984,9 @@
     machinePlayerCoordinatorModule,
     heuristicDecisionFunctionModule,
     agentRuntimeModule,
+    analysisPortModule,
     agentFactory: browserAgentType === "completion"
-      ? completionAgent.createCompletionAgent : null,
+      ? completionAgent.createCompletionAgent : browserAgentType === "search" ? searchAgent.createSearchAgent : null,
     inputAdapter: residentInput,
     isMachineSeat: (seatId) => (
       humanSeat.playerId != null && String(seatId) !== String(humanSeat.playerId)

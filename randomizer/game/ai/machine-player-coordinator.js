@@ -172,6 +172,7 @@ function createMachinePlayerCoordinator(options = {}) {
       } catch (error) {
         throw new Error(
           `MACHINE_PLAYER_DECISION_FAILED: 座位 ${seatId} 决策函数抛错: ${error?.message || String(error)}`,
+          { cause: error },
         );
       }
       if (!decision || typeof decision.actionId !== "string" || !decision.actionId) {

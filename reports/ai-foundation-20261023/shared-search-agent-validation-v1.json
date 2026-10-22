@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "seti-shared-search-agent-validation-v1",
+  "scope": "shared playing factory integration and specific recorded decisions; experimental incomplete inputs explicitly fail; no whole-game grade",
+  "baseCommit": "623d0e9038188f6258d7f786fad8ca5d5c29e442",
+  "agent": {
+    "version": "seti-search-agent-v1/seti-complete-decision-search-v16/seti-linear-state-value-v1",
+    "budget": {
+      "transitions": 256,
+      "nodes": 257,
+      "frontier": 256,
+      "milliseconds": 600
+    },
+    "options": {
+      "resourceDominance": true,
+      "moneyCapacityDominance": true,
+      "cardTradePruning": true,
+      "postMainPruning": true,
+      "openingPruning": true,
+      "cardChoiceEquivalence": true
+    },
+    "modelChecksum": "{\"searchVersion\":\"seti-complete-decision-search-v16\",\"valueVersion\":\"seti-linear-state-value-v1\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1},\"budget\":{\"transitions\":256,\"nodes\":257,\"frontier\":256,\"milliseconds\":600},\"options\":{\"resourceDominance\":true,\"moneyCapacityDominance\":true,\"cardTradePruning\":true,\"postMainPruning\":true,\"openingPruning\":true,\"cardChoiceEquivalence\":true}}"
+  },
+  "sourceHashes": {
+    "randomizer/game/ai/search-agent.js": "d72a1d9e406f57cebd91292c9eb5a56a367930d80ccdb115814d608f60bbce0d",
+    "randomizer/game/ai/search-agent.test.js": "2096eaaf1bbe176f4810504a020f4b1cd3bd47b9b6ecb2a19a49dfefbac8a404",
+    "randomizer/game/ai/agent-runtime.js": "3b1dad3631bad0b7fc1a34d01de5fa15211eb7ede8dfc60e8d560a4d695f198c",
+    "randomizer/game/ai/machine-player-coordinator.js": "a15aa57882d638b52ca6b3e5105724418b3ec556612082ff5f2f3f6017aa95ff",
+    "randomizer/app/ai/browser-bootstrap.js": "5de0597946633a5d8d37995f04647501164955d8f412fa4032a629611882c967",
+    "randomizer/app/dependencies.js": "ea81aca85e6ae80d543c155263f254d061a78ea8a6e5234110377803b9e9825d",
+    "randomizer/app.js": "4e1d583793c3fc3cc7bb0db9c618a41d8c08ffd32e370f8e11c3857d08bffc34",
+    "randomizer/index.html": "f775461fb41be10999643606dcc2d761d7f57fac04a02cc537641853d3965385",
+    "randomizer/app/simulation-env.js": "2f4b7f43cf001c8def7d564858317d45966d5cc38c64a1997313ee8ed9c14fcc",
+    "tools/node-test-inventory.js": "71145114dfea89fbe9d2e77cb6d119b300773089eecd4cf9b394f7e662213d90",
+    "tools/run_research_validation.js": "52ef0c69f4455a9599d384990c9c815412e891d2bac92b596455745236e0ba49",
+    "tools/browser-smoke-inventory.js": "619c4ff4c84ebcade9561990553c58462f10b0698acfae1b1611bfc101353421",
+    "randomizer/app/simulation-contract.js": "3531d126a450c812ea0894834be9f85709ac28e1ebfb5a9dec657708b03f290a",
+    "randomizer/app/rule-observation.js": "d1dc58cc707eb5f57db761c39ebf327abfadc0c45eb8f191f35fc7c7ef62c295",
+    "randomizer/app/browser-rule-composition.js": "58bb28cf900a3784b7bea2b6dd1093a786c80ed826e662d37356773776d70fc0",
+    "tools/audit_v_state_inputs.js": "56cf694a02c14471a9cffe6a33221ac9a3ef2fab589a1ac4a01faae9a27479c7",
+    "tools/run_browser_smokes.js": "6ac622610348fea37447978c45d48dacd9c09f79a28ea90d13c7ddeacb4a79bb",
+    "randomizer/app/ai/browser-machine-player.test.js": "dda51d328a193a9b80580af3cb480dcf5a9d25ade907c9f6e21f3e3c694fe79f",
+    "randomizer/app/rule-composition.test.js": "55ec455d6e0686f5746e58062b894901a91867a9800f68d65175c1d0d777c1a1"
+  },
+  "trackedJavaScriptCompared": 301,
+  "unit": {
+    "sharedSearchAgent": "passed",
+    "fixture": "case-003",
+    "transitions": 26,
+    "postMainTransitions": 137,
+    "incompleteFixture": "case-008",
+    "reuseHits": 2,
+    "wholeGames": 0
+  },
+  "rootAndStateParity": [
+    "direct vs Simulation vs Browser case-003",
+    "direct vs Simulation case-011",
+    "cache0 vs cache256 action parity",
+    "real payment component continuation hit twice, restored suffix recomputation equal",
+    "case-008 budget failure changes no authoritative root/RNG/replay",
+    "forged legal payload/stale boundary rejected; port always closed"
+  ],
+  "browserObservation": {
+    "sameModuleBrowserAndNode": true,
+    "missingBrowserCommonJsExportReproduced": true,
+    "explicitDependencyRequired": true,
+    "spectatorPrivateHandAndInitialOfferExcluded": true
+  },
+  "inspect": {
+    "rawActionOutcomesExcludedFromPolling": true,
+    "fullRunOnceResultPreserved": true,
+    "largeLeafObservationRegressionPassed": true
+  },
+  "verification": {
+    "nodeUnit": 120,
+    "nodeFullFlow": 1,
+    "unitSeconds": 144.17,
+    "fullFlowSeconds": 0.51,
+    "syntaxFiles": 18,
+    "chromePassed": [
+      "production-start-button",
+      "production-search-agent-entry",
+      "production-completion-agent-parity"
+    ],
+    "chromeLog": "reports/ai-foundation-20261023/search-agent-browser-final-v2.log",
+    "newValueInputPassed": true,
+    "wholeValueAuditExit": 1,
+    "knownLegacyValueFailure": "frozen aomomo write in old evaluator",
+    "legacyChromeLastAttempt": {
+      "smoke": "production-browser-full-parity",
+      "status": "Runtime.evaluate timeout after 60 seconds",
+      "log": "reports/ai-foundation-20261023/search-agent-browser-v5.log",
+      "finalSpectatorRevisionRetested": false,
+      "notAnewSearchTimingResult": true
+    }
+  },
+  "profileBeforeWiring": {
+    "sourceCommit": "623d0e9038188f6258d7f786fad8ca5d5c29e442",
+    "path": "reports/ai-foundation-20261023/alien-opening-profile-v1.json",
+    "verifiedBaseSourceHashes": 83,
+    "transitions": 961,
+    "searchMilliseconds": 1756.000792,
+    "timingScope": "search only; excludes openRoot",
+    "tradeCardSelectionInputs": 190,
+    "passReserveSelectionInputs": 105
+  },
+  "latestPriorDecisionMatrix": {
+    "path": "reports/ai-foundation-20261023/decision-corpus-audit-v7.json",
+    "passed": 4,
+    "total": 8,
+    "notRerunAsPartOfWiring": true
+  },
+  "newSearchWholeGames": 0,
+  "newSearchGameTiming": null,
+  "newSearchGameScores": null,
+  "goalComplete": false,
+  "remaining": [
+    "complex opening and late-tech/reserved/alien complete search within budget",
+    "general action continuation dependency proof",
+    "whole-game reproducibility/cache parity and <=180 seconds per cold run"
+  ],
+  "machine": {
+    "node": "v22.22.0",
+    "cpu": "Apple M4",
+    "logicalCpuCount": 10,
+    "totalMemoryBytes": 17179869184
+  },
+  "evidence": {
+    "reports/ai-foundation-20261023/search-agent-full-node-v2.log": "4fab68689258617772dfe8e97d54e1324da75043765f1431a5df2ff13e3730e6",
+    "reports/ai-foundation-20261023/search-agent-browser-final-v2.log": "95eaf94c4fd4c19b7539424dc510e357c7007f02405f37e41b22abb334af26dc",
+    "reports/ai-foundation-20261023/state-value-input-audit-v15.json": "67d78835dd78742dbec0922532098d85268cfd06f31f6b231f2d7e46539041dc",
+    "reports/ai-foundation-20261023/search-agent-before-host-wiring-v1.log": "02d99335a6aff314edc30e42f4c71ac3f3e6ba2805c34262a6bce6eb3eede140",
+    "reports/ai-foundation-20261023/search-agent-inspect-before-fix-v1.log": "64e64ece2f6d974cb2b873dee7dcd58d1dd87298ccc3505ddbb41eaf0fffce7c",
+    "reports/ai-foundation-20261023/search-agent-spectator-before-fix-v1.log": "44b213e86a274d90c44e62bcc2e65dcd0ef148ad84d469c8b42ce079b1cb5894",
+    "reports/ai-foundation-20261023/search-agent-browser-v1.log": "e19a0b84e986a6cb724ac2205da4c0cd5fb505e8a26fbac0e5490c9b9c96033e",
+    "reports/ai-foundation-20261023/search-agent-browser-legacy-diagnostic-v2.log": "b8316e66772990b2e749dc8f836d5890caeb4a5fc621314e3957f199327df0c8",
+    "reports/ai-foundation-20261023/search-agent-browser-v5.log": "2c828a0aee0d474cb4d16ef060fd4cdaf16920b9baaa40a1e1341d55893073c0"
+  }
+}

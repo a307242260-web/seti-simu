@@ -63,14 +63,12 @@ AI 只拥有选择。正式合法性、资源扣除、结算、条件 Decision�
 保留协调器已有的同步最小签名，不先引入新一套 Policy 信封：
 
 ```js
-// 新 factory 的拟定形状，尚未实现。
-const agent = createAgent({ config, analysisPort, onDecision });
-coordinator.registerSeat(seatId, agent.decide);
-
-// boundary 来自共享协调器。
-function decide({ seatId, observation, legalActions, phase, sessionDecision }) {
-  return { actionId }; // 必须命中本次 legalActions
-}
+const runtime = createAgentDecisionFunction({
+  seatId, createAgent: createSearchAgent,
+  analysisPortFactory: () => createAnalysisPort({ composition, seatId }),
+});
+coordinator.registerSeat(seatId, runtime.run);
+// factory收到seatId、只读config与惰性analysisPort；decide只收到冻结席位context。
 ```
 
 最小接入先返回 actionId。搜索接入时可返回经验证的 plan，由协调器复用；新 AI 不读取旧 AI 的计划缓存。
@@ -82,6 +80,9 @@ function decide({ seatId, observation, legalActions, phase, sessionDecision }) {
 内置基础 AI 使用 `reset({agentType:"completion"})`；自定义 factory 由
 `createSimulationEnv({agentFactory})` 注入。Browser 通过 bootstrap 的同名 factory 参数注入，
 页面可用 `?agent=completion` 选择基础 AI。基础实现不搜索，coverage 标记为 not-evaluated。
+实验搜索使用同一个`createSearchAgent`：Simulation的`agentType:"search"`与页面`?agent=search`。
+其固定预算、完整证据、失败和纯选择续用契约见[共享搜索玩家](ai-search-agent-contract-20261023.md)。
+该入口已经接通，复杂场景仍会明确失败，尚不能作为完整对局或180秒验收版本。
 Browser 与 Simulation 共用 factory、默认配置和算法身份，Simulation 额外记录训练数据。
 重置、加载或更换算法时清空算法临时状态。首版不支持 Promise；未来异步推理增加 requestId、
 generation、deadline、cancel 和 late-response 拒绝后再开放，不能直接把 Promise 塞进当前协调器。

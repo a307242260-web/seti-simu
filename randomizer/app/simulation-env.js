@@ -14,6 +14,8 @@ const heuristicDecisionFunctionModule = require("../game/ai/heuristic-decision-f
 const vGuidedDecisionFunctionModule = require("../game/ai/v-guided-decision-function");
 const agentRuntime = require("../game/ai/agent-runtime");
 const completionAgent = require("../game/ai/completion-agent");
+const searchAgent = require("../game/ai/search-agent");
+const analysisPort = require("../game/ai/analysis-port");
 const finalScoring = require("../game/final-scoring");
 const { getWorldVersion } = require("../game/state/fixed-world-config");
 
@@ -366,8 +368,9 @@ function createSimulationEnv(options = {}) {
       vGuidedDiscardSession = null;
       machineCoordinator = null;
       heuristicDecision = null;
+      for (const agent of agents.values()) agent.dispose();
       agents.clear();
-      if (!["heuristic", "completion", "custom"].includes(config.agentType)
+      if (!["heuristic", "completion", "search", "custom"].includes(config.agentType)
         || (config.agentType === "custom" && typeof options.agentFactory !== "function")) {
         throw environmentError("AGENT_FACTORY_MISSING", `没有可用的 AI factory: ${config.agentType}`);
       }
@@ -626,7 +629,9 @@ function createSimulationEnv(options = {}) {
       if (!agents.has(seatId)) {
         const agent = agentRuntime.createAgentDecisionFunction({
           seatId, config: { agentType: config.agentType },
-          createAgent: config.agentType === "custom" ? options.agentFactory : completionAgent.createCompletionAgent,
+          createAgent: config.agentType === "custom" ? options.agentFactory
+            : config.agentType === "search" ? searchAgent.createSearchAgent : completionAgent.createCompletionAgent,
+          analysisPortFactory: () => analysisPort.createAnalysisPort({ composition, seatId }),
           onDecision: options.onAgentDecision,
         });
         agents.set(seatId, agent);
@@ -638,7 +643,7 @@ function createSimulationEnv(options = {}) {
       return {
         ...machineStepResult, policyDecision: result.decision.decision,
         policyProvenance: agents.get(seatId).getProvenance(),
-        agentTrace: result.decision.agentTrace, actionOutcomes: [], searches: [], plan: null,
+        agentTrace: result.decision.agentTrace, actionOutcomes: [], searches: result.decision.searches, plan: null,
       };
     },
 
@@ -1112,6 +1117,7 @@ function createSimulationEnv(options = {}) {
       seededRandom = null;
       machineCoordinator = null;
       heuristicDecision = null;
+      for (const agent of agents.values()) agent.dispose();
       agents.clear();
       selectors = new Map();
       cachedLegal = null;

@@ -1,3 +1,12 @@
+(function (root, factory) {
+  "use strict";
+  const common = typeof module === "object" && module.exports;
+  const api = factory(common ? require("./simulation-contract") : root.SetiSimulationContract,
+    common ? require("../game/end-game-scoring") : root.SetiEndGameScoring,
+    common ? require("../game/cards/effects") : root.SetiCardEffects);
+  if (common) module.exports = api;
+  else root.SetiRuleObservation = api;
+})(typeof globalThis !== "undefined" ? globalThis : window, function (contract, endGameScoring, cardEffects) {
 "use strict";
 
 // 共享规则观察构建器（Browser/Simulation 同源信息层）。
@@ -25,9 +34,7 @@ const {
   sanitizeAlienPublicState,
   sanitizeTechSupply,
   sanitizeFinalScoringState,
-} = require("./simulation-contract");
-const endGameScoring = require("../game/end-game-scoring");
-const cardEffects = require("../game/cards/effects");
+} = contract;
 
 function clone(value) {
   return value == null ? value : structuredClone(value);
@@ -119,7 +126,8 @@ function buildDecisionFromState(state, legalActions) {
 function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], options = {}) {
   const turn = getTurnState(state);
   const playersState = state.players || { players: [] };
-  const perspectivePlayerId = viewerPlayerId || legalActions[0]?.actorId || turn.currentPlayerId || null;
+  const perspectivePlayerId = options.spectator === true ? null
+    : viewerPlayerId || legalActions[0]?.actorId || turn.currentPlayerId || null;
   const decision = buildDecisionFromState(state, legalActions);
   const setup = state.match?.initialSetup || null;
   const setupCurrentPlayerId = setup?.currentPlayerId || null;
@@ -202,10 +210,11 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
   };
 }
 
-module.exports = {
+return {
   OBSERVATION_SCHEMA_VERSION,
   buildRuleObservation,
   buildDecisionFromState,
   getTurnState,
   pendingFinalMarkValue,
 };
+});

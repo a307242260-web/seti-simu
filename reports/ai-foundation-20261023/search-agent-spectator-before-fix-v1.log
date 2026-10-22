@@ -1,0 +1,150 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: 无席位观察不得回退到当前玩家的私有手牌
++ actual - expected
+
++ {
++   companyState: {
++     abilityId: null,
++     futureSpan: null,
++     roundMarkRound: 0,
++     roundMarkTurn: 0,
++     strategyPassiveSlots: null
++   },
++   hand: [
++     {
++       cardId: 'dlc_25.png',
++       cardTypeCode: 1,
++       discardActionCode: 0,
++       faceUp: true,
++       id: 'card-13-0',
++       incomeCode: 1,
++       price: 1,
++       scanActionCode: 1,
++       set: 'space-agency'
++     },
++     {
++       cardId: 'b_15.webp',
++       cardTypeCode: 2,
++       discardActionCode: 2,
++       faceUp: true,
++       id: 'card-14-0',
++       incomeCode: 1,
++       price: 1,
++       scanActionCode: 2,
++       set: 'basic'
++     },
++     {
++       cardId: 'b_36.webp',
++       cardTypeCode: 0,
++       discardActionCode: 1,
++       faceUp: true,
++       id: 'card-15-0',
++       incomeCode: 0,
++       price: 2,
++       scanActionCode: 3,
++       set: 'basic'
++     },
++     {
++       cardId: 'b_78.webp',
++       cardTypeCode: 1,
++       discardActionCode: 0,
++       faceUp: true,
++       id: 'card-16-0',
++       incomeCode: 2,
++       price: 1,
++       scanActionCode: 0,
++       set: 'basic'
++     }
++   ],
++   oneTimeAbilities: {},
++   playerId: 'player-white',
++   privateAlienCards: [],
++   reservedCards: [],
++   taskState: {}
++ }
+- null
+
+    at Object.<anonymous> (/Users/bilibili/code/seti-simu/randomizer/app/rule-composition.test.js:91:8)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: {
+    playerId: 'player-white',
+    hand: [
+      {
+        id: 'card-13-0',
+        cardId: 'dlc_25.png',
+        set: 'space-agency',
+        price: 1,
+        cardTypeCode: 1,
+        discardActionCode: 0,
+        scanActionCode: 1,
+        incomeCode: 1,
+        faceUp: true
+      },
+      {
+        id: 'card-14-0',
+        cardId: 'b_15.webp',
+        set: 'basic',
+        price: 1,
+        cardTypeCode: 2,
+        discardActionCode: 2,
+        scanActionCode: 2,
+        incomeCode: 1,
+        faceUp: true
+      },
+      {
+        id: 'card-15-0',
+        cardId: 'b_36.webp',
+        set: 'basic',
+        price: 2,
+        cardTypeCode: 0,
+        discardActionCode: 1,
+        scanActionCode: 3,
+        incomeCode: 0,
+        faceUp: true
+      },
+      {
+        id: 'card-16-0',
+        cardId: 'b_78.webp',
+        set: 'basic',
+        price: 1,
+        cardTypeCode: 1,
+        discardActionCode: 0,
+        scanActionCode: 0,
+        incomeCode: 2,
+        faceUp: true
+      }
+    ],
+    reservedCards: [],
+    companyState: {
+      abilityId: null,
+      roundMarkRound: 0,
+      roundMarkTurn: 0,
+      futureSpan: null,
+      strategyPassiveSlots: null
+    },
+    privateAlienCards: [],
+    taskState: {},
+    oneTimeAbilities: {}
+  },
+  expected: null,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+SUMMARY unit passed=0 failed=1 total=1 time=0.12s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/rule-composition tests=1
+FAIL randomizer/app/rule-composition.test.js status=1 signal=none

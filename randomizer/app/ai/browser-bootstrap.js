@@ -50,6 +50,7 @@
       machineConfig,
       agentFactory,
       agentRuntimeModule,
+      analysisPortModule,
       onAgentDecision,
     } = options;
     if (!ruleComposition?.inspect || !ruleComposition?.inputPort?.enumerateActions
@@ -93,6 +94,7 @@
         if (!agents.has(seatId)) {
           agents.set(seatId, agentRuntimeModule.createAgentDecisionFunction({
             seatId, createAgent: agentFactory, config: { agentType: config.agentType || "custom" },
+            analysisPortFactory: () => analysisPortModule.createAnalysisPort({ composition: ruleComposition, seatId }),
             onDecision: onAgentDecision,
           }));
         }
@@ -226,6 +228,7 @@
               policyDecision: result.decision.decision,
               actionOutcomes: result.decision.actionOutcomes || [],
               ...(result.decision.agentTrace ? { agentTrace: result.decision.agentTrace } : {}),
+              searches: result.decision.searches || [],
             }
             : {
               policyDecision: {
@@ -253,7 +256,8 @@
       } catch (error) {
         // fail-closed：协调器/提交错误显式转成 fail 结果（不静默，app 会记录）。
         lastResult = ownGeneration === generation
-          ? fail(error?.code || "MACHINE_PLAYER_FAILED", error?.message || String(error), { seatId })
+          ? fail(error?.code || error?.cause?.code || "MACHINE_PLAYER_FAILED", error?.message || String(error),
+            { seatId, ...(error?.cause?.search ? { search: error.cause.search } : {}) })
           : fail("MACHINE_POLICY_REQUEST_INVALIDATED", "Browser Machine Player generation 已变化", { seatId });
         return lastResult;
       }
@@ -263,6 +267,7 @@
       generation += 1;
       coordinator = null;
       decisionFunction = null;
+      for (const agent of agents.values()) agent.dispose();
       agents.clear();
       lastResult = null;
       lastSubmittedKey = null;
@@ -273,13 +278,15 @@
     }
 
     function inspect() {
+      const inspectedResult = lastResult && Object.fromEntries(Object.entries(lastResult)
+        .filter(([key]) => key !== "actionOutcomes"));
       return Object.freeze({
         generation,
         seatId: currentSeatId(),
         submittedCount,
         diagnostics: lastDiagnostics ? structuredClone(lastDiagnostics) : null,
         lastOutcomeSummary: structuredClone(lastOutcomeSummary),
-        lastResult: structuredClone(lastResult),
+        lastResult: structuredClone(inspectedResult),
       });
     }
 
@@ -303,6 +310,7 @@
       machineConfig,
       agentFactory,
       agentRuntimeModule,
+      analysisPortModule,
       onAgentDecision,
     } = context;
     const machinePlayerPort = createBrowserMachinePlayerPort({
@@ -314,6 +322,7 @@
       machineConfig,
       agentFactory,
       agentRuntimeModule,
+      analysisPortModule,
       onAgentDecision,
     });
     ruleComposition.subscribe((event) => {

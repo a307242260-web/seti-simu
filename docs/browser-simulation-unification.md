@@ -98,6 +98,11 @@ family 共用能力层的 `launchProbe` / `orbitProbe` / `landProbe`。
 
 - `app/rule-observation.js` 的 `buildRuleObservation` 与同一 sanitize 纯函数为两个宿主
   提供顶层 `publicState`、`selfState` 和 requirements。
+  两个模块均提供CommonJS与浏览器导出；页面显式加载simulation-contract/rule-observation，
+  经dependencies传给Browser composition。缺失构建器直接拒绝启动，不可跳过信息层。
+  Node的require路径不能代替真实Chrome装配验证。
+  无席位观众显式传spectator选项，不回退到当前玩家的手牌或初始私有选项；
+  Simulation未指定席位时读取当前决策owner的原默认语义保留。
 - Browser `projectBrowserState` 保留 `resident` 信息字段，将读模型附加在 `resident.ui`。
   UI 从 `resident.ui.browserReadModel` 与 `resident.ui.finalReadModel` 读取展示数据。
 - 机器协调器读取 `projection.state` 的规则观察，评估器只消费完整、按 viewer 遮蔽的输入。

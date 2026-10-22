@@ -1,0 +1,16 @@
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+true !== false
+
+    at /Users/bilibili/code/seti-simu/randomizer/app/ai/browser-machine-player.test.js:134:12 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: true,
+  expected: false,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+SUMMARY unit passed=0 failed=1 total=1 time=0.04s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+FAIL randomizer/app/ai/browser-machine-player.test.js status=1 signal=none

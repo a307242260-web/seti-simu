@@ -42,6 +42,7 @@ const { execFileSync } = require("node:child_process");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const heuristicPolicy = require("../randomizer/game/ai/heuristic-policy");
 const completionAgent = require("../randomizer/game/ai/completion-agent");
+const searchAgent = require("../randomizer/game/ai/search-agent");
 const { createStepProgressReporter } = require("./progress");
 const { buildWorldIdentity } = require("./fixed-world-identity");
 
@@ -111,12 +112,13 @@ function parseConfig(raw) {
 function buildIdentity(options) {
   const config = { ...options.config };
   const agentType = config.agentType || "heuristic";
-  if (!["heuristic", "completion"].includes(agentType)) throw new Error(`未知 AI 类型: ${agentType}`);
+  if (!["heuristic", "completion", "search"].includes(agentType)) throw new Error(`未知 AI 类型: ${agentType}`);
   const identity = {
     seed: options.seed || DEFAULT_SEED,
     activePlayerCount: Number(config.activePlayerCount || 4),
     aiDifficulty: config.aiDifficulty || "laughable",
-    policyVersion: agentType === "completion" ? completionAgent.VERSION : POLICY_VERSION,
+    policyVersion: agentType === "completion" ? completionAgent.VERSION
+      : agentType === "search" ? searchAgent.VERSION : POLICY_VERSION,
     flags: {},
     gitCommit: gitCommit() || "dirty",
   };
