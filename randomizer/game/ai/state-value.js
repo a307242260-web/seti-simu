@@ -11,10 +11,20 @@
   const DEFAULT_WEIGHTS = Object.freeze({
     credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1,
   });
+  const moneyMonotoneEvaluators = new WeakSet();
 
   function number(value, path) {
     if (typeof value !== "number" || !Number.isFinite(value)) throw new TypeError(`VALUE_NUMBER_INVALID: ${path}`);
     return value;
+  }
+
+  function valueWeights(options) {
+    const weights = { ...DEFAULT_WEIGHTS, ...options.weights };
+    for (const [key, value] of Object.entries(weights)) {
+      if (!Object.hasOwn(DEFAULT_WEIGHTS, key)) throw new TypeError(`VALUE_WEIGHT_UNKNOWN: ${key}`);
+      if (number(value, `weights.${key}`) < 0) throw new TypeError(`VALUE_WEIGHT_NEGATIVE: ${key}`);
+    }
+    return weights;
   }
 
   function evaluateStateValue(observation, seatId, options = {}) {
@@ -30,11 +40,7 @@
       components: Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
         resources: 0, hand: 0, income: 0 }), terminal: true });
 
-    const weights = { ...DEFAULT_WEIGHTS, ...options.weights };
-    for (const [key, value] of Object.entries(weights)) {
-      if (!Object.hasOwn(DEFAULT_WEIGHTS, key)) throw new TypeError(`VALUE_WEIGHT_UNKNOWN: ${key}`);
-      if (number(value, `weights.${key}`) < 0) throw new TypeError(`VALUE_WEIGHT_NEGATIVE: ${key}`);
-    }
+    const weights = valueWeights(options);
     const round = number(observation.publicState.roundNumber, "roundNumber");
     if (!Number.isInteger(round) || round < 1 || round > 4) throw new TypeError("VALUE_ROUND_INVALID");
     if (!player.income || typeof player.income !== "object") throw new TypeError("VALUE_INCOME_MISSING");
@@ -53,5 +59,18 @@
     return Object.freeze({ modelVersion: MODEL_VERSION, total, components, terminal: false });
   }
 
-  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, evaluateStateValue });
+  function createStateValueEvaluator(seatId, options = {}) {
+    if (typeof seatId !== "string" || !seatId) throw new TypeError("VALUE_VIEWER_INVALID");
+    const weights = Object.freeze(valueWeights(options));
+    const evaluate = observation => evaluateStateValue(observation, seatId, { weights }).total;
+    Object.defineProperties(evaluate, {
+      modelKey: { value: JSON.stringify({ version: MODEL_VERSION, seatId, weights }) },
+      seatId: { value: seatId },
+    });
+    if (weights.credits > 0 && weights.energy > 0) moneyMonotoneEvaluators.add(evaluate);
+    return Object.freeze(evaluate);
+  }
+
+  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, evaluateStateValue, createStateValueEvaluator,
+    isMoneyMonotoneEvaluator: evaluate => moneyMonotoneEvaluators.has(evaluate) });
 });

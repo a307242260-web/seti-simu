@@ -93,6 +93,10 @@ try {
   const rawValue = independentValue.evaluateStateValue(rawObs, seatId);
   const standardValue = independentValue.evaluateStateValue(stdObs, seatId);
   if (rawValue.total !== standardValue.total) throw new Error("原始与决策观察估值不一致");
+  const evaluator = independentValue.createStateValueEvaluator(seatId);
+  if (evaluator(rawObs) !== rawValue.total || evaluator(stdObs) !== standardValue.total) {
+    throw new Error("冻结配置估值与直接估值不一致");
+  }
   console.log(`[PASS] independent-state-value: total=${standardValue.total} model=${standardValue.modelVersion}`);
 } catch (error) {
   console.log(`[FAIL] independent-state-value: ${error.message}`);

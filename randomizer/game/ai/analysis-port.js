@@ -2,10 +2,13 @@
   "use strict";
   const common = typeof module === "object" && module.exports;
   const api = factory(common ? require("../rule-composition") : root.SetiRuleComposition,
-    common ? require("../cards/effects") : root.SetiCardEffects);
+    common ? require("../cards/effects") : root.SetiCardEffects,
+    common ? require("../cards/deck") : root.SetiCards,
+    common ? require("../industry/catalog") : root.SetiIndustryCatalog,
+    common ? require("../turn-flow") : root.SetiTurnFlow);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow) {
   "use strict";
 
   function freeze(value) {
@@ -23,9 +26,9 @@
   // 只比较向前正式输入的行为；不提供 undo/abort，因而历史日志和撤销帧不参与身份。
   // 实体编号、数组顺序、资源、规则 RNG 与完整剩余队列保留。会改变合法信封的
   // authority 版本单独由 expand 校验，不能作为循环状态的差异。
-  function forwardIdentity(envelope, status, boundary) {
+  function forwardIdentity(envelope, status, boundary, stateOverride = null) {
     const session = envelope.session?.session;
-    const source = session?.workingState || JSON.parse(envelope.committedState);
+    const source = session?.workingState || stateOverride || JSON.parse(envelope.committedState);
     const state = { ...source, meta: { ...source.meta }, ...(source.match ? { match: { ...source.match } } : {}) };
     // 固定牌堆不从弃牌洗回；Production 仅按唯一实体ID查找/移除或读取集合。
     // UI 展示和 journal 的历史顺序不属于向前规则身份；其他数组仍保留顺序。
@@ -73,6 +76,8 @@
     const viewer = Object.freeze({ playerId: seatId, role: "player" });
     let nodes = new WeakMap();
     const identities = new Map();
+    let resourceOrders = new WeakMap();
+    const resourceGroups = new Map();
     let fork = null;
     let loadedEnvelope = null;
     let rootObservation = null;
@@ -86,7 +91,7 @@
     let selectionCertificate = null;
     let nextCertificate = 0;
     const now = () => typeof performance !== "undefined" ? performance.now() : Date.now();
-    const milliseconds = { restore: 0, execute: 0, observation: 0, checkpoint: 0 };
+    const milliseconds = { restore: 0, execute: 0, observation: 0, checkpoint: 0, resourceOrder: 0 };
 
     function project(comp) {
       const state = comp.projection(viewer).state;
@@ -425,12 +430,60 @@
       return Array.isArray(ids) ? JSON.stringify(unordered ? [...ids].sort() : ids) : null;
     }
 
+    function postMainResourceOrder(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (resourceOrders.has(node)) return resourceOrders.get(node);
+      const at = now();
+      const result = describeResourceOrder(stored, node);
+      milliseconds.resourceOrder += now() - at;
+      resourceOrders.set(node, result);
+      return result;
+    }
+
+    function describeResourceOrder(stored, node) {
+      if (node.status !== "stable" || stored.envelope.session) return null;
+      const state = JSON.parse(stored.envelope.committedState);
+      const owner = state.players.players.find(player => player.id === seatId);
+      if (state.turn.currentPlayerId !== seatId || owner?.mainActionCompleted !== true
+        || owner.passCompletionPending || state.turn.passedPlayerIds.includes(seatId)
+        || state.match.initialSetup || (owner.reservedCards || []).length
+        || (state.turn.cardTurnEventBonuses || []).length
+        || Object.values(state.aliens.aliens).some(slot => slot.revealed)) return null;
+      const company = industryCatalog.getPlayerIndustryDefinition(owner);
+      if (company?.activeAbilityId !== "helios_remove_tech_income"
+        || company.passiveIds.some(id => id !== "helios_passive_reward_slots")) return null;
+      if (owner.hand.some(card => !["basic", "space-agency"].includes(card.set)
+        || !cards.getCatalogEntryForCard(card))) return null;
+      const credits = owner.resources.credits, energy = owner.resources.energy;
+      const blueCredits = owner.blueBonusResources?.credits ?? 0;
+      const blueEnergy = owner.blueBonusResources?.energy ?? 0;
+      const vector = { credits, energy, blueCredits, blueEnergy };
+      if (Object.values(vector).some(value => !Number.isSafeInteger(value) || value < 0)
+        || blueCredits > credits || blueEnergy > energy) return null;
+      // 复用正式推进规则；同 owner 的下一回合可能重新打出零资源条件牌，不能使用本证明。
+      const preview = structuredClone(state);
+      const transition = turnFlow.advanceTurnAfterPlayerAction(preview, seatId);
+      if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded
+        || transition.nextPlayerId === seatId) return null;
+      // 蓝槽留存未进入标准席位观察，保留在可信身份中精确比较，不向算法额外披露。
+      const neutralOwner = { ...owner, resources: { ...owner.resources, credits: 0, energy: 0 } };
+      const neutral = { ...state, players: { ...state.players,
+        players: state.players.players.map(player => player.id === seatId ? neutralOwner : player) } };
+      const key = forwardIdentity(stored.envelope, "post-main-resource-order", null, neutral);
+      if (!resourceGroups.has(key)) resourceGroups.set(key, Object.freeze({}));
+      return freeze({ group: resourceGroups.get(key), credits, energy,
+        proof: "seti-helios-post-main-money-simulation-v1" });
+    }
+
     function close() {
       (fork?.composition || fork)?.dispose?.();
       fork = null;
       loadedEnvelope = null;
       nodes = new WeakMap();
       identities.clear();
+      resourceOrders = new WeakMap();
+      resourceGroups.clear();
       cache.clear();
       rootObservation = null;
       publicSeed = null;
@@ -450,7 +503,7 @@
     }
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
-      rememberSelection, reuseSelection, close, getDiagnostics });
+      rememberSelection, reuseSelection, postMainResourceOrder, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

@@ -1,6 +1,6 @@
 "use strict";
 const assert = require("node:assert/strict");
-const { evaluateStateValue, MODEL_VERSION } = require("./state-value");
+const { evaluateStateValue, MODEL_VERSION, createStateValueEvaluator, isMoneyMonotoneEvaluator } = require("./state-value");
 
 function observation(round = 1) {
   return { terminal: false, publicState: { roundNumber: round, players: [{
@@ -21,6 +21,16 @@ assert.equal(evaluateStateValue(observation(4), "p1").components.income, 0);
 const end = { ...start, terminal: true };
 assert.equal(evaluateStateValue(end, "p1").total, 14, "正式最终分不叠资源或未来收入");
 assert.deepEqual(start, observation(), "估值不得修改来源");
+const configured = { weights: { credits: 2 } };
+const evaluator = createStateValueEvaluator("p1", configured);
+const configuredValue = evaluateStateValue(start, "p1", configured).total;
+assert.equal(evaluator(start), configuredValue);
+configured.weights.credits = 100;
+assert.equal(evaluator(start), configuredValue, "已签发估值函数固定配置，外部修改不能改变证明前提");
+assert.equal(isMoneyMonotoneEvaluator(evaluator), true);
+assert.equal(isMoneyMonotoneEvaluator(() => 1), false);
+assert.equal(isMoneyMonotoneEvaluator(createStateValueEvaluator("p1", { weights: { energy: 0 } })), false,
+  "零权重不能签发严格钱电支配证明");
 
 assert.throws(() => evaluateStateValue(start, "other"), /VALUE_PLAYER_MISSING/);
 assert.throws(() => evaluateStateValue({ ...start, selfState: { playerId: "other", hand: [] } }, "p1"), /VALUE_VIEWER_MISMATCH/);
