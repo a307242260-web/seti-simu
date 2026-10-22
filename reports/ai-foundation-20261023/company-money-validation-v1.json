@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "seti-company-money-validation-v1",
+  "scope": "eleven controlled complete small post-main windows with raw/pruned/cache parity; all ten active company condition trees paired across two wallets; not a whole-game grade",
+  "baseCommit": "530750d6895006f5d24f30451418e923bb43b214",
+  "runtimeRulesetVersion": "seti-runtime-v1.2",
+  "searchVersion": "seti-complete-decision-search-v13",
+  "proof": "seti-standard-company-post-main-money-simulation-v2",
+  "smallWindows": [
+    {
+      "label": "层云核心",
+      "rawInputs": 54,
+      "prunedInputs": 46,
+      "value": 30
+    },
+    {
+      "label": "图灵系统",
+      "rawInputs": 144,
+      "prunedInputs": 126,
+      "value": 28.5
+    },
+    {
+      "label": "哨兵探测网络",
+      "rawInputs": 29,
+      "prunedInputs": 26,
+      "value": 28.5
+    },
+    {
+      "label": "寰宇动力",
+      "rawInputs": 13,
+      "prunedInputs": 12,
+      "value": 28.5
+    },
+    {
+      "label": "赫利昂联合体",
+      "rawInputs": 13,
+      "prunedInputs": 12,
+      "value": 28.5
+    },
+    {
+      "label": "任务中继站",
+      "rawInputs": 13,
+      "prunedInputs": 12,
+      "value": 28.5
+    },
+    {
+      "label": "芬威克研究中心",
+      "rawInputs": 13,
+      "prunedInputs": 12,
+      "value": 28.5
+    },
+    {
+      "label": "深空探测",
+      "rawInputs": 13,
+      "prunedInputs": 12,
+      "value": 28.5
+    },
+    {
+      "label": "未来跨度研究所",
+      "rawInputs": 13,
+      "prunedInputs": 12,
+      "value": 28.5
+    },
+    {
+      "label": "异星实验室",
+      "rawInputs": 13,
+      "prunedInputs": 12,
+      "value": 28.5
+    },
+    {
+      "label": "宇宙战略集团",
+      "rawInputs": 25,
+      "prunedInputs": 20,
+      "value": 29.5
+    }
+  ],
+  "companyAbilities": [
+    {
+      "label": "层云核心",
+      "inputsPerWallet": 3,
+      "leaves": 1
+    },
+    {
+      "label": "图灵系统",
+      "inputsPerWallet": 9,
+      "leaves": 8
+    },
+    {
+      "label": "哨兵探测网络",
+      "inputsPerWallet": 1,
+      "leaves": 1
+    },
+    {
+      "label": "寰宇动力",
+      "inputsPerWallet": 5,
+      "leaves": 4
+    },
+    {
+      "label": "赫利昂联合体",
+      "inputsPerWallet": 3,
+      "leaves": 1
+    },
+    {
+      "label": "任务中继站",
+      "inputsPerWallet": 4,
+      "leaves": 3
+    },
+    {
+      "label": "芬威克研究中心",
+      "inputsPerWallet": 4,
+      "leaves": 3
+    },
+    {
+      "label": "深空探测",
+      "inputsPerWallet": 5,
+      "leaves": 3
+    },
+    {
+      "label": "未来跨度研究所",
+      "inputsPerWallet": 4,
+      "leaves": 3
+    },
+    {
+      "label": "宇宙战略集团",
+      "inputsPerWallet": 4,
+      "leaves": 3
+    }
+  ],
+  "inputsPerAbilityWallet": 42,
+  "rawPrunedCacheSameActionValueShortestInput": true,
+  "canonicalRootUnchanged": true,
+  "sentinelDataActualAllocationAndRestoreReplay": "passed",
+  "globalBudgetChanged": false,
+  "coverage": {
+    "boundedAudit": "reports/ai-foundation-20261023/decision-corpus-audit-v5.json",
+    "passed": 3,
+    "total": 8,
+    "scope": "eight archived checkpoints only"
+  },
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "67f4608b2638fede9b2ecd5428ece90e77705b089216391125bce3f31280e4af",
+    "randomizer/game/ai/company-money-dominance.test.js": "6acf1dc651ce0ec726d1cf772a2d76bae12e867d1d66947070f9840ac3118c4d",
+    "randomizer/game/ai/decision-search.js": "7e33b33ea503d46e06735dcf90ce0cf1c7b1de180840c6a3feb5a43a18399170",
+    "tools/node-test-inventory.js": "4317199d8e1d7f7c5646d49d3dba7ccd21996c5ccd17041e9ef650a16b522dc2",
+    "randomizer/game/industry/abilities.js": "3330f3e64519ddeed4b7c4f9c08b5a047b4525b48ce358cf58e1eb0ad6d6a5e9",
+    "randomizer/game/effects/residual-domain-session.js": "bdfc516c562c49186101f695065b1df12b9ffdda7106fd812bcbf4d62c4548a7"
+  },
+  "logs": {
+    "company-money-unit-v8.log": "e8f458c8802bbb294e8ebf87c956daad420cf9c47d3ceb89c022034973b0066b",
+    "company-money-full-node-v1.log": "9675c8ad32bde75b6eb3e3998aa9fdde663302dad9897cd5fcafeef944406666",
+    "company-money-browser-v1.log": "3dad3e5fc64fb85692616b55cc6c2e1b206595f4ce0d0c1c636d3ca21585f8e0",
+    "sentinel-data-before-fix-v1.log": "4047d0bd55eea330b51be68dde01f1c98140d0e2a065c27f024634f9a94b6adc"
+  },
+  "checks": {
+    "unit": 116,
+    "fullFlow": 1,
+    "browserSmoke": 2
+  }
+}

@@ -2089,7 +2089,7 @@
       if (!player || !card) {
         return fail("INDUSTRY_SENTINEL_CORNER_STALE", "哨兵弃牌角标已失效");
       }
-      const applied = industryAbilities.resolveSentinelPlayCorner(cards, players, data, player, card);
+      const applied = industryAbilities.resolveSentinelPlayCorner(cards, players, data, player, card, { root });
       if (!applied?.ok) return applied;
       const spawnedEffects = [];
       if (applied.pendingFreeMove) {

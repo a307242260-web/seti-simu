@@ -45,6 +45,9 @@ trusted恢复契约。它不证明隐藏配置内容或世界指纹一致，后�
 数据的pool/placed列表查询是只读操作；尚未建立dataState的初始快照以及已有旧式tokens
 仅在临时视图中解释，不依赖一次投影来补写规则状态。正式获得、放置和分析仍由数据写入入口处理。
 
+哨兵补开的已打牌数据角标也通过统一角标执行器，并传递当前权威root分配dataToken编号；
+不能仅传player/data模块而遗漏实体编号上下文。其真实公司输入、数据和编号在checkpoint恢复重放时一致。
+
 所有公开 envelope 使用 `schemaVersion=seti-effect-session-v1`。
 
 ### Effect Group

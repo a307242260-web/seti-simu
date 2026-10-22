@@ -18,6 +18,22 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession) {
   "use strict";
 
+  // 已逐项审计的 Production 公司流程：仅在主行动完成后的钱电模拟中使用。
+  // 新主动/被动组合必须重审，不能因目录新增公司自动扩大证明范围。
+  const POST_MAIN_MONEY_COMPANIES = Object.freeze({
+    stratus_public_corners: [],
+    turing_borrow_tech: ["turing_blue_tech_publicity"],
+    sentinel_arm_play_corner: ["sentinel_launch_scan_earth"],
+    huanyu_free_moves: ["huanyu_rocket_limit"],
+    helios_remove_tech_income: ["helios_passive_reward_slots"],
+    mission_publicity_pick_income: ["mission_play_type_publicity", "mission_startup_final_mark"],
+    fenwick_publicity_pick_corner: ["fenwick_research_cost"],
+    deepspace_swap_cards: ["deepspace_free_analyze"],
+    future_span_pick_advance: ["future_span_parking"],
+    no_active: ["alien_lab_panels"],
+    strategy_pick_card: ["strategy_passive_reward_slots"],
+  });
+
   function freeze(value) {
     if (!value || typeof value !== "object" || Object.isFrozen(value)) return value;
     for (const item of Object.values(value)) freeze(item);
@@ -769,8 +785,19 @@
         || (state.turn.cardTurnEventBonuses || []).length
         || Object.values(state.aliens.aliens).some(slot => slot.revealed)) return null;
       const company = industryCatalog.getPlayerIndustryDefinition(owner);
-      if (company?.activeAbilityId !== "helios_remove_tech_income"
-        || company.passiveIds.some(id => id !== "helios_passive_reward_slots")) return null;
+      if (opening) {
+        if (company?.activeAbilityId !== "helios_remove_tech_income"
+          || company.passiveIds.some(id => id !== "helios_passive_reward_slots")) return null;
+      } else {
+        const passives = company && POST_MAIN_MONEY_COMPANIES[company.activeAbilityId ?? "no_active"];
+        if (!passives || passives.length !== company.passiveIds.length
+          || company.passiveIds.some(id => !passives.includes(id))
+          || state.players.players.some(player => player.reservedCards.length)
+          || state.cards.publicCards.some(card => card && (!["basic", "space-agency"].includes(card.set)
+            || !cards.getCatalogEntryForCard(card)))
+          || (owner.industryLastPlayedCardThisRound && (!["basic", "space-agency"].includes(owner.industryLastPlayedCardThisRound.set)
+            || !cards.getCatalogEntryForCard(owner.industryLastPlayedCardThisRound)))) return null;
+      }
       if (owner.hand.some(card => !["basic", "space-agency"].includes(card.set)
         || !cards.getCatalogEntryForCard(card))) return null;
       if (opening) {
@@ -802,7 +829,7 @@
       const key = forwardIdentity(stored.envelope, scope, null, neutral);
       if (!resourceGroups.has(key)) resourceGroups.set(key, Object.freeze({}));
       return freeze({ group: resourceGroups.get(key), credits, energy,
-        proof: opening ? "seti-helios-opening-money-simulation-v1" : "seti-helios-post-main-money-simulation-v1" });
+        proof: opening ? "seti-helios-opening-money-simulation-v1" : "seti-standard-company-post-main-money-simulation-v2" });
     }
 
     function close() {

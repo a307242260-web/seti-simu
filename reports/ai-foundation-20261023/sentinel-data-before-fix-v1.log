@@ -1,0 +1,28 @@
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: 哨兵探测网络: {"code":"EFFECT_EXECUTOR_THROWN","message":"规则实体编号需要 canonical meta.sequences","effectId":"effect-session-3:effect:2","type":"industry_sentinel_corner"}
+    at inputPort.<computed> [as submitQuickAction] (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/ai/company-money-dominance.test.js:104:9)
+    at executeCurrent (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/ai/analysis-port.js:283:54)
+    at Object.expand (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/ai/analysis-port.js:266:34)
+    at Object.<anonymous> (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/ai/company-money-dominance.test.js:119:26)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+SUMMARY unit passed=0 failed=1 total=1 time=2.37s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1
+FAIL randomizer/game/ai/company-money-dominance.test.js status=1 signal=none

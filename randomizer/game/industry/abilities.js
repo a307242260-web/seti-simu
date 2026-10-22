@@ -601,7 +601,7 @@
     return node ? [node] : [];
   }
 
-  function resolveSentinelPlayCorner(cards, players, data, player, card) {
+  function resolveSentinelPlayCorner(cards, players, data, player, card, options = {}) {
     if (isAlienCard(card)) {
       return { ok: false, message: "外星人卡牌不能触发哨兵弃牌角标" };
     }
@@ -609,7 +609,7 @@
     if (!reward) {
       return { ok: false, message: "该牌没有弃牌角标奖励" };
     }
-    const applied = applyCornerReward(players, data, player, reward, { cards });
+    const applied = applyCornerReward(players, data, player, reward, { ...options, cards });
     return {
       ...applied,
       reward,
