@@ -1,0 +1,4 @@
+{"alienOpeningPlan":"passed","fullInputs":961,"value":38.5,"small":[{"cardId":null,"rawInputs":446,"prunedInputs":108,"value":33.5},{"cardId":"dlc_9.png","rawInputs":1084,"prunedInputs":272,"value":34.5},{"cardId":"b_86.webp","rawInputs":1084,"prunedInputs":272,"value":34.5},{"cardId":"b_114.webp","rawInputs":1000,"prunedInputs":128,"value":34.5}]}
+SUMMARY unit passed=1 failed=0 total=1 time=11.53s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1

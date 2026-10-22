@@ -241,6 +241,42 @@ try {
       }
       console.log(`[PASS] independent-post-main-income: delta=${delta} retainedData=${proof.retainedDataCardCount}`);
     } finally { incomePort?.close(); incomeKernel.composition.dispose(); }
+    const sectorFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+      "../adhoc/ai-decision-corpus-20261023-v1/case-008-20261023-v1.json")));
+    const sectorSeed = sectorFixture.source.seed;
+    const sectorKernel = createSimulationRuleComposition({ seed: sectorSeed, random: createSeededRandom(sectorSeed),
+      activePlayerCount: 4, trustedProjectionReader: true,
+      projectCounterfactualState: (state, viewer) => buildRuleObservation(state, sectorSeed, viewer?.playerId) });
+    try {
+      sectorKernel.newGame({ seed: sectorSeed });
+      const sectorComp = sectorKernel.composition;
+      const evaluateSector = independentValue.createStateValueEvaluator(sectorFixture.seatId);
+      for (const cardId of [null, "b_114.webp", "dlc_9.png"]) {
+        if (!sectorComp.lifecycle.restore(sectorFixture.compositionEnvelope).ok) throw new Error("扇区任务审计恢复失败");
+        if (cardId) {
+          const state = JSON.parse(sectorFixture.compositionEnvelope.committedState);
+          const instanceId = state.players.players.find(player => player.id === sectorFixture.seatId)
+            .hand.find(card => card.cardId === cardId).id;
+          const action = sectorComp.inputPort.enumerateActions({}).find(candidate => candidate.family === "play_card"
+            && candidate.target?.cardInstanceId === instanceId);
+          if (!action || !sectorComp.inputPort.submitAction(action).ok) throw new Error("扇区任务真实打牌失败");
+          for (let step = 0; step < 24 && sectorComp.inspect().phase === "awaiting_input"; step += 1) {
+            const decision = sectorComp.inspect().session.decision;
+            if (!sectorComp.inputPort.submitDecision({ decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,
+              ownerId: decision.ownerId, choice: decision.choices[0] }).ok) throw new Error("扇区任务条件输入失败");
+          }
+        }
+        const sectorPort = createAnalysisPort({ composition: sectorComp, seatId: sectorFixture.seatId });
+        try {
+          const root = sectorPort.openRoot();
+          const proof = cardId ? sectorPort.postMainPlanSpec(root) : sectorPort.openingPlanSpec(root);
+          const rawValue = evaluateSector(root.observation);
+          if (!proof || rawValue !== evaluateSector(outcomeModel.createDecisionObservation(root.observation,
+            { seatId: sectorFixture.seatId }))) throw new Error("异星实验室准备或扇区任务的证明/原始标准估值不一致");
+          console.log(`[PASS] independent-alien-opening-sector-task: card=${cardId || "opening"} total=${rawValue}`);
+        } finally { sectorPort.close(); }
+      }
+    } finally { sectorKernel.composition.dispose(); }
   } catch (error) {
     console.log(`[FAIL] independent-card-choice-equivalence: ${error.message}`);
     allPass = false;

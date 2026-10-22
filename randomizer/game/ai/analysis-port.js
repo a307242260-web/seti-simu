@@ -503,10 +503,18 @@
       return result;
     }
 
-    function hasOnlyOwnPlanetVisitReservations(state) {
+    function hasOnlyOwnInertReservations(state, { sectorTasks = false } = {}) {
       return state.players.players.every(player => player.reservedCards.every(card => {
-        if (player.id !== seatId || card.cardId !== "b_44.webp" || card.set !== "basic") return false;
+        if (player.id !== seatId) return false;
         const model = cardEffects.getCardModel(card);
+        if (sectorTasks && ["b_114.webp", "dlc_9.png"].includes(card.cardId)) {
+          return ["basic", "space-agency"].includes(card.set) && model?.cardType === 2
+            && Object.keys(model).every(key => ["cardType", "playEffects", "tasks", "source"].includes(key))
+            && Array.isArray(model.tasks) && model.tasks.length > 0
+            && model.tasks.every(task => ["completedSectors", "completedSectorsByColor"].includes(task.condition?.type)
+              && !cardEffects.taskConditionMet(task, player, { data: state.data }));
+        }
+        if (card.cardId !== "b_44.webp" || card.set !== "basic") return false;
         // 只审计过B44：没有任务、终局公式或其他阶段效果；types列表会覆盖单个type，必须排除。
         return model?.cardType === 1 && Array.isArray(model.triggers) && model.triggers.length > 0
           && Object.keys(model).every(key => ["cardType", "triggers", "source"].includes(key))
@@ -535,7 +543,7 @@
       const company = industryCatalog.getPlayerIndustryDefinition(owner);
       if (state.turn.currentPlayerId !== seatId || owner.passCompletionPending
         || state.turn.passedPlayerIds.includes(seatId) || state.match.initialSetup
-        || !hasOnlyOwnPlanetVisitReservations(state)
+        || !hasOnlyOwnInertReservations(state)
         || state.turn.cardTurnEventBonuses?.length
         || Object.values(state.aliens.aliens).some(slot => slot.revealed)
         || company?.activeAbilityId !== "helios_remove_tech_income"
@@ -575,7 +583,7 @@
       if (state.turn.currentPlayerId !== seatId || !owner?.mainActionCompleted
         || owner.passCompletionPending || state.turn.passedPlayerIds.includes(seatId) || state.match.initialSetup
         || state.turn.activePlayerCount !== 4 || owner.industryBorrowedTechTileId
-        || !hasOnlyOwnPlanetVisitReservations(state) || (owner.reservedCards.length && ownRockets.length)
+        || !hasOnlyOwnInertReservations(state, { sectorTasks: true }) || (owner.reservedCards.length && ownRockets.length)
         || state.turn.cardTurnEventBonuses?.length
         || Object.values(state.aliens.aliens).some(slot => slot.revealed || alienState.isAlienReadyToReveal(slot))
         || !quietCompany
@@ -678,7 +686,7 @@
       if (scoreUpperBound >= scoreThreshold) return null;
       const transition = turnFlow.advanceTurnAfterPlayerAction(structuredClone(state), seatId);
       if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded || transition.nextPlayerId === seatId) return null;
-      return freeze({ proof: "seti-quiet-post-main-default-value-plan-v4", retainedActionIds: kept.map(action => action.actionId),
+      return freeze({ proof: "seti-quiet-post-main-default-value-plan-v5", retainedActionIds: kept.map(action => action.actionId),
         excludedActionIds: excluded.map(action => action.actionId), maximumValueIncrease, scoreUpperBound, scoreThreshold,
         incomeReachable, retainedDataCardCount: dataCornerIds.size });
     }
@@ -728,8 +736,68 @@
           });
         }
       }
+      if (!result) result = describeAlienLabOpeningPlan(stored, node);
       openingPlans.set(node, result);
       return result;
+    }
+
+    function describeAlienLabOpeningPlan(stored, node) {
+      if (node.status !== "stable" || stored.envelope.session) return null;
+      const state = JSON.parse(stored.envelope.committedState);
+      const owner = state.players.players.find(player => player.id === seatId);
+      const company = industryCatalog.getPlayerIndustryDefinition(owner);
+      if (state.turn.currentPlayerId !== seatId || !owner || owner.mainActionCompleted || owner.passCompletionPending
+        || state.turn.activePlayerCount !== 4 || state.turn.passedPlayerIds.includes(seatId) || state.match.initialSetup
+        || company?.activeAbilityId !== null || company.passiveIds.length !== 1 || company.passiveIds[0] !== "alien_lab_panels"
+        || owner.industryBorrowedTechTileId || Object.values(owner.techState.ownedTiles).some(Boolean)
+        || state.players.players.some(player => player.reservedCards.length) || state.turn.cardTurnEventBonuses?.length
+        || Object.values(state.aliens.aliens).some(slot => slot.revealed || alienState.isAlienReadyToReveal(slot))
+        || state.pieces.rockets.some(rocket => [rocket.playerId, rocket.color, rocket.playerColor]
+          .some(id => id === seatId || id === owner.color))
+        || owner.blueBonusResources?.credits || owner.blueBonusResources?.energy
+        || probeTurnSession.PASS_HAND_LIMIT !== 4 || !hasStandardOpeningTrades()
+        || owner.resources.credits < 3 || owner.resources.energy < 2
+        || owner.hand.length > 3 || new Set(owner.hand.map(card => card.cardId)).size !== owner.hand.length
+        || state.cards.publicCards.length !== 3 || state.cards.publicCards.some(card => !card
+          || !["basic", "space-agency"].includes(card.set) || !cards.getCatalogEntryForCard(card))
+        || !state.cards.passReservePiles?.[state.turn.roundNumber]?.length) return null;
+      if (Object.values(owner.resources).some(value => !Number.isSafeInteger(value) || value < 0 || value > 1000000)
+        || Object.values(owner.income).some(value => !Number.isSafeInteger(value) || value < 0 || value > 1000000)
+        || !state.finalScoring.thresholds.length || state.finalScoring.thresholds.some(value =>
+          !Number.isSafeInteger(value) || value <= owner.resources.score)) return null;
+      const audited = { "dlc_9.png": [1, 2], "b_86.webp": [1, 0], "b_114.webp": [2, 1] };
+      let dataCorners = 0;
+      for (const card of owner.hand) {
+        const entry = cards.getCatalogEntryForCard(card), cost = cardEffects.getCardPlayCost(card);
+        if (!Object.hasOwn(audited, card.cardId) || !entry || card.set !== entry.set || card.price !== entry.price
+          || card.cardTypeCode !== entry.card_type_code || card.scanActionCode !== entry.scan_action_code
+          || cards.getIncomeCodeForCard(card) !== audited[card.cardId][1]
+          || cards.getDiscardActionCodeForCard(card) !== audited[card.cardId][0]
+          || Object.keys(cost).some(key => key !== "credits") || !Number.isSafeInteger(cost.credits ?? 0)
+          || (cost.credits ?? 0) < 0 || (cost.credits ?? 0) > 3) return null;
+        if (cards.getDiscardActionCodeForCard(card) === 1) dataCorners += 1;
+      }
+      const occupied = data.listComputerPlacedTokens(owner).map(token => token.placementSlot).sort((a, b) => a - b);
+      // 池、已放数据与剩余数据角标的总量不足6，主行动前不能解锁分析。
+      if (data.ANALYZE_REQUIRED_COMPUTER_SLOT !== 6 || owner.resources.availableData !== owner.dataState.poolTokens.length
+        || occupied.length !== owner.dataState.placedTokens.length || occupied.some((slot, index) => slot !== index + 1)
+        || occupied.length + owner.dataState.poolTokens.length + dataCorners > 5
+        || JSON.stringify(scanEffects.getStandardScanCost(owner)) !== '{"energy":2}'
+        || JSON.stringify(rocketAbilities.getLaunchCost({ turn: state.turn }, owner)) !== '{"credits":1}'
+        || owner.hand.some(card => ["dlc_9.png", "b_86.webp"].includes(card.cardId))
+          && !["purple1", "purple2", "purple3", "purple4"].some(id => state.tech.stacks[id]?.remaining > 0)) return null;
+      const transition = turnFlow.advanceTurnAfterPlayerAction(structuredClone(state), seatId);
+      if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded || transition.nextPlayerId === seatId) return null;
+      if (node.legalActions.some(action => !["launch", "scan", "research_tech", "play_card", "pass", "quick_trade",
+        "card_corner", "place_data"].includes(action.family) || action.family === "card_corner" && action.payload?.multiplier !== 1)) return null;
+      const unnecessaryTrades = new Set(["credits-for-energy", "energy-for-credit", "cards-for-credit", "cards-for-energy"]);
+      const excluded = node.legalActions.filter(action => action.family === "quick_trade" ? unnecessaryTrades.has(action.target?.tradeId)
+        : action.family === "card_corner" && action.payload.kind === "move");
+      const kept = node.legalActions.filter(action => !excluded.includes(action));
+      if (!excluded.length || !kept.some(action => action.family === "pass")) return null;
+      return freeze({ proof: "seti-alien-lab-funded-money-opening-plan-v1",
+        retainedActionIds: kept.map(action => action.actionId), excludedActionIds: excluded.map(action => action.actionId),
+        handLimit: probeTurnSession.PASS_HAND_LIMIT, passPreparationActionIds: [] });
     }
 
     function expandOpeningPass(node, actionId) {
@@ -774,19 +842,23 @@
         if (code === 0 ? reward?.dataCount !== 0 || reward.gain.publicity !== 1 || Object.keys(reward.gain).length !== 1
           : reward?.movementPoints !== 1 || Object.keys(reward.gain).length) return null;
       }
+      if (!hasStandardOpeningTrades()) return null;
+      if (node.legalActions.some(action => !["launch", "scan", "research_tech", "play_card", "pass", "quick_trade",
+        "card_corner", "place_data"].includes(action.family) || (action.family === "card_corner" && action.payload?.multiplier !== 1))) return null;
+      return freeze({ ...order, moneyCapacity: { credits: 2, energy: 2 },
+        capacityProof: "seti-helios-opening-money-capacity-v1" });
+    }
+
+    function hasStandardOpeningTrades() {
       const expectedTrades = {
         "credits-for-energy": [{ credits: 2 }, { energy: 1 }], "energy-for-credit": [{ energy: 2 }, { credits: 1 }],
         "credits-for-card": [{ credits: 2 }, { handSize: 1 }], "energy-for-card": [{ energy: 2 }, { handSize: 1 }],
         "cards-for-credit": [{ handSize: 2 }, { credits: 1 }], "cards-for-energy": [{ handSize: 2 }, { energy: 1 }],
         "cards-for-pick-card": [{ handSize: 2 }, { handSize: 1 }], "publicity-for-card": [{ publicity: 3 }, { handSize: 1 }],
       };
-      if (quickTrades.TRADE_ACTIONS.some(trade => trade.moveStep ? trade.id !== "energy-for-move"
+      return !quickTrades.TRADE_ACTIONS.some(trade => trade.moveStep ? trade.id !== "energy-for-move"
         || JSON.stringify(trade.cost) !== '{"energy":1}' || Object.keys(trade.gain).length
-        : JSON.stringify([trade.cost, trade.gain]) !== JSON.stringify(expectedTrades[trade.id]))) return null;
-      if (node.legalActions.some(action => !["launch", "scan", "research_tech", "play_card", "pass", "quick_trade",
-        "card_corner", "place_data"].includes(action.family) || (action.family === "card_corner" && action.payload?.multiplier !== 1))) return null;
-      return freeze({ ...order, moneyCapacity: { credits: 2, energy: 2 },
-        capacityProof: "seti-helios-opening-money-capacity-v1" });
+        : JSON.stringify([trade.cost, trade.gain]) !== JSON.stringify(expectedTrades[trade.id]));
     }
 
     function resourceOrder(node, orders, opening) {

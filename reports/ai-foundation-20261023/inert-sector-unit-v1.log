@@ -1,0 +1,4 @@
+{"inertSectorTasks":"passed","rows":[{"cardId":"b_114.webp","rawInputs":1900,"prunedInputs":104,"value":36},{"cardId":"dlc_9.png","rawInputs":1729,"prunedInputs":48,"value":37.5}]}
+SUMMARY unit passed=1 failed=0 total=1 time=6.52s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1
