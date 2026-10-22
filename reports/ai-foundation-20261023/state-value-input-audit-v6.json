@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "seti-state-value-input-audit-v6",
+  "exitCode": 1,
+  "sourceSha256": "2f239e2596a1c5874acce8a054f8519d01b02f4adbb3b01fe1f86fb4c3ee45b7",
+  "stateValueSha256": "31f0718b2723190ec318262ae28241249ca0c2f3eafd36d0c22d9862c396d4cd",
+  "cardDomainSha256": "964c5735c9d61fe6c87fcb711f94acf52416a5e0385b5608319985b9ad53a689",
+  "logPath": "reports/ai-foundation-20261023/state-value-input-audit-v6.log",
+  "logSha256": "3752f1fc0a8b487412a80a8caeacfa832f23839ce24a5a9f00238d87348f44d6",
+  "independentPassed": true,
+  "cardChoicePassed": true,
+  "publicPickBarrierPassed": true,
+  "knownLegacyFailure": true
+}

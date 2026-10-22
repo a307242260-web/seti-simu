@@ -34,7 +34,7 @@ const { createRuleComposition } = loadProductionDependency("./rule-composition",
 const productionCompositionApi = loadProductionDependency("./production-composition", "SetiProductionComposition");
 const turnFlowApi = loadProductionDependency("./turn-flow", "SetiTurnFlow");
 
-const RULESET_VERSION = "seti-runtime-v1";
+const RULESET_VERSION = "seti-runtime-v1.1";
 const INTERNAL_RULE_SCOPE = Symbol("seti-production-kernel-rule-scope");
 const DEFAULT_FINAL_SCORE_IDS = Object.freeze(["a", "b", "c", "d"]);
 const NEBULA_IDS_BY_SCAN_CODE = Object.freeze([

@@ -1127,7 +1127,7 @@
           nextState: commitWorkingState(state, { source: effect.type }),
           irreversible: legal.target.source === "blind"
             ? { code: "hidden_card_reveal", reason: "盲抽翻出新牌" }
-            : null,
+            : result.replenished ? { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" } : null,
           rng: [{
             owner: "card_play",
             effectId: effect.id || null,
@@ -2462,6 +2462,7 @@
         );
         const result = drawCtx.pickFromPublic(actor, index);
         if (!result.ok) return result;
+        if (result.replenished) irreversible = { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" };
         spawnedEffects = spawnCardEffects(cornerEffects(result.card), sessionEffect);
       } else if (effect.type === cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND) {
         const index = actor.reservedCards.findIndex((card) => card.id === legal.target.cardInstanceId);

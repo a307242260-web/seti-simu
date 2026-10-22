@@ -601,10 +601,10 @@
       }
       const picked = drawOptions(root).pickFromPublic(player, target.slotIndex);
       if (!picked.ok) return picked;
-      irreversible = {
+      irreversible = picked.replenished ? {
         code: "hidden_public_replenish",
         reason: "精选公共牌后翻开新牌",
-      };
+      } : null;
       if (payload.abilityId === "mission_publicity_pick_income") {
         // 获得角标奖励（一次性、不弃牌）：精选牌进手牌并保留，只获得该牌
         // 收入角标码奖励（资源/数据/盲抽）。与弃牌获得角标奖励（card_corner
@@ -618,7 +618,7 @@
         irreversible = gained.drawnCards?.length ? {
           code: "hidden_card_draw",
           reason: "任务中继站角标盲抽翻开隐藏牌",
-        } : null;
+        } : irreversible;
       } else if (payload.abilityId === "fenwick_publicity_pick_corner") {
         const applied = industryAbilities.applyCornerReward(
           players,

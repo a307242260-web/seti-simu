@@ -140,6 +140,18 @@ try {
     }
     port.close();
     console.log(`[PASS] independent-card-choice-equivalence: total=${result.value} inputs=1`);
+    const publicPort = createAnalysisPort({ composition: comp, seatId: actor.actorId });
+    const publicRoot = publicPort.openRoot();
+    const grantId = publicRoot.observation.selfState.hand.find(card => card.cardId === "b_48.webp").id;
+    const grant = publicPort.expand(publicRoot, publicRoot.legalActions.find(action => action.family === "play_card"
+      && action.target?.cardInstanceId === grantId).actionId);
+    const revealed = publicPort.expand(grant, grant.legalActions[0].actionId);
+    if (revealed.status !== "information-barrier") throw new Error("公共补牌未停在信息边界");
+    const publicStandard = outcomeModel.createDecisionObservation(revealed.observation, { seatId: actor.actorId });
+    const publicValue = evaluator(revealed.observation);
+    if (publicValue !== evaluator(publicStandard)) throw new Error("公共补牌屏障的原始/标准估值不一致");
+    publicPort.close();
+    console.log(`[PASS] independent-public-pick-barrier: total=${publicValue}`);
   } catch (error) {
     console.log(`[FAIL] independent-card-choice-equivalence: ${error.message}`);
     allPass = false;

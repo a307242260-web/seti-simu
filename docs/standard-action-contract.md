@@ -38,6 +38,10 @@ Standard Action 是浏览器控件与训练 Policy 之间唯一共享的游戏�
 4. 依序结算确定性 effect。零选项按规则失败或自动落空；一个等价选项可自动推进；两个以上非等价选项必须停止并枚举 conditional Action。
 5. 到 terminal 或下一个真实策略选择点后提交事务，输出稳定 `events/replay/nextDecision`。任一步失败应回滚到 checkpoint 或进入已声明的不可逆失败语义。
 
+公共选牌实际补出隐藏牌时，输出必须携带隐藏信息屏障；它不取消同一行动后续的正式选择。
+通用精选、B48精选角标及公司精选的收入角标不得遗漏或清空该屏障。
+从`seti-runtime-v1.1`起，前两条路径只有实际补出牌才新增该屏障；已知公共牌入手本身不构成新隐藏身份。
+
 drain 必须有步数上界；未知 pending、未知 family、旧 resolver/recover/skip 依赖一律 fail-closed，并输出 `state/family/type/owner`。Policy、AI valuation、DOM callback、overlay 文案均不得成为 drain 的输入。
 
 ## Registry
