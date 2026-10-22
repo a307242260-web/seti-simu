@@ -1,0 +1,1 @@
+{"complete":true,"milliseconds":1248.875333,"transitions":606,"calls":{"stable/launch/":21,"stable/scan/standard-scan":21,"stable/play_card/":35,"stable/pass/pass":21,"stable/quick_trade/":54,"stable/card_corner/":54,"stable/place_data/place-data":58,"stable/end_turn/end-turn":51,"decision/choose_target/":151,"decision/choose_card/":140}}
