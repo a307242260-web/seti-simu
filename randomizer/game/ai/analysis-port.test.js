@@ -6,7 +6,7 @@ const { createSeededRandom, RNG_ALGORITHM } = require("../random");
 const { buildRuleObservation } = require("../../app/rule-observation");
 const { createSimulationEnv } = require("../../app/simulation-env");
 const { evaluateStateValue } = require("./state-value");
-const { searchDecision } = require("./decision-search");
+const { searchDecision, VERSION: SEARCH_VERSION } = require("./decision-search");
 
 const seed = "analysis-port-isolation-v1";
 const random = createSeededRandom(seed);
@@ -106,7 +106,7 @@ assert.equal(mainPort.selectionSpec(mainRoot), null, "普通行动不能套用�
 const spec = mainPort.selectionSpec(discardRoot);
 assert.equal(spec.requiredCount, 2);
 const plans = [...mainPort.selectionPlans(discardRoot)];
-assert.equal(plans.length, spec.cardIds.length * (spec.cardIds.length - 1), "保留所有有序弃牌选择");
+assert.equal(plans.length, spec.cardIds.length * (spec.cardIds.length - 1) / 2, "每个弃牌集合保留最短有序执行路径");
 const component = [discardRoot];
 const seenSelections = new Set([mainPort.identity(discardRoot)]);
 let fullSelections = 0;
@@ -124,10 +124,10 @@ for (let cursor = 0; cursor < component.length; cursor += 1) {
       component.push(child);
     }
   }
-  assert(component.length <= 1 + spec.cardIds.length + plans.length, "点击循环不能制造新的规则状态");
+  assert(component.length <= 1 + spec.cardIds.length + plans.length * 2, "点击循环不能制造新的规则状态");
 }
-assert.equal(component.length, 1 + spec.cardIds.length + plans.length);
-assert.equal(fullSelections, plans.length, "有序确认出口与完整逐点击图一一对应");
+assert.equal(component.length, 1 + spec.cardIds.length + plans.length * 2);
+assert.equal(fullSelections, plans.length * 2, "每个集合的两种原始确认顺序都可达");
 for (const plan of plans) {
   let direct = discardRoot;
   for (const id of plan.selectedIds) direct = mainPort.expand(direct,
@@ -137,14 +137,25 @@ for (const plan of plans) {
   assert.equal(macro.submissions, plan.submissions);
   assert.equal(macro.actions[0].actionId, plan.firstActionId);
   assert.deepEqual(macro.node, direct, "宏步逐次正式提交，不能伪造确认后的盘面或信封");
+  const reverse = mainPort.expandSelection(discardRoot, [...plan.selectedIds].reverse()).node;
+  assert.equal(mainPort.identity(macro.node), mainPort.identity(reverse), "只差弃牌堆顺序的结果是同一向前状态");
+  assert.deepEqual(macro.node, reverse);
+  for (const action of macro.node.legalActions) {
+    const left = mainPort.expand(macro.node, action.actionId);
+    const right = mainPort.expand(reverse, action.actionId);
+    assert.equal(mainPort.identity(left), mainPort.identity(right));
+    assert.deepEqual(left, right, "全部后续公共取牌/盲抽保持相同规则结果与信息边界");
+  }
 }
 const reversedPlan = [...mainPort.selectionPlans(selectedAB)]
-  .find(plan => plan.selectedIds[0] === secondCard.target.cardInstanceId
-    && plan.selectedIds[1] === undoDiscard.target.cardInstanceId);
-assert.equal(reversedPlan.submissions, 3, "保留目标前缀子序列，一次取消、一次追加、一次确认");
-const reversed = mainPort.expandSelection(selectedAB, reversedPlan.selectedIds);
+  .find(plan => plan.selectedIds.includes(secondCard.target.cardInstanceId)
+    && plan.selectedIds.includes(undoDiscard.target.cardInstanceId));
+assert.equal(reversedPlan.submissions, 1, "同一弃牌集合已有两张时直接确认，不为了顺序取消重选");
+const reversedIds = [secondCard.target.cardInstanceId, undoDiscard.target.cardInstanceId];
+const reversed = mainPort.expandSelection(selectedAB, reversedIds);
+assert.equal(reversed.submissions, 3, "显式要求反序时仍按正式最短点击执行");
 const beforeCache = mainPort.getDiagnostics().submissionCount;
-assert.equal(mainPort.expandSelection(selectedAB, reversedPlan.selectedIds), reversed);
+assert.equal(mainPort.expandSelection(selectedAB, reversedIds), reversed);
 assert.equal(mainPort.getDiagnostics().submissionCount, beforeCache, "宏步命中不再次提交");
 const expectedReversed = mainPort.expand(selectedBA,
   selectedBA.legalActions.find(action => action.target?.confirm).actionId);
@@ -161,6 +172,20 @@ assert.equal(readySearch.actionId, selectedAB.legalActions.find(action => action
 assert.equal(readySearch.unresolved.length, 0);
 assert.equal(readySearch.roots.every(root => root.completion === "complete"), true);
 assert.equal(readySearch.selectionPlan.complete, true);
+for (const tradeId of ["cards-for-credit", "cards-for-energy"]) {
+  const entry = mainPort.expand(mainRoot, mainRoot.legalActions.find(action => action.target?.tradeId === tradeId).actionId);
+  const pair = mainPort.selectionSpec(entry).cardIds.slice(0, 2);
+  const ab = mainPort.expandSelection(entry, pair).node;
+  const ba = mainPort.expandSelection(entry, [...pair].reverse()).node;
+  assert.equal(mainPort.identity(ab), mainPort.identity(ba));
+  assert.deepEqual(ab, ba);
+  for (const action of ab.legalActions) {
+    const left = mainPort.expand(ab, action.actionId);
+    const right = mainPort.expand(ba, action.actionId);
+    assert.equal(mainPort.identity(left), mainPort.identity(right));
+    assert.deepEqual(left, right, "钱/电弃牌后的每个正式行动不依赖弃牌堆排列");
+  }
+}
 for (let step = 0; step < 4 && !pick.legalActions.some(action => action.target?.source === "blind"); step += 1) {
   const next = pick.legalActions.find(action => action.target?.confirm)
     || pick.legalActions.find(action => action.target?.kind === "discard-hand-card" && !action.presentation?.selected);
@@ -203,7 +228,7 @@ assert.equal(comp.lifecycle.restore(beforeMain).ok, true);
 const actualTrade = comp.inputPort.enumerateActions({}).find(action => action.target?.tradeId === "cards-for-pick-card");
 assert.equal(comp.inputPort.submitQuickAction(actualTrade).ok, true);
 const reusePort = createAnalysisPort({ composition: comp, seatId: actions[0].actorId });
-const modelKey = "state-value-v1/default/decision-search-v1";
+const modelKey = `state-value-v1/default/${SEARCH_VERSION}`;
 const searchOptions = { evaluate: observation => evaluateStateValue(observation, actions[0].actorId).total,
   budget: { transitions: 256, nodes: 257, frontier: 256, milliseconds: 2000 }, modelKey };
 let current = searchDecision({ ...searchOptions, port: reusePort, root: reusePort.openRoot() });
@@ -274,6 +299,38 @@ assert.equal(lateReuse.complete, false);
 assert.equal(lateReuse.actionId, null, "完成证据校验本身超时也不得返回可提交动作");
 assert.equal(lateReuse.stopReason, "watchdog");
 reusePort.close();
+for (const eventType of ["quick_trade_payment", "quick_trade_discard_selection"]) {
+  const withBonus = structuredClone(beforeMain);
+  const state = JSON.parse(withBonus.committedState);
+  state.turn.cardTurnEventBonuses = [{ id: "discard-order-observer", ownerId: actions[0].actorId,
+    playerId: actions[0].actorId, duration: "turn", eventType,
+    distinctBy: eventType === "quick_trade_payment" ? "cardInstanceIds" : "cardInstanceId",
+    rewards: [{ id: "observed-discard-credit", type: "gain_resources", options: { gain: { credits: 1 } } }] }];
+  withBonus.committedState = JSON.stringify(state);
+  assert.equal(comp.lifecycle.restore(withBonus).ok, true);
+  const trade = comp.inputPort.enumerateActions({}).find(action => action.target?.tradeId === "cards-for-credit");
+  assert.equal(comp.inputPort.submitQuickAction(trade).ok, true);
+  const observedPort = createAnalysisPort({ composition: comp, seatId: actions[0].actorId });
+  const observedRoot = observedPort.openRoot();
+  if (eventType === "quick_trade_payment") {
+    const observedSpec = observedPort.selectionSpec(observedRoot);
+    assert.equal(observedSpec.unordered, false, "支付事件可观察顺序时必须保留有序支付");
+    const observedPlans = [...observedPort.selectionPlans(observedRoot)];
+    assert.equal(observedPlans.length, observedSpec.cardIds.length * (observedSpec.cardIds.length - 1));
+    const pair = observedSpec.cardIds.slice(0, 2);
+    const left = observedPort.expandSelection(observedRoot, pair).node;
+    const right = observedPort.expandSelection(observedRoot, [...pair].reverse()).node;
+    assert.notEqual(observedPort.identity(left), observedPort.identity(right), "不同支付顺序写入不同事件进度，不能合并");
+  } else {
+    assert.equal(observedPort.selectionSpec(observedRoot), null, "点击也有规则效果时不再是纯选择部分");
+    assert.throws(() => observedPort.expandSelection(observedRoot, spec.cardIds.slice(0, 2)), /SELECTION_UNSUPPORTED/);
+    const beforeCredits = observedRoot.observation.publicState.players.find(player => player.playerId === actions[0].actorId).credits;
+    const clicked = observedPort.expand(observedRoot, observedRoot.legalActions[0].actionId);
+    assert.equal(clicked.observation.publicState.players.find(player => player.playerId === actions[0].actorId).credits,
+      beforeCredits + 1, "反例确实产生了额外收益，不能按无效果 toggle 处理");
+  }
+  observedPort.close();
+}
 env.dispose();
 comp.dispose();
 console.log("trusted analysis fork isolation and exact reuse passed");

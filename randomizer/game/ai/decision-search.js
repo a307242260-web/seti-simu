@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v1";
+  const VERSION = "seti-complete-decision-search-v2";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -56,7 +56,8 @@
       const alternatives = selection ? port.selectionPlans(node)
         : node.legalActions.map(action => ({ firstActionId: action.actionId, submissions: 1 }));
       const alternativeCount = selection ? Array.from({ length: selection.requiredCount }, (_, i) =>
-        selection.cardIds.length - i).reduce((count, n) => count * n, 1) : node.legalActions.length;
+        (selection.cardIds.length - i) / (selection.unordered ? i + 1 : 1))
+        .reduce((count, n) => count * n, 1) : node.legalActions.length;
       nodes.push({ node, edges: [], selection, alternatives, alternativeCount,
         expanded: boundary, value, distance: boundary ? 0 : Infinity, best: null });
       if (!boundary) queue.push(index);

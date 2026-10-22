@@ -1,10 +1,11 @@
 (function (root, factory) {
   "use strict";
   const common = typeof module === "object" && module.exports;
-  const api = factory(common ? require("../rule-composition") : root.SetiRuleComposition);
+  const api = factory(common ? require("../rule-composition") : root.SetiRuleComposition,
+    common ? require("../cards/effects") : root.SetiCardEffects);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects) {
   "use strict";
 
   function freeze(value) {
@@ -24,7 +25,12 @@
   // authority 版本单独由 expand 校验，不能作为循环状态的差异。
   function forwardIdentity(envelope, status, boundary) {
     const session = envelope.session?.session;
-    const state = structuredClone(session?.workingState || JSON.parse(envelope.committedState));
+    const source = session?.workingState || JSON.parse(envelope.committedState);
+    const state = { ...source, meta: { ...source.meta }, ...(source.match ? { match: { ...source.match } } : {}) };
+    // 固定牌堆不从弃牌洗回；Production 仅按唯一实体ID查找/移除或读取集合。
+    // UI 展示和 journal 的历史顺序不属于向前规则身份；其他数组仍保留顺序。
+    if (Array.isArray(source.cards?.discardPile)) state.cards = { ...source.cards,
+      discardPile: [...source.cards.discardPile].sort((a, b) => String(a.id) < String(b.id) ? -1 : String(a.id) > String(b.id) ? 1 : 0) };
     delete state.meta.stateVersion;
     if (state.match) delete state.match.decisionVersion;
     const references = new Map();
@@ -61,6 +67,7 @@
 
   function createAnalysisPort({ composition, seatId, maxCacheEntries = 256 } = {}) {
     if (!composition?.counterfactualPort?.createFork || !composition?.counterfactualPort?.prepareRoot
+      || typeof cardEffects?.getCardModel !== "function"
       || typeof seatId !== "string" || !seatId) throw new TypeError("ANALYSIS_PORT_INVALID");
     if (!Number.isSafeInteger(maxCacheEntries) || maxCacheEntries < 0) throw new TypeError("ANALYSIS_CACHE_LIMIT_INVALID");
     const viewer = Object.freeze({ playerId: seatId, role: "player" });
@@ -268,7 +275,17 @@
         || !Array.isArray(selectedIds) || new Set(cardIds).size !== cardIds.length
         || new Set(selectedIds).size !== selectedIds.length || selectedIds.length > pending.count
         || selectedIds.some(id => !cardIds.includes(id)) || pending.count > cardIds.length) return null;
-      return freeze({ proof: "seti-quick-trade-discard-component-v1", requiredCount: pending.count,
+      const owner = session.workingState.players.players.find(player => player.id === seatId);
+      const observes = type => (owner?.reservedCards || []).some(card =>
+        (cardEffects.getCardModel(card)?.triggers || []).some(trigger =>
+          trigger.event?.types?.includes(type) || trigger.event?.type === type))
+        || (session.workingState.turn.cardTurnEventBonuses || []).some(bonus =>
+          (bonus.eventType || bonus.event?.type) === type);
+      // 点击产生额外效果时不再是纯选择部分；支付事件有观察者时保留有序出口。
+      if (observes("quick_trade_discard_selection")) return null;
+      const unordered = !observes("quick_trade_payment");
+      return freeze({ proof: `seti-quick-trade-discard-component-v${unordered ? 2 : 1}`,
+        requiredCount: pending.count, unordered,
         cardIds, selectedIds: [...selectedIds] });
     }
 
@@ -290,18 +307,28 @@
     function* selectionPlans(node) {
       const spec = selectionSpec(node);
       if (!spec) throw new Error("ANALYSIS_SELECTION_UNSUPPORTED");
-      function* visit(target) {
+      function planFor(target) {
+        const edits = selectionEdits(spec.selectedIds, target);
+        const first = edits.length
+          ? node.legalActions.find(action => action.target?.cardInstanceId === edits[0])
+          : node.legalActions.find(action => action.target?.confirm);
+        if (!first) throw new Error("ANALYSIS_SELECTION_PATH_INVALID");
+        return { selectedIds: [...target], submissions: edits.length + 1,
+          firstActionId: first.actionId, proof: spec.proof };
+      }
+      function* visit(target, start = 0) {
         if (target.length === spec.requiredCount) {
-          const edits = selectionEdits(spec.selectedIds, target);
-          const first = edits.length
-            ? node.legalActions.find(action => action.target?.cardInstanceId === edits[0])
-            : node.legalActions.find(action => action.target?.confirm);
-          if (!first) throw new Error("ANALYSIS_SELECTION_PATH_INVALID");
-          yield freeze({ selectedIds: [...target], submissions: edits.length + 1,
-            firstActionId: first.actionId, proof: spec.proof });
+          const forward = planFor(target);
+          if (!spec.unordered) { yield freeze(forward); return; }
+          const reversed = planFor([...target].reverse());
+          yield freeze(reversed.submissions < forward.submissions
+            || (reversed.submissions === forward.submissions && reversed.firstActionId < forward.firstActionId)
+            ? reversed : forward);
           return;
         }
-        for (const id of spec.cardIds) if (!target.includes(id)) yield* visit([...target, id]);
+        for (let i = spec.unordered ? start : 0; i < spec.cardIds.length; i += 1) {
+          if (!target.includes(spec.cardIds[i])) yield* visit([...target, spec.cardIds[i]], i + 1);
+        }
       }
       yield* visit([]);
     }
@@ -349,10 +376,10 @@
     function rememberSelection(node, entries, modelKey) {
       const spec = selectionSpec(node);
       if (!spec || typeof modelKey !== "string" || !modelKey) throw new Error("ANALYSIS_SELECTION_EVIDENCE_INVALID");
-      const expected = new Set([...selectionPlans(node)].map(plan => JSON.stringify(plan.selectedIds)));
+      const expected = new Set([...selectionPlans(node)].map(plan => selectionTargetKey(plan.selectedIds, spec.unordered)));
       if (!Array.isArray(entries) || entries.length !== expected.size) throw new Error("ANALYSIS_SELECTION_EVIDENCE_INCOMPLETE");
       for (const entry of entries) {
-        const key = JSON.stringify(entry.selectedIds);
+        const key = selectionTargetKey(entry.selectedIds, spec.unordered);
         if (!expected.delete(key) || (entry.value === null ? entry.distance !== null
           : !Number.isFinite(entry.value) || !Number.isSafeInteger(entry.distance) || entry.distance < 0)) {
           throw new Error("ANALYSIS_SELECTION_EVIDENCE_INVALID");
@@ -371,10 +398,10 @@
       const spec = selectionSpec(node);
       if (!spec) return { hit: false, reason: "outside-selection-component" };
       if (saved.key !== selectionDependencyKey(node)) return { hit: false, reason: "dependencies-changed" };
-      const byTarget = new Map(saved.entries.map(entry => [JSON.stringify(entry.selectedIds), entry]));
+      const byTarget = new Map(saved.entries.map(entry => [selectionTargetKey(entry.selectedIds, spec.unordered), entry]));
       let best = null;
       for (const plan of selectionPlans(node)) {
-        const entry = byTarget.get(JSON.stringify(plan.selectedIds));
+        const entry = byTarget.get(selectionTargetKey(plan.selectedIds, spec.unordered));
         if (entry.value == null) continue;
         const distance = plan.submissions + entry.distance;
         if (!best || entry.value > best.value || (entry.value === best.value
@@ -385,13 +412,17 @@
       if (!best) return { hit: false, reason: "no-reachable-boundary" };
       const roots = node.legalActions.map(action => {
         const direct = action.target?.confirm
-          ? byTarget.get(JSON.stringify(spec.selectedIds)) : null;
+          ? byTarget.get(selectionTargetKey(spec.selectedIds, spec.unordered)) : null;
         const value = action.target?.confirm ? direct.value : best.value;
         return { actionId: action.actionId, value, completion: value == null ? "unreachable" : "complete",
           proof: spec.proof, equivalentExitSet: !action.target?.confirm };
       });
       return freeze({ hit: true, ...best, roots, cardIds: spec.cardIds, proof: spec.proof,
         evidenceId: saved.evidenceId, exitCount: saved.entries.length });
+    }
+
+    function selectionTargetKey(ids, unordered) {
+      return Array.isArray(ids) ? JSON.stringify(unordered ? [...ids].sort() : ids) : null;
     }
 
     function close() {
