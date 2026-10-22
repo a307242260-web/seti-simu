@@ -6,13 +6,13 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v6";
+  const VERSION = "seti-complete-decision-search-v7";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
 
   function searchDecision({ port, root, evaluate, budget = {}, continuation = null,
-    modelKey = null, resourceDominance = false, cardTradePruning = false, postMainPruning = false,
+    modelKey = null, resourceDominance = false, cardTradePruning = false, postMainPruning = false, cardChoiceEquivalence = false,
     now = () => performance.now() } = {}) {
     if (typeof port?.expand !== "function" || typeof port?.identity !== "function"
       || typeof evaluate !== "function" || !root) throw new TypeError("SEARCH_INPUT_INVALID");
@@ -32,6 +32,9 @@
     if (postMainPruning && (!stateValue?.isDefaultStateValueEvaluator?.(evaluate)
       || evaluate.seatId !== root.legalActions?.[0]?.actorId
       || typeof port.postMainPlanSpec !== "function")) throw new TypeError("SEARCH_POST_MAIN_MODEL_INVALID");
+    if (cardChoiceEquivalence && (!stateValue?.isStateValueEvaluator?.(evaluate)
+      || evaluate.seatId !== root.legalActions?.[0]?.actorId
+      || typeof port.cardTradeBound !== "function")) throw new TypeError("SEARCH_CARD_CHOICE_MODEL_INVALID");
     if (modelKey != null && (typeof modelKey !== "string" || !modelKey)) throw new TypeError("SEARCH_MODEL_KEY_INVALID");
     const reused = continuation && modelKey && port.reuseSelection?.(root, continuation, modelKey);
     if (reused?.hit && now() - startedAt < limits.milliseconds) return {
@@ -45,6 +48,7 @@
         dominancePrunes: 0, resourceDominance: resourceDominance ? "disabled-for-selection-certificate" : "off",
         cardTradePrunes: 0, cardTradePruning: cardTradePruning ? "disabled-for-selection-certificate" : "off",
         postMainProofNodes: 0, postMainExcludedActions: 0, postMainPruning: postMainPruning ? "enabled" : "off",
+        cardChoiceProofNodes: 0, cardChoiceExcludedActions: 0, cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
         continuation: "hit", milliseconds: now() - startedAt, limits },
     };
     const nodes = [];
@@ -62,6 +66,7 @@
     let dominancePrunes = 0;
     let cardTradePrunes = 0;
     let postMainProofNodes = 0, postMainExcludedActions = 0;
+    let cardChoiceProofNodes = 0, cardChoiceExcludedActions = 0;
     let incumbent = null;
     let stopReason = null;
     function dominates(upper, lower) {
@@ -89,14 +94,19 @@
       if (boundary && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
       if (boundary && (!incumbent || value > incumbent.value)) incumbent = { node: index, value };
       const selection = boundary ? null : port.selectionSpec?.(node) || null;
-      let postMainPlan = !boundary && !selection && postMainPruning && node.status === "stable"
+      const postMainPlan = !boundary && !selection && postMainPruning && node.status === "stable"
         ? port.postMainPlanSpec(node) : null;
-      if (postMainPlan) {
-        const kept = new Set(postMainPlan.retainedActionIds), removed = new Set(postMainPlan.excludedActionIds);
-        if (!kept.size || !removed.size || kept.size !== postMainPlan.retainedActionIds.length
-          || removed.size !== postMainPlan.excludedActionIds.length || kept.size + removed.size !== node.legalActions.length
-          || node.legalActions.some(action => kept.has(action.actionId) === removed.has(action.actionId))
-          || !Number.isSafeInteger(postMainPlan.maximumValueIncrease * 2) || postMainPlan.maximumValueIncrease < 0) {
+      let localPlan = postMainPlan ? { ...postMainPlan, kind: "post-main" } : null;
+      if (localPlan) {
+        const kept = new Set(localPlan.retainedActionIds), removed = new Set(localPlan.excludedActionIds);
+        if (!kept.size || !removed.size || kept.size !== localPlan.retainedActionIds.length
+          || removed.size !== localPlan.excludedActionIds.length || kept.size + removed.size !== node.legalActions.length
+          || node.legalActions.some(action => kept.has(action.actionId) === removed.has(action.actionId))) {
+          throw new TypeError("SEARCH_LOCAL_PLAN_INVALID");
+        }
+      }
+      if (localPlan?.kind === "post-main") {
+        if (!Number.isSafeInteger(localPlan.maximumValueIncrease * 2) || localPlan.maximumValueIncrease < 0) {
           throw new TypeError("SEARCH_POST_MAIN_PROOF_INVALID");
         }
         const observation = node.observation;
@@ -105,10 +115,10 @@
         // 所有贡献为非负整数/半整数；保留足够的精确加法空间，不以容差证明平分。
         if (!Number.isSafeInteger(player.finalScore) || player.finalScore < player.score
           || !Number.isSafeInteger(currentValue * 2) || currentValue < 0
-          || currentValue * 2 + postMainPlan.maximumValueIncrease * 2 >= Number.MAX_SAFE_INTEGER / 2) postMainPlan = null;
-        else { postMainProofNodes += 1; postMainExcludedActions += removed.size; }
+          || currentValue * 2 + localPlan.maximumValueIncrease * 2 >= Number.MAX_SAFE_INTEGER / 2) localPlan = null;
+        else { postMainProofNodes += 1; postMainExcludedActions += localPlan.excludedActionIds.length; }
       }
-      const retainedActions = postMainPlan ? node.legalActions.filter(action => postMainPlan.retainedActionIds.includes(action.actionId))
+      const retainedActions = localPlan ? node.legalActions.filter(action => localPlan.retainedActionIds.includes(action.actionId))
         : node.legalActions;
       const alternatives = selection ? port.selectionPlans(node)
         : retainedActions.map(action => ({ firstActionId: action.actionId, submissions: 1 }));
@@ -117,7 +127,7 @@
         .reduce((count, n) => count * n, 1) : retainedActions.length;
       const resources = !boundary && !selection && useResourceDominance
         ? port.postMainResourceOrder(node) || port.openingResourceOrder?.(node) || null : null;
-      nodes.push({ node, edges: [], selection, alternatives, alternativeCount, resources, postMainPlan,
+      nodes.push({ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan,
         expanded: boundary, value, distance: boundary ? 0 : Infinity, best: null });
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
@@ -139,10 +149,11 @@
     outer: while (cursor < queue.length) {
       const entry = nodes[queue[cursor]];
       if (entry.prunedBy) { cursor += 1; continue; }
+      let bound = null, upperBound = null, boundChecked = false;
       if (useCardTradePruning && incumbent && entry.node.status === "decision") {
         if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
-        const bound = port.cardTradeBound(entry.node);
-        const upperBound = bound
+        bound = port.cardTradeBound(entry.node); boundChecked = true;
+        upperBound = bound
           ? stateValue.evaluateHandCountDelta(evaluate, entry.node.observation, bound.handDelta) : null;
         if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
         if (bound && incumbent.value > upperBound) {
@@ -151,6 +162,22 @@
           if (entry.queued) { entry.queued = false; pendingFrontier -= 1; }
           cursor += 1;
           continue;
+        }
+      }
+      if (cardChoiceEquivalence && !entry.selection && entry.node.status === "decision" && entry.node.legalActions.length > 1
+        && entry.node.legalActions.every(action => action.family === "choose_card" && action.target?.kind === "trade-card-selection")) {
+        if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
+        if (!boundChecked) bound = port.cardTradeBound(entry.node);
+        if (bound?.handDelta === 1) {
+          const expectedValue = upperBound ?? stateValue.evaluateHandCountDelta(evaluate, entry.node.observation, 1);
+          if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
+          const actionIds = entry.node.legalActions.map(action => action.actionId).sort();
+          if (new Set(actionIds).size !== actionIds.length) throw new TypeError("SEARCH_LOCAL_PLAN_INVALID");
+          entry.localPlan = { kind: "card-choice", proof: "seti-card-trade-information-choice-value-equivalence-v1",
+            boundProof: bound.proof, retainedActionIds: actionIds.slice(0, 1), excludedActionIds: actionIds.slice(1), expectedValue };
+          entry.alternatives = [{ firstActionId: actionIds[0], submissions: 1 }];
+          entry.alternativeCount = 1;
+          cardChoiceProofNodes += 1; cardChoiceExcludedActions += actionIds.length - 1;
         }
       }
       for (const alternative of entry.alternatives) {
@@ -166,6 +193,8 @@
         transitions += alternative.submissions;
         if (macro) selectionMacros += 1;
         const added = add(child);
+        if (entry.localPlan?.kind === "card-choice" && (child.status !== "information-barrier"
+          || nodes[added.index].value !== entry.localPlan.expectedValue)) throw new Error("SEARCH_CARD_CHOICE_WITNESS_MISMATCH");
         if (added.equivalent) equivalents += 1;
         entry.edges.push({ actionId: alternative.firstActionId, target: added.index,
           equivalent: added.equivalent, cost: alternative.submissions,
@@ -222,7 +251,7 @@
     const complete = !stopReason;
     function retainedWitness(index) {
       if (!complete) return null;
-      const start = dominancePrunes || cardTradePrunes ? 0 : index;
+      const start = nodes[index].localPlan?.kind !== "card-choice" && (dominancePrunes || cardTradePrunes) ? 0 : index;
       let current = start;
       for (let depth = 0; depth <= nodes.length; depth += 1) {
         const entry = nodes[current];
@@ -232,7 +261,7 @@
         if (!edge || !(nodes[edge.target].distance < entry.distance)) break;
         current = edge.target;
       }
-      throw new Error("SEARCH_POST_MAIN_WITNESS_MISSING");
+      throw new Error("SEARCH_LOCAL_PLAN_WITNESS_MISSING");
     }
     const lines = nodes.map((entry, index) => ({
       node: index, status: entry.node.status, boundary: entry.node.boundary || null,
@@ -242,9 +271,9 @@
         : entry.value == null ? (stopReason ? "pending" : entry.covered ? "covered-by-global-pruning" : "unreachable") : "reachable",
       ...(entry.prunedBy ? { prunedBy: entry.prunedBy } : {}),
       ...(entry.prunedByBound ? { prunedByBound: entry.prunedByBound } : {}),
-      ...(entry.postMainPlan ? { postMainPlan: entry.postMainPlan,
-        excludedActions: entry.postMainPlan.excludedActionIds.map(actionId => ({ actionId,
-          proof: entry.postMainPlan.proof, retainedActionIds: entry.postMainPlan.retainedActionIds,
+      ...(entry.localPlan ? { localPlan: entry.localPlan,
+        excludedActions: entry.localPlan.excludedActionIds.map(actionId => ({ actionId,
+          proof: entry.localPlan.proof, retainedActionIds: entry.localPlan.retainedActionIds,
           witness: retainedWitness(index), completion: complete ? "covered-by-retained-search" : "pending-retained-search",
           modelKey: evaluate.modelKey })) } : {}),
       ...(entry.selection ? { selection: entry.selection, orderedExitCount: entry.alternativeCount } : {}),
@@ -300,7 +329,9 @@
         cardTradePrunes, cardTradePruning: useCardTradePruning ? "enabled"
           : cardTradePruning ? "disabled-for-selection-certificate" : "off",
         postMainProofNodes, postMainExcludedActions, postMainPruning: postMainPruning ? "enabled" : "off",
-        ...(useResourceDominance || useCardTradePruning || postMainPruning ? { resourceModelKey: evaluate.modelKey } : {}),
+        cardChoiceProofNodes, cardChoiceExcludedActions, cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
+        ...(useResourceDominance || useCardTradePruning || postMainPruning || cardChoiceEquivalence
+          ? { resourceModelKey: evaluate.modelKey } : {}),
         continuation: reused ? (reused.hit ? "validation-watchdog" : reused.reason) : "not-requested",
         milliseconds: elapsed, limits },
     };

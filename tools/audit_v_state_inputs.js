@@ -109,6 +109,45 @@ try {
   allPass = false;
 }
 
+// 新路径：正式待取牌的原始/标准观察、数量界及真实单步见证必须逐位一致。
+{
+  let auditKernel;
+  try {
+    const fs = require("node:fs"), path = require("node:path");
+    const { createSimulationRuleComposition } = require("../randomizer/training/simulation-rule-composition");
+    const { createSeededRandom } = require("../randomizer/game/random");
+    const { buildRuleObservation } = require("../randomizer/app/rule-observation");
+    const { createAnalysisPort } = require("../randomizer/game/ai/analysis-port");
+    const { searchDecision } = require("../randomizer/game/ai/decision-search");
+    const auditSeed = "card-choice-input-audit-v1";
+    auditKernel = createSimulationRuleComposition({ seed: auditSeed, random: createSeededRandom(auditSeed), activePlayerCount: 4,
+      trustedProjectionReader: true, projectCounterfactualState: (state, viewer) => buildRuleObservation(state, auditSeed, viewer?.playerId) });
+    auditKernel.newGame({ seed: auditSeed });
+    const checkpoint = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+      "../reports/ai-foundation-20261022/analysis-root-input-v2.json")));
+    const comp = auditKernel.composition;
+    if (!comp.lifecycle.restore(checkpoint.coreState.compositionEnvelope).ok) throw new Error("取牌审计恢复失败");
+    const actor = comp.inputPort.enumerateActions({}).find(action => action.target?.tradeId === "credits-for-card");
+    const port = createAnalysisPort({ composition: comp, seatId: actor.actorId });
+    const pending = port.expand(port.openRoot(), actor.actionId);
+    const evaluator = independentValue.createStateValueEvaluator(actor.actorId);
+    const rawBound = independentValue.evaluateHandCountDelta(evaluator, pending.observation, 1);
+    const standardized = outcomeModel.createDecisionObservation(pending.observation, { seatId: actor.actorId });
+    const standardBound = independentValue.evaluateHandCountDelta(evaluator, standardized, 1);
+    const result = searchDecision({ port, root: pending, evaluate: evaluator, cardChoiceEquivalence: true });
+    if (!result.complete || result.diagnostics.transitions !== 1 || result.value !== rawBound || rawBound !== standardBound) {
+      throw new Error("取牌等价路径的观察、数值界与真实见证不一致");
+    }
+    port.close();
+    console.log(`[PASS] independent-card-choice-equivalence: total=${result.value} inputs=1`);
+  } catch (error) {
+    console.log(`[FAIL] independent-card-choice-equivalence: ${error.message}`);
+    allPass = false;
+  } finally {
+    auditKernel?.composition.dispose();
+  }
+}
+
 // 路径 3：启发式 actionOutcomes 的 leaf.observation —— 必须 PASS
 // （evaluateActionOutcomes 旧入口已删除；统一用真实决策 runHeuristicPolicyDecision
 // 返回的 actionOutcomes，与决策函数同一搜索参数）

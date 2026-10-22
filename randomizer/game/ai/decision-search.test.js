@@ -252,7 +252,7 @@ assert.deepEqual(localLimited.unresolved.map(row => row.actionIds), [["settle"]]
   "待展开只计保留图中的剩余输入，不把被证明省略的动作重新算作缺失");
 const malformedLocal = postMainFixture();
 malformedLocal.port.postMainPlanSpec = () => ({ retainedActionIds: ["keep"], excludedActionIds: ["unknown"], maximumValueIncrease: 0 });
-assert.throws(() => searchDecision({ ...malformedLocal, postMainPruning: true }), /POST_MAIN_PROOF_INVALID/);
+assert.throws(() => searchDecision({ ...malformedLocal, postMainPruning: true }), /LOCAL_PLAN_INVALID/);
 const unsafeLocal = postMainFixture();
 unsafeLocal.root.observation.publicState.players[0].credits = Number.MAX_SAFE_INTEGER;
 const unprunedUnsafe = searchDecision({ ...unsafeLocal, postMainPruning: true });
@@ -261,7 +261,7 @@ assert.equal(unprunedUnsafe.diagnostics.transitions, localRaw.diagnostics.transi
 const noWitness = postMainFixture();
 const expandLocal = noWitness.port.expand;
 noWitness.port.expand = (node, actionId) => actionId === "keep" ? noWitness.root : expandLocal(node, actionId);
-assert.throws(() => searchDecision({ ...noWitness, postMainPruning: true }), /POST_MAIN_WITNESS_MISSING/);
+assert.throws(() => searchDecision({ ...noWitness, postMainPruning: true }), /LOCAL_PLAN_WITNESS_MISSING/);
 const slowProof = postMainFixture();
 let localClock = 0;
 const localSpec = slowProof.port.postMainPlanSpec;
@@ -278,4 +278,59 @@ assert.equal(lateCertificate.complete, false);
 assert.equal(lateCertificate.stopReason, "watchdog");
 assert.equal(lateCertificate.actionId, null);
 assert.equal(lateCertificate.selectionContinuation, null, "生成复用证据的时间也计入决策门槛");
+
+function cardChoiceFixture() {
+  const drawn = wallet(1, 1); drawn.selfState.hand = [{ hidden: true }];
+  const fixture = graph({ root: { status: "decision", observation: wallet(1, 1), next: { z: "drawn", a: "drawn" } },
+    drawn: { status: "information-barrier", observation: drawn } });
+  for (const action of fixture.root.legalActions) Object.assign(action, {
+    family: "choose_card", target: { kind: "trade-card-selection" },
+  });
+  fixture.evaluate = createStateValueEvaluator("p1");
+  fixture.port.cardTradeBound = node => node === fixture.root ? { handDelta: 1, proof: "card-choice-fixture" } : null;
+  return fixture;
+}
+const equalChoices = searchDecision({ ...cardChoiceFixture(), cardChoiceEquivalence: true });
+assert.equal(equalChoices.actionId, "a");
+assert.equal(equalChoices.value, 3);
+assert.equal(equalChoices.diagnostics.transitions, 1);
+const pendingChoices = searchDecision({ ...cardChoiceFixture(), cardChoiceEquivalence: true, budget: { nodes: 1 } });
+assert.equal(pendingChoices.complete, false);
+assert.equal(pendingChoices.actionId, null);
+assert.equal(pendingChoices.roots.find(row => row.prunedByPlan).prunedByPlan.witness, null);
+assert.throws(() => searchDecision({ ...cardChoiceFixture(), cardChoiceEquivalence: true, evaluate: () => 3 }), /CHOICE_MODEL_INVALID/);
+assert.throws(() => searchDecision({ ...cardChoiceFixture(), cardChoiceEquivalence: true,
+  evaluate: createStateValueEvaluator("p2") }), /CHOICE_MODEL_INVALID/);
+const wrongChoiceWitness = cardChoiceFixture();
+const expandChoice = wrongChoiceWitness.port.expand;
+wrongChoiceWitness.port.expand = (node, id) => {
+  const next = expandChoice(node, id);
+  next.observation.publicState.players[0].credits += 1;
+  return next;
+};
+assert.throws(() => searchDecision({ ...wrongChoiceWitness, cardChoiceEquivalence: true }), /CHOICE_WITNESS_MISMATCH/);
+const delayedChoice = cardChoiceFixture();
+let choiceClock = 0;
+const choiceBound = delayedChoice.port.cardTradeBound;
+delayedChoice.port.cardTradeBound = node => { choiceClock = 1000; return choiceBound(node); };
+const lateChoice = searchDecision({ ...delayedChoice, cardChoiceEquivalence: true, now: () => choiceClock,
+  budget: { milliseconds: 100 } });
+assert.equal(lateChoice.complete, false);
+assert.equal(lateChoice.actionId, null);
+assert.equal(lateChoice.stopReason, "watchdog");
+const dominatedChoice = cardChoiceFixture();
+const outerRoot = { status: "stable", legalActions: [{ actionId: "choice", actorId: "p1" }, { actionId: "best", actorId: "p1" }] };
+const better = { status: "other-owner", observation: wallet(1, 1, 5), legalActions: [] };
+const outerPort = { ...dominatedChoice.port,
+  identity: node => node === outerRoot ? "outer" : node === better ? "better" : dominatedChoice.port.identity(node),
+  expand: (node, id) => node === outerRoot ? id === "best" ? better : dominatedChoice.root : dominatedChoice.port.expand(node, id),
+};
+const globallyDominated = searchDecision({ port: outerPort, root: outerRoot, evaluate: dominatedChoice.evaluate,
+  cardChoiceEquivalence: true, cardTradePruning: true });
+assert.equal(globallyDominated.actionId, "best");
+assert.equal(globallyDominated.diagnostics.cardTradePrunes, 1);
+assert.equal(globallyDominated.diagnostics.cardChoiceProofNodes, 0);
+assert.equal(globallyDominated.diagnostics.cardChoiceExcludedActions, 0);
+assert(globallyDominated.lines.some(line => line.prunedByBound && !line.localPlan),
+  "整条取牌分支被更强全局证明省略时，不伪造本地执行见证");
 console.log("complete decision graph coverage, cycles, preparation chains and budget failures passed");

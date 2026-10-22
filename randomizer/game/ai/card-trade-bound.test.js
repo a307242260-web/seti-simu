@@ -6,6 +6,7 @@ const { createSimulationRuleComposition } = require("../../training/simulation-r
 const { createSeededRandom } = require("../random");
 const { buildRuleObservation } = require("../../app/rule-observation");
 const { createAnalysisPort } = require("./analysis-port");
+const { searchDecision } = require("./decision-search");
 const { createStateValueEvaluator, evaluateHandCountDelta } = require("./state-value");
 
 const initial = JSON.parse(fs.readFileSync(path.resolve(__dirname,
@@ -50,11 +51,84 @@ for (const tradeId of ["credits-for-card", "energy-for-card", "publicity-for-car
         "整数/分数权重均与真实边界叶逐位相同，不用可能下溢的增量加法估计上界");
       leaves += 1;
     }
+    for (const [index, evaluate] of evaluators.entries()) {
+      const reduced = searchDecision({ port, root: selection, evaluate, cardChoiceEquivalence: true });
+      assert.equal(reduced.complete, true);
+      assert.equal(reduced.diagnostics.transitions, 1, "同值、同一步长的取牌出口只执行一个真实见证");
+      assert.equal(reduced.actionId, selection.legalActions.map(action => action.actionId).sort()[0]);
+      assert.equal(reduced.value, values[index]);
+      assert.equal(reduced.lines[0].distance, 1);
+      assert.equal(reduced.lines[0].localPlan.kind, "card-choice");
+      assert.equal(reduced.diagnostics.cardChoiceExcludedActions, selection.legalActions.length - 1);
+      for (const row of reduced.roots.filter(row => row.actionId !== reduced.actionId)) {
+        assert.equal(row.value, null);
+        assert.equal(row.target, null);
+        assert.equal(row.completion, "proof-pruned");
+        assert.equal(reduced.lines[row.prunedByPlan.witness.node].status, "information-barrier");
+      }
+    }
   }
   assert.deepEqual(comp.lifecycle.save().envelope, initial);
   port.close();
   assert.throws(() => port.cardTradeBound(pending), /ANALYSIS_NODE_INVALID/);
 }
+
+// 支付出口仍全部保留；跨真实两次点选和确认复用同一份完整竞争证据。
+function actualPaymentRun(equivalence, reuse) {
+  const startedAt = performance.now();
+  assert.equal(comp.lifecycle.restore(initial).ok, true);
+  assert.equal(comp.inputPort.submitQuickAction(comp.inputPort.enumerateActions({})
+    .find(action => action.target?.tradeId === "cards-for-pick-card")).ok, true);
+  const port = createAnalysisPort({ composition: comp, seatId, maxCacheEntries: 0 });
+  const records = [], actions = [], searches = [];
+  let continuation = null;
+  for (let i = 0; i < 4; i += 1) {
+    const root = port.openRoot();
+    const result = searchDecision({ port, root, evaluate: evaluators[0], cardChoiceEquivalence: equivalence,
+      resourceDominance: true, cardTradePruning: true, modelKey: `payment-exit-model:${evaluators[0].modelKey}`,
+      continuation: reuse ? continuation : null });
+    assert.equal(result.complete, true);
+    if (i === 0) {
+      assert.equal(result.lines[0].edges.length, 10, "十个支付集合均得到精确完成值，不能随取牌出口一起省略");
+      assert.equal(result.diagnostics.selectionMacros, 10);
+      assert.equal(result.diagnostics.resourceDominance, "disabled-for-selection-certificate");
+      assert.equal(result.diagnostics.cardTradePruning, "disabled-for-selection-certificate");
+      assert(result.selectionContinuation);
+    }
+    if (reuse && i > 0 && i < 3) {
+      assert.equal(result.diagnostics.continuation, "hit");
+      assert.equal(result.reusedCoverage.exitCount, 10);
+    }
+    continuation = result.selectionContinuation;
+    records.push(result.diagnostics.transitions);
+    actions.push(result.actionId);
+    searches.push({ ...result, selectionContinuation: undefined });
+    port.close();
+    const decision = comp.inspect().session.decision;
+    const choice = decision.choices.find(action => action.actionId === result.actionId);
+    assert(choice);
+    const submitted = comp.inputPort.submitDecision({ decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice });
+    assert.equal(submitted.ok, true);
+  }
+  assert.notEqual(comp.inspect().phase, "awaiting_input");
+  const envelope = comp.lifecycle.save().envelope;
+  return { records, actions, searches, envelope, milliseconds: performance.now() - startedAt };
+}
+const originalPayment = actualPaymentRun(false, false);
+const originalReusedPayment = actualPaymentRun(false, true);
+const equivalentPayment = actualPaymentRun(true, false);
+const reusedPayment = actualPaymentRun(true, true);
+assert.deepEqual(equivalentPayment.actions, originalPayment.actions);
+assert.deepEqual(reusedPayment.actions, originalPayment.actions);
+assert.deepEqual(originalReusedPayment.actions, originalPayment.actions);
+assert.deepEqual(equivalentPayment.envelope, originalPayment.envelope);
+assert.deepEqual(reusedPayment.envelope, originalPayment.envelope);
+assert.deepEqual(originalReusedPayment.envelope, originalPayment.envelope);
+assert.deepEqual(originalPayment.records, [70, 72, 74, 4]);
+assert.deepEqual(originalReusedPayment.records, [70, 0, 0, 4]);
+assert.deepEqual(equivalentPayment.records, [40, 42, 44, 1]);
+assert.deepEqual(reusedPayment.records, [40, 0, 0, 1]);
 
 // 取牌事件奖励确实会越过简单手牌上界，必须拒绝该证明。
 const bonus = structuredClone(state);
@@ -70,6 +144,10 @@ assert.equal(observed.cardTradeBound(observedPending), null);
 const naive = evaluateHandCountDelta(evaluators[0], observedPending.observation, 1);
 const rewarded = observed.expand(observedPending, observedPending.legalActions[0].actionId);
 assert.equal(evaluators[0](rewarded.observation), naive + 5);
+const observedResult = searchDecision({ port: observed, root: observedPending, evaluate: evaluators[0], cardChoiceEquivalence: true });
+assert.equal(observedResult.complete, true);
+assert.equal(observedResult.diagnostics.cardChoiceExcludedActions, 0);
+assert.equal(observedResult.diagnostics.transitions, observedPending.legalActions.length);
 observed.close();
 comp.dispose();
 assert.equal(leaves, 90);

@@ -1,0 +1,9 @@
+[INFO(需装配)] env.observe(原始, 需装配): schema=false scoring=false progress=false assets=false hand=true V=THROW: V 只接受同 viewer 的标准 outcome projection
+[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib
+[PASS] independent-state-value: total=40.5 model=seti-linear-state-value-v1
+[PASS] independent-card-choice-equivalence: total=36 inputs=1
+[PASS] heuristic-leaf(反事实叶): schema=true scoring=true progress=true assets=true hand=true V=total=223.0
+[INFO(需装配)] vguided-fork(原始, 需装配): schema=false scoring=false progress=false assets=false hand=true V=THROW: V 只接受同 viewer 的标准 outcome projection
+[PASS] browser-info-layer(机器席位观察): schema=true scoring=true progress=true assets=true hand=true V=total=0.0
+
+V 输入审计有 FAIL（见上，检查对应调用点装配）
