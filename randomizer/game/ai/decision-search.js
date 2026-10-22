@@ -6,13 +6,13 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v9";
+  const VERSION = "seti-complete-decision-search-v11";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
 
   function searchDecision({ port, root, evaluate, budget = {}, continuation = null,
-    modelKey = null, resourceDominance = false, moneyCapacityDominance = false, cardTradePruning = false, postMainPruning = false, cardChoiceEquivalence = false,
+    modelKey = null, resourceDominance = false, moneyCapacityDominance = false, cardTradePruning = false, postMainPruning = false, openingPruning = false, cardChoiceEquivalence = false,
     now = () => performance.now() } = {}) {
     if (typeof port?.expand !== "function" || typeof port?.identity !== "function"
       || typeof evaluate !== "function" || !root) throw new TypeError("SEARCH_INPUT_INVALID");
@@ -23,6 +23,9 @@
       }
     }
     const startedAt = now();
+    if (openingPruning && (!stateValue?.isDefaultStateValueEvaluator?.(evaluate)
+      || evaluate.seatId !== root.legalActions?.[0]?.actorId
+      || typeof port.openingPlanSpec !== "function")) throw new TypeError("SEARCH_OPENING_MODEL_INVALID");
     if (moneyCapacityDominance && (!stateValue?.isDefaultStateValueEvaluator?.(evaluate)
       || evaluate.seatId !== root.legalActions?.[0]?.actorId
       || typeof port.openingMoneyCapacity !== "function")) throw new TypeError("SEARCH_MONEY_CAPACITY_MODEL_INVALID");
@@ -52,6 +55,8 @@
         moneyCapacityPrunes: 0, moneyCapacityDominance: moneyCapacityDominance ? "disabled-for-selection-certificate" : "off",
         cardTradePrunes: 0, cardTradePruning: cardTradePruning ? "disabled-for-selection-certificate" : "off",
         postMainProofNodes: 0, postMainExcludedActions: 0, postMainPruning: postMainPruning ? "enabled" : "off",
+        openingProofNodes: 0, openingExcludedActions: 0, openingPruning: openingPruning ? "enabled" : "off",
+        openingPassMacros: 0,
         cardChoiceProofNodes: 0, cardChoiceExcludedActions: 0, cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
         continuation: "hit", milliseconds: now() - startedAt, limits },
     };
@@ -72,6 +77,8 @@
     let moneyCapacityPrunes = 0;
     let cardTradePrunes = 0;
     let postMainProofNodes = 0, postMainExcludedActions = 0;
+    let openingProofNodes = 0, openingExcludedActions = 0;
+    let openingPassMacros = 0;
     let cardChoiceProofNodes = 0, cardChoiceExcludedActions = 0;
     let incumbent = null;
     let stopReason = null;
@@ -110,6 +117,10 @@
       const postMainPlan = !boundary && !selection && postMainPruning && node.status === "stable"
         ? port.postMainPlanSpec(node) : null;
       let localPlan = postMainPlan ? { ...postMainPlan, kind: "post-main" } : null;
+      if (!boundary && !selection && !localPlan && openingPruning && node.status === "stable") {
+        const opening = port.openingPlanSpec(node);
+        if (opening) localPlan = { ...opening, kind: "opening" };
+      }
       if (localPlan) {
         const kept = new Set(localPlan.retainedActionIds), removed = new Set(localPlan.excludedActionIds);
         if (!kept.size || !removed.size || kept.size !== localPlan.retainedActionIds.length
@@ -131,10 +142,24 @@
           || currentValue * 2 + localPlan.maximumValueIncrease * 2 >= Number.MAX_SAFE_INTEGER / 2) localPlan = null;
         else { postMainProofNodes += 1; postMainExcludedActions += localPlan.excludedActionIds.length; }
       }
+      if (localPlan?.kind === "opening") {
+        const preparations = localPlan.passPreparationActionIds || [];
+        if (!Array.isArray(preparations) || new Set(preparations).size !== preparations.length
+          || preparations.some(id => !localPlan.retainedActionIds.includes(id))) throw new TypeError("SEARCH_LOCAL_PLAN_INVALID");
+        const observation = node.observation, currentValue = evaluate(observation);
+        const player = observation.publicState.players.find(player => player.playerId === evaluate.seatId);
+        if (!Number.isSafeInteger(player.finalScore) || player.finalScore < player.score
+          || !Number.isSafeInteger(currentValue * 2) || currentValue < 0 || currentValue > Number.MAX_SAFE_INTEGER / 64) localPlan = null;
+        else { openingProofNodes += 1; openingExcludedActions += localPlan.excludedActionIds.length; }
+      }
       const retainedActions = localPlan ? node.legalActions.filter(action => localPlan.retainedActionIds.includes(action.actionId))
         : node.legalActions;
       const alternatives = selection ? port.selectionPlans(node)
-        : retainedActions.map(action => ({ firstActionId: action.actionId, submissions: 1 }));
+        : retainedActions.map(action => {
+          const openingPass = localPlan?.kind === "opening" && localPlan.passPreparationActionIds?.includes(action.actionId);
+          if (openingPass && typeof port.expandOpeningPass !== "function") throw new TypeError("SEARCH_OPENING_PASS_PORT_INVALID");
+          return { firstActionId: action.actionId, submissions: openingPass ? 2 : 1, ...(openingPass ? { openingPass: true } : {}) };
+        });
       const alternativeCount = selection ? Array.from({ length: selection.requiredCount }, (_, i) =>
         (selection.cardIds.length - i) / (selection.unordered ? i + 1 : 1))
         .reduce((count, n) => count * n, 1) : retainedActions.length;
@@ -206,18 +231,20 @@
         else if (pendingFrontier > limits.frontier) stopReason = "frontier-budget";
         else if (now() - startedAt >= limits.milliseconds) stopReason = "watchdog";
         if (stopReason) break outer;
-        const macro = entry.selection ? port.expandSelection(entry.node, alternative.selectedIds) : null;
+        const macro = entry.selection ? port.expandSelection(entry.node, alternative.selectedIds)
+          : alternative.openingPass ? port.expandOpeningPass(entry.node, alternative.firstActionId) : null;
         const child = macro ? macro.node : port.expand(entry.node, alternative.firstActionId);
         if (macro && macro.submissions !== alternative.submissions) throw new Error("SEARCH_MACRO_COST_MISMATCH");
         transitions += alternative.submissions;
-        if (macro) selectionMacros += 1;
+        if (macro) { if (alternative.openingPass) openingPassMacros += 1; else selectionMacros += 1; }
         const added = add(child);
         if (entry.localPlan?.kind === "card-choice" && (child.status !== "information-barrier"
           || nodes[added.index].value !== entry.localPlan.expectedValue)) throw new Error("SEARCH_CARD_CHOICE_WITNESS_MISMATCH");
         if (added.equivalent) equivalents += 1;
         entry.edges.push({ actionId: alternative.firstActionId, target: added.index,
           equivalent: added.equivalent, cost: alternative.submissions,
-          ...(macro ? { selectedIds: alternative.selectedIds, proof: alternative.proof,
+          ...(macro ? { ...(alternative.openingPass ? { openingPass: true } : { selectedIds: alternative.selectedIds }),
+            proof: alternative.openingPass ? macro.proof : alternative.proof,
             steps: macro.actions.map(action => action.actionId) } : {}) });
         if (now() - startedAt >= limits.milliseconds) {
           stopReason = "watchdog";
@@ -295,6 +322,9 @@
           proof: entry.localPlan.proof, retainedActionIds: entry.localPlan.retainedActionIds,
           witness: retainedWitness(index), completion: complete ? "covered-by-retained-search" : "pending-retained-search",
           modelKey: evaluate.modelKey })) } : {}),
+      ...(entry.edges.some(edge => edge.openingPass) ? { normalizedPreparations: entry.edges.filter(edge => edge.openingPass)
+        .map(edge => ({ actionId: edge.actionId, proof: edge.proof, steps: edge.steps,
+          omittedContinuationFamilies: "all-except-pass", witness: retainedWitness(index), modelKey: evaluate.modelKey })) } : {}),
       ...(entry.selection ? { selection: entry.selection, orderedExitCount: entry.alternativeCount } : {}),
     }));
     const roots = root.legalActions.map(action => {
@@ -314,10 +344,11 @@
       return {
         actionId: action.actionId, target: edge?.target ?? null,
         value: edge ? nodes[edge.target].value : null,
-        completion: stopReason || !edge ? "pending" : cardTradePrunes ? "covered-by-global-pruning"
+        completion: stopReason || !edge ? "pending" : edge.openingPass ? "covered-by-opening-normal-form" : cardTradePrunes ? "covered-by-global-pruning"
           : dominancePrunes ? "covered-by-global-dominance"
           : nodes[edge.target].value == null ? "unreachable" : "complete",
-        ...(dominancePrunes || cardTradePrunes ? { valueType: "attained-lower-bound" } : {}),
+        ...(dominancePrunes || cardTradePrunes || edge?.openingPass ? { valueType: "attained-lower-bound" } : {}),
+        ...(edge?.openingPass ? { normalForm: edge.proof } : {}),
       };
     });
     const evidence = complete && nodes[0].selection ? nodes[0].edges.map(edge => ({
@@ -350,8 +381,10 @@
         cardTradePrunes, cardTradePruning: useCardTradePruning ? "enabled"
           : cardTradePruning ? "disabled-for-selection-certificate" : "off",
         postMainProofNodes, postMainExcludedActions, postMainPruning: postMainPruning ? "enabled" : "off",
+        openingProofNodes, openingExcludedActions, openingPruning: openingPruning ? "enabled" : "off",
+        openingPassMacros,
         cardChoiceProofNodes, cardChoiceExcludedActions, cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
-        ...(useResourceDominance || useMoneyCapacity || useCardTradePruning || postMainPruning || cardChoiceEquivalence
+        ...(useResourceDominance || useMoneyCapacity || useCardTradePruning || postMainPruning || openingPruning || cardChoiceEquivalence
           ? { resourceModelKey: evaluate.modelKey } : {}),
         continuation: reused ? (reused.hit ? "validation-watchdog" : reused.reason) : "not-requested",
         milliseconds: elapsed, limits },

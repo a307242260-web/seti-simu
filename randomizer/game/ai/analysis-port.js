@@ -10,10 +10,12 @@
     common ? require("../aliens/state") : root.SetiAlienState,
     common ? require("../actions/quick-trades") : root.SetiQuickTrades,
     common ? require("../actions/scan-effects") : root.SetiScanEffects,
-    common ? require("../abilities/rocket") : root.SetiAbilityRocket);
+    common ? require("../abilities/rocket") : root.SetiAbilityRocket,
+    common ? require("../tech/resolver") : root.SetiTechResolver,
+    common ? require("../effects/probe-turn-session") : root.SetiProbeTurnSession);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession) {
   "use strict";
 
   function freeze(value) {
@@ -114,6 +116,7 @@
     let resourceOrders = new WeakMap();
     let openingOrders = new WeakMap();
     let openingCapacities = new WeakMap();
+    let openingPlans = new WeakMap();
     let cardTradeBounds = new WeakMap();
     let postMainPlans = new WeakMap();
     const resourceGroups = new Map();
@@ -649,6 +652,52 @@
       return result || null;
     }
 
+    function openingPlanSpec(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (openingPlans.has(node)) return openingPlans.get(node);
+      const capacity = openingMoneyCapacity(node);
+      let result = null;
+      if (capacity && capacity.credits >= capacity.moneyCapacity.credits && capacity.energy >= capacity.moneyCapacity.energy) {
+        const state = JSON.parse(stored.envelope.committedState);
+        const owner = state.players.players.find(player => player.id === seatId);
+        const researchCost = techResolver.getResearchPublicityCost(owner), handLimit = probeTurnSession.PASS_HAND_LIMIT;
+        if (Number.isSafeInteger(researchCost) && researchCost >= 0 && owner.resources.publicity >= Math.max(3, researchCost)
+          && handLimit === 4 && owner.hand.length <= handLimit + 1) {
+          const unnecessaryTrades = new Set(["credits-for-energy", "energy-for-credit", "cards-for-credit", "cards-for-energy"]);
+          // 无蓝科技时唯一现有数据只能放到无奖励的首位；首个主行动在信息边界前
+          // 最多再给4数据，六格池不溢出。保留这枚数据严格多0.5V且不丢失行动资格。
+          const skipFirstData = owner.dataState.poolTokens.length === 1 && owner.dataState.placedTokens.length === 0
+            && Object.keys(data.DATA_POOL_SLOTS).length >= 5 && !data.getComputerSlotBonus(1)
+            && !data.getComputerSlotBlueColumnBonus(owner, 1);
+          const excluded = node.legalActions.filter(action => action.family === "quick_trade"
+            ? unnecessaryTrades.has(action.target?.tradeId) : (action.family === "place_data" && skipFirstData)
+              || (action.family === "card_corner" && (action.payload.kind === "move" || owner.hand.length <= handLimit)));
+          const kept = node.legalActions.filter(action => !excluded.includes(action));
+          if (excluded.length && kept.some(action => action.family === "pass")) result = freeze({
+            proof: "seti-funded-opening-default-value-plan-v2", retainedActionIds: kept.map(action => action.actionId),
+            excludedActionIds: excluded.map(action => action.actionId), handLimit, researchCost,
+            dataPlacementPruned: skipFirstData,
+            passPreparationActionIds: owner.hand.length > handLimit
+              ? kept.filter(action => action.family === "card_corner" && action.payload.kind === "resource").map(action => action.actionId) : [],
+          });
+        }
+      }
+      openingPlans.set(node, result);
+      return result;
+    }
+
+    function expandOpeningPass(node, actionId) {
+      const plan = openingPlanSpec(node);
+      if (!plan?.passPreparationActionIds.includes(actionId)) throw new Error("ANALYSIS_OPENING_PASS_INVALID");
+      const corner = node.legalActions.find(action => action.actionId === actionId);
+      const prepared = expand(node, actionId);
+      const pass = prepared.status === "stable" && prepared.legalActions.find(action => action.family === "pass");
+      if (!pass) throw new Error("ANALYSIS_OPENING_PASS_CONTINUATION_MISSING");
+      return freeze({ node: expand(prepared, pass.actionId), submissions: 2, actions: [corner, pass],
+        proof: "seti-funded-opening-publicity-pass-normal-form-v1" });
+    }
+
     function describeOpeningMoneyCapacity(stored, node, order) {
       const state = JSON.parse(stored.envelope.committedState);
       const owner = state.players.players.find(player => player.id === seatId);
@@ -761,6 +810,7 @@
       resourceOrders = new WeakMap();
       openingOrders = new WeakMap();
       openingCapacities = new WeakMap();
+      openingPlans = new WeakMap();
       cardTradeBounds = new WeakMap();
       postMainPlans = new WeakMap();
       resourceGroups.clear();
@@ -783,7 +833,7 @@
     }
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
-      rememberSelection, reuseSelection, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity,
+      rememberSelection, reuseSelection, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, postMainPlanSpec, close, getDiagnostics });
   }
 

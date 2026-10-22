@@ -1,0 +1,23 @@
+standard full-flow v2 passed
+trusted analysis fork isolation and exact reuse passed
+card trade information bounds match all 90 formal leaves and reject extra rewards
+data token fungibility, real placement diamonds and every immediate successor passed
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"inertReservation":"passed","rawInputs":314,"prunedInputs":9,"boundLeaves":40}
+{"openingMoneyCapacity":"passed","results":[{"cardId":null,"value":29.5,"raw":814,"capacityOnly":602,"pruned":44,"capacityPrunes":4},{"cardId":"dlc_27.png","value":30.5,"raw":1850,"capacityOnly":1396,"pruned":96,"capacityPrunes":8},{"cardId":"b_44.webp","value":30.5,"raw":3546,"capacityOnly":3062,"pruned":98,"capacityPrunes":8},{"cardId":"b_23.webp","value":30.5,"raw":1904,"capacityOnly":1304,"pruned":122,"capacityPrunes":8},{"cardId":"dlc_22.png","value":30.5,"raw":1850,"capacityOnly":1396,"pruned":96,"capacityPrunes":8},{"cardId":"b_48.webp","value":30.5,"raw":1760,"capacityOnly":1280,"pruned":98,"capacityPrunes":8}]}
+{"openingPlan":"passed","results":[{"cardId":null,"value":32.5,"baseline":96,"pruned":47},{"cardId":"dlc_27.png","value":33.5,"baseline":200,"pruned":52},{"cardId":"b_44.webp","value":33.5,"baseline":202,"pruned":52},{"cardId":"b_23.webp","value":33.5,"baseline":226,"pruned":63},{"cardId":"dlc_22.png","value":33.5,"baseline":200,"pruned":52},{"cardId":"b_48.webp","value":33.5,"baseline":202,"pruned":51}],"passPaymentExits":20,"directPassValue":37,"directPassInputs":3,"publicityPassValue":37.5,"dataAuditInputs":382,"dataAuditLeaves":140,"fullHandBeforePassMacros":766,"fullHandAfterPassMacros":136}
+{"openingMoney":"passed","rawInputs":365,"prunedInputs":281,"boundedInputs":218,"proofPrunes":8,"cardTradePrunes":21}
+{"postMainMovement":"passed","rawInputs":282,"prunedInputs":4,"payments":95,"arrivals":29,"twoPointPayments":16}
+{"postMainPlan":"passed","rawInputs":314,"prunedInputs":9,"excludedActions":20}
+{"resourceDominance":"passed","rawInputs":318,"prunedInputs":150,"proofPrunes":6}
+independent state value accounting and strict inputs passed
+public picks preserve hidden-refill boundaries, known cards and recovery across 8 cases
+probe-turn-session tests passed
+SUMMARY unit passed=14 failed=0 total=14 time=70.95s
+SUMMARY fullFlow passed=1 failed=0 total=1 time=0.49s
+OWNER architecture/effect-session tests=1
+OWNER architecture/policy-host tests=2
+OWNER full-flow/standard-flow-v1 tests=1
+OWNER policy/decision-search tests=9
+OWNER policy/state-value tests=1
+OWNER rules/card-play tests=1

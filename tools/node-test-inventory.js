@@ -12,6 +12,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/data-equivalence.test.js", "architecture/policy-host", "数据标记编号与池展示位置等价，真实放置交换路径及全部直接后继一致", "显示序号造成重复搜索或错误忽略计算机槽位、蓝色附加位和真实奖励"),
     entry("randomizer/game/ai/opening-resource.test.js", "policy/decision-search", "受限首个主行动资源模拟保持真钱电循环后继与完整小窗口最优，有探测器的零电收益拒绝剪枝", "dlc27零电收益反转资源大小关系或未闭合主行动被当成完成"),
     entry("randomizer/game/ai/money-capacity.test.js", "policy/decision-search", "受限开局充足钱包与严格更高钱电总值覆盖亏损兑换，全部已审计单牌窗口最优与缓存一致", "把扫描费用误写成1电、忽略补牌为空或后续生产性钱电支出而删掉有价值路线"),
+    entry("randomizer/game/ai/opening-plan.test.js", "policy/decision-search", "资金宣传已足够的开局省略无收益准备，保留5手牌PASS角标及全部选牌与数据出口", "忽略PASS手牌上限误删有收益角标，或以V平分冒充最短输入保持"),
     entry("randomizer/game/ai/card-trade-bound.test.js", "policy/decision-search", "取牌交易边界值与数量界一致，同值单步出口省略保留真实见证及全部支付集合的复用证据", "遗漏取牌奖励、浮点界错误或随同值取牌一起丢弃支付出口而破坏复用"),
     entry("randomizer/game/ai/post-main-plan.test.js", "policy/decision-search", "受限主行动后保留所有有收益放数据链，省略路径有实际保留见证并保持最优值与最短输入", "删除强制收入、里程碑或新数据收益，或用未完成保留图冒充覆盖"),
     entry("randomizer/game/ai/post-main-movement.test.js", "policy/decision-search", "普通探测器主行动后的移动及支付链有正式奖励上界，局部最优值与最短输入保持", "遗漏到达宣传或移动事件奖励，错误省略有净收益的移动准备链"),

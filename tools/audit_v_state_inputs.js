@@ -163,8 +163,23 @@ try {
       const standard = outcomeModel.createDecisionObservation(node.observation, { seatId: actor.actorId });
       if (evaluator(node.observation) !== evaluator(standard)) throw new Error("生产性钱包界的原始/标准估值不一致");
     }
-    moneyPort.close();
     console.log(`[PASS] independent-opening-money-capacity: delta=${evaluator(moneyRoot.observation) - evaluator(converted.observation)}`);
+    const opening = moneyPort.openingPlanSpec(moneyRoot);
+    const corner = moneyRoot.legalActions.find(action => action.family === "card_corner" && action.payload?.kind === "resource");
+    if (!opening || !opening.retainedActionIds.includes(corner?.actionId)) throw new Error("5手牌PASS角标未保留");
+    const afterCorner = moneyPort.expand(moneyRoot, corner.actionId), afterOpening = moneyPort.openingPlanSpec(afterCorner);
+    if (!afterOpening || afterCorner.legalActions.some(action => action.family === "card_corner"
+      && !afterOpening.excludedActionIds.includes(action.actionId))) throw new Error("4手牌后的无收益角标未进入路径证明");
+    const openingStandard = outcomeModel.createDecisionObservation(afterCorner.observation, { seatId: actor.actorId });
+    if (evaluator(afterCorner.observation) !== evaluator(openingStandard)) throw new Error("开局准备路径的原始/标准估值不一致");
+    console.log(`[PASS] independent-opening-plan: total=${evaluator(afterCorner.observation)}`);
+    const passMacro = moneyPort.expandOpeningPass(moneyRoot, corner.actionId);
+    const passStandard = outcomeModel.createDecisionObservation(passMacro.node.observation, { seatId: actor.actorId });
+    if (passMacro.submissions !== 2 || evaluator(passMacro.node.observation) !== evaluator(passStandard)) {
+      throw new Error("开局角标PASS合并路径的实际输入数或标准估值不一致");
+    }
+    console.log(`[PASS] independent-opening-pass-normal-form: total=${evaluator(passMacro.node.observation)}`);
+    moneyPort.close();
   } catch (error) {
     console.log(`[FAIL] independent-card-choice-equivalence: ${error.message}`);
     allPass = false;

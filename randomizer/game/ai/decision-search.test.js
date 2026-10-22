@@ -300,6 +300,71 @@ const lateLocal = searchDecision({ ...slowProof, postMainPruning: true, now: () 
 assert.equal(lateLocal.complete, false);
 assert.equal(lateLocal.actionId, null);
 assert.equal(lateLocal.stopReason, "watchdog");
+function openingFixture() {
+  const fixture = postMainFixture();
+  fixture.port.openingPlanSpec = fixture.port.postMainPlanSpec;
+  return fixture;
+}
+const openingRaw = searchDecision(openingFixture());
+const openingPruned = searchDecision({ ...openingFixture(), openingPruning: true });
+assert.equal(openingPruned.actionId, openingRaw.actionId);
+assert.equal(openingPruned.value, openingRaw.value);
+assert.equal(openingPruned.lines[0].distance, openingRaw.lines[0].distance);
+assert.equal(openingPruned.lines[0].localPlan.kind, "opening");
+assert.equal(openingPruned.diagnostics.openingProofNodes, 1);
+const openingLimited = searchDecision({ ...openingFixture(), openingPruning: true, budget: { transitions: 1 } });
+assert.equal(openingLimited.complete, false);
+assert.equal(openingLimited.actionId, null);
+assert.equal(openingLimited.roots.find(row => row.prunedByPlan).prunedByPlan.witness, null);
+assert.throws(() => searchDecision({ ...openingFixture(), evaluate: () => 3, openingPruning: true }), /OPENING_MODEL_INVALID/);
+const openingUnsafe = openingFixture();
+openingUnsafe.root.observation.publicState.players[0].credits = Number.MAX_SAFE_INTEGER;
+assert.equal(searchDecision({ ...openingUnsafe, openingPruning: true }).diagnostics.openingProofNodes, 0);
+const openingSlow = openingFixture();
+let openingClock = 0;
+const openingSpec = openingSlow.port.openingPlanSpec;
+openingSlow.port.openingPlanSpec = node => { openingClock = 1000; return openingSpec(node); };
+const openingLate = searchDecision({ ...openingSlow, openingPruning: true, now: () => openingClock, budget: { milliseconds: 100 } });
+assert.equal(openingLate.complete, false);
+assert.equal(openingLate.stopReason, "watchdog");
+assert.equal(openingLate.actionId, null);
+function openingMacroFixture() {
+  const fixture = graph({ root: { observation: wallet(0, 0), next: { corner: "prepared", main: "best", waste: "low" } },
+    prepared: { observation: wallet(0, 0), next: { pass: "passed", main: "weaker" } },
+    passed: { status: "other-owner", observation: wallet(0, 0, 5) },
+    weaker: { status: "information-barrier", observation: wallet(0, 0, 9) },
+    best: { status: "information-barrier", observation: wallet(0, 0, 10) },
+    low: { status: "other-owner", observation: wallet(0, 0) } });
+  fixture.evaluate = createStateValueEvaluator("p1");
+  fixture.port.openingPlanSpec = node => node === fixture.root ? { proof: "opening-macro-fixture",
+    retainedActionIds: ["corner", "main"], excludedActionIds: ["waste"], passPreparationActionIds: ["corner"] } : null;
+  fixture.port.expandOpeningPass = (node, actionId) => ({
+    node: fixture.port.expand(fixture.port.expand(node, actionId), "pass"), submissions: 2,
+    actions: [{ actionId }, { actionId: "pass" }], proof: "opening-pass-fixture",
+  });
+  return fixture;
+}
+const macroOpeningRaw = searchDecision(openingMacroFixture());
+const macroOpening = searchDecision({ ...openingMacroFixture(), openingPruning: true });
+assert.equal(macroOpening.actionId, macroOpeningRaw.actionId);
+assert.equal(macroOpening.value, macroOpeningRaw.value);
+assert.equal(macroOpening.lines[0].distance, macroOpeningRaw.lines[0].distance);
+assert.equal(macroOpening.diagnostics.openingPassMacros, 1);
+assert.equal(macroOpening.lines[0].edges.find(edge => edge.openingPass).cost, 2);
+assert.deepEqual(macroOpening.lines[0].edges.find(edge => edge.openingPass).steps, ["corner", "pass"]);
+assert.equal(macroOpening.roots.find(row => row.actionId === "corner").value, 5);
+assert.equal(macroOpeningRaw.roots.find(row => row.actionId === "corner").value, 9);
+assert.equal(macroOpening.roots.find(row => row.actionId === "corner").valueType, "attained-lower-bound");
+assert.equal(macroOpening.lines[0].normalizedPreparations[0].witness.value, 10);
+for (const transitions of [1, 2]) {
+  const incomplete = searchDecision({ ...openingMacroFixture(), openingPruning: true, budget: { transitions } });
+  assert.equal(incomplete.complete, false);
+  assert.equal(incomplete.actionId, null);
+  if (transitions === 1) assert.equal(incomplete.diagnostics.transitions, 0, "两个真实输入不能用一个单位预算执行");
+  if (transitions === 2) assert.equal(incomplete.lines[0].normalizedPreparations[0].witness, null);
+}
+const noMacroPort = openingMacroFixture(); delete noMacroPort.port.expandOpeningPass;
+assert.throws(() => searchDecision({ ...noMacroPort, openingPruning: true }), /OPENING_PASS_PORT_INVALID/);
 let certificateClock = 0;
 selectionFixture.port.rememberSelection = () => { certificateClock = 1000; return Object.freeze({}); };
 const lateCertificate = searchDecision({ ...selectionFixture, evaluate: selectionModel, modelKey: "late-certificate",

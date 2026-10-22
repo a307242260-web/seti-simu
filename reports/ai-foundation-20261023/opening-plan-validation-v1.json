@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "seti-funded-opening-plan-validation-v1",
+  "scope": "closed small windows, actual PASS exceptions and same-runtime complete full-hand normal-form differential; not full original graph or game acceptance",
+  "fixture": "reports/ai-foundation-20261022/analysis-root-input-v2.json",
+  "smallWindowChanges": "zero/single audited hand card, C2/E2/P6, actual pool1 retained",
+  "equalActionValueAndShortestInput": true,
+  "cache256Parity": true,
+  "rootEnvelopeUnchanged": true,
+  "unitResult": {
+    "openingPlan": "passed",
+    "results": [
+      {
+        "cardId": null,
+        "value": 32.5,
+        "baseline": 96,
+        "pruned": 47
+      },
+      {
+        "cardId": "dlc_27.png",
+        "value": 33.5,
+        "baseline": 200,
+        "pruned": 52
+      },
+      {
+        "cardId": "b_44.webp",
+        "value": 33.5,
+        "baseline": 202,
+        "pruned": 52
+      },
+      {
+        "cardId": "b_23.webp",
+        "value": 33.5,
+        "baseline": 226,
+        "pruned": 63
+      },
+      {
+        "cardId": "dlc_22.png",
+        "value": 33.5,
+        "baseline": 200,
+        "pruned": 52
+      },
+      {
+        "cardId": "b_48.webp",
+        "value": 33.5,
+        "baseline": 202,
+        "pruned": 51
+      }
+    ],
+    "passPaymentExits": 20,
+    "directPassValue": 37,
+    "directPassInputs": 3,
+    "publicityPassValue": 37.5,
+    "dataAuditInputs": 382,
+    "dataAuditLeaves": 140,
+    "fullHandBeforePassMacros": 766,
+    "fullHandAfterPassMacros": 136,
+    "fullHandCachedInputs": 136,
+    "passMacroCacheHits": 2
+  },
+  "unitLog": "reports/ai-foundation-20261023/opening-plan-unit-v2.log",
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "7ccb37579e04e0dbe13008fa5d508225828fe89aa8b044b2998bf444ae68518d",
+    "randomizer/game/ai/decision-search.js": "8d738a9bf699063a9f05fb17c29391941ec1ffa3d22f092d39b7fe5ae4043e31",
+    "randomizer/game/ai/decision-search.test.js": "22aa9b321d2552088f07e597a1de53b1ae98058fe0f827fbc1d846b8ce5177eb",
+    "randomizer/game/ai/opening-plan.test.js": "0f442be7ad42f3967d584545643d632d5befe932dba2113c48512044ed4a79ea",
+    "randomizer/game/effects/probe-turn-session.js": "fab2b0255a41b7d66f59925e2cda0ef44a684591eca3daf74435adb017ddeda5",
+    "tools/node-test-inventory.js": "ac8dd036f8b2c1069506f1ce3ae90e5e38635d2f5d82e7f75ffe943901d97b2b",
+    "tools/audit_v_state_inputs.js": "65180b69af1b4cf7ed6373e07fd2fb6a0291aca12619a45a15d19bb7002d2583"
+  },
+  "fullOriginalReference": "reports/ai-foundation-20261023/opening-full-reference-v1.json",
+  "fullOriginalReferenceComplete": false,
+  "regressionLog": "reports/ai-foundation-20261023/opening-plan-unit-v1.log",
+  "passMacroCacheHitParity": true
+}

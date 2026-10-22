@@ -1,0 +1,5 @@
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"openingPlan":"passed","results":[{"cardId":null,"value":32.5,"baseline":96,"pruned":47},{"cardId":"dlc_27.png","value":33.5,"baseline":200,"pruned":52},{"cardId":"b_44.webp","value":33.5,"baseline":202,"pruned":52},{"cardId":"b_23.webp","value":33.5,"baseline":226,"pruned":63},{"cardId":"dlc_22.png","value":33.5,"baseline":200,"pruned":52},{"cardId":"b_48.webp","value":33.5,"baseline":202,"pruned":51}],"passPaymentExits":20,"directPassValue":37,"directPassInputs":3,"publicityPassValue":37.5,"dataAuditInputs":382,"dataAuditLeaves":140,"fullHandBeforePassMacros":766,"fullHandAfterPassMacros":136,"fullHandCachedInputs":136,"passMacroCacheHits":2}
+SUMMARY unit passed=2 failed=0 total=2 time=15.39s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=2

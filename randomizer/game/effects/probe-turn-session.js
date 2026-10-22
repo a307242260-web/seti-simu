@@ -37,6 +37,7 @@
   const DOMAIN_ID = "probe_turn";
   const EXECUTOR_ID = `${DOMAIN_ID}:executor:v1`;
   const ACTION_FAMILIES = Object.freeze(["launch", "move", "orbit", "land", "pass", "end_turn"]);
+  const PASS_HAND_LIMIT = 4;
   const EFFECT_TYPES = Object.freeze({
     EXECUTE: "probe_turn_execute",
     MOVE_PAYMENT: "probe_turn_move_payment",
@@ -372,7 +373,7 @@
     // （=九折牌，不进手牌），虫（硫铵虫）等外星牌无豁免。
     const discardCount = Math.max(
       0,
-      (player.hand || []).length - 4,
+      (player.hand || []).length - PASS_HAND_LIMIT,
     );
     if (discardCount) {
       effects.push({
@@ -961,7 +962,7 @@
     return Object.freeze({ actionFamilies: ACTION_FAMILIES, createEffectGroup });
   }
   return Object.freeze({
-    DOMAIN_ID, EXECUTOR_ID, ACTION_FAMILIES, EFFECT_TYPES,
+    DOMAIN_ID, EXECUTOR_ID, ACTION_FAMILIES, EFFECT_TYPES, PASS_HAND_LIMIT,
     DOMAIN_HANDOFF_EFFECT_TYPE, DOMAIN_HANDOFF_SCHEMA_VERSION,
     createActionDefinitions, createProbeTurnDomain, actionContext,
   });
