@@ -6,7 +6,8 @@
 
 首个交付目标是一个覆盖全部决策阶段、能合法结束对局、每步可解释和可重放的基础 AI。
 随后分别建设估值、必要分支搜索和对局评测；计划复用与缓存纳入搜索提速主线。
-本次只交付接口整理与设计，以下新 API 和算法均为待实现方案；硬性要求不是已达标的实测结论。
+实施进度见 [AI 实施记录](ai-implementation-20261022.md)。下文未标为已实现的能力仍属设计；
+硬性要求不是已达标的实测结论。
 
 ## 基础验收要求
 
@@ -77,7 +78,10 @@ function decide({ seatId, observation, legalActions, phase, sessionDecision }) {
 进入算法的数据只取已确认公开的结构化 Decision 信息；不能把整个 session 传进模型。
 同一算法版本、输入和策略随机种子必须得到同一选择。
 
-宿主拟增加按席位注册的 AI factory 和通用 `runAgentDecision`；这两个名字目前不是现有 API。
+现已接入共享 `createAgentDecisionFunction` 和按席位实例化的 factory，Simulation 提供 `runAgentDecision`。
+内置基础 AI 使用 `reset({agentType:"completion"})`；自定义 factory 由
+`createSimulationEnv({agentFactory})` 注入。Browser 通过 bootstrap 的同名 factory 参数注入，
+页面可用 `?agent=completion` 选择基础 AI。基础实现不搜索，coverage 标记为 not-evaluated。
 Browser 与 Simulation 共用 factory、默认配置和算法身份，Simulation 额外记录训练数据。
 重置、加载或更换算法时清空算法临时状态。首版不支持 Promise；未来异步推理增加 requestId、
 generation、deadline、cancel 和 late-response 拒绝后再开放，不能直接把 Promise 塞进当前协调器。

@@ -242,6 +242,41 @@ function makePort(options = {}) {
     assert.equal(coordinatorModule.calls.decisions, 2);
   }
 
+  // 新factory经真实协调器提交，不能调用旧启发式或泄漏session。
+  {
+    const legalActions = [{ schemaVersion: "seti-standard-action-v1", actionId: "pass:p1",
+      actorId: "p1", family: "pass", phase: "main", stateVersion: 1, decisionVersion: 1 }];
+    let submissions = 0;
+    let creations = 0;
+    const port = createBrowserMachinePlayerPort({
+      ruleComposition: makeComposition({ legalActions }),
+      machinePlayerCoordinatorModule: require("../../game/ai/machine-player-coordinator"),
+      heuristicDecisionFunctionModule: { createHeuristicDecisionFunction() { throw new Error("旧AI被调用"); } },
+      agentRuntimeModule: require("../../game/ai/agent-runtime"),
+      agentFactory: () => {
+        creations += 1;
+        return { getProvenance: () => ({ type: "fixture", version: "factory-v1" }),
+          decide(context) {
+            assert.equal(context.sessionDecision, undefined);
+            assert.equal(Object.isFrozen(context.legalActions), true);
+            return { actionId: context.legalActions[0].actionId };
+          } };
+      },
+      inputAdapter: { dispatchAction() { submissions += 1; return { ok: true }; },
+        submitDecision() { throw new Error("非Decision不能走此端口"); } },
+      isMachineSeat: () => true,
+    });
+    const result = await port.runOnce();
+    assert.equal(result.ok, true, result.message);
+    assert.equal(result.agentTrace.policy.type, "fixture");
+    assert.equal(submissions, 1);
+    assert.equal((await port.runOnce()).code, "MACHINE_POLICY_DUPLICATE_SUBMISSION");
+    assert.equal(submissions, 1);
+    port.invalidate("restore");
+    assert.equal((await port.runOnce()).ok, true);
+    assert.equal(creations, 2, "恢复后必须重建算法临时状态");
+  }
+
   // 7) 源码级：Browser 机器席位不再包含第二份搜索拷贝与旧 Host 装配
   {
     const source = fs.readFileSync(path.join(__dirname, "browser-bootstrap.js"), "utf8");

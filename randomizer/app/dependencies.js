@@ -18,6 +18,8 @@
     ["residentRenderer", "SetiBrowserResidentRenderer"],
     ["machinePlayerCoordinator", "SetiMachinePlayerCoordinator"],
     ["heuristicDecisionFunction", "SetiHeuristicDecisionFunction"],
+    ["agentRuntime", "SetiAgentRuntime"],
+    ["completionAgent", "SetiCompletionAgent"],
     ["browserAiBootstrap", "SetiAppAiBrowserBootstrap"],
     ["trajectoryRecorder", "SetiTrajectoryRecorder"],
     ["trajectoryRecording", "SetiBrowserTrajectoryRecording"],

@@ -12,6 +12,8 @@ const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
 const machinePlayerCoordinatorModule = require("../game/ai/machine-player-coordinator");
 const heuristicDecisionFunctionModule = require("../game/ai/heuristic-decision-function");
 const vGuidedDecisionFunctionModule = require("../game/ai/v-guided-decision-function");
+const agentRuntime = require("../game/ai/agent-runtime");
+const completionAgent = require("../game/ai/completion-agent");
 const finalScoring = require("../game/final-scoring");
 const { getWorldVersion } = require("../game/state/fixed-world-config");
 
@@ -99,7 +101,7 @@ function buildObservation(state, seed, viewerPlayerId, legalActions = [], option
   return buildRuleObservation(state, seed, viewerPlayerId, legalActions, options);
 }
 
-function createSimulationEnv() {
+function createSimulationEnv(options = {}) {
   let kernel = null;
   let composition = null;
   let seededRandom = null;
@@ -122,6 +124,7 @@ function createSimulationEnv() {
   let diagnostics = null;
   let machineCoordinator = null;
   let heuristicDecision = null;
+  const agents = new Map();
   let disposed = false;
 
   function recordDuration(key, startedAt) {
@@ -340,6 +343,7 @@ function createSimulationEnv() {
         aiDifficulty: resetConfig.aiDifficulty || "laughable",
         episodeId: resetConfig.episodeId || null,
         policyVersion: resetConfig.policyVersion || null,
+        agentType: resetConfig.agentType || (options.agentFactory ? "custom" : "heuristic"),
         opponentIdentity: resetConfig.opponentIdentity || null,
         seat: resetConfig.seat ?? null,
         offlineTeacher: resetConfig.offlineTeacher === true,
@@ -362,6 +366,11 @@ function createSimulationEnv() {
       vGuidedDiscardSession = null;
       machineCoordinator = null;
       heuristicDecision = null;
+      agents.clear();
+      if (!["heuristic", "completion", "custom"].includes(config.agentType)
+        || (config.agentType === "custom" && typeof options.agentFactory !== "function")) {
+        throw environmentError("AGENT_FACTORY_MISSING", `没有可用的 AI factory: ${config.agentType}`);
+      }
       diagnostics = {
         bootMilliseconds: 0,
         setupSelectionMilliseconds: 0,
@@ -605,6 +614,34 @@ function createSimulationEnv() {
       return this.runHeuristicPolicyDecision(true);
     },
 
+    runAgentDecision() {
+      assertUsable();
+      if (config.agentType === "heuristic") return this.runHeuristicPolicyDecision();
+      this.createCheckpoint();
+      cachedLegal = null;
+      selectors = new Map();
+      const coordinator = ensureCoordinator();
+      const boundary = coordinator.readBoundary(null);
+      const seatId = boundary.seatId;
+      if (!agents.has(seatId)) {
+        const agent = agentRuntime.createAgentDecisionFunction({
+          seatId, config: { agentType: config.agentType },
+          createAgent: config.agentType === "custom" ? options.agentFactory : completionAgent.createCompletionAgent,
+          onDecision: options.onAgentDecision,
+        });
+        agents.set(seatId, agent);
+      }
+      coordinator.registerSeat(seatId, agents.get(seatId).run);
+      machineStepResult = null;
+      const result = coordinator.runDecision(seatId, { reuseEnabled: false });
+      if (!machineStepResult) throw new Error("MACHINE_PLAYER_RECORD_STEP_MISSING");
+      return {
+        ...machineStepResult, policyDecision: result.decision.decision,
+        policyProvenance: agents.get(seatId).getProvenance(),
+        agentTrace: result.decision.agentTrace, actionOutcomes: [], searches: [], plan: null,
+      };
+    },
+
     runHeuristicPolicyDecision(asTeacher = false) {
       assertUsable();
       this.createCheckpoint();
@@ -614,9 +651,7 @@ function createSimulationEnv() {
       const coordinator = ensureCoordinator();
       const probeBoundary = coordinator.readBoundary(null);
       const seatId = probeBoundary.seatId;
-      if (!coordinator.hasSeat(seatId)) {
-        coordinator.registerSeat(seatId, decisionFunction.run);
-      }
+      coordinator.registerSeat(seatId, decisionFunction.run);
       if (asTeacher) {
         // teacher 路径（self-play 录制需要内部数据）：不经协调器复用，直接
         // 读边界 + 决策函数 + env.step 提交，返回原 teacher 形状。
@@ -1077,6 +1112,7 @@ function createSimulationEnv() {
       seededRandom = null;
       machineCoordinator = null;
       heuristicDecision = null;
+      agents.clear();
       selectors = new Map();
       cachedLegal = null;
       lastObservation = null;

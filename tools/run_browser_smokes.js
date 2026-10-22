@@ -288,7 +288,7 @@ async function main() {
     });
     for (const smoke of selectedInventory) {
       uncaughtExceptions = [];
-      const url = `http://127.0.0.1:${server.address().port}/${smoke.file}`;
+      const url = `http://127.0.0.1:${server.address().port}/${smoke.file}${smoke.query ? `?${smoke.query}` : ""}`;
       await cdp.send("Page.navigate", { url });
       const result = smoke.actionExpression
         ? await runInteractiveSmoke(cdp, smoke, () => uncaughtExceptions[0])

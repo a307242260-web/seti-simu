@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = Object.freeze([
+const smokes = [
   Object.freeze({
     id: "production-start-button",
     file: "randomizer/index.html",
@@ -761,4 +761,13 @@ module.exports = Object.freeze([
     obligation: "浏览器内核 lifecycle.save 的 committedState 必须能提供 players/turn/resources（replaySteps after 摘要的状态源）",
     counterexample: "committedState 结构变化导致 after 摘要无法生成",
   }),
-]);
+];
+
+module.exports = Object.freeze([...smokes, Object.freeze({
+  ...smokes.find(smoke => smoke.id === "production-browser-full-parity"),
+  id: "production-completion-agent-parity",
+  file: "randomizer/index.html",
+  query: "agent=completion",
+  obligation: "新completion AI在真实页面经共享factory完成初始选择、正式提交和保存恢复",
+  counterexample: "新AI脚本未装配、绕过协调器提交或恢复后仍复用旧算法状态",
+})]);

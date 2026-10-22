@@ -48,6 +48,9 @@
       inputAdapter,
       isMachineSeat,
       machineConfig,
+      agentFactory,
+      agentRuntimeModule,
+      onAgentDecision,
     } = options;
     if (!ruleComposition?.inspect || !ruleComposition?.inputPort?.enumerateActions
       || typeof ruleComposition?.projection !== "function"
@@ -65,6 +68,7 @@
     let lastDiagnostics = null;
     let coordinator = null;
     let decisionFunction = null;
+    const agents = new Map();
     let submittedCount = 0; // 成功提交计数（含方案/复用路径），供 inspect 与 smoke 断言
     let lastSubmittedKey = null; // 去重：seatId:stateVersion:decisionVersion:kind:decisionId
 
@@ -81,7 +85,19 @@
     // 一份 Heuristic 决策函数（与 Simulation 同一份实现、同一 config 源）：
     // traceCounterfactualGoalClusters /
     // vStateValueEnabled 等开关与 sim 完全一致地透传（搜索机制统一，无分桶开关）。
-    function ensureDecisionFunction() {
+    function ensureDecisionFunction(seatId) {
+      if (agentFactory) {
+        if (typeof agentFactory !== "function" || !agentRuntimeModule?.createAgentDecisionFunction) {
+          throw new TypeError("AGENT_FACTORY_INVALID: Browser 需要 agentFactory/agentRuntime");
+        }
+        if (!agents.has(seatId)) {
+          agents.set(seatId, agentRuntimeModule.createAgentDecisionFunction({
+            seatId, createAgent: agentFactory, config: { agentType: config.agentType || "custom" },
+            onDecision: onAgentDecision,
+          }));
+        }
+        return agents.get(seatId);
+      }
       if (!decisionFunction) {
         decisionFunction = heuristicDecisionFunctionModule.createHeuristicDecisionFunction({
           composition: ruleComposition,
@@ -173,8 +189,8 @@
           throw error;
         }
         const activeCoordinator = ensureCoordinator();
-        const activeDecision = ensureDecisionFunction();
         const probeBoundary = activeCoordinator.readBoundary(seatId);
+        const activeDecision = ensureDecisionFunction(probeBoundary.seatId);
         if (!activeCoordinator.hasSeat(probeBoundary.seatId)) {
           activeCoordinator.registerSeat(probeBoundary.seatId, activeDecision.run);
         }
@@ -194,7 +210,7 @@
           return lastResult;
         }
         const result = activeCoordinator.runDecision(probeBoundary.seatId, {
-          reuseEnabled: config.planContinuationReuse !== false,
+          reuseEnabled: !agentFactory && config.planContinuationReuse !== false,
         });
         lastSubmittedKey = dedupeKey;
         submittedCount += 1;
@@ -209,6 +225,7 @@
             ? {
               policyDecision: result.decision.decision,
               actionOutcomes: result.decision.actionOutcomes || [],
+              ...(result.decision.agentTrace ? { agentTrace: result.decision.agentTrace } : {}),
             }
             : {
               policyDecision: {
@@ -246,6 +263,7 @@
       generation += 1;
       coordinator = null;
       decisionFunction = null;
+      agents.clear();
       lastResult = null;
       lastSubmittedKey = null;
       lastOutcomeSummary = null;
@@ -283,6 +301,9 @@
       inputAdapter,
       isMachineSeat,
       machineConfig,
+      agentFactory,
+      agentRuntimeModule,
+      onAgentDecision,
     } = context;
     const machinePlayerPort = createBrowserMachinePlayerPort({
       ruleComposition,
@@ -291,6 +312,9 @@
       inputAdapter,
       isMachineSeat,
       machineConfig,
+      agentFactory,
+      agentRuntimeModule,
+      onAgentDecision,
     });
     ruleComposition.subscribe((event) => {
       if (event?.source === "lifecycle") {

@@ -10,6 +10,8 @@
     inputAdapter,
     machinePlayerCoordinator: machinePlayerCoordinatorModule,
     heuristicDecisionFunction: heuristicDecisionFunctionModule,
+    agentRuntime: agentRuntimeModule,
+    completionAgent,
     browserAiBootstrap,
     trajectoryRecorder,
     trajectoryRecording: trajectoryRecordingModule,
@@ -969,15 +971,23 @@
   const browserMachineFlags = (typeof URLSearchParams === "function"
     ? new URLSearchParams(window.location.search)
     : new URLSearchParams(""));
+  const browserAgentType = browserMachineFlags.get("agent") || "heuristic";
+  if (!["heuristic", "completion"].includes(browserAgentType)) {
+    throw new Error(`未知 AI 类型: ${browserAgentType}`);
+  }
   const browserAi = browserAiBootstrap.createBrowserAiBootstrap({
     ruleComposition,
     machinePlayerCoordinatorModule,
     heuristicDecisionFunctionModule,
+    agentRuntimeModule,
+    agentFactory: browserAgentType === "completion"
+      ? completionAgent.createCompletionAgent : null,
     inputAdapter: residentInput,
     isMachineSeat: (seatId) => (
       humanSeat.playerId != null && String(seatId) !== String(humanSeat.playerId)
     ),
     machineConfig: {
+      agentType: browserAgentType,
       // 惰性读取：决策函数在首个 runOnce（startNewGame 之后）创建，
       // 新游戏时 invalidate 丢弃重建，难度切换随之生效。
       get difficulty() { return aiDifficulty; },

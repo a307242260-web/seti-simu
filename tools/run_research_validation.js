@@ -41,6 +41,7 @@ const crypto = require("node:crypto");
 const { execFileSync } = require("node:child_process");
 const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 const heuristicPolicy = require("../randomizer/game/ai/heuristic-policy");
+const completionAgent = require("../randomizer/game/ai/completion-agent");
 const { createStepProgressReporter } = require("./progress");
 const { buildWorldIdentity } = require("./fixed-world-identity");
 
@@ -96,8 +97,8 @@ function parseConfig(raw) {
     if (eq <= 0) throw new Error(`--config 需要 k=v 格式：${pair}`);
     const key = pair.slice(0, eq).trim();
     const value = pair.slice(eq + 1).trim();
-    if (!FLAG_KEYS.includes(key) && !["aiDifficulty", "activePlayerCount"].includes(key)) {
-      throw new Error(`未知配置键：${key}（允许：${[...FLAG_KEYS, "aiDifficulty", "activePlayerCount"].join(", ")}）`);
+    if (!FLAG_KEYS.includes(key) && !["aiDifficulty", "activePlayerCount", "agentType"].includes(key)) {
+      throw new Error(`未知配置键：${key}（允许：${[...FLAG_KEYS, "aiDifficulty", "activePlayerCount", "agentType"].join(", ")}）`);
     }
     config[key] = value === "true" ? true
       : value === "false" ? false
@@ -109,17 +110,20 @@ function parseConfig(raw) {
 
 function buildIdentity(options) {
   const config = { ...options.config };
+  const agentType = config.agentType || "heuristic";
+  if (!["heuristic", "completion"].includes(agentType)) throw new Error(`未知 AI 类型: ${agentType}`);
   const identity = {
     seed: options.seed || DEFAULT_SEED,
     activePlayerCount: Number(config.activePlayerCount || 4),
     aiDifficulty: config.aiDifficulty || "laughable",
-    policyVersion: POLICY_VERSION,
+    policyVersion: agentType === "completion" ? completionAgent.VERSION : POLICY_VERSION,
     flags: {},
     gitCommit: gitCommit() || "dirty",
   };
   for (const key of FLAG_KEYS) {
     if (config[key] !== undefined) identity.flags[key] = config[key];
   }
+  if (agentType !== "heuristic") identity.agentType = agentType;
   identity.world = buildWorldIdentity(identity);
   return identity;
 }
@@ -132,6 +136,7 @@ function fingerprintOf(identity) {
   // 记录天然隔离（2026-08-20 缺陷修复——此前指纹不含 commit，行为变化会静默
   // 覆盖旧记录或拒绝重跑，无法追溯每条记录对应的精确代码版本）。
   payload.gitCommit = identity.gitCommit || "dirty";
+  if (identity.agentType) payload.agentType = identity.agentType;
   payload.world = identity.world;
   return sha256(stableSerialize(payload));
 }
@@ -404,6 +409,7 @@ function runValidation(options) {
     activePlayerCount: identity.activePlayerCount,
     aiDifficulty: identity.aiDifficulty,
     policyVersion: identity.policyVersion,
+    agentType: identity.agentType || "heuristic",
     episodeId: `research-${options.name || fingerprint.slice(0, 8)}-${Date.now()}`,
     ...identity.flags,
   };
@@ -413,6 +419,8 @@ function runValidation(options) {
   let steps = 0;
   let terminal = false;
   let savePath = null;
+  const agentTracePath = identity.agentType ? `${recordPath}.decisions.jsonl` : null;
+  if (agentTracePath) fs.mkdirSync(RECORDS_DIR, { recursive: true });
 
   try {
     if (resumedFrom) {
@@ -432,7 +440,8 @@ function runValidation(options) {
     while (!env.isTerminal() && steps < limit) {
       const obsBefore = env.observe();
       const seat = obsBefore?.decision?.actorPlayerId || null;
-      const result = env.runHeuristicPolicyDecision();
+      const result = env.runAgentDecision();
+      if (agentTracePath) fs.appendFileSync(agentTracePath, `${JSON.stringify(result.agentTrace)}\n`, "utf8");
       steps += 1;
       collectStep(collector, steps, result);
       collectBudgetHits(collector, steps, result);
@@ -483,6 +492,9 @@ function runValidation(options) {
       world: identity.world,
       aiDifficulty: identity.aiDifficulty,
       policyVersion: identity.policyVersion,
+      ...(identity.agentType ? { agentType: identity.agentType,
+        agentTracePath: path.relative(path.join(__dirname, ".."), agentTracePath),
+        searchCoverage: "not-evaluated" } : {}),
       flags: identity.flags,
       createdAt: new Date().toISOString(),
       gitCommit: gitCommit(),
