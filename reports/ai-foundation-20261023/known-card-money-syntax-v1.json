@@ -1,0 +1,20 @@
+{
+  "passed": [
+    "randomizer/game/ai/analysis-port.js",
+    "randomizer/game/ai/decision-search.js",
+    "randomizer/game/ai/known-card-money.test.js",
+    "tools/node-test-inventory.js",
+    "tools/audit_v_state_inputs.js",
+    "adhoc/profile-ai-late-cold-20261023-v5.js",
+    "adhoc/audit-ai-decision-corpus-20261023-v13.js"
+  ],
+  "sha256": {
+    "randomizer/game/ai/analysis-port.js": "16fee592356cdd5e180434ad6a9086edc806c44b47314007ec1db5b899805592",
+    "randomizer/game/ai/decision-search.js": "86ca260cb1fdbc48ce03b6d87bd330091c3d89792c5b165cd08a10161fe5a32c",
+    "randomizer/game/ai/known-card-money.test.js": "23be067184855be420e8406ea0a0216d5d4af79df69529c129630c6b9849856e",
+    "tools/node-test-inventory.js": "90c69a7bf4b388242d2c2a733958f2c15294559fa952db6d24ddd0149d196f77",
+    "tools/audit_v_state_inputs.js": "7bf99c6ce4cd45a2d295dea3ea04e5e2ea3b8e842f071028442147a8724139bb",
+    "adhoc/profile-ai-late-cold-20261023-v5.js": "c8e17be9022fa99ab360f7772653e5f061a1541cccb1dafcb4c5e06dc5434458",
+    "adhoc/audit-ai-decision-corpus-20261023-v13.js": "1776fe6d9771ae0df316c8e19b472da6a03b6d6fc0d6da32bc4399944f4bb271"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "seti-state-value-input-audit-v19",
+  "baseCommit": "aca68bea6d95f5247b0026492745f69eb5124b74",
+  "exitCode": 1,
+  "allNewKnownCardMoneyPathsPassed": true,
+  "newPaths": [
+    "[PASS] independent-known-card-money: case=062 root=44.5 poor=42.5",
+    "[PASS] independent-known-card-money: case=105 root=40 poor=38",
+    "[PASS] independent-known-card-money: case=152 root=32.5 poor=30.5"
+  ],
+  "knownLegacyFailures": [
+    "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+  ],
+  "log": "reports/ai-foundation-20261023/state-value-input-audit-v19.log",
+  "sourceHashes": {
+    "tools/audit_v_state_inputs.js": "7bf99c6ce4cd45a2d295dea3ea04e5e2ea3b8e842f071028442147a8724139bb",
+    "randomizer/game/ai/analysis-port.js": "16fee592356cdd5e180434ad6a9086edc806c44b47314007ec1db5b899805592",
+    "randomizer/game/ai/decision-search.js": "86ca260cb1fdbc48ce03b6d87bd330091c3d89792c5b165cd08a10161fe5a32c",
+    "randomizer/game/ai/state-value.js": "31f0718b2723190ec318262ae28241249ca0c2f3eafd36d0c22d9862c396d4cd"
+  }
+}

@@ -1,0 +1,2099 @@
+{
+  "scope": "three previously incomplete late checkpoints, existing 256-input cold budget, public descriptor shape and proof applicability profile only; no full games or score grade",
+  "budget": {
+    "transitions": 256,
+    "nodes": 257,
+    "frontier": 256,
+    "milliseconds": 600
+  },
+  "rows": [
+    {
+      "id": "062",
+      "fixturePath": "adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json",
+      "fixtureSha256": "e76dc0b1b72a00a07ae1e69c02ae3b0a2ad07ec4bc2702a8076ef4eaf6b82795",
+      "complete": false,
+      "stopReason": "transition-budget",
+      "milliseconds": 451.44333299999994,
+      "diagnostics": {
+        "transitions": 256,
+        "nodes": 185,
+        "equivalents": 12,
+        "selectionMacros": 30,
+        "peakFrontier": 150,
+        "dominancePrunes": 1,
+        "resourceDominance": "enabled",
+        "moneyCapacityPrunes": 0,
+        "moneyCapacityDominance": "enabled",
+        "cardTradePrunes": 0,
+        "cardTradePruning": "enabled",
+        "postMainProofNodes": 0,
+        "postMainExcludedActions": 0,
+        "postMainPruning": "enabled",
+        "openingProofNodes": 0,
+        "openingExcludedActions": 0,
+        "openingPruning": "enabled",
+        "openingPassMacros": 0,
+        "cardChoiceProofNodes": 0,
+        "cardChoiceExcludedActions": 0,
+        "cardChoiceEquivalence": "enabled",
+        "resourceModelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+        "continuation": "not-requested",
+        "planContinuation": "not-requested",
+        "milliseconds": 451.122208,
+        "limits": {
+          "transitions": 256,
+          "nodes": 257,
+          "frontier": 256,
+          "milliseconds": 600
+        }
+      },
+      "port": {
+        "nodeCount": 197,
+        "submissionCount": 256,
+        "cacheHits": 0,
+        "cacheEntries": 0,
+        "observationCount": 15,
+        "identityCount": 185,
+        "maxCacheEntries": 0,
+        "decodedStateCacheEntries": 1,
+        "maxDecodedStateCacheEntries": 1,
+        "selectionEvidenceEntries": 0,
+        "maxSelectionEvidenceEntries": 1,
+        "planEvidenceEntries": 0,
+        "planPrefixEntries": 0,
+        "maxPlanPrefixEntries": 32,
+        "milliseconds": {
+          "restore": 74.09879199999963,
+          "execute": 120.52786499999915,
+          "observation": 20.798583999999863,
+          "checkpoint": 45.20133299999969,
+          "resourceOrder": 32.787411999999705,
+          "valueBound": 0.20583300000006943,
+          "postMainPlan": 1.7097910000000667
+        }
+      },
+      "company": "图灵系统",
+      "publicRoot": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 3,
+          "energy": 2,
+          "handSize": 5,
+          "publicity": 1,
+          "score": 17
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 1,
+          "credits": 3,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-3-0",
+            "cardId": "dlc_23.png"
+          },
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-24-pass-1-5",
+            "cardId": "dlc_5.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-53-0",
+            "cardId": "b_10.webp"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-36-0",
+            "cardId": "b_71.webp"
+          }
+        ],
+        "tech": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {
+            "orange4": true
+          }
+        }
+      },
+      "calls": {
+        "[\"stable\",\"scan\",\"standard-scan\",null,[\"kind\"],[],null]": {
+          "count": 2,
+          "milliseconds": 5.87541699999997,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "childStatuses": {
+            "decision": 2
+          }
+        },
+        "[\"stable\",\"play_card\",null,null,[\"cardInstanceId\"],[\"cost\",\"handIndex\"],null]": {
+          "count": 13,
+          "milliseconds": 29.269708000000122,
+          "target": {
+            "cardInstanceId": "card-3-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 1
+            },
+            "handIndex": 0
+          },
+          "childStatuses": {
+            "stable": 8,
+            "decision": 5
+          }
+        },
+        "[\"stable\",\"pass\",\"pass\",null,[\"kind\"],[],null]": {
+          "count": 3,
+          "milliseconds": 4.876874000000015,
+          "target": {
+            "kind": "pass"
+          },
+          "payload": {},
+          "childStatuses": {
+            "decision": 3
+          }
+        },
+        "[\"stable\",\"move\",null,null,[\"deltaX\",\"deltaY\",\"rocketId\"],[\"direction\",\"requiredMovePoints\"],null]": {
+          "count": 18,
+          "milliseconds": 41.408124000000214,
+          "target": {
+            "rocketId": 5,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "childStatuses": {
+            "decision": 18
+          }
+        },
+        "[\"stable\",\"quick_trade\",null,null,[\"tradeId\"],[\"cost\",\"gain\"],null]": {
+          "count": 41,
+          "milliseconds": 78.19750100000024,
+          "target": {
+            "tradeId": "credits-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "childStatuses": {
+            "stable": 9,
+            "decision": 32
+          }
+        },
+        "[\"stable\",\"industry\",null,null,[\"abilityId\",\"companyId\"],[],null]": {
+          "count": 6,
+          "milliseconds": 8.008335000000045,
+          "target": {
+            "companyId": "图灵系统",
+            "abilityId": "turing_borrow_tech"
+          },
+          "payload": {},
+          "childStatuses": {
+            "decision": 6
+          }
+        },
+        "[\"stable\",\"card_corner\",null,null,[\"cardInstanceId\"],[\"kind\",\"multiplier\"],\"move\"]": {
+          "count": 15,
+          "milliseconds": 21.742999000000054,
+          "target": {
+            "cardInstanceId": "card-3-0"
+          },
+          "payload": {
+            "kind": "move",
+            "multiplier": 1
+          },
+          "childStatuses": {
+            "decision": 15
+          }
+        },
+        "[\"stable\",\"card_corner\",null,null,[\"cardInstanceId\"],[\"kind\",\"multiplier\"],\"resource\"]": {
+          "count": 12,
+          "milliseconds": 22.75274799999994,
+          "target": {
+            "cardInstanceId": "card-40-0"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "childStatuses": {
+            "stable": 12
+          }
+        },
+        "[\"stable\",\"place_data\",\"place-data\",null,[\"kind\"],[],null]": {
+          "count": 6,
+          "milliseconds": 7.744707999999861,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "childStatuses": {
+            "decision": 6
+          }
+        },
+        "[\"decision\",\"choose_target\",null,\"nebula\",[\"choiceId\",\"nebulaId\",\"sectorX\"],[\"gainData\"],null]": {
+          "count": 1,
+          "milliseconds": 1.8632090000000119,
+          "target": {
+            "choiceId": "nebula:sector-2-a",
+            "nebulaId": "sector-2-a",
+            "sectorX": 1
+          },
+          "payload": {
+            "gainData": true
+          },
+          "childStatuses": {
+            "decision": 1
+          }
+        },
+        "[\"stable\",\"end_turn\",\"end-turn\",null,[\"kind\"],[],null]": {
+          "count": 3,
+          "milliseconds": 5.672249999999991,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "childStatuses": {
+            "other-owner": 3
+          }
+        },
+        "[\"decision\",\"choose_target\",null,\"5\",[\"choiceId\",\"deltaX\",\"deltaY\",\"rocketId\"],[\"remaining\",\"requiredMovePoints\"],null]": {
+          "count": 9,
+          "milliseconds": 17.390503000000052,
+          "target": {
+            "choiceId": "5:0:1",
+            "rocketId": 5,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 5
+          },
+          "childStatuses": {
+            "decision": 3,
+            "stable": 6
+          }
+        },
+        "[\"decision\",\"choose_target\",null,\"skip\",[\"choiceId\",\"skip\"],[\"remaining\"],null]": {
+          "count": 3,
+          "milliseconds": 5.599290999999994,
+          "target": {
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {
+            "remaining": 5
+          },
+          "childStatuses": {
+            "stable": 3
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-3-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.043542000000002,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-3-0",
+            "cardIds": [
+              "card-3-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 1
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-40-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.5371250000000032,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-40-0",
+            "cardIds": [
+              "card-40-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 1
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-24-pass-1-5\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.3749589999999898,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-24-pass-1-5",
+            "cardIds": [
+              "card-24-pass-1-5"
+            ]
+          },
+          "payload": {
+            "discardCount": 1
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-52-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.3817909999999642,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-52-0",
+            "cardIds": [
+              "card-52-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 1
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-53-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.2892499999999814,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-53-0",
+            "cardIds": [
+              "card-53-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 1
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_payment\",\"move-payment\",\"energy\",[\"cardIds\",\"choiceId\",\"kind\"],[\"energyCost\",\"requiredMovePoints\"],null]": {
+          "count": 3,
+          "milliseconds": 6.191750000000013,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          },
+          "childStatuses": {
+            "stable": 3
+          }
+        },
+        "[\"decision\",\"choose_payment\",\"move-payment\",\"card-3-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"energyCost\",\"requiredMovePoints\"],null]": {
+          "count": 3,
+          "milliseconds": 6.147375000000068,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-3-0",
+            "cardIds": [
+              "card-3-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "childStatuses": {
+            "stable": 3
+          }
+        },
+        "[\"decision\",\"choose_payment\",\"move-payment\",\"card-52-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"energyCost\",\"requiredMovePoints\"],null]": {
+          "count": 3,
+          "milliseconds": 6.455750999999964,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-52-0",
+            "cardIds": [
+              "card-52-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "childStatuses": {
+            "stable": 3
+          }
+        },
+        "[\"decision\",\"choose_payment\",\"move-payment\",\"card-53-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"energyCost\",\"requiredMovePoints\"],null]": {
+          "count": 3,
+          "milliseconds": 5.513834000000031,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-53-0",
+            "cardIds": [
+              "card-53-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "childStatuses": {
+            "stable": 3
+          }
+        },
+        "[\"decision\",\"choose_card\",\"trade-card-selection\",\"public\",[\"cardInstanceId\",\"choiceId\",\"kind\",\"slotIndex\",\"source\"],[\"slotIndex\"],null]": {
+          "count": 6,
+          "milliseconds": 10.817041999999901,
+          "target": {
+            "kind": "trade-card-selection",
+            "choiceId": "public:0",
+            "source": "public",
+            "slotIndex": 0,
+            "cardInstanceId": "card-46-0"
+          },
+          "payload": {
+            "slotIndex": 0
+          },
+          "childStatuses": {
+            "information-barrier": 6
+          }
+        },
+        "selection-macro": {
+          "count": 30,
+          "submissions": 90,
+          "milliseconds": 72.32395600000001
+        },
+        "[\"decision\",\"choose_target\",\"quick-move\",\"move\",[\"choiceId\",\"deltaX\",\"deltaY\",\"direction\",\"kind\",\"rocketId\"],[\"direction\"],null]": {
+          "count": 3,
+          "milliseconds": 6.302166000000057,
+          "target": {
+            "kind": "quick-move",
+            "choiceId": "move:5:out",
+            "rocketId": 5,
+            "deltaX": 0,
+            "deltaY": 1,
+            "direction": "out"
+          },
+          "payload": {
+            "direction": "out"
+          },
+          "childStatuses": {
+            "stable": 3
+          }
+        },
+        "[\"decision\",\"choose_target\",\"residual-domain\",\"tech\",[\"choiceId\",\"kind\",\"tileId\"],[],null]": {
+          "count": 8,
+          "milliseconds": 14.079292000000123,
+          "target": {
+            "kind": "residual-domain",
+            "choiceId": "tech:orange1",
+            "tileId": "orange1"
+          },
+          "payload": {},
+          "childStatuses": {
+            "stable": 8
+          }
+        }
+      },
+      "proofs": {
+        "postMainPlanSpec": {
+          "checked": 70,
+          "supported": 0
+        },
+        "openingPlanSpec": {
+          "checked": 70,
+          "supported": 0
+        },
+        "openingMoneyCapacity": {
+          "checked": 153,
+          "supported": 0
+        },
+        "postMainResourceOrder": {
+          "checked": 153,
+          "supported": 0
+        },
+        "openingResourceOrder": {
+          "checked": 153,
+          "supported": 0
+        },
+        "knownCardMoneyOrder": {
+          "checked": 153,
+          "supported": 70
+        },
+        "cardTradeBound": {
+          "checked": 14,
+          "supported": 0
+        },
+        "passReserveChoiceSpec": {
+          "checked": 1,
+          "supported": 0
+        }
+      },
+      "rootUnchanged": true,
+      "rawPath": "adhoc/ai-decision-corpus-20261023-v1/late-profile-case-062-v5.raw.json",
+      "rawSha256": "fc1833e14806f7b25984975d2b38098af94773b63ebba8880c40c49ab36d3cdd"
+    },
+    {
+      "id": "105",
+      "fixturePath": "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json",
+      "fixtureSha256": "840d7625dd80b5a0186133b4aabc25fec65dd55aa79e1b82da9d733be2e5cb6c",
+      "complete": false,
+      "stopReason": "transition-budget",
+      "milliseconds": 436.88195800000005,
+      "diagnostics": {
+        "transitions": 256,
+        "nodes": 182,
+        "equivalents": 1,
+        "selectionMacros": 37,
+        "peakFrontier": 144,
+        "dominancePrunes": 1,
+        "resourceDominance": "enabled",
+        "moneyCapacityPrunes": 0,
+        "moneyCapacityDominance": "enabled",
+        "cardTradePrunes": 0,
+        "cardTradePruning": "enabled",
+        "postMainProofNodes": 0,
+        "postMainExcludedActions": 0,
+        "postMainPruning": "enabled",
+        "openingProofNodes": 0,
+        "openingExcludedActions": 0,
+        "openingPruning": "enabled",
+        "openingPassMacros": 0,
+        "cardChoiceProofNodes": 0,
+        "cardChoiceExcludedActions": 0,
+        "cardChoiceEquivalence": "enabled",
+        "resourceModelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+        "continuation": "not-requested",
+        "planContinuation": "not-requested",
+        "milliseconds": 436.86350000000004,
+        "limits": {
+          "transitions": 256,
+          "nodes": 257,
+          "frontier": 256,
+          "milliseconds": 600
+        }
+      },
+      "port": {
+        "nodeCount": 183,
+        "submissionCount": 256,
+        "cacheHits": 0,
+        "cacheEntries": 0,
+        "observationCount": 22,
+        "identityCount": 182,
+        "maxCacheEntries": 0,
+        "decodedStateCacheEntries": 1,
+        "maxDecodedStateCacheEntries": 1,
+        "selectionEvidenceEntries": 0,
+        "maxSelectionEvidenceEntries": 1,
+        "planEvidenceEntries": 0,
+        "planPrefixEntries": 0,
+        "maxPlanPrefixEntries": 32,
+        "milliseconds": {
+          "restore": 72.86942300000078,
+          "execute": 113.94378800000095,
+          "observation": 28.695917000000463,
+          "checkpoint": 44.80379000000005,
+          "resourceOrder": 31.72296999999935,
+          "valueBound": 0.11379199999987577,
+          "postMainPlan": 1.8840849999995726
+        }
+      },
+      "company": "图灵系统",
+      "publicRoot": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 6,
+          "credits": 3,
+          "energy": 2,
+          "handSize": 6,
+          "publicity": 3,
+          "score": 17
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 1,
+          "credits": 3,
+          "energy": 2,
+          "handSize": 2,
+          "publicity": 0
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-24-pass-1-5",
+            "cardId": "dlc_5.png"
+          },
+          {
+            "id": "card-26-pass-2-2",
+            "cardId": "b_78.webp"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-36-0",
+            "cardId": "b_71.webp"
+          },
+          {
+            "id": "card-3-0",
+            "cardId": "dlc_23.png"
+          },
+          {
+            "id": "card-53-0",
+            "cardId": "b_10.webp"
+          }
+        ],
+        "tech": {
+          "blueBoardSlots": {},
+          "disabledTiles": {},
+          "ownedTiles": {
+            "orange4": true
+          }
+        }
+      },
+      "calls": {
+        "[\"stable\",\"scan\",\"standard-scan\",null,[\"kind\"],[],null]": {
+          "count": 2,
+          "milliseconds": 3.1139579999999114,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "childStatuses": {
+            "decision": 2
+          }
+        },
+        "[\"stable\",\"play_card\",null,null,[\"cardInstanceId\"],[\"cost\",\"handIndex\"],null]": {
+          "count": 9,
+          "milliseconds": 18.41695699999991,
+          "target": {
+            "cardInstanceId": "card-40-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "handIndex": 0
+          },
+          "childStatuses": {
+            "decision": 5,
+            "stable": 4
+          }
+        },
+        "[\"stable\",\"pass\",\"pass\",null,[\"kind\"],[],null]": {
+          "count": 2,
+          "milliseconds": 3.484083000000055,
+          "target": {
+            "kind": "pass"
+          },
+          "payload": {},
+          "childStatuses": {
+            "decision": 2
+          }
+        },
+        "[\"stable\",\"move\",null,null,[\"deltaX\",\"deltaY\",\"rocketId\"],[\"direction\",\"requiredMovePoints\"],null]": {
+          "count": 15,
+          "milliseconds": 22.473414999999818,
+          "target": {
+            "rocketId": 5,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "childStatuses": {
+            "decision": 15
+          }
+        },
+        "[\"stable\",\"quick_trade\",null,null,[\"tradeId\"],[\"cost\",\"gain\"],null]": {
+          "count": 39,
+          "milliseconds": 75.89020499999992,
+          "target": {
+            "tradeId": "credits-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "childStatuses": {
+            "stable": 7,
+            "decision": 32
+          }
+        },
+        "[\"stable\",\"industry\",null,null,[\"abilityId\",\"companyId\"],[],null]": {
+          "count": 5,
+          "milliseconds": 8.080790999999977,
+          "target": {
+            "companyId": "图灵系统",
+            "abilityId": "turing_borrow_tech"
+          },
+          "payload": {},
+          "childStatuses": {
+            "decision": 5
+          }
+        },
+        "[\"stable\",\"card_corner\",null,null,[\"cardInstanceId\"],[\"kind\",\"multiplier\"],\"resource\"]": {
+          "count": 19,
+          "milliseconds": 39.37216699999999,
+          "target": {
+            "cardInstanceId": "card-40-0"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "childStatuses": {
+            "stable": 19
+          }
+        },
+        "[\"stable\",\"card_corner\",null,null,[\"cardInstanceId\"],[\"kind\",\"multiplier\"],\"move\"]": {
+          "count": 8,
+          "milliseconds": 12.447583999999779,
+          "target": {
+            "cardInstanceId": "card-52-0"
+          },
+          "payload": {
+            "kind": "move",
+            "multiplier": 1
+          },
+          "childStatuses": {
+            "decision": 8
+          }
+        },
+        "[\"stable\",\"place_data\",\"place-data\",null,[\"kind\"],[],null]": {
+          "count": 5,
+          "milliseconds": 6.842667000000006,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "childStatuses": {
+            "decision": 5
+          }
+        },
+        "[\"decision\",\"choose_target\",null,\"nebula\",[\"choiceId\",\"nebulaId\",\"sectorX\"],[\"gainData\"],null]": {
+          "count": 1,
+          "milliseconds": 1.34274999999991,
+          "target": {
+            "choiceId": "nebula:sector-1-a",
+            "nebulaId": "sector-1-a",
+            "sectorX": 5
+          },
+          "payload": {
+            "gainData": true
+          },
+          "childStatuses": {
+            "decision": 1
+          }
+        },
+        "[\"decision\",\"choose_target\",null,\"5\",[\"choiceId\",\"deltaX\",\"deltaY\",\"rocketId\"],[\"remaining\",\"requiredMovePoints\"],null]": {
+          "count": 6,
+          "milliseconds": 10.149210000000267,
+          "target": {
+            "choiceId": "5:0:1",
+            "rocketId": 5,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 5
+          },
+          "childStatuses": {
+            "decision": 4,
+            "stable": 2
+          }
+        },
+        "[\"decision\",\"choose_target\",null,\"skip\",[\"choiceId\",\"skip\"],[\"remaining\"],null]": {
+          "count": 2,
+          "milliseconds": 4.22158300000001,
+          "target": {
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {
+            "remaining": 5
+          },
+          "childStatuses": {
+            "stable": 2
+          }
+        },
+        "[\"stable\",\"end_turn\",\"end-turn\",null,[\"kind\"],[],null]": {
+          "count": 3,
+          "milliseconds": 6.18071000000009,
+          "target": {
+            "kind": "end-turn"
+          },
+          "payload": {},
+          "childStatuses": {
+            "other-owner": 3
+          }
+        },
+        "[\"decision\",\"choose_reward\",null,\"pay\",[\"choiceId\",\"pay\"],[],null]": {
+          "count": 1,
+          "milliseconds": 1.5275000000000318,
+          "target": {
+            "choiceId": "pay",
+            "pay": true
+          },
+          "payload": {},
+          "childStatuses": {
+            "decision": 1
+          }
+        },
+        "[\"decision\",\"choose_reward\",null,\"skip\",[\"choiceId\",\"skip\"],[],null]": {
+          "count": 1,
+          "milliseconds": 1.6860419999999294,
+          "target": {
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {},
+          "childStatuses": {
+            "stable": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-40-0|card-52-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.6107909999999492,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-40-0|card-52-0",
+            "cardIds": [
+              "card-40-0",
+              "card-52-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-40-0|card-24-pass-1-5\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.6180830000000697,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-40-0|card-24-pass-1-5",
+            "cardIds": [
+              "card-40-0",
+              "card-24-pass-1-5"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-40-0|card-26-pass-2-2\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.646833000000015,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-40-0|card-26-pass-2-2",
+            "cardIds": [
+              "card-40-0",
+              "card-26-pass-2-2"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-40-0|card-65-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.5432080000000497,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-40-0|card-65-0",
+            "cardIds": [
+              "card-40-0",
+              "card-65-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-40-0|card-66-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.451750000000061,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-40-0|card-66-0",
+            "cardIds": [
+              "card-40-0",
+              "card-66-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-52-0|card-24-pass-1-5\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.4268329999999878,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-52-0|card-24-pass-1-5",
+            "cardIds": [
+              "card-52-0",
+              "card-24-pass-1-5"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-52-0|card-26-pass-2-2\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.449124999999981,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-52-0|card-26-pass-2-2",
+            "cardIds": [
+              "card-52-0",
+              "card-26-pass-2-2"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-52-0|card-65-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.4455000000000382,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-52-0|card-65-0",
+            "cardIds": [
+              "card-52-0",
+              "card-65-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-52-0|card-66-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.5334589999999935,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-52-0|card-66-0",
+            "cardIds": [
+              "card-52-0",
+              "card-66-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-24-pass-1-5|card-26-pass-2-2\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.5402920000000222,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-24-pass-1-5|card-26-pass-2-2",
+            "cardIds": [
+              "card-24-pass-1-5",
+              "card-26-pass-2-2"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-24-pass-1-5|card-65-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.4518339999999625,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-24-pass-1-5|card-65-0",
+            "cardIds": [
+              "card-24-pass-1-5",
+              "card-65-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-24-pass-1-5|card-66-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.344082999999955,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-24-pass-1-5|card-66-0",
+            "cardIds": [
+              "card-24-pass-1-5",
+              "card-66-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-26-pass-2-2|card-65-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.4631250000001046,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-26-pass-2-2|card-65-0",
+            "cardIds": [
+              "card-26-pass-2-2",
+              "card-65-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-26-pass-2-2|card-66-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.463292000000024,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-26-pass-2-2|card-66-0",
+            "cardIds": [
+              "card-26-pass-2-2",
+              "card-66-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-65-0|card-66-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 1.4552090000000817,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-65-0|card-66-0",
+            "cardIds": [
+              "card-65-0",
+              "card-66-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_payment\",\"move-payment\",\"energy\",[\"cardIds\",\"choiceId\",\"kind\"],[\"energyCost\",\"requiredMovePoints\"],null]": {
+          "count": 3,
+          "milliseconds": 6.564750999999887,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          },
+          "childStatuses": {
+            "stable": 2,
+            "decision": 1
+          }
+        },
+        "[\"decision\",\"choose_payment\",\"move-payment\",\"card-52-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"energyCost\",\"requiredMovePoints\"],null]": {
+          "count": 3,
+          "milliseconds": 4.709792000000107,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-52-0",
+            "cardIds": [
+              "card-52-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "childStatuses": {
+            "stable": 2,
+            "decision": 1
+          }
+        },
+        "[\"decision\",\"choose_payment\",\"move-payment\",\"card-66-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"energyCost\",\"requiredMovePoints\"],null]": {
+          "count": 3,
+          "milliseconds": 5.149332999999956,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-66-0",
+            "cardIds": [
+              "card-66-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "childStatuses": {
+            "stable": 2,
+            "decision": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"trade-card-selection\",\"public\",[\"cardInstanceId\",\"choiceId\",\"kind\",\"slotIndex\",\"source\"],[\"slotIndex\"],null]": {
+          "count": 3,
+          "milliseconds": 5.85345899999993,
+          "target": {
+            "kind": "trade-card-selection",
+            "choiceId": "public:0",
+            "source": "public",
+            "slotIndex": 0,
+            "cardInstanceId": "card-55-0"
+          },
+          "payload": {
+            "slotIndex": 0
+          },
+          "childStatuses": {
+            "information-barrier": 3
+          }
+        },
+        "selection-macro": {
+          "count": 37,
+          "submissions": 111,
+          "milliseconds": 104.9187459999996
+        }
+      },
+      "proofs": {
+        "postMainPlanSpec": {
+          "checked": 71,
+          "supported": 0
+        },
+        "openingPlanSpec": {
+          "checked": 71,
+          "supported": 0
+        },
+        "openingMoneyCapacity": {
+          "checked": 146,
+          "supported": 0
+        },
+        "postMainResourceOrder": {
+          "checked": 146,
+          "supported": 0
+        },
+        "openingResourceOrder": {
+          "checked": 146,
+          "supported": 0
+        },
+        "knownCardMoneyOrder": {
+          "checked": 146,
+          "supported": 71
+        },
+        "cardTradeBound": {
+          "checked": 10,
+          "supported": 0
+        },
+        "passReserveChoiceSpec": {
+          "checked": 1,
+          "supported": 0
+        }
+      },
+      "rootUnchanged": true,
+      "rawPath": "adhoc/ai-decision-corpus-20261023-v1/late-profile-case-105-v5.raw.json",
+      "rawSha256": "699827a74438c76226eea9c642e0124810ca1960e1e3ee4b62b9e01a970bd9bf"
+    },
+    {
+      "id": "152",
+      "fixturePath": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+      "fixtureSha256": "a0aaef74d6e6a272bcd89e9f2c9f3c764b673c16cdaec44d26b7457fafbd8023",
+      "complete": false,
+      "stopReason": "transition-budget",
+      "milliseconds": 490.0037500000001,
+      "diagnostics": {
+        "transitions": 256,
+        "nodes": 163,
+        "equivalents": 4,
+        "selectionMacros": 45,
+        "peakFrontier": 106,
+        "dominancePrunes": 1,
+        "resourceDominance": "enabled",
+        "moneyCapacityPrunes": 0,
+        "moneyCapacityDominance": "enabled",
+        "cardTradePrunes": 0,
+        "cardTradePruning": "enabled",
+        "postMainProofNodes": 0,
+        "postMainExcludedActions": 0,
+        "postMainPruning": "enabled",
+        "openingProofNodes": 0,
+        "openingExcludedActions": 0,
+        "openingPruning": "enabled",
+        "openingPassMacros": 0,
+        "cardChoiceProofNodes": 0,
+        "cardChoiceExcludedActions": 0,
+        "cardChoiceEquivalence": "enabled",
+        "resourceModelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+        "continuation": "not-requested",
+        "planContinuation": "not-requested",
+        "milliseconds": 489.9945419999999,
+        "limits": {
+          "transitions": 256,
+          "nodes": 257,
+          "frontier": 256,
+          "milliseconds": 600
+        }
+      },
+      "port": {
+        "nodeCount": 167,
+        "submissionCount": 256,
+        "cacheHits": 0,
+        "cacheEntries": 0,
+        "observationCount": 39,
+        "identityCount": 163,
+        "maxCacheEntries": 0,
+        "decodedStateCacheEntries": 1,
+        "maxDecodedStateCacheEntries": 1,
+        "selectionEvidenceEntries": 0,
+        "maxSelectionEvidenceEntries": 1,
+        "planEvidenceEntries": 0,
+        "planPrefixEntries": 0,
+        "maxPlanPrefixEntries": 32,
+        "milliseconds": {
+          "restore": 91.59175600000026,
+          "execute": 108.52392699999973,
+          "observation": 96.20500000000061,
+          "checkpoint": 42.004084000000375,
+          "resourceOrder": 26.374257999998918,
+          "valueBound": 0.07212499999923239,
+          "postMainPlan": 0.31941900000038004
+        }
+      },
+      "company": "赫利昂联合体",
+      "publicRoot": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 6,
+          "credits": 3,
+          "energy": 1,
+          "handSize": 6,
+          "publicity": 5,
+          "score": 17
+        },
+        "income": {
+          "additionalPublicScan": 0,
+          "availableData": 0,
+          "credits": 3,
+          "energy": 1,
+          "handSize": 1,
+          "publicity": 1
+        },
+        "hand": [
+          {
+            "id": "card-9-0",
+            "cardId": "b_109.webp"
+          },
+          {
+            "id": "card-11-0",
+            "cardId": "b_65.webp"
+          },
+          {
+            "id": "card-41-0",
+            "cardId": "dlc_39.png"
+          },
+          {
+            "id": "card-54-0",
+            "cardId": "b_62.webp"
+          },
+          {
+            "id": "card-31-pass-3-2",
+            "cardId": "dlc_12.png"
+          },
+          {
+            "id": "card-83-0",
+            "cardId": "b_136.webp"
+          }
+        ],
+        "reserved": [
+          {
+            "id": "card-12-0",
+            "cardId": "b_139.webp"
+          },
+          {
+            "id": "card-10-0",
+            "cardId": "b_12.webp"
+          }
+        ],
+        "tech": {
+          "blueBoardSlots": {
+            "blue1": 3,
+            "blue2": 4
+          },
+          "disabledTiles": {},
+          "ownedTiles": {
+            "blue1": true,
+            "blue2": true
+          }
+        }
+      },
+      "calls": {
+        "[\"stable\",\"play_card\",null,null,[\"cardInstanceId\"],[\"cost\",\"handIndex\"],null]": {
+          "count": 13,
+          "milliseconds": 20.621914999999717,
+          "target": {
+            "cardInstanceId": "card-9-0"
+          },
+          "payload": {
+            "cost": {
+              "credits": 3
+            },
+            "handIndex": 0
+          },
+          "childStatuses": {
+            "decision": 13
+          }
+        },
+        "[\"stable\",\"pass\",\"pass\",null,[\"kind\"],[],null]": {
+          "count": 3,
+          "milliseconds": 4.32745900000009,
+          "target": {
+            "kind": "pass"
+          },
+          "payload": {},
+          "childStatuses": {
+            "decision": 3
+          }
+        },
+        "[\"stable\",\"move\",null,null,[\"deltaX\",\"deltaY\",\"rocketId\"],[\"direction\",\"requiredMovePoints\"],null]": {
+          "count": 9,
+          "milliseconds": 14.184666000000107,
+          "target": {
+            "rocketId": 4,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "direction": "out",
+            "requiredMovePoints": 1
+          },
+          "childStatuses": {
+            "decision": 9
+          }
+        },
+        "[\"stable\",\"quick_trade\",null,null,[\"tradeId\"],[\"cost\",\"gain\"],null]": {
+          "count": 18,
+          "milliseconds": 36.33100100000024,
+          "target": {
+            "tradeId": "credits-for-energy"
+          },
+          "payload": {
+            "cost": {
+              "credits": 2
+            },
+            "gain": {
+              "energy": 1
+            }
+          },
+          "childStatuses": {
+            "stable": 3,
+            "decision": 15
+          }
+        },
+        "[\"stable\",\"card_corner\",null,null,[\"cardInstanceId\"],[\"kind\",\"multiplier\"],\"resource\"]": {
+          "count": 8,
+          "milliseconds": 15.69379200000003,
+          "target": {
+            "cardInstanceId": "card-9-0"
+          },
+          "payload": {
+            "kind": "resource",
+            "multiplier": 1
+          },
+          "childStatuses": {
+            "stable": 8
+          }
+        },
+        "[\"stable\",\"card_corner\",null,null,[\"cardInstanceId\"],[\"kind\",\"multiplier\"],\"move\"]": {
+          "count": 4,
+          "milliseconds": 6.09641600000009,
+          "target": {
+            "cardInstanceId": "card-11-0"
+          },
+          "payload": {
+            "kind": "move",
+            "multiplier": 1
+          },
+          "childStatuses": {
+            "decision": 4
+          }
+        },
+        "[\"stable\",\"place_data\",\"place-data\",null,[\"kind\"],[],null]": {
+          "count": 2,
+          "milliseconds": 3.111458000000084,
+          "target": {
+            "kind": "place-data"
+          },
+          "payload": {},
+          "childStatuses": {
+            "decision": 2
+          }
+        },
+        "[\"decision\",\"choose_target\",null,\"tech\",[\"blueSlot\",\"choiceId\",\"tileId\"],[\"skipBonus\",\"skipCost\",\"skipRotate\"],null]": {
+          "count": 16,
+          "milliseconds": 34.176874000000225,
+          "target": {
+            "choiceId": "tech:blue3:slot:1",
+            "tileId": "blue3",
+            "blueSlot": 1
+          },
+          "payload": {
+            "skipCost": true,
+            "skipRotate": false,
+            "skipBonus": false
+          },
+          "childStatuses": {
+            "information-barrier": 16
+          }
+        },
+        "[\"decision\",\"choose_target\",null,\"4\",[\"choiceId\",\"deltaX\",\"deltaY\",\"rocketId\"],[\"remaining\",\"requiredMovePoints\"],null]": {
+          "count": 9,
+          "milliseconds": 14.124709000000394,
+          "target": {
+            "choiceId": "4:0:1",
+            "rocketId": 4,
+            "deltaX": 0,
+            "deltaY": 1
+          },
+          "payload": {
+            "requiredMovePoints": 1,
+            "remaining": 2
+          },
+          "childStatuses": {
+            "decision": 9
+          }
+        },
+        "[\"decision\",\"choose_target\",null,\"skip\",[\"choiceId\",\"skip\"],[\"remaining\"],null]": {
+          "count": 3,
+          "milliseconds": 5.512375000000247,
+          "target": {
+            "choiceId": "skip",
+            "skip": true
+          },
+          "payload": {
+            "remaining": 2
+          },
+          "childStatuses": {
+            "stable": 3
+          }
+        },
+        "[\"decision\",\"choose_target\",null,\"nebula\",[\"choiceId\",\"nebulaId\",\"sectorX\"],[\"gainData\"],null]": {
+          "count": 1,
+          "milliseconds": 1.6105000000000018,
+          "target": {
+            "choiceId": "nebula:sector-4-a",
+            "nebulaId": "sector-4-a",
+            "sectorX": 3
+          },
+          "payload": {
+            "gainData": true
+          },
+          "childStatuses": {
+            "decision": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-9-0|card-11-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.527708999999959,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-9-0|card-11-0",
+            "cardIds": [
+              "card-9-0",
+              "card-11-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-9-0|card-41-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 3.254916000000094,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-9-0|card-41-0",
+            "cardIds": [
+              "card-9-0",
+              "card-41-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-9-0|card-54-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.4135000000001128,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-9-0|card-54-0",
+            "cardIds": [
+              "card-9-0",
+              "card-54-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-9-0|card-31-pass-3-2\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.9242910000000393,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-9-0|card-31-pass-3-2",
+            "cardIds": [
+              "card-9-0",
+              "card-31-pass-3-2"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-9-0|card-83-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.4237499999999272,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-9-0|card-83-0",
+            "cardIds": [
+              "card-9-0",
+              "card-83-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-11-0|card-41-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.3150829999999587,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-11-0|card-41-0",
+            "cardIds": [
+              "card-11-0",
+              "card-41-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-11-0|card-54-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.7752499999999145,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-11-0|card-54-0",
+            "cardIds": [
+              "card-11-0",
+              "card-54-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-11-0|card-31-pass-3-2\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.316874999999982,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-11-0|card-31-pass-3-2",
+            "cardIds": [
+              "card-11-0",
+              "card-31-pass-3-2"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-11-0|card-83-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.3863750000000437,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-11-0|card-83-0",
+            "cardIds": [
+              "card-11-0",
+              "card-83-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-41-0|card-54-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.9677500000000236,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-41-0|card-54-0",
+            "cardIds": [
+              "card-41-0",
+              "card-54-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-41-0|card-31-pass-3-2\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.3851669999999103,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-41-0|card-31-pass-3-2",
+            "cardIds": [
+              "card-41-0",
+              "card-31-pass-3-2"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-41-0|card-83-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.378209000000197,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-41-0|card-83-0",
+            "cardIds": [
+              "card-41-0",
+              "card-83-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-54-0|card-31-pass-3-2\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.915749999999889,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-54-0|card-31-pass-3-2",
+            "cardIds": [
+              "card-54-0",
+              "card-31-pass-3-2"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-54-0|card-83-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.3416249999997945,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-54-0|card-83-0",
+            "cardIds": [
+              "card-54-0",
+              "card-83-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"pass-hand-limit\",\"card-31-pass-3-2|card-83-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"discardCount\"],null]": {
+          "count": 1,
+          "milliseconds": 2.930499999999938,
+          "target": {
+            "kind": "pass-hand-limit",
+            "choiceId": "card-31-pass-3-2|card-83-0",
+            "cardIds": [
+              "card-31-pass-3-2",
+              "card-83-0"
+            ]
+          },
+          "payload": {
+            "discardCount": 2
+          },
+          "childStatuses": {
+            "other-owner": 1
+          }
+        },
+        "[\"decision\",\"choose_payment\",\"move-payment\",\"energy\",[\"cardIds\",\"choiceId\",\"kind\"],[\"energyCost\",\"requiredMovePoints\"],null]": {
+          "count": 3,
+          "milliseconds": 5.85149999999976,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "energy",
+            "cardIds": []
+          },
+          "payload": {
+            "energyCost": 1,
+            "requiredMovePoints": 1
+          },
+          "childStatuses": {
+            "stable": 3
+          }
+        },
+        "[\"decision\",\"choose_payment\",\"move-payment\",\"card-11-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"energyCost\",\"requiredMovePoints\"],null]": {
+          "count": 3,
+          "milliseconds": 5.444539999999961,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-11-0",
+            "cardIds": [
+              "card-11-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "childStatuses": {
+            "stable": 3
+          }
+        },
+        "[\"decision\",\"choose_payment\",\"move-payment\",\"card-83-0\",[\"cardIds\",\"choiceId\",\"kind\"],[\"energyCost\",\"requiredMovePoints\"],null]": {
+          "count": 3,
+          "milliseconds": 6.277458000000252,
+          "target": {
+            "kind": "move-payment",
+            "choiceId": "card-83-0",
+            "cardIds": [
+              "card-83-0"
+            ]
+          },
+          "payload": {
+            "energyCost": 0,
+            "requiredMovePoints": 1
+          },
+          "childStatuses": {
+            "stable": 3
+          }
+        },
+        "[\"stable\",\"scan\",\"standard-scan\",null,[\"kind\"],[],null]": {
+          "count": 1,
+          "milliseconds": 1.34050000000002,
+          "target": {
+            "kind": "standard-scan"
+          },
+          "payload": {},
+          "childStatuses": {
+            "decision": 1
+          }
+        },
+        "[\"decision\",\"choose_card\",\"trade-card-selection\",\"public\",[\"cardInstanceId\",\"choiceId\",\"kind\",\"slotIndex\",\"source\"],[\"slotIndex\"],null]": {
+          "count": 6,
+          "milliseconds": 11.081333000000086,
+          "target": {
+            "kind": "trade-card-selection",
+            "choiceId": "public:0",
+            "source": "public",
+            "slotIndex": 0,
+            "cardInstanceId": "card-69-0"
+          },
+          "payload": {
+            "slotIndex": 0
+          },
+          "childStatuses": {
+            "information-barrier": 6
+          }
+        },
+        "selection-macro": {
+          "count": 45,
+          "submissions": 135,
+          "milliseconds": 126.34258200000068
+        },
+        "[\"decision\",\"choose_card\",\"trade-card-selection\",\"blind\",[\"choiceId\",\"kind\",\"source\"],[],null]": {
+          "count": 1,
+          "milliseconds": 1.7930419999997866,
+          "target": {
+            "kind": "trade-card-selection",
+            "choiceId": "blind",
+            "source": "blind"
+          },
+          "payload": {},
+          "childStatuses": {
+            "information-barrier": 1
+          }
+        },
+        "[\"decision\",\"choose_target\",\"quick-move\",\"move\",[\"choiceId\",\"deltaX\",\"deltaY\",\"direction\",\"kind\",\"rocketId\"],[\"direction\"],null]": {
+          "count": 3,
+          "milliseconds": 7.445876000000226,
+          "target": {
+            "kind": "quick-move",
+            "choiceId": "move:4:out",
+            "rocketId": 4,
+            "deltaX": 0,
+            "deltaY": 1,
+            "direction": "out"
+          },
+          "payload": {
+            "direction": "out"
+          },
+          "childStatuses": {
+            "stable": 3
+          }
+        }
+      },
+      "proofs": {
+        "postMainPlanSpec": {
+          "checked": 53,
+          "supported": 0
+        },
+        "openingPlanSpec": {
+          "checked": 53,
+          "supported": 0
+        },
+        "openingMoneyCapacity": {
+          "checked": 117,
+          "supported": 0
+        },
+        "postMainResourceOrder": {
+          "checked": 117,
+          "supported": 0
+        },
+        "openingResourceOrder": {
+          "checked": 117,
+          "supported": 0
+        },
+        "knownCardMoneyOrder": {
+          "checked": 117,
+          "supported": 51
+        },
+        "cardTradeBound": {
+          "checked": 15,
+          "supported": 0
+        },
+        "passReserveChoiceSpec": {
+          "checked": 1,
+          "supported": 0
+        }
+      },
+      "rootUnchanged": true,
+      "rawPath": "adhoc/ai-decision-corpus-20261023-v1/late-profile-case-152-v5.raw.json",
+      "rawSha256": "3fa3ac8fd90944c37f49e1f2a6927429239606bb77549828eba0edf5b8bffc00"
+    }
+  ],
+  "sourceHashes": {
+    "randomizer/training/simulation-rule-composition.js": "24d04512bcd67fd226dfc272a2369bfd769dfc2c04b40e01a75a40bdfbbbe0a3",
+    "randomizer/game/production-kernel.js": "49ebd31c0db6a75fe662dea8f2cd7077e409b13c1244ccac73769e305040a1eb",
+    "randomizer/game/state/state-store.js": "e55c8dd2336a83db70f74235202763ebb94c16c2b6aa908f154397402010b781",
+    "randomizer/game/state/high-coupling-slices.js": "86e4a9ccc20e8804e008c25b3354cfd964fe091248d1755fad7a59495d57fd2b",
+    "randomizer/game/state/low-coupling-slices.js": "5104bca6ef4cea25856ca88c5ecc07b2d363aa732f8d70fc89cb34d4f6ca08b7",
+    "randomizer/game/cards/task-state.js": "b7bdd2c0b559f731523f4ce37b485d6b40d53dd881e6ebce37d311a788d0cd90",
+    "randomizer/game/tech/catalog.js": "fa2f805c29052eab58f26855174dd5d76da9f70c50865b4ace781d89ccdb5bda",
+    "randomizer/game/effects/session-runtime.js": "eb3eb1be726780192d96525b2326bc9142d597c76c389b7b34bd3f66a8f36167",
+    "randomizer/game/actions/standard-action.js": "9bfd8d8a1bd6120807dfeb7f3a4364ae7c39bba9443b243821a6d3789ca93b7d",
+    "randomizer/game/state/initial-game-state.js": "5bdd4c17e0d737415b324205b9a66b0bff5c8675170001688f0edd72aba66d98",
+    "randomizer/game/random.js": "92f4d5c9257f8c36f0766c431ccedd3aef6dce87c089836951c9ebae9678686a",
+    "randomizer/game/state/fixed-world-config.js": "f507dfdfe4c2a0b857a01fea361b86a866e22e622e9ffd1dd060d355c2fd5459",
+    "randomizer/game/players.js": "f98ff1eced6fbdefa139cfb34f32f46e7afab1d66bd85458cab0ea240cb0bbbe",
+    "randomizer/solar-system/core.js": "3acb2281591e7b22322ed9bc1624f5ceb2831e209477270e3b49e90798309164",
+    "randomizer/solar-system/layout.js": "fb757393f99426784b23b8e42effb09055ec17951082923c85e2e9794609d477",
+    "randomizer/game/rockets.js": "a3924ee4ee1392a20671699b51b1e25b40fd08d0536c38acff4f882bba76ca74",
+    "randomizer/game/state/sequences.js": "a55ca5951946dfd5429741672ff36e2094dc198c466afc5ec240fadb2084ec9f",
+    "randomizer/game/planet-stats.js": "ef82551c1ea8b6f43262816cb80a7cc3cd11652c64b5175cff8cd8fcafc7f3c2",
+    "randomizer/game/planet-reference-layout.js": "c8ccd4452e92630708d23dfab1ee7d528ed0fe55977c8706935600f0bc17af1f",
+    "randomizer/game/actions/planet-rewards.js": "498db93607e3d13fb6bb5c359a3f60b537de7bc38bb2a9cc7b4d7e108fe8c705",
+    "randomizer/game/actions/scan-effects.js": "ea334dbde70c8002952569a15f15fd0e3f136efde7ae9092614753b9c48999eb",
+    "randomizer/game/tech/player-tech.js": "bb44ec09fb871e0c92053218823694ac48df57f3635dc0acfa517ef04168dbf2",
+    "randomizer/game/industry/passives.js": "d3d3215cc33467f7ceed675bcf4f6064436aa66e8c4dbeac4e6748aa96e3c111",
+    "randomizer/game/industry/catalog.js": "d94dbc9aae18cb1a5515e5686e88aa00dad61c922688baaa88e121037133901c",
+    "randomizer/game/effects/science-session.js": "029de78c50a1a064bb876022cfcb18ae56d27c51f07bdbb5903f6008043dadc1",
+    "randomizer/game/actions/research-tech.js": "1ae3e6b3dce07e8a92ad28c4c282e79d1381b6fff48fa150f2ae6e4db82cc534",
+    "randomizer/game/tech/resolver.js": "e52c3dc535c85ecef2c288e6fcf821f18611c2c2bae1ee30970c82574efbac03",
+    "randomizer/game/tech/board-state.js": "a0694120d45db58574a527694836bc3688337d787e90baae0dac3972d15211c2",
+    "randomizer/game/tech/bonuses.js": "6541ccf6de5b865f67faa478ff42c42d5fce3c8a11299ac6f6a8201c387f58a3",
+    "randomizer/game/tech/placement.js": "ea524c964e954fbf98d8b7b56122f4e252c53e2f15b0ecb521c5a99d52263473",
+    "randomizer/game/abilities/index.js": "58f01c1059e0f3cf3dbffdb03252943252f1097e279fb06b51bb7439496220dc",
+    "randomizer/game/abilities/rocket.js": "082d3bebe6a9cdb46d050c7d3e12bc04c4b62c50a05257a3833fe3bf9286a3af",
+    "randomizer/game/abilities/scan.js": "01709beb1dfc27af91b89ecf4bc9871dd919a1dddcaf4b40c2e340a4b8f955b2",
+    "randomizer/game/data/index.js": "68f79323130653fa1f2a292f19b6d01143785ed09b6b4b829cf6fe412c40d928",
+    "randomizer/game/data/placement.js": "c22364549c3a3bc5ce019b3a11de8951d829023f99a387a7f7d87cf8a65389e8",
+    "randomizer/game/data/state.js": "b6b9061cce1679e09342e208213fcff6959f381424787a5f01f5aebfd361e96c",
+    "randomizer/game/data/nebula-placement.js": "f1e099066d87d3ece7d24ac142cc4eee0f7ad5acd2d41753911b6f1d01ecc227",
+    "randomizer/game/data/nebula-state.js": "d7ac07b41e1317cf15ba019482165558a6e39060b1a76abd4d402be792995a88",
+    "randomizer/game/abilities/planet.js": "f95f41290c99457fa28265bd87a1ce7deee73190b38c0f5d9edef2bddd0ae9c8",
+    "randomizer/game/actions/shared.js": "2f35f3317c7d4d509f4c8ad8847c27176a25031909e5ebb72cd667f5f5ad5966",
+    "randomizer/game/aliens/aomomo.js": "986413d7da56665ac423b507f92832dce83519a6f94aa79280caa6d4377e4a3d",
+    "randomizer/game/aliens/placement.js": "3ec5839029fd04ab29ee9796ac05de49c42d12967880098b60cdaed160341596",
+    "randomizer/game/aliens/state.js": "34c637fe28acebda33f5018e0ac53373968785268c6328d500c947826a118829",
+    "randomizer/game/abilities/data.js": "1bf1cdb886f3a691938a0661695ae67b4ba2af4309c1f31697c0ee718008eef4",
+    "randomizer/game/abilities/tech.js": "567c269a3788fe67143828e992eff0619b8baedc4847780d7ecee291109c08c8",
+    "randomizer/game/tech/index.js": "1a9f59b462a90d40bab2a4567f4ee90288f9c076df2034f0f52f862f559d8c99",
+    "randomizer/game/cards/deck.js": "9ce529094559c5e14016962ab57157780fb210ca4ac868364981bba1d8f94121",
+    "randomizer/game/aliens/index.js": "adcd3fa19f71d904eb0a1af063fa71b4d5d82203d82d39c717164dc8b51ccb04",
+    "randomizer/game/aliens/catalog.js": "9f8d8998fdc6650890ce9e9abf722854bbfc316ac6fc42235d9002e67e3894c7",
+    "randomizer/game/aliens/jiuzhe.js": "82d776ae6879b88ea3ba0c654994d89772a6b7d1545c532947c5e59e714bf2f7",
+    "randomizer/game/aliens/yichangdian.js": "ba72c77d4605f78cd545daabc7fa5591139a8acce103f90bac3c28001afeebcf",
+    "randomizer/game/aliens/fangzhou.js": "9d80fac9fbd84ce947adcc86ad98cd3ec5a1c56bb98ce6ea96399294c619a47b",
+    "randomizer/game/aliens/banrenma.js": "38fd7776fb8bd7c343c9a59f37da237d48d52588e5f1ef28e4ae4504a343defe",
+    "randomizer/game/aliens/chong.js": "de65614f5aae989b2d79902fe51724a6ed85c2292a2d7677decbfff85f120838",
+    "randomizer/game/aliens/amiba.js": "81eefb293c298fd194d2570854c980b17606ff79fa765db5d0cfbfb9761b0648",
+    "randomizer/game/aliens/runezu.js": "338983840374234912cd3db00ce5994d1cb0b1a031dfbc51e58d103054d04768",
+    "randomizer/game/aliens/fangzhou-card1-queue.js": "8dbdaa750ec55fd2caae46b02946a7108ee1b0dcaa15d90fa91a1a12a997faf7",
+    "randomizer/game/aliens/reveal-card-grants.js": "e944721eef70a7df1ac0abc8004c26f9ee584dd768533940c5d66ac048e5cadb",
+    "randomizer/game/aliens/randomizer.js": "2ab1d5e42925e563dbf36da8306be17b4f2e730274711014d7197dc10411f73a",
+    "randomizer/game/industry/state.js": "07ae0e61fd21f349202c30260997302c54e6d6cb3e5735bdc340c130ad99c231",
+    "randomizer/game/industry/helios-passive.js": "8860a1c368226b1257c772cd8c671f19a55089af137f76c9de5b0b1cc3d9bd33",
+    "randomizer/game/industry/placement.js": "b3b3a127439b167e703bfc231135dda359604bc39ef344674681ada732e2b972",
+    "randomizer/game/cards/effects.js": "2fcbf8dcdadd16fb00ff7f0fc423780226cc123f5eb30ef53cdbb5932ec59bb9",
+    "randomizer/game/final-scoring.js": "4770b83ca0153b7ba0490fd10dc821334b9a36b3e559b1671b9b7b1328f943f3",
+    "randomizer/game/effects/residual-domain-session.js": "bdfc516c562c49186101f695065b1df12b9ffdda7106fd812bcbf4d62c4548a7",
+    "randomizer/game/industry/index.js": "f24fc4ad4b3351b21248d04c569a48ab480ff8356a3115872e1e2679f23a2a31",
+    "randomizer/game/industry/abilities.js": "3330f3e64519ddeed4b7c4f9c08b5a047b4525b48ce358cf58e1eb0ad6d6a5e9",
+    "randomizer/game/industry/strategy-passive.js": "8bae3cdb34075fe7df8c1963c2e6d9cb2ba8c64a5e773e775ff4bf969b22e77b",
+    "randomizer/game/end-game-scoring.js": "13c2989df4f601cc5677544f925e0dccc46e8775b64516e5027cd8e50ab8458f",
+    "randomizer/game/cards/play-domain.js": "964c5735c9d61fe6c87fcb711f94acf52416a5e0385b5608319985b9ad53a689",
+    "randomizer/game/initial-cards.js": "b0a0fa47c241d5e68a4a2e3c55adca8f687bf94c751346bde42cee682637b235",
+    "randomizer/game/rule-composition.js": "76c369648150153c62f8a9bf6fe66eadae3dc6635030fa3eac6584d918a3c4d9",
+    "randomizer/game/production-composition.js": "4347d4cf0b1bd3898527aea6b790777185b5791f71a0caf80901d9dc7be2ef0c",
+    "randomizer/game/effects/standard-action-session.js": "5b6c60ebdee4b05963ab861be8465e15c26039b5b1343059e7651d6d87433d81",
+    "randomizer/game/effects/probe-turn-session.js": "71d5f8a4890bc8b214d23997e50ded3693e5c235108760d1e12fe1f895e088f3",
+    "randomizer/game/turn-flow.js": "efae9c17ad7eab1698a2c20f7ba77b63eaeeb4f1d33133bf7a58f080522e39fc",
+    "randomizer/game/initial-setup.js": "e30d48741330426c2801f3b70766c720bd8440a539df3a92295c8c7de5b08b46",
+    "randomizer/game/actions/quick-trades.js": "508e5ba1b3e46f48525513ec1bc7628779aa89ec7ea4bae1d745c58a1fd20722",
+    "randomizer/app/rule-observation.js": "d1dc58cc707eb5f57db761c39ebf327abfadc0c45eb8f191f35fc7c7ef62c295",
+    "randomizer/app/simulation-contract.js": "3531d126a450c812ea0894834be9f85709ac28e1ebfb5a9dec657708b03f290a",
+    "randomizer/game/ai/analysis-port.js": "16fee592356cdd5e180434ad6a9086edc806c44b47314007ec1db5b899805592",
+    "randomizer/game/ai/decision-search.js": "86ca260cb1fdbc48ce03b6d87bd330091c3d89792c5b165cd08a10161fe5a32c",
+    "randomizer/game/ai/state-value.js": "31f0718b2723190ec318262ae28241249ca0c2f3eafd36d0c22d9862c396d4cd"
+  },
+  "status": "complete"
+}

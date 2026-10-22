@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v20";
+  const VERSION = "seti-complete-decision-search-v21";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -96,6 +96,11 @@
     let incumbent = null;
     let stopReason = null;
     function dominates(upper, lower) {
+      if (upper.credits >= lower.credits && upper.energy >= lower.energy && lower.moneyValue) {
+        const a = upper.moneyValue(), b = lower.moneyValue();
+        if (![a, b].every(value => Number.isSafeInteger(value * 2) && value >= 0 && value <= Number.MAX_SAFE_INTEGER / 64)
+          || a - b !== upper.credits - lower.credits + upper.energy - lower.energy) return null;
+      }
       if (upper.credits >= lower.credits && upper.energy >= lower.energy
         && (upper.credits > lower.credits || upper.energy > lower.energy)) return lower.proof;
       if (upper.moneyCapacity && lower.moneyCapacity
@@ -183,6 +188,13 @@
       }
       if (!resources && !boundary && !selection && useResourceDominance) {
         resources = port.postMainResourceOrder(node) || port.openingResourceOrder?.(node) || null;
+        if (!resources && limits.transitions <= 4096 && stateValue?.isDefaultStateValueEvaluator?.(evaluate)) {
+          resources = port.knownCardMoneyOrder?.(node) || null;
+          if (resources) {
+            let value;
+            resources = { ...resources, moneyValue: () => value ??= evaluate(node.observation) };
+          }
+        }
       }
       nodes.push({ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan,
         expanded: boundary, value, distance: boundary ? 0 : Infinity, best: null });

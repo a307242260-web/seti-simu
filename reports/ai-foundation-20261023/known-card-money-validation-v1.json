@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "seti-known-card-money-validation-v1",
+  "baseCommit": "aca68bea6d95f5247b0026492745f69eb5124b74",
+  "snapshot": "/private/tmp/seti-ai-stage28-20261023-bav_4gsi",
+  "searchVersion": "seti-complete-decision-search-v21",
+  "agentVersion": "seti-search-agent-v2",
+  "rulesetVersion": "seti-runtime-v1.3 (unchanged)",
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "16fee592356cdd5e180434ad6a9086edc806c44b47314007ec1db5b899805592",
+    "randomizer/game/ai/decision-search.js": "86ca260cb1fdbc48ce03b6d87bd330091c3d89792c5b165cd08a10161fe5a32c",
+    "randomizer/game/ai/known-card-money.test.js": "23be067184855be420e8406ea0a0216d5d4af79df69529c129630c6b9849856e",
+    "tools/node-test-inventory.js": "90c69a7bf4b388242d2c2a733958f2c15294559fa952db6d24ddd0149d196f77",
+    "tools/audit_v_state_inputs.js": "7bf99c6ce4cd45a2d295dea3ea04e5e2ea3b8e842f071028442147a8724139bb",
+    "randomizer/index.html": "ede50b962641a0d56adb8e95be685f4872d3810a3bcf3091d98f34d8baf06857",
+    "adhoc/ai-known-card-money-design-20261023-v1.md": "723eae7b3f572db8a9e61c06ee75c0d776880f49621ccfe8f41d8da8b461b819",
+    "docs/ai-known-card-money-proof-20261023.md": "31bdd8cee42849303bf3e3ef0fdade3293ab4e10e3c71ec20b4851c3e8e3c39d",
+    "docs/ai-interface-inventory-20261022.md": "67df567f2622f5307968d91bf7fdbf32b1391dca781b61e0a995d6c9f1ec74d8",
+    "docs/ai-search-agent-contract-20261023.md": "f4605453750750d086de435fa17984837e65d304aa52bf628e4ada74c7009364",
+    "docs/ai-development-workflow.md": "f8dc40c151cfee5bd4406dceb8605ff1b57e3d82ce7184e65ad6463911bb249a",
+    "adhoc/profile-ai-late-cold-20261023-v5.js": "c8e17be9022fa99ab360f7772653e5f061a1541cccb1dafcb4c5e06dc5434458",
+    "adhoc/audit-ai-decision-corpus-20261023-v13.js": "1776fe6d9771ae0df316c8e19b472da6a03b6d6fc0d6da32bc4399944f4bb271"
+  },
+  "node": "v22.22.0",
+  "machine": {
+    "system": "Darwin",
+    "nodeName": "fireMacBook-Pro-4.local",
+    "release": "24.6.0",
+    "version": "Darwin Kernel Version 24.6.0: Mon Jan 19 22:01:41 PST 2026; root:xnu-11417.140.69.708.3~1/RELEASE_ARM64_T8132",
+    "machine": "arm64",
+    "processor": "arm"
+  },
+  "unit": {
+    "passed": 125,
+    "failed": 0,
+    "seconds": 181.16,
+    "log": "reports/ai-foundation-20261023/known-card-money-full-node-v1.log"
+  },
+  "fullFlow": {
+    "passed": 1,
+    "failed": 0,
+    "seconds": 0.51
+  },
+  "browser": {
+    "passed": 3,
+    "failed": 0,
+    "scope": [
+      "production-start-button",
+      "production-search-agent-entry",
+      "production-completion-agent-parity"
+    ],
+    "log": "reports/ai-foundation-20261023/known-card-money-browser-v1.log"
+  },
+  "syntax": {
+    "passed": 7,
+    "report": "reports/ai-foundation-20261023/known-card-money-syntax-v1.json"
+  },
+  "inputAudit": {
+    "exitCode": 1,
+    "newKnownCardMoneyPathsPassed": 3,
+    "knownLegacyFailures": [
+      "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+    ],
+    "report": "reports/ai-foundation-20261023/state-value-input-audit-v19.json"
+  },
+  "pairedFormalExecution": [
+    {
+      "inputs": 1576,
+      "leaves": 278,
+      "extraStops": 0
+    },
+    {
+      "inputs": 2745,
+      "leaves": 472,
+      "extraStops": 1
+    },
+    {
+      "inputs": 1816,
+      "leaves": 185,
+      "extraStops": 0
+    }
+  ],
+  "pairedInputCount": 6137,
+  "pairedEndpointCount": 935,
+  "completeSmallWindows": [
+    {
+      "raw": 483,
+      "pruned": 415,
+      "value": 36
+    },
+    {
+      "raw": 489,
+      "pruned": 477,
+      "value": 28.5
+    },
+    {
+      "raw": 237,
+      "pruned": 231,
+      "value": 21
+    }
+  ],
+  "coldProfile": {
+    "report": "reports/ai-foundation-20261023/late-cold-profile-v5.json",
+    "timingScope": "search call, same sequential process; no new-search whole games",
+    "rows": [
+      {
+        "id": "062",
+        "inputs": 256,
+        "complete": false,
+        "milliseconds": 451.44333299999994
+      },
+      {
+        "id": "105",
+        "inputs": 256,
+        "complete": false,
+        "milliseconds": 436.88195800000005
+      },
+      {
+        "id": "152",
+        "inputs": 256,
+        "complete": false,
+        "milliseconds": 490.0037500000001
+      }
+    ]
+  },
+  "fixedColdGate": {
+    "passed": 4,
+    "total": 8,
+    "report": "reports/ai-foundation-20261023/decision-corpus-audit-v13.json",
+    "budget": {
+      "transitions": 256,
+      "nodes": 257,
+      "frontier": 256,
+      "milliseconds": 600
+    }
+  },
+  "negativeChecks": [
+    "own DLC27 zero energy",
+    "own DLC28 empty credits/energy/hand",
+    "own B13 unsupported effect",
+    "FutureSpan parked DLC27",
+    "DeepSpace public DLC27"
+  ],
+  "nextProfilingFinding": {
+    "undoFrames": "trusted isolated captureUndoFrame already returns null; no new runtime flag added",
+    "remainingLead": "repeated JSON parse, clone/freeze and stable serialization of unchanged committed state during fork restore/save; investigate immutable-state reuse with explicit ownership before changing"
+  },
+  "limitations": [
+    "four of eight cold checkpoints remain incomplete",
+    "three late cold profiles remain incomplete at 256 inputs; no speed improvement claimed",
+    "DSL proof is closed and does not cover every standard card or revealed aliens",
+    "whole V audit retains old aomomo frozen-object failure",
+    "no new-search full-game time, terminal score, cold/hot recovery experiment or 180-second acceptance"
+  ]
+}

@@ -334,6 +334,24 @@ try {
         || evaluate(raw) !== evaluate(next.agentTrace.context.observation)) throw new Error("最优前缀复用的完成证据或原始/标准输入不一致");
       console.log(`[PASS] independent-plan-prefix-reuse: root=${evaluate(raw)} leaf=${next.searches[0].value} inputs=0`);
     } finally { prefixEnv.dispose(); }
+    for (const id of ["062", "105", "152"]) {
+      const moneyFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+        `../adhoc/ai-decision-corpus-20261023-v1/case-${id}-20261023-v1.json`)));
+      const moneyComp = auditKernel.composition;
+      if (!moneyComp.lifecycle.restore(moneyFixture.compositionEnvelope).ok) throw new Error("已知模型钱包审计恢复失败");
+      const moneyPort = createAnalysisPort({ composition: moneyComp, seatId: moneyFixture.seatId });
+      try {
+        const root = moneyPort.openRoot(), proof = moneyPort.knownCardMoneyOrder(root);
+        const first = moneyPort.expand(root, root.legalActions.find(action => action.target?.tradeId === "credits-for-energy").actionId);
+        const poor = moneyPort.expand(first, first.legalActions.find(action => action.target?.tradeId === "energy-for-credit").actionId);
+        const evaluate = independentValue.createStateValueEvaluator(moneyFixture.seatId);
+        if (!proof || moneyPort.knownCardMoneyOrder(poor)?.group !== proof.group
+          || evaluate(root.observation) !== evaluate(outcomeModel.createDecisionObservation(root.observation, { seatId: moneyFixture.seatId }))
+          || evaluate(poor.observation) !== evaluate(outcomeModel.createDecisionObservation(poor.observation, { seatId: moneyFixture.seatId }))
+          || evaluate(root.observation) - evaluate(poor.observation) !== 2) throw new Error("已知模型钱包证明、原始/标准V或严格余额差不一致");
+        console.log(`[PASS] independent-known-card-money: case=${id} root=${evaluate(root.observation)} poor=${evaluate(poor.observation)}`);
+      } finally { moneyPort.close(); }
+    }
   } catch (error) {
     console.log(`[FAIL] independent-card-choice-equivalence: ${error.message}`);
     allPass = false;

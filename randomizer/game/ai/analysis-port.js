@@ -34,6 +34,81 @@
     strategy_pick_card: ["strategy_passive_reward_slots"],
   });
 
+  // 已审计的效果及选项；新DSL字段不自动取得钱包单调性证明。
+  const MONEY_MONOTONE_EFFECT_OPTIONS = Object.freeze({
+    gain_resources: ["gain"], gain_data: ["count"], draw_cards: ["count"], pick_card: ["count"],
+    launch: ["cost", "ignoreRocketLimit", "skipCost", "source"],
+    card_move: ["movementPoints"], card_return_played_card_to_hand_if: ["condition"],
+    card_orbit: ["grantRewards", "skipCost"], card_count_owned_tech_reward: ["per", "resource", "techType"],
+    card_pluto_reserve: [], card_research_tech: ["afterResearchReward", "skipCost", "techTypes"],
+    card_pay_credits_for_reward: ["reward"], card_discard_any_for_income: [],
+    card_scan_nebula: ["gainData", "nebulaId", "repeat"], card_register_event_bonus: ["bonus"],
+    card_planet_sector_scan: ["gainData", "planetId", "repeat"],
+  });
+  const MONEY_INDEPENDENT_CONDITIONS = Object.freeze({
+    probeAdjacentEarth: [], dataTotal: ["count"], traceCount: ["traceType", "count"],
+    completedSectorsByColor: ["color", "count"], resourceEquals: ["resource", "count"],
+  });
+  const MONEY_INDEPENDENT_EVENTS = new Set(["launch", "orbit", "land", "visitPlanet", "visitAsteroid",
+    "visitComet", "researchTech", "signalMarked", "move", "playCard", "cardCorner"]);
+
+  function hasMoneyMonotoneCardModel(card) {
+    const model = cardEffects.getCardModel(card);
+    if (!model || !["basic", "space-agency"].includes(card.set) || !cards.getCatalogEntryForCard(card)) return false;
+    const bounded = value => Number.isSafeInteger(value) && value >= 0 && value <= 1000;
+    const keysWithin = (value, keys) => value && typeof value === "object" && !Array.isArray(value)
+      && Object.keys(value).every(key => keys.includes(key));
+    function condition(value) {
+      const keys = Object.hasOwn(MONEY_INDEPENDENT_CONDITIONS, value?.type) ? MONEY_INDEPENDENT_CONDITIONS[value.type] : null;
+      return Boolean(keys && keysWithin(value, ["type", ...keys])
+        && (value.type !== "resourceEquals" || ["publicity", "score", "availableData", "handSize", "aomomoFossils"].includes(value.resource)));
+    }
+    function effect(value) {
+      const keys = Object.hasOwn(MONEY_MONOTONE_EFFECT_OPTIONS, value?.type) ? MONEY_MONOTONE_EFFECT_OPTIONS[value.type] : null;
+      const options = value?.options || {};
+      if (!keys || !keysWithin(value, ["id", "type", "label", "icon", "options"]) || !keysWithin(options, keys)) return false;
+      for (const key of ["count", "per", "movementPoints", "repeat"]) if (Object.hasOwn(options, key) && !bounded(options[key])) return false;
+      if (options.gain && (!keysWithin(options.gain, ["credits", "energy", "publicity", "score"])
+        || Object.values(options.gain).some(value => !bounded(value)))) return false;
+      if (options.cost && (!keysWithin(options.cost, ["credits", "energy", "publicity"])
+        || Object.values(options.cost).some(value => !bounded(value)))) return false;
+      if (options.resource && !["credits", "energy", "publicity", "score", "data"].includes(options.resource)) return false;
+      if (options.condition && !condition(options.condition)) return false;
+      if (options.reward && !effect(options.reward)) return false;
+      if (options.afterResearchReward && (!keysWithin(options.afterResearchReward, ["kind", "publicity"])
+        || options.afterResearchReward.kind !== "publicityIfNotFirstTake" || !bounded(options.afterResearchReward.publicity))) return false;
+      if (options.bonus) {
+        const bonus = options.bonus;
+        if (!keysWithin(bonus, ["duration", "eventType", "includePlanetIds", "excludePlanetIds", "onceKey", "icon",
+          "distinctBy", "minCount", "color", "rewards"]) || !MONEY_INDEPENDENT_EVENTS.has(bonus.eventType)
+          || !["turn", "flow"].includes(bonus.duration)
+          || bonus.distinctBy && !["planetId", "sectorX", "nebulaId", "cardInstanceId", "cardInstanceIds"].includes(bonus.distinctBy)
+          || !Array.isArray(bonus.rewards) || !bonus.rewards.every(effect)) return false;
+      }
+      return true;
+    }
+    const taskSafe = task => keysWithin(task, ["id", "condition", "rewards"]) && condition(task.condition)
+      && Array.isArray(task.rewards) && task.rewards.every(effect);
+    if (!keysWithin(model, ["cardType", "playEffects", "tasks", "temporaryTasks", "triggers", "endGameScoring", "source",
+      "reserveAfterPlay", "displayRow", "countsAsType3", "pluto"])
+      || model.pluto && (!keysWithin(model.pluto, ["orbit", "land"]) || Object.values(model.pluto).some(value => typeof value !== "boolean"))
+      || [model.playEffects, model.tasks, model.temporaryTasks, model.triggers].some(value => value != null && !Array.isArray(value))
+      || !(model.playEffects || []).every(effect) || !(model.tasks || []).every(taskSafe)
+      || !(model.temporaryTasks || []).every(taskSafe)) return false;
+    if (!(model.triggers || []).every(trigger => keysWithin(trigger, ["id", "event", "effect"])
+      && keysWithin(trigger.event, ["type", "types", "planetIds", "includePlanetIds",
+      "excludePlanetIds", "requiresOwnOrbit", "techType", "color"])
+      && (trigger.event.types == null || Array.isArray(trigger.event.types))
+      && (trigger.event.types?.length ? trigger.event.types : [trigger.event.type]).every(type => MONEY_INDEPENDENT_EVENTS.has(type))
+      && effect(trigger.effect))) return false;
+    const scoring = model.endGameScoring;
+    return !scoring || keysWithin(scoring, ["kind", "color", "traceType", "techType", "planetId", "scorePer", "locationType", "score", "resource", "count"])
+      && Object.values(scoring).every(value => typeof value !== "number" || bounded(value))
+      && ["sectorWinsByColor", "traceCount", "techCount", "distinctSignalSectors", "planetOrbitOrLand",
+      "probeLocation", "unmarkedFinalRightmost", "remainingResource", "planetLandingPairs", "allOrbitOrLand"].includes(scoring.kind)
+      && (scoring.kind !== "remainingResource" || ["availableData", "publicity"].includes(scoring.resource));
+  }
+
   function freeze(value) {
     if (!value || typeof value !== "object" || Object.isFrozen(value)) return value;
     for (const item of Object.values(value)) freeze(item);
@@ -146,6 +221,7 @@
     let nodes = new WeakMap();
     const identities = new Map();
     let resourceOrders = new WeakMap();
+    let knownMoneyOrders = new WeakMap();
     let openingOrders = new WeakMap();
     let openingCapacities = new WeakMap();
     let openingPlans = new WeakMap();
@@ -155,6 +231,7 @@
     const resourceGroups = new Map();
     let fork = null;
     let loadedEnvelope = null;
+    let decodedEnvelope = null, decodedState = null;
     let rootObservation = null;
     let publicSeed = null;
     let nodeCount = 0;
@@ -230,11 +307,21 @@
         legalActions: freeze(structuredClone(actions)), status, boundary: barrier?.code || null,
       });
       const boundary = barrier?.code || null;
-      const key = forwardIdentity(envelope, status, boundary);
+      const key = forwardIdentity(envelope, status, boundary, readIdentityState(envelope));
       if (!identities.has(key)) identities.set(key, Object.freeze({}));
       nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key });
       nodeCount += 1;
       return node;
+    }
+
+    function readIdentityState(envelope) {
+      if (envelope.session?.session) return envelope.session.session.workingState;
+      // 仅保留最近一份私有只读解码，供身份和本节点的纯证明检查共用；不交给规则写入。
+      if (decodedEnvelope !== envelope) {
+        decodedEnvelope = envelope;
+        decodedState = JSON.parse(envelope.committedState);
+      }
+      return decodedState;
     }
 
     function openRoot() {
@@ -612,6 +699,50 @@
       return resourceOrder(node, resourceOrders, false);
     }
 
+    function knownCardMoneyOrder(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (knownMoneyOrders.has(node)) return knownMoneyOrders.get(node);
+      const at = now(), result = describeKnownCardMoneyOrder(stored, node);
+      milliseconds.resourceOrder += now() - at;
+      knownMoneyOrders.set(node, result);
+      return result;
+    }
+
+    function describeKnownCardMoneyOrder(stored, node) {
+      if (node.status !== "stable" || stored.envelope.session) return null;
+      const state = readIdentityState(stored.envelope), owner = state.players.players.find(player => player.id === seatId);
+      const company = industryCatalog.getPlayerIndustryDefinition(owner), passives = company && POST_MAIN_MONEY_COMPANIES[company.activeAbilityId ?? "no_active"];
+      if (!owner || state.turn.currentPlayerId !== seatId || state.match.initialSetup || owner.passCompletionPending
+        || state.turn.passedPlayerIds.includes(seatId) || state.turn.activePlayerCount !== 4
+        || !hasStandardOpeningTrades() || Object.keys(state.tech.stacks).some(id => !/^(orange|purple|blue)[1-4]$/.test(id))
+        || Object.keys(owner.techState.ownedTiles).some(id => !/^(orange|purple|blue)[1-4]$/.test(id))
+        || node.legalActions.some(action => !["launch", "orbit", "land", "scan", "analyze", "research_tech", "play_card", "pass", "quick_trade",
+          "card_corner", "place_data", "move", "end_turn", "industry", "complete_task"].includes(action.family))
+        || state.turn.cardTurnEventBonuses?.length || Object.values(state.aliens.aliens).some(slot => slot.revealed)
+        || owner.hand.length > 250 || owner.reservedCards.length > 250
+        || !Number.isSafeInteger(owner.completedTaskCount ?? 0) || (owner.completedTaskCount ?? 0) < 0 || (owner.completedTaskCount ?? 0) > 1000000
+        || !passives || passives.length !== company.passiveIds.length || company.passiveIds.some(id => !passives.includes(id))
+        || [...Object.values(owner.resources), ...Object.values(owner.income)].some(value => !Number.isSafeInteger(value) || value < 0 || value > 1000000)
+        || [...owner.hand, ...owner.reservedCards, ...(owner.industryLastPlayedCardThisRound ? [owner.industryLastPlayedCardThisRound] : []),
+          ...(owner.industryFutureSpan?.card ? [owner.industryFutureSpan.card] : []),
+          ...(company?.activeAbilityId === "deepspace_swap_cards" ? state.cards.publicCards.filter(Boolean) : [])]
+          .some(card => !hasMoneyMonotoneCardModel(card))
+        || state.players.players.some(player => player.reservedCards.some(card => !["basic", "space-agency"].includes(card.set)
+          || !cards.getCatalogEntryForCard(card)))
+        || state.cards.publicCards.some(card => card && (!["basic", "space-agency"].includes(card.set) || !cards.getCatalogEntryForCard(card)))) return null;
+      const credits = owner.resources.credits, energy = owner.resources.energy;
+      if (["credits", "energy"].some(key => !Number.isSafeInteger(owner.blueBonusResources?.[key] ?? 0)
+        || (owner.blueBonusResources?.[key] ?? 0) < 0 || (owner.blueBonusResources?.[key] ?? 0) > owner.resources[key])) return null;
+      const transition = turnFlow.advanceTurnAfterPlayerAction(structuredClone(state), seatId);
+      if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded || transition.nextPlayerId === seatId) return null;
+      const neutral = { ...state, players: { ...state.players, players: state.players.players.map(player => player.id === seatId
+        ? { ...owner, resources: { ...owner.resources, credits: 0, energy: 0 } } : player) } };
+      const key = forwardIdentity(stored.envelope, `known-card-money:${owner.mainActionCompleted ? "post-main" : "before-main"}`, null, neutral);
+      if (!resourceGroups.has(key)) resourceGroups.set(key, Object.freeze({}));
+      return freeze({ group: resourceGroups.get(key), credits, energy, proof: "seti-known-card-money-simulation-v1" });
+    }
+
     function passReserveChoiceSpec(node) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
@@ -671,7 +802,9 @@
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
       if (postMainPlans.has(node)) return postMainPlans.get(node);
       const at = now();
-      const result = describePostMainPlan(stored, node);
+      const beforeMain = node.status === "stable" && !stored.envelope.session
+        && !readIdentityState(stored.envelope).players.players.find(player => player.id === seatId)?.mainActionCompleted;
+      const result = beforeMain ? null : describePostMainPlan(stored, node);
       milliseconds.postMainPlan += now() - at;
       postMainPlans.set(node, result);
       return result;
@@ -973,7 +1106,10 @@
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
       if (orders.has(node)) return orders.get(node);
       const at = now();
-      const result = describeResourceOrder(stored, node, opening);
+      // 两份旧证明都排除本席保留牌；用已有私有解码先判定，避免重复解析整个存档。
+      const hasReservation = node.status === "stable" && !stored.envelope.session
+        && readIdentityState(stored.envelope).players.players.find(player => player.id === seatId)?.reservedCards.length;
+      const result = hasReservation ? null : describeResourceOrder(stored, node, opening);
       milliseconds.resourceOrder += now() - at;
       orders.set(node, result);
       return result;
@@ -1040,9 +1176,11 @@
       (fork?.composition || fork)?.dispose?.();
       fork = null;
       loadedEnvelope = null;
+      decodedEnvelope = null; decodedState = null;
       nodes = new WeakMap();
       identities.clear();
       resourceOrders = new WeakMap();
+      knownMoneyOrders = new WeakMap();
       openingOrders = new WeakMap();
       openingCapacities = new WeakMap();
       openingPlans = new WeakMap();
@@ -1058,6 +1196,7 @@
     function getDiagnostics() {
       return freeze({ nodeCount, submissionCount, cacheHits, cacheEntries: cache.size,
         observationCount, identityCount: identities.size, maxCacheEntries,
+        decodedStateCacheEntries: decodedEnvelope ? 1 : 0, maxDecodedStateCacheEntries: 1,
         selectionEvidenceEntries: selectionCertificate ? 1 : 0, maxSelectionEvidenceEntries: 1,
         planEvidenceEntries: planCertificate ? 1 : 0, planPrefixEntries: planCertificate?.rows.length || 0, maxPlanPrefixEntries: 32,
         milliseconds: { ...milliseconds } });
@@ -1070,7 +1209,7 @@
     }
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
-      rememberSelection, reuseSelection, rememberPlan, reusePlan, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
+      rememberSelection, reuseSelection, rememberPlan, reusePlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, postMainPlanSpec, close, getDiagnostics });
   }
 

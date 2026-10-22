@@ -8,6 +8,8 @@
 2026-10-23更新：通用factory、可信分析端口、独立估值和搜索已提供；
 Browser/Simulation都可显式选择实验search玩家，未闭合仍失败，不代表整局能力已完成。
 搜索v20另提供按完整状态与合法信封校验的最优前缀复用；证明与容量见[复用契约](ai-plan-prefix-reuse-proof-20261023.md)。
+搜索v21增加可信`knownCardMoneyOrder`，按已审计DSL结构证明稳定节点的钱电支配；
+未知模型继续普通搜索，范围见[证明契约](ai-known-card-money-proof-20261023.md)。
 新的开发顺序见 [AI 开发流程](ai-development-workflow.md)。
 
 ## 机器决策调用链
