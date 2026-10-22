@@ -80,7 +80,8 @@
       const alternativeCount = selection ? Array.from({ length: selection.requiredCount }, (_, i) =>
         (selection.cardIds.length - i) / (selection.unordered ? i + 1 : 1))
         .reduce((count, n) => count * n, 1) : node.legalActions.length;
-      const resources = !boundary && !selection && useResourceDominance ? port.postMainResourceOrder(node) : null;
+      const resources = !boundary && !selection && useResourceDominance
+        ? port.postMainResourceOrder(node) || port.openingResourceOrder?.(node) || null : null;
       nodes.push({ node, edges: [], selection, alternatives, alternativeCount, resources,
         expanded: boundary, value, distance: boundary ? 0 : Infinity, best: null });
       if (resources) {

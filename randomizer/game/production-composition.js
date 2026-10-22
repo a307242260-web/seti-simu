@@ -153,20 +153,18 @@
       if (!player) {
         return { ok: false, code: "QUICK_TRADE_MOVE_OWNER_MISSING", message: "快速移动 owner 不存在" };
       }
-      const hasMove = (root.pieces?.rockets || []).some((rocket) => (
-        rocket.playerId === player.id && rocket.surface === "solar-board"
-      ));
-      if (!hasMove) {
-        return { ok: false, code: "QUICK_TRADE_MOVE_UNAVAILABLE", message: "没有可移动的探测器" };
+      const decisionContext = {
+        kind: "move",
+        type: "trade",
+        tradeId: input.tradeId,
+        playerId: player.id,
+      };
+      if (!moveChoices(root, decisionContext).length) {
+        return { ok: false, code: "QUICK_TRADE_MOVE_UNAVAILABLE", message: "没有可在1移动点内到达的方向" };
       }
       return {
         ok: true,
-        decisionContext: {
-          kind: "move",
-          type: "trade",
-          tradeId: input.tradeId,
-          playerId: player.id,
-        },
+        decisionContext,
         message: "请选择要移动的探测器与方向（1 步）",
       };
     }

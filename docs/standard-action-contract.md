@@ -78,7 +78,8 @@ Host 只提供 state/projection adapter 与纯 service，传入 `productionRules
 的目标固定为 `tileId + blueSlot`。
 
 快速交易枚举须满足真实执行的必要前置条件：`energy-for-move` 除足够能量外，
-还要求本席有位于太阳系的探测器。Production provider 复用正式移动选择的 owner/位置检查，
+还要求本席探测器至少有一个在1移动点内可达的方向。Production provider 复用正式移动选择，
+不是只判断棋子存在；无橙2科技等减免时，离开小行星需要2移动点，不能用该1步交易隐式补差。
 不能把必然执行失败的交易交给 AI 再过滤；Browser 与 Simulation 的合法集使用同一判断。
 
 当前行为证据以 `tools/node-test-inventory.js` 登记的 Action、Session 与领域行为测试为准：各 family 必须覆盖合法候选执行、stale/越权拒绝、失败零污染和浏览器/Policy 同入口；跨模块组合由唯一 full-flow 验证。本文不维护按迁移批次命名的测试清单。

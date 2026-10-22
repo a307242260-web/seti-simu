@@ -24,7 +24,7 @@
   }
 
   // 只比较向前正式输入的行为；不提供 undo/abort，因而历史日志和撤销帧不参与身份。
-  // 实体编号、数组顺序、资源、规则 RNG 与完整剩余队列保留。会改变合法信封的
+  // 除下述已证明例外，实体编号、数组顺序、资源、规则 RNG 与剩余队列保留。会改变合法信封的
   // authority 版本单独由 expand 校验，不能作为循环状态的差异。
   function forwardIdentity(envelope, status, boundary, stateOverride = null) {
     const session = envelope.session?.session;
@@ -34,6 +34,30 @@
     // UI 展示和 journal 的历史顺序不属于向前规则身份；其他数组仍保留顺序。
     if (Array.isArray(source.cards?.discardPile)) state.cards = { ...source.cards,
       discardPile: [...source.cards.discardPile].sort((a, b) => String(a.id) < String(b.id) ? -1 : String(a.id) > String(b.id) ? 1 : 0) };
+    // 玩家数据标记可互换；编号/显示序号和池展示位置不进入正式选择或奖励。
+    // 计算机与蓝色附加位仍按真实槽位区分，溢出数量等其余字段原样保留。
+    if (Array.isArray(source.players?.players)) state.players = { ...source.players,
+      players: source.players.players.map(player => {
+        if (!player.dataState) return player;
+        function tokenIdentity(token, pool) {
+          const result = { ...token };
+          delete result.id;
+          delete result.index;
+          if (pool) delete result.slotIndex;
+          return result;
+        }
+        return { ...player, dataState: { ...player.dataState,
+          poolTokens: player.dataState.poolTokens.map(token => tokenIdentity(token, true)),
+          placedTokens: player.dataState.placedTokens.map(token => tokenIdentity(token, false))
+            .sort((a, b) => (a.placementKind < b.placementKind ? -1 : a.placementKind > b.placementKind ? 1 : 0)
+              || (a.placementSlot ?? a.blueSlot) - (b.placementSlot ?? b.blueSlot)),
+        } };
+      }),
+    };
+    if (source.meta?.sequences) {
+      state.meta.sequences = { ...source.meta.sequences };
+      delete state.meta.sequences.dataToken;
+    }
     delete state.meta.stateVersion;
     if (state.match) delete state.match.decisionVersion;
     const references = new Map();
@@ -77,6 +101,7 @@
     let nodes = new WeakMap();
     const identities = new Map();
     let resourceOrders = new WeakMap();
+    let openingOrders = new WeakMap();
     const resourceGroups = new Map();
     let fork = null;
     let loadedEnvelope = null;
@@ -431,21 +456,29 @@
     }
 
     function postMainResourceOrder(node) {
+      return resourceOrder(node, resourceOrders, false);
+    }
+
+    function openingResourceOrder(node) {
+      return resourceOrder(node, openingOrders, true);
+    }
+
+    function resourceOrder(node, orders, opening) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
-      if (resourceOrders.has(node)) return resourceOrders.get(node);
+      if (orders.has(node)) return orders.get(node);
       const at = now();
-      const result = describeResourceOrder(stored, node);
+      const result = describeResourceOrder(stored, node, opening);
       milliseconds.resourceOrder += now() - at;
-      resourceOrders.set(node, result);
+      orders.set(node, result);
       return result;
     }
 
-    function describeResourceOrder(stored, node) {
+    function describeResourceOrder(stored, node, opening) {
       if (node.status !== "stable" || stored.envelope.session) return null;
       const state = JSON.parse(stored.envelope.committedState);
       const owner = state.players.players.find(player => player.id === seatId);
-      if (state.turn.currentPlayerId !== seatId || owner?.mainActionCompleted !== true
+      if (state.turn.currentPlayerId !== seatId || !owner || Boolean(owner.mainActionCompleted) !== !opening
         || owner.passCompletionPending || state.turn.passedPlayerIds.includes(seatId)
         || state.match.initialSetup || (owner.reservedCards || []).length
         || (state.turn.cardTurnEventBonuses || []).length
@@ -455,6 +488,16 @@
         || company.passiveIds.some(id => id !== "helios_passive_reward_slots")) return null;
       if (owner.hand.some(card => !["basic", "space-agency"].includes(card.set)
         || !cards.getCatalogEntryForCard(card))) return null;
+      if (opening) {
+        const knownCards = new Set(["dlc_27.png", "b_44.webp", "b_23.webp", "dlc_22.png", "b_48.webp"]);
+        // 仅覆盖已逐张审计的首个主行动窗口；未审计的牌、科技和外部触发器不套用。
+        if (owner.hand.some(card => !knownCards.has(card.cardId))
+          || Object.values(owner.techState.ownedTiles).some(Boolean)
+          || state.players.players.some(player => player.reservedCards.length)
+          || state.pieces.rockets.some(rocket => [rocket.playerId, rocket.color, rocket.playerColor]
+            .some(id => id === seatId || id === owner.color))
+          || state.cards.publicCards.some(card => card && !["basic", "space-agency"].includes(card.set))) return null;
+      }
       const credits = owner.resources.credits, energy = owner.resources.energy;
       const blueCredits = owner.blueBonusResources?.credits ?? 0;
       const blueEnergy = owner.blueBonusResources?.energy ?? 0;
@@ -466,14 +509,15 @@
       const transition = turnFlow.advanceTurnAfterPlayerAction(preview, seatId);
       if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded
         || transition.nextPlayerId === seatId) return null;
-      // 蓝槽留存未进入标准席位观察，保留在可信身份中精确比较，不向算法额外披露。
+      // 蓝槽留存已通过 blueBonusAssets 公开；此版仍保守要求精确相同，不扩大支配关系。
       const neutralOwner = { ...owner, resources: { ...owner.resources, credits: 0, energy: 0 } };
       const neutral = { ...state, players: { ...state.players,
         players: state.players.players.map(player => player.id === seatId ? neutralOwner : player) } };
-      const key = forwardIdentity(stored.envelope, "post-main-resource-order", null, neutral);
+      const scope = opening ? "opening-resource-order" : "post-main-resource-order";
+      const key = forwardIdentity(stored.envelope, scope, null, neutral);
       if (!resourceGroups.has(key)) resourceGroups.set(key, Object.freeze({}));
       return freeze({ group: resourceGroups.get(key), credits, energy,
-        proof: "seti-helios-post-main-money-simulation-v1" });
+        proof: opening ? "seti-helios-opening-money-simulation-v1" : "seti-helios-post-main-money-simulation-v1" });
     }
 
     function close() {
@@ -483,6 +527,7 @@
       nodes = new WeakMap();
       identities.clear();
       resourceOrders = new WeakMap();
+      openingOrders = new WeakMap();
       resourceGroups.clear();
       cache.clear();
       rootObservation = null;
@@ -503,7 +548,7 @@
     }
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
-      rememberSelection, reuseSelection, postMainResourceOrder, close, getDiagnostics });
+      rememberSelection, reuseSelection, postMainResourceOrder, openingResourceOrder, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

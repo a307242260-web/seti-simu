@@ -60,7 +60,7 @@ function run(enabled) {
   const resources = port.postMainResourceOrder(root);
   assert(resources);
   assert.deepEqual(Object.keys(resources).sort(), ["credits", "energy", "group", "proof"],
-    "除公开钱电外仅暴露不透明比较组与证明，未投影的蓝槽留存不披露给算法");
+    "比较接口只提供钱电与不透明组，蓝槽留存仍在完整组身份中要求相同");
   const result = searchDecision({ port, root, evaluate, resourceDominance: enabled,
     budget: { transitions: 2048, nodes: 2049, frontier: 2048, milliseconds: 6000 } });
   port.close();
