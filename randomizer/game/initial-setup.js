@@ -167,6 +167,7 @@
     return {
       ok: true,
       progressed: true,
+      irreversible: { code: "hidden_initial_offer", reason: "发出初始公司与资源牌选项" },
       events: [{ type: "initial_setup_started", ownerId: OWNER_ID }],
     };
   }
@@ -207,6 +208,7 @@
     const random = typeof actionContext?.random === "function"
       ? actionContext.random
       : createRandom(`${rootState.meta?.seed || "browser-host"}:initial-settlement`);
+    let revealedCard = false;
     const result = initialCards.resolveInitialSelections({
       state: rootState,
       players: rootState.players,
@@ -218,18 +220,16 @@
       tech: rootState.tech,
       turn: rootState.turn,
       blindDrawCard(player) {
-        if (typeof actionContext?.blindDrawCard === "function") return actionContext.blindDrawCard(player);
         // 统一抽牌上下文：初始结算盲抽共用 cards.createCardDrawContext
-        return cards.createCardDrawContext(
-          rootState.cards,
-          rootState.players,
-          random,
-          { root: rootState },
-        ).blindDraw(player);
+        const draw = typeof actionContext?.blindDrawCard === "function" ? actionContext.blindDrawCard(player)
+          : cards.createCardDrawContext(rootState.cards, rootState.players, random, { root: rootState }).blindDraw(player);
+        if (draw?.ok && draw.card) revealedCard = true;
+        return draw;
       },
       getEarthSectorCoordinate: () => earthCoordinate(rootState),
     }, { playerIds: activePlayerIds(rootState) });
-    return result;
+    return { ...result, irreversible: result.ok && revealedCard
+      ? { code: "hidden_card_draw", reason: "初始结算盲抽翻出隐藏牌" } : null };
   }
 
   function confirm(rootState, actionContext) {
@@ -283,6 +283,7 @@
       ok: true,
       progressed: true,
       settlement,
+      irreversible: settlement.irreversible,
       events: [
         { type: "initial_setup_player_confirmed", playerId: player.id },
         { type: "initial_setup_settled", ownerId: OWNER_ID },
@@ -408,10 +409,11 @@
     // 初始收入牌插入起始收入牌下方，移出游戏（不进弃牌堆、不会被洗回主牌库）。
     cards.addRemovedFromGame(rootState.cards, removed.card);
     const gain = cards.getIncomeGainForCard(removed.card);
+    let revealedCard = false;
     if (gain) {
       players.gainIncome(player, gain, {
-        blindDraw: (targetPlayer) => (
-          typeof actionContext?.blindDrawCard === "function"
+        blindDraw: (targetPlayer) => {
+          const draw = typeof actionContext?.blindDrawCard === "function"
             ? actionContext.blindDrawCard(targetPlayer)
             // 统一抽牌上下文：初始收入盲抽共用 cards.createCardDrawContext
             : cards.createCardDrawContext(
@@ -419,8 +421,10 @@
               rootState.players,
               createRandom(`${rootState.meta?.seed || "browser-host"}:initial-income:${player.id}`),
               { root: rootState },
-            ).blindDraw(targetPlayer)
-        ),
+            ).blindDraw(targetPlayer);
+          if (draw?.ok && draw.card) revealedCard = true;
+          return draw;
+        },
         gainData: (targetPlayer) => data.gainData(
           targetPlayer,
           { source: "initial_income", root: rootState },
@@ -435,6 +439,7 @@
       ok: true,
       progressed: true,
       remainingDecisionQueue,
+      irreversible: revealedCard ? { code: "hidden_card_draw", reason: "初始收入盲抽翻出隐藏牌" } : null,
       events: [{ type: "initial_income_resolved", playerId: player.id }],
     };
   }

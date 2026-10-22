@@ -41,6 +41,10 @@
     // UI 展示和 journal 的历史顺序不属于向前规则身份；其他数组仍保留顺序。
     if (Array.isArray(source.cards?.discardPile)) state.cards = { ...source.cards,
       discardPile: [...source.cards.discardPile].sort((a, b) => String(a.id) < String(b.id) ? -1 : String(a.id) > String(b.id) ? 1 : 0) };
+    // 移出游戏只按卡ID集合查重/排除抽取，没有按记录顺序执行的规则。
+    // 正式状态与journal的收入顺序保留；这里只忽略集合的历史排列。
+    if (Array.isArray(source.cards?.removedFromGameCardIds)) state.cards = { ...(state.cards || source.cards),
+      removedFromGameCardIds: [...source.cards.removedFromGameCardIds].sort() };
     // 玩家数据标记可互换；编号/显示序号和池展示位置不进入正式选择或奖励。
     // 计算机与蓝色附加位仍按真实槽位区分，溢出数量等其余字段原样保留。
     if (Array.isArray(source.players?.players)) state.players = { ...source.players,

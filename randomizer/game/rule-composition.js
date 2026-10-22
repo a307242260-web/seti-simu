@@ -199,6 +199,12 @@
       decision: null,
       informationBoundary: { code: barrier?.code || "hidden_information" },
     };
+    if (barrier?.code === "hidden_initial_offer" && sanitized.publicState?.resident?.initialSetup) {
+      const resident = sanitized.publicState.resident;
+      sanitized.publicState.resident = { ...resident, initialSetup: {
+        ...resident.initialSetup, offer: null, interactive: false, offerHidden: true,
+      } };
+    }
     const self = leafObservation.selfState || null;
     if (self) {
       sanitized.selfState = {

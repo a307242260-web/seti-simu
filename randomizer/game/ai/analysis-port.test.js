@@ -18,6 +18,19 @@ const kernel = createSimulationRuleComposition({
 kernel.newGame({ seed, activePlayerCount: 4 });
 kernel.composition.inputPort.beginDrain({});
 const comp = kernel.composition;
+const beforeStart = comp.lifecycle.save().envelope;
+const startDecision = comp.inspect().session.decision;
+const startChoice = startDecision.choices.find(action => action.target?.kind === "start_initial_setup");
+const startPort = createAnalysisPort({ composition: comp, seatId: startChoice.actorId });
+const startRoot = startPort.openRoot(), offered = startPort.expand(startRoot, startChoice.actionId);
+assert.equal(offered.status, "information-barrier", "发出未知初始选项后不能继续规划选择");
+assert.deepEqual(offered.legalActions, []);
+assert.equal(offered.observation.publicState.resident.initialSetup.offer, null);
+assert.deepEqual(comp.lifecycle.save().envelope, beforeStart);
+startPort.close();
+assert.equal(comp.inputPort.submitDecision({ decisionId: startDecision.decisionId,
+  decisionVersion: startDecision.decisionVersion, ownerId: startDecision.ownerId, choice: startChoice }).ok, true);
+// 初始选项实际可见后，再验证纯点击选择、取消与缓存；不能跨屏障沿用旧分支。
 const before = comp.lifecycle.save().envelope;
 const first = comp.inputPort.enumerateActions({})[0];
 const port = createAnalysisPort({ composition: comp, seatId: first.actorId });

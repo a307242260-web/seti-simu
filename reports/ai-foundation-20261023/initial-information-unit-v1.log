@@ -1,0 +1,132 @@
+standard full-flow v2 passed
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+agent runtime isolation, completion and recovery tests passed
+trusted analysis fork isolation and exact reuse passed
+blue bonus value tests passed
+card trade information bounds match all 90 formal leaves and reject extra rewards
+conditional resolution tests passed
+data token fungibility, real placement diamonds and every immediate successor passed
+data resource greedy contracts passed
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+失效科技：所有权/计数不变，V、叶排序与搜索优先级共同扣除能力未来价值
+final mark company income and required inputs passed
+heuristic evaluator outcome behavior tests passed
+heuristic policy outcome behavior tests passed
+{"inertReservation":"passed","rawInputs":314,"prunedInputs":9,"boundLeaves":40}
+machine-player-coordinator.test.js ok
+{"openingMoneyCapacity":"passed","results":[{"cardId":null,"value":29.5,"raw":814,"capacityOnly":602,"pruned":44,"capacityPrunes":4},{"cardId":"dlc_27.png","value":30.5,"raw":1850,"capacityOnly":1396,"pruned":96,"capacityPrunes":8},{"cardId":"b_44.webp","value":30.5,"raw":3546,"capacityOnly":3062,"pruned":98,"capacityPrunes":8},{"cardId":"b_23.webp","value":30.5,"raw":1904,"capacityOnly":1304,"pruned":122,"capacityPrunes":8},{"cardId":"dlc_22.png","value":30.5,"raw":1850,"capacityOnly":1396,"pruned":96,"capacityPrunes":8},{"cardId":"b_48.webp","value":30.5,"raw":1760,"capacityOnly":1280,"pruned":98,"capacityPrunes":8}]}
+{"openingPlan":"passed","results":[{"cardId":null,"value":32.5,"baseline":96,"pruned":47},{"cardId":"dlc_27.png","value":33.5,"baseline":200,"pruned":52},{"cardId":"b_44.webp","value":33.5,"baseline":202,"pruned":52},{"cardId":"b_23.webp","value":33.5,"baseline":226,"pruned":63},{"cardId":"dlc_22.png","value":33.5,"baseline":200,"pruned":52},{"cardId":"b_48.webp","value":33.5,"baseline":202,"pruned":51}],"passPaymentExits":20,"directPassValue":37,"directPassInputs":3,"publicityPassValue":37.5,"dataAuditInputs":382,"dataAuditLeaves":140,"fullHandBeforePassMacros":766,"fullHandAfterPassMacros":136,"fullHandCachedInputs":136,"passMacroCacheHits":2}
+{"openingMoney":"passed","rawInputs":365,"prunedInputs":281,"boundedInputs":218,"proofPrunes":8,"cardTradePrunes":21}
+outcome projection tests passed
+plan-continuation.test.js ok
+policy port protocol tests passed
+{"postMainMovement":"passed","rawInputs":282,"prunedInputs":4,"payments":95,"arrivals":29,"twoPointPayments":16}
+{"postMainPlan":"passed","rawInputs":314,"prunedInputs":9,"excludedActions":20}
+probe move greedy tests passed
+secondary company probe greedy contracts passed
+probe resource greedy tests passed
+probe source binding tests passed
+public card acquisition goal tests passed
+company acquisition policy and plan dependencies passed
+public card publicity preparation boundaries passed
+public card trade cost representative tests passed
+quick timing phase observation contract passed
+TAP version 13
+# Subtest: 主行动后根目录保留真实转动窗口与指定公共牌，不放行普通准备
+ok 1 - 主行动后根目录保留真实转动窗口与指定公共牌，不放行普通准备
+  ---
+  duration_ms: 0.6135
+  type: 'test'
+  ...
+# Subtest: 主行动后已绑定的普通准备延至下一turn，保留原目标
+ok 2 - 主行动后已绑定的普通准备延至下一turn，保留原目标
+  ---
+  duration_ms: 0.599084
+  type: 'test'
+  ...
+# Subtest: 目标完成后的未绑定后继不能重新引入主行动后普通准备
+ok 3 - 目标完成后的未绑定后继不能重新引入主行动后普通准备
+  ---
+  duration_ms: 0.951458
+  type: 'test'
+  ...
+# Subtest: 计划身份和盘面依赖未变化也不能绕过主行动后时机判断
+ok 4 - 计划身份和盘面依赖未变化也不能绕过主行动后时机判断
+  ---
+  duration_ms: 0.158916
+  type: 'test'
+  ...
+# Subtest: 移动窗口绑定方向，消失后计划失效；正式付款与结束不受裁剪
+ok 5 - 移动窗口绑定方向，消失后计划失效；正式付款与结束不受裁剪
+  ---
+  duration_ms: 0.908
+  type: 'test'
+  ...
+# Subtest: 机会资源准备只补第一步缺口，已满足时不为未来终点囤资源
+ok 6 - 机会资源准备只补第一步缺口，已满足时不为未来终点囤资源
+  ---
+  duration_ms: 0.505334
+  type: 'test'
+  ...
+# Subtest: 移动角标共用机会准入，缺牌、无窗口和点数不足均拒绝
+ok 7 - 移动角标共用机会准入，缺牌、无窗口和点数不足均拒绝
+  ---
+  duration_ms: 0.902542
+  type: 'test'
+  ...
+# Subtest: 扫描准备保留仍有效的扇区目标，不因填数据改做分析
+ok 8 - 扫描准备保留仍有效的扇区目标，不因填数据改做分析
+  ---
+  duration_ms: 0.414625
+  type: 'test'
+  ...
+# Subtest: 扫描根和绑定后继保留准备方案，池数据变化使准备计划失效
+ok 9 - 扫描根和绑定后继保留准备方案，池数据变化使准备计划失效
+  ---
+  duration_ms: 1.378333
+  type: 'test'
+  ...
+# Subtest: 真实叶同收益优先少丢数据，再少步骤；不以防溢出压过较高收益
+ok 10 - 真实叶同收益优先少丢数据，再少步骤；不以防溢出压过较高收益
+  ---
+  duration_ms: 4.71325
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 16.375083
+research potential tests passed
+{"resourceDominance":"passed","rawInputs":318,"prunedInputs":150,"proofPrunes":6}
+resource value tests passed
+score corner target tests passed
+independent state value accounting and strict inputs passed
+同色额外位贪心、原生输入与任务/特殊边界通过
+虫族跨颜色纯分数贪心、正式奖励、任务与特殊奖励边界通过
+外星人普通槽位贪心：根/绑定/未绑定、末轮、特殊位置及方舟边界通过
+strategic goal evaluator tests passed
+terminal value tests passed
+turing active tech pruning tests passed
+turing immediate expiry tests passed
+public picks preserve hidden-refill boundaries, known cards and recovery across 8 cases
+initial offer, settlement and income information boundaries, removal equivalence and recovery passed
+initial-setup mission startup final mark passed
+SUMMARY unit passed=39 failed=0 total=39 time=75.69s
+SUMMARY fullFlow passed=1 failed=0 total=1 time=0.50s
+OWNER architecture/policy-host tests=6
+OWNER full-flow/standard-flow-v1 tests=1
+OWNER policy/decision-search tests=9
+OWNER policy/heuristic-evaluator tests=8
+OWNER policy/heuristic-policy tests=10
+OWNER policy/machine-player-coordinator tests=1
+OWNER policy/plan-continuation tests=1
+OWNER policy/state-value tests=1
+OWNER rules/actions tests=1
+OWNER rules/card-play tests=1
+OWNER rules/initial-setup tests=1

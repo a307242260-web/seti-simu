@@ -180,6 +180,37 @@ try {
     }
     console.log(`[PASS] independent-opening-pass-normal-form: total=${evaluator(passMacro.node.observation)}`);
     moneyPort.close();
+    const initialEnv = createSimulationEnv();
+    try {
+      initialEnv.reset({ seed: "seti-free-analyze-v1", agentType: "completion", compactReplay: true });
+      if (!comp.lifecycle.restore(initialEnv.createCheckpoint().coreState.compositionEnvelope).ok) throw new Error("初始发牌审计恢复失败");
+      const ownerId = comp.inspect().session.decision.ownerId;
+      const initialValue = independentValue.createStateValueEvaluator(ownerId);
+      const startPort = createAnalysisPort({ composition: comp, seatId: ownerId }), startRoot = startPort.openRoot();
+      const offered = startPort.expand(startRoot, startRoot.legalActions.find(action => action.target?.kind === "start_initial_setup").actionId);
+      if (offered.status !== "information-barrier" || offered.observation.publicState.resident.initialSetup.offer !== null) {
+        throw new Error("初始发牌未停在已遮蔽选项的信息边界");
+      }
+      if (initialValue(offered.observation) !== initialValue(outcomeModel.createDecisionObservation(offered.observation, { seatId: ownerId }))) {
+        throw new Error("初始选项边界的原始/标准估值不一致");
+      }
+      startPort.close();
+      for (let i = 0; i < 64 && !initialEnv.legalActions().some(action => action.target?.kind === "discard-hand-cards"); i += 1) initialEnv.runAgentDecision();
+      if (!comp.lifecycle.restore(initialEnv.createCheckpoint().coreState.compositionEnvelope).ok) throw new Error("初始收入审计恢复失败");
+      const incomeSeat = comp.inspect().session.decision.ownerId;
+      const incomeValue = independentValue.createStateValueEvaluator(incomeSeat);
+      const incomePort = createAnalysisPort({ composition: comp, seatId: incomeSeat }), incomeRoot = incomePort.openRoot();
+      const incomeCard = incomeRoot.observation.selfState.hand.find(card => card.incomeCode === 2);
+      const incomeAction = incomeRoot.legalActions.find(action => action.target?.cardIds?.includes(incomeCard?.cardId));
+      if (!incomeAction) throw new Error("初始收入审计缺少真实盲抽来源");
+      const incomeLeaf = incomePort.expand(incomeRoot, incomeAction.actionId);
+      if (incomeLeaf.status !== "information-barrier" || incomeValue(incomeLeaf.observation)
+        !== incomeValue(outcomeModel.createDecisionObservation(incomeLeaf.observation, { seatId: incomeSeat }))) {
+        throw new Error("初始收入盲抽的边界或原始/标准估值不一致");
+      }
+      incomePort.close();
+      console.log(`[PASS] independent-initial-information: offer=${initialValue(offered.observation)} income=${incomeValue(incomeLeaf.observation)}`);
+    } finally { initialEnv.dispose(); }
   } catch (error) {
     console.log(`[FAIL] independent-card-choice-equivalence: ${error.message}`);
     allPass = false;

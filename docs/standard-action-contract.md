@@ -42,6 +42,11 @@ Standard Action 是浏览器控件与训练 Policy 之间唯一共享的游戏�
 通用精选、B48精选角标及公司精选的收入角标不得遗漏或清空该屏障。
 从`seti-runtime-v1.1`起，前两条路径只有实际补出牌才新增该屏障；已知公共牌入手本身不构成新隐藏身份。
 
+从`seti-runtime-v1.2`起，初始发出公司与资源牌选项报告`hidden_initial_offer`，末位确认结算和
+初始插收入牌的实际盲抽报告`hidden_card_draw`。无实际抽牌时不新增屏障，也不清除已有屏障。
+分析分支发牌后停止展开并遮蔽新选项；真实宿主在正式发牌后仍可读取这些选项并继续选择。
+同类屏障也按实际执行的revision区分，恢复重放保留相同记录。旧checkpoint版本字段不批量改写。
+
 drain 必须有步数上界；未知 pending、未知 family、旧 resolver/recover/skip 依赖一律 fail-closed，并输出 `state/family/type/owner`。Policy、AI valuation、DOM callback、overlay 文案均不得成为 drain 的输入。
 
 ## Registry
