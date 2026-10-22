@@ -75,6 +75,9 @@
     let cacheHits = 0;
     let observationCount = 0;
     const cache = new Map();
+    // 每席只保留最近一份完成证据；close 结束分支，不丢失下一次点击的证据。
+    let selectionCertificate = null;
+    let nextCertificate = 0;
     const now = () => typeof performance !== "undefined" ? performance.now() : Date.now();
     const milliseconds = { restore: 0, execute: 0, observation: 0, checkpoint: 0 };
 
@@ -330,6 +333,67 @@
         proof: spec.proof, submissions: actions.length }));
     }
 
+    function selectionDependencyKey(node) {
+      const envelope = nodes.get(node).envelope;
+      const session = envelope.session.session;
+      const head = session.queue[0];
+      // 只剥离已证明纯点击会改变的选中列表和由它生成的 choices；余下队列原样保留。
+      const neutral = { ...envelope, session: { ...envelope.session, session: { ...session,
+        queue: [{ ...head, payload: { ...head.payload, choices: [],
+          decisionContext: { ...head.payload.decisionContext, selected: [] } } }, ...session.queue.slice(1)],
+      } } };
+      return JSON.stringify([node.legalActions[0].stateVersion, node.legalActions[0].decisionVersion,
+        forwardIdentity(neutral, "selection-component", null)]);
+    }
+
+    function rememberSelection(node, entries, modelKey) {
+      const spec = selectionSpec(node);
+      if (!spec || typeof modelKey !== "string" || !modelKey) throw new Error("ANALYSIS_SELECTION_EVIDENCE_INVALID");
+      const expected = new Set([...selectionPlans(node)].map(plan => JSON.stringify(plan.selectedIds)));
+      if (!Array.isArray(entries) || entries.length !== expected.size) throw new Error("ANALYSIS_SELECTION_EVIDENCE_INCOMPLETE");
+      for (const entry of entries) {
+        const key = JSON.stringify(entry.selectedIds);
+        if (!expected.delete(key) || (entry.value === null ? entry.distance !== null
+          : !Number.isFinite(entry.value) || !Number.isSafeInteger(entry.distance) || entry.distance < 0)) {
+          throw new Error("ANALYSIS_SELECTION_EVIDENCE_INVALID");
+        }
+      }
+      const token = Object.freeze({});
+      selectionCertificate = { token, key: selectionDependencyKey(node), modelKey,
+        entries: freeze(structuredClone(entries)), evidenceId: `selection-evidence-${++nextCertificate}` };
+      return token;
+    }
+
+    function reuseSelection(node, token, modelKey) {
+      const saved = token && selectionCertificate?.token === token ? selectionCertificate : null;
+      if (!saved) return { hit: false, reason: "unknown-evidence" };
+      if (saved.modelKey !== modelKey) return { hit: false, reason: "model-changed" };
+      const spec = selectionSpec(node);
+      if (!spec) return { hit: false, reason: "outside-selection-component" };
+      if (saved.key !== selectionDependencyKey(node)) return { hit: false, reason: "dependencies-changed" };
+      const byTarget = new Map(saved.entries.map(entry => [JSON.stringify(entry.selectedIds), entry]));
+      let best = null;
+      for (const plan of selectionPlans(node)) {
+        const entry = byTarget.get(JSON.stringify(plan.selectedIds));
+        if (entry.value == null) continue;
+        const distance = plan.submissions + entry.distance;
+        if (!best || entry.value > best.value || (entry.value === best.value
+          && (distance < best.distance || (distance === best.distance && plan.firstActionId < best.actionId)))) {
+          best = { actionId: plan.firstActionId, selectedIds: plan.selectedIds, value: entry.value, distance };
+        }
+      }
+      if (!best) return { hit: false, reason: "no-reachable-boundary" };
+      const roots = node.legalActions.map(action => {
+        const direct = action.target?.confirm
+          ? byTarget.get(JSON.stringify(spec.selectedIds)) : null;
+        const value = action.target?.confirm ? direct.value : best.value;
+        return { actionId: action.actionId, value, completion: value == null ? "unreachable" : "complete",
+          proof: spec.proof, equivalentExitSet: !action.target?.confirm };
+      });
+      return freeze({ hit: true, ...best, roots, cardIds: spec.cardIds, proof: spec.proof,
+        evidenceId: saved.evidenceId, exitCount: saved.entries.length });
+    }
+
     function close() {
       (fork?.composition || fork)?.dispose?.();
       fork = null;
@@ -343,7 +407,9 @@
 
     function getDiagnostics() {
       return freeze({ nodeCount, submissionCount, cacheHits, cacheEntries: cache.size,
-        observationCount, identityCount: identities.size, maxCacheEntries, milliseconds: { ...milliseconds } });
+        observationCount, identityCount: identities.size, maxCacheEntries,
+        selectionEvidenceEntries: selectionCertificate ? 1 : 0, maxSelectionEvidenceEntries: 1,
+        milliseconds: { ...milliseconds } });
     }
 
     function identity(node) {
@@ -352,7 +418,8 @@
       return stored.identity;
     }
 
-    return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection, close, getDiagnostics });
+    return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
+      rememberSelection, reuseSelection, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

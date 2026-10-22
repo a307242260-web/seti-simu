@@ -197,6 +197,83 @@ assert.deepEqual(changedLeaf, hiddenResult);
 changedPort.close();
 mainPort.close();
 coldPort.close();
+
+// 跨真实点击复用整个竞争集，不只验证旧计划下一步仍合法。
+assert.equal(comp.lifecycle.restore(beforeMain).ok, true);
+const actualTrade = comp.inputPort.enumerateActions({}).find(action => action.target?.tradeId === "cards-for-pick-card");
+assert.equal(comp.inputPort.submitQuickAction(actualTrade).ok, true);
+const reusePort = createAnalysisPort({ composition: comp, seatId: actions[0].actorId });
+const modelKey = "state-value-v1/default/decision-search-v1";
+const searchOptions = { evaluate: observation => evaluateStateValue(observation, actions[0].actorId).total,
+  budget: { transitions: 256, nodes: 257, frontier: 256, milliseconds: 2000 }, modelKey };
+let current = searchDecision({ ...searchOptions, port: reusePort, root: reusePort.openRoot() });
+assert.equal(current.complete, true);
+const certificate = current.selectionContinuation;
+const firstSelectionAction = current.actionId;
+assert(certificate);
+assert.deepEqual(Object.keys(certificate), [], "续行证据不暴露完整状态键");
+let hits = 0;
+for (let step = 0; step < 3; step += 1) {
+  reusePort.close();
+  const decision = comp.inspect().session.decision;
+  const choice = decision.choices.find(action => action.actionId === current.actionId);
+  assert(choice, "只执行当前正式合法信封");
+  assert.equal(comp.inputPort.submitDecision({ decisionId: decision.decisionId,
+    decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice }).ok, true);
+  const actualRoot = reusePort.openRoot();
+  if (!reusePort.selectionSpec(actualRoot)) {
+    assert.equal(reusePort.reuseSelection(actualRoot, certificate, modelKey).reason, "outside-selection-component");
+    break;
+  }
+  assert.equal(reusePort.reuseSelection(actualRoot, certificate, "changed-model").reason, "model-changed");
+  assert.throws(() => reusePort.rememberSelection(actualRoot, [], modelKey), /EVIDENCE_INCOMPLETE/);
+  const unfinished = searchDecision({ ...searchOptions, port: reusePort, root: actualRoot,
+    budget: { transitions: 1, nodes: 257, frontier: 256, milliseconds: 2000 } });
+  assert.equal(unfinished.complete, false);
+  assert.equal(unfinished.selectionContinuation, null, "未闭合结果不能作为完成证据流转");
+  const beforeReuse = reusePort.getDiagnostics().submissionCount;
+  current = searchDecision({ ...searchOptions, port: reusePort, root: actualRoot, continuation: certificate });
+  assert.equal(current.diagnostics.continuation, "hit");
+  assert.equal(current.diagnostics.transitions, 0);
+  assert.equal(reusePort.getDiagnostics().submissionCount, beforeReuse, "续行不重新提交搜索分支");
+  const referencePort = createAnalysisPort({ composition: comp, seatId: actions[0].actorId });
+  const referenceRoot = referencePort.openRoot();
+  assert.equal(referencePort.reuseSelection(referenceRoot, certificate, modelKey).reason, "unknown-evidence",
+    "证据不能跨实例或席位传递");
+  const referenceSearch = searchDecision({ ...searchOptions, port: referencePort, root: referenceRoot });
+  assert.equal(current.actionId, referenceSearch.actionId, "开关复用必须选择同一个当前 actionId");
+  assert.equal(current.value, referenceSearch.value);
+  referencePort.close();
+  hits += 1;
+}
+assert.equal(hits, 2);
+reusePort.close();
+// 下一步仍合法也不足以续行：同一弃牌状态的资源变化必须使完整竞争证据失效。
+const changedResources = structuredClone(beforeMain);
+const resourceState = JSON.parse(changedResources.committedState);
+resourceState.players.players.find(player => player.id === actions[0].actorId).resources.energy += 1;
+changedResources.committedState = JSON.stringify(resourceState);
+assert.equal(comp.lifecycle.restore(changedResources).ok, true);
+const changedTrade = comp.inputPort.enumerateActions({}).find(action => action.target?.tradeId === "cards-for-pick-card");
+assert.equal(comp.inputPort.submitQuickAction(changedTrade).ok, true);
+const changedResourceRoot = reusePort.openRoot();
+assert(changedResourceRoot.legalActions.some(action => action.actionId === firstSelectionAction),
+  "资源变化后原首步仍合法，仍不能据此复用完整竞争结论");
+assert.equal(reusePort.reuseSelection(changedResourceRoot, certificate, modelKey).reason, "dependencies-changed");
+const replacement = searchDecision({ ...searchOptions, port: reusePort, root: changedResourceRoot });
+assert.equal(replacement.complete, true);
+assert.equal(reusePort.getDiagnostics().selectionEvidenceEntries, 1);
+assert.equal(reusePort.reuseSelection(changedResourceRoot, certificate, modelKey).reason, "unknown-evidence",
+  "新完成结果确定性替换旧证据，容量始终为1");
+assert.equal(reusePort.reuseSelection(changedResourceRoot, replacement.selectionContinuation, modelKey).hit, true);
+let validationClock = 0;
+const lateReuse = searchDecision({ ...searchOptions, port: reusePort, root: changedResourceRoot,
+  continuation: replacement.selectionContinuation, now: () => validationClock += 2,
+  budget: { transitions: 256, nodes: 257, frontier: 256, milliseconds: 1 } });
+assert.equal(lateReuse.complete, false);
+assert.equal(lateReuse.actionId, null, "完成证据校验本身超时也不得返回可提交动作");
+assert.equal(lateReuse.stopReason, "watchdog");
+reusePort.close();
 env.dispose();
 comp.dispose();
 console.log("trusted analysis fork isolation and exact reuse passed");

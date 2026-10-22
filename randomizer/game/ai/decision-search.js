@@ -11,7 +11,8 @@
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
 
-  function searchDecision({ port, root, evaluate, budget = {}, now = () => performance.now() } = {}) {
+  function searchDecision({ port, root, evaluate, budget = {}, continuation = null,
+    modelKey = null, now = () => performance.now() } = {}) {
     if (typeof port?.expand !== "function" || typeof port?.identity !== "function"
       || typeof evaluate !== "function" || !root) throw new TypeError("SEARCH_INPUT_INVALID");
     const limits = { ...DEFAULT_BUDGET, ...budget };
@@ -21,6 +22,18 @@
       }
     }
     const startedAt = now();
+    if (modelKey != null && (typeof modelKey !== "string" || !modelKey)) throw new TypeError("SEARCH_MODEL_KEY_INVALID");
+    const reused = continuation && modelKey && port.reuseSelection?.(root, continuation, modelKey);
+    if (reused?.hit && now() - startedAt < limits.milliseconds) return {
+      schemaVersion: VERSION, complete: true, actionId: reused.actionId, value: reused.value,
+      selectionPlan: { selectedIds: reused.selectedIds, cardIds: reused.cardIds, proof: reused.proof, complete: true },
+      selectionContinuation: continuation,
+      reusedCoverage: { evidenceId: reused.evidenceId, exitCount: reused.exitCount, proof: reused.proof },
+      stopReason: null, scope: "own-visible-decision-window-to-owner-information-or-terminal-boundary",
+      roots: reused.roots, lines: [], unresolved: [],
+      diagnostics: { transitions: 0, nodes: 1, equivalents: 0, selectionMacros: 0, peakFrontier: 0,
+        continuation: "hit", milliseconds: now() - startedAt, limits },
+    };
     const nodes = [];
     const known = new Map();
     const queue = [];
@@ -131,6 +144,12 @@
       };
     });
     const complete = !stopReason;
+    const evidence = complete && nodes[0].selection ? nodes[0].edges.map(edge => ({
+      selectedIds: edge.selectedIds, value: nodes[edge.target].value,
+      distance: nodes[edge.target].value == null ? null : nodes[edge.target].distance,
+    })) : null;
+    const certificate = evidence && modelKey && nodes[0].best
+      ? port.rememberSelection?.(root, evidence, modelKey) || null : null;
     return {
       schemaVersion: VERSION, complete,
       actionId: complete ? nodes[0].best?.actionId || null : null,
@@ -138,11 +157,13 @@
         selectedIds: nodes[0].best.selectedIds, cardIds: nodes[0].selection.cardIds,
         proof: nodes[0].selection.proof, complete: true,
       } : null,
+      selectionContinuation: certificate,
       value: complete ? nodes[0].value : null,
       stopReason: stopReason || (nodes[0].value == null ? "no-reachable-boundary" : null),
       scope: "own-visible-decision-window-to-owner-information-or-terminal-boundary",
       roots, lines, unresolved,
       diagnostics: { transitions, nodes: nodes.length, equivalents, selectionMacros, peakFrontier,
+        continuation: reused ? (reused.hit ? "validation-watchdog" : reused.reason) : "not-requested",
         milliseconds: now() - startedAt, limits },
     };
   }
