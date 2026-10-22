@@ -533,7 +533,8 @@
         || company?.activeAbilityId !== "helios_remove_tech_income"
         || company.passiveIds.some(id => id !== "helios_passive_reward_slots")
         || state.pieces.rockets.some(rocket => [rocket.playerId, rocket.color, rocket.playerColor]
-          .some(id => id === seatId || id === owner.color))) return null;
+          .some(id => id === seatId || id === owner.color)
+          && ((rocket.kind ?? "standard") !== "standard" || rocket.fossilId != null))) return null;
       const weights = { credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1 };
       if (Object.keys(weights).some(key => !Number.isSafeInteger(owner.income[key]) || owner.income[key] < 0
         || (key !== "handSize" && (!Number.isSafeInteger(owner.resources[key]) || owner.resources[key] < 0)))
@@ -541,7 +542,11 @@
       const tradeIds = new Set(["credits-for-energy", "credits-for-card", "cards-for-credit", "cards-for-energy",
         "cards-for-pick-card", "energy-for-card", "energy-for-credit", "publicity-for-card"]);
       for (const trade of quickTrades.TRADE_ACTIONS) {
-        if (trade.moveStep) { if (trade.id !== "energy-for-move") return null; continue; }
+        if (trade.moveStep) {
+          if (trade.id !== "energy-for-move" || trade.cost.energy !== 1 || Object.keys(trade.cost).length !== 1
+            || Object.keys(trade.gain).length) return null;
+          continue;
+        }
         const costKeys = Object.keys(trade.cost), gainKeys = Object.keys(trade.gain);
         const costKey = costKeys[0], gainKey = gainKeys[0];
         if (!tradeIds.has(trade.id) || costKeys.length !== 1 || gainKeys.length !== 1
@@ -551,11 +556,13 @@
           || trade.cost[costKey] * weights[costKey] <= weights[gainKey]) return null;
       }
       if (node.legalActions.some(action => {
-        if (!["end_turn", "place_data", "quick_trade", "card_corner"].includes(action.family)) return true;
+        if (!["end_turn", "place_data", "quick_trade", "card_corner", "move"].includes(action.family)) return true;
+        if (action.family === "move") return !Number.isSafeInteger(action.payload?.requiredMovePoints)
+          || action.payload.requiredMovePoints < 1;
         if (action.family === "card_corner") return action.payload?.multiplier !== 1;
         if (action.family !== "quick_trade") return false;
         const trade = quickTrades.getTradeAction(action.target?.tradeId);
-        return !trade || trade.moveStep || JSON.stringify(action.payload?.cost) !== JSON.stringify(trade.cost)
+        return !trade || JSON.stringify(action.payload?.cost) !== JSON.stringify(trade.cost)
           || JSON.stringify(action.payload?.gain) !== JSON.stringify(trade.gain);
       })) return null;
       for (const card of owner.hand) {
@@ -604,7 +611,7 @@
       if (scoreUpperBound >= scoreThreshold) return null;
       const transition = turnFlow.advanceTurnAfterPlayerAction(structuredClone(state), seatId);
       if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded || transition.nextPlayerId === seatId) return null;
-      return freeze({ proof: "seti-quiet-post-main-default-value-plan-v1", retainedActionIds: kept.map(action => action.actionId),
+      return freeze({ proof: "seti-quiet-post-main-default-value-plan-v2", retainedActionIds: kept.map(action => action.actionId),
         excludedActionIds: excluded.map(action => action.actionId), maximumValueIncrease, scoreUpperBound, scoreThreshold });
     }
 

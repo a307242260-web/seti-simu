@@ -207,6 +207,7 @@ const withProbe = structuredClone(prepared);
 owner = withProbe.players.players.find(player => player.id === seatId);
 withProbe.pieces.rockets[0].playerId = seatId;
 withProbe.pieces.rockets[0].color = owner.color;
+withProbe.pieces.rockets[0].kind = "fossil";
 withProbe.pieces.playerRocketSequences[seatId] = [withProbe.pieces.rockets[0].playerSequence];
 declined(withProbe);
 const fractional = structuredClone(prepared);

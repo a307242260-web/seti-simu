@@ -13,6 +13,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/opening-resource.test.js", "policy/decision-search", "受限首个主行动资源模拟保持真钱电循环后继与完整小窗口最优，有探测器的零电收益拒绝剪枝", "dlc27零电收益反转资源大小关系或未闭合主行动被当成完成"),
     entry("randomizer/game/ai/card-trade-bound.test.js", "policy/decision-search", "无额外触发的取牌交易到信息边界的值与手牌数量上界完全一致，包含全部支付与选择", "遗漏取牌奖励、把牌面身份当成未来已兑现收益或浮点增量低估上界"),
     entry("randomizer/game/ai/post-main-plan.test.js", "policy/decision-search", "受限主行动后保留所有有收益放数据链，省略路径有实际保留见证并保持最优值与最短输入", "删除强制收入、里程碑或新数据收益，或用未完成保留图冒充覆盖"),
+    entry("randomizer/game/ai/post-main-movement.test.js", "policy/decision-search", "普通探测器主行动后的移动及支付链有正式奖励上界，局部最优值与最短输入保持", "遗漏到达宣传或移动事件奖励，错误省略有净收益的移动准备链"),
     entry("randomizer/game/actions/quick-move-availability.test.js", "rules/quick-trades", "快速移动必须有正式一步可达方向；无路时拒绝且根状态不变", "只有探测器存在便提供快速移动，扣能量后生成空Decision"),
     entry("randomizer/game/ai/state-value.test.js", "policy/state-value", "独立估值只读标准事实，未来收入窗口明确且终局只计正式分", "终局重复加资源、未知牌身份进入估值或缺字段被静默补零"),
     entry("randomizer/game/ai/analysis-port.test.js", "architecture/policy-host", "可信分支精确提交、结果缓存和权威根隔离", "策略取得权威envelope、同family代替动作或fork改变真实根/RNG"),
