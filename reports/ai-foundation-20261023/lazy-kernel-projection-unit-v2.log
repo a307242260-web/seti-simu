@@ -1,0 +1,15 @@
+standard full-flow v2 passed
+trusted analysis fork isolation and exact reuse passed
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+public picks preserve hidden-refill boundaries, known cards and recovery across 8 cases
+data.test.js: all tests passed
+nebula.test.js: all tests passed
+initial offer, settlement and income information boundaries, removal equivalence and recovery passed
+SUMMARY unit passed=6 failed=0 total=6 time=4.19s
+SUMMARY fullFlow passed=1 failed=0 total=1 time=0.51s
+OWNER architecture/policy-host tests=1
+OWNER full-flow/standard-flow-v1 tests=1
+OWNER policy/decision-search tests=1
+OWNER rules/card-play tests=1
+OWNER rules/data tests=2
+OWNER rules/initial-setup tests=1

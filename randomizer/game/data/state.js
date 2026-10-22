@@ -110,12 +110,18 @@
     return player.resources.availableData;
   }
 
+  function readPlayerDataState(player) {
+    const state = player.dataState;
+    return Array.isArray(state?.poolTokens) && Array.isArray(state?.placedTokens)
+      ? state : normalizeDataState(state);
+  }
+
   function listPoolTokens(player) {
-    return [...ensurePlayerDataState(player).poolTokens];
+    return [...readPlayerDataState(player).poolTokens];
   }
 
   function listPlacedTokens(player) {
-    return [...ensurePlayerDataState(player).placedTokens];
+    return [...readPlayerDataState(player).placedTokens];
   }
 
   function listComputerPlacedTokens(player) {

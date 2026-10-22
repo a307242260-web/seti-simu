@@ -10,10 +10,14 @@ const { searchDecision, VERSION: SEARCH_VERSION } = require("./decision-search")
 
 const seed = "analysis-port-isolation-v1";
 const random = createSeededRandom(seed);
+let counterfactualProjections = 0;
 const kernel = createSimulationRuleComposition({
   seed, random, activePlayerCount: 4, trustedProjectionReader: true,
   rngState: { algorithm: RNG_ALGORITHM, state: random.getState() },
-  projectCounterfactualState: (state, viewer) => buildRuleObservation(state, seed, viewer?.playerId),
+  projectCounterfactualState: (state, viewer) => {
+    counterfactualProjections += 1;
+    return buildRuleObservation(state, seed, viewer?.playerId);
+  },
 });
 kernel.newGame({ seed, activePlayerCount: 4 });
 kernel.composition.inputPort.beginDrain({});
@@ -39,13 +43,16 @@ const rootActionId = root.legalActions[0].actionId;
 assert.equal(Object.isFrozen(root.observation), true);
 assert.deepEqual(Object.keys(root).sort(), ["boundary", "legalActions", "observation", "status"]);
 assert.throws(() => port.expand(root, "unknown"), /NOT_LEGAL/);
+const projectionsBeforeExpand = counterfactualProjections;
 const branch = port.expand(root, rootActionId);
 assert.equal(branch.status, "decision");
+assert.equal(counterfactualProjections, projectionsBeforeExpand, "正式模拟输入不生成未消费的内核返回观察");
 assert.equal(port.getDiagnostics().observationCount, 0, "内部节点不预先生成未消费的观察");
 assert.equal(port.expand(root, rootActionId), branch, "相同已验证输入复用精确结果");
 assert.equal(port.getDiagnostics().cacheHits, 1);
 const branchBefore = JSON.stringify(branch);
 assert.equal(port.getDiagnostics().observationCount, 1, "首次读取才投影且冻结观察");
+assert.equal(counterfactualProjections, projectionsBeforeExpand + 1, "首次读取只生成一次完整内核观察");
 const initialChoice = branch.legalActions.find(action => action.target?.selectionKind === "initial");
 const selected = port.expand(branch, initialChoice.actionId);
 assert.equal(selected.status, "decision");

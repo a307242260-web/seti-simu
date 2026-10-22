@@ -1,0 +1,4 @@
+PASS production-start-button http://127.0.0.1:54491/randomizer/index.html
+PASS production-browser-full-parity http://127.0.0.1:54491/randomizer/index.html
+PASS production-completion-agent-parity http://127.0.0.1:54491/randomizer/index.html?agent=completion
+SUMMARY browserSmoke passed=3 failed=0 total=3

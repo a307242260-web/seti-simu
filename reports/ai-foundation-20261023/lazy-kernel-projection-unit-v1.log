@@ -1,0 +1,46 @@
+standard full-flow v2 passed
+/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/data/state.js:93
+      player.dataState = createDefaultDataState();
+                       ^
+
+TypeError: Cannot add property dataState, object is not extensible
+    at ensurePlayerDataState (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/data/state.js:93:24)
+    at listPlacedTokens (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/data/state.js:118:16)
+    at Object.listComputerPlacedTokens (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/data/state.js:122:12)
+    at buildDataAnalyzeRequirements (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/production-kernel.js:899:30)
+    at projectedRequirements (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/production-kernel.js:1454:32)
+    at Object.projectState (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/production-kernel.js:1619:28)
+    at projectState (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/rule-composition.js:452:19)
+    at Object.observe (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/effects/session-runtime.js:353:16)
+    at projectionInner (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/rule-composition.js:598:20)
+    at Object.projection (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/rule-composition.js:588:14)
+
+Node.js v22.22.0
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+public picks preserve hidden-refill boundaries, known cards and recovery across 8 cases
+/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/data/state.js:93
+      player.dataState = createDefaultDataState();
+                       ^
+
+TypeError: Cannot add property dataState, object is not extensible
+    at ensurePlayerDataState (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/data/state.js:93:24)
+    at listPlacedTokens (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/data/state.js:118:16)
+    at Object.listComputerPlacedTokens (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/data/state.js:122:12)
+    at buildDataAnalyzeRequirements (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/production-kernel.js:899:30)
+    at projectedRequirements (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/production-kernel.js:1454:32)
+    at Object.projectState (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/production-kernel.js:1619:28)
+    at projectState (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/rule-composition.js:452:19)
+    at Object.observe (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/effects/session-runtime.js:353:16)
+    at projectionInner (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/rule-composition.js:598:20)
+    at Object.projection (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/rule-composition.js:588:14)
+
+Node.js v22.22.0
+SUMMARY unit passed=2 failed=2 total=4 time=1.78s
+SUMMARY fullFlow passed=1 failed=0 total=1 time=0.48s
+OWNER architecture/policy-host tests=1
+OWNER full-flow/standard-flow-v1 tests=1
+OWNER policy/decision-search tests=1
+OWNER rules/card-play tests=1
+OWNER rules/initial-setup tests=1
+FAIL randomizer/game/ai/analysis-port.test.js status=1 signal=none
+FAIL randomizer/game/initial-information-barrier.test.js status=1 signal=none

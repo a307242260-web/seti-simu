@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "seti-lazy-kernel-projection-comparison-v1",
+  "scope": "same recorded eight checkpoints, same limits, separately recorded sequential-process audits; timing includes warmup/noise; no full game score or 180s acceptance",
+  "before": "reports/ai-foundation-20261023/decision-corpus-audit-v2.json",
+  "after": "reports/ai-foundation-20261023/decision-corpus-audit-v3.json",
+  "rows": [
+    {
+      "caseId": "case-001",
+      "sameActionValueAndRoots": true,
+      "sameGraph": false,
+      "changedFields": [
+        "lines"
+      ],
+      "beforeInputs": 149,
+      "afterInputs": 144,
+      "beforeMilliseconds": 338.69175,
+      "afterMilliseconds": 244.766166,
+      "complete": true
+    },
+    {
+      "caseId": "case-003",
+      "sameActionValueAndRoots": true,
+      "sameGraph": true,
+      "changedFields": [],
+      "beforeInputs": 26,
+      "afterInputs": 26,
+      "beforeMilliseconds": 183.878875,
+      "afterMilliseconds": 168.64354200000002,
+      "complete": true
+    },
+    {
+      "caseId": "case-008",
+      "sameActionValueAndRoots": true,
+      "sameGraph": true,
+      "changedFields": [],
+      "beforeInputs": 256,
+      "afterInputs": 256,
+      "beforeMilliseconds": 494.13066600000013,
+      "afterMilliseconds": 407.46570799999995,
+      "complete": false
+    },
+    {
+      "caseId": "case-011",
+      "sameActionValueAndRoots": true,
+      "sameGraph": true,
+      "changedFields": [],
+      "beforeInputs": 256,
+      "afterInputs": 256,
+      "beforeMilliseconds": 397.5730000000001,
+      "afterMilliseconds": 321.160125,
+      "complete": false
+    },
+    {
+      "caseId": "case-009",
+      "sameActionValueAndRoots": true,
+      "sameGraph": true,
+      "changedFields": [],
+      "beforeInputs": 7,
+      "afterInputs": 7,
+      "beforeMilliseconds": 28.255124999999907,
+      "afterMilliseconds": 28.41291699999988,
+      "complete": true
+    },
+    {
+      "caseId": "case-062",
+      "sameActionValueAndRoots": true,
+      "sameGraph": true,
+      "changedFields": [],
+      "beforeInputs": 256,
+      "afterInputs": 256,
+      "beforeMilliseconds": 538.24,
+      "afterMilliseconds": 397.554666,
+      "complete": false
+    },
+    {
+      "caseId": "case-105",
+      "sameActionValueAndRoots": true,
+      "sameGraph": true,
+      "changedFields": [],
+      "beforeInputs": 256,
+      "afterInputs": 256,
+      "beforeMilliseconds": 558.0910000000003,
+      "afterMilliseconds": 403.36116600000014,
+      "complete": false
+    },
+    {
+      "caseId": "case-152",
+      "sameActionValueAndRoots": true,
+      "sameGraph": true,
+      "changedFields": [],
+      "beforeInputs": 256,
+      "afterInputs": 256,
+      "beforeMilliseconds": 593.5317910000003,
+      "afterMilliseconds": 470.69904199999974,
+      "complete": false
+    }
+  ],
+  "initialGraphChange": "data list reads no longer materialize missing dataState in rule state; pure selection graph has 42 rather than 43 nodes, same best and root results",
+  "physicalParity": "lazy-kernel-projection-parity-v1.json: 328 actual inputs per mode across eight roots have exact saved envelopes, visible observations and legal actions, same current runtime"
+}

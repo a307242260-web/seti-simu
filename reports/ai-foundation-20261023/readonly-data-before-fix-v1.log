@@ -1,0 +1,21 @@
+/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/data/state.js:93
+      player.dataState = createDefaultDataState();
+                       ^
+
+TypeError: Cannot add property dataState, object is not extensible
+    at ensurePlayerDataState (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/data/state.js:93:24)
+    at Object.listPoolTokens (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/data/state.js:114:16)
+    at Object.<anonymous> (/private/tmp/seti-ai-stage0-20261022-sp_78xnl/randomizer/game/data/data.test.js:23:25)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+
+Node.js v22.22.0
+SUMMARY unit passed=0 failed=1 total=1 time=0.04s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER rules/data tests=1
+FAIL randomizer/game/data/data.test.js status=1 signal=none

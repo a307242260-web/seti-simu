@@ -263,9 +263,9 @@
           decisionId: before.session.decision.decisionId,
           decisionVersion: before.session.decision.decisionVersion,
           ownerId: before.session.decision.ownerId, choice: current,
-        })
-        : current.phase === "quick" ? comp.inputPort.submitQuickAction(current)
-          : comp.inputPort.submitAction(current);
+        }, { skipProjection: true })
+        : current.phase === "quick" ? comp.inputPort.submitQuickAction(current, { skipProjection: true })
+          : comp.inputPort.submitAction(current, { skipProjection: true });
       milliseconds.execute += now() - executeAt;
       if (!result?.ok) {
         const failure = result?.failure || result;

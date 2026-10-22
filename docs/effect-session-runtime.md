@@ -32,9 +32,18 @@ trusted恢复契约。它不证明隐藏配置内容或世界指纹一致，后�
 屏障只关闭旧知识下的搜索窗口，已生成的移动角标等真实Decision继续保存在Session中，
 下一次真实输入与checkpoint恢复仍执行它，不自动跳过或提前完成奖励。
 
-新建局的规则版本为`seti-runtime-v1.1`。既有checkpoint保留原始版本字段，未批量迁移；
+`seti-runtime-v1.2`补齐初始信息边界：发出公司和资源牌选项报告`hidden_initial_offer`，
+末位确认结算及插收入牌的实际盲抽报告`hidden_card_draw`；空堆和非盲抽不新增屏障。
+分析遮蔽新选项/手牌并关闭旧知识窗口，真实宿主仍能完成剩余选择和恢复重放。
+
+新建局的规则版本为`seti-runtime-v1.2`。既有checkpoint保留原始版本字段，未批量迁移；
 恢复后的执行规则由当前代码决定。实验须同时绑定实际代码摘要、运行引擎版本与源checkpoint版本，
 不能仅凭存档中的版本字段认定跨版本行为一致。
+
+隔离分析fork提交正式输入时可用`skipProjection:true`省略未消费的返回观察，
+不省略校验、drain、屏障、journal和正式提交。观察在实际读取时按原viewer规则生成。
+数据的pool/placed列表查询是只读操作；尚未建立dataState的初始快照以及已有旧式tokens
+仅在临时视图中解释，不依赖一次投影来补写规则状态。正式获得、放置和分析仍由数据写入入口处理。
 
 所有公开 envelope 使用 `schemaVersion=seti-effect-session-v1`。
 

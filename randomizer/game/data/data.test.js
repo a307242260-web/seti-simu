@@ -11,6 +11,21 @@ const data = require("./index");
 const players = require("../players");
 const playerTech = require("../tech/player-tech");
 
+// 查询不能借机补写规则状态；尚未结算初始数据的冻结快照也可读取。
+for (const source of [{}, { dataState: { tokens: [{ id: "existing-pool", slotIndex: 2 }] } }]) {
+  const before = structuredClone(source);
+  if (source.dataState) {
+    source.dataState.tokens.forEach(Object.freeze);
+    Object.freeze(source.dataState.tokens);
+    Object.freeze(source.dataState);
+  }
+  Object.freeze(source);
+  assert.deepEqual(data.listPoolTokens(source), data.normalizeDataState(before.dataState).poolTokens);
+  assert.deepEqual(data.listPlacedTokens(source), []);
+  assert.deepEqual(data.listComputerPlacedTokens(source), []);
+  assert.deepEqual(source, before, "数据读取不能依赖调用次数或解冻状态");
+}
+
 const root = { meta: { sequences: { dataToken: 1 } } };
 function gainCanonicalData(player, options = {}) {
   return data.gainData(player, { ...options, root });
