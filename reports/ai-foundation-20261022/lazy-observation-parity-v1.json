@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "seti-lazy-observation-parity-v1",
+  "referenceCommit": "623e4f5c8dc30b71e6637b249dc2639fde82f636",
+  "seed": "analysis-port-isolation-v1",
+  "seatId": "player-white",
+  "submissions": 128,
+  "comparisons": 138,
+  "passed": true,
+  "scope": "128 identical formal transitions; delayed reads after other branches; full observations, legal descriptors, boundaries and statuses match eager reference; root remains unchanged",
+  "currentSourceSha256": "90e7c6a7982e0328b4ccaee3b4120c1490857d8d45ad873bd896ce02d3c6d8c5",
+  "referenceRootStatusCorrection": "only root changes from unconditional decision to actual stable/decision; all successors match"
+}

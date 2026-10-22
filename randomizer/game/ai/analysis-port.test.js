@@ -27,9 +27,11 @@ assert.deepEqual(Object.keys(root).sort(), ["boundary", "legalActions", "observa
 assert.throws(() => port.expand(root, "unknown"), /NOT_LEGAL/);
 const branch = port.expand(root, rootActionId);
 assert.equal(branch.status, "decision");
+assert.equal(port.getDiagnostics().observationCount, 0, "内部节点不预先生成未消费的观察");
 assert.equal(port.expand(root, rootActionId), branch, "相同已验证输入复用精确结果");
 assert.equal(port.getDiagnostics().cacheHits, 1);
 const branchBefore = JSON.stringify(branch);
+assert.equal(port.getDiagnostics().observationCount, 1, "首次读取才投影且冻结观察");
 const initialChoice = branch.legalActions.find(action => action.target?.selectionKind === "initial");
 const selected = port.expand(branch, initialChoice.actionId);
 assert.equal(selected.status, "decision");
@@ -40,11 +42,14 @@ const cancelled = port.expand(selected, toggle.actionId);
 assert.equal(port.identity(cancelled), port.identity(branch), "选择再取消只有日志/版本差异，应回到同一向前状态");
 assert.deepEqual(Object.keys(port.identity(branch)), [], "身份是不透明令牌，不能读到隐藏世界键");
 assert.equal(JSON.stringify(branch), branchBefore, "后继执行不能冻结或修改已有节点观察");
+assert.equal(port.getDiagnostics().observationCount, 1, "已物化观察不会因分支变化重复投影");
 assert.deepEqual(comp.lifecycle.save().envelope, before, "分支不能改变真实根或RNG");
 const other = createAnalysisPort({ composition: comp, seatId: "wrong-owner" });
 assert.throws(() => other.openRoot(), /OWNER_MISMATCH/);
 port.close();
 assert.throws(() => port.expand(root, rootActionId), /NODE_INVALID/);
+assert.equal(JSON.stringify(branch), branchBefore, "已物化观察关闭后仍是稳定的只读值");
+assert.throws(() => selected.observation, /NODE_INVALID/, "关闭后不能为未读取节点重新访问分支");
 
 // 用公共机器输入推进到首个主行动，检查同family不同选择、跨分支restore和关闭缓存。
 const env = createSimulationEnv();
@@ -62,10 +67,14 @@ const mainRoot = mainPort.openRoot();
 assert(Number.isFinite(evaluateStateValue(mainRoot.observation, actions[0].actorId).total));
 const beforeMain = comp.lifecycle.save().envelope;
 const evaluated = mainRoot.legalActions.slice(0, 3).map(action => mainPort.expand(mainRoot, action.actionId));
+assert.equal(mainPort.getDiagnostics().observationCount, 0);
 assert.equal(mainPort.getDiagnostics().cacheEntries, 1, "缓存容量有界");
 const coldPort = createAnalysisPort({ composition: comp, seatId: actions[0].actorId, maxCacheEntries: 0 });
 const coldRoot = coldPort.openRoot();
 assert.deepEqual(coldPort.expand(coldRoot, mainRoot.legalActions[0].actionId), evaluated[0]);
+const firstObservation = evaluated[0].observation;
+assert.equal(Object.isFrozen(firstObservation.publicState), true);
+assert.equal(evaluated[0].observation, firstObservation, "跨分支读取同一观察保持对象与数值稳定");
 assert.deepEqual(mainPort.expand(mainRoot, mainRoot.legalActions[0].actionId), evaluated[0], "淘汰后重算结果不变");
 assert.deepEqual(comp.lifecycle.save().envelope, beforeMain);
 const trade = mainRoot.legalActions.find(action => action.family === "quick_trade"

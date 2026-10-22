@@ -67,11 +67,13 @@
     let nodes = new WeakMap();
     const identities = new Map();
     let fork = null;
+    let loadedEnvelope = null;
     let rootObservation = null;
     let publicSeed = null;
     let nodeCount = 0;
     let submissionCount = 0;
     let cacheHits = 0;
+    let observationCount = 0;
     const cache = new Map();
     const now = () => typeof performance !== "undefined" ? performance.now() : Date.now();
     const milliseconds = { restore: 0, execute: 0, observation: 0, checkpoint: 0 };
@@ -99,14 +101,47 @@
       return saved.envelope;
     }
 
-    function createNode(envelope, observation, actions, status, path = [], boundary = null) {
-      const node = freeze({
-        observation: structuredClone(observation),
-        legalActions: structuredClone(actions), status, boundary,
+    function restoreEnvelope(envelope, forWrite = false) {
+      // trusted save 会冻结当前 session。只读投影可直接复用，下一次提交必须恢复可写副本。
+      if (!forWrite && loadedEnvelope === envelope) return;
+      const restoreAt = now();
+      const comp = fork.composition || fork;
+      const restored = comp.lifecycle.restore(envelope, {
+        silent: true, inPlace: true, trustedFork: true, skipProjection: true,
       });
+      milliseconds.restore += now() - restoreAt;
+      if (!restored.ok) throw new Error(`ANALYSIS_RESTORE_FAILED: ${restored.code || restored.message}`);
+      loadedEnvelope = envelope;
+    }
+
+    function observeEnvelope(envelope, barrier) {
+      if (!fork) throw new Error("ANALYSIS_NODE_INVALID");
+      restoreEnvelope(envelope);
+      const observationAt = now();
+      const observation = project(fork.composition || fork);
+      const visible = barrier
+        ? ruleComposition.sanitizeHiddenInformationObservation(rootObservation, observation, barrier)
+        : observation;
+      observationCount += 1;
+      const result = freeze(structuredClone(visible));
+      milliseconds.observation += now() - observationAt;
+      return result;
+    }
+
+    function createNode(envelope, observation, actions, status, barrier = null) {
+      let visible = observation && freeze(structuredClone(observation));
+      // 搜索内部节点只用合法集与身份；首次估值/记录时才投影。getter 不暴露快照。
+      const node = Object.freeze({
+        get observation() {
+          if (!visible) visible = observeEnvelope(envelope, barrier);
+          return visible;
+        },
+        legalActions: freeze(structuredClone(actions)), status, boundary: barrier?.code || null,
+      });
+      const boundary = barrier?.code || null;
       const key = forwardIdentity(envelope, status, boundary);
       if (!identities.has(key)) identities.set(key, Object.freeze({}));
-      nodes.set(node, { envelope, path, identity: identities.get(key) });
+      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key) });
       nodeCount += 1;
       return node;
     }
@@ -116,6 +151,7 @@
       nodeCount = 0;
       submissionCount = 0;
       cacheHits = 0;
+      observationCount = 0;
       for (const key of Object.keys(milliseconds)) milliseconds[key] = 0;
       rootObservation = project(composition);
       const actions = legalActions(composition);
@@ -130,7 +166,9 @@
       fork = composition.counterfactualPort.createFork(rootEnvelope, {
         branchKey: publicSeed, restoreRandomState: true,
       });
-      return createNode(rootEnvelope, rootObservation, actions, "decision");
+      loadedEnvelope = rootEnvelope;
+      return createNode(rootEnvelope, rootObservation, actions,
+        composition.inspect().phase === "awaiting_input" ? "decision" : "stable");
     }
 
     function expand(node, actionId) {
@@ -141,23 +179,18 @@
       }
       const requested = node.legalActions.find(action => action.actionId === actionId);
       if (!requested || requested.actorId !== seatId) throw new Error("ANALYSIS_ACTION_NOT_LEGAL");
-      const path = [...stored.path, actionId];
-      // 路径与完整快照同时匹配才可复用，不能按观察摘要合并不同规则状态。
-      const key = JSON.stringify([stored.envelope, path]);
+      // serial 只在本端口生命周期内绑定这一不可变快照；不按观察摘要跨节点复用。
+      const key = JSON.stringify([stored.serial, actionId]);
       if (cache.has(key)) {
         cacheHits += 1;
         return cache.get(key);
       }
       const comp = fork.composition || fork;
-      const restoreAt = now();
-      const restored = comp.lifecycle.restore(stored.envelope, {
-        silent: true, inPlace: true, trustedFork: true, skipProjection: true,
-      });
-      milliseconds.restore += now() - restoreAt;
-      if (!restored.ok) throw new Error(`ANALYSIS_RESTORE_FAILED: ${restored.code || restored.message}`);
+      restoreEnvelope(stored.envelope, true);
       const before = comp.inspect();
       const current = legalActions(comp, before).find(action => action.actionId === actionId);
       if (!current) throw new Error("ANALYSIS_ACTION_STALE");
+      loadedEnvelope = null;
       const executeAt = now();
       const result = before.phase === "awaiting_input"
         ? comp.inputPort.submitDecision({
@@ -177,23 +210,20 @@
       const barrier = result.irreversibleBarrier || inspection.session?.irreversibleBarrier;
       const newBarrier = ruleComposition.isHiddenInformationBarrier(barrier)
         && JSON.stringify(barrier) !== JSON.stringify(before.session?.irreversibleBarrier);
-      const observationAt = now();
-      const observation = project(comp);
-      const visibleObservation = newBarrier
-        ? ruleComposition.sanitizeHiddenInformationObservation(rootObservation, observation, barrier)
-        : observation;
-      milliseconds.observation += now() - observationAt;
       const actions = newBarrier ? [] : legalActions(comp, inspection);
-      if (!newBarrier && !actions.length && observation.terminal !== true) {
+      const envelope = snapshot(comp);
+      loadedEnvelope = envelope;
+      const observation = !newBarrier && !actions.length ? observeEnvelope(envelope) : null;
+      if (observation && observation.terminal !== true) {
         throw new Error("ANALYSIS_EMPTY_NONTERMINAL");
       }
       const status = newBarrier ? "information-barrier"
         : actions.some(action => action.actorId !== seatId) ? "other-owner"
           : !actions.length ? "terminal"
             : inspection.phase === "awaiting_input" ? "decision" : "stable";
-      const child = createNode(snapshot(comp), visibleObservation,
-        ["other-owner", "terminal"].includes(status) ? [] : actions, status, path,
-        newBarrier ? barrier.code : null);
+      const child = createNode(envelope, observation,
+        ["other-owner", "terminal"].includes(status) ? [] : actions, status,
+        newBarrier ? barrier : null);
       if (maxCacheEntries) {
         if (cache.size >= maxCacheEntries) cache.delete(cache.keys().next().value);
         cache.set(key, child);
@@ -204,6 +234,7 @@
     function close() {
       (fork?.composition || fork)?.dispose?.();
       fork = null;
+      loadedEnvelope = null;
       nodes = new WeakMap();
       identities.clear();
       cache.clear();
@@ -213,7 +244,7 @@
 
     function getDiagnostics() {
       return freeze({ nodeCount, submissionCount, cacheHits, cacheEntries: cache.size,
-        identityCount: identities.size, maxCacheEntries, milliseconds: { ...milliseconds } });
+        observationCount, identityCount: identities.size, maxCacheEntries, milliseconds: { ...milliseconds } });
     }
 
     function identity(node) {
