@@ -221,4 +221,61 @@ selectionFixture.port.cardTradeBound = () => { throw new Error("selection certif
 const selectionWithoutBounds = searchDecision({ ...selectionFixture, evaluate: selectionModel, cardTradePruning: true });
 assert.equal(selectionWithoutBounds.complete, true);
 assert.equal(selectionWithoutBounds.diagnostics.cardTradePruning, "disabled-for-selection-certificate");
+
+function postMainFixture() {
+  const fixture = graph({ root: { observation: wallet(2, 1), next: { wasted: "low", keep: "via" } },
+    via: { observation: wallet(2, 1), next: { settle: "high" } },
+    low: { status: "other-owner", observation: wallet(1, 1) },
+    high: { status: "other-owner", observation: wallet(2, 1) } });
+  fixture.evaluate = createStateValueEvaluator("p1");
+  fixture.port.postMainPlanSpec = node => node === fixture.root ? {
+    proof: "local-post-main-fixture", retainedActionIds: ["keep"], excludedActionIds: ["wasted"], maximumValueIncrease: 0,
+  } : null;
+  return fixture;
+}
+const localRaw = searchDecision(postMainFixture());
+const localPruned = searchDecision({ ...postMainFixture(), postMainPruning: true });
+assert.equal(localPruned.actionId, localRaw.actionId);
+assert.equal(localPruned.value, localRaw.value);
+assert.equal(localPruned.lines[0].distance, localRaw.lines[0].distance);
+assert.equal(localPruned.diagnostics.transitions, localRaw.diagnostics.transitions - 1);
+const excludedRoot = localPruned.roots.find(row => row.prunedByPlan);
+assert.equal(excludedRoot.value, null);
+assert.equal(localPruned.lines[excludedRoot.prunedByPlan.witness.node].status, "other-owner");
+assert.equal(excludedRoot.prunedByPlan.witness.scope, "local");
+const localLimited = searchDecision({ ...postMainFixture(), postMainPruning: true, budget: { transitions: 1 } });
+assert.equal(localLimited.complete, false);
+assert.equal(localLimited.actionId, null);
+assert.equal(localLimited.roots.find(row => row.prunedByPlan).completion, "pending-retained-search");
+assert.equal(localLimited.roots.find(row => row.prunedByPlan).prunedByPlan.witness, null);
+assert.deepEqual(localLimited.unresolved.map(row => row.actionIds), [["settle"]],
+  "待展开只计保留图中的剩余输入，不把被证明省略的动作重新算作缺失");
+const malformedLocal = postMainFixture();
+malformedLocal.port.postMainPlanSpec = () => ({ retainedActionIds: ["keep"], excludedActionIds: ["unknown"], maximumValueIncrease: 0 });
+assert.throws(() => searchDecision({ ...malformedLocal, postMainPruning: true }), /POST_MAIN_PROOF_INVALID/);
+const unsafeLocal = postMainFixture();
+unsafeLocal.root.observation.publicState.players[0].credits = Number.MAX_SAFE_INTEGER;
+const unprunedUnsafe = searchDecision({ ...unsafeLocal, postMainPruning: true });
+assert.equal(unprunedUnsafe.diagnostics.postMainExcludedActions, 0, "精确半整数范围外保留原图");
+assert.equal(unprunedUnsafe.diagnostics.transitions, localRaw.diagnostics.transitions);
+const noWitness = postMainFixture();
+const expandLocal = noWitness.port.expand;
+noWitness.port.expand = (node, actionId) => actionId === "keep" ? noWitness.root : expandLocal(node, actionId);
+assert.throws(() => searchDecision({ ...noWitness, postMainPruning: true }), /POST_MAIN_WITNESS_MISSING/);
+const slowProof = postMainFixture();
+let localClock = 0;
+const localSpec = slowProof.port.postMainPlanSpec;
+slowProof.port.postMainPlanSpec = node => { localClock = 1000; return localSpec(node); };
+const lateLocal = searchDecision({ ...slowProof, postMainPruning: true, now: () => localClock, budget: { milliseconds: 100 } });
+assert.equal(lateLocal.complete, false);
+assert.equal(lateLocal.actionId, null);
+assert.equal(lateLocal.stopReason, "watchdog");
+let certificateClock = 0;
+selectionFixture.port.rememberSelection = () => { certificateClock = 1000; return Object.freeze({}); };
+const lateCertificate = searchDecision({ ...selectionFixture, evaluate: selectionModel, modelKey: "late-certificate",
+  now: () => certificateClock, budget: { milliseconds: 100 } });
+assert.equal(lateCertificate.complete, false);
+assert.equal(lateCertificate.stopReason, "watchdog");
+assert.equal(lateCertificate.actionId, null);
+assert.equal(lateCertificate.selectionContinuation, null, "生成复用证据的时间也计入决策门槛");
 console.log("complete decision graph coverage, cycles, preparation chains and budget failures passed");

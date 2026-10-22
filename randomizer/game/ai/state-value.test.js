@@ -1,7 +1,7 @@
 "use strict";
 const assert = require("node:assert/strict");
 const { evaluateStateValue, MODEL_VERSION, createStateValueEvaluator, isMoneyMonotoneEvaluator,
-  isStateValueEvaluator, evaluateHandCountDelta } = require("./state-value");
+  isStateValueEvaluator, isDefaultStateValueEvaluator, evaluateHandCountDelta } = require("./state-value");
 
 function observation(round = 1) {
   return { terminal: false, publicState: { roundNumber: round, players: [{
@@ -30,6 +30,10 @@ configured.weights.credits = 100;
 assert.equal(evaluator(start), configuredValue, "已签发估值函数固定配置，外部修改不能改变证明前提");
 assert.equal(isMoneyMonotoneEvaluator(evaluator), true);
 assert.equal(isStateValueEvaluator(evaluator), true);
+assert.equal(isDefaultStateValueEvaluator(evaluator), false);
+assert.equal(isDefaultStateValueEvaluator(createStateValueEvaluator("p1")), true);
+assert.equal(isDefaultStateValueEvaluator(createStateValueEvaluator("p1", { weights: { credits: 1 } })), true);
+assert.equal(isDefaultStateValueEvaluator(() => 1), false);
 assert.equal(evaluateHandCountDelta(evaluator, start, 1), configuredValue + 1);
 assert.equal(evaluateHandCountDelta(evaluator, start, -1), configuredValue - 1);
 assert.deepEqual(start, observation(), "数值界的假设手牌数量不能修改真实观察");

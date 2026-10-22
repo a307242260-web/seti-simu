@@ -5,10 +5,13 @@
     common ? require("../cards/effects") : root.SetiCardEffects,
     common ? require("../cards/deck") : root.SetiCards,
     common ? require("../industry/catalog") : root.SetiIndustryCatalog,
-    common ? require("../turn-flow") : root.SetiTurnFlow);
+    common ? require("../turn-flow") : root.SetiTurnFlow,
+    common ? require("../data") : root.SetiData,
+    common ? require("../aliens/state") : root.SetiAlienState,
+    common ? require("../actions/quick-trades") : root.SetiQuickTrades);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades) {
   "use strict";
 
   function freeze(value) {
@@ -103,6 +106,7 @@
     let resourceOrders = new WeakMap();
     let openingOrders = new WeakMap();
     let cardTradeBounds = new WeakMap();
+    let postMainPlans = new WeakMap();
     const resourceGroups = new Map();
     let fork = null;
     let loadedEnvelope = null;
@@ -117,7 +121,7 @@
     let selectionCertificate = null;
     let nextCertificate = 0;
     const now = () => typeof performance !== "undefined" ? performance.now() : Date.now();
-    const milliseconds = { restore: 0, execute: 0, observation: 0, checkpoint: 0, resourceOrder: 0, valueBound: 0 };
+    const milliseconds = { restore: 0, execute: 0, observation: 0, checkpoint: 0, resourceOrder: 0, valueBound: 0, postMainPlan: 0 };
 
     function project(comp) {
       const state = comp.projection(viewer).state;
@@ -504,6 +508,106 @@
       return resourceOrder(node, resourceOrders, false);
     }
 
+    function postMainPlanSpec(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (postMainPlans.has(node)) return postMainPlans.get(node);
+      const at = now();
+      const result = describePostMainPlan(stored, node);
+      milliseconds.postMainPlan += now() - at;
+      postMainPlans.set(node, result);
+      return result;
+    }
+
+    function describePostMainPlan(stored, node) {
+      if (node.status !== "stable" || stored.envelope.session) return null;
+      const state = JSON.parse(stored.envelope.committedState);
+      const owner = state.players.players.find(player => player.id === seatId);
+      const company = industryCatalog.getPlayerIndustryDefinition(owner);
+      if (state.turn.currentPlayerId !== seatId || !owner?.mainActionCompleted
+        || owner.passCompletionPending || state.turn.passedPlayerIds.includes(seatId) || state.match.initialSetup
+        || state.turn.activePlayerCount !== 4 || owner.industryBorrowedTechTileId
+        || state.players.players.some(player => player.reservedCards.length)
+        || state.turn.cardTurnEventBonuses?.length
+        || Object.values(state.aliens.aliens).some(slot => slot.revealed || alienState.isAlienReadyToReveal(slot))
+        || company?.activeAbilityId !== "helios_remove_tech_income"
+        || company.passiveIds.some(id => id !== "helios_passive_reward_slots")
+        || state.pieces.rockets.some(rocket => [rocket.playerId, rocket.color, rocket.playerColor]
+          .some(id => id === seatId || id === owner.color))) return null;
+      const weights = { credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1 };
+      if (Object.keys(weights).some(key => !Number.isSafeInteger(owner.income[key]) || owner.income[key] < 0
+        || (key !== "handSize" && (!Number.isSafeInteger(owner.resources[key]) || owner.resources[key] < 0)))
+        || !Number.isSafeInteger(owner.resources.score) || owner.resources.score < 0) return null;
+      const tradeIds = new Set(["credits-for-energy", "credits-for-card", "cards-for-credit", "cards-for-energy",
+        "cards-for-pick-card", "energy-for-card", "energy-for-credit", "publicity-for-card"]);
+      for (const trade of quickTrades.TRADE_ACTIONS) {
+        if (trade.moveStep) { if (trade.id !== "energy-for-move") return null; continue; }
+        const costKeys = Object.keys(trade.cost), gainKeys = Object.keys(trade.gain);
+        const costKey = costKeys[0], gainKey = gainKeys[0];
+        if (!tradeIds.has(trade.id) || costKeys.length !== 1 || gainKeys.length !== 1
+          || !["credits", "energy", "publicity", "handSize"].includes(costKey)
+          || !["credits", "energy", "handSize"].includes(gainKey)
+          || !Number.isSafeInteger(trade.cost[costKey]) || trade.cost[costKey] < 1 || trade.gain[gainKey] !== 1
+          || trade.cost[costKey] * weights[costKey] <= weights[gainKey]) return null;
+      }
+      if (node.legalActions.some(action => {
+        if (!["end_turn", "place_data", "quick_trade", "card_corner"].includes(action.family)) return true;
+        if (action.family === "card_corner") return action.payload?.multiplier !== 1;
+        if (action.family !== "quick_trade") return false;
+        const trade = quickTrades.getTradeAction(action.target?.tradeId);
+        return !trade || trade.moveStep || JSON.stringify(action.payload?.cost) !== JSON.stringify(trade.cost)
+          || JSON.stringify(action.payload?.gain) !== JSON.stringify(trade.gain);
+      })) return null;
+      for (const card of owner.hand) {
+        if (!["basic", "space-agency"].includes(card.set) || !cards.getCatalogEntryForCard(card)) return null;
+        const code = cards.getDiscardActionCodeForCard(card);
+        if (code === 0) {
+          const reward = cards.getDiscardActionRewardForCard(card);
+          if (reward?.dataCount !== 0 || reward.gain.publicity !== 1 || Object.keys(reward.gain).length !== 1) return null;
+        } else if (code === 2) {
+          const reward = cards.getDiscardActionMoveRewardForCard(card);
+          if (reward?.movementPoints !== 1 || Object.keys(reward.gain).length) return null;
+        } else return null;
+      }
+      const kept = node.legalActions.filter(action => ["end_turn", "place_data"].includes(action.family));
+      const excluded = node.legalActions.filter(action => !kept.includes(action));
+      if (!kept.some(action => action.family === "end_turn") || !excluded.length) return null;
+      const poolCount = owner.dataState.poolTokens.length;
+      if (owner.resources.availableData !== poolCount) return null;
+      const occupied = data.listComputerPlacedTokens(owner).map(token => token.placementSlot);
+      const reachable = Object.keys(data.COMPUTER_DATA_SLOTS).map(Number).sort((a, b) => a - b)
+        .filter(slot => !occupied.includes(slot)).slice(0, poolCount);
+      if (reachable.includes(4)) return null;
+      let maximumValueIncrease = 0, additionalScore = 0;
+      function includeBonus(bonus) {
+        if (!bonus) return true;
+        if (bonus.type === "choose_card" && Object.keys(bonus).length === 1) { maximumValueIncrease += 1; return true; }
+        const weight = bonus.type === "score" ? 1 : weights[bonus.type];
+        if (!["score", "credits", "energy", "publicity"].includes(bonus.type)
+          || Object.keys(bonus).some(key => key !== "type" && key !== bonus.type)
+          || !Number.isSafeInteger(bonus[bonus.type]) || bonus[bonus.type] < 0) return false;
+        maximumValueIncrease += bonus[bonus.type] * weight;
+        if (bonus.type === "score") additionalScore += bonus.score;
+        return true;
+      }
+      for (const slot of reachable) if (!includeBonus(data.getComputerSlotBonus(slot))
+        || !includeBonus(data.getComputerSlotBlueColumnBonus(owner, slot))) return null;
+      if (poolCount) for (const slot of Object.keys(data.BLUE_BONUS_DATA_SLOTS).map(Number)) {
+        const required = data.getRequiredComputerSlotForBlueBonus(slot);
+        if (!data.hasBlueTechInBoardSlot(owner, slot) || data.listBlueBonusPlacedTokens(owner).some(token => token.blueSlot === slot)
+          || (!occupied.includes(required) && !reachable.includes(required))) continue;
+        if (!includeBonus(data.getBlueBonusPlacementReward(owner, slot))) return null;
+      }
+      const thresholds = state.finalScoring.thresholds;
+      if (!thresholds.length || thresholds.some(value => !Number.isSafeInteger(value) || value <= 0)) return null;
+      const scoreThreshold = Math.min(...thresholds), scoreUpperBound = owner.resources.score + additionalScore;
+      if (scoreUpperBound >= scoreThreshold) return null;
+      const transition = turnFlow.advanceTurnAfterPlayerAction(structuredClone(state), seatId);
+      if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded || transition.nextPlayerId === seatId) return null;
+      return freeze({ proof: "seti-quiet-post-main-default-value-plan-v1", retainedActionIds: kept.map(action => action.actionId),
+        excludedActionIds: excluded.map(action => action.actionId), maximumValueIncrease, scoreUpperBound, scoreThreshold });
+    }
+
     function openingResourceOrder(node) {
       return resourceOrder(node, openingOrders, true);
     }
@@ -574,6 +678,7 @@
       resourceOrders = new WeakMap();
       openingOrders = new WeakMap();
       cardTradeBounds = new WeakMap();
+      postMainPlans = new WeakMap();
       resourceGroups.clear();
       cache.clear();
       rootObservation = null;
@@ -594,7 +699,7 @@
     }
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
-      rememberSelection, reuseSelection, postMainResourceOrder, openingResourceOrder, cardTradeBound, close, getDiagnostics });
+      rememberSelection, reuseSelection, postMainResourceOrder, openingResourceOrder, cardTradeBound, postMainPlanSpec, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

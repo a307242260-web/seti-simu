@@ -88,6 +88,10 @@
 
   return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, evaluateStateValue, createStateValueEvaluator,
     evaluateHandCountDelta, isStateValueEvaluator: evaluate => evaluatorWeights.has(evaluate),
+    isDefaultStateValueEvaluator: evaluate => {
+      const weights = evaluatorWeights.get(evaluate);
+      return Boolean(weights && Object.keys(DEFAULT_WEIGHTS).every(key => weights[key] === DEFAULT_WEIGHTS[key]));
+    },
     isMoneyMonotoneEvaluator: evaluate => {
       const weights = evaluatorWeights.get(evaluate);
       return Boolean(weights && weights.credits > 0 && weights.energy > 0);
