@@ -1,0 +1,18 @@
+{
+  "passed": [
+    "randomizer/game/state/state-store.js",
+    "randomizer/game/state/state-store.test.js",
+    "randomizer/game/ai/analysis-port.js",
+    "randomizer/game/ai/analysis-port.test.js",
+    "adhoc/benchmark-ai-fork-state-reuse-20261023-v1.js",
+    "adhoc/audit-ai-decision-corpus-20261023-v14.js"
+  ],
+  "sourceHashes": {
+    "randomizer/game/state/state-store.js": "25f452041322fb493c750ace6407ee15018dc0c767ca48db0f4a3290eeb35ed5",
+    "randomizer/game/state/state-store.test.js": "0ebad51778a361113513a51f482163db0abb0a5ca9b4d7e0328e187fe1e7196e",
+    "randomizer/game/ai/analysis-port.js": "f760d1cc2bea454434e4f51d5268ae3c63fe44fe43bd95726c2e56182c6c05eb",
+    "randomizer/game/ai/analysis-port.test.js": "e230c08397024004f883a75881389945eea53f7cb1177069968ff2996452131d",
+    "adhoc/benchmark-ai-fork-state-reuse-20261023-v1.js": "8d14632a96a03b64b2beb20b395b2b824603bd7128201ee55d77aa29404b1ff0",
+    "adhoc/audit-ai-decision-corpus-20261023-v14.js": "f7b60615cda64b0157783ac6e64fbe59a592df9dbc098532755d6bca81affca2"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "scope": "instrumented prefixes only; identical graph after excluding diagnostics.milliseconds; not complete search or whole-game speed",
+  "baselineCommit": "b1566ffa172196ee05cdcdb2e5d7184978070f73",
+  "changedRuntimeFiles": [
+    "randomizer/game/state/state-store.js",
+    "randomizer/game/ai/analysis-port.js"
+  ],
+  "driverSha256": "8d14632a96a03b64b2beb20b395b2b824603bd7128201ee55d77aa29404b1ff0",
+  "rows": [
+    {
+      "id": "062",
+      "graphEqual": true,
+      "inputs": 256,
+      "baselineMilliseconds": 456.54066700000004,
+      "immutableMilliseconds": 390.738917,
+      "baselineCensus": {
+        "committedParses": 375,
+        "fullStateClones": 426,
+        "sessionClones": 77,
+        "otherClones": 10009
+      },
+      "immutableCensus": {
+        "committedParses": 272,
+        "fullStateClones": 230,
+        "sessionClones": 77,
+        "otherClones": 10009
+      }
+    },
+    {
+      "id": "105",
+      "graphEqual": true,
+      "inputs": 256,
+      "baselineMilliseconds": 443.9773339999999,
+      "immutableMilliseconds": 387.33737499999995,
+      "baselineCensus": {
+        "committedParses": 353,
+        "fullStateClones": 399,
+        "sessionClones": 75,
+        "otherClones": 11162
+      },
+      "immutableCensus": {
+        "committedParses": 250,
+        "fullStateClones": 217,
+        "sessionClones": 75,
+        "otherClones": 11162
+      }
+    },
+    {
+      "id": "152",
+      "graphEqual": true,
+      "inputs": 256,
+      "baselineMilliseconds": 504.251125,
+      "immutableMilliseconds": 437.72579199999996,
+      "baselineCensus": {
+        "committedParses": 314,
+        "fullStateClones": 344,
+        "sessionClones": 108,
+        "otherClones": 15614
+      },
+      "immutableCensus": {
+        "committedParses": 242,
+        "fullStateClones": 178,
+        "sessionClones": 108,
+        "otherClones": 15614
+      }
+    }
+  ],
+  "reports": [
+    "reports/ai-foundation-20261023/fork-state-reuse-baseline-v1.json",
+    "reports/ai-foundation-20261023/fork-state-reuse-immutable-v1.json"
+  ]
+}

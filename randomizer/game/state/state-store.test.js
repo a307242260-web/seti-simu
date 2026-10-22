@@ -282,4 +282,33 @@ function committedBytes(store) {
     "trusted ownership 路径仍必须 fail-closed，不得提交无效 candidate");
 })();
 
+(function testTrustedSerializationTracksFullImmutableRoot() {
+  const store = createStateStore(createState(), { trustedIsolatedOwnership: true });
+  const first = store.serializeForkSnapshot().serialized;
+  const canonical = () => store.serialize(store.getSnapshot()).serialized;
+  assert.equal(first, canonical());
+  const working = store.beginWorkingCopy(0).state;
+  working.players.p1.resources.credits += 2;
+  assert.equal(store.serializeForkSnapshot().serialized, first, "工作副本不能改变缓存的已提交字节");
+  assert.equal(store.compareAndCommit(0, working).ok, true);
+  const committed = store.serializeForkSnapshot().serialized;
+  assert.notEqual(committed, first);
+  assert.equal(committed, canonical(), "成功提交后必须重新生成相同canonical格式");
+
+  const replacement = structuredClone(store.getSnapshot());
+  replacement.players.p1.resources.credits = 19;
+  assert.equal(store.restoreForkSnapshot(replacement).ok, true);
+  replacement.players.p1.resources.credits = 99;
+  const restored = store.serializeForkSnapshot().serialized;
+  assert.notEqual(restored, committed, "相同stateVersion的不同状态不能复用旧字节");
+  assert.equal(restored, canonical());
+  const invalid = store.beginWorkingCopy(1).state;
+  invalid.meta.stateVersion = 7;
+  assert.equal(store.compareAndCommit(1, invalid).code, "STATE_CANDIDATE_VERSION_MISMATCH");
+  assert.equal(store.serializeForkSnapshot().serialized, restored, "失败提交不能替换序列化对应的根");
+  assert.equal(store.restore(JSON.parse(first)).ok, true);
+  assert.equal(store.serializeForkSnapshot().serialized, first, "普通恢复也必须使旧根序列化失效");
+  assert.equal(store.serializeForkSnapshot().serialized, canonical());
+})();
+
 console.log("state-store tests passed");

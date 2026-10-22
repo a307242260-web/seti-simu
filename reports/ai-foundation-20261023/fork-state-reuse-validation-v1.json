@@ -1,0 +1,160 @@
+{
+  "schemaVersion": "seti-fork-state-reuse-validation-v1",
+  "baseCommit": "b1566ffa172196ee05cdcdb2e5d7184978070f73",
+  "snapshot": "/private/tmp/seti-ai-stage29-20261023-rm56gutj",
+  "searchVersion": "seti-complete-decision-search-v21 (unchanged)",
+  "agentVersion": "seti-search-agent-v2 (unchanged)",
+  "rulesetVersion": "seti-runtime-v1.3 (unchanged)",
+  "sourceHashes": {
+    "randomizer/game/state/state-store.js": "25f452041322fb493c750ace6407ee15018dc0c767ca48db0f4a3290eeb35ed5",
+    "randomizer/game/state/state-store.test.js": "0ebad51778a361113513a51f482163db0abb0a5ca9b4d7e0328e187fe1e7196e",
+    "randomizer/game/ai/analysis-port.js": "f760d1cc2bea454434e4f51d5268ae3c63fe44fe43bd95726c2e56182c6c05eb",
+    "randomizer/game/ai/analysis-port.test.js": "e230c08397024004f883a75881389945eea53f7cb1177069968ff2996452131d",
+    "randomizer/index.html": "72c51e3f3d881c59f5694c6dd83b5490b3849f4aaafa4327fc19cc3c3e10e41f",
+    "adhoc/benchmark-ai-fork-state-reuse-20261023-v1.js": "8d14632a96a03b64b2beb20b395b2b824603bd7128201ee55d77aa29404b1ff0",
+    "adhoc/ai-fork-state-reuse-design-20261023-v1.md": "8e84cb182bd3b858b3ec29d1b064a27a115e38108f561e10ca921dfc4d87f11e",
+    "adhoc/audit-ai-decision-corpus-20261023-v14.js": "f7b60615cda64b0157783ac6e64fbe59a592df9dbc098532755d6bca81affca2",
+    "docs/ai-fork-state-reuse-20261023.md": "78679a2febc19b092b06c3e1c7d86a216dbc5e3d06e81dbd8475a1e41b23d9bf",
+    "docs/ai-known-card-money-proof-20261023.md": "3fcadf4946aa507194eb5bccb05b2713f6a7bb49eab8ce81984d94818b4407b9",
+    "docs/ai-search-agent-contract-20261023.md": "f74b1e37d704a09e5025741610898d4d104237afa18ad9da2bec9a33dbc8d7b8",
+    "docs/ai-development-workflow.md": "9e431a0446f5713df65c50fa34c5e5cd3e2eb6cc8c20f2860011cacf42abff24",
+    "docs/ai-implementation-20261022.md": "2e79394a2d7c0198691abe77555fb4cc3e107f128608d255abefe6f6a39e73d4"
+  },
+  "node": "v22.22.0",
+  "machine": {
+    "system": "Darwin",
+    "release": "24.6.0",
+    "machine": "arm64"
+  },
+  "unit": {
+    "passed": 125,
+    "failed": 0,
+    "seconds": 170.73,
+    "log": "reports/ai-foundation-20261023/fork-state-reuse-full-node-v1.log"
+  },
+  "fullFlow": {
+    "passed": 1,
+    "failed": 0,
+    "seconds": 0.51
+  },
+  "browser": {
+    "passed": 3,
+    "failed": 0,
+    "scope": [
+      "production-start-button",
+      "production-search-agent-entry",
+      "production-completion-agent-parity"
+    ],
+    "log": "reports/ai-foundation-20261023/fork-state-reuse-browser-v1.log"
+  },
+  "syntax": {
+    "passed": 6,
+    "report": "reports/ai-foundation-20261023/fork-state-reuse-syntax-v1.json"
+  },
+  "inputAudit": {
+    "exitCode": 1,
+    "independentPathsPassed": 20,
+    "knownLegacyFailures": [
+      "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+    ],
+    "report": "reports/ai-foundation-20261023/state-value-input-audit-v20.json"
+  },
+  "controlledComparison": {
+    "report": "reports/ai-foundation-20261023/fork-state-reuse-comparison-v1.json",
+    "scope": "three instrumented incomplete 256-input prefixes; search call excludes initialization and root creation; no 600ms/180s acceptance",
+    "exactGraphHashesEqual": true,
+    "baselineRuntimeImportsVerifiedAgainstCommit": 83,
+    "finalRuntimeImportsVerified": 83,
+    "changedRuntimeFiles": [
+      "randomizer/game/state/state-store.js",
+      "randomizer/game/ai/analysis-port.js"
+    ],
+    "rows": [
+      {
+        "id": "062",
+        "graphEqual": true,
+        "inputs": 256,
+        "baselineMilliseconds": 456.54066700000004,
+        "immutableMilliseconds": 390.738917,
+        "baselineCensus": {
+          "committedParses": 375,
+          "fullStateClones": 426,
+          "sessionClones": 77,
+          "otherClones": 10009
+        },
+        "immutableCensus": {
+          "committedParses": 272,
+          "fullStateClones": 230,
+          "sessionClones": 77,
+          "otherClones": 10009
+        }
+      },
+      {
+        "id": "105",
+        "graphEqual": true,
+        "inputs": 256,
+        "baselineMilliseconds": 443.9773339999999,
+        "immutableMilliseconds": 387.33737499999995,
+        "baselineCensus": {
+          "committedParses": 353,
+          "fullStateClones": 399,
+          "sessionClones": 75,
+          "otherClones": 11162
+        },
+        "immutableCensus": {
+          "committedParses": 250,
+          "fullStateClones": 217,
+          "sessionClones": 75,
+          "otherClones": 11162
+        }
+      },
+      {
+        "id": "152",
+        "graphEqual": true,
+        "inputs": 256,
+        "baselineMilliseconds": 504.251125,
+        "immutableMilliseconds": 437.72579199999996,
+        "baselineCensus": {
+          "committedParses": 314,
+          "fullStateClones": 344,
+          "sessionClones": 108,
+          "otherClones": 15614
+        },
+        "immutableCensus": {
+          "committedParses": 242,
+          "fullStateClones": 178,
+          "sessionClones": 108,
+          "otherClones": 15614
+        }
+      }
+    ]
+  },
+  "fixedColdGate": {
+    "passed": 4,
+    "total": 8,
+    "report": "reports/ai-foundation-20261023/decision-corpus-audit-v14.json",
+    "budget": {
+      "transitions": 256,
+      "nodes": 257,
+      "frontier": 256,
+      "milliseconds": 600
+    },
+    "failureReason": "four transition-budget stops"
+  },
+  "ownershipChecks": [
+    "one fully frozen committed decode by complete bytes",
+    "working state and Session still independently cloned",
+    "same version different root invalidates serialization",
+    "successful and failed commit canonical bytes",
+    "normal and fork restore canonical bytes",
+    "external mutable candidate isolated",
+    "close releases decoded cache"
+  ],
+  "limitations": [
+    "same search graph and branch coverage; no reduction in necessary search input count",
+    "four complex cold checkpoints still incomplete at 256 inputs",
+    "instrumentation wall times are not end-to-end decision or whole-game metrics",
+    "whole V audit retains old aomomo frozen-object failure",
+    "no new-search full games, terminal scores, cold/hot recovery or 180-second acceptance"
+  ]
+}

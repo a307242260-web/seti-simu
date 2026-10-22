@@ -56,6 +56,8 @@ assert.equal(counterfactualProjections, projectionsBeforeExpand + 1, "首次读�
 const initialChoice = branch.legalActions.find(action => action.target?.selectionKind === "initial");
 const selected = port.expand(branch, initialChoice.actionId);
 assert.equal(selected.status, "decision");
+const decodesBeforeCancel = port.getDiagnostics().committedDecodeCount;
+assert(decodesBeforeCancel > 0);
 assert.notEqual(port.identity(selected), port.identity(branch), "选中状态不同不能合并");
 const toggle = selected.legalActions.find(action => action.target?.cardId === initialChoice.target.cardId);
 assert(toggle, "开局选择可取消");
@@ -64,10 +66,14 @@ assert.equal(port.identity(cancelled), port.identity(branch), "选择再取消�
 assert.deepEqual(Object.keys(port.identity(branch)), [], "身份是不透明令牌，不能读到隐藏世界键");
 assert.equal(JSON.stringify(branch), branchBefore, "后继执行不能冻结或修改已有节点观察");
 assert.equal(port.getDiagnostics().observationCount, 1, "已物化观察不会因分支变化重复投影");
+assert.equal(port.getDiagnostics().committedDecodeCount, decodesBeforeCancel,
+  "不同pending信封的已提交字节相同时，不重复解码，工作Session仍各自恢复");
+assert(port.getDiagnostics().committedDecodeHits >= 1);
 assert.deepEqual(comp.lifecycle.save().envelope, before, "分支不能改变真实根或RNG");
 const other = createAnalysisPort({ composition: comp, seatId: "wrong-owner" });
 assert.throws(() => other.openRoot(), /OWNER_MISMATCH/);
 port.close();
+assert.equal(port.getDiagnostics().decodedStateCacheEntries, 0, "关闭必须释放已提交状态缓存");
 assert.throws(() => port.expand(root, rootActionId), /NODE_INVALID/);
 assert.equal(JSON.stringify(branch), branchBefore, "已物化观察关闭后仍是稳定的只读值");
 assert.throws(() => selected.observation, /NODE_INVALID/, "关闭后不能为未读取节点重新访问分支");

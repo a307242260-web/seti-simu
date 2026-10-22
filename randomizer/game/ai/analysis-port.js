@@ -231,7 +231,8 @@
     const resourceGroups = new Map();
     let fork = null;
     let loadedEnvelope = null;
-    let decodedEnvelope = null, decodedState = null;
+    let decodedSerialized = null, decodedState = null;
+    let committedDecodeCount = 0, committedDecodeHits = 0;
     let rootObservation = null;
     let publicSeed = null;
     let nodeCount = 0;
@@ -276,6 +277,7 @@
       const comp = fork.composition || fork;
       const restored = comp.lifecycle.restore(envelope, {
         silent: true, inPlace: true, trustedFork: true, skipProjection: true,
+        trustedState: readCommittedState(envelope),
       });
       milliseconds.restore += now() - restoreAt;
       if (!restored.ok) throw new Error(`ANALYSIS_RESTORE_FAILED: ${restored.code || restored.message}`);
@@ -316,10 +318,18 @@
 
     function readIdentityState(envelope) {
       if (envelope.session?.session) return envelope.session.session.workingState;
-      // 仅保留最近一份私有只读解码，供身份和本节点的纯证明检查共用；不交给规则写入。
-      if (decodedEnvelope !== envelope) {
-        decodedEnvelope = envelope;
-        decodedState = JSON.parse(envelope.committedState);
+      return readCommittedState(envelope);
+    }
+
+    function readCommittedState(envelope) {
+      // 不同pending信封可有相同committed bytes。只共享完整冻结的已提交根，
+      // store.beginWorkingCopy和Session恢复仍各自复制，不转移任何可写树。
+      if (decodedSerialized !== envelope.committedState) {
+        decodedState = freeze(JSON.parse(envelope.committedState));
+        decodedSerialized = envelope.committedState;
+        committedDecodeCount += 1;
+      } else {
+        committedDecodeHits += 1;
       }
       return decodedState;
     }
@@ -330,6 +340,7 @@
       submissionCount = 0;
       cacheHits = 0;
       observationCount = 0;
+      committedDecodeCount = 0; committedDecodeHits = 0;
       for (const key of Object.keys(milliseconds)) milliseconds[key] = 0;
       rootObservation = project(composition);
       const actions = legalActions(composition);
@@ -1176,7 +1187,7 @@
       (fork?.composition || fork)?.dispose?.();
       fork = null;
       loadedEnvelope = null;
-      decodedEnvelope = null; decodedState = null;
+      decodedSerialized = null; decodedState = null;
       nodes = new WeakMap();
       identities.clear();
       resourceOrders = new WeakMap();
@@ -1196,7 +1207,8 @@
     function getDiagnostics() {
       return freeze({ nodeCount, submissionCount, cacheHits, cacheEntries: cache.size,
         observationCount, identityCount: identities.size, maxCacheEntries,
-        decodedStateCacheEntries: decodedEnvelope ? 1 : 0, maxDecodedStateCacheEntries: 1,
+        decodedStateCacheEntries: decodedSerialized ? 1 : 0, maxDecodedStateCacheEntries: 1,
+        committedDecodeCount, committedDecodeHits,
         selectionEvidenceEntries: selectionCertificate ? 1 : 0, maxSelectionEvidenceEntries: 1,
         planEvidenceEntries: planCertificate ? 1 : 0, planPrefixEntries: planCertificate?.rows.length || 0, maxPlanPrefixEntries: 32,
         milliseconds: { ...milliseconds } });

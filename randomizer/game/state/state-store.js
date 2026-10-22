@@ -247,6 +247,7 @@ function stableSerialize(value) {
     const trustedIsolatedOwnership = options.trustedIsolatedOwnership === true;
     const listeners = new Set();
     let committedState;
+    let forkSerializedState = null, forkSerializedBytes = null;
 
     for (const validator of invariantValidators) {
       if (typeof validator !== "function") throw new TypeError("invariantValidators 必须只包含函数");
@@ -462,7 +463,14 @@ function stableSerialize(value) {
     }
 
     function serializeForkSnapshot() {
-      return { ok: true, serialized: stableSerialize(committedState) };
+      if (!trustedIsolatedOwnership) return { ok: true, serialized: stableSerialize(committedState) };
+      // trusted committed root完整冻结；按对象身份保留最近一次canonical bytes。
+      // 同版本不同恢复根也会重算，工作副本不进入此缓存。
+      if (forkSerializedState !== committedState) {
+        forkSerializedBytes = stableSerialize(committedState);
+        forkSerializedState = committedState;
+      }
+      return { ok: true, serialized: forkSerializedBytes };
     }
 
     function subscribe(listener) {
