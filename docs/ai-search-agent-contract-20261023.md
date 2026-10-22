@@ -23,6 +23,11 @@ Browser高频inspect不复制原始actionOutcomes，查看lastOutcomeSummary；�
 算法身份绑定search版本、state-value版本及完整固定配置；实验指纹与completion/旧策略分离。
 这只是单决策诊断配置，不是整局180秒已通过的证据。
 
+搜索v19的取牌界接受已审计的11种标准公司组合及未达成B114/DLC9任务，仍逐项验证队列。
+`cardChoiceEquivalence`分别使用交易信息边界证明和[已知PASS预留证明](ai-pass-reserve-choice-proof-20261023.md)；
+代表动作必须真实到达各自预期边界并符合V。PASS之前搜索停在`hidden_pass_reserve_offer`，
+不读未来选项、不计尚未取得的手牌。实际公开后的下一真实根才允许预留选择等价。
+
 每次finally关闭分析端口，释放fork及精确转换缓存。已完成纯付款选择组件的opaque token
 只保存在本席算法中，下一真实点击仍核对完整依赖与全部出口完成证据。
 关闭端口不删除该份证据；reset、恢复、Browser invalidate和dispose均丢弃旧算法实例及临时token。

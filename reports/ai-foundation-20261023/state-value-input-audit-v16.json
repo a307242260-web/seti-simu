@@ -1,0 +1,24 @@
+{
+  "exitCode": 1,
+  "sourceAuditSha256": "658f42ee1c8eac5edfeb843d29e33b464624851dcbfd7553ec93741fb26f7cc8",
+  "analysisPortSha256": "72f900f4ff4c4d8e33c66a38bfd616b3e51181b2b0843ccec3f4d07d9cd92a88",
+  "log": "reports/ai-foundation-20261023/state-value-input-audit-v16.log",
+  "logSha256": "3003b6692e0e4794937c5d6c7aeba5be866943f8f7d14ba889f39ba0e02ba94e",
+  "knownLegacyFailure": [
+    "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+  ],
+  "newPathChecks": {
+    "independent-company-card-trade": [
+      "[PASS] independent-company-card-trade: card=opening total=35.5",
+      "[PASS] independent-company-card-trade: card=b_114.webp total=33.5",
+      "[PASS] independent-company-card-trade: card=dlc_9.png total=35"
+    ],
+    "independent-pass-reserve-choice": [
+      "[PASS] independent-pass-reserve-choice: total=37.5 inputs=1"
+    ],
+    "independent-shared-search-agent": [
+      "[PASS] independent-shared-search-agent: root=27.5 leaf=36.5"
+    ]
+  },
+  "newPathsPassed": true
+}

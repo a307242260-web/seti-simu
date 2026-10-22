@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v16";
+  const VERSION = "seti-complete-decision-search-v19";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -209,16 +209,20 @@
         }
       }
       if (cardChoiceEquivalence && !entry.selection && entry.node.status === "decision" && entry.node.legalActions.length > 1
-        && entry.node.legalActions.every(action => action.family === "choose_card" && action.target?.kind === "trade-card-selection")) {
+        && entry.node.legalActions.every(action => action.family === "choose_card")) {
         if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
-        if (!boundChecked) bound = port.cardTradeBound(entry.node);
-        if (bound?.handDelta === 1) {
+        const tradeChoice = entry.node.legalActions.every(action => action.target?.kind === "trade-card-selection");
+        if (!boundChecked && tradeChoice) bound = port.cardTradeBound(entry.node);
+        const passChoice = !tradeChoice && port.passReserveChoiceSpec?.(entry.node);
+        if (passChoice) bound = passChoice;
+        if ((tradeChoice || passChoice) && bound?.handDelta === 1) {
           const expectedValue = upperBound ?? stateValue.evaluateHandCountDelta(evaluate, entry.node.observation, 1);
           if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
           const actionIds = entry.node.legalActions.map(action => action.actionId).sort();
           if (new Set(actionIds).size !== actionIds.length) throw new TypeError("SEARCH_LOCAL_PLAN_INVALID");
-          entry.localPlan = { kind: "card-choice", proof: "seti-card-trade-information-choice-value-equivalence-v1",
-            boundProof: bound.proof, retainedActionIds: actionIds.slice(0, 1), excludedActionIds: actionIds.slice(1), expectedValue };
+          entry.localPlan = { kind: "card-choice", proof: passChoice ? passChoice.proof : "seti-card-trade-information-choice-value-equivalence-v1",
+            boundProof: bound.proof, retainedActionIds: actionIds.slice(0, 1), excludedActionIds: actionIds.slice(1), expectedValue,
+            expectedStatus: passChoice ? passChoice.expectedStatus : "information-barrier" };
           entry.alternatives = [{ firstActionId: actionIds[0], submissions: 1 }];
           entry.alternativeCount = 1;
           cardChoiceProofNodes += 1; cardChoiceExcludedActions += actionIds.length - 1;
@@ -238,7 +242,7 @@
         transitions += alternative.submissions;
         if (macro) { if (alternative.openingPass) openingPassMacros += 1; else selectionMacros += 1; }
         const added = add(child);
-        if (entry.localPlan?.kind === "card-choice" && (child.status !== "information-barrier"
+        if (entry.localPlan?.kind === "card-choice" && (child.status !== entry.localPlan.expectedStatus
           || nodes[added.index].value !== entry.localPlan.expectedValue)) throw new Error("SEARCH_CARD_CHOICE_WITNESS_MISMATCH");
         if (added.equivalent) equivalents += 1;
         entry.edges.push({ actionId: alternative.firstActionId, target: added.index,

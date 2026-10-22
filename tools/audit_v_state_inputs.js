@@ -274,8 +274,31 @@ try {
           if (!proof || rawValue !== evaluateSector(outcomeModel.createDecisionObservation(root.observation,
             { seatId: sectorFixture.seatId }))) throw new Error("异星实验室准备或扇区任务的证明/原始标准估值不一致");
           console.log(`[PASS] independent-alien-opening-sector-task: card=${cardId || "opening"} total=${rawValue}`);
+          const trade = root.legalActions.find(action => action.target?.tradeId === "energy-for-card");
+          const pending = sectorPort.expand(root, trade.actionId), bound = sectorPort.cardTradeBound(pending);
+          const leaf = sectorPort.expand(pending, pending.legalActions[0].actionId);
+          if (!bound || evaluateSector(leaf.observation) !== independentValue.evaluateHandCountDelta(evaluateSector, pending.observation, 1)
+            || evaluateSector(leaf.observation) !== evaluateSector(outcomeModel.createDecisionObservation(leaf.observation,
+              { seatId: sectorFixture.seatId }))) throw new Error("公司/扇区任务取牌的数量界或标准估值不一致");
+          console.log(`[PASS] independent-company-card-trade: card=${cardId || "opening"} total=${evaluateSector(leaf.observation)}`);
         } finally { sectorPort.close(); }
       }
+      if (!sectorKernel.composition.lifecycle.restore(sectorFixture.compositionEnvelope).ok) throw new Error("PASS预留审计恢复失败");
+      const pass = sectorKernel.composition.inputPort.enumerateActions({}).find(action => action.family === "pass");
+      if (!sectorKernel.composition.inputPort.submitAction(pass).ok) throw new Error("PASS预留审计提交失败");
+      const passPort = createAnalysisPort({ composition: sectorKernel.composition, seatId: sectorFixture.seatId });
+      try {
+        const root = passPort.openRoot(), proof = passPort.passReserveChoiceSpec(root);
+        const evaluate = independentValue.createStateValueEvaluator(sectorFixture.seatId);
+        const result = searchDecision({ port: passPort, root, evaluate, cardChoiceEquivalence: true });
+        const leaf = passPort.expand(root, result.actionId);
+        if (!proof || !result.complete || result.diagnostics.transitions !== 1 || leaf.status !== "other-owner"
+          || result.value !== evaluate(leaf.observation) || result.value !== independentValue.evaluateHandCountDelta(evaluate, root.observation, 1)
+          || result.value !== evaluate(outcomeModel.createDecisionObservation(leaf.observation, { seatId: sectorFixture.seatId }))) {
+          throw new Error("PASS预留的数量界、边界或标准估值不一致");
+        }
+        console.log(`[PASS] independent-pass-reserve-choice: total=${result.value} inputs=1`);
+      } finally { passPort.close(); }
     } finally { sectorKernel.composition.dispose(); }
     const searchFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
       "../adhoc/ai-decision-corpus-20261023-v1/case-003-20261023-v1.json")));

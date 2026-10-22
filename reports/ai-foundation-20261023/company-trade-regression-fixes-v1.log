@@ -1,0 +1,7 @@
+{"alienOpeningPlan":"passed","fullInputs":856,"value":37.5,"small":[{"cardId":null,"rawInputs":326,"prunedInputs":88,"value":32.5},{"cardId":"dlc_9.png","rawInputs":814,"prunedInputs":227,"value":33.5},{"cardId":"b_86.webp","rawInputs":814,"prunedInputs":227,"value":33.5},{"cardId":"b_114.webp","rawInputs":760,"prunedInputs":108,"value":33.5}]}
+{"openingPlan":"passed","results":[{"cardId":null,"value":32.5,"baseline":86,"pruned":42},{"cardId":"dlc_27.png","value":33.5,"baseline":180,"pruned":47},{"cardId":"b_44.webp","value":33.5,"baseline":182,"pruned":47},{"cardId":"b_23.webp","value":33.5,"baseline":206,"pruned":58},{"cardId":"dlc_22.png","value":33.5,"baseline":180,"pruned":47},{"cardId":"b_48.webp","value":33.5,"baseline":182,"pruned":46}],"passPaymentExits":20,"directPassValue":36,"directPassInputs":2,"publicityPassValue":36.5,"dataAuditInputs":332,"dataAuditLeaves":120,"fullHandBeforePassMacros":676,"fullHandAfterPassMacros":91,"fullHandCachedInputs":91,"passMacroCacheHits":2}
+public picks preserve hidden-refill boundaries, known cards and recovery across 8 cases
+SUMMARY unit passed=3 failed=0 total=3 time=22.19s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=2
+OWNER rules/card-play tests=1

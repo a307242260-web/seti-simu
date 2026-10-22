@@ -148,6 +148,6 @@ for (const reversed of [false, true]) {
   assert.equal(comp.inspect().session.irreversibleBarrier.code, "hidden_card_draw");
   restore(before); submit(confirm); assert.deepEqual(comp.lifecycle.save().envelope, after);
 }
-assert.equal(runtimeVersion, "seti-runtime-v1.2");
+assert.equal(runtimeVersion, "seti-runtime-v1.3");
 comp.dispose();
 console.log("initial offer, settlement and income information boundaries, removal equivalence and recovery passed");

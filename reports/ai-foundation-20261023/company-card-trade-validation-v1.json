@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "seti-company-card-trade-validation-v1",
+  "baseCommit": "aee0639db0fd1548a0b52bfbed7f68b5cbfab41d",
+  "searchVersion": "seti-complete-decision-search-v19",
+  "newGameRulesetVersion": "seti-runtime-v1.3",
+  "snapshot": "/private/tmp/seti-ai-stage0-20261022-sp_78xnl",
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "72f900f4ff4c4d8e33c66a38bfd616b3e51181b2b0843ccec3f4d07d9cd92a88",
+    "randomizer/game/ai/decision-search.js": "e41a2472f951c0d0d80d33a77e1feff4bff23eb5b70ea47291d6c7658eff4782",
+    "randomizer/game/ai/company-card-trade.test.js": "e1e053035df6310e2d589a4a18bf387a78c8f0d2b8f80f435afe0902f88f2c62",
+    "tools/node-test-inventory.js": "42aed1b7c3b0fc4da89600837615d26c4fc33b9db5c4c255f0705ff6b264bc90",
+    "randomizer/index.html": "39c6a0bfd225241f37e905b5cfde99f75407e2b897105250b5607d603fa2ccd4",
+    "randomizer/game/ai/pass-reserve-choice.test.js": "eb40c4822a5a4ca1770bf1687ddbc8279b44bab336af19b8b3ba8f9b0d8ea932",
+    "tools/audit_v_state_inputs.js": "658f42ee1c8eac5edfeb843d29e33b464624851dcbfd7553ec93741fb26f7cc8",
+    "randomizer/game/ai/pass-offer-barrier.test.js": "dddc5023e46d6a9ac314fbd61664904f2bbfe3d7e5886b587ce4cb2374edcd61",
+    "randomizer/game/effects/probe-turn-session.js": "71d5f8a4890bc8b214d23997e50ded3693e5c235108760d1e12fe1f895e088f3",
+    "randomizer/game/production-kernel.js": "49ebd31c0db6a75fe662dea8f2cd7077e409b13c1244ccac73769e305040a1eb",
+    "randomizer/game/state/initial-game-state.js": "5bdd4c17e0d737415b324205b9a66b0bff5c8675170001688f0edd72aba66d98",
+    "randomizer/game/initial-information-barrier.test.js": "8855ffe70e8b4d32d84991ead3afae20b9397a1709ad627308533a5f584119ea",
+    "randomizer/game/ai/opening-plan.test.js": "b1a7668379380b66c3b49d14284b4274f685b19ed4e0f8d82c6d745b93da015b",
+    "randomizer/game/cards/public-pick-barrier.test.js": "e0d7f32a529ec5176d746c6fdddc4a055adf0ca302056c91ebd62a1a2db6b5d4",
+    "docs/ai-card-trade-bound-proof-20261022.md": "60318b6afc3a2c9150a07483cc239f34718b93c7f484bd7b1788b301d6ea92b0",
+    "docs/ai-pass-reserve-choice-proof-20261023.md": "441dc0aa6f0f5e64f41b79f5ab4f1f724e89f9b35ba365d9fb975eddd3b6e26a",
+    "docs/ai-search-agent-contract-20261023.md": "4e7d59d67b9308c782924eb428d73e6e259d1442b40d6633539a92a51feeea9c",
+    "docs/ai-development-workflow.md": "c4800ae5ea851a2b2c70af878c192ef7eefae9d07ca007544b05b1eabdf8b3be",
+    "docs/ai-opening-plan-proof-20261023.md": "525bdb0f05975d05845ff3e7d7fca0b78d283c6b3c969a16a2ff839c63f3a8c9",
+    "docs/mechanics-reference.md": "b27eac07aeab456fdd7681fc732d508038fc50294a3e30fab764c7b840daea51",
+    "docs/ai-implementation-20261022.md": "562ec42ceeb7685710b08f748516a5f025857c04efaab150f8e9168acfa3403c",
+    "adhoc/ai-company-card-trade-design-20261023-v1.md": "4a16cbf8112d6b966d51b4f0d3bf8fadbe9709cda6a91f8d8205de3865a32847"
+  },
+  "syntaxChecked": [
+    "randomizer/game/ai/analysis-port.js",
+    "randomizer/game/ai/decision-search.js",
+    "randomizer/game/ai/company-card-trade.test.js",
+    "tools/node-test-inventory.js",
+    "randomizer/game/ai/pass-reserve-choice.test.js",
+    "tools/audit_v_state_inputs.js",
+    "randomizer/game/ai/pass-offer-barrier.test.js",
+    "randomizer/game/effects/probe-turn-session.js",
+    "randomizer/game/production-kernel.js",
+    "randomizer/game/state/initial-game-state.js",
+    "randomizer/game/initial-information-barrier.test.js",
+    "randomizer/game/ai/opening-plan.test.js",
+    "randomizer/game/cards/public-pick-barrier.test.js"
+  ],
+  "node": "v22.22.0",
+  "machine": {
+    "system": "Darwin",
+    "release": "24.6.0",
+    "machine": "arm64"
+  },
+  "unit": {
+    "passed": 123,
+    "failed": 0,
+    "seconds": 143.97,
+    "log": "reports/ai-foundation-20261023/company-trade-full-node-v2.log"
+  },
+  "fullFlow": {
+    "passed": 1,
+    "failed": 0,
+    "seconds": 0.54
+  },
+  "browser": {
+    "passed": 3,
+    "failed": 0,
+    "log": "reports/ai-foundation-20261023/company-trade-browser-v1.log",
+    "scope": [
+      "production-start-button",
+      "production-search-agent-entry",
+      "production-completion-agent-parity"
+    ]
+  },
+  "inputAudit": {
+    "exitCode": 1,
+    "knownLegacyFailure": [
+      "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+    ],
+    "newPathsPassed": true,
+    "report": "reports/ai-foundation-20261023/state-value-input-audit-v16.json"
+  },
+  "physicalLeaves": {
+    "companyTrade": 410,
+    "knownPassReserve": 65
+  },
+  "comparison": {
+    "report": "reports/ai-foundation-20261023/company-trade-pass-offer-comparison-v1.json",
+    "inputs": [
+      856,
+      606,
+      606
+    ],
+    "actionId": "card_corner:72914895",
+    "value": 37.5,
+    "distance": 10,
+    "timingScope": "rootAndSearchMilliseconds includes openRoot, search, root equality assertion and raw evidence serialization/write; diagnostics.milliseconds is search only; same-process warmup prevents isolated speed-ratio claims",
+    "notWholeGame": true,
+    "notFullUnprunedGraph": true
+  },
+  "fixedBudget": {
+    "report": "reports/ai-foundation-20261023/decision-corpus-audit-v10.json",
+    "passed": 4,
+    "total": 8,
+    "budget": {
+      "transitions": 256,
+      "nodes": 257,
+      "frontier": 256,
+      "milliseconds": 600
+    }
+  },
+  "limitations": [
+    "complex main/technology/reserved/late-round decisions still incomplete under the fixed budget",
+    "no revealed-alien point in the current eight-checkpoint corpus",
+    "general action suffix reuse not implemented",
+    "no new search whole game, terminal score or cold/hot <=180s acceptance",
+    "whole V audit retains legacy aomomo failure",
+    "old heuristic full Chrome workflow not rerun and previously timed out",
+    "v17/v18 intermediate opening profiles preceded hidden PASS offer fix and are not correctness acceptance"
+  ]
+}

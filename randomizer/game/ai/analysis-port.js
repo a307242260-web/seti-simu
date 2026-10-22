@@ -18,7 +18,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession) {
   "use strict";
 
-  // 已逐项审计的 Production 公司流程：仅在主行动完成后的钱电模拟中使用。
+  // 已逐项审计的 Production 公司组合：钱电模拟和取牌待选分别检查各自的队列前提。
   // 新主动/被动组合必须重审，不能因目录新增公司自动扩大证明范围。
   const POST_MAIN_MONEY_COMPANIES = Object.freeze({
     stratus_public_corners: [],
@@ -138,6 +138,7 @@
     let openingCapacities = new WeakMap();
     let openingPlans = new WeakMap();
     let cardTradeBounds = new WeakMap();
+    let passReserveBounds = new WeakMap();
     let postMainPlans = new WeakMap();
     const resourceGroups = new Map();
     let fork = null;
@@ -541,22 +542,77 @@
       const state = session.workingState;
       const owner = state.players.players.find(player => player.id === seatId);
       const company = industryCatalog.getPlayerIndustryDefinition(owner);
+      const passives = company && POST_MAIN_MONEY_COMPANIES[company.activeAbilityId ?? "no_active"];
       if (state.turn.currentPlayerId !== seatId || owner.passCompletionPending
         || state.turn.passedPlayerIds.includes(seatId) || state.match.initialSetup
-        || !hasOnlyOwnInertReservations(state)
+        || !hasOnlyOwnInertReservations(state, { sectorTasks: true })
         || state.turn.cardTurnEventBonuses?.length
         || Object.values(state.aliens.aliens).some(slot => slot.revealed)
-        || company?.activeAbilityId !== "helios_remove_tech_income"
-        || company.passiveIds.some(id => id !== "helios_passive_reward_slots")
+        || !passives || passives.length !== company.passiveIds.length
+        || company.passiveIds.some(id => !passives.includes(id))
         || owner.hand.some(card => !["basic", "space-agency"].includes(card.set))
         || state.cards.publicCards.some(card => card && !["basic", "space-agency"].includes(card.set))) return null;
       // getAvailablePool 会清理副本上的牌堆目录，不能写入冻结的工作状态。
       if (!cards.getAvailablePool({ ...state.cards }, state.players).length) return null;
-      return freeze({ proof: "seti-card-trade-information-value-bound-v2", tradeId: pending.tradeId, handDelta });
+      return freeze({ proof: "seti-card-trade-information-value-bound-v3", tradeId: pending.tradeId, handDelta });
     }
 
     function postMainResourceOrder(node) {
       return resourceOrder(node, resourceOrders, false);
+    }
+
+    function passReserveChoiceSpec(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (passReserveBounds.has(node)) return passReserveBounds.get(node);
+      const at = now(), result = describePassReserveChoice(stored, node);
+      milliseconds.valueBound += now() - at;
+      passReserveBounds.set(node, result);
+      return result;
+    }
+
+    function describePassReserveChoice(stored, node) {
+      const session = stored.envelope.session?.session, queue = session?.queue;
+      const types = probeTurnSession.EFFECT_TYPES;
+      if (node.status !== "decision" || session.interruptContext || queue.length !== 8
+        || queue[0].type !== types.PASS_RESERVE || queue[1].type !== types.PASS_COMMIT || queue[7].type !== types.TURN_ADVANCE
+        || queue.some(effect => effect.ownerId !== seatId || effect.allowQuickActions)
+        || session.journal.actions[0]?.action?.family !== "pass") return null;
+      const state = session.workingState, owner = state.players.players.find(player => player.id === seatId);
+      const company = industryCatalog.getPlayerIndustryDefinition(owner);
+      const passives = company && POST_MAIN_MONEY_COMPANIES[company.activeAbilityId ?? "no_active"];
+      if (state.turn.currentPlayerId !== seatId || state.turn.activePlayerCount !== 4 || state.match.initialSetup
+        || state.turn.passedPlayerIds.includes(seatId) || owner.passCompletionPending || owner.industryBorrowedTechTileId
+        || !passives || passives.length !== company.passiveIds.length || company.passiveIds.some(id => !passives.includes(id))
+        || !hasOnlyOwnInertReservations(state, { sectorTasks: true }) || state.turn.cardTurnEventBonuses?.length
+        || Object.values(state.aliens.aliens).some(slot => slot.revealed || alienState.isAlienReadyToReveal(slot))
+        || owner.hand.some(card => !["basic", "space-agency"].includes(card.set))) return null;
+      const round = state.turn.roundNumber, turn = state.turn.turnNumber;
+      const boundaryMatches = payload => payload && Object.keys(payload).length === 3
+        && payload.roundNumber === round && payload.turnNumber === turn && payload.didPass === true;
+      if (Object.keys(queue[0].payload).length !== 1 || queue[0].payload.roundNumber !== round
+        || Object.keys(queue[1].payload).length || !boundaryMatches(queue[7].payload)) return null;
+      const handoffs = [["final_scoring", "milestone"], ["alien", "turn_end_neutral_milestone"],
+        ["alien", "turn_end_reveal"], ["company", "turn_end"], ["card_trigger", "turn_end"]];
+      if (handoffs.some(([domain, effectType], index) => {
+        const effect = queue[index + 2], payload = effect.payload;
+        return effect.type !== probeTurnSession.DOMAIN_HANDOFF_EFFECT_TYPE || Object.keys(payload).length !== 4
+          || payload.schemaVersion !== probeTurnSession.DOMAIN_HANDOFF_SCHEMA_VERSION
+          || payload.domain !== domain || payload.effectType !== effectType || !boundaryMatches(payload.data);
+      })) return null;
+      const thresholds = state.finalScoring.thresholds;
+      if (!thresholds.length || thresholds.some(value => !Number.isSafeInteger(value) || value <= 0)
+        || state.players.players.some(player => !Number.isSafeInteger(player.resources.score)
+          || player.resources.score < 0 || player.resources.score >= Math.min(...thresholds))) return null;
+      const pile = cards.getPassReservePile(state.cards, round);
+      if (!pile.length || node.legalActions.length !== pile.length || new Set(pile.map(card => card.id)).size !== pile.length
+        || pile.some(card => !["basic", "space-agency"].includes(card.set) || !cards.getCatalogEntryForCard(card))
+        || node.legalActions.some(action => action.actorId !== seatId || action.family !== "choose_card"
+          || action.target?.kind !== "pass-reserve-card" || action.payload?.cardInstanceId !== action.target.choiceId
+          || !pile.some(card => card.id === action.target.choiceId))) return null;
+      const preview = turnFlow.advanceTurnAfterPlayerAction(structuredClone(state), seatId, { passed: true });
+      if (!preview.turnAdvanced || preview.roundAdvanced || preview.gameEnded || preview.nextPlayerId === seatId) return null;
+      return freeze({ proof: "seti-standard-pass-reserve-choice-value-equivalence-v1", handDelta: 1, expectedStatus: "other-owner" });
     }
 
     function postMainPlanSpec(node) {
@@ -940,6 +996,7 @@
       openingCapacities = new WeakMap();
       openingPlans = new WeakMap();
       cardTradeBounds = new WeakMap();
+      passReserveBounds = new WeakMap();
       postMainPlans = new WeakMap();
       resourceGroups.clear();
       cache.clear();
@@ -962,7 +1019,7 @@
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
-      cardTradeBound, postMainPlanSpec, close, getDiagnostics });
+      cardTradeBound, passReserveChoiceSpec, postMainPlanSpec, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

@@ -17,7 +17,7 @@ const kernel = createSimulationRuleComposition({ seed, random: createSeededRando
   trustedProjectionReader: true, projectCounterfactualState: (state, viewer) => buildRuleObservation(state, seed, viewer?.playerId) });
 kernel.newGame({ seed });
 const comp = kernel.composition;
-assert.equal(JSON.parse(comp.lifecycle.save().envelope.committedState).meta.rulesetVersion, "seti-runtime-v1.2");
+assert.equal(JSON.parse(comp.lifecycle.save().envelope.committedState).meta.rulesetVersion, "seti-runtime-v1.3");
 function submitChoice(choice) {
   const decision = comp.inspect().session.decision;
   const result = comp.inputPort.submitDecision({ decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,

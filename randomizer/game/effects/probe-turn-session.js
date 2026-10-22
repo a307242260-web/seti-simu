@@ -44,6 +44,7 @@
     REWARD: "probe_turn_reward",
     PASS: "probe_turn_pass",
     PASS_DISCARD: "probe_turn_pass_discard",
+    PASS_RESERVE_OFFER: "probe_turn_pass_reserve_offer",
     PASS_RESERVE: "probe_turn_pass_reserve",
     PASS_COMMIT: "probe_turn_pass_commit",
     TURN_ADVANCE: "probe_turn_advance",
@@ -399,6 +400,10 @@
     if (!isFinalRound) {
       const reserve = cards.getPassReservePile(slice(root, "cards", "cards"), turn.roundNumber);
       if (reserve.length) {
+        effects.push({
+          priority: "direct",
+          effect: { type: EFFECT_TYPES.PASS_RESERVE_OFFER, ownerId: player.id, payload: { roundNumber: turn.roundNumber } },
+        });
         effects.push({
           priority: "direct",
           effect: {
@@ -928,6 +933,14 @@
         }),
       );
     }
+    runtime.registerExecutor(EFFECT_TYPES.PASS_RESERVE_OFFER, (state, effect, workingContext) => {
+      const root = getRoot(state, workingContext);
+      const reserve = cards.getPassReservePile(slice(root, "cards", "cards"), effect.payload?.roundNumber);
+      return result(state, root, EFFECT_TYPES.PASS_RESERVE_OFFER, reserve.length ? {
+        irreversible: { code: "hidden_pass_reserve_offer", reason: "公开本轮PASS预留牌选项" },
+        events: [{ type: "pass_reserve_offer", playerId: effect.ownerId, roundNumber: effect.payload?.roundNumber, count: reserve.length }],
+      } : {});
+    });
     runtime.registerExecutor(EFFECT_TYPES.PASS_RESERVE, {
       getLegalChoices: passReserveChoices,
       resolveDecision(state, effect, choice, workingContext) {

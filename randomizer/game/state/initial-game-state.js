@@ -52,7 +52,7 @@
         schemaVersion: options.schemaVersion,
         stateVersion: Number(options.stateVersion) || 0,
         gameId: options.gameId || "seti-browser-runtime",
-        rulesetVersion: options.rulesetVersion || "seti-runtime-v1.2",
+        rulesetVersion: options.rulesetVersion || "seti-runtime-v1.3",
         seed: options.seed ?? "browser-host",
         worldVersion: fixedWorld.getWorldVersion(options.seed),
         rngState: clone(options.rngState || {}),

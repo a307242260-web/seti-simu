@@ -86,14 +86,14 @@ function passLeaves(start, prefix = 0) {
       leaves.push({ value: evaluate(row.node.observation), inputs: row.inputs }); continue;
     }
     assert.equal(row.node.status, "decision");
-    assert(row.node.legalActions.every(action => ["pass-hand-limit", "pass-reserve-card"].includes(action.target?.kind)));
+    assert(row.node.legalActions.every(action => action.target?.kind === "pass-hand-limit"), "PASS前只能处理已知弃牌，不能展开尚未公开的预留牌");
     for (const action of row.node.legalActions) queue.push({ node: port.expand(row.node, action.actionId), inputs: row.inputs + 1 });
   }
   return leaves;
 }
 const direct = passLeaves(root), best = leaves => Math.max(...leaves.map(leaf => leaf.value));
-assert.equal(direct.length, 25, "5种正式弃牌目标×5张实际预留牌，全部保留");
-assert(direct.every(leaf => leaf.inputs === 3));
+assert.equal(direct.length, 5, "5种正式弃牌目标全部保留，随后停在预留牌公开边界");
+assert(direct.every(leaf => leaf.inputs === 2));
 const corners = root.legalActions.filter(action => action.family === "card_corner");
 const publicityCorners = corners.filter(action => action.payload.kind === "resource");
 assert.equal(publicityCorners.length, 4);
@@ -108,7 +108,7 @@ for (const corner of publicityCorners) {
   assert.deepEqual(macro.node.observation, directChild.observation);
   assert.deepEqual(macro.node.legalActions, directChild.legalActions);
   assert.equal(best(leaves), best(direct) + 0.5);
-  assert(leaves.every(leaf => leaf.inputs === 3));
+  assert(leaves.every(leaf => leaf.inputs === 2));
   const afterPlan = port.openingPlanSpec(after);
   for (const second of after.legalActions.filter(action => action.family === "card_corner")) {
     assert(afterPlan.excludedActionIds.includes(second.actionId), "降至4手牌后额外角标不再替换强制弃牌");
@@ -124,7 +124,7 @@ assert.equal(moving.status, "decision");
 assert(moving.legalActions.length === 1 && moving.legalActions[0].target.skip);
 const moved = passLeaves(port.expand(moving, moving.legalActions[0].actionId), 2);
 assert.equal(best(moved), best(direct));
-assert(moved.every(leaf => leaf.inputs === 4), "空移动必须多一次结束移动输入，不能用V平分掩盖最短路径");
+assert(moved.every(leaf => leaf.inputs === 3), "空移动必须多一次结束移动输入，不能用V平分掩盖最短路径");
 let paymentExits = 0;
 for (const tradeId of ["cards-for-credit", "cards-for-energy"]) {
   const trade = root.legalActions.find(action => action.target?.tradeId === tradeId);
@@ -136,7 +136,7 @@ for (const tradeId of ["cards-for-credit", "cards-for-energy"]) {
     assert.equal(paid.submissions, 3, "两次点选加确认，不能按一次宏步计费");
     const leaves = passLeaves(paid.node, 1 + paid.submissions);
     assert.equal(best(leaves), best(direct));
-    assert(leaves.every(leaf => leaf.inputs === 6));
+    assert(leaves.every(leaf => leaf.inputs === 5));
     paymentExits += 1;
   }
 }
@@ -244,7 +244,7 @@ assert.deepEqual(comp.lifecycle.save().envelope, cachedMacro.before);
 cachedMacro.port.close();
 comp.dispose();
 console.log(JSON.stringify({ openingPlan: "passed", results, passPaymentExits: paymentExits,
-  directPassValue: best(direct), directPassInputs: 3, publicityPassValue: best(direct) + 0.5,
+  directPassValue: best(direct), directPassInputs: 2, publicityPassValue: best(direct) + 0.5,
   dataAuditInputs, dataAuditLeaves,
   fullHandBeforePassMacros: expanded.diagnostics.transitions, fullHandAfterPassMacros: normalized.diagnostics.transitions,
   fullHandCachedInputs: cachedFull.diagnostics.transitions, passMacroCacheHits: 2 }));
