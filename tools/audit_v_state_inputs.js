@@ -152,6 +152,19 @@ try {
     if (publicValue !== evaluator(publicStandard)) throw new Error("公共补牌屏障的原始/标准估值不一致");
     publicPort.close();
     console.log(`[PASS] independent-public-pick-barrier: total=${publicValue}`);
+    const moneyPort = createAnalysisPort({ composition: comp, seatId: actor.actorId });
+    const moneyRoot = moneyPort.openRoot(), upper = moneyPort.openingMoneyCapacity(moneyRoot);
+    const converted = moneyPort.expand(moneyRoot, moneyRoot.legalActions.find(action =>
+      action.target?.tradeId === "credits-for-energy").actionId);
+    const lower = moneyPort.openingMoneyCapacity(converted);
+    if (!upper || !lower || upper.group !== lower.group || upper.moneyCapacity.energy !== 2
+      || upper.credits + upper.energy <= lower.credits + lower.energy) throw new Error("生产性钱包界审计未进入实际跨钱包关系");
+    for (const node of [moneyRoot, converted]) {
+      const standard = outcomeModel.createDecisionObservation(node.observation, { seatId: actor.actorId });
+      if (evaluator(node.observation) !== evaluator(standard)) throw new Error("生产性钱包界的原始/标准估值不一致");
+    }
+    moneyPort.close();
+    console.log(`[PASS] independent-opening-money-capacity: delta=${evaluator(moneyRoot.observation) - evaluator(converted.observation)}`);
   } catch (error) {
     console.log(`[FAIL] independent-card-choice-equivalence: ${error.message}`);
     allPass = false;

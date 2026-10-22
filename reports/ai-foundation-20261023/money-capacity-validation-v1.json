@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "seti-opening-money-capacity-validation-v1",
+  "scope": "six complete bounded main windows, not full-hand or full-game acceptance",
+  "fixture": "reports/ai-foundation-20261022/analysis-root-input-v2.json",
+  "fixtureChanges": "keep zero or one audited hand card, publicity=0, handSize synchronized; retain actual pool data",
+  "comparisons": [
+    "all-pruning-off",
+    "capacity-only",
+    "all-proof-options-on",
+    "all-proof-options-on-cache-256"
+  ],
+  "equalActionValueAndShortestInput": true,
+  "rootEnvelopeUnchanged": true,
+  "results": [
+    {
+      "cardId": null,
+      "value": 29.5,
+      "rawInputs": 814,
+      "prunedInputs": 44,
+      "moneyCapacityPrunes": 4,
+      "capacityOnlyInputs": 602
+    },
+    {
+      "cardId": "dlc_27.png",
+      "value": 30.5,
+      "rawInputs": 1850,
+      "prunedInputs": 96,
+      "moneyCapacityPrunes": 8,
+      "capacityOnlyInputs": 1396
+    },
+    {
+      "cardId": "b_44.webp",
+      "value": 30.5,
+      "rawInputs": 3546,
+      "prunedInputs": 98,
+      "moneyCapacityPrunes": 8,
+      "capacityOnlyInputs": 3062
+    },
+    {
+      "cardId": "b_23.webp",
+      "value": 30.5,
+      "rawInputs": 1904,
+      "prunedInputs": 122,
+      "moneyCapacityPrunes": 8,
+      "capacityOnlyInputs": 1304
+    },
+    {
+      "cardId": "dlc_22.png",
+      "value": 30.5,
+      "rawInputs": 1850,
+      "prunedInputs": 96,
+      "moneyCapacityPrunes": 8,
+      "capacityOnlyInputs": 1396
+    },
+    {
+      "cardId": "b_48.webp",
+      "value": 30.5,
+      "rawInputs": 1760,
+      "prunedInputs": 98,
+      "moneyCapacityPrunes": 8,
+      "capacityOnlyInputs": 1280
+    }
+  ],
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "97bcde4dbf734dd1fef321c11ec0f530beb98135c58f83d75cd6322deae16ccb",
+    "randomizer/game/ai/decision-search.js": "1ad4d3aa25cfca10202e04dc04a860f9d6574d00053f4aa12fc32c3859557500",
+    "randomizer/game/ai/decision-search.test.js": "d6a34377a431ae4e84b2c1a607b67cf9bb0b4263d1abe35301d437bbb1db013c",
+    "randomizer/game/ai/money-capacity.test.js": "6984a8a64fb2ef3cc2e1a4acb96379bc80ec0e40ac5c8aba24d10cce52416d92",
+    "tools/node-test-inventory.js": "af6c138fc8ec78cc00186591cfe66d215eefa246169f079e6296c8169cad5504",
+    "tools/audit_v_state_inputs.js": "29a79bd9124b88945100637eb58e192888abd69385ec1a334a800e9fe7b4d411"
+  },
+  "unitTest": "randomizer/game/ai/money-capacity.test.js",
+  "timingScope": "no per-configuration timing claim; final registered capacity/search unit runner total=38.55s",
+  "unitLog": "reports/ai-foundation-20261023/money-capacity-unit-v1.log"
+}

@@ -147,6 +147,32 @@ assert.equal(crossedResult.diagnostics.transitions, exhaustiveMoney.diagnostics.
 const moneyLimited = searchDecision({ ...moneyFixture(), resourceDominance: true, budget: { transitions: 2 } });
 assert.equal(moneyLimited.complete, false);
 assert.equal(moneyLimited.actionId, null, "有剪枝证明也不能把剩余富分支未展开当作完成");
+function capacityFixture(credits = 4, energy = 2, lowCredits = 2, lowEnergy = 3) {
+  const fixture = graph({ root: { observation: wallet(credits, energy), next: { loss: "poor", settle: "high" } },
+    poor: { observation: wallet(lowCredits, lowEnergy), next: { settle: "low" } },
+    high: { status: "other-owner", observation: wallet(credits, energy) },
+    low: { status: "other-owner", observation: wallet(lowCredits, lowEnergy) } });
+  fixture.evaluate = createStateValueEvaluator("p1");
+  const group = Object.freeze({});
+  fixture.port.openingMoneyCapacity = node => ["root", "poor"].includes(fixture.port.identity(node)) ? {
+    group, ...Object.fromEntries(["credits", "energy"].map(key => [key, node.observation.publicState.players[0][key]])),
+    proof: "capacity-componentwise-fixture", moneyCapacity: { credits: 2, energy: 2 }, capacityProof: "capacity-fixture",
+  } : null;
+  return fixture;
+}
+const capacityRaw = searchDecision(capacityFixture());
+const capacityPruned = searchDecision({ ...capacityFixture(), moneyCapacityDominance: true });
+assert.equal(capacityPruned.actionId, capacityRaw.actionId);
+assert.equal(capacityPruned.value, capacityRaw.value);
+assert.equal(capacityPruned.diagnostics.moneyCapacityPrunes, 1);
+assert.equal(capacityPruned.lines.find(line => line.prunedBy).prunedBy.proof, "capacity-fixture");
+assert.equal(searchDecision({ ...capacityFixture(3, 1, 1, 2), moneyCapacityDominance: true })
+  .diagnostics.moneyCapacityPrunes, 0, "总值多但扫描所需能量不足，不能使用容量支配");
+assert.equal(searchDecision({ ...capacityFixture(4, 2, 3, 3), moneyCapacityDominance: true })
+  .diagnostics.moneyCapacityPrunes, 0, "总值相等保留全部路径和最短输入/actionId平分选择");
+const capacityLimited = searchDecision({ ...capacityFixture(), moneyCapacityDominance: true, budget: { transitions: 1 } });
+assert.equal(capacityLimited.complete, false);
+assert.equal(capacityLimited.actionId, null, "富代表本身没有闭合时不能报告覆盖完成");
 const selectionModel = createStateValueEvaluator("p1");
 const selectionFixture = graph({
   root: { next: { x: "x", y: "y" } }, x: { next: { confirm: "low" } }, y: { next: { confirm: "high" } },
@@ -163,6 +189,10 @@ selectionFixture.port.expandSelection = (node, ids) => ({
 });
 selectionFixture.port.postMainResourceOrder = () => { throw new Error("selection certificate must keep exact exits"); };
 const exactSelection = searchDecision({ ...selectionFixture, evaluate: selectionModel, resourceDominance: true });
+selectionFixture.port.openingMoneyCapacity = () => { throw new Error("selection certificate must keep exact capacity exits"); };
+const capacitySelection = searchDecision({ ...selectionFixture, evaluate: selectionModel, moneyCapacityDominance: true });
+assert.equal(capacitySelection.complete, true);
+assert.equal(capacitySelection.diagnostics.moneyCapacityDominance, "disabled-for-selection-certificate");
 assert.equal(exactSelection.complete, true);
 assert.equal(exactSelection.diagnostics.resourceDominance, "disabled-for-selection-certificate");
 

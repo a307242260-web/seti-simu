@@ -6,13 +6,13 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v8";
+  const VERSION = "seti-complete-decision-search-v9";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
 
   function searchDecision({ port, root, evaluate, budget = {}, continuation = null,
-    modelKey = null, resourceDominance = false, cardTradePruning = false, postMainPruning = false, cardChoiceEquivalence = false,
+    modelKey = null, resourceDominance = false, moneyCapacityDominance = false, cardTradePruning = false, postMainPruning = false, cardChoiceEquivalence = false,
     now = () => performance.now() } = {}) {
     if (typeof port?.expand !== "function" || typeof port?.identity !== "function"
       || typeof evaluate !== "function" || !root) throw new TypeError("SEARCH_INPUT_INVALID");
@@ -23,6 +23,9 @@
       }
     }
     const startedAt = now();
+    if (moneyCapacityDominance && (!stateValue?.isDefaultStateValueEvaluator?.(evaluate)
+      || evaluate.seatId !== root.legalActions?.[0]?.actorId
+      || typeof port.openingMoneyCapacity !== "function")) throw new TypeError("SEARCH_MONEY_CAPACITY_MODEL_INVALID");
     if (resourceDominance && (!stateValue?.isMoneyMonotoneEvaluator?.(evaluate)
       || evaluate.seatId !== root.legalActions?.[0]?.actorId
       || typeof port.postMainResourceOrder !== "function")) throw new TypeError("SEARCH_RESOURCE_PROOF_MODEL_INVALID");
@@ -46,6 +49,7 @@
       roots: reused.roots, lines: [], unresolved: [],
       diagnostics: { transitions: 0, nodes: 1, equivalents: 0, selectionMacros: 0, peakFrontier: 0,
         dominancePrunes: 0, resourceDominance: resourceDominance ? "disabled-for-selection-certificate" : "off",
+        moneyCapacityPrunes: 0, moneyCapacityDominance: moneyCapacityDominance ? "disabled-for-selection-certificate" : "off",
         cardTradePrunes: 0, cardTradePruning: cardTradePruning ? "disabled-for-selection-certificate" : "off",
         postMainProofNodes: 0, postMainExcludedActions: 0, postMainPruning: postMainPruning ? "enabled" : "off",
         cardChoiceProofNodes: 0, cardChoiceExcludedActions: 0, cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
@@ -56,6 +60,7 @@
     const queue = [];
     const resourceGroups = new Map();
     const useResourceDominance = resourceDominance && !port.selectionSpec?.(root);
+    const useMoneyCapacity = moneyCapacityDominance && !port.selectionSpec?.(root);
     const useCardTradePruning = cardTradePruning && !port.selectionSpec?.(root);
     let cursor = 0;
     let transitions = 0;
@@ -64,23 +69,31 @@
     let peakFrontier = 0;
     let pendingFrontier = 0;
     let dominancePrunes = 0;
+    let moneyCapacityPrunes = 0;
     let cardTradePrunes = 0;
     let postMainProofNodes = 0, postMainExcludedActions = 0;
     let cardChoiceProofNodes = 0, cardChoiceExcludedActions = 0;
     let incumbent = null;
     let stopReason = null;
     function dominates(upper, lower) {
-      return upper.credits >= lower.credits && upper.energy >= lower.energy
-        && (upper.credits > lower.credits || upper.energy > lower.energy);
+      if (upper.credits >= lower.credits && upper.energy >= lower.energy
+        && (upper.credits > lower.credits || upper.energy > lower.energy)) return lower.proof;
+      if (upper.moneyCapacity && lower.moneyCapacity
+        && upper.capacityProof === lower.capacityProof
+        && upper.credits >= upper.moneyCapacity.credits && upper.energy >= upper.moneyCapacity.energy
+        && upper.credits + upper.energy > lower.credits + lower.energy) return lower.capacityProof;
+      return null;
     }
     function prune(index, dominator) {
       const entry = nodes[index];
       if (entry.prunedBy) return;
       const upper = nodes[dominator].resources;
-      entry.prunedBy = { node: dominator, proof: entry.resources.proof,
+      const proof = dominates(upper, entry.resources);
+      entry.prunedBy = { node: dominator, proof,
         gap: Object.fromEntries(["credits", "energy"]
           .map(key => [key, upper[key] - entry.resources[key]])) };
       dominancePrunes += 1;
+      if (proof === entry.resources.capacityProof) moneyCapacityPrunes += 1;
       if (entry.queued) { entry.queued = false; pendingFrontier -= 1; }
     }
     function add(node) {
@@ -125,8 +138,14 @@
       const alternativeCount = selection ? Array.from({ length: selection.requiredCount }, (_, i) =>
         (selection.cardIds.length - i) / (selection.unordered ? i + 1 : 1))
         .reduce((count, n) => count * n, 1) : retainedActions.length;
-      const resources = !boundary && !selection && useResourceDominance
-        ? port.postMainResourceOrder(node) || port.openingResourceOrder?.(node) || null : null;
+      let resources = !boundary && !selection && useMoneyCapacity ? port.openingMoneyCapacity(node) : null;
+      if (resources?.moneyCapacity) {
+        const currentValue = evaluate(node.observation);
+        if (!Number.isSafeInteger(currentValue * 2) || currentValue < 0 || currentValue > Number.MAX_SAFE_INTEGER / 64) resources = null;
+      }
+      if (!resources && !boundary && !selection && useResourceDominance) {
+        resources = port.postMainResourceOrder(node) || port.openingResourceOrder?.(node) || null;
+      }
       nodes.push({ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan,
         expanded: boundary, value, distance: boundary ? 0 : Infinity, best: null });
       if (resources) {
@@ -326,11 +345,13 @@
       diagnostics: { transitions, nodes: nodes.length, equivalents, selectionMacros, peakFrontier,
         dominancePrunes, resourceDominance: useResourceDominance ? "enabled"
           : resourceDominance ? "disabled-for-selection-certificate" : "off",
+        moneyCapacityPrunes, moneyCapacityDominance: useMoneyCapacity ? "enabled"
+          : moneyCapacityDominance ? "disabled-for-selection-certificate" : "off",
         cardTradePrunes, cardTradePruning: useCardTradePruning ? "enabled"
           : cardTradePruning ? "disabled-for-selection-certificate" : "off",
         postMainProofNodes, postMainExcludedActions, postMainPruning: postMainPruning ? "enabled" : "off",
         cardChoiceProofNodes, cardChoiceExcludedActions, cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
-        ...(useResourceDominance || useCardTradePruning || postMainPruning || cardChoiceEquivalence
+        ...(useResourceDominance || useMoneyCapacity || useCardTradePruning || postMainPruning || cardChoiceEquivalence
           ? { resourceModelKey: evaluate.modelKey } : {}),
         continuation: reused ? (reused.hit ? "validation-watchdog" : reused.reason) : "not-requested",
         milliseconds: elapsed, limits },

@@ -8,10 +8,12 @@
     common ? require("../turn-flow") : root.SetiTurnFlow,
     common ? require("../data") : root.SetiData,
     common ? require("../aliens/state") : root.SetiAlienState,
-    common ? require("../actions/quick-trades") : root.SetiQuickTrades);
+    common ? require("../actions/quick-trades") : root.SetiQuickTrades,
+    common ? require("../actions/scan-effects") : root.SetiScanEffects,
+    common ? require("../abilities/rocket") : root.SetiAbilityRocket);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities) {
   "use strict";
 
   function freeze(value) {
@@ -61,6 +63,12 @@
       state.meta.sequences = { ...source.meta.sequences };
       delete state.meta.sequences.dataToken;
     }
+    // prepareRoot 的诊断标记在第一次正式保存时消失；没有规则读取它。
+    // 算法、数值状态及其他 RNG 子流仍逐字段保留。
+    if (source.meta?.rngState) {
+      state.meta.rngState = { ...source.meta.rngState };
+      delete state.meta.rngState.branch;
+    }
     delete state.meta.stateVersion;
     if (state.match) delete state.match.decisionVersion;
     const references = new Map();
@@ -105,6 +113,7 @@
     const identities = new Map();
     let resourceOrders = new WeakMap();
     let openingOrders = new WeakMap();
+    let openingCapacities = new WeakMap();
     let cardTradeBounds = new WeakMap();
     let postMainPlans = new WeakMap();
     const resourceGroups = new Map();
@@ -630,6 +639,62 @@
       return resourceOrder(node, openingOrders, true);
     }
 
+    function openingMoneyCapacity(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (openingCapacities.has(node)) return openingCapacities.get(node);
+      const order = openingResourceOrder(node);
+      const result = order && describeOpeningMoneyCapacity(stored, node, order);
+      openingCapacities.set(node, result || null);
+      return result || null;
+    }
+
+    function describeOpeningMoneyCapacity(stored, node, order) {
+      const state = JSON.parse(stored.envelope.committedState);
+      const owner = state.players.players.find(player => player.id === seatId);
+      // 本界只覆盖一个生产性钱电支出；扫描/公共取牌在实际补牌屏障停止，
+      // 发射和零效果牌之后仅剩已证明无收益的移动/交易及免费放数据。
+      if (JSON.stringify(scanEffects.getStandardScanCost(owner)) !== '{"credits":1,"energy":2}'
+        || JSON.stringify(rocketAbilities.getLaunchCost({ turn: state.turn }, owner)) !== '{"credits":2}') return null;
+      if (state.turn.activePlayerCount !== 4 || owner.industryBorrowedTechTileId
+        || Object.values(state.aliens.aliens).some(slot => alienState.isAlienReadyToReveal(slot))
+        || owner.blueBonusResources?.credits || owner.blueBonusResources?.energy
+        || owner.dataState.poolTokens.length + owner.dataState.placedTokens.length > 1
+        || owner.resources.availableData !== owner.dataState.poolTokens.length
+        || owner.hand.length > 5 || new Set(owner.hand.map(card => card.cardId)).size !== owner.hand.length
+        || state.cards.publicCards.length !== 3 || state.cards.publicCards.some(card => !card)
+        || state.cards.drawPileCardIds.length < 3
+        || Object.keys(state.data.nebulae).some(id => data.getSectorRanking(state.data, id).some(entry =>
+          (entry.playerId === seatId || entry.playerColor === owner.color) && entry.count >= 3))
+        || state.cards.publicCards.some(card => !cards.getCatalogEntryForCard(card)
+          || ![0, 1, 2].includes(cards.getDiscardActionCodeForCard(card)))) return null;
+      if (Object.values(owner.resources).some(value => !Number.isSafeInteger(value) || value < 0 || value > 1000000)
+        || Object.values(owner.income).some(value => !Number.isSafeInteger(value) || value < 0 || value > 1000000)
+        || !state.finalScoring.thresholds.length
+        || state.finalScoring.thresholds.some(value => !Number.isSafeInteger(value) || value <= owner.resources.score)) return null;
+      for (const card of owner.hand) {
+        const cost = cardEffects.getCardPlayCost(card), code = cards.getDiscardActionCodeForCard(card);
+        if (Object.keys(cost).some(key => key !== "credits") || !Number.isSafeInteger(cost.credits ?? 0)
+          || (cost.credits ?? 0) < 0 || (cost.credits ?? 0) > 1 || ![0, 2].includes(code)) return null;
+        const reward = code === 0 ? cards.getDiscardActionRewardForCard(card) : cards.getDiscardActionMoveRewardForCard(card);
+        if (code === 0 ? reward?.dataCount !== 0 || reward.gain.publicity !== 1 || Object.keys(reward.gain).length !== 1
+          : reward?.movementPoints !== 1 || Object.keys(reward.gain).length) return null;
+      }
+      const expectedTrades = {
+        "credits-for-energy": [{ credits: 2 }, { energy: 1 }], "energy-for-credit": [{ energy: 2 }, { credits: 1 }],
+        "credits-for-card": [{ credits: 2 }, { handSize: 1 }], "energy-for-card": [{ energy: 2 }, { handSize: 1 }],
+        "cards-for-credit": [{ handSize: 2 }, { credits: 1 }], "cards-for-energy": [{ handSize: 2 }, { energy: 1 }],
+        "cards-for-pick-card": [{ handSize: 2 }, { handSize: 1 }], "publicity-for-card": [{ publicity: 3 }, { handSize: 1 }],
+      };
+      if (quickTrades.TRADE_ACTIONS.some(trade => trade.moveStep ? trade.id !== "energy-for-move"
+        || JSON.stringify(trade.cost) !== '{"energy":1}' || Object.keys(trade.gain).length
+        : JSON.stringify([trade.cost, trade.gain]) !== JSON.stringify(expectedTrades[trade.id]))) return null;
+      if (node.legalActions.some(action => !["launch", "scan", "research_tech", "play_card", "pass", "quick_trade",
+        "card_corner", "place_data"].includes(action.family) || (action.family === "card_corner" && action.payload?.multiplier !== 1))) return null;
+      return freeze({ ...order, moneyCapacity: { credits: 2, energy: 2 },
+        capacityProof: "seti-helios-opening-money-capacity-v1" });
+    }
+
     function resourceOrder(node, orders, opening) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
@@ -695,6 +760,7 @@
       identities.clear();
       resourceOrders = new WeakMap();
       openingOrders = new WeakMap();
+      openingCapacities = new WeakMap();
       cardTradeBounds = new WeakMap();
       postMainPlans = new WeakMap();
       resourceGroups.clear();
@@ -717,7 +783,8 @@
     }
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
-      rememberSelection, reuseSelection, postMainResourceOrder, openingResourceOrder, cardTradeBound, postMainPlanSpec, close, getDiagnostics });
+      rememberSelection, reuseSelection, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity,
+      cardTradeBound, postMainPlanSpec, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });
