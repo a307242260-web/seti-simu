@@ -14,6 +14,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/card-trade-bound.test.js", "policy/decision-search", "取牌交易边界值与数量界一致，同值单步出口省略保留真实见证及全部支付集合的复用证据", "遗漏取牌奖励、浮点界错误或随同值取牌一起丢弃支付出口而破坏复用"),
     entry("randomizer/game/ai/post-main-plan.test.js", "policy/decision-search", "受限主行动后保留所有有收益放数据链，省略路径有实际保留见证并保持最优值与最短输入", "删除强制收入、里程碑或新数据收益，或用未完成保留图冒充覆盖"),
     entry("randomizer/game/ai/post-main-movement.test.js", "policy/decision-search", "普通探测器主行动后的移动及支付链有正式奖励上界，局部最优值与最短输入保持", "遗漏到达宣传或移动事件奖励，错误省略有净收益的移动准备链"),
+    entry("randomizer/game/ai/inert-reservation.test.js", "policy/decision-search", "仅本席访问行星型保留牌在无访问事件的窗口内不影响局部路径证明和取牌数值界", "无探测器时拒绝整条无收益准备链或有探测器时删掉木星数据解锁蓝列的净收益"),
     entry("randomizer/game/actions/quick-move-availability.test.js", "rules/quick-trades", "快速移动必须有正式一步可达方向；无路时拒绝且根状态不变", "只有探测器存在便提供快速移动，扣能量后生成空Decision"),
     entry("randomizer/game/ai/state-value.test.js", "policy/state-value", "独立估值只读标准事实，未来收入窗口明确且终局只计正式分", "终局重复加资源、未知牌身份进入估值或缺字段被静默补零"),
     entry("randomizer/game/ai/analysis-port.test.js", "architecture/policy-host", "可信分支精确提交、结果缓存和权威根隔离", "策略取得权威envelope、同family代替动作或fork改变真实根/RNG"),

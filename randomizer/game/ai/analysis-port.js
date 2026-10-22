@@ -471,6 +471,17 @@
       return result;
     }
 
+    function hasOnlyOwnPlanetVisitReservations(state) {
+      return state.players.players.every(player => player.reservedCards.every(card => {
+        if (player.id !== seatId || card.cardId !== "b_44.webp" || card.set !== "basic") return false;
+        const model = cardEffects.getCardModel(card);
+        // 只审计过B44：没有任务、终局公式或其他阶段效果；types列表会覆盖单个type，必须排除。
+        return model?.cardType === 1 && Array.isArray(model.triggers) && model.triggers.length > 0
+          && Object.keys(model).every(key => ["cardType", "triggers", "source"].includes(key))
+          && model.triggers.every(trigger => trigger.event?.type === "visitPlanet" && !trigger.event.types?.length);
+      }));
+    }
+
     function describeCardTradeBound(stored, node) {
       const session = stored.envelope.session?.session;
       const effect = session?.queue?.[0];
@@ -492,7 +503,7 @@
       const company = industryCatalog.getPlayerIndustryDefinition(owner);
       if (state.turn.currentPlayerId !== seatId || owner.passCompletionPending
         || state.turn.passedPlayerIds.includes(seatId) || state.match.initialSetup
-        || state.players.players.some(player => player.reservedCards.length)
+        || !hasOnlyOwnPlanetVisitReservations(state)
         || state.turn.cardTurnEventBonuses?.length
         || Object.values(state.aliens.aliens).some(slot => slot.revealed)
         || company?.activeAbilityId !== "helios_remove_tech_income"
@@ -501,7 +512,7 @@
         || state.cards.publicCards.some(card => card && !["basic", "space-agency"].includes(card.set))) return null;
       // getAvailablePool 会清理副本上的牌堆目录，不能写入冻结的工作状态。
       if (!cards.getAvailablePool({ ...state.cards }, state.players).length) return null;
-      return freeze({ proof: "seti-card-trade-information-value-bound-v1", tradeId: pending.tradeId, handDelta });
+      return freeze({ proof: "seti-card-trade-information-value-bound-v2", tradeId: pending.tradeId, handDelta });
     }
 
     function postMainResourceOrder(node) {
@@ -524,17 +535,17 @@
       const state = JSON.parse(stored.envelope.committedState);
       const owner = state.players.players.find(player => player.id === seatId);
       const company = industryCatalog.getPlayerIndustryDefinition(owner);
+      const ownRockets = owner ? state.pieces.rockets.filter(rocket => [rocket.playerId, rocket.color, rocket.playerColor]
+        .some(id => id === seatId || id === owner.color)) : [];
       if (state.turn.currentPlayerId !== seatId || !owner?.mainActionCompleted
         || owner.passCompletionPending || state.turn.passedPlayerIds.includes(seatId) || state.match.initialSetup
         || state.turn.activePlayerCount !== 4 || owner.industryBorrowedTechTileId
-        || state.players.players.some(player => player.reservedCards.length)
+        || !hasOnlyOwnPlanetVisitReservations(state) || (owner.reservedCards.length && ownRockets.length)
         || state.turn.cardTurnEventBonuses?.length
         || Object.values(state.aliens.aliens).some(slot => slot.revealed || alienState.isAlienReadyToReveal(slot))
         || company?.activeAbilityId !== "helios_remove_tech_income"
         || company.passiveIds.some(id => id !== "helios_passive_reward_slots")
-        || state.pieces.rockets.some(rocket => [rocket.playerId, rocket.color, rocket.playerColor]
-          .some(id => id === seatId || id === owner.color)
-          && ((rocket.kind ?? "standard") !== "standard" || rocket.fossilId != null))) return null;
+        || ownRockets.some(rocket => (rocket.kind ?? "standard") !== "standard" || rocket.fossilId != null)) return null;
       const weights = { credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1 };
       if (Object.keys(weights).some(key => !Number.isSafeInteger(owner.income[key]) || owner.income[key] < 0
         || (key !== "handSize" && (!Number.isSafeInteger(owner.resources[key]) || owner.resources[key] < 0)))
@@ -611,7 +622,7 @@
       if (scoreUpperBound >= scoreThreshold) return null;
       const transition = turnFlow.advanceTurnAfterPlayerAction(structuredClone(state), seatId);
       if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded || transition.nextPlayerId === seatId) return null;
-      return freeze({ proof: "seti-quiet-post-main-default-value-plan-v2", retainedActionIds: kept.map(action => action.actionId),
+      return freeze({ proof: "seti-quiet-post-main-default-value-plan-v3", retainedActionIds: kept.map(action => action.actionId),
         excludedActionIds: excluded.map(action => action.actionId), maximumValueIncrease, scoreUpperBound, scoreThreshold });
     }
 
