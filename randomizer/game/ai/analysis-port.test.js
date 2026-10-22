@@ -6,6 +6,7 @@ const { createSeededRandom, RNG_ALGORITHM } = require("../random");
 const { buildRuleObservation } = require("../../app/rule-observation");
 const { createSimulationEnv } = require("../../app/simulation-env");
 const { evaluateStateValue } = require("./state-value");
+const { searchDecision } = require("./decision-search");
 
 const seed = "analysis-port-isolation-v1";
 const random = createSeededRandom(seed);
@@ -101,6 +102,65 @@ const selectedBA = mainPort.expand(selectedB, selectedB.legalActions.find(action
   action.target?.cardInstanceId === undoDiscard.target.cardInstanceId).actionId);
 assert.notEqual(mainPort.identity(selectedAB), mainPort.identity(selectedBA),
   "相同弃牌集合但不同顺序保守保留，不能假设数组无序");
+assert.equal(mainPort.selectionSpec(mainRoot), null, "普通行动不能套用纯选中状态证明");
+const spec = mainPort.selectionSpec(discardRoot);
+assert.equal(spec.requiredCount, 2);
+const plans = [...mainPort.selectionPlans(discardRoot)];
+assert.equal(plans.length, spec.cardIds.length * (spec.cardIds.length - 1), "保留所有有序弃牌选择");
+const component = [discardRoot];
+const seenSelections = new Set([mainPort.identity(discardRoot)]);
+let fullSelections = 0;
+for (let cursor = 0; cursor < component.length; cursor += 1) {
+  const current = component[cursor];
+  const currentSpec = mainPort.selectionSpec(current);
+  assert.deepEqual(currentSpec.cardIds, spec.cardIds, "确认前手牌和所有可选项不变");
+  if (currentSpec.selectedIds.length === 2) fullSelections += 1;
+  for (const action of current.legalActions.filter(action => !action.target?.confirm)) {
+    const child = mainPort.expand(current, action.actionId);
+    assert(mainPort.selectionSpec(child), "所有点击仍留在同一纯选中状态部分");
+    const token = mainPort.identity(child);
+    if (!seenSelections.has(token)) {
+      seenSelections.add(token);
+      component.push(child);
+    }
+  }
+  assert(component.length <= 1 + spec.cardIds.length + plans.length, "点击循环不能制造新的规则状态");
+}
+assert.equal(component.length, 1 + spec.cardIds.length + plans.length);
+assert.equal(fullSelections, plans.length, "有序确认出口与完整逐点击图一一对应");
+for (const plan of plans) {
+  let direct = discardRoot;
+  for (const id of plan.selectedIds) direct = mainPort.expand(direct,
+    direct.legalActions.find(action => action.target?.cardInstanceId === id).actionId);
+  direct = mainPort.expand(direct, direct.legalActions.find(action => action.target?.confirm).actionId);
+  const macro = mainPort.expandSelection(discardRoot, plan.selectedIds);
+  assert.equal(macro.submissions, plan.submissions);
+  assert.equal(macro.actions[0].actionId, plan.firstActionId);
+  assert.deepEqual(macro.node, direct, "宏步逐次正式提交，不能伪造确认后的盘面或信封");
+}
+const reversedPlan = [...mainPort.selectionPlans(selectedAB)]
+  .find(plan => plan.selectedIds[0] === secondCard.target.cardInstanceId
+    && plan.selectedIds[1] === undoDiscard.target.cardInstanceId);
+assert.equal(reversedPlan.submissions, 3, "保留目标前缀子序列，一次取消、一次追加、一次确认");
+const reversed = mainPort.expandSelection(selectedAB, reversedPlan.selectedIds);
+const beforeCache = mainPort.getDiagnostics().submissionCount;
+assert.equal(mainPort.expandSelection(selectedAB, reversedPlan.selectedIds), reversed);
+assert.equal(mainPort.getDiagnostics().submissionCount, beforeCache, "宏步命中不再次提交");
+const expectedReversed = mainPort.expand(selectedBA,
+  selectedBA.legalActions.find(action => action.target?.confirm).actionId);
+assert.equal(mainPort.identity(reversed.node), mainPort.identity(expectedReversed));
+assert.deepEqual(reversed.node.observation, expectedReversed.observation);
+assert.throws(() => mainPort.expandSelection(discardRoot, [spec.cardIds[0], spec.cardIds[0]]), /SELECTION_INVALID/);
+assert.throws(() => mainPort.expandSelection(mainRoot, spec.cardIds.slice(0, 2)), /SELECTION_UNSUPPORTED/);
+const readySearch = searchDecision({ port: mainPort, root: selectedAB,
+  evaluate: observation => evaluateStateValue(observation, actions[0].actorId).total,
+  budget: { transitions: 256, nodes: 257, frontier: 256, milliseconds: 2000 } });
+assert.equal(readySearch.complete, true, "真实弃牌决策的全部后续选牌到信息边界必须闭合");
+assert.equal(readySearch.actionId, selectedAB.legalActions.find(action => action.target?.confirm).actionId,
+  "已选满且当前选择同分时直接确认，不为等价出口重新取消重选");
+assert.equal(readySearch.unresolved.length, 0);
+assert.equal(readySearch.roots.every(root => root.completion === "complete"), true);
+assert.equal(readySearch.selectionPlan.complete, true);
 for (let step = 0; step < 4 && !pick.legalActions.some(action => action.target?.source === "blind"); step += 1) {
   const next = pick.legalActions.find(action => action.target?.confirm)
     || pick.legalActions.find(action => action.target?.kind === "discard-hand-card" && !action.presentation?.selected);

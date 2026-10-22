@@ -27,6 +27,7 @@
     let cursor = 0;
     let transitions = 0;
     let equivalents = 0;
+    let selectionMacros = 0;
     let peakFrontier = 0;
     let stopReason = null;
     function add(node) {
@@ -38,7 +39,13 @@
       if (!boundary && !node.legalActions?.length) throw new Error("SEARCH_EMPTY_NONTERMINAL");
       const value = boundary ? evaluate(node.observation) : null;
       if (boundary && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
-      nodes.push({ node, edges: [], expanded: boundary, value, distance: boundary ? 0 : Infinity, best: null });
+      const selection = boundary ? null : port.selectionSpec?.(node) || null;
+      const alternatives = selection ? port.selectionPlans(node)
+        : node.legalActions.map(action => ({ firstActionId: action.actionId, submissions: 1 }));
+      const alternativeCount = selection ? Array.from({ length: selection.requiredCount }, (_, i) =>
+        selection.cardIds.length - i).reduce((count, n) => count * n, 1) : node.legalActions.length;
+      nodes.push({ node, edges: [], selection, alternatives, alternativeCount,
+        expanded: boundary, value, distance: boundary ? 0 : Infinity, best: null });
       if (!boundary) queue.push(index);
       peakFrontier = Math.max(peakFrontier, queue.length - cursor);
       return { index, equivalent: false };
@@ -46,17 +53,23 @@
     add(root);
     outer: while (cursor < queue.length) {
       const entry = nodes[queue[cursor]];
-      for (const action of entry.node.legalActions) {
-        if (transitions >= limits.transitions) stopReason = "transition-budget";
+      for (const alternative of entry.alternatives) {
+        if (transitions + alternative.submissions > limits.transitions) stopReason = "transition-budget";
         else if (nodes.length >= limits.nodes) stopReason = "node-budget";
         else if (queue.length - cursor > limits.frontier) stopReason = "frontier-budget";
         else if (now() - startedAt >= limits.milliseconds) stopReason = "watchdog";
         if (stopReason) break outer;
-        const child = port.expand(entry.node, action.actionId);
-        transitions += 1;
+        const macro = entry.selection ? port.expandSelection(entry.node, alternative.selectedIds) : null;
+        const child = macro ? macro.node : port.expand(entry.node, alternative.firstActionId);
+        if (macro && macro.submissions !== alternative.submissions) throw new Error("SEARCH_MACRO_COST_MISMATCH");
+        transitions += alternative.submissions;
+        if (macro) selectionMacros += 1;
         const added = add(child);
         if (added.equivalent) equivalents += 1;
-        entry.edges.push({ actionId: action.actionId, target: added.index, equivalent: added.equivalent });
+        entry.edges.push({ actionId: alternative.firstActionId, target: added.index,
+          equivalent: added.equivalent, cost: alternative.submissions,
+          ...(macro ? { selectedIds: alternative.selectedIds, proof: alternative.proof,
+            steps: macro.actions.map(action => action.actionId) } : {}) });
         if (now() - startedAt >= limits.milliseconds) {
           stopReason = "watchdog";
           break outer;
@@ -76,7 +89,7 @@
         const target = nodes[changed[head]];
         for (const { index, edge } of parents[changed[head]]) {
           const parent = nodes[index];
-          const distance = target.distance + 1;
+          const distance = target.distance + edge.cost;
           if (parent.value == null || target.value > parent.value
             || (target.value === parent.value && (distance < parent.distance
               || (distance === parent.distance && edge.actionId < parent.best?.actionId)))) {
@@ -89,15 +102,28 @@
       }
     }
     const unresolved = nodes.flatMap((entry, index) => entry.expanded ? [] : [{
-      node: index, actionIds: entry.node.legalActions.slice(entry.edges.length).map(action => action.actionId),
+      node: index, actionIds: (entry.selection ? entry.node.legalActions
+        : entry.node.legalActions.slice(entry.edges.length)).map(action => action.actionId),
+      ...(entry.selection ? { selectionPlansRemaining: entry.alternativeCount - entry.edges.length,
+        selection: entry.selection } : {}),
     }]);
     const lines = nodes.map((entry, index) => ({
       node: index, status: entry.node.status, boundary: entry.node.boundary || null,
       expanded: entry.expanded, edges: entry.edges,
       value: entry.value, completion: entry.value == null ? (stopReason ? "pending" : "unreachable") : "reachable",
+      ...(entry.selection ? { selection: entry.selection, orderedExitCount: entry.alternativeCount } : {}),
     }));
     const roots = root.legalActions.map(action => {
-      const edge = nodes[0].edges.find(edge => edge.actionId === action.actionId);
+      const selection = nodes[0].selection;
+      // 纯点击的强连通部分可到达同一完整出口集；confirm 直接离开，只对应当前选择。
+      const edge = selection && action.target?.confirm ? nodes[0].edges.find(edge =>
+        JSON.stringify(edge.selectedIds) === JSON.stringify(selection.selectedIds))
+        : nodes[0].edges.find(edge => edge.actionId === action.actionId);
+      if (selection && !action.target?.confirm) return {
+        actionId: action.actionId, target: null, value: nodes[0].value,
+        completion: stopReason ? "pending" : nodes[0].value == null ? "unreachable" : "complete",
+        proof: selection.proof, equivalentExitSet: true,
+      };
       return {
         actionId: action.actionId, target: edge?.target ?? null,
         value: edge ? nodes[edge.target].value : null,
@@ -108,11 +134,15 @@
     return {
       schemaVersion: VERSION, complete,
       actionId: complete ? nodes[0].best?.actionId || null : null,
+      selectionPlan: complete && nodes[0].best?.selectedIds ? {
+        selectedIds: nodes[0].best.selectedIds, cardIds: nodes[0].selection.cardIds,
+        proof: nodes[0].selection.proof, complete: true,
+      } : null,
       value: complete ? nodes[0].value : null,
       stopReason: stopReason || (nodes[0].value == null ? "no-reachable-boundary" : null),
       scope: "own-visible-decision-window-to-owner-information-or-terminal-boundary",
       roots, lines, unresolved,
-      diagnostics: { transitions, nodes: nodes.length, equivalents, peakFrontier,
+      diagnostics: { transitions, nodes: nodes.length, equivalents, selectionMacros, peakFrontier,
         milliseconds: now() - startedAt, limits },
     };
   }

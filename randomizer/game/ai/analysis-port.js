@@ -185,11 +185,16 @@
         cacheHits += 1;
         return cache.get(key);
       }
-      const comp = fork.composition || fork;
       restoreEnvelope(stored.envelope, true);
+      const { before, result } = executeCurrent(actionId);
+      return remember(key, finishChild(before, result));
+    }
+
+    function executeCurrent(actionId) {
+      const comp = fork.composition || fork;
       const before = comp.inspect();
       const current = legalActions(comp, before).find(action => action.actionId === actionId);
-      if (!current) throw new Error("ANALYSIS_ACTION_STALE");
+      if (!current || current.actorId !== seatId) throw new Error("ANALYSIS_ACTION_STALE");
       loadedEnvelope = null;
       const executeAt = now();
       const result = before.phase === "awaiting_input"
@@ -206,6 +211,11 @@
         throw new Error(`ANALYSIS_EXECUTION_FAILED: ${failure?.code || failure?.message || "unknown"}`);
       }
       submissionCount += 1;
+      return { before, result };
+    }
+
+    function finishChild(before, result) {
+      const comp = fork.composition || fork;
       const inspection = comp.inspect();
       const barrier = result.irreversibleBarrier || inspection.session?.irreversibleBarrier;
       const newBarrier = ruleComposition.isHiddenInformationBarrier(barrier)
@@ -224,11 +234,100 @@
       const child = createNode(envelope, observation,
         ["other-owner", "terminal"].includes(status) ? [] : actions, status,
         newBarrier ? barrier : null);
+      return child;
+    }
+
+    function remember(key, child) {
       if (maxCacheEntries) {
         if (cache.size >= maxCacheEntries) cache.delete(cache.keys().next().value);
         cache.set(key, child);
       }
       return child;
+    }
+
+    function selectionSpec(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (node.status !== "decision") return null;
+      const session = stored.envelope.session?.session;
+      const effect = session?.queue?.[0];
+      const pending = effect?.payload?.decisionContext;
+      if (effect?.type !== "standard_action_session_decision" || effect.allowQuickActions
+        || effect.ownerId !== seatId || pending?.kind !== "discard" || pending.type !== "trade"
+        || pending.required !== true || pending.count !== 2
+        || !["cards-for-credit", "cards-for-energy", "cards-for-pick-card"].includes(pending.tradeId)) return null;
+      const cards = node.legalActions.filter(action => action.target?.kind === "discard-hand-card");
+      if (cards.some(action => action.family !== "choose_payment" || action.actorId !== seatId)
+        || node.legalActions.some(action => action.target?.kind !== "discard-hand-card" && !action.target?.confirm)) return null;
+      const cardIds = cards.map(action => action.target.cardInstanceId);
+      const selectedIds = pending.selected;
+      if (cardIds.some(id => typeof id !== "string" || !id)
+        || !Array.isArray(selectedIds) || new Set(cardIds).size !== cardIds.length
+        || new Set(selectedIds).size !== selectedIds.length || selectedIds.length > pending.count
+        || selectedIds.some(id => !cardIds.includes(id)) || pending.count > cardIds.length) return null;
+      return freeze({ proof: "seti-quick-trade-discard-component-v1", requiredCount: pending.count,
+        cardIds, selectedIds: [...selectedIds] });
+    }
+
+    // 保留目标前缀中仍可按原顺序留下的最长子序列，删除其他项，再追加剩余目标。
+    // 所有留下的项必须是目标前缀，故该路径的点击数最少；顺序仍有规则意义。
+    function selectionEdits(selected, target) {
+      let kept = 0;
+      let cursor = 0;
+      while (kept < target.length) {
+        const next = selected.indexOf(target[kept], cursor);
+        if (next < 0) break;
+        cursor = next + 1;
+        kept += 1;
+      }
+      const retained = new Set(target.slice(0, kept));
+      return [...selected.filter(id => !retained.has(id)), ...target.slice(kept)];
+    }
+
+    function* selectionPlans(node) {
+      const spec = selectionSpec(node);
+      if (!spec) throw new Error("ANALYSIS_SELECTION_UNSUPPORTED");
+      function* visit(target) {
+        if (target.length === spec.requiredCount) {
+          const edits = selectionEdits(spec.selectedIds, target);
+          const first = edits.length
+            ? node.legalActions.find(action => action.target?.cardInstanceId === edits[0])
+            : node.legalActions.find(action => action.target?.confirm);
+          if (!first) throw new Error("ANALYSIS_SELECTION_PATH_INVALID");
+          yield freeze({ selectedIds: [...target], submissions: edits.length + 1,
+            firstActionId: first.actionId, proof: spec.proof });
+          return;
+        }
+        for (const id of spec.cardIds) if (!target.includes(id)) yield* visit([...target, id]);
+      }
+      yield* visit([]);
+    }
+
+    function expandSelection(node, selectedIds) {
+      const spec = selectionSpec(node);
+      if (!spec) throw new Error("ANALYSIS_SELECTION_UNSUPPORTED");
+      if (!Array.isArray(selectedIds) || selectedIds.length !== spec.requiredCount
+        || new Set(selectedIds).size !== selectedIds.length
+        || selectedIds.some(id => !spec.cardIds.includes(id))) throw new Error("ANALYSIS_SELECTION_INVALID");
+      const stored = nodes.get(node);
+      const key = JSON.stringify([stored.serial, "selection", selectedIds]);
+      if (cache.has(key)) {
+        cacheHits += 1;
+        return cache.get(key);
+      }
+      restoreEnvelope(stored.envelope, true);
+      const comp = fork.composition || fork;
+      const actions = [];
+      let outcome;
+      for (const id of [...selectionEdits(spec.selectedIds, selectedIds), null]) {
+        const current = legalActions(comp).find(action => id == null
+          ? action.target?.confirm : action.target?.cardInstanceId === id);
+        if (!current) throw new Error("ANALYSIS_SELECTION_PATH_INVALID");
+        actions.push(structuredClone(current));
+        outcome = executeCurrent(current.actionId);
+      }
+      return remember(key, freeze({ node: finishChild(outcome.before, outcome.result), actions,
+        proof: spec.proof, submissions: actions.length }));
     }
 
     function close() {
@@ -253,7 +352,7 @@
       return stored.identity;
     }
 
-    return Object.freeze({ openRoot, expand, identity, close, getDiagnostics });
+    return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });
