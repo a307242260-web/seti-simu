@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "seti-agent-trace-replay-audit-v1",
+  "status": "passed",
+  "tracePath": "reports/research/cdbe7999.576bbc50.full.json.decisions.jsonl",
+  "sourceCommit": "576bbc50",
+  "policyVersion": "seti-completion-agent-v1",
+  "traceSha256": "9524ea5d00f58bab998799b836a6adaba07d36637023e24fc61557c9e63a0ef6",
+  "policySourceSha256": "893e188016180d7b091769ce50c8f9ef7cfe0d917acc8602f5ddeeaa80e83e9d",
+  "checkedDecisions": 229,
+  "checkedSeats": [
+    "player-white",
+    "player-green",
+    "player-blue",
+    "player-brown"
+  ],
+  "scope": "recompute every recorded decision from its visible input; no new game or score experiment"
+}

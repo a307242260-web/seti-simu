@@ -728,7 +728,17 @@
       });
     }
     const quickTradeProvider = standardAction.createQuickTradeProvider({
-      quickTrades,
+      quickTrades: {
+        TRADE_ACTIONS: quickTrades.TRADE_ACTIONS,
+        canExecuteTrade(tradeId, context) {
+          const check = quickTrades.canExecuteTrade(tradeId, context);
+          if (!check.ok || !quickTrades.getTradeAction(tradeId)?.moveStep) return check;
+          const available = quickTradeDecisionSource.openMoveSelection(context.state || context, {
+            player: check.currentPlayer,
+          });
+          return available.ok ? check : available;
+        },
+      },
       execute: executeQuickTrade,
     });
     function canOfferQuickTrade(actionContext) {

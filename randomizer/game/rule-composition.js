@@ -3530,6 +3530,11 @@
     const lifecycle = Object.freeze({ newGame, save, validateRestore, restore });
     const counterfactualPort = Object.freeze({
       selectCardRevealChoices,
+      prepareRoot(envelope, context) {
+        return typeof options.prepareCounterfactualEnvelope === "function"
+          ? options.prepareCounterfactualEnvelope(envelope, context)
+          : clone(envelope);
+      },
       evaluate: evaluateCounterfactualOutcomes,
       getDiagnostics: () => clone(lastCounterfactualDiagnostics),
       // 暴露 fork 原语（可回退执行）：从任意 envelope 创建独立 composition 分支，
@@ -3598,5 +3603,6 @@
     });
   }
 
-  return Object.freeze({ SAVE_SCHEMA_VERSION, createRuleComposition });
+  return Object.freeze({ SAVE_SCHEMA_VERSION, createRuleComposition,
+    isHiddenInformationBarrier, sanitizeHiddenInformationObservation });
 });

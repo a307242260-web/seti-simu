@@ -7,6 +7,22 @@
   },
   "versions": [
     {
+      "id": "ai-foundation-20261022",
+      "name": "ai-foundation-20261022",
+      "date": "2026-10-22",
+      "baseline": null,
+      "head": "576bbc50",
+      "commits": [
+        "576bbc50"
+      ],
+      "summary": "新AI统一接入基础完整局；固定顺序完成策略，不搜索，不宣称必要探索达标",
+      "records": {
+        "cdbe7999.576bbc50.full.json": {}
+      },
+      "roadmap": null,
+      "agentType": "completion"
+    },
+    {
       "id": "budget-ladder-03-20260913",
       "name": "budget-ladder-03-20260913",
       "date": "2026-09-13",

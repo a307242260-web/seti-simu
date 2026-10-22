@@ -43,3 +43,41 @@ agent 提供 `decide(context)` 和 `getProvenance()`；恢复自定义 checkpoin
 真实 Chrome 的新 completion 页面完整 parity、原默认 AI 完整 parity 和启动入口共 3 项 smoke 通过。
 本批验证覆盖接入、输入隔离、已选项推进、非法/异步返回拒绝、恢复和算法实验身份；
 完整终局速度与必要探索尚未验收。
+
+## 首个基础完整局
+
+代码 `576bbc50`，种子 `seti-free-analyze-v1`，四席 completion：229 次正式输入后自然终局，
+记录的对局运行耗时 7728 ms。该值未包含最终存档和报告写出，不用作端到端 180 秒验收。
+该策略没有搜索，必要探索尚未验收。四席正式最终分为蓝 21、绿 21、棕 19、白 20；
+分数只用于记录当前基础行为，不与旧 AI 成绩比较。
+
+证据：
+
+- [入库运行摘要](../reports/ai-foundation-20261022/run-summary-v1.json)与[确认动作序列](../reports/ai-foundation-20261022/confirmed-actions-v1.json)。
+- [标准研究记录](../reports/research/cdbe7999.576bbc50.full.json)。
+- [逐步策略输入](../reports/research/cdbe7999.576bbc50.full.json.decisions.jsonl)。
+- [完整存档](../seti-saves/seti-save-research-ai-foundation-20261022-576bbc50-full-v126.json)。
+- [逐步复盘](../reports/iteration/ai-foundation-20261022/cdbe7999.576bbc50.full.action-log.html)。
+- [决策重算审计](../reports/ai-foundation-20261022/trace-replay-v1.json)：从原始可见输入重算 229 次选择，全部一致；未重复运行该成绩实验。
+
+原始研究记录、16.5 MiB 的逐步输入和完整存档按仓库 `.gitignore` 留本机，未强制入库；
+入库的是小型摘要、确认动作序列、审计指纹和复盘报告。
+
+## 可信分析分支接口
+
+`analysis-port.js` 提供 `openRoot/expand/close/getDiagnostics`。权威 envelope、隐藏牌序和
+分支恢复能力留在闭包中；算法只收到公开观察、当前合法集、节点状态和信息边界。
+分支复用同一正式 Production Composition，按完整 actionId 精确提交；支持有容量限制的精确结果缓存。
+改变真实隐藏牌序后，正式弃两张牌再盲抽这条路径的可见结果保持一致；到屏障后禁止继续展开。
+缓存关闭、命中和淘汰后重算得到同样结果，分支执行不改变真实根或 RNG。
+
+单决策根展开诊断在固定输入上执行 23 个正式候选，全部成功；冷展开 82.45 ms，
+缓存重取 1.66 ms，创建分析根另耗 8.81 ms。这只是根转换成本，尚未展开完整准备链，
+不能外推为整局搜索已经满足速度或覆盖要求。
+[诊断](../reports/ai-foundation-20261022/analysis-root-benchmark-v2.json)、
+[输入检查点](../reports/ai-foundation-20261022/analysis-root-input-v2.json)、
+[源码摘要](../reports/ai-foundation-20261022/analysis-source-manifest-v2.json)。
+
+初次诊断发现正式合法集在无本席探测器时仍提供 energy-for-move，提交必然失败。
+已让 Production 枚举复用实际移动选择的可用性检查，并更新旧的“先枚举再失败”测试。
+此修复服务于新搜索逐候选执行，未继续处理旧策略待办。

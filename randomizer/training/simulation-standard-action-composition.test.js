@@ -675,8 +675,8 @@ for (const family of ["scan", "place_data"]) {
   const simulationTrades = parityKernel.composition.inputPort.enumerateActions({ family: "quick_trade" });
   assert.deepEqual(
     simulationTrades.map((action) => action.target.tradeId),
-    quickTrades.TRADE_ACTIONS.map((trade) => trade.id),
-    "富资源代表状态必须枚举全部生产快速交易",
+    quickTrades.TRADE_ACTIONS.filter((trade) => !trade.moveStep).map((trade) => trade.id),
+    "富资源但无探测器时，不得枚举必然执行失败的移动交易",
   );
   assert.deepEqual(
     identityView(simulationTrades),
@@ -688,22 +688,11 @@ for (const family of ["scan", "place_data"]) {
     assert.equal(parityKernel.composition.lifecycle.restore(richEnvelope).ok, true);
     const action = parityKernel.composition.inputPort.enumerateActions({ family: "quick_trade" })
       .find((candidate) => candidate.target.tradeId === trade.id);
-    assert.ok(action, `${trade.id} 必须保持生产可枚举`);
     if (trade.moveStep) {
-      // 无探测器代表状态：能量移动必须 fail-closed 返回明确错误且退还能量，不进 Session
-      const beforeEnergy = JSON.parse(parityKernel.composition.lifecycle.save().envelope.committedState)
-        .players.players.find((player) => player.id === scenario.turn.currentPlayerId).resources.energy;
-      const rejected = parityKernel.composition.inputPort.submitQuickAction(action);
-      assert.equal(rejected.ok, false, `${trade.id} 无探测器必须拒绝`);
-      assert.ok(
-        /探测器/.test(`${rejected.failure?.message || ""}${rejected.failure?.code || ""}`),
-        `${trade.id} 必须给出明确错误`,
-      );
-      const afterEnergy = JSON.parse(parityKernel.composition.lifecycle.save().envelope.committedState)
-        .players.players.find((player) => player.id === scenario.turn.currentPlayerId).resources.energy;
-      assert.equal(afterEnergy, beforeEnergy, `${trade.id} 失败必须退还能量`);
+      assert.equal(action, undefined, `${trade.id} 无探测器时应在正式枚举处排除`);
       continue;
     }
+    assert.ok(action, `${trade.id} 必须保持生产可枚举`);
     const completed = submitActionToCompletion(parityKernel.composition, action, true);
     assert.equal(completed.phase, "completed", `${trade.id} 必须经 Effect Session 提交`);
     assert.equal(completed.journal.actions[0].action.actionId, action.actionId);

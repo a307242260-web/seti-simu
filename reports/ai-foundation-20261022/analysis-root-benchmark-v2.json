@@ -1,0 +1,377 @@
+{
+  "schemaVersion": "seti-analysis-root-benchmark-v1",
+  "seed": "analysis-port-isolation-v1",
+  "scope": "root transitions only; not a complete search",
+  "node": "v22.22.0",
+  "platform": "darwin",
+  "arch": "arm64",
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "1b7f3d32441031c3fcb71033adac38c2822138b5fd8ca15dbe6b6e0dd3df7fae",
+    "randomizer/game/rule-composition.js": "b94d14c3d91a3599064863657e60ada1329f3360325cbbc329cc93bd547ad99e",
+    "randomizer/game/production-kernel.js": "6417933817c6923d10e5f92f0f1f248faf680dcbbf249cb1bfe886167b4244b4"
+  },
+  "openingMs": 8.810292000000004,
+  "rootActionCount": 23,
+  "passes": [
+    {
+      "mode": "cold",
+      "ms": 82.4514999999999,
+      "branches": [
+        {
+          "actionId": "launch:c94cda79",
+          "family": "launch",
+          "status": "stable",
+          "legalSuccessors": 19,
+          "ms": 11.25304200000005
+        },
+        {
+          "actionId": "scan:2d21a323",
+          "family": "scan",
+          "status": "decision",
+          "legalSuccessors": 1,
+          "ms": 3.6464999999999463
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "family": "research_tech",
+          "status": "decision",
+          "legalSuccessors": 24,
+          "ms": 4.514249999999947
+        },
+        {
+          "actionId": "play_card:11f55efa",
+          "family": "play_card",
+          "status": "stable",
+          "legalSuccessors": 14,
+          "ms": 3.5385420000000067
+        },
+        {
+          "actionId": "play_card:d532befa",
+          "family": "play_card",
+          "status": "stable",
+          "legalSuccessors": 14,
+          "ms": 2.5472910000000866
+        },
+        {
+          "actionId": "play_card:d641923d",
+          "family": "play_card",
+          "status": "decision",
+          "legalSuccessors": 3,
+          "ms": 3.0205839999999853
+        },
+        {
+          "actionId": "play_card:086d6a3e",
+          "family": "play_card",
+          "status": "stable",
+          "legalSuccessors": 14,
+          "ms": 7.5095830000000205
+        },
+        {
+          "actionId": "play_card:76cdb7c5",
+          "family": "play_card",
+          "status": "decision",
+          "legalSuccessors": 3,
+          "ms": 3.0765420000000177
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "family": "pass",
+          "status": "decision",
+          "legalSuccessors": 5,
+          "ms": 3.937291000000073
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "family": "quick_trade",
+          "status": "stable",
+          "legalSuccessors": 23,
+          "ms": 2.706625000000031
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "family": "quick_trade",
+          "status": "decision",
+          "legalSuccessors": 3,
+          "ms": 2.870249999999942
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "family": "quick_trade",
+          "status": "decision",
+          "legalSuccessors": 5,
+          "ms": 3.1544999999999845
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "family": "quick_trade",
+          "status": "decision",
+          "legalSuccessors": 5,
+          "ms": 2.8540839999999434
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "family": "quick_trade",
+          "status": "decision",
+          "legalSuccessors": 5,
+          "ms": 3.4853329999999687
+        },
+        {
+          "actionId": "quick_trade:122c43fc",
+          "family": "quick_trade",
+          "status": "decision",
+          "legalSuccessors": 3,
+          "ms": 2.8547499999999673
+        },
+        {
+          "actionId": "quick_trade:df811f99",
+          "family": "quick_trade",
+          "status": "stable",
+          "legalSuccessors": 20,
+          "ms": 2.127749999999992
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "family": "quick_trade",
+          "status": "decision",
+          "legalSuccessors": 4,
+          "ms": 2.7711249999999836
+        },
+        {
+          "actionId": "card_corner:385c75e9",
+          "family": "card_corner",
+          "status": "stable",
+          "legalSuccessors": 21,
+          "ms": 2.3390829999999596
+        },
+        {
+          "actionId": "card_corner:75641403",
+          "family": "card_corner",
+          "status": "decision",
+          "legalSuccessors": 1,
+          "ms": 4.447874999999954
+        },
+        {
+          "actionId": "card_corner:f9d602d7",
+          "family": "card_corner",
+          "status": "stable",
+          "legalSuccessors": 21,
+          "ms": 2.306874999999991
+        },
+        {
+          "actionId": "card_corner:17a0f8a8",
+          "family": "card_corner",
+          "status": "stable",
+          "legalSuccessors": 21,
+          "ms": 2.1295000000000073
+        },
+        {
+          "actionId": "card_corner:72914895",
+          "family": "card_corner",
+          "status": "stable",
+          "legalSuccessors": 21,
+          "ms": 1.8875830000000633
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "family": "place_data",
+          "status": "decision",
+          "legalSuccessors": 1,
+          "ms": 3.413833000000068
+        }
+      ],
+      "diagnostics": {
+        "nodeCount": 24,
+        "submissionCount": 23,
+        "cacheHits": 0,
+        "cacheEntries": 23,
+        "maxCacheEntries": 256,
+        "milliseconds": {
+          "restore": 9.1412499999999,
+          "execute": 30.36254000000008,
+          "observation": 19.62341800000013,
+          "checkpoint": 5.593123000000105
+        }
+      }
+    },
+    {
+      "mode": "cached",
+      "ms": 1.6591249999999036,
+      "branches": [
+        {
+          "actionId": "launch:c94cda79",
+          "family": "launch",
+          "status": "stable",
+          "legalSuccessors": 19,
+          "ms": 0.07808299999999235
+        },
+        {
+          "actionId": "scan:2d21a323",
+          "family": "scan",
+          "status": "decision",
+          "legalSuccessors": 1,
+          "ms": 0.06495800000004692
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "family": "research_tech",
+          "status": "decision",
+          "legalSuccessors": 24,
+          "ms": 0.061332999999990534
+        },
+        {
+          "actionId": "play_card:11f55efa",
+          "family": "play_card",
+          "status": "stable",
+          "legalSuccessors": 14,
+          "ms": 0.0730829999999969
+        },
+        {
+          "actionId": "play_card:d532befa",
+          "family": "play_card",
+          "status": "stable",
+          "legalSuccessors": 14,
+          "ms": 0.06779200000005403
+        },
+        {
+          "actionId": "play_card:d641923d",
+          "family": "play_card",
+          "status": "decision",
+          "legalSuccessors": 3,
+          "ms": 0.06533400000000711
+        },
+        {
+          "actionId": "play_card:086d6a3e",
+          "family": "play_card",
+          "status": "stable",
+          "legalSuccessors": 14,
+          "ms": 0.06254200000000765
+        },
+        {
+          "actionId": "play_card:76cdb7c5",
+          "family": "play_card",
+          "status": "decision",
+          "legalSuccessors": 3,
+          "ms": 0.059750000000008185
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "family": "pass",
+          "status": "decision",
+          "legalSuccessors": 5,
+          "ms": 0.06016699999997854
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "family": "quick_trade",
+          "status": "stable",
+          "legalSuccessors": 23,
+          "ms": 0.09895800000003874
+        },
+        {
+          "actionId": "quick_trade:49c75492",
+          "family": "quick_trade",
+          "status": "decision",
+          "legalSuccessors": 3,
+          "ms": 0.09016700000006495
+        },
+        {
+          "actionId": "quick_trade:12411a2c",
+          "family": "quick_trade",
+          "status": "decision",
+          "legalSuccessors": 5,
+          "ms": 0.08724999999992633
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "family": "quick_trade",
+          "status": "decision",
+          "legalSuccessors": 5,
+          "ms": 0.08487500000001091
+        },
+        {
+          "actionId": "quick_trade:37140fcf",
+          "family": "quick_trade",
+          "status": "decision",
+          "legalSuccessors": 5,
+          "ms": 0.08233300000006238
+        },
+        {
+          "actionId": "quick_trade:122c43fc",
+          "family": "quick_trade",
+          "status": "decision",
+          "legalSuccessors": 3,
+          "ms": 0.07887500000003911
+        },
+        {
+          "actionId": "quick_trade:df811f99",
+          "family": "quick_trade",
+          "status": "stable",
+          "legalSuccessors": 20,
+          "ms": 0.07608300000003965
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "family": "quick_trade",
+          "status": "decision",
+          "legalSuccessors": 4,
+          "ms": 0.07329200000003766
+        },
+        {
+          "actionId": "card_corner:385c75e9",
+          "family": "card_corner",
+          "status": "stable",
+          "legalSuccessors": 21,
+          "ms": 0.07275000000004184
+        },
+        {
+          "actionId": "card_corner:75641403",
+          "family": "card_corner",
+          "status": "decision",
+          "legalSuccessors": 1,
+          "ms": 0.06862499999999727
+        },
+        {
+          "actionId": "card_corner:f9d602d7",
+          "family": "card_corner",
+          "status": "stable",
+          "legalSuccessors": 21,
+          "ms": 0.06579199999998764
+        },
+        {
+          "actionId": "card_corner:17a0f8a8",
+          "family": "card_corner",
+          "status": "stable",
+          "legalSuccessors": 21,
+          "ms": 0.06299999999998818
+        },
+        {
+          "actionId": "card_corner:72914895",
+          "family": "card_corner",
+          "status": "stable",
+          "legalSuccessors": 21,
+          "ms": 0.06024999999999636
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "family": "place_data",
+          "status": "decision",
+          "legalSuccessors": 1,
+          "ms": 0.060541000000057466
+        }
+      ],
+      "diagnostics": {
+        "nodeCount": 24,
+        "submissionCount": 23,
+        "cacheHits": 23,
+        "cacheEntries": 23,
+        "maxCacheEntries": 256,
+        "milliseconds": {
+          "restore": 9.1412499999999,
+          "execute": 30.36254000000008,
+          "observation": 19.62341800000013,
+          "checkpoint": 5.593123000000105
+        }
+      }
+    }
+  ]
+}

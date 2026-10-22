@@ -1,0 +1,1380 @@
+{
+  "schemaVersion": "seti-confirmed-action-sequence-v1",
+  "sourceCommit": "576bbc50",
+  "steps": [
+    {
+      "seatId": "player-white",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:04955932"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:0f42436e"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:1c123253"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:62f3b091"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:35276232"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:0c3d7935"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:0bde23d3"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:3fdaeed4"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:e1ed423c"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:032691f3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:364043b8"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:7ecb5e47"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:c55d4683"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:17b6af33"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:34f42237"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:7b3703b5"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_card:74b146ff"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_payment:1b209b35"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_payment:699dc7fd"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_payment:334f853f"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_payment:8fae1aa2"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_payment:507f0ae9"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_payment:9b2fddef"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 1,
+      "decisionVersion": 0,
+      "actionId": "choose_payment:67db0e89"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 2,
+      "decisionVersion": 0,
+      "actionId": "scan:2d21a323"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 2,
+      "decisionVersion": 0,
+      "actionId": "choose_target:756e7901"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 2,
+      "decisionVersion": 0,
+      "actionId": "choose_card:00a51ff4"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 3,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 4,
+      "decisionVersion": 0,
+      "actionId": "scan:1b66b805"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 4,
+      "decisionVersion": 0,
+      "actionId": "choose_target:a2b5645b"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 4,
+      "decisionVersion": 0,
+      "actionId": "choose_card:79d4efb1"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 5,
+      "decisionVersion": 0,
+      "actionId": "end_turn:1f65daa3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 6,
+      "decisionVersion": 0,
+      "actionId": "scan:96a13338"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 6,
+      "decisionVersion": 0,
+      "actionId": "choose_target:0cfaea46"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 6,
+      "decisionVersion": 0,
+      "actionId": "choose_card:4b285ca3"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 6,
+      "decisionVersion": 0,
+      "actionId": "choose_target:4307819c"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 7,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 8,
+      "decisionVersion": 0,
+      "actionId": "research_tech:547c8803"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 8,
+      "decisionVersion": 0,
+      "actionId": "choose_target:0bd8a31f"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 8,
+      "decisionVersion": 0,
+      "actionId": "choose_card:3eefe214"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 9,
+      "decisionVersion": 0,
+      "actionId": "end_turn:d59ab08c"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 10,
+      "decisionVersion": 0,
+      "actionId": "launch:c94cda79"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 11,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 12,
+      "decisionVersion": 0,
+      "actionId": "play_card:91c74616"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 13,
+      "decisionVersion": 0,
+      "actionId": "end_turn:1f65daa3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 14,
+      "decisionVersion": 0,
+      "actionId": "research_tech:b5bf67f7"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 14,
+      "decisionVersion": 0,
+      "actionId": "choose_target:04102630"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 15,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 16,
+      "decisionVersion": 0,
+      "actionId": "scan:0ca111ac"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 16,
+      "decisionVersion": 0,
+      "actionId": "choose_target:4b5ac2fc"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 16,
+      "decisionVersion": 0,
+      "actionId": "choose_card:0051242f"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 17,
+      "decisionVersion": 0,
+      "actionId": "end_turn:d59ab08c"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 18,
+      "decisionVersion": 0,
+      "actionId": "play_card:8b4a6364"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 18,
+      "decisionVersion": 0,
+      "actionId": "choose_target:062d2a7a"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 19,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 20,
+      "decisionVersion": 0,
+      "actionId": "pass:ff716055"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 20,
+      "decisionVersion": 0,
+      "actionId": "choose_card:0dc6322e"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 21,
+      "decisionVersion": 0,
+      "actionId": "scan:96a13338"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 21,
+      "decisionVersion": 0,
+      "actionId": "choose_target:2552960a"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 21,
+      "decisionVersion": 0,
+      "actionId": "choose_card:14647cd1"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 22,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 23,
+      "decisionVersion": 0,
+      "actionId": "launch:c1616852"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 24,
+      "decisionVersion": 0,
+      "actionId": "end_turn:d59ab08c"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 25,
+      "decisionVersion": 0,
+      "actionId": "pass:a1f33c73"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 25,
+      "decisionVersion": 0,
+      "actionId": "choose_card:29c580eb"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 26,
+      "decisionVersion": 0,
+      "actionId": "launch:a4087d46"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 27,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 28,
+      "decisionVersion": 0,
+      "actionId": "play_card:ec6835e9"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 29,
+      "decisionVersion": 0,
+      "actionId": "end_turn:d59ab08c"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 30,
+      "decisionVersion": 0,
+      "actionId": "play_card:2df0a317"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 30,
+      "decisionVersion": 0,
+      "actionId": "choose_target:098c8070"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 30,
+      "decisionVersion": 0,
+      "actionId": "choose_target:d64e085d"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 31,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 32,
+      "decisionVersion": 0,
+      "actionId": "pass:ac4b4ab2"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 32,
+      "decisionVersion": 0,
+      "actionId": "choose_card:326a31d7"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 33,
+      "decisionVersion": 0,
+      "actionId": "play_card:6c72acbd"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 34,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 35,
+      "decisionVersion": 0,
+      "actionId": "pass:c858282e"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 35,
+      "decisionVersion": 0,
+      "actionId": "choose_card:1061905a"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 36,
+      "decisionVersion": 0,
+      "actionId": "play_card:2fe98771"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 36,
+      "decisionVersion": 0,
+      "actionId": "choose_target:1d5fc8f1"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 37,
+      "decisionVersion": 0,
+      "actionId": "end_turn:1f65daa3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 38,
+      "decisionVersion": 0,
+      "actionId": "scan:96a13338"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 38,
+      "decisionVersion": 0,
+      "actionId": "choose_target:2552960a"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 38,
+      "decisionVersion": 0,
+      "actionId": "choose_card:4b069bb5"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 39,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 40,
+      "decisionVersion": 0,
+      "actionId": "play_card:018d31b2"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 40,
+      "decisionVersion": 0,
+      "actionId": "choose_target:43a1afc4"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 41,
+      "decisionVersion": 0,
+      "actionId": "end_turn:d59ab08c"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 42,
+      "decisionVersion": 0,
+      "actionId": "play_card:2b9cd494"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 42,
+      "decisionVersion": 0,
+      "actionId": "choose_target:1a6065ca"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 42,
+      "decisionVersion": 0,
+      "actionId": "choose_target:12d5f7ff"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 43,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 44,
+      "decisionVersion": 0,
+      "actionId": "research_tech:f86fc96a"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 44,
+      "decisionVersion": 0,
+      "actionId": "choose_target:0975381b"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 45,
+      "decisionVersion": 0,
+      "actionId": "end_turn:1f65daa3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 46,
+      "decisionVersion": 0,
+      "actionId": "play_card:3b8ed751"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 47,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 48,
+      "decisionVersion": 0,
+      "actionId": "pass:ac4b4ab2"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 48,
+      "decisionVersion": 0,
+      "actionId": "choose_card:5d5ebc7f"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 48,
+      "decisionVersion": 0,
+      "actionId": "choose_card:3bfb7572"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 49,
+      "decisionVersion": 0,
+      "actionId": "research_tech:806ccfc8"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 49,
+      "decisionVersion": 0,
+      "actionId": "choose_target:03fdb62d"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 49,
+      "decisionVersion": 0,
+      "actionId": "choose_card:7eb6cf26"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 50,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 51,
+      "decisionVersion": 0,
+      "actionId": "play_card:01d2732f"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 52,
+      "decisionVersion": 0,
+      "actionId": "end_turn:1f65daa3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 53,
+      "decisionVersion": 0,
+      "actionId": "play_card:89ae31f4"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 54,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 0,
+      "actionId": "play_card:40ab642c"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 0,
+      "actionId": "choose_target:637877a1"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 55,
+      "decisionVersion": 0,
+      "actionId": "choose_card:42a2f76b"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 56,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 57,
+      "decisionVersion": 0,
+      "actionId": "play_card:3f36b83c"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 58,
+      "decisionVersion": 0,
+      "actionId": "end_turn:1f65daa3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 59,
+      "decisionVersion": 0,
+      "actionId": "play_card:fdddf014"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 59,
+      "decisionVersion": 0,
+      "actionId": "choose_target:2794cc34"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 60,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 61,
+      "decisionVersion": 0,
+      "actionId": "play_card:1965d049"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 61,
+      "decisionVersion": 0,
+      "actionId": "choose_target:6b287122"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 61,
+      "decisionVersion": 0,
+      "actionId": "choose_target:2618cdf2"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 62,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 63,
+      "decisionVersion": 0,
+      "actionId": "play_card:d6faf48f"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 63,
+      "decisionVersion": 0,
+      "actionId": "choose_card:426bd777"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 64,
+      "decisionVersion": 0,
+      "actionId": "end_turn:1f65daa3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 65,
+      "decisionVersion": 0,
+      "actionId": "pass:c858282e"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 65,
+      "decisionVersion": 0,
+      "actionId": "choose_card:5eebf9fe"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 66,
+      "decisionVersion": 0,
+      "actionId": "play_card:29285ca9"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 67,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 68,
+      "decisionVersion": 0,
+      "actionId": "pass:ff716055"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 68,
+      "decisionVersion": 0,
+      "actionId": "choose_card:6ce42928"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 69,
+      "decisionVersion": 0,
+      "actionId": "play_card:bd6940d7"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 70,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 71,
+      "decisionVersion": 0,
+      "actionId": "pass:a1f33c73"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 71,
+      "decisionVersion": 0,
+      "actionId": "choose_card:a17893ff"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 71,
+      "decisionVersion": 0,
+      "actionId": "accept_optional_effect:17c68753"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 72,
+      "decisionVersion": 0,
+      "actionId": "scan:96a13338"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 72,
+      "decisionVersion": 0,
+      "actionId": "choose_target:0cfaea46"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 72,
+      "decisionVersion": 0,
+      "actionId": "choose_card:480ecdf5"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 73,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 74,
+      "decisionVersion": 0,
+      "actionId": "scan:0ca111ac"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 74,
+      "decisionVersion": 0,
+      "actionId": "choose_target:9aad0b7a"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 74,
+      "decisionVersion": 0,
+      "actionId": "choose_card:0a398c45"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 75,
+      "decisionVersion": 0,
+      "actionId": "end_turn:d59ab08c"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 76,
+      "decisionVersion": 0,
+      "actionId": "scan:2d21a323"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 76,
+      "decisionVersion": 0,
+      "actionId": "choose_target:756e7901"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 76,
+      "decisionVersion": 0,
+      "actionId": "choose_card:1d9cfc4b"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 76,
+      "decisionVersion": 0,
+      "actionId": "choose_target:1ad3aa1b"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 77,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 78,
+      "decisionVersion": 0,
+      "actionId": "scan:1b66b805"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 78,
+      "decisionVersion": 0,
+      "actionId": "choose_target:a2b5645b"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 78,
+      "decisionVersion": 0,
+      "actionId": "choose_card:1eaa69a1"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 78,
+      "decisionVersion": 0,
+      "actionId": "choose_card:20740772"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 79,
+      "decisionVersion": 0,
+      "actionId": "end_turn:1f65daa3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 80,
+      "decisionVersion": 0,
+      "actionId": "play_card:4b747e42"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 80,
+      "decisionVersion": 0,
+      "actionId": "choose_reward:73e9aae9"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 81,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 82,
+      "decisionVersion": 0,
+      "actionId": "play_card:038e2ca4"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 82,
+      "decisionVersion": 0,
+      "actionId": "choose_target:506a929b"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 82,
+      "decisionVersion": 0,
+      "actionId": "choose_target:47404362"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 82,
+      "decisionVersion": 0,
+      "actionId": "choose_target:590499b1"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 83,
+      "decisionVersion": 0,
+      "actionId": "end_turn:d59ab08c"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 84,
+      "decisionVersion": 0,
+      "actionId": "play_card:3417ad71"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 85,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 86,
+      "decisionVersion": 0,
+      "actionId": "play_card:a0ac9fac"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 86,
+      "decisionVersion": 0,
+      "actionId": "choose_card:3206642c"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 87,
+      "decisionVersion": 0,
+      "actionId": "end_turn:1f65daa3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 88,
+      "decisionVersion": 0,
+      "actionId": "play_card:893952c3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 88,
+      "decisionVersion": 0,
+      "actionId": "choose_target:2794cc34"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 88,
+      "decisionVersion": 0,
+      "actionId": "accept_optional_effect:405236b8"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 89,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 90,
+      "decisionVersion": 0,
+      "actionId": "pass:ac4b4ab2"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 90,
+      "decisionVersion": 0,
+      "actionId": "choose_card:b27f36d7"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 90,
+      "decisionVersion": 0,
+      "actionId": "choose_card:46156094"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 91,
+      "decisionVersion": 0,
+      "actionId": "play_card:80138632"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 92,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 93,
+      "decisionVersion": 0,
+      "actionId": "research_tech:f86fc96a"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 93,
+      "decisionVersion": 0,
+      "actionId": "choose_target:09c77a7a"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 93,
+      "decisionVersion": 0,
+      "actionId": "choose_card:5d253bdc"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 94,
+      "decisionVersion": 0,
+      "actionId": "end_turn:1f65daa3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 95,
+      "decisionVersion": 0,
+      "actionId": "play_card:dc488075"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 96,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 97,
+      "decisionVersion": 0,
+      "actionId": "pass:a1f33c73"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 97,
+      "decisionVersion": 0,
+      "actionId": "choose_card:80881b7c"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 98,
+      "decisionVersion": 0,
+      "actionId": "play_card:b0c03832"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 98,
+      "decisionVersion": 0,
+      "actionId": "choose_target:56a0fcfd"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 98,
+      "decisionVersion": 0,
+      "actionId": "choose_target:606367a1"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 99,
+      "decisionVersion": 0,
+      "actionId": "end_turn:1f65daa3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 100,
+      "decisionVersion": 0,
+      "actionId": "pass:c858282e"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 100,
+      "decisionVersion": 0,
+      "actionId": "choose_card:2e3843c5"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 101,
+      "decisionVersion": 0,
+      "actionId": "pass:ff716055"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 101,
+      "decisionVersion": 0,
+      "actionId": "choose_card:dc21139d"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 102,
+      "decisionVersion": 0,
+      "actionId": "play_card:3e8e8ea5"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 102,
+      "decisionVersion": 0,
+      "actionId": "choose_target:3604000b"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 103,
+      "decisionVersion": 0,
+      "actionId": "end_turn:d59ab08c"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 104,
+      "decisionVersion": 0,
+      "actionId": "play_card:127074ef"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 104,
+      "decisionVersion": 0,
+      "actionId": "choose_target:12d5f7ff"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 105,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 106,
+      "decisionVersion": 0,
+      "actionId": "play_card:0046aa74"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 107,
+      "decisionVersion": 0,
+      "actionId": "end_turn:1f65daa3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 108,
+      "decisionVersion": 0,
+      "actionId": "research_tech:b5bf67f7"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 108,
+      "decisionVersion": 0,
+      "actionId": "choose_target:105f2d4b"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 109,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 110,
+      "decisionVersion": 0,
+      "actionId": "research_tech:547c8803"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 110,
+      "decisionVersion": 0,
+      "actionId": "choose_target:0c4c59a7"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 111,
+      "decisionVersion": 0,
+      "actionId": "end_turn:d59ab08c"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 112,
+      "decisionVersion": 0,
+      "actionId": "play_card:9a504829"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 113,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 114,
+      "decisionVersion": 0,
+      "actionId": "play_card:22ca1dd3"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 115,
+      "decisionVersion": 0,
+      "actionId": "end_turn:1f65daa3"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 116,
+      "decisionVersion": 0,
+      "actionId": "scan:96a13338"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 116,
+      "decisionVersion": 0,
+      "actionId": "choose_target:d7a0e441"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 116,
+      "decisionVersion": 0,
+      "actionId": "choose_card:0454ad6d"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 116,
+      "decisionVersion": 0,
+      "actionId": "accept_optional_effect:e59a465c"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 117,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 118,
+      "decisionVersion": 0,
+      "actionId": "pass:ac4b4ab2"
+    },
+    {
+      "seatId": "player-brown",
+      "stateVersion": 118,
+      "decisionVersion": 0,
+      "actionId": "choose_card:2984722d"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 119,
+      "decisionVersion": 0,
+      "actionId": "research_tech:806ccfc8"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 119,
+      "decisionVersion": 0,
+      "actionId": "choose_target:0cbf059c"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 119,
+      "decisionVersion": 0,
+      "actionId": "choose_card:2c11230a"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 120,
+      "decisionVersion": 0,
+      "actionId": "end_turn:b2f9b29d"
+    },
+    {
+      "seatId": "player-green",
+      "stateVersion": 121,
+      "decisionVersion": 0,
+      "actionId": "pass:ff716055"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 122,
+      "decisionVersion": 0,
+      "actionId": "play_card:bc20e6f4"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 122,
+      "decisionVersion": 0,
+      "actionId": "choose_target:01c56ada"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 123,
+      "decisionVersion": 0,
+      "actionId": "end_turn:320f2608"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 124,
+      "decisionVersion": 0,
+      "actionId": "pass:a1f33c73"
+    },
+    {
+      "seatId": "player-white",
+      "stateVersion": 124,
+      "decisionVersion": 0,
+      "actionId": "choose_card:2a839ed0"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 125,
+      "decisionVersion": 0,
+      "actionId": "pass:c858282e"
+    },
+    {
+      "seatId": "player-blue",
+      "stateVersion": 125,
+      "decisionVersion": 0,
+      "actionId": "choose_card:0395551b"
+    }
+  ]
+}
