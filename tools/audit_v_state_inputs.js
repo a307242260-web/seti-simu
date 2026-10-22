@@ -211,6 +211,36 @@ try {
       incomePort.close();
       console.log(`[PASS] independent-initial-information: offer=${initialValue(offered.observation)} income=${incomeValue(incomeLeaf.observation)}`);
     } finally { initialEnv.dispose(); }
+    const incomeFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+      "../adhoc/ai-decision-corpus-20261023-v1/case-011-20261023-v1.json")));
+    const incomeSeed = incomeFixture.source.seed;
+    const incomeKernel = createSimulationRuleComposition({ seed: incomeSeed, random: createSeededRandom(incomeSeed),
+      activePlayerCount: 4, trustedProjectionReader: true,
+      projectCounterfactualState: (state, viewer) => buildRuleObservation(state, incomeSeed, viewer?.playerId) });
+    let incomePort;
+    try {
+      incomeKernel.newGame({ seed: incomeSeed });
+      if (!incomeKernel.composition.lifecycle.restore(incomeFixture.compositionEnvelope).ok) throw new Error("主行动后收入审计恢复失败");
+      incomePort = createAnalysisPort({ composition: incomeKernel.composition, seatId: incomeFixture.seatId });
+      let node = incomePort.openRoot();
+      const proof = incomePort.postMainPlanSpec(node);
+      if (!proof?.incomeReachable || proof.retainedDataCardCount !== 2) throw new Error("主行动后收入审计未进入实际保留路径");
+      const evaluateIncome = independentValue.createStateValueEvaluator(incomeFixture.seatId);
+      for (let count = 0; count < 4; count += 1) {
+        node = incomePort.expand(node, node.legalActions.find(action => action.family === "place_data").actionId);
+        node = incomePort.expand(node, node.legalActions.find(action => action.target?.target === "computer").actionId);
+      }
+      const beforeValue = evaluateIncome(node.observation);
+      const cashCard = node.observation.selfState.hand.find(card => card.incomeCode === 0);
+      node = incomePort.expand(node, node.legalActions.find(action => action.target?.cardInstanceId === cashCard?.id).actionId);
+      const rawValue = evaluateIncome(node.observation);
+      const standardValue = evaluateIncome(outcomeModel.createDecisionObservation(node.observation, { seatId: incomeFixture.seatId }));
+      const delta = rawValue - beforeValue;
+      if (node.status !== "stable" || rawValue !== standardValue || delta !== 4 - node.observation.publicState.roundNumber) {
+        throw new Error("主行动后现金收入的正式输入、原始/标准估值或未来窗口不一致");
+      }
+      console.log(`[PASS] independent-post-main-income: delta=${delta} retainedData=${proof.retainedDataCardCount}`);
+    } finally { incomePort?.close(); incomeKernel.composition.dispose(); }
   } catch (error) {
     console.log(`[FAIL] independent-card-choice-equivalence: ${error.message}`);
     allPass = false;

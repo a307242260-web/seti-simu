@@ -164,9 +164,8 @@ assert(thresholdResult.lines.some(line => line.status === "decision" && line.edg
   "范围外的多个金标选择仍逐项展开");
 thresholdRoot.port.close();
 
-// 收入4号位可达时，保留手牌会新增强制选择；不套用删角标后的同输入路径证明。
+// 收入4号位仍保留真实强制选择；正常形不能把它虚构成无选择的同一步。
 const income = fixture(0, 4, false);
-declined(income);
 const incomeRoot = open(income);
 function placeFour(node) {
   for (let i = 0; i < 4; i += 1) {
@@ -190,8 +189,10 @@ for (const trace of Object.values(ready.aliens.aliens[1].traces)) {
 assert(aliens.isAlienReadyToReveal(ready.aliens.aliens[1]));
 declined(ready);
 const needsData = fixture(1, 0, true);
-declined(needsData);
 const dataRoot = open(needsData);
+const dataPlan = dataRoot.port.postMainPlanSpec(dataRoot.root);
+assert(dataPlan && dataRoot.root.legalActions.filter(action => action.family === "card_corner")
+  .every(action => dataPlan.retainedActionIds.includes(action.actionId)), "数据准备是保留路线，不能省略");
 const dataResult = searchDecision({ port: dataRoot.port, root: dataRoot.root, evaluate, postMainPruning: true,
   budget: { transitions: 4096, nodes: 4097, frontier: 4096, milliseconds: 10000 } });
 assert.equal(dataResult.complete, true);

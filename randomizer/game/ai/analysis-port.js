@@ -567,6 +567,9 @@
       const state = JSON.parse(stored.envelope.committedState);
       const owner = state.players.players.find(player => player.id === seatId);
       const company = industryCatalog.getPlayerIndustryDefinition(owner);
+      const quietCompany = company && ((company.activeAbilityId === "helios_remove_tech_income"
+        && company.passiveIds.every(id => id === "helios_passive_reward_slots"))
+        || (company.activeAbilityId === null && company.passiveIds.length === 1 && company.passiveIds[0] === "alien_lab_panels"));
       const ownRockets = owner ? state.pieces.rockets.filter(rocket => [rocket.playerId, rocket.color, rocket.playerColor]
         .some(id => id === seatId || id === owner.color)) : [];
       if (state.turn.currentPlayerId !== seatId || !owner?.mainActionCompleted
@@ -575,8 +578,7 @@
         || !hasOnlyOwnPlanetVisitReservations(state) || (owner.reservedCards.length && ownRockets.length)
         || state.turn.cardTurnEventBonuses?.length
         || Object.values(state.aliens.aliens).some(slot => slot.revealed || alienState.isAlienReadyToReveal(slot))
-        || company?.activeAbilityId !== "helios_remove_tech_income"
-        || company.passiveIds.some(id => id !== "helios_passive_reward_slots")
+        || !quietCompany
         || ownRockets.some(rocket => (rocket.kind ?? "standard") !== "standard" || rocket.fossilId != null)) return null;
       const weights = { credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1 };
       if (Object.keys(weights).some(key => !Number.isSafeInteger(owner.income[key]) || owner.income[key] < 0
@@ -608,29 +610,51 @@
         return !trade || JSON.stringify(action.payload?.cost) !== JSON.stringify(trade.cost)
           || JSON.stringify(action.payload?.gain) !== JSON.stringify(trade.gain);
       })) return null;
+      const dataCornerIds = new Set();
       for (const card of owner.hand) {
         if (!["basic", "space-agency"].includes(card.set) || !cards.getCatalogEntryForCard(card)) return null;
         const code = cards.getDiscardActionCodeForCard(card);
         if (code === 0) {
           const reward = cards.getDiscardActionRewardForCard(card);
           if (reward?.dataCount !== 0 || reward.gain.publicity !== 1 || Object.keys(reward.gain).length !== 1) return null;
+        } else if (code === 1) {
+          const reward = cards.getDiscardActionRewardForCard(card);
+          if (reward?.dataCount !== 1 || Object.keys(reward.gain).length) return null;
+          dataCornerIds.add(card.id);
         } else if (code === 2) {
           const reward = cards.getDiscardActionMoveRewardForCard(card);
           if (reward?.movementPoints !== 1 || Object.keys(reward.gain).length) return null;
         } else return null;
       }
-      const kept = node.legalActions.filter(action => ["end_turn", "place_data"].includes(action.family));
+      const kept = node.legalActions.filter(action => ["end_turn", "place_data"].includes(action.family)
+        || (action.family === "card_corner" && dataCornerIds.has(action.target?.cardInstanceId)));
       const excluded = node.legalActions.filter(action => !kept.includes(action));
       if (!kept.some(action => action.family === "end_turn") || !excluded.length) return null;
       const poolCount = owner.dataState.poolTokens.length;
       if (owner.resources.availableData !== poolCount) return null;
       const occupied = data.listComputerPlacedTokens(owner).map(token => token.placementSlot);
+      const maximumDataCount = poolCount + dataCornerIds.size;
       const reachable = Object.keys(data.COMPUTER_DATA_SLOTS).map(Number).sort((a, b) => a - b)
-        .filter(slot => !occupied.includes(slot)).slice(0, poolCount);
-      if (reachable.includes(4)) return null;
-      let maximumValueIncrease = 0, additionalScore = 0;
+        .filter(slot => !occupied.includes(slot)).slice(0, maximumDataCount);
+      const incomeReachable = reachable.includes(4);
+      if (incomeReachable) {
+        let blindCards = 0;
+        for (const card of owner.hand) {
+          const code = cards.getIncomeCodeForCard(card), gain = cards.getIncomeGainForCard(card);
+          const key = ["credits", "energy", "handSize"][code];
+          if (!key || !gain || Object.keys(gain).length !== 1 || gain[key] !== 1) return null;
+          if (code === 2 && (++blindCards > 1 || !dataCornerIds.has(card.id))) return null;
+        }
+        // 新收入改变a板公式；本版数值增益界只覆盖没有本席a板标记的窗口。
+        if (state.finalScoring.tiles.a?.marks.some(mark => mark.playerId === seatId)) return null;
+      }
+      let maximumValueIncrease = dataCornerIds.size * weights.availableData, additionalScore = 0;
       function includeBonus(bonus) {
         if (!bonus) return true;
+        if (bonus.type === "income" && Object.keys(bonus).length === 1 && incomeReachable) {
+          maximumValueIncrease += 5 - state.turn.roundNumber;
+          return true;
+        }
         if (bonus.type === "choose_card" && Object.keys(bonus).length === 1) { maximumValueIncrease += 1; return true; }
         const weight = bonus.type === "score" ? 1 : weights[bonus.type];
         if (!["score", "credits", "energy", "publicity"].includes(bonus.type)
@@ -642,7 +666,7 @@
       }
       for (const slot of reachable) if (!includeBonus(data.getComputerSlotBonus(slot))
         || !includeBonus(data.getComputerSlotBlueColumnBonus(owner, slot))) return null;
-      if (poolCount) for (const slot of Object.keys(data.BLUE_BONUS_DATA_SLOTS).map(Number)) {
+      if (maximumDataCount) for (const slot of Object.keys(data.BLUE_BONUS_DATA_SLOTS).map(Number)) {
         const required = data.getRequiredComputerSlotForBlueBonus(slot);
         if (!data.hasBlueTechInBoardSlot(owner, slot) || data.listBlueBonusPlacedTokens(owner).some(token => token.blueSlot === slot)
           || (!occupied.includes(required) && !reachable.includes(required))) continue;
@@ -654,8 +678,9 @@
       if (scoreUpperBound >= scoreThreshold) return null;
       const transition = turnFlow.advanceTurnAfterPlayerAction(structuredClone(state), seatId);
       if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded || transition.nextPlayerId === seatId) return null;
-      return freeze({ proof: "seti-quiet-post-main-default-value-plan-v3", retainedActionIds: kept.map(action => action.actionId),
-        excludedActionIds: excluded.map(action => action.actionId), maximumValueIncrease, scoreUpperBound, scoreThreshold });
+      return freeze({ proof: "seti-quiet-post-main-default-value-plan-v4", retainedActionIds: kept.map(action => action.actionId),
+        excludedActionIds: excluded.map(action => action.actionId), maximumValueIncrease, scoreUpperBound, scoreThreshold,
+        incomeReachable, retainedDataCardCount: dataCornerIds.size });
     }
 
     function openingResourceOrder(node) {

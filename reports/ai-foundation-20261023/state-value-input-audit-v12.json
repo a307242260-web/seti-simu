@@ -1,0 +1,15 @@
+{
+  "exitCode": 1,
+  "sourceAuditSha256": "aab4e0e8da91f78c595de7b88de537544b6473c8986f93d6a2ea0de89b6e2fc2",
+  "analysisPortSha256": "364328a9c8ebbd4c3540cf73f4544a1d559ea3b4f8595baf49d2436390fe5c11",
+  "log": "reports/ai-foundation-20261023/state-value-input-audit-v12.log",
+  "knownLegacyFailure": true,
+  "independentPassed": true,
+  "cardChoicePassed": true,
+  "publicPickBarrierPassed": true,
+  "moneyCapacityPassed": true,
+  "openingPlanPassed": true,
+  "openingPassPassed": true,
+  "initialInformationPassed": true,
+  "postMainIncomePassed": true
+}

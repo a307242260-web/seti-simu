@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "seti-post-main-income-validation-v1",
+  "scope": "five closed controlled windows, two complete payment components, actual cash substitution and blind-only counterexample; original full raw graph not completed; no whole-game grade",
+  "baseCommit": "69538a89575a754e31325b1bc824c1dc85b27175",
+  "runtimeRulesetVersion": "seti-runtime-v1.2",
+  "searchVersion": "seti-complete-decision-search-v14",
+  "proof": "seti-quiet-post-main-default-value-plan-v4",
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "364328a9c8ebbd4c3540cf73f4544a1d559ea3b4f8595baf49d2436390fe5c11",
+    "randomizer/game/ai/decision-search.js": "028547543d5692180403a01f4c5e81f4284ce09dde132e10f1d18795ab71bf99",
+    "randomizer/game/ai/post-main-income.test.js": "a908568c6d5cc25c314c8f8c95edb149357f37c7369a8737b55fa9160b4f7a43",
+    "tools/node-test-inventory.js": "ff45436d01f4bbff524e4a4579b898763ffe09ff12ae0364c029ab83c8c41fbd",
+    "randomizer/game/ai/post-main-plan.test.js": "e9e27857e19861cbfb4bb352b34b37b6b0940a81d65bd44d0f613d19071e49dc",
+    "tools/audit_v_state_inputs.js": "aab4e0e8da91f78c595de7b88de537544b6473c8986f93d6a2ea0de89b6e2fc2"
+  },
+  "unit": {
+    "postMainIncome": "passed",
+    "prunedInputs": 137,
+    "value": 37,
+    "small": [
+      {
+        "rawInputs": 60,
+        "prunedInputs": 5,
+        "value": 32.5
+      },
+      {
+        "rawInputs": 60,
+        "prunedInputs": 5,
+        "value": 7.5
+      },
+      {
+        "rawInputs": 270,
+        "prunedInputs": 16,
+        "value": 33.5
+      },
+      {
+        "rawInputs": 234,
+        "prunedInputs": 7,
+        "value": 8.5
+      },
+      {
+        "rawInputs": 523,
+        "prunedInputs": 34,
+        "value": 36.5
+      }
+    ],
+    "paymentCases": [
+      {
+        "tradeId": "cards-for-credit",
+        "rawInputs": 1141,
+        "prunedInputs": 83,
+        "exits": 3
+      },
+      {
+        "tradeId": "cards-for-energy",
+        "rawInputs": 1304,
+        "prunedInputs": 83,
+        "exits": 3
+      }
+    ]
+  },
+  "smallWindowActionValueAndShortestParity": true,
+  "paymentExits": 6,
+  "selectionContinuationPreserved": true,
+  "cache256Parity": true,
+  "rootUnchanged": true,
+  "physicalCases": [
+    "round4 cash forced choice vs no-hand skip: retained leaf 0.5V higher",
+    "resource payment of both cash cards then data corner: extra cash income continues same remaining placements",
+    "blind-only surplus: early information boundary loses later blue-column/bonus value; proof rejected",
+    "multiple blind income cards and owned a-board mark: proof rejected"
+  ],
+  "firstRawReference": {
+    "complete": false,
+    "stopReason": "transition-budget",
+    "transitions": 4096,
+    "budget": {
+      "transitions": 4096,
+      "nodes": 4097,
+      "frontier": 4096,
+      "milliseconds": 15000
+    },
+    "driverArchive": "adhoc/post-main-income-first-reference-driver-20261023-v1.json",
+    "driverArchiveSha256": "01fa9e77c4ab86bac31e7eaa6a267d22ab503b932adfeffd00b0a0c9ab85438e",
+    "log": "reports/ai-foundation-20261023/post-main-income-full-reference-v1.log",
+    "logSha256": "ef00dd2433928d697bdfe90a66d1bf304ac0f6297d21964645f9c3da8451a5a1"
+  },
+  "fixedCheckpoint": {
+    "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-011-20261023-v1.json",
+    "fixtureSha256": "10ae734103d0bdacc79dc5d7d97ec0d5bb7d0152256b4d851faf12d6bbc711bb",
+    "actionId": "place_data:8fd12fd3",
+    "value": 37,
+    "valueMeaning": "nonterminal default state value, not game score",
+    "complete": true,
+    "rootAndSearchMilliseconds": 254.8499999999999,
+    "unresolved": 0,
+    "diagnostics": {
+      "transitions": 137,
+      "nodes": 114,
+      "equivalents": 24,
+      "selectionMacros": 0,
+      "peakFrontier": 8,
+      "dominancePrunes": 0,
+      "resourceDominance": "enabled",
+      "moneyCapacityPrunes": 0,
+      "moneyCapacityDominance": "enabled",
+      "cardTradePrunes": 0,
+      "cardTradePruning": "enabled",
+      "postMainProofNodes": 38,
+      "postMainExcludedActions": 148,
+      "postMainPruning": "enabled",
+      "openingProofNodes": 0,
+      "openingExcludedActions": 0,
+      "openingPruning": "enabled",
+      "openingPassMacros": 0,
+      "cardChoiceProofNodes": 0,
+      "cardChoiceExcludedActions": 0,
+      "cardChoiceEquivalence": "enabled",
+      "resourceModelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-white\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "continuation": "not-requested",
+      "milliseconds": 247.3895419999999,
+      "limits": {
+        "transitions": 256,
+        "nodes": 257,
+        "frontier": 256,
+        "milliseconds": 600
+      }
+    },
+    "port": {
+      "nodeCount": 138,
+      "submissionCount": 137,
+      "cacheHits": 0,
+      "cacheEntries": 0,
+      "observationCount": 77,
+      "identityCount": 114,
+      "maxCacheEntries": 0,
+      "selectionEvidenceEntries": 0,
+      "maxSelectionEvidenceEntries": 1,
+      "milliseconds": {
+        "restore": 35.38378400000022,
+        "execute": 54.82474699999875,
+        "observation": 46.76216600000055,
+        "checkpoint": 21.764829999999733,
+        "resourceOrder": 16.97332600000061,
+        "valueBound": 0.030044000000316373,
+        "postMainPlan": 7.639583000001721
+      }
+    }
+  },
+  "matrix": {
+    "path": "reports/ai-foundation-20261023/decision-corpus-audit-v6.json",
+    "passed": 4,
+    "total": 8,
+    "meaning": "eight sampled checkpoints, not all corpus categories"
+  },
+  "verification": {
+    "unit": 117,
+    "fullFlow": 1,
+    "browserChanges": false,
+    "newStateValueInputsPassed": true,
+    "wholeStateValueAuditExit": 1,
+    "knownLegacyFailure": "frozen aomomo write in old evaluator"
+  },
+  "machine": {
+    "node": "v22.22.0",
+    "cpu": "Apple M4",
+    "logicalCpuCount": 10,
+    "totalMemoryBytes": 17179869184
+  }
+}
