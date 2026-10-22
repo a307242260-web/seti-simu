@@ -165,4 +165,60 @@ selectionFixture.port.postMainResourceOrder = () => { throw new Error("selection
 const exactSelection = searchDecision({ ...selectionFixture, evaluate: selectionModel, resourceDominance: true });
 assert.equal(exactSelection.complete, true);
 assert.equal(exactSelection.diagnostics.resourceDominance, "disabled-for-selection-certificate");
+
+function boundFixture(bestScore = 5, options = {}) {
+  const drawn = wallet(1, 1);
+  drawn.selfState.hand = [{ hidden: true }];
+  const fixture = graph({ root: { next: { bad: "via", good: "best" } },
+    via: { next: { trade: "pending" } },
+    pending: { status: "decision", observation: wallet(1, 1), next: { pick: "drawn" } },
+    drawn: { status: "information-barrier", observation: drawn },
+    best: { status: "other-owner", observation: wallet(1, 1, bestScore) },
+  });
+  fixture.evaluate = createStateValueEvaluator("p1", options);
+  fixture.port.cardTradeBound = node => fixture.port.identity(node) === "pending"
+    ? { proof: "card-bound-fixture", handDelta: 1 } : null;
+  return fixture;
+}
+const rawBound = searchDecision(boundFixture());
+const prunedBound = searchDecision({ ...boundFixture(), cardTradePruning: true });
+assert.equal(prunedBound.complete, true);
+assert.equal(prunedBound.actionId, rawBound.actionId);
+assert.equal(prunedBound.value, rawBound.value);
+assert.equal(prunedBound.diagnostics.cardTradePrunes, 1);
+assert.equal(prunedBound.diagnostics.transitions, rawBound.diagnostics.transitions - 1);
+const boundedLine = prunedBound.lines.find(line => line.prunedByBound);
+assert.equal(boundedLine.value, null, "估值上界不是该分支已执行得到的收益");
+assert.equal(boundedLine.prunedByBound.upperBound, 3);
+assert.equal(prunedBound.lines[boundedLine.prunedByBound.node].value, 7,
+  "剪枝必须引用真正完成到比较边界的严格更优叶");
+assert.equal(prunedBound.lines.find(line => line.edges.some(edge => edge.actionId === "trade")).completion,
+  "covered-by-global-pruning", "祖先不能将有可达但被覆盖的边界误报成规则不可达");
+assert.deepEqual(prunedBound.unresolved, []);
+assert.equal(searchDecision({ ...boundFixture(1), cardTradePruning: true }).diagnostics.cardTradePrunes, 0,
+  "仅相等时不能省略可能影响最短路径或actionId平分选择的分支");
+const valuableCard = boundFixture(5, { weights: { handSize: 100 } });
+const valuableResult = searchDecision({ ...valuableCard, cardTradePruning: true });
+assert.equal(valuableResult.actionId, "bad", "取牌权重变高时必须按新模型保留有价值的分支");
+assert.equal(valuableResult.value, 102);
+assert.equal(valuableResult.diagnostics.cardTradePrunes, 0);
+const unfinishedBound = searchDecision({ ...boundFixture(), cardTradePruning: true, budget: { transitions: 2 } });
+assert.equal(unfinishedBound.complete, false);
+assert.equal(unfinishedBound.actionId, null, "已有较优叶也不能跳过尚无上界的准备线");
+const timedBound = boundFixture();
+let boundClock = 0;
+const boundFacts = timedBound.port.cardTradeBound;
+timedBound.port.cardTradeBound = node => { const proof = boundFacts(node); if (proof) boundClock = 1000; return proof; };
+const lateBound = searchDecision({ ...timedBound, cardTradePruning: true, now: () => boundClock,
+  budget: { milliseconds: 100 } });
+assert.equal(lateBound.complete, false);
+assert.equal(lateBound.stopReason, "watchdog");
+assert.equal(lateBound.actionId, null, "上界计算本身超时仍拒绝选招");
+assert.throws(() => searchDecision({ ...boundFixture(), evaluate: () => 9, cardTradePruning: true }), /BOUND_MODEL_INVALID/);
+assert.throws(() => searchDecision({ ...boundFixture(), evaluate: createStateValueEvaluator("p2"),
+  cardTradePruning: true }), /BOUND_MODEL_INVALID/);
+selectionFixture.port.cardTradeBound = () => { throw new Error("selection certificate needs exact exit values"); };
+const selectionWithoutBounds = searchDecision({ ...selectionFixture, evaluate: selectionModel, cardTradePruning: true });
+assert.equal(selectionWithoutBounds.complete, true);
+assert.equal(selectionWithoutBounds.diagnostics.cardTradePruning, "disabled-for-selection-certificate");
 console.log("complete decision graph coverage, cycles, preparation chains and budget failures passed");

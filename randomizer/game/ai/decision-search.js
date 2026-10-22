@@ -6,13 +6,13 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v3";
+  const VERSION = "seti-complete-decision-search-v4";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
 
   function searchDecision({ port, root, evaluate, budget = {}, continuation = null,
-    modelKey = null, resourceDominance = false, now = () => performance.now() } = {}) {
+    modelKey = null, resourceDominance = false, cardTradePruning = false, now = () => performance.now() } = {}) {
     if (typeof port?.expand !== "function" || typeof port?.identity !== "function"
       || typeof evaluate !== "function" || !root) throw new TypeError("SEARCH_INPUT_INVALID");
     const limits = { ...DEFAULT_BUDGET, ...budget };
@@ -25,6 +25,9 @@
     if (resourceDominance && (!stateValue?.isMoneyMonotoneEvaluator?.(evaluate)
       || evaluate.seatId !== root.legalActions?.[0]?.actorId
       || typeof port.postMainResourceOrder !== "function")) throw new TypeError("SEARCH_RESOURCE_PROOF_MODEL_INVALID");
+    if (cardTradePruning && (!stateValue?.isStateValueEvaluator?.(evaluate)
+      || evaluate.seatId !== root.legalActions?.[0]?.actorId
+      || typeof port.cardTradeBound !== "function")) throw new TypeError("SEARCH_CARD_BOUND_MODEL_INVALID");
     if (modelKey != null && (typeof modelKey !== "string" || !modelKey)) throw new TypeError("SEARCH_MODEL_KEY_INVALID");
     const reused = continuation && modelKey && port.reuseSelection?.(root, continuation, modelKey);
     if (reused?.hit && now() - startedAt < limits.milliseconds) return {
@@ -36,6 +39,7 @@
       roots: reused.roots, lines: [], unresolved: [],
       diagnostics: { transitions: 0, nodes: 1, equivalents: 0, selectionMacros: 0, peakFrontier: 0,
         dominancePrunes: 0, resourceDominance: resourceDominance ? "disabled-for-selection-certificate" : "off",
+        cardTradePrunes: 0, cardTradePruning: cardTradePruning ? "disabled-for-selection-certificate" : "off",
         continuation: "hit", milliseconds: now() - startedAt, limits },
     };
     const nodes = [];
@@ -43,6 +47,7 @@
     const queue = [];
     const resourceGroups = new Map();
     const useResourceDominance = resourceDominance && !port.selectionSpec?.(root);
+    const useCardTradePruning = cardTradePruning && !port.selectionSpec?.(root);
     let cursor = 0;
     let transitions = 0;
     let equivalents = 0;
@@ -50,6 +55,8 @@
     let peakFrontier = 0;
     let pendingFrontier = 0;
     let dominancePrunes = 0;
+    let cardTradePrunes = 0;
+    let incumbent = null;
     let stopReason = null;
     function dominates(upper, lower) {
       return upper.credits >= lower.credits && upper.energy >= lower.energy
@@ -74,6 +81,7 @@
       if (!boundary && !node.legalActions?.length) throw new Error("SEARCH_EMPTY_NONTERMINAL");
       const value = boundary ? evaluate(node.observation) : null;
       if (boundary && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
+      if (boundary && (!incumbent || value > incumbent.value)) incumbent = { node: index, value };
       const selection = boundary ? null : port.selectionSpec?.(node) || null;
       const alternatives = selection ? port.selectionPlans(node)
         : node.legalActions.map(action => ({ firstActionId: action.actionId, submissions: 1 }));
@@ -104,6 +112,20 @@
     outer: while (cursor < queue.length) {
       const entry = nodes[queue[cursor]];
       if (entry.prunedBy) { cursor += 1; continue; }
+      if (useCardTradePruning && incumbent && entry.node.status === "decision") {
+        if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
+        const bound = port.cardTradeBound(entry.node);
+        const upperBound = bound
+          ? stateValue.evaluateHandCountDelta(evaluate, entry.node.observation, bound.handDelta) : null;
+        if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
+        if (bound && incumbent.value > upperBound) {
+          entry.prunedByBound = { ...incumbent, upperBound, proof: bound.proof, modelKey: evaluate.modelKey };
+          cardTradePrunes += 1;
+          if (entry.queued) { entry.queued = false; pendingFrontier -= 1; }
+          cursor += 1;
+          continue;
+        }
+      }
       for (const alternative of entry.alternatives) {
         if (entry.prunedBy) break;
         if (transitions + alternative.submissions > limits.transitions) stopReason = "transition-budget";
@@ -137,6 +159,14 @@
     if (!stopReason) {
       const parents = nodes.map(() => []);
       nodes.forEach((entry, index) => entry.edges.forEach(edge => parents[edge.target].push({ index, edge })));
+      const covered = nodes.flatMap((entry, index) => entry.prunedBy || entry.prunedByBound ? [index] : []);
+      for (const index of covered) nodes[index].covered = true;
+      for (let head = 0; head < covered.length; head += 1) {
+        for (const { index } of parents[covered[head]]) if (!nodes[index].covered) {
+          nodes[index].covered = true;
+          covered.push(index);
+        }
+      }
       const changed = nodes.flatMap((entry, index) => entry.value == null ? [] : [index]);
       for (let head = 0; head < changed.length; head += 1) {
         const target = nodes[changed[head]];
@@ -154,7 +184,7 @@
         }
       }
     }
-    const unresolved = nodes.flatMap((entry, index) => entry.expanded || entry.prunedBy ? [] : [{
+    const unresolved = nodes.flatMap((entry, index) => entry.expanded || entry.prunedBy || entry.prunedByBound ? [] : [{
       node: index, actionIds: (entry.selection ? entry.node.legalActions
         : entry.node.legalActions.slice(entry.edges.length)).map(action => action.actionId),
       ...(entry.selection ? { selectionPlansRemaining: entry.alternativeCount - entry.edges.length,
@@ -163,9 +193,10 @@
     const lines = nodes.map((entry, index) => ({
       node: index, status: entry.node.status, boundary: entry.node.boundary || null,
       expanded: entry.expanded, edges: entry.edges,
-      value: entry.value, completion: entry.prunedBy ? "proof-pruned"
-        : entry.value == null ? (stopReason ? "pending" : "unreachable") : "reachable",
+      value: entry.value, completion: entry.prunedBy || entry.prunedByBound ? "proof-pruned"
+        : entry.value == null ? (stopReason ? "pending" : entry.covered ? "covered-by-global-pruning" : "unreachable") : "reachable",
       ...(entry.prunedBy ? { prunedBy: entry.prunedBy } : {}),
+      ...(entry.prunedByBound ? { prunedByBound: entry.prunedByBound } : {}),
       ...(entry.selection ? { selection: entry.selection, orderedExitCount: entry.alternativeCount } : {}),
     }));
     const roots = root.legalActions.map(action => {
@@ -182,9 +213,10 @@
       return {
         actionId: action.actionId, target: edge?.target ?? null,
         value: edge ? nodes[edge.target].value : null,
-        completion: stopReason || !edge ? "pending" : dominancePrunes ? "covered-by-global-dominance"
+        completion: stopReason || !edge ? "pending" : cardTradePrunes ? "covered-by-global-pruning"
+          : dominancePrunes ? "covered-by-global-dominance"
           : nodes[edge.target].value == null ? "unreachable" : "complete",
-        ...(dominancePrunes ? { valueType: "attained-lower-bound" } : {}),
+        ...(dominancePrunes || cardTradePrunes ? { valueType: "attained-lower-bound" } : {}),
       };
     });
     const complete = !stopReason;
@@ -209,7 +241,9 @@
       diagnostics: { transitions, nodes: nodes.length, equivalents, selectionMacros, peakFrontier,
         dominancePrunes, resourceDominance: useResourceDominance ? "enabled"
           : resourceDominance ? "disabled-for-selection-certificate" : "off",
-        ...(useResourceDominance ? { resourceModelKey: evaluate.modelKey } : {}),
+        cardTradePrunes, cardTradePruning: useCardTradePruning ? "enabled"
+          : cardTradePruning ? "disabled-for-selection-certificate" : "off",
+        ...(useResourceDominance || useCardTradePruning ? { resourceModelKey: evaluate.modelKey } : {}),
         continuation: reused ? (reused.hit ? "validation-watchdog" : reused.reason) : "not-requested",
         milliseconds: now() - startedAt, limits },
     };

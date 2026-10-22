@@ -11,6 +11,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/resource-dominance.test.js", "policy/decision-search", "受限主行动后资源支配保持真实窗口的最佳动作与估值，规则敏感状态拒绝应用", "零钱电条件、保留任务、事件奖励或同席下一回合使较富分支不能模拟较穷分支"),
     entry("randomizer/game/ai/data-equivalence.test.js", "architecture/policy-host", "数据标记编号与池展示位置等价，真实放置交换路径及全部直接后继一致", "显示序号造成重复搜索或错误忽略计算机槽位、蓝色附加位和真实奖励"),
     entry("randomizer/game/ai/opening-resource.test.js", "policy/decision-search", "受限首个主行动资源模拟保持真钱电循环后继与完整小窗口最优，有探测器的零电收益拒绝剪枝", "dlc27零电收益反转资源大小关系或未闭合主行动被当成完成"),
+    entry("randomizer/game/ai/card-trade-bound.test.js", "policy/decision-search", "无额外触发的取牌交易到信息边界的值与手牌数量上界完全一致，包含全部支付与选择", "遗漏取牌奖励、把牌面身份当成未来已兑现收益或浮点增量低估上界"),
     entry("randomizer/game/actions/quick-move-availability.test.js", "rules/quick-trades", "快速移动必须有正式一步可达方向；无路时拒绝且根状态不变", "只有探测器存在便提供快速移动，扣能量后生成空Decision"),
     entry("randomizer/game/ai/state-value.test.js", "policy/state-value", "独立估值只读标准事实，未来收入窗口明确且终局只计正式分", "终局重复加资源、未知牌身份进入估值或缺字段被静默补零"),
     entry("randomizer/game/ai/analysis-port.test.js", "architecture/policy-host", "可信分支精确提交、结果缓存和权威根隔离", "策略取得权威envelope、同family代替动作或fork改变真实根/RNG"),

@@ -97,6 +97,12 @@ try {
   if (evaluator(rawObs) !== rawValue.total || evaluator(stdObs) !== standardValue.total) {
     throw new Error("冻结配置估值与直接估值不一致");
   }
+  const addedHand = { ...rawObs, selfState: { ...rawObs.selfState, hand: [...rawObs.selfState.hand, { hidden: true }] } };
+  const handBound = independentValue.evaluateHandCountDelta(evaluator, rawObs, 1);
+  if (handBound !== independentValue.evaluateStateValue(addedHand, seatId).total
+    || handBound !== independentValue.evaluateHandCountDelta(evaluator, stdObs, 1)) {
+    throw new Error("手牌数量数值界与真实估值输入求和不一致");
+  }
   console.log(`[PASS] independent-state-value: total=${standardValue.total} model=${standardValue.modelVersion}`);
 } catch (error) {
   console.log(`[FAIL] independent-state-value: ${error.message}`);

@@ -1,6 +1,7 @@
 "use strict";
 const assert = require("node:assert/strict");
-const { evaluateStateValue, MODEL_VERSION, createStateValueEvaluator, isMoneyMonotoneEvaluator } = require("./state-value");
+const { evaluateStateValue, MODEL_VERSION, createStateValueEvaluator, isMoneyMonotoneEvaluator,
+  isStateValueEvaluator, evaluateHandCountDelta } = require("./state-value");
 
 function observation(round = 1) {
   return { terminal: false, publicState: { roundNumber: round, players: [{
@@ -28,6 +29,13 @@ assert.equal(evaluator(start), configuredValue);
 configured.weights.credits = 100;
 assert.equal(evaluator(start), configuredValue, "已签发估值函数固定配置，外部修改不能改变证明前提");
 assert.equal(isMoneyMonotoneEvaluator(evaluator), true);
+assert.equal(isStateValueEvaluator(evaluator), true);
+assert.equal(evaluateHandCountDelta(evaluator, start, 1), configuredValue + 1);
+assert.equal(evaluateHandCountDelta(evaluator, start, -1), configuredValue - 1);
+assert.deepEqual(start, observation(), "数值界的假设手牌数量不能修改真实观察");
+assert.throws(() => evaluateHandCountDelta(() => 0, start, 1), /VALUE_EVALUATOR_UNKNOWN/);
+assert.throws(() => evaluateHandCountDelta(evaluator, start, 2), /VALUE_HAND_DELTA_INVALID/);
+assert.throws(() => evaluateHandCountDelta(evaluator, end, 1), /VALUE_BOUND_NONTERMINAL_REQUIRED/);
 assert.equal(isMoneyMonotoneEvaluator(() => 1), false);
 assert.equal(isMoneyMonotoneEvaluator(createStateValueEvaluator("p1", { weights: { energy: 0 } })), false,
   "零权重不能签发严格钱电支配证明");

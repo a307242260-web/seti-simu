@@ -118,15 +118,16 @@ smallOwner.dataState = { poolTokens: [], placedTokens: [], discardedCount: 0 };
 const smallEnvelope = { ...structuredClone(initial), committedState: JSON.stringify(small) };
 assert.equal(comp.lifecycle.restore(smallEnvelope).ok, true);
 const smallBefore = comp.lifecycle.save().envelope;
-function run(enabled) {
+function run(enabled, pruneCardTrades = false) {
+  const beforeSearch = comp.lifecycle.save().envelope;
   const analysis = createAnalysisPort({ composition: comp, seatId, maxCacheEntries: 0 });
   const node = analysis.openRoot();
   assert(analysis.openingResourceOrder(node));
-  const result = searchDecision({ port: analysis, root: node, evaluate, resourceDominance: enabled,
+  const result = searchDecision({ port: analysis, root: node, evaluate, resourceDominance: enabled, cardTradePruning: pruneCardTrades,
     budget: { transitions: 2048, nodes: 2049, frontier: 2048, milliseconds: 6000 } });
   analysis.close();
   assert.equal(result.complete, true, result.stopReason);
-  assert.deepEqual(comp.lifecycle.save().envelope, smallBefore);
+  assert.deepEqual(comp.lifecycle.save().envelope, beforeSearch);
   return result;
 }
 const raw = run(false), pruned = run(true);
@@ -136,6 +137,31 @@ assert(pruned.diagnostics.dominancePrunes > 0);
 assert(pruned.lines.some(line => line.prunedBy?.proof === "seti-helios-opening-money-simulation-v1"),
   "完整小窗口必须实际使用主行动前证明，不能只测到已有主行动后剪枝");
 assert(pruned.diagnostics.transitions < raw.diagnostics.transitions);
+const bounded = run(true, true);
+assert.equal(bounded.value, raw.value);
+assert.equal(bounded.actionId, raw.actionId);
+assert(bounded.diagnostics.cardTradePrunes > 0);
+assert(bounded.diagnostics.transitions < pruned.diagnostics.transitions,
+  "已完成真实竞争线严格胜过上界时才省略取牌子树，完整窗口最优不变");
+for (const line of bounded.lines.filter(line => line.prunedByBound)) {
+  const witness = bounded.lines[line.prunedByBound.node];
+  assert(["other-owner", "information-barrier", "terminal"].includes(witness.status));
+  assert.equal(witness.value, line.prunedByBound.value);
+  assert(witness.value > line.prunedByBound.upperBound);
+  assert.equal(line.value, null, "真实被省略分支的值不能用竞争叶填充");
+}
+const hiddenSwap = structuredClone(smallBefore);
+const swapped = JSON.parse(hiddenSwap.committedState);
+swapped.cards.drawPileCardIds.reverse();
+hiddenSwap.committedState = JSON.stringify(swapped);
+assert.equal(comp.lifecycle.restore(hiddenSwap).ok, true);
+const hiddenBounded = run(true, true);
+assert.equal(hiddenBounded.actionId, bounded.actionId);
+assert.equal(hiddenBounded.value, bounded.value);
+assert.equal(hiddenBounded.diagnostics.transitions, bounded.diagnostics.transitions);
+assert.equal(hiddenBounded.diagnostics.cardTradePrunes, bounded.diagnostics.cardTradePrunes,
+  "替换隐藏未来牌序不改变完整窗口的选择、值或上界剪枝");
 comp.dispose();
 console.log(JSON.stringify({ openingMoney: "passed", rawInputs: raw.diagnostics.transitions,
-  prunedInputs: pruned.diagnostics.transitions, proofPrunes: pruned.diagnostics.dominancePrunes }));
+  prunedInputs: pruned.diagnostics.transitions, boundedInputs: bounded.diagnostics.transitions,
+  proofPrunes: pruned.diagnostics.dominancePrunes, cardTradePrunes: bounded.diagnostics.cardTradePrunes }));

@@ -11,7 +11,7 @@
   const DEFAULT_WEIGHTS = Object.freeze({
     credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1,
   });
-  const moneyMonotoneEvaluators = new WeakSet();
+  const evaluatorWeights = new WeakMap();
 
   function number(value, path) {
     if (typeof value !== "number" || !Number.isFinite(value)) throw new TypeError(`VALUE_NUMBER_INVALID: ${path}`);
@@ -67,10 +67,29 @@
       modelKey: { value: JSON.stringify({ version: MODEL_VERSION, seatId, weights }) },
       seatId: { value: seatId },
     });
-    if (weights.credits > 0 && weights.energy > 0) moneyMonotoneEvaluators.add(evaluate);
+    evaluatorWeights.set(evaluate, weights);
     return Object.freeze(evaluate);
   }
 
+  function evaluateHandCountDelta(evaluate, observation, delta) {
+    if (!evaluatorWeights.has(evaluate)) throw new TypeError("VALUE_EVALUATOR_UNKNOWN");
+    if (![-1, 1].includes(delta)) throw new TypeError("VALUE_HAND_DELTA_INVALID");
+    if ((observation?.terminal ?? observation?.outcomeProjection?.terminal) !== false) {
+      throw new TypeError("VALUE_BOUND_NONTERMINAL_REQUIRED");
+    }
+    if (!Array.isArray(observation.selfState?.hand)) throw new TypeError("VALUE_HAND_MISSING");
+    const hand = observation.selfState.hand.slice();
+    if (delta === -1 && !hand.length) throw new TypeError("VALUE_HAND_DELTA_INVALID");
+    if (delta === -1) hand.pop();
+    else hand.push({ hidden: true });
+    // 仅计算数值界，不是规则后继。重算相同求和顺序，避免 base+delta 的浮点误差低估上界。
+    return evaluate({ ...observation, selfState: { ...observation.selfState, hand } });
+  }
+
   return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, evaluateStateValue, createStateValueEvaluator,
-    isMoneyMonotoneEvaluator: evaluate => moneyMonotoneEvaluators.has(evaluate) });
+    evaluateHandCountDelta, isStateValueEvaluator: evaluate => evaluatorWeights.has(evaluate),
+    isMoneyMonotoneEvaluator: evaluate => {
+      const weights = evaluatorWeights.get(evaluate);
+      return Boolean(weights && weights.credits > 0 && weights.energy > 0);
+    } });
 });

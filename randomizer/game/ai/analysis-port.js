@@ -102,6 +102,7 @@
     const identities = new Map();
     let resourceOrders = new WeakMap();
     let openingOrders = new WeakMap();
+    let cardTradeBounds = new WeakMap();
     const resourceGroups = new Map();
     let fork = null;
     let loadedEnvelope = null;
@@ -116,7 +117,7 @@
     let selectionCertificate = null;
     let nextCertificate = 0;
     const now = () => typeof performance !== "undefined" ? performance.now() : Date.now();
-    const milliseconds = { restore: 0, execute: 0, observation: 0, checkpoint: 0, resourceOrder: 0 };
+    const milliseconds = { restore: 0, execute: 0, observation: 0, checkpoint: 0, resourceOrder: 0, valueBound: 0 };
 
     function project(comp) {
       const state = comp.projection(viewer).state;
@@ -455,6 +456,50 @@
       return Array.isArray(ids) ? JSON.stringify(unordered ? [...ids].sort() : ids) : null;
     }
 
+    function cardTradeBound(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (cardTradeBounds.has(node)) return cardTradeBounds.get(node);
+      const at = now();
+      const result = describeCardTradeBound(stored, node);
+      milliseconds.valueBound += now() - at;
+      cardTradeBounds.set(node, result);
+      return result;
+    }
+
+    function describeCardTradeBound(stored, node) {
+      const session = stored.envelope.session?.session;
+      const effect = session?.queue?.[0];
+      const pending = effect?.payload?.decisionContext;
+      const source = session?.journal?.actions?.[0]?.action;
+      if (node.status !== "decision" || session.queue.length !== 1 || session.interruptContext
+        || effect.type !== "standard_action_session_decision" || effect.allowQuickActions
+        || effect.ownerId !== seatId || pending?.type !== "trade" || pending.playerId !== seatId
+        || source?.family !== "quick_trade" || source.target?.tradeId !== pending.tradeId
+        || !["credits-for-card", "energy-for-card", "publicity-for-card", "cards-for-pick-card"].includes(pending.tradeId)) return null;
+      let handDelta;
+      if (pending.kind === "discard" && pending.tradeId === "cards-for-pick-card"
+        && pending.required === true && pending.count === 2 && selectionSpec(node)) handDelta = -1;
+      else if (pending.kind === "card_selection" && node.legalActions.every(action =>
+        action.family === "choose_card" && action.target?.kind === "trade-card-selection")) handDelta = 1;
+      else return null;
+      const state = session.workingState;
+      const owner = state.players.players.find(player => player.id === seatId);
+      const company = industryCatalog.getPlayerIndustryDefinition(owner);
+      if (state.turn.currentPlayerId !== seatId || owner.passCompletionPending
+        || state.turn.passedPlayerIds.includes(seatId) || state.match.initialSetup
+        || state.players.players.some(player => player.reservedCards.length)
+        || state.turn.cardTurnEventBonuses?.length
+        || Object.values(state.aliens.aliens).some(slot => slot.revealed)
+        || company?.activeAbilityId !== "helios_remove_tech_income"
+        || company.passiveIds.some(id => id !== "helios_passive_reward_slots")
+        || owner.hand.some(card => !["basic", "space-agency"].includes(card.set))
+        || state.cards.publicCards.some(card => card && !["basic", "space-agency"].includes(card.set))) return null;
+      // getAvailablePool 会清理副本上的牌堆目录，不能写入冻结的工作状态。
+      if (!cards.getAvailablePool({ ...state.cards }, state.players).length) return null;
+      return freeze({ proof: "seti-card-trade-information-value-bound-v1", tradeId: pending.tradeId, handDelta });
+    }
+
     function postMainResourceOrder(node) {
       return resourceOrder(node, resourceOrders, false);
     }
@@ -528,6 +573,7 @@
       identities.clear();
       resourceOrders = new WeakMap();
       openingOrders = new WeakMap();
+      cardTradeBounds = new WeakMap();
       resourceGroups.clear();
       cache.clear();
       rootObservation = null;
@@ -548,7 +594,7 @@
     }
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
-      rememberSelection, reuseSelection, postMainResourceOrder, openingResourceOrder, close, getDiagnostics });
+      rememberSelection, reuseSelection, postMainResourceOrder, openingResourceOrder, cardTradeBound, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });
