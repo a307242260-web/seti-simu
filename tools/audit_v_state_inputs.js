@@ -318,6 +318,22 @@ try {
       }
       console.log(`[PASS] independent-shared-search-agent: root=${evaluate(raw)} leaf=${result.searches[0].value}`);
     } finally { searchEnv.dispose(); }
+    const prefixFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+      "../adhoc/ai-decision-corpus-20261023-v1/case-011-20261023-v1.json")));
+    const prefixEnv = createSimulationEnv();
+    try {
+      prefixEnv.reset({ seed: prefixFixture.source.seed, agentType: "search", compactReplay: true });
+      const checkpoint = prefixEnv.createCheckpoint();
+      checkpoint.coreState.committedState = prefixFixture.compositionEnvelope.committedState;
+      checkpoint.coreState.compositionEnvelope = prefixFixture.compositionEnvelope;
+      prefixEnv.loadCheckpoint(checkpoint);
+      const first = prefixEnv.runAgentDecision(), raw = prefixEnv.observe(prefixFixture.seatId);
+      const next = prefixEnv.runAgentDecision(), evaluate = independentValue.createStateValueEvaluator(prefixFixture.seatId);
+      if (!first.searches[0].planEvidence || next.searches[0].diagnostics.planContinuation !== "hit"
+        || next.searches[0].diagnostics.transitions !== 0 || first.searches[0].value !== next.searches[0].value
+        || evaluate(raw) !== evaluate(next.agentTrace.context.observation)) throw new Error("最优前缀复用的完成证据或原始/标准输入不一致");
+      console.log(`[PASS] independent-plan-prefix-reuse: root=${evaluate(raw)} leaf=${next.searches[0].value} inputs=0`);
+    } finally { prefixEnv.dispose(); }
   } catch (error) {
     console.log(`[FAIL] independent-card-choice-equivalence: ${error.message}`);
     allPass = false;

@@ -1,0 +1,15 @@
+{
+  "exitCode": 1,
+  "sourceAuditSha256": "4d24591735090d911e9d93f12abb51ea666de9949e8224fa8a245056e393cb79",
+  "analysisPortSha256": "0dc81a2d5cae2b7dcb1abf903c2fbad1c2623d7437a5a9151b2b8fd5fd6f6dd4",
+  "decisionSearchSha256": "91d9d97616d40fabb0b89563e7838597d39d69ae0bdfe7b651df4637b061c640",
+  "log": "reports/ai-foundation-20261023/state-value-input-audit-v18.log",
+  "logSha256": "336aaea161bbacc308a882d20948d126aa0dad0b3483e08668a166fec7cada8f",
+  "knownLegacyFailure": [
+    "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+  ],
+  "planPrefixPassed": [
+    "[PASS] independent-plan-prefix-reuse: root=35.5 leaf=37 inputs=0"
+  ],
+  "allNewPathsPassed": true
+}

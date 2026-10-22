@@ -1,0 +1,119 @@
+{
+  "schemaVersion": "seti-plan-prefix-validation-v1",
+  "baseCommit": "9646d74a6c0947a6746ab174a8faf622f089bf04",
+  "searchVersion": "seti-complete-decision-search-v20",
+  "agentVersion": "seti-search-agent-v2",
+  "rulesetVersion": "seti-runtime-v1.3 (unchanged)",
+  "snapshot": "/private/tmp/seti-ai-stage0-20261022-sp_78xnl",
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "0dc81a2d5cae2b7dcb1abf903c2fbad1c2623d7437a5a9151b2b8fd5fd6f6dd4",
+    "randomizer/game/ai/decision-search.js": "91d9d97616d40fabb0b89563e7838597d39d69ae0bdfe7b651df4637b061c640",
+    "randomizer/game/ai/search-agent.js": "23152262a2f35aae2ab5aa09e4d7ca23187efe7dfc6a44a147c540429c490425",
+    "randomizer/game/ai/search-agent.test.js": "9ab29ca4dc280101bc91d92b8a276db35baa114cf82a11d7426adb813520f85d",
+    "randomizer/game/ai/plan-prefix-reuse.test.js": "3b67256f3efc582ba6664e794bc46f893cf07adb66ad76b1d8cb16b1f32a3d5f",
+    "tools/node-test-inventory.js": "68ce02a33c6e6724fbfe9c849c02cef2afa201578ed52a44a8c7836aead54241",
+    "tools/audit_v_state_inputs.js": "4d24591735090d911e9d93f12abb51ea666de9949e8224fa8a245056e393cb79",
+    "randomizer/index.html": "a4bc90cb93e223763c0595f894d8c0b61641cd506e9d118f44e08e2b48e988fb",
+    "adhoc/ai-plan-prefix-reuse-design-20261023-v1.md": "44688e5f1fe3d5adb9e7db98c1d98ee78448078177a9fb00daf0b05ba373a714",
+    "tools/browser-smoke-inventory.js": "2787b06ffa839030e7d22858a3b01f3e3c7cd47672405d89a991cb67c9e17afd",
+    "docs/ai-plan-prefix-reuse-proof-20261023.md": "54f39d5ab29763d145f95b066765308be0a3bf08bcd2bbcaae9dc691e675a507",
+    "docs/ai-interface-inventory-20261022.md": "0221ca5c1d5fe7ddf063e4b15a10353b3bfb4303b66012de781326be3ee17352",
+    "docs/ai-search-agent-contract-20261023.md": "5f47ebd483a80b117eb1b877de2ba2e028566adfa0635793f422833a14d408e7",
+    "docs/ai-development-workflow.md": "7778901927bf7cfd96b4e92872646f5d5caa939684e321b675328665b3aaddd9",
+    "docs/ai-implementation-20261022.md": "0d4ef09c6cf231e59e226228041de6b4bb39a58309a6e43eb2e1230332b1e27b"
+  },
+  "syntaxChecked": [
+    "randomizer/game/ai/analysis-port.js",
+    "randomizer/game/ai/decision-search.js",
+    "randomizer/game/ai/search-agent.js",
+    "randomizer/game/ai/search-agent.test.js",
+    "randomizer/game/ai/plan-prefix-reuse.test.js",
+    "tools/node-test-inventory.js",
+    "tools/audit_v_state_inputs.js",
+    "tools/browser-smoke-inventory.js",
+    "adhoc/benchmark-ai-plan-prefix-20261023-v2.js",
+    "adhoc/audit-ai-decision-corpus-20261023-v12.js",
+    "adhoc/verify-ai-plan-prefix-receipt-20261023-v1.js"
+  ],
+  "node": "v22.22.0",
+  "machine": {
+    "system": "Darwin",
+    "release": "24.6.0",
+    "machine": "arm64"
+  },
+  "unit": {
+    "passed": 124,
+    "failed": 0,
+    "seconds": 148.87,
+    "log": "reports/ai-foundation-20261023/plan-prefix-full-node-v3.log"
+  },
+  "fullFlow": {
+    "passed": 1,
+    "failed": 0,
+    "seconds": 0.51
+  },
+  "browser": {
+    "passed": 3,
+    "failed": 0,
+    "log": "reports/ai-foundation-20261023/plan-prefix-browser-v1.log",
+    "scope": [
+      "production-start-button",
+      "production-search-agent-entry",
+      "production-completion-agent-parity"
+    ]
+  },
+  "inputAudit": {
+    "exitCode": 1,
+    "knownLegacyFailure": [
+      "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+    ],
+    "allNewPathsPassed": true,
+    "report": "reports/ai-foundation-20261023/state-value-input-audit-v18.json"
+  },
+  "windowBenchmark": {
+    "report": "reports/ai-foundation-20261023/plan-prefix-benchmark-v2.json",
+    "physicalInputs": 10,
+    "inputs": [
+      1994,
+      606
+    ],
+    "milliseconds": [
+      4273.958458,
+      1360.2813749999996
+    ],
+    "hits": 9,
+    "timingScope": "each mode from kernel construction through ten real inputs and final save, including root/search/close/actual execution; excludes raw report writes; same-process sequential warmup prevents isolated speed-ratio claims",
+    "stateComparison": "full committed state exact; all session fields retained with bijective temporary-handle renaming"
+  },
+  "formalReplayReceipt": "reports/ai-foundation-20261023/plan-prefix-receipt-v1.json",
+  "fixedColdGate": {
+    "report": "reports/ai-foundation-20261023/decision-corpus-audit-v12.json",
+    "passed": 4,
+    "total": 8,
+    "budget": {
+      "transitions": 256,
+      "nodes": 257,
+      "frontier": 256,
+      "milliseconds": 600
+    }
+  },
+  "negativeChecks": [
+    "model/proof-switch changes",
+    "full resource dependency changes while next action stays legal",
+    "foreign instance",
+    "information publication",
+    "incomplete search",
+    "validation watchdog",
+    "no opaque token in Browser/Simulation traces"
+  ],
+  "limitations": [
+    "four cold complex main/technology/reserved/late-round checkpoints remain incomplete at 256 inputs",
+    "complete cold window is required before prefix reuse; experimental shared agent budget unchanged",
+    "macro internal nodes and all steps beyond owner/information/terminal boundaries are not reused",
+    "proof limited to frozen linear V and its root-mask-invariant inputs; new features require review",
+    "no revealed-alien point in current eight-checkpoint corpus",
+    "temporary session handles are compared by bijective renaming on recovery, not raw byte identity",
+    "whole V audit retains old aomomo failure; legacy heuristic full Chrome flow not rerun",
+    "no new-search whole game, terminal score, cold/hot <=180s acceptance"
+  ]
+}

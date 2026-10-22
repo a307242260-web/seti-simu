@@ -7,10 +7,10 @@
   else root.SetiSearchAgent = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (search, stateValue) {
   "use strict";
-  const VERSION = `seti-search-agent-v1/${search.VERSION}/${stateValue.MODEL_VERSION}`;
+  const VERSION = `seti-search-agent-v2/${search.VERSION}/${stateValue.MODEL_VERSION}`;
   const BUDGET = Object.freeze({ transitions: 256, nodes: 257, frontier: 256, milliseconds: 600 });
   const OPTIONS = Object.freeze({ resourceDominance: true, moneyCapacityDominance: true,
-    cardTradePruning: true, postMainPruning: true, openingPruning: true, cardChoiceEquivalence: true });
+    cardTradePruning: true, postMainPruning: true, openingPruning: true, cardChoiceEquivalence: true, planReuse: true });
   const MODEL_CHECKSUM = JSON.stringify({ searchVersion: search.VERSION, valueVersion: stateValue.MODEL_VERSION,
     weights: stateValue.DEFAULT_WEIGHTS, budget: BUDGET, options: OPTIONS });
 
@@ -30,6 +30,7 @@
       || typeof analysisPort?.close !== "function") throw new TypeError("SEARCH_AGENT_PORT_REQUIRED");
     const evaluate = stateValue.createStateValueEvaluator(seatId);
     let continuation = null;
+    let planContinuation = null;
     function decide(context) {
       const startedAt = performance.now();
       try {
@@ -39,8 +40,8 @@
         if (expected.size !== context.legalActions.length || root.legalActions.length !== expected.size
           || root.legalActions.some(action => !expected.has(actionKey(action)))) throw new Error("SEARCH_AGENT_BOUNDARY_MISMATCH");
         const result = search.searchDecision({ port: analysisPort, root, evaluate, budget: BUDGET,
-          ...OPTIONS, continuation, modelKey: evaluate.modelKey });
-        const { selectionContinuation, ...publicResult } = result;
+          ...OPTIONS, continuation, planContinuation, modelKey: evaluate.modelKey });
+        const { selectionContinuation, planContinuation: nextPlan, ...publicResult } = result;
         const evidence = { ...publicResult, rootAndSearchMilliseconds: performance.now() - startedAt,
           analysis: analysisPort.getDiagnostics?.() || null };
         if (!result.complete || !result.actionId) {
@@ -50,9 +51,11 @@
           throw error;
         }
         continuation = selectionContinuation;
+        planContinuation = nextPlan;
         return { actionId: result.actionId, reasonCode: "search:complete-visible-window", search: evidence };
       } catch (error) {
         continuation = null;
+        planContinuation = null;
         throw error;
       } finally { analysisPort.close(); }
     }

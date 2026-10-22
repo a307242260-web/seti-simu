@@ -804,6 +804,7 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     await waitFor(completed, "搜索玩家真实提交");
     const first = window.SetiRandomizer.inspect().machinePlayer;
     if (first.lastResult.agentTrace.search.selectionContinuation !== undefined
+      || first.lastResult.agentTrace.search.planContinuation !== undefined
       || !first.lastResult.searches?.length) throw new Error("搜索证据丢失或泄漏临时token");
     const capture = window.SetiRandomizer.capture();
     if (!capture.ok) throw new Error("搜索后保存失败");

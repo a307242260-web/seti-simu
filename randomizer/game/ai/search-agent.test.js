@@ -12,6 +12,17 @@ const { createBrowserRuleComposition } = require("../../app/browser-rule-composi
 const { defaultVisibilityPolicy } = require("../../app/browser-host/projection-adapter");
 const { createBrowserAiBootstrap } = require("../../app/ai/browser-bootstrap");
 const { buildIdentity, fingerprintOf } = require("../../../tools/run_research_validation");
+// Session handles are rebuilt on restore; preserve a bijection of every reference.
+// Committed rule state, physical entity IDs, RNG and all other fields stay exact.
+function normalizeSessionHandles(envelope) {
+  if (!envelope.session) return envelope;
+  const names = new Map();
+  const session = JSON.stringify(envelope.session).replace(/effect-session-[0-9]+(?=[:"\\])/g, name => {
+    if (!names.has(name)) names.set(name, `effect-session-ref-${names.size}`);
+    return names.get(name);
+  });
+  return { ...envelope, session: JSON.parse(session) };
+}
 const read = p => JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../..", p)));
 const fixture = id => read(`adhoc/ai-decision-corpus-20261023-v1/case-${id}-20261023-v1.json`);
 function simulation(f, options = {}) {
@@ -59,6 +70,7 @@ function direct(f, cache = 0) {
   assert(result.searches[0].rootAndSearchMilliseconds >= result.searches[0].diagnostics.milliseconds);
   assert.equal(Object.isFrozen(result.agentTrace.search), true);
   assert.equal(Object.hasOwn(result.agentTrace.search, "selectionContinuation"), false);
+  assert.equal(Object.hasOwn(result.agentTrace.search, "planContinuation"), false);
   assert.equal(env.getReplay().steps.length, 1);
 
   const browser = createBrowserRuleComposition({ seed: f.source.seed, random: createSeededRandom(f.source.seed),
@@ -93,12 +105,31 @@ function direct(f, cache = 0) {
   assert.equal(browserFailure.ok, false); assert.equal(browserFailure.code, "SEARCH_INCOMPLETE");
   assert.equal(browserFailure.search.complete, false); assert.equal(submissions, 1);
   assert.deepEqual(browser.lifecycle.save().envelope, browserBefore);
-  env.dispose(); failed.dispose(); browser.dispose();
+  env.dispose(); failed.dispose();
 
   const postFixture = fixture("011"), post = simulation(postFixture), postExpected = direct(postFixture);
   const postResult = post.runAgentDecision();
   assert.equal(postResult.actionId, postExpected.actionId); assert.equal(postResult.agentTrace.coverage, "complete");
   assert.equal(postResult.searches[0].value, postExpected.searches[0].value); assert.equal(post.getReplay().steps.length, 1);
+  assert(browser.lifecycle.restore(postFixture.compositionEnvelope).ok);
+  const browserPost=await port.runOnce();assert(browserPost.ok,browserPost.message);
+  assert.equal(browserPost.actionId,postResult.actionId);
+  const recoveredPost=simulation(postFixture);recoveredPost.loadCheckpoint(post.createCheckpoint());
+  let prefixHits=0;
+  for(let step=1;step<postResult.searches[0].lines[0].distance;step+=1) {
+    const reusedPost=post.runAgentDecision(), coldPost=recoveredPost.runAgentDecision();
+    assert.equal(reusedPost.actionId,coldPost.actionId);assert.equal(reusedPost.searches[0].value,coldPost.searches[0].value);
+    assert.deepEqual(normalizeSessionHandles(post.createCheckpoint().coreState.compositionEnvelope),
+      normalizeSessionHandles(recoveredPost.createCheckpoint().coreState.compositionEnvelope));
+    const browserNext=await port.runOnce();assert(browserNext.ok,browserNext.message);
+    assert.equal(browserNext.actionId,reusedPost.actionId);assert.equal(browserNext.searches[0].value,reusedPost.searches[0].value);
+    assert.deepEqual(normalizeSessionHandles(browser.lifecycle.save().envelope),
+      normalizeSessionHandles(post.createCheckpoint().coreState.compositionEnvelope));
+    assert.equal(Object.hasOwn(browserNext.agentTrace.search,"planContinuation"),false);
+    if(reusedPost.searches[0].diagnostics.planContinuation==="hit")prefixHits+=1;
+  }
+  assert(prefixHits>0,"共享Simulation运行时须沿完整窗口命中一般前缀证据");
+  recoveredPost.dispose();browser.dispose();
   post.dispose();
 
   const base = read("reports/ai-foundation-20261022/analysis-root-input-v2.json");

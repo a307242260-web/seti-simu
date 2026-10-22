@@ -31,13 +31,16 @@ Browser高频inspect不复制原始actionOutcomes，查看lastOutcomeSummary；�
 每次finally关闭分析端口，释放fork及精确转换缓存。已完成纯付款选择组件的opaque token
 只保存在本席算法中，下一真实点击仍核对完整依赖与全部出口完成证据。
 关闭端口不删除该份证据；reset、恢复、Browser invalidate和dispose均丢弃旧算法实例及临时token。
-一般行动后缀的复用仍未实现，不能仅凭下一步合法就续用。
+搜索v20另显式启用`planReuse`，复用[已闭合窗口的最优前缀](ai-plan-prefix-reuse-proof-20261023.md)。
+同一回合的假设种子按公开配置和回合身份重建；完整状态、RNG、队列及合法信封仍须一致。
+证书最多记录32个真实单输入前缀，宏内部、信息边界和其他owner不冒充已有节点。
+它保留原完整比较结论及真实后缀见证；不能仅凭下一步合法就续用，也不能救活未闭合的首次搜索。
 
 ## 结果和失败
 
 成功的agentTrace.coverage为complete，search保存scope、根去向、完整图、等价/证明归属、
-未完成集合、预算与耗时，selectionContinuation不导出。
-searches返回本次搜索证据；选择续用记录0次新模拟及复用证据，不把旧计算重复记账。
+未完成集合、预算与耗时，selectionContinuation与planContinuation均不导出。
+searches返回本次搜索证据；选择或最优前缀续用记录0次新模拟及原证据引用，不把旧计算重复记账。
 rootAndSearchMilliseconds包括打开根，analysis诊断保留正式提交、投影、缓存等成本。
 value是非终局窗口估值，游戏分数须来自正式完整终局。
 
@@ -51,9 +54,10 @@ search-agent.test比较真实收入检查点在直接搜索、Browser、Simulati
 检查缓存开关、一个输入对应一个replay，以及复杂开局超预算时两端根/RNG/replay不变。
 主行动后真实数据窗口也通过共享Simulation接入。
 实际付款点击的两次完成证据命中与恢复后重新计算后缀一致，非法payload和错误边界拒绝。
+主行动后窗口在共享Simulation中命中一般前缀证据，与恢复后的动作、估值、正式状态及会话引用关系一致。
 真实Chrome的production-search-agent-entry检查脚本加载、机器提交和保存恢复。
 
 这些是具体输入与共享接入的验证，不构成全部规则状态、整个游戏、搜索质量或单局速度验收。
-复杂主行动、科技/任务/外星人更广范围、一般行动计划复用及完整局性能仍需继续。
+复杂主行动、科技/任务/外星人更广范围、宏内部复用及完整局性能仍需继续。
 旧heuristic的production-browser-full-parity未通过，本轮失败记录为60秒外层超时。
 最终版只重跑启动、新搜索和completion三项Chrome检查；没有将旧流程算作搜索速度通过。

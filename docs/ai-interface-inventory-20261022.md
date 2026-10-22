@@ -7,6 +7,7 @@
 新 AI 可以绕过旧启发式策略与目标系统，接入共享协调器的决策函数边界。
 2026-10-23更新：通用factory、可信分析端口、独立估值和搜索已提供；
 Browser/Simulation都可显式选择实验search玩家，未闭合仍失败，不代表整局能力已完成。
+搜索v20另提供按完整状态与合法信封校验的最优前缀复用；证明与容量见[复用契约](ai-plan-prefix-reuse-proof-20261023.md)。
 新的开发顺序见 [AI 开发流程](ai-development-workflow.md)。
 
 ## 机器决策调用链
@@ -25,7 +26,8 @@ Browser bootstrap                  Simulation env
              recordStep（Simulation 记录 replay 和 reward）
 ```
 
-决策函数是可替换点。协调器拥有执行和计划缓存；策略不需要复制执行器。
+决策函数是可替换点。协调器拥有正式执行与旧计划缓存；新完成证据留在本席算法和可信分析端口。
+策略不需要复制执行器。
 条件 Decision 的 owner 可能不是当前 turn 玩家，必须按当前合法集和 session 解析席位。
 
 ## 接口和责任
@@ -43,9 +45,10 @@ Browser bootstrap                  Simulation env
 | Policy 数据协议 | [policy-port.js](../randomizer/game/ai/policy-port.js) | `createDecisionContext`、`createPolicyDecision`、`validatePolicyDecision`；这是策略内部可选协议，不等同于协调器函数签名 |
 | 旧搜索服务 | [rule-composition.js](../randomizer/game/rule-composition.js) 的 `counterfactualPort.evaluate(actions, options)` | 在正式规则分支执行并输出 actionOutcomes；已含搜索与策略回调机制，不能视为纯规则原语 |
 | 分支原语 | `counterfactualPort.createFork(envelope, forkOptions)` | 从生命周期 envelope 创建隔离分支；只供可信搜索适配层使用，不能把 envelope 交给策略 |
+| 新分析与证据 | [analysis-port.js](../randomizer/game/ai/analysis-port.js) 的 `openRoot/expand/rememberPlan/reusePlan` | 不透明节点；完整窗口完成后颁发本席证书，按完整身份、RNG、合法信封和模型验证后复用 |
 | 分支诊断 | `counterfactualPort.getDiagnostics()` | 上次 evaluate 的预算、执行和裁剪诊断；不是所有自定义搜索的通用计时器 |
 | 旧估值 | [expected-score-evaluator.js](../randomizer/game/ai/expected-score-evaluator.js) 的 `evaluateState`、`evaluateStateValue` | 同文件还含目标枚举、后继选择与搜索优先级；新 AI 不把整个模块作为规则依赖 |
-| 计划复用 | [plan-continuation.js](../randomizer/game/ai/plan-continuation.js) | 从真实执行证据构造计划；协调器逐步检查依赖和合法性后消费 |
+| 旧计划复用 | [plan-continuation.js](../randomizer/game/ai/plan-continuation.js) | 从真实执行证据构造计划；协调器逐步检查依赖和合法性后消费 |
 
 Standard Action 使用 `seti-standard-action-v1`，主要字段为：
 

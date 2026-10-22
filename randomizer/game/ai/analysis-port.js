@@ -46,6 +46,18 @@
       : composition.inputPort.enumerateActions({});
   }
 
+  function actionSetKey(actions) {
+    function ordered(value) {
+      if (!value || typeof value !== "object") return value;
+      if (Array.isArray(value)) return value.map(ordered);
+      return Object.fromEntries(Object.keys(value).sort().map(key => [key, ordered(value[key])]));
+    }
+    return JSON.stringify(actions.map(action => ordered({ actionId: action.actionId, actorId: action.actorId,
+      stateVersion: action.stateVersion, decisionVersion: action.decisionVersion, decisionId: action.decisionId || null,
+      family: action.family, phase: action.phase, target: action.target || {}, payload: action.payload || {} }))
+      .sort((a, b) => a.actionId < b.actionId ? -1 : a.actionId > b.actionId ? 1 : 0));
+  }
+
   // 只比较向前正式输入的行为；不提供 undo/abort，因而历史日志和撤销帧不参与身份。
   // 除下述已证明例外，实体编号、数组顺序、资源、规则 RNG 与剩余队列保留。会改变合法信封的
   // authority 版本单独由 expand 校验，不能作为循环状态的差异。
@@ -152,6 +164,7 @@
     const cache = new Map();
     // 每席只保留最近一份完成证据；close 结束分支，不丢失下一次点击的证据。
     let selectionCertificate = null;
+    let planCertificate = null;
     let nextCertificate = 0;
     const now = () => typeof performance !== "undefined" ? performance.now() : Date.now();
     const milliseconds = { restore: 0, execute: 0, observation: 0, checkpoint: 0, resourceOrder: 0, valueBound: 0, postMainPlan: 0 };
@@ -219,7 +232,7 @@
       const boundary = barrier?.code || null;
       const key = forwardIdentity(envelope, status, boundary);
       if (!identities.has(key)) identities.set(key, Object.freeze({}));
-      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key) });
+      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key });
       nodeCount += 1;
       return node;
     }
@@ -236,9 +249,13 @@
       if (!actions.length || actions.some(action => action.actorId !== seatId)) {
         throw new Error("ANALYSIS_ROOT_OWNER_MISMATCH");
       }
-      // 公共事实确定假设世界；隐藏权威快照只留在本闭包。
-      publicSeed = JSON.stringify(rootObservation);
-      const rootEnvelope = composition.counterfactualPort.prepareRoot(snapshot(composition), {
+      // 同一回合的已知输入不重抽未知世界；恢复仅依赖正式公开配置和回合身份。
+      // 完整节点身份仍包括假设/RNG，不能因种子稳定而忽略实际依赖变化。
+      const authoritative = snapshot(composition);
+      const state = authoritative.session?.session?.workingState || JSON.parse(authoritative.committedState);
+      publicSeed = JSON.stringify(["seti-turn-hypothesis-v1", state.meta.seed, state.meta.gameId, seatId,
+        state.turn.roundNumber, state.turn.turnNumber, state.turn.actionCycleNumber, state.turn.activePlayerIds]);
+      const rootEnvelope = composition.counterfactualPort.prepareRoot(authoritative, {
         publicSeed, restoreRandomState: true,
       });
       fork = composition.counterfactualPort.createFork(rootEnvelope, {
@@ -491,6 +508,40 @@
 
     function selectionTargetKey(ids, unordered) {
       return Array.isArray(ids) ? JSON.stringify(unordered ? [...ids].sort() : ids) : null;
+    }
+
+    function rememberPlan(entries, modelKey, source) {
+      if (typeof modelKey !== "string" || !modelKey || !Array.isArray(entries) || !entries.length
+        || !Number.isSafeInteger(source?.nodeCount) || source.nodeCount < 1) throw new Error("ANALYSIS_PLAN_EVIDENCE_INVALID");
+      const rows = entries.slice(0, 32).map(entry => {
+        const stored = nodes.get(entry.node);
+        if (!fork || !stored || !["stable", "decision"].includes(entry.node.status)
+          || !entry.node.legalActions.some(action => action.actionId === entry.actionId)
+          || !Number.isFinite(entry.value) || !Number.isSafeInteger(entry.distance) || entry.distance < 1
+          || !Array.isArray(entry.roots) || entry.roots.length !== entry.node.legalActions.length
+          || new Set(entry.roots.map(row => row.actionId)).size !== entry.roots.length
+          || entry.node.legalActions.some(action => !entry.roots.some(row => row.actionId === action.actionId))) {
+          throw new Error("ANALYSIS_PLAN_EVIDENCE_INVALID");
+        }
+        return { key: stored.key, actions: actionSetKey(entry.node.legalActions), actionId: entry.actionId,
+          value: entry.value, distance: entry.distance, sourceNode: entry.sourceNode, roots: freeze(structuredClone(entry.roots)) };
+      });
+      const token = Object.freeze({}), evidenceId = `plan-evidence-${++nextCertificate}`;
+      planCertificate = { token, modelKey, rows, evidenceId, source: freeze(structuredClone(source)) };
+      return { token, evidenceId };
+    }
+
+    function reusePlan(node, token, modelKey) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      const saved = token && planCertificate?.token === token ? planCertificate : null;
+      if (!saved) return { hit: false, reason: "unknown-evidence" };
+      if (saved.modelKey !== modelKey) return { hit: false, reason: "model-changed" };
+      const row = saved.rows.find(entry => entry.key === stored.key && entry.actions === actionSetKey(node.legalActions));
+      if (!row) return { hit: false, reason: "dependencies-changed" };
+      return freeze({ hit: true, actionId: row.actionId, value: row.value, distance: row.distance, roots: row.roots,
+        proof: "seti-complete-window-best-prefix-reuse-v1", evidenceId: saved.evidenceId,
+        sourceNode: row.sourceNode, source: saved.source });
     }
 
     function cardTradeBound(node) {
@@ -1008,6 +1059,7 @@
       return freeze({ nodeCount, submissionCount, cacheHits, cacheEntries: cache.size,
         observationCount, identityCount: identities.size, maxCacheEntries,
         selectionEvidenceEntries: selectionCertificate ? 1 : 0, maxSelectionEvidenceEntries: 1,
+        planEvidenceEntries: planCertificate ? 1 : 0, planPrefixEntries: planCertificate?.rows.length || 0, maxPlanPrefixEntries: 32,
         milliseconds: { ...milliseconds } });
     }
 
@@ -1018,7 +1070,7 @@
     }
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
-      rememberSelection, reuseSelection, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
+      rememberSelection, reuseSelection, rememberPlan, reusePlan, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, postMainPlanSpec, close, getDiagnostics });
   }
 

@@ -6,12 +6,12 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v19";
+  const VERSION = "seti-complete-decision-search-v20";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
 
-  function searchDecision({ port, root, evaluate, budget = {}, continuation = null,
+  function searchDecision({ port, root, evaluate, budget = {}, continuation = null, planContinuation = null, planReuse = false,
     modelKey = null, resourceDominance = false, moneyCapacityDominance = false, cardTradePruning = false, postMainPruning = false, openingPruning = false, cardChoiceEquivalence = false,
     now = () => performance.now() } = {}) {
     if (typeof port?.expand !== "function" || typeof port?.identity !== "function"
@@ -42,23 +42,36 @@
       || evaluate.seatId !== root.legalActions?.[0]?.actorId
       || typeof port.cardTradeBound !== "function")) throw new TypeError("SEARCH_CARD_CHOICE_MODEL_INVALID");
     if (modelKey != null && (typeof modelKey !== "string" || !modelKey)) throw new TypeError("SEARCH_MODEL_KEY_INVALID");
+    if (planReuse && (!stateValue?.isStateValueEvaluator?.(evaluate) || evaluate.seatId !== root.legalActions?.[0]?.actorId
+      || typeof port.rememberPlan !== "function" || typeof port.reusePlan !== "function")) throw new TypeError("SEARCH_PLAN_MODEL_INVALID");
+    const planKey = JSON.stringify([VERSION, modelKey, evaluate.modelKey, resourceDominance, moneyCapacityDominance,
+      cardTradePruning, postMainPruning, openingPruning, cardChoiceEquivalence]);
     const reused = continuation && modelKey && port.reuseSelection?.(root, continuation, modelKey);
-    if (reused?.hit && now() - startedAt < limits.milliseconds) return {
-      schemaVersion: VERSION, complete: true, actionId: reused.actionId, value: reused.value,
-      selectionPlan: { selectedIds: reused.selectedIds, cardIds: reused.cardIds, proof: reused.proof, complete: true },
-      selectionContinuation: continuation,
-      reusedCoverage: { evidenceId: reused.evidenceId, exitCount: reused.exitCount, proof: reused.proof },
+    const reusedPlan = !reused?.hit && planReuse && planContinuation && port.reusePlan(root, planContinuation, planKey);
+    const hit = reused?.hit ? reused : reusedPlan?.hit ? reusedPlan : null;
+    if (hit && now() - startedAt < limits.milliseconds) return {
+      schemaVersion: VERSION, complete: true, actionId: hit.actionId, value: hit.value,
+      selectionPlan: reused?.hit ? { selectedIds: reused.selectedIds, cardIds: reused.cardIds, proof: reused.proof, complete: true } : null,
+      selectionContinuation: reused?.hit ? continuation : null,
+      planContinuation: reusedPlan?.hit ? planContinuation : null,
+      reusedCoverage: reused?.hit ? { evidenceId: reused.evidenceId, exitCount: reused.exitCount, proof: reused.proof }
+        : { evidenceId: hit.evidenceId, proof: hit.proof, sourceNode: hit.sourceNode, source: hit.source, distance: hit.distance },
       stopReason: null, scope: "own-visible-decision-window-to-owner-information-or-terminal-boundary",
-      roots: reused.roots, lines: [], unresolved: [],
+      roots: hit.roots, lines: [], unresolved: [],
       diagnostics: { transitions: 0, nodes: 1, equivalents: 0, selectionMacros: 0, peakFrontier: 0,
-        dominancePrunes: 0, resourceDominance: resourceDominance ? "disabled-for-selection-certificate" : "off",
-        moneyCapacityPrunes: 0, moneyCapacityDominance: moneyCapacityDominance ? "disabled-for-selection-certificate" : "off",
-        cardTradePrunes: 0, cardTradePruning: cardTradePruning ? "disabled-for-selection-certificate" : "off",
+        dominancePrunes: 0, resourceDominance: resourceDominance
+          ? reused?.hit ? "disabled-for-selection-certificate" : "reused-complete-window" : "off",
+        moneyCapacityPrunes: 0, moneyCapacityDominance: moneyCapacityDominance
+          ? reused?.hit ? "disabled-for-selection-certificate" : "reused-complete-window" : "off",
+        cardTradePrunes: 0, cardTradePruning: cardTradePruning
+          ? reused?.hit ? "disabled-for-selection-certificate" : "reused-complete-window" : "off",
         postMainProofNodes: 0, postMainExcludedActions: 0, postMainPruning: postMainPruning ? "enabled" : "off",
         openingProofNodes: 0, openingExcludedActions: 0, openingPruning: openingPruning ? "enabled" : "off",
         openingPassMacros: 0,
         cardChoiceProofNodes: 0, cardChoiceExcludedActions: 0, cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
-        continuation: "hit", milliseconds: now() - startedAt, limits },
+        continuation: reused?.hit ? "hit" : reused ? reused.reason : "not-requested",
+        planContinuation: reusedPlan?.hit ? "hit" : planReuse ? "not-requested" : "off",
+        milliseconds: now() - startedAt, limits },
     };
     const nodes = [];
     const known = new Map();
@@ -362,6 +375,28 @@
     let accepted = complete && now() - startedAt < limits.milliseconds;
     let certificate = accepted && evidence && modelKey && nodes[0].best
       ? port.rememberSelection?.(root, evidence, modelKey) || null : null;
+    let planCertificate = null;
+    if (accepted && planReuse && nodes[0].best) {
+      const entries = [];
+      let current = 0;
+      while (entries.length < 32 && !BOUNDARIES.has(nodes[current].node.status)) {
+        const entry = nodes[current], best = entry.best;
+        if (!best) throw new Error("SEARCH_PLAN_WITNESS_MISSING");
+        const roots = entry.node.legalActions.map(action => {
+          const edge = entry.edges.find(edge => edge.actionId === action.actionId);
+          const exclusion = entry.localPlan?.excludedActionIds.includes(action.actionId) ? entry.localPlan.proof : null;
+          return { actionId: action.actionId, value: exclusion ? null : edge ? nodes[edge.target].value : null,
+            valueType: exclusion ? "not-executed" : "attained-lower-bound", completion: "covered-by-prior-complete-window",
+            sourceNode: current, ...(exclusion ? { proof: exclusion } : {}),
+            ...(entry.selection ? { proof: entry.selection.proof, equivalentExitSet: !action.target?.confirm } : {}) };
+        });
+        entries.push({ node: entry.node, actionId: best.actionId, value: entry.value, distance: entry.distance, sourceNode: current, roots });
+        if (best.cost !== 1) break;
+        current = best.target;
+      }
+      planCertificate = port.rememberPlan(entries, planKey, { searchVersion: VERSION, rootNode: 0,
+        nodeCount: nodes.length, boundaryWitness: retainedWitness(0), rootValue: nodes[0].value });
+    }
     const elapsed = now() - startedAt;
     accepted = accepted && elapsed < limits.milliseconds;
     if (!accepted) certificate = null;
@@ -373,6 +408,9 @@
         proof: nodes[0].selection.proof, complete: true,
       } : null,
       selectionContinuation: certificate,
+      planContinuation: accepted ? planCertificate?.token || null : null,
+      planEvidence: accepted && planCertificate ? { evidenceId: planCertificate.evidenceId,
+        proof: "seti-complete-window-best-prefix-reuse-v1", nodeCount: nodes.length } : null,
       value: accepted ? nodes[0].value : null,
       stopReason: stopReason || (!accepted ? "watchdog" : nodes[0].value == null ? "no-reachable-boundary" : null),
       scope: "own-visible-decision-window-to-owner-information-or-terminal-boundary",
@@ -391,6 +429,7 @@
         ...(useResourceDominance || useMoneyCapacity || useCardTradePruning || postMainPruning || openingPruning || cardChoiceEquivalence
           ? { resourceModelKey: evaluate.modelKey } : {}),
         continuation: reused ? (reused.hit ? "validation-watchdog" : reused.reason) : "not-requested",
+        planContinuation: reusedPlan ? (reusedPlan.hit ? "validation-watchdog" : reusedPlan.reason) : planReuse ? "not-requested" : "off",
         milliseconds: elapsed, limits },
     };
   }
