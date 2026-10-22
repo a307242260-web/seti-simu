@@ -19,12 +19,53 @@
       : composition.inputPort.enumerateActions({});
   }
 
+  // 只比较向前正式输入的行为；不提供 undo/abort，因而历史日志和撤销帧不参与身份。
+  // 实体编号、数组顺序、资源、规则 RNG 与完整剩余队列保留。会改变合法信封的
+  // authority 版本单独由 expand 校验，不能作为循环状态的差异。
+  function forwardIdentity(envelope, status, boundary) {
+    const session = envelope.session?.session;
+    const state = structuredClone(session?.workingState || JSON.parse(envelope.committedState));
+    delete state.meta.stateVersion;
+    if (state.match) delete state.match.decisionVersion;
+    const references = new Map();
+    const prefix = /^effect-session-[0-9]+$/.test(session?.sessionId) ? session.sessionId : null;
+    const referenceKeys = new Set(["effectId", "parentEffectId", "groupId", "quickGroupId", "decisionId", "choiceId"]);
+    function normalize(value, key = "") {
+      if (typeof value === "string" && prefix && referenceKeys.has(key)) {
+        // 引用按首次出现编号，保留相等关系；物理实体和普通文本绝不重命名。
+        const parts = value.split(new RegExp(`(${prefix}:(?:effect|group):[0-9]+)`, "g"));
+        if (parts.length > 1) return parts.map((part, index) => {
+          if (index % 2 === 0) return part;
+          if (!references.has(part)) references.set(part, references.size);
+          return { reference: references.get(part) };
+        });
+      }
+      if (!value || typeof value !== "object") return value;
+      if (Array.isArray(value)) return value.map(item => normalize(item));
+      const descriptor = value.schemaVersion === "seti-standard-action-v1";
+      return Object.fromEntries(Object.keys(value).sort()
+        .filter(name => !descriptor || !["actionId", "stateVersion", "decisionVersion"].includes(name))
+        .map(name => [name, normalize(value[name], name)]));
+    }
+    const pending = session ? {
+      phase: session.phase, queue: session.queue,
+      interruptContext: session.interruptContext,
+      irreversibleBarrier: session.irreversibleBarrier && {
+        code: session.irreversibleBarrier.code, reason: session.irreversibleBarrier.reason,
+      },
+      failure: session.failure,
+      family: session.journal.actions[0]?.action?.family || null,
+    } : null;
+    return JSON.stringify(normalize({ state, pending, status, boundary }));
+  }
+
   function createAnalysisPort({ composition, seatId, maxCacheEntries = 256 } = {}) {
     if (!composition?.counterfactualPort?.createFork || !composition?.counterfactualPort?.prepareRoot
       || typeof seatId !== "string" || !seatId) throw new TypeError("ANALYSIS_PORT_INVALID");
     if (!Number.isSafeInteger(maxCacheEntries) || maxCacheEntries < 0) throw new TypeError("ANALYSIS_CACHE_LIMIT_INVALID");
     const viewer = Object.freeze({ playerId: seatId, role: "player" });
     let nodes = new WeakMap();
+    const identities = new Map();
     let fork = null;
     let rootObservation = null;
     let publicSeed = null;
@@ -63,7 +104,9 @@
         observation: structuredClone(observation),
         legalActions: structuredClone(actions), status, boundary,
       });
-      nodes.set(node, { envelope, path });
+      const key = forwardIdentity(envelope, status, boundary);
+      if (!identities.has(key)) identities.set(key, Object.freeze({}));
+      nodes.set(node, { envelope, path, identity: identities.get(key) });
       nodeCount += 1;
       return node;
     }
@@ -81,8 +124,12 @@
       }
       // 公共事实确定假设世界；隐藏权威快照只留在本闭包。
       publicSeed = JSON.stringify(rootObservation);
-      const rootEnvelope = composition.counterfactualPort.prepareRoot(snapshot(composition), { publicSeed });
-      fork = composition.counterfactualPort.createFork(rootEnvelope, { branchKey: publicSeed });
+      const rootEnvelope = composition.counterfactualPort.prepareRoot(snapshot(composition), {
+        publicSeed, restoreRandomState: true,
+      });
+      fork = composition.counterfactualPort.createFork(rootEnvelope, {
+        branchKey: publicSeed, restoreRandomState: true,
+      });
       return createNode(rootEnvelope, rootObservation, actions, "decision");
     }
 
@@ -103,7 +150,6 @@
       }
       const comp = fork.composition || fork;
       const restoreAt = now();
-      fork.resetBranch?.(JSON.stringify([publicSeed, path]));
       const restored = comp.lifecycle.restore(stored.envelope, {
         silent: true, inPlace: true, trustedFork: true, skipProjection: true,
       });
@@ -159,6 +205,7 @@
       (fork?.composition || fork)?.dispose?.();
       fork = null;
       nodes = new WeakMap();
+      identities.clear();
       cache.clear();
       rootObservation = null;
       publicSeed = null;
@@ -166,10 +213,16 @@
 
     function getDiagnostics() {
       return freeze({ nodeCount, submissionCount, cacheHits, cacheEntries: cache.size,
-        maxCacheEntries, milliseconds: { ...milliseconds } });
+        identityCount: identities.size, maxCacheEntries, milliseconds: { ...milliseconds } });
     }
 
-    return Object.freeze({ openRoot, expand, close, getDiagnostics });
+    function identity(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      return stored.identity;
+    }
+
+    return Object.freeze({ openRoot, expand, identity, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

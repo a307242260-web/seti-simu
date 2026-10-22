@@ -30,8 +30,15 @@ assert.equal(branch.status, "decision");
 assert.equal(port.expand(root, rootActionId), branch, "相同已验证输入复用精确结果");
 assert.equal(port.getDiagnostics().cacheHits, 1);
 const branchBefore = JSON.stringify(branch);
-const selected = port.expand(branch, branch.legalActions[0].actionId);
+const initialChoice = branch.legalActions.find(action => action.target?.selectionKind === "initial");
+const selected = port.expand(branch, initialChoice.actionId);
 assert.equal(selected.status, "decision");
+assert.notEqual(port.identity(selected), port.identity(branch), "选中状态不同不能合并");
+const toggle = selected.legalActions.find(action => action.target?.cardId === initialChoice.target.cardId);
+assert(toggle, "开局选择可取消");
+const cancelled = port.expand(selected, toggle.actionId);
+assert.equal(port.identity(cancelled), port.identity(branch), "选择再取消只有日志/版本差异，应回到同一向前状态");
+assert.deepEqual(Object.keys(port.identity(branch)), [], "身份是不透明令牌，不能读到隐藏世界键");
 assert.equal(JSON.stringify(branch), branchBefore, "后继执行不能冻结或修改已有节点观察");
 assert.deepEqual(comp.lifecycle.save().envelope, before, "分支不能改变真实根或RNG");
 const other = createAnalysisPort({ composition: comp, seatId: "wrong-owner" });
@@ -66,6 +73,25 @@ const trade = mainRoot.legalActions.find(action => action.family === "quick_trad
 assert(trade, "本夹具必须能用两张牌精选");
 const drawPath = [trade.actionId];
 let pick = mainPort.expand(mainRoot, trade.actionId);
+const discardRoot = pick;
+const oneDiscard = mainPort.expand(pick, pick.legalActions[0].actionId);
+const undoDiscard = oneDiscard.legalActions.find(action => action.presentation?.selected);
+const discardCancelled = mainPort.expand(oneDiscard, undoDiscard.actionId);
+assert.equal(mainPort.identity(discardCancelled), mainPort.identity(discardRoot),
+  "弃牌取消的完整队列虽有新effect编号，但剩余规则与随机状态相同");
+assert.notEqual(mainPort.identity(oneDiscard), mainPort.identity(discardRoot));
+const reselected = mainPort.expand(discardCancelled, discardCancelled.legalActions[0].actionId);
+assert.equal(mainPort.identity(reselected), mainPort.identity(oneDiscard),
+  "循环后后继状态一致，随机状态不能依赖路径长度");
+const secondCard = oneDiscard.legalActions.find(action => action.target?.cardInstanceId
+  && action.target.cardInstanceId !== undoDiscard.target.cardInstanceId);
+const selectedAB = mainPort.expand(oneDiscard, secondCard.actionId);
+const selectedB = mainPort.expand(discardRoot, discardRoot.legalActions.find(action =>
+  action.target?.cardInstanceId === secondCard.target.cardInstanceId).actionId);
+const selectedBA = mainPort.expand(selectedB, selectedB.legalActions.find(action =>
+  action.target?.cardInstanceId === undoDiscard.target.cardInstanceId).actionId);
+assert.notEqual(mainPort.identity(selectedAB), mainPort.identity(selectedBA),
+  "相同弃牌集合但不同顺序保守保留，不能假设数组无序");
 for (let step = 0; step < 4 && !pick.legalActions.some(action => action.target?.source === "blind"); step += 1) {
   const next = pick.legalActions.find(action => action.target?.confirm)
     || pick.legalActions.find(action => action.target?.kind === "discard-hand-card" && !action.presentation?.selected);

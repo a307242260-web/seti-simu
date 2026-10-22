@@ -54,7 +54,7 @@ function hashCounterfactualSeed(seed) {
   return hash >>> 0;
 }
 
-function createCounterfactualRandomFromState(initialState) {
+function createCounterfactualRandomFromState(initialState, restoreState = false) {
   let state = Number(initialState) >>> 0 || 1;
   const random = function counterfactualRandom() {
     state = Math.imul(state ^ (state >>> 15), 1 | state);
@@ -65,11 +65,12 @@ function createCounterfactualRandomFromState(initialState) {
     state = hashCounterfactualSeed(nextSeed) || 1;
   };
   random.getState = () => state >>> 0;
+  if (restoreState) random.setState = (next) => { state = Number(next) >>> 0; };
   return random;
 }
 
-function createCounterfactualRandom(seed) {
-  return createCounterfactualRandomFromState(hashCounterfactualSeed(seed));
+function createCounterfactualRandom(seed, restoreState = false) {
+  return createCounterfactualRandomFromState(hashCounterfactualSeed(seed), restoreState);
 }
 
 function createHiddenAlienHypothesis(root, publicSeed) {
@@ -1516,7 +1517,7 @@ function createProductionHostComposition(options = {}) {
   }
 
   const hostRuleOptions = {
-    prepareCounterfactualEnvelope(envelope, { publicSeed }) {
+    prepareCounterfactualEnvelope(envelope, { publicSeed, restoreRandomState = false }) {
       // 一次搜索只构造一次假设世界；后继/复用 fork 恢复该世界的真实执行快照。
       // session 的工作副本与撤销副本同样隔离，不能从恢复路径重新读回真实牌堆。
       const prepared = clone(envelope);
@@ -1527,6 +1528,11 @@ function createProductionHostComposition(options = {}) {
         session.committedState, ...session.undoFrames.map(frame => frame.stateBefore)] : [])];
       for (const state of snapshots) {
         if (state == null) continue;
+        if (restoreRandomState) state.meta.rngState = {
+          algorithm: "seti-counterfactual-mulberry32-v2",
+          state: hashCounterfactualSeed(`analysis-random-v1:${publicSeed}`) || 1,
+          branch: true,
+        };
         // 分配按根已知信息计算一次，各快照共用；不能因旧base尚未揭示而重抽已知物种。
         for (const key of hypothesis.unknownKeys) state.aliens[key].initialConfiguration = null;
         for (const { slotId, alienId, key, configuration } of hypothesis.assignments) {
@@ -1639,11 +1645,13 @@ function createProductionHostComposition(options = {}) {
           "composition-fork",
           forkOptions.branchKey || "root",
         ].join(":");
-        const branchRandom = createCounterfactualRandom(branchKey);
+        const branchRandom = createCounterfactualRandom(branchKey, forkOptions.restoreRandomState === true);
         const forkKernel = createProductionHostComposition({
           ...options,
           hostKind,
           random: branchRandom,
+          ...(forkOptions.restoreRandomState === true
+            ? { rngAlgorithm: "seti-counterfactual-mulberry32-v2" } : {}),
           rngState: {
             algorithm: "seti-counterfactual-mulberry32-v2",
             state: hashCounterfactualSeed(branchKey),
