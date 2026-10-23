@@ -16,6 +16,8 @@ Browser/Simulation都可显式选择实验search玩家，未闭合仍失败，�
 范围和身份限制见[角标选择等价](ai-post-main-corner-choice-proof-20261023.md)。
 搜索v24扩展既有`postMainPlanSpec`的[不活动保留牌范围](ai-post-main-plan-proof-20261022.md)，
 不增加接口、状态合并或新预算；未知和活动保留牌仍回到普通搜索。
+搜索v25新增`preMainDataPlanSpec`，输出[主行动前数据资源下界与严格省略](ai-pre-main-data-proof-20261023.md)，
+可与原开局计划合成；算法不读取私有状态，也不把未完成图作为计划证据。
 新的开发顺序见 [AI 开发流程](ai-development-workflow.md)。
 
 ## 机器决策调用链

@@ -1,0 +1,9 @@
+{"label":"initial-selection","id":"case-001","choices":5,"complete":true,"stopReason":null,"inputs":144,"ms":189.67079199999998}
+{"label":"initial-income","id":"case-003","choices":5,"complete":true,"stopReason":null,"inputs":26,"ms":158.65750000000003}
+{"label":"first-other-company-main","id":"case-008","choices":17,"complete":false,"stopReason":"transition-budget","inputs":256,"ms":502.81354099999993}
+{"label":"first-other-company-post-main","id":"case-011","choices":10,"complete":true,"stopReason":null,"inputs":137,"ms":246.40020900000002}
+{"label":"regular-conditional","id":"case-009","choices":1,"complete":true,"stopReason":null,"inputs":7,"ms":25.257959000000028}
+{"label":"round2-main-with-tech","id":"case-062","choices":25,"complete":false,"stopReason":"transition-budget","inputs":256,"ms":424.0899159999999}
+{"label":"round3-main-with-reserved","id":"case-105","choices":28,"complete":false,"stopReason":"transition-budget","inputs":254,"ms":390.28766700000006}
+{"label":"round4-main","id":"case-152","choices":24,"complete":false,"stopReason":"transition-budget","inputs":256,"ms":487.0342499999997}
+reports/ai-foundation-20261023/decision-corpus-audit-v20.json

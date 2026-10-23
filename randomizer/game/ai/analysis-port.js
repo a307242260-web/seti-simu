@@ -228,6 +228,7 @@
     let cardTradeBounds = new WeakMap();
     let passReserveBounds = new WeakMap();
     let cornerChoices = new WeakMap();
+    let preMainDataPlans = new WeakMap();
     let postMainPlans = new WeakMap();
     const resourceGroups = new Map();
     let fork = null;
@@ -246,7 +247,7 @@
     let planCertificate = null;
     let nextCertificate = 0;
     const now = () => typeof performance !== "undefined" ? performance.now() : Date.now();
-    const milliseconds = { restore: 0, execute: 0, observation: 0, checkpoint: 0, resourceOrder: 0, valueBound: 0, postMainPlan: 0 };
+    const milliseconds = { restore: 0, execute: 0, observation: 0, checkpoint: 0, resourceOrder: 0, valueBound: 0, postMainPlan: 0, preMainDataPlan: 0 };
 
     function project(comp) {
       const state = comp.projection(viewer).state;
@@ -873,6 +874,71 @@
       return freeze({ proof: "seti-standard-pass-reserve-choice-value-equivalence-v1", handDelta: 1, expectedStatus: "other-owner" });
     }
 
+    function preMainDataPlanSpec(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (preMainDataPlans.has(node)) return preMainDataPlans.get(node);
+      const at = now(), result = describePreMainDataPlan(stored, node);
+      milliseconds.preMainDataPlan += now() - at;
+      preMainDataPlans.set(node, result);
+      return result;
+    }
+
+    function describePreMainDataPlan(stored, node) {
+      if (node.status !== "stable" || stored.envelope.session) return null;
+      const state = readIdentityState(stored.envelope), owner = state.players.players.find(player => player.id === seatId);
+      if (!owner || owner.mainActionCompleted || owner.hand.length > 5 || probeTurnSession.PASS_HAND_LIMIT !== 4
+        || Object.keys(owner.techState.ownedTiles).some(id => id.startsWith("blue") && owner.techState.ownedTiles[id])
+        || owner.industryFutureSpan?.card || owner.industryBorrowedTechTileId && !/^(orange|purple)[1-4]$/.test(owner.industryBorrowedTechTileId)
+        || Object.keys(state.aliens.chong?.transportTasksByRocketId || {}).length
+        || Object.values(state.aliens.aliens).some(alienState.isAlienReadyToReveal)
+        || state.pieces.rockets.some(rocket => [rocket.playerId, rocket.color, rocket.playerColor].some(id => id === seatId || id === owner.color)
+          && ((rocket.kind ?? "standard") !== "standard" || rocket.fossilId != null))) return null;
+      const company = industryCatalog.getPlayerIndustryDefinition(owner);
+      if (![null, "turing_borrow_tech"].includes(company?.activeAbilityId) || !knownCardMoneyOrder(node)) return null;
+      const occupied = data.listComputerPlacedTokens(owner).map(token => token.placementSlot).sort((a, b) => a - b);
+      if (owner.resources.availableData !== owner.dataState.poolTokens.length
+        || occupied.length !== owner.dataState.placedTokens.length || occupied.some((slot, index) => slot !== index + 1)
+        || data.ANALYZE_REQUIRED_COMPUTER_SLOT !== 6
+        || JSON.stringify(data.getComputerSlotBonus(2)) !== '{"type":"publicity","publicity":1}'
+        || JSON.stringify(data.getComputerSlotBonus(4)) !== '{"type":"income"}'
+        || Object.keys(data.COMPUTER_DATA_SLOTS).some(slot => ![2, 4].includes(Number(slot)) && data.getComputerSlotBonus(slot))) return null;
+      const stock = occupied.length + owner.dataState.poolTokens.length;
+      if (stock < 4 || owner.hand.length > 4 && (state.turn.roundNumber > 2 || occupied.includes(4))) return null;
+      const sensitive = value => Boolean(value && typeof value === "object" && (value.type === "dataTotal"
+        || value.type === "resourceEquals" || value.kind === "remainingResource" && value.resource === "availableData"
+        || Object.values(value).some(sensitive)));
+      if ([...owner.hand, ...owner.reservedCards].some(card => sensitive(cardEffects.getCardModel(card)))) return null;
+      // 这些已审计原语在主行动前不增加数据/手牌身份；取牌一旦公开即到信息边界。
+      const beforeMainReward = effect => ["gain_resources", "draw_cards", "pick_card", "card_move"].includes(effect.type);
+      if (owner.reservedCards.some(card => {
+        const model = cardEffects.getCardModel(card);
+        return (model.tasks || []).some(task => !task.rewards.every(beforeMainReward))
+          || (model.triggers || []).some(trigger => !beforeMainReward(trigger.effect)
+            || (trigger.event.types?.length ? trigger.event.types : [trigger.event.type]).includes("cardCorner"));
+      })) return null;
+      const dataIds = new Set(), cashIds = new Set();
+      for (const card of owner.hand) {
+        const corner = cards.getDiscardActionCodeForCard(card), income = cards.getIncomeCodeForCard(card);
+        const gain = cards.getIncomeGainForCard(card), key = ["credits", "energy", "handSize"][income];
+        if (![0, 1, 2].includes(corner) || !key || !gain || Object.keys(gain).length !== 1 || gain[key] !== 1) return null;
+        if (corner === 1) {
+          const reward = cards.getDiscardActionRewardForCard(card);
+          if (reward.dataCount !== 1 || Object.keys(reward.gain).length) return null;
+          dataIds.add(card.id); if (income !== 2) cashIds.add(card.id);
+        }
+      }
+      if (stock + dataIds.size >= 6 || node.legalActions.some(action => action.family === "card_corner" && action.payload?.multiplier !== 1)) return null;
+      const excluded = node.legalActions.filter(action => action.family === "card_corner"
+        && (cashIds.has(action.target?.cardInstanceId) || occupied.includes(4) && dataIds.has(action.target?.cardInstanceId))
+        || action.family === "place_data" && occupied.includes(4));
+      return excluded.length ? freeze({ proof: "seti-before-main-funded-data-strict-plan-v1",
+        retainedActionIds: node.legalActions.filter(action => !excluded.includes(action)).map(action => action.actionId),
+        excludedActionIds: excluded.map(action => action.actionId), passPreparationActionIds: [],
+        stock, maximumBeforeMainData: stock + dataIds.size, analyzeRequiredData: 6, incomeAlreadyPlaced: occupied.includes(4),
+        cashDataCardIds: [...cashIds], passCashIncomeReplacement: owner.hand.length > 4 }) : null;
+    }
+
     function postMainCornerChoiceSpec(node) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
@@ -1337,6 +1403,7 @@
       cardTradeBounds = new WeakMap();
       passReserveBounds = new WeakMap();
       cornerChoices = new WeakMap();
+      preMainDataPlans = new WeakMap();
       postMainPlans = new WeakMap();
       resourceGroups.clear();
       cache.clear();
@@ -1362,7 +1429,7 @@
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
-      cardTradeBound, passReserveChoiceSpec, postMainCornerChoiceSpec, postMainPlanSpec, close, getDiagnostics });
+      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

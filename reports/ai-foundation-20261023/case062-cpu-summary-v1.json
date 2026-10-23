@@ -1,0 +1,485 @@
+{
+  "scope": "One CPU-sampled diagnostic: module loading, kernel/root creation, 4096-input search and report writes. Not isolated search wall time or acceptance.",
+  "samplingIntervalMicroseconds": 1000,
+  "profilePath": "reports/ai-foundation-20261023/case062-cpu-v1.cpuprofile.gz",
+  "compressedSha256": "da28fa9581a2692fd37385b136492214f8a5e12e61004bc9f7ba793a0caabbe1",
+  "uncompressedSha256": "7c8c492ffd81a99d907b8d4b2f293cb3d6a0c9447c054c86c324a9f27bf24d4e",
+  "durationMicroseconds": 6395833,
+  "sampleCount": 4396,
+  "sampledMicroseconds": 6395792,
+  "diagnosticPath": "reports/ai-foundation-20261023/late-semantic-case062-cpu-v1.json",
+  "topSelfFrames": [
+    {
+      "id": 312,
+      "functionName": "(garbage collector)",
+      "url": "",
+      "line": 0,
+      "samples": 418,
+      "microseconds": 608457
+    },
+    {
+      "id": 725,
+      "functionName": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 271,
+      "microseconds": 404660
+    },
+    {
+      "id": 486,
+      "functionName": "forwardIdentity",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 139,
+      "samples": 130,
+      "microseconds": 194710
+    },
+    {
+      "id": 638,
+      "functionName": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 116,
+      "microseconds": 172792
+    },
+    {
+      "id": 729,
+      "functionName": "readCommittedState",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 326,
+      "samples": 95,
+      "microseconds": 141540
+    },
+    {
+      "id": 781,
+      "functionName": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 79,
+      "microseconds": 117460
+    },
+    {
+      "id": 630,
+      "functionName": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 73,
+      "microseconds": 109414
+    },
+    {
+      "id": 1068,
+      "functionName": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 57,
+      "microseconds": 85374
+    },
+    {
+      "id": 654,
+      "functionName": "normalize",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 186,
+      "samples": 55,
+      "microseconds": 81461
+    },
+    {
+      "id": 570,
+      "functionName": "readCommittedState",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 326,
+      "samples": 54,
+      "microseconds": 80750
+    },
+    {
+      "id": 663,
+      "functionName": "stableSerialize",
+      "url": "file://<snapshot>/randomizer/game/state/state-store.js",
+      "line": 46,
+      "samples": 52,
+      "microseconds": 77665
+    },
+    {
+      "id": 493,
+      "functionName": "normalize",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 186,
+      "samples": 48,
+      "microseconds": 70833
+    },
+    {
+      "id": 985,
+      "functionName": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 46,
+      "microseconds": 69042
+    },
+    {
+      "id": 664,
+      "functionName": "stableSerialize",
+      "url": "file://<snapshot>/randomizer/game/state/state-store.js",
+      "line": 46,
+      "samples": 43,
+      "microseconds": 64251
+    },
+    {
+      "id": 621,
+      "functionName": "normalize",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 186,
+      "samples": 43,
+      "microseconds": 62124
+    },
+    {
+      "id": 787,
+      "functionName": "normalize",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 186,
+      "samples": 39,
+      "microseconds": 58625
+    },
+    {
+      "id": 665,
+      "functionName": "stableSerialize",
+      "url": "file://<snapshot>/randomizer/game/state/state-store.js",
+      "line": 46,
+      "samples": 35,
+      "microseconds": 52210
+    },
+    {
+      "id": 811,
+      "functionName": "describeAlienLabOpeningPlan",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 1200,
+      "samples": 34,
+      "microseconds": 50666
+    },
+    {
+      "id": 762,
+      "functionName": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 33,
+      "microseconds": 49207
+    },
+    {
+      "id": 617,
+      "functionName": "normalize",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 186,
+      "samples": 30,
+      "microseconds": 45040
+    },
+    {
+      "id": 523,
+      "functionName": "describePostMainPlan",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 1029,
+      "samples": 29,
+      "microseconds": 43332
+    },
+    {
+      "id": 595,
+      "functionName": "normalize",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 186,
+      "samples": 28,
+      "microseconds": 41752
+    },
+    {
+      "id": 485,
+      "functionName": "createNode",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 303,
+      "samples": 27,
+      "microseconds": 40581
+    },
+    {
+      "id": 666,
+      "functionName": "stableSerialize",
+      "url": "file://<snapshot>/randomizer/game/state/state-store.js",
+      "line": 46,
+      "samples": 27,
+      "microseconds": 40416
+    },
+    {
+      "id": 813,
+      "functionName": "normalize",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 186,
+      "samples": 25,
+      "microseconds": 37500
+    },
+    {
+      "id": 1684,
+      "functionName": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 25,
+      "microseconds": 37083
+    },
+    {
+      "id": 1395,
+      "functionName": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 23,
+      "microseconds": 34167
+    },
+    {
+      "id": 662,
+      "functionName": "stableSerialize",
+      "url": "file://<snapshot>/randomizer/game/state/state-store.js",
+      "line": 46,
+      "samples": 22,
+      "microseconds": 33084
+    },
+    {
+      "id": 1565,
+      "functionName": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 22,
+      "microseconds": 32458
+    },
+    {
+      "id": 720,
+      "functionName": "deepFreeze",
+      "url": "file://<snapshot>/randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 21,
+      "microseconds": 31417
+    },
+    {
+      "id": 719,
+      "functionName": "deepFreeze",
+      "url": "file://<snapshot>/randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 20,
+      "microseconds": 30041
+    },
+    {
+      "id": 1180,
+      "functionName": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 20,
+      "microseconds": 29084
+    },
+    {
+      "id": 748,
+      "functionName": "forwardIdentity",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 139,
+      "samples": 18,
+      "microseconds": 27001
+    },
+    {
+      "id": 525,
+      "functionName": "describePostMainCornerChoices",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 951,
+      "samples": 17,
+      "microseconds": 25500
+    },
+    {
+      "id": 1651,
+      "functionName": "readCommittedState",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 326,
+      "samples": 17,
+      "microseconds": 25499
+    },
+    {
+      "id": 917,
+      "functionName": "structuredClone",
+      "url": "node:internal/worker/js_transferable",
+      "line": 112,
+      "samples": 16,
+      "microseconds": 23957
+    },
+    {
+      "id": 491,
+      "functionName": "normalize",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 186,
+      "samples": 17,
+      "microseconds": 23957
+    },
+    {
+      "id": 718,
+      "functionName": "deepFreeze",
+      "url": "file://<snapshot>/randomizer/game/rule-composition.js",
+      "line": 42,
+      "samples": 14,
+      "microseconds": 21207
+    },
+    {
+      "id": 557,
+      "functionName": "getBaseWheelCell",
+      "url": "file://<snapshot>/randomizer/solar-system/core.js",
+      "line": 486,
+      "samples": 13,
+      "microseconds": 19500
+    },
+    {
+      "id": 620,
+      "functionName": "(anonymous)",
+      "url": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "line": 197,
+      "samples": 13,
+      "microseconds": 19374
+    }
+  ],
+  "topSelfModules": [
+    {
+      "name": "file://<snapshot>/randomizer/game/ai/analysis-port.js",
+      "microseconds": 1795623,
+      "samples": 1218
+    },
+    {
+      "name": "node:internal/worker/js_transferable",
+      "microseconds": 1680569,
+      "samples": 1129
+    },
+    {
+      "name": "(garbage collector)",
+      "microseconds": 608457,
+      "samples": 418
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/state/state-store.js",
+      "microseconds": 397665,
+      "samples": 273
+    },
+    {
+      "name": "file://<snapshot>/randomizer/solar-system/core.js",
+      "microseconds": 371757,
+      "samples": 252
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/actions/standard-action.js",
+      "microseconds": 213671,
+      "samples": 149
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/state/low-coupling-slices.js",
+      "microseconds": 201247,
+      "samples": 136
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/rule-composition.js",
+      "microseconds": 199085,
+      "samples": 135
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/state/high-coupling-slices.js",
+      "microseconds": 142751,
+      "samples": 98
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/effects/session-runtime.js",
+      "microseconds": 77500,
+      "samples": 57
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/production-kernel.js",
+      "microseconds": 75168,
+      "samples": 58
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/effects/residual-domain-session.js",
+      "microseconds": 70041,
+      "samples": 49
+    },
+    {
+      "name": "structuredClone",
+      "microseconds": 56084,
+      "samples": 37
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/production-composition.js",
+      "microseconds": 50498,
+      "samples": 37
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/abilities/rocket.js",
+      "microseconds": 45581,
+      "samples": 37
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/effects/probe-turn-session.js",
+      "microseconds": 43043,
+      "samples": 31
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/effects/science-session.js",
+      "microseconds": 42210,
+      "samples": 39
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/ai/decision-search.js",
+      "microseconds": 33291,
+      "samples": 23
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/rockets.js",
+      "microseconds": 26711,
+      "samples": 30
+    },
+    {
+      "name": "node:internal/modules/cjs/loader",
+      "microseconds": 25542,
+      "samples": 17
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/actions/quick-trades.js",
+      "microseconds": 21628,
+      "samples": 16
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/cards/play-domain.js",
+      "microseconds": 19501,
+      "samples": 13
+    },
+    {
+      "name": "internalModuleStat",
+      "microseconds": 18166,
+      "samples": 12
+    },
+    {
+      "name": "file://<snapshot>/adhoc/profile-ai-cpu-case062-20261023-v1.js",
+      "microseconds": 15001,
+      "samples": 11
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/players.js",
+      "microseconds": 14124,
+      "samples": 11
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/cards/deck.js",
+      "microseconds": 13917,
+      "samples": 10
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/data/state.js",
+      "microseconds": 12959,
+      "samples": 13
+    },
+    {
+      "name": "file://<snapshot>/randomizer/app/simulation-contract.js",
+      "microseconds": 10501,
+      "samples": 7
+    },
+    {
+      "name": "file://<snapshot>/randomizer/game/cards/effects.js",
+      "microseconds": 8250,
+      "samples": 6
+    },
+    {
+      "name": "file://<snapshot>/randomizer/app/rule-observation.js",
+      "microseconds": 7375,
+      "samples": 5
+    }
+  ]
+}

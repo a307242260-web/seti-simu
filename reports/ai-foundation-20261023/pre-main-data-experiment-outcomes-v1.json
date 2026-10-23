@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "seti-ai-pre-main-data-experiments-v1",
+  "baseCommit": "d09630902b8508a53b6b18792650b3ae5321e154",
+  "productionFifoUnchanged": true,
+  "valueOrdering": {
+    "notAdopted": true,
+    "scope": "Only original complete case008 was tested; no universal ordering claim.",
+    "archivePath": "adhoc/ai-value-order-prototype-20261023-v1.json",
+    "reportPath": "reports/ai-foundation-20261023/value-order-complete-window-v1.json",
+    "formalInputs": [
+      606,
+      606
+    ],
+    "peakFrontier": [
+      31,
+      107
+    ],
+    "observationCount": [
+      399,
+      526
+    ],
+    "reason": "No less exploration work in the tested complete window; more frontier and projection work.",
+    "reproduce": "Create an isolated git-archive snapshot of baseCommit, write archive.prototypeSource to randomizer/game/ai/decision-search.js, copy this experiment archive and driver, then run node adhoc/benchmark-ai-value-order-20261023-v1.js."
+  },
+  "phaseSpecificDataPrototype": {
+    "notAdoptedAsWritten": true,
+    "archivePath": "adhoc/ai-surplus-data-prototype-20261023-v1.json",
+    "reportPath": "reports/ai-foundation-20261023/surplus-data-complete-window-v1.json",
+    "formalInputs": [
+      606,
+      579,
+      558
+    ],
+    "reason": "Replaced with the separately guarded generic before-main causal proof that covers original case062. Prototype post-main v7 and Alien Lab v2 are absent from production.",
+    "reproduce": "Create an isolated git-archive snapshot of baseCommit, write archive.combinedSource to randomizer/game/ai/analysis-port.js, copy this experiment archive and driver, then run node adhoc/benchmark-ai-surplus-data-20261023-v1.js. Search stays the original base v24 FIFO."
+  },
+  "finalBeforeMainProof": {
+    "reportPath": "reports/ai-foundation-20261023/pre-main-data-complete-window-v1.json",
+    "formalInputs": [
+      606,
+      587
+    ],
+    "sameActionValueDistance": true
+  },
+  "cpuDiagnostic": {
+    "summaryPath": "reports/ai-foundation-20261023/case062-cpu-summary-v1.json",
+    "sameSearchGraphAsUninstrumentedFinalExceptElapsedTime": true,
+    "scope": "One CPU-sampled diagnostic: module loading, kernel/root creation, 4096-input search and report writes. Not isolated search wall time or acceptance.",
+    "analysisPortSelfShare": 0.28075068732691744,
+    "cloneModuleSelfShare": 0.26276167204937245,
+    "gcSelfShare": 0.09513395682661349
+  },
+  "timingLimitation": "Complete-window comparisons run sequentially with warmup; no isolated time ratios. CPU captures include loading, initialization and report writes."
+}

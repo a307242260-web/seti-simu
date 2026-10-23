@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "seti-ai-tested-snapshot-check-v1",
+  "baseCommit": "d09630902b8508a53b6b18792650b3ae5321e154",
+  "snapshot": "/private/tmp/seti-ai-stage33-20261023-wl9ci262",
+  "unchangedBaseBlobsVerified": 3580,
+  "changedBaseBlobsVerified": 9,
+  "explicitOverlayFilesVerified": 59,
+  "rootSnapshotManifestHashesAgree": true,
+  "finalRuntimeFrozenBeforeFullRegression": true,
+  "earlierPrototypeReportsBindSeparateArchivedBase": true,
+  "sharedIndexBeforeCommit": {
+    "sha256": "622e7bfce3d122b1a37562af7973296fc114d81a99b7921f2a2837c5871a9c02",
+    "entries": 2607
+  }
+}

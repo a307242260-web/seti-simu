@@ -12,6 +12,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/known-card-money.test.js", "policy/decision-search", "已知卡牌DSL在钱电独立条件下允许钱包模拟，真实后期全部单行动条件链及小完整窗口保持最优", "零资源条件、隐藏可再打出牌或未知DSL选项破坏钱包单调性，仍省略较穷分支"),
     entry("randomizer/game/ai/post-main-corner-choice.test.js", "policy/decision-search", "主行动后同角标同收入且无外部身份引用的选择保留完整窗口最优、距离和实体代表", "忽略收入差异、公司能力、实体引用或角标观察者，省略真实不同收益"),
     entry("randomizer/game/ai/post-main-inert-reservations.test.js", "policy/decision-search", "主行动后不活动任务、已消耗或不可达触发与固定保留牌计分保持完整窗口最优及实际见证", "漏掉历史待结算事件、过期消耗记录、已就绪任务或移动相关计分，却省略真实收益"),
+    entry("randomizer/game/ai/pre-main-data-plan.test.js", "policy/decision-search", "主行动前以数据下界和现金收入替代省略严格亏损准备，保留最优、最短输入及合成证明", "漏算第六数据可解锁分析、PASS强制弃牌或后两轮收入不足，错误删除必要数据角标"),
     entry("randomizer/game/ai/resource-dominance.test.js", "policy/decision-search", "受限主行动后资源支配保持真实窗口的最佳动作与估值，规则敏感状态拒绝应用", "零钱电条件、保留任务、事件奖励或同席下一回合使较富分支不能模拟较穷分支"),
     entry("randomizer/game/ai/company-money-dominance.test.js", "policy/decision-search", "已审计公司的主行动后钱包模拟保持完整小窗口的最优动作、值和最短输入，缓存开关一致", "公司快速流程重新打牌或外部触发器使较富钱包失去较穷钱包的正式继续路径"),
     entry("randomizer/game/ai/data-equivalence.test.js", "architecture/policy-host", "数据标记编号与池展示位置等价，真实放置交换路径及全部直接后继一致", "显示序号造成重复搜索或错误忽略计算机槽位、蓝色附加位和真实奖励"),

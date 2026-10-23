@@ -399,6 +399,29 @@ try {
       if (after.status !== "other-owner" || evaluate(after.observation) !== evaluate(raw)) throw new Error("不活动保留牌正式结束值改变");
       console.log(`[PASS] independent-post-main-inert-reservations: value=${evaluate(raw)} excluded=${proof.excludedActionIds.length}`);
     } finally { inertPort.close(); }
+    const preDataFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+      "../adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json")));
+    if (!cornerComp.lifecycle.restore(preDataFixture.compositionEnvelope).ok) throw new Error("主行动前数据审计恢复失败");
+    const preDataPort = createAnalysisPort({ composition: cornerComp, seatId: preDataFixture.seatId });
+    try {
+      const root = preDataPort.openRoot(), proof = preDataPort.preMainDataPlanSpec(root);
+      const evaluate = independentValue.createStateValueEvaluator(preDataFixture.seatId);
+      const raw = root.observation, normalized = outcomeModel.createDecisionObservation(raw, { seatId: preDataFixture.seatId });
+      if (!proof || evaluate(raw) !== evaluate(normalized)) throw new Error("主行动前数据原始/标准V不一致");
+      const corner = root.legalActions.find(action => action.family === "card_corner" && proof.excludedActionIds.includes(action.actionId));
+      const spent = preDataPort.expand(root, corner.actionId);
+      const oldPass = preDataPort.expand(spent, spent.legalActions.find(action => action.family === "pass").actionId);
+      let node = root;
+      for (let index = 0; index < 4; index += 1) {
+        node = preDataPort.expand(node, node.legalActions.find(action => action.family === "place_data").actionId);
+        node = preDataPort.expand(node, node.legalActions.find(action => action.target?.target === "computer").actionId);
+      }
+      node = preDataPort.expand(node, node.legalActions.find(action => action.target?.cardInstanceId === corner.target.cardInstanceId).actionId);
+      const cashPass = preDataPort.expand(node, node.legalActions.find(action => action.family === "pass").actionId);
+      if (![oldPass, cashPass].every(node => ["other-owner", "information-barrier"].includes(node.status))
+        || evaluate(cashPass.observation) <= evaluate(oldPass.observation)) throw new Error("主行动前数据正式PASS替代不占优");
+      console.log(`[PASS] independent-pre-main-data-plan: root=${evaluate(raw)} cashPass=${evaluate(cashPass.observation)} oldPass=${evaluate(oldPass.observation)}`);
+    } finally { preDataPort.close(); }
   } catch (error) {
     console.log(`[FAIL] independent-card-choice-equivalence: ${error.message}`);
     allPass = false;

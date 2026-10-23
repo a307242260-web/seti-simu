@@ -55,6 +55,10 @@ Browser高频inspect不复制原始actionOutcomes，查看lastOutcomeSummary；�
 逐项排除可达触发、历史待结算事件、就绪任务及移动/资源相关计分；其他阶段和预算不变。
 全部牌与消耗/完成记录仍进入正式状态及精确身份，没有把保留区抽象为空。
 
+搜索v25增加`preMainDataPlanSpec`，以[主行动前数据下界及PASS替代](ai-pre-main-data-proof-20261023.md)
+省略严格无收益的数据准备。绑定默认V和`openingPruning`；与原开局严格计划合成时保存componentPlans。
+未知数据来源、条件、蓝奖励或后两轮五手牌不取得权限；付款集合与原全局预算不变。
+
 ## 结果和失败
 
 成功的agentTrace.coverage为complete，search保存scope、根去向、完整图、等价/证明归属、

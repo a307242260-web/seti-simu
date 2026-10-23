@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "seti-ai-syntax-validation-v1",
+  "checks": [
+    {
+      "path": "randomizer/game/ai/analysis-port.js",
+      "sha256": "542ba25eba114f5491bef26a777acae0d44f77e6050e0bd684b67e2102249262",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/decision-search.js",
+      "sha256": "aa41485e74cbaaec1a88fcd3c0fafeb462477699a6f0376c9e11081c151ecccd",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/pre-main-data-plan.test.js",
+      "sha256": "5b5a33ab39f69b3a48bcad5961a24bda0c7b9666de6064ed9fa1b66468851188",
+      "exitCode": 0
+    },
+    {
+      "path": "tools/node-test-inventory.js",
+      "sha256": "441fb71107e32794b7d37e9195c4fcf96afd8c145fcfdb03106752eafb48576b",
+      "exitCode": 0
+    },
+    {
+      "path": "tools/audit_v_state_inputs.js",
+      "sha256": "8c9f158f47e79be1b76194dd5af991dfbfec1ff97ba5b31e322399734cdc8f41",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/benchmark-ai-value-order-20261023-v1.js",
+      "sha256": "19d909b50d0aaea4635e42d991b75992109235dfee88fa2c1197eab8790c1e36",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/benchmark-ai-surplus-data-20261023-v1.js",
+      "sha256": "eecef89a3d306fdbd8066a8ce3732bdd97198f1acfa0b71035ae02b39e07d65b",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/benchmark-ai-pre-main-data-20261023-v1.js",
+      "sha256": "1c0f8a3bca893d0e0335bfccab0b2955cd0acfa1151eac882f847b0246859a17",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/audit-ai-decision-corpus-20261023-v20.js",
+      "sha256": "26c446510936c4ac626ab46f2eaaa25b886e02e616fb152c7a3380dc6b8cf53d",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/profile-ai-late-semantic-case062-20261023-v6.js",
+      "sha256": "d5448a320e0508b8bf31dbb6e961568c7557ec6573b7e534e0edf8f527b508a3",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/profile-ai-cpu-case062-20261023-v1.js",
+      "sha256": "752b3aa318245c5ea015060668fba9da170672c70363c40648ca3dcabc2c4b8f",
+      "exitCode": 0
+    }
+  ],
+  "passed": 11,
+  "failed": 0
+}
