@@ -1,0 +1,58 @@
+{
+  "rows": [
+    {
+      "path": "randomizer/game/ai/analysis-port.js",
+      "exitCode": 0,
+      "sha256": "8e33e102c72d9deb12e2eb1a3ab6f2c2eb44951ca2b81293ab9a2b1e91f2e9c3",
+      "output": ""
+    },
+    {
+      "path": "randomizer/game/ai/turn-preview.test.js",
+      "exitCode": 0,
+      "sha256": "ef30c71b93c60db010231bd8f8f7171f1d9b0102166ef9f0aaf1df1e46dab562",
+      "output": ""
+    },
+    {
+      "path": "tools/node-test-inventory.js",
+      "exitCode": 0,
+      "sha256": "4dceb252a03def72e4cc631028f521e6651f0cfce0dc545d77844334bff37879",
+      "output": ""
+    },
+    {
+      "path": "adhoc/benchmark-ai-identity-20261023-v2.js",
+      "exitCode": 0,
+      "sha256": "957dd413535b67c9334b1224fdc1c422d7a1f757682a1489df263792f5672659",
+      "output": ""
+    },
+    {
+      "path": "adhoc/benchmark-ai-identity-search-20261023-v2.js",
+      "exitCode": 0,
+      "sha256": "53192a78e64ab3d914c5433760b61bccae470a628fc93cd597bc4e3fcb7a90f9",
+      "output": ""
+    },
+    {
+      "path": "adhoc/benchmark-ai-turn-copy-search-20261023-v2.js",
+      "exitCode": 0,
+      "sha256": "2c6608c6c8d98f36c8c2384ccb333015f8ca59e09c8e24ed6d8b6f7610a291a9",
+      "output": ""
+    },
+    {
+      "path": "adhoc/audit-ai-decision-corpus-20261023-v22.js",
+      "exitCode": 0,
+      "sha256": "fff9685967f6833431f072428d30b5d8e8e7b0b589609686635353abeb5a09d6",
+      "output": ""
+    },
+    {
+      "path": "adhoc/profile-ai-late-semantic-case062-20261023-v7.js",
+      "exitCode": 0,
+      "sha256": "3d4499937528358717195531fe0a14245db31c1775a081c87277cc28a8e25477",
+      "output": ""
+    },
+    {
+      "path": "adhoc/profile-ai-late-semantic-case062-20261023-v8.js",
+      "exitCode": 0,
+      "sha256": "b8219fa818fa359921467d04ee15c8ef5e69479aa763737659f25c5a747d5afa",
+      "output": ""
+    }
+  ]
+}

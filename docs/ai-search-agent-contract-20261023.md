@@ -59,6 +59,10 @@ Browser高频inspect不复制原始actionOutcomes，查看lastOutcomeSummary；�
 省略严格无收益的数据准备。绑定默认V和`openingPruning`；与原开局严格计划合成时保存componentPlans。
 未知数据来源、条件、蓝奖励或后两轮五手牌不取得权限；付款集合与原全局预算不变。
 
+分析端口v27降低[身份构建及回合预览复制成本](ai-identity-copy-cost-20261023.md)。
+身份JSON逐字节保持，回合预览仅独立复制正式推进所写的turn；其他切片共享冻结快照。
+正式动作和Session恢复仍完整隔离，搜索版本、全部证明及预算不变；这不代表覆盖门槛或整局性能已通过。
+
 ## 结果和失败
 
 成功的agentTrace.coverage为complete，search保存scope、根去向、完整图、等价/证明归属、

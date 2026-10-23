@@ -183,10 +183,11 @@
     const references = new Map();
     const prefix = /^effect-session-[0-9]+$/.test(session?.sessionId) ? session.sessionId : null;
     const referenceKeys = new Set(["effectId", "parentEffectId", "groupId", "quickGroupId", "decisionId", "choiceId"]);
+    const referencePattern = prefix && new RegExp(`(${prefix}:(?:effect|group):[0-9]+)`, "g");
     function normalize(value, key = "") {
       if (typeof value === "string" && prefix && referenceKeys.has(key)) {
         // 引用按首次出现编号，保留相等关系；物理实体和普通文本绝不重命名。
-        const parts = value.split(new RegExp(`(${prefix}:(?:effect|group):[0-9]+)`, "g"));
+        const parts = value.split(referencePattern);
         if (parts.length > 1) return parts.map((part, index) => {
           if (index % 2 === 0) return part;
           if (!references.has(part)) references.set(part, references.size);
@@ -196,9 +197,12 @@
       if (!value || typeof value !== "object") return value;
       if (Array.isArray(value)) return value.map(item => normalize(item));
       const descriptor = value.schemaVersion === "seti-standard-action-v1";
-      return Object.fromEntries(Object.keys(value).sort()
-        .filter(name => !descriptor || !["actionId", "stateVersion", "decisionVersion"].includes(name))
-        .map(name => [name, normalize(value[name], name)]));
+      const result = Object.create(null);
+      for (const name of Object.keys(value).sort()) {
+        if (descriptor && ["actionId", "stateVersion", "decisionVersion"].includes(name)) continue;
+        result[name] = normalize(value[name], name);
+      }
+      return result;
     }
     const pending = session ? {
       phase: session.phase, queue: session.queue,
@@ -316,6 +320,11 @@
       nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key });
       nodeCount += 1;
       return node;
+    }
+
+    // 正式回合预览只写 turn；其他规则切片继续共享冻结快照，越界写入会显式失败。
+    function previewTurn(state, options = {}) {
+      return turnFlow.advanceTurnAfterPlayerAction({ ...state, turn: structuredClone(state.turn) }, seatId, options);
     }
 
     function readIdentityState(envelope) {
@@ -811,7 +820,7 @@
       const credits = owner.resources.credits, energy = owner.resources.energy;
       if (["credits", "energy"].some(key => !Number.isSafeInteger(owner.blueBonusResources?.[key] ?? 0)
         || (owner.blueBonusResources?.[key] ?? 0) < 0 || (owner.blueBonusResources?.[key] ?? 0) > owner.resources[key])) return null;
-      const transition = turnFlow.advanceTurnAfterPlayerAction(structuredClone(state), seatId);
+      const transition = previewTurn(state);
       if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded || transition.nextPlayerId === seatId) return null;
       const neutral = { ...state, players: { ...state.players, players: state.players.players.map(player => player.id === seatId
         ? { ...owner, resources: { ...owner.resources, credits: 0, energy: 0 } } : player) } };
@@ -869,7 +878,7 @@
         || node.legalActions.some(action => action.actorId !== seatId || action.family !== "choose_card"
           || action.target?.kind !== "pass-reserve-card" || action.payload?.cardInstanceId !== action.target.choiceId
           || !pile.some(card => card.id === action.target.choiceId))) return null;
-      const preview = turnFlow.advanceTurnAfterPlayerAction(structuredClone(state), seatId, { passed: true });
+      const preview = previewTurn(state, { passed: true });
       if (!preview.turnAdvanced || preview.roundAdvanced || preview.gameEnded || preview.nextPlayerId === seatId) return null;
       return freeze({ proof: "seti-standard-pass-reserve-choice-value-equivalence-v1", handDelta: 1, expectedStatus: "other-owner" });
     }
@@ -1140,7 +1149,7 @@
       if (!thresholds.length || thresholds.some(value => !Number.isSafeInteger(value) || value <= 0)) return null;
       const scoreThreshold = Math.min(...thresholds), scoreUpperBound = owner.resources.score + additionalScore;
       if (scoreUpperBound >= scoreThreshold) return null;
-      const transition = turnFlow.advanceTurnAfterPlayerAction(structuredClone(state), seatId);
+      const transition = previewTurn(state);
       if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded || transition.nextPlayerId === seatId) return null;
       return freeze({ proof: "seti-quiet-post-main-default-value-plan-v6", retainedActionIds: kept.map(action => action.actionId),
         excludedActionIds: excluded.map(action => action.actionId), maximumValueIncrease, scoreUpperBound, scoreThreshold,
@@ -1242,7 +1251,7 @@
         || JSON.stringify(rocketAbilities.getLaunchCost({ turn: state.turn }, owner)) !== '{"credits":1}'
         || owner.hand.some(card => ["dlc_9.png", "b_86.webp"].includes(card.cardId))
           && !["purple1", "purple2", "purple3", "purple4"].some(id => state.tech.stacks[id]?.remaining > 0)) return null;
-      const transition = turnFlow.advanceTurnAfterPlayerAction(structuredClone(state), seatId);
+      const transition = previewTurn(state);
       if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded || transition.nextPlayerId === seatId) return null;
       if (node.legalActions.some(action => !["launch", "scan", "research_tech", "play_card", "pass", "quick_trade",
         "card_corner", "place_data"].includes(action.family) || action.family === "card_corner" && action.payload?.multiplier !== 1)) return null;
@@ -1373,8 +1382,7 @@
       if (Object.values(vector).some(value => !Number.isSafeInteger(value) || value < 0)
         || blueCredits > credits || blueEnergy > energy) return null;
       // 复用正式推进规则；同 owner 的下一回合可能重新打出零资源条件牌，不能使用本证明。
-      const preview = structuredClone(state);
-      const transition = turnFlow.advanceTurnAfterPlayerAction(preview, seatId);
+      const transition = previewTurn(state);
       if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded
         || transition.nextPlayerId === seatId) return null;
       // 蓝槽留存已通过 blueBonusAssets 公开；此版仍保守要求精确相同，不扩大支配关系。

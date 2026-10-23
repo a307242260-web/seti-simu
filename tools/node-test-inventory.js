@@ -34,6 +34,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/initial-information-barrier.test.js", "rules/initial-setup", "初始发选项、结算盲抽和插收入牌报告实际新信息，移出集合去重并保持恢复重放", "搜索继续使用未知起始牌或收入盲抽牌，或空堆与非盲抽错误生成新屏障"),
     entry("randomizer/game/actions/quick-move-availability.test.js", "rules/quick-trades", "快速移动必须有正式一步可达方向；无路时拒绝且根状态不变", "只有探测器存在便提供快速移动，扣能量后生成空Decision"),
     entry("randomizer/game/ai/state-value.test.js", "policy/state-value", "独立估值只读标准事实，未来收入窗口明确且终局只计正式分", "终局重复加资源、未知牌身份进入估值或缺字段被静默补零"),
+    entry("randomizer/game/ai/turn-preview.test.js", "architecture/policy-host", "正式回合推进在冻结非turn切片上与整局复制保持完整结果一致，覆盖PASS、跨轮、终局及同席", "推进函数越界写其他规则切片或部分复制共享可写turn，导致证明预览修改真实分支"),
     entry("randomizer/game/ai/analysis-port.test.js", "architecture/policy-host", "可信分支精确提交、结果缓存和权威根隔离", "策略取得权威envelope、同family代替动作或fork改变真实根/RNG"),
     entry("randomizer/game/ai/agent-runtime.test.js", "architecture/policy-host", "新AI接入只读席位输入、合法选择、多选完成与恢复复现", "私有session进入策略、异步或非法返回被提交、多选反复切换或恢复后选择漂移"),
     entry("randomizer/game/ai/search-agent.test.js", "architecture/policy-host", "同一搜索玩家经Browser与Simulation共享接入，每次只提交一步、记录完整覆盖、续用及恢复一致，超预算无提交", "宿主调用不同算法、丢弃搜索诊断、复用临时token跨恢复或不完整搜索被当成合法行动提交"),

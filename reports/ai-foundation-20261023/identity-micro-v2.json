@@ -1,0 +1,156 @@
+{
+  "scope": "Eight actual checkpoint envelopes and a numeric-key/reference/JSON edge case; exact output byte parity. Microbenchmark only, no search/game speed inference.",
+  "originalFileSha256": "542ba25eba114f5491bef26a777acae0d44f77e6050e0bd684b67e2102249262",
+  "functionSources": {
+    "original": "  function forwardIdentity(envelope, status, boundary, stateOverride = null) {\n    const session = envelope.session?.session;\n    const source = session?.workingState || stateOverride || JSON.parse(envelope.committedState);\n    const state = { ...source, meta: { ...source.meta }, ...(source.match ? { match: { ...source.match } } : {}) };\n    // 固定牌堆不从弃牌洗回；Production 仅按唯一实体ID查找/移除或读取集合。\n    // UI 展示和 journal 的历史顺序不属于向前规则身份；其他数组仍保留顺序。\n    if (Array.isArray(source.cards?.discardPile)) state.cards = { ...source.cards,\n      discardPile: [...source.cards.discardPile].sort((a, b) => String(a.id) < String(b.id) ? -1 : String(a.id) > String(b.id) ? 1 : 0) };\n    // 移出游戏只按卡ID集合查重/排除抽取，没有按记录顺序执行的规则。\n    // 正式状态与journal的收入顺序保留；这里只忽略集合的历史排列。\n    if (Array.isArray(source.cards?.removedFromGameCardIds)) state.cards = { ...(state.cards || source.cards),\n      removedFromGameCardIds: [...source.cards.removedFromGameCardIds].sort() };\n    // 玩家数据标记可互换；编号/显示序号和池展示位置不进入正式选择或奖励。\n    // 计算机与蓝色附加位仍按真实槽位区分，溢出数量等其余字段原样保留。\n    if (Array.isArray(source.players?.players)) state.players = { ...source.players,\n      players: source.players.players.map(player => {\n        if (!player.dataState) return player;\n        function tokenIdentity(token, pool) {\n          const result = { ...token };\n          delete result.id;\n          delete result.index;\n          if (pool) delete result.slotIndex;\n          return result;\n        }\n        return { ...player, dataState: { ...player.dataState,\n          poolTokens: player.dataState.poolTokens.map(token => tokenIdentity(token, true)),\n          placedTokens: player.dataState.placedTokens.map(token => tokenIdentity(token, false))\n            .sort((a, b) => (a.placementKind < b.placementKind ? -1 : a.placementKind > b.placementKind ? 1 : 0)\n              || (a.placementSlot ?? a.blueSlot) - (b.placementSlot ?? b.blueSlot)),\n        } };\n      }),\n    };\n    if (source.meta?.sequences) {\n      state.meta.sequences = { ...source.meta.sequences };\n      delete state.meta.sequences.dataToken;\n    }\n    // prepareRoot 的诊断标记在第一次正式保存时消失；没有规则读取它。\n    // 算法、数值状态及其他 RNG 子流仍逐字段保留。\n    if (source.meta?.rngState) {\n      state.meta.rngState = { ...source.meta.rngState };\n      delete state.meta.rngState.branch;\n    }\n    delete state.meta.stateVersion;\n    if (state.match) delete state.match.decisionVersion;\n    const references = new Map();\n    const prefix = /^effect-session-[0-9]+$/.test(session?.sessionId) ? session.sessionId : null;\n    const referenceKeys = new Set([\"effectId\", \"parentEffectId\", \"groupId\", \"quickGroupId\", \"decisionId\", \"choiceId\"]);\n    function normalize(value, key = \"\") {\n      if (typeof value === \"string\" && prefix && referenceKeys.has(key)) {\n        // 引用按首次出现编号，保留相等关系；物理实体和普通文本绝不重命名。\n        const parts = value.split(new RegExp(`(${prefix}:(?:effect|group):[0-9]+)`, \"g\"));\n        if (parts.length > 1) return parts.map((part, index) => {\n          if (index % 2 === 0) return part;\n          if (!references.has(part)) references.set(part, references.size);\n          return { reference: references.get(part) };\n        });\n      }\n      if (!value || typeof value !== \"object\") return value;\n      if (Array.isArray(value)) return value.map(item => normalize(item));\n      const descriptor = value.schemaVersion === \"seti-standard-action-v1\";\n      return Object.fromEntries(Object.keys(value).sort()\n        .filter(name => !descriptor || ![\"actionId\", \"stateVersion\", \"decisionVersion\"].includes(name))\n        .map(name => [name, normalize(value[name], name)]));\n    }\n    const pending = session ? {\n      phase: session.phase, queue: session.queue,\n      interruptContext: session.interruptContext,\n      irreversibleBarrier: session.irreversibleBarrier && {\n        code: session.irreversibleBarrier.code, reason: session.irreversibleBarrier.reason,\n      },\n      failure: session.failure,\n      family: session.journal.actions[0]?.action?.family || null,\n    } : null;\n    return JSON.stringify(normalize({ state, pending, status, boundary }));\n  }\n",
+    "imperative": "  function forwardIdentity(envelope, status, boundary, stateOverride = null) {\n    const session = envelope.session?.session;\n    const source = session?.workingState || stateOverride || JSON.parse(envelope.committedState);\n    const state = { ...source, meta: { ...source.meta }, ...(source.match ? { match: { ...source.match } } : {}) };\n    // 固定牌堆不从弃牌洗回；Production 仅按唯一实体ID查找/移除或读取集合。\n    // UI 展示和 journal 的历史顺序不属于向前规则身份；其他数组仍保留顺序。\n    if (Array.isArray(source.cards?.discardPile)) state.cards = { ...source.cards,\n      discardPile: [...source.cards.discardPile].sort((a, b) => String(a.id) < String(b.id) ? -1 : String(a.id) > String(b.id) ? 1 : 0) };\n    // 移出游戏只按卡ID集合查重/排除抽取，没有按记录顺序执行的规则。\n    // 正式状态与journal的收入顺序保留；这里只忽略集合的历史排列。\n    if (Array.isArray(source.cards?.removedFromGameCardIds)) state.cards = { ...(state.cards || source.cards),\n      removedFromGameCardIds: [...source.cards.removedFromGameCardIds].sort() };\n    // 玩家数据标记可互换；编号/显示序号和池展示位置不进入正式选择或奖励。\n    // 计算机与蓝色附加位仍按真实槽位区分，溢出数量等其余字段原样保留。\n    if (Array.isArray(source.players?.players)) state.players = { ...source.players,\n      players: source.players.players.map(player => {\n        if (!player.dataState) return player;\n        function tokenIdentity(token, pool) {\n          const result = { ...token };\n          delete result.id;\n          delete result.index;\n          if (pool) delete result.slotIndex;\n          return result;\n        }\n        return { ...player, dataState: { ...player.dataState,\n          poolTokens: player.dataState.poolTokens.map(token => tokenIdentity(token, true)),\n          placedTokens: player.dataState.placedTokens.map(token => tokenIdentity(token, false))\n            .sort((a, b) => (a.placementKind < b.placementKind ? -1 : a.placementKind > b.placementKind ? 1 : 0)\n              || (a.placementSlot ?? a.blueSlot) - (b.placementSlot ?? b.blueSlot)),\n        } };\n      }),\n    };\n    if (source.meta?.sequences) {\n      state.meta.sequences = { ...source.meta.sequences };\n      delete state.meta.sequences.dataToken;\n    }\n    // prepareRoot 的诊断标记在第一次正式保存时消失；没有规则读取它。\n    // 算法、数值状态及其他 RNG 子流仍逐字段保留。\n    if (source.meta?.rngState) {\n      state.meta.rngState = { ...source.meta.rngState };\n      delete state.meta.rngState.branch;\n    }\n    delete state.meta.stateVersion;\n    if (state.match) delete state.match.decisionVersion;\n    const references = new Map();\n    const prefix = /^effect-session-[0-9]+$/.test(session?.sessionId) ? session.sessionId : null;\n    const referenceKeys = new Set([\"effectId\", \"parentEffectId\", \"groupId\", \"quickGroupId\", \"decisionId\", \"choiceId\"]);\n    const referencePattern = prefix && new RegExp(`(${prefix}:(?:effect|group):[0-9]+)`, \"g\");\n    function normalize(value, key = \"\") {\n      if (typeof value === \"string\" && prefix && referenceKeys.has(key)) {\n        // 引用按首次出现编号，保留相等关系；物理实体和普通文本绝不重命名。\n        const parts = value.split(referencePattern);\n        if (parts.length > 1) return parts.map((part, index) => {\n          if (index % 2 === 0) return part;\n          if (!references.has(part)) references.set(part, references.size);\n          return { reference: references.get(part) };\n        });\n      }\n      if (!value || typeof value !== \"object\") return value;\n      if (Array.isArray(value)) return value.map(item => normalize(item));\n      const descriptor = value.schemaVersion === \"seti-standard-action-v1\";\n      const result = Object.create(null);\n      for (const name of Object.keys(value).sort()) {\n        if (descriptor && [\"actionId\", \"stateVersion\", \"decisionVersion\"].includes(name)) continue;\n        result[name] = normalize(value[name], name);\n      }\n      return result;\n    }\n    const pending = session ? {\n      phase: session.phase, queue: session.queue,\n      interruptContext: session.interruptContext,\n      irreversibleBarrier: session.irreversibleBarrier && {\n        code: session.irreversibleBarrier.code, reason: session.irreversibleBarrier.reason,\n      },\n      failure: session.failure,\n      family: session.journal.actions[0]?.action?.family || null,\n    } : null;\n    return JSON.stringify(normalize({ state, pending, status, boundary }));\n  }\n",
+    "streaming": "  function forwardIdentity(envelope, status, boundary, stateOverride = null) {\n    const session = envelope.session?.session;\n    const source = session?.workingState || stateOverride || JSON.parse(envelope.committedState);\n    const state = { ...source, meta: { ...source.meta }, ...(source.match ? { match: { ...source.match } } : {}) };\n    // 固定牌堆不从弃牌洗回；Production 仅按唯一实体ID查找/移除或读取集合。\n    // UI 展示和 journal 的历史顺序不属于向前规则身份；其他数组仍保留顺序。\n    if (Array.isArray(source.cards?.discardPile)) state.cards = { ...source.cards,\n      discardPile: [...source.cards.discardPile].sort((a, b) => String(a.id) < String(b.id) ? -1 : String(a.id) > String(b.id) ? 1 : 0) };\n    // 移出游戏只按卡ID集合查重/排除抽取，没有按记录顺序执行的规则。\n    // 正式状态与journal的收入顺序保留；这里只忽略集合的历史排列。\n    if (Array.isArray(source.cards?.removedFromGameCardIds)) state.cards = { ...(state.cards || source.cards),\n      removedFromGameCardIds: [...source.cards.removedFromGameCardIds].sort() };\n    // 玩家数据标记可互换；编号/显示序号和池展示位置不进入正式选择或奖励。\n    // 计算机与蓝色附加位仍按真实槽位区分，溢出数量等其余字段原样保留。\n    if (Array.isArray(source.players?.players)) state.players = { ...source.players,\n      players: source.players.players.map(player => {\n        if (!player.dataState) return player;\n        function tokenIdentity(token, pool) {\n          const result = { ...token };\n          delete result.id;\n          delete result.index;\n          if (pool) delete result.slotIndex;\n          return result;\n        }\n        return { ...player, dataState: { ...player.dataState,\n          poolTokens: player.dataState.poolTokens.map(token => tokenIdentity(token, true)),\n          placedTokens: player.dataState.placedTokens.map(token => tokenIdentity(token, false))\n            .sort((a, b) => (a.placementKind < b.placementKind ? -1 : a.placementKind > b.placementKind ? 1 : 0)\n              || (a.placementSlot ?? a.blueSlot) - (b.placementSlot ?? b.blueSlot)),\n        } };\n      }),\n    };\n    if (source.meta?.sequences) {\n      state.meta.sequences = { ...source.meta.sequences };\n      delete state.meta.sequences.dataToken;\n    }\n    // prepareRoot 的诊断标记在第一次正式保存时消失；没有规则读取它。\n    // 算法、数值状态及其他 RNG 子流仍逐字段保留。\n    if (source.meta?.rngState) {\n      state.meta.rngState = { ...source.meta.rngState };\n      delete state.meta.rngState.branch;\n    }\n    delete state.meta.stateVersion;\n    if (state.match) delete state.match.decisionVersion;\n    const references = new Map();\n    const prefix = /^effect-session-[0-9]+$/.test(session?.sessionId) ? session.sessionId : null;\n    const referencePattern = prefix && new RegExp(`(${prefix}:(?:effect|group):[0-9]+)`, \"g\");\n    const referenceKeys = new Set([\"effectId\", \"parentEffectId\", \"groupId\", \"quickGroupId\", \"decisionId\", \"choiceId\"]);\n    function encode(value, key = \"\") {\n      if (typeof value === \"string\" && prefix && referenceKeys.has(key)) {\n        const parts = value.split(referencePattern);\n        if (parts.length > 1) return encode(parts.map((part, index) => {\n          if (index % 2 === 0) return part;\n          if (!references.has(part)) references.set(part, references.size);\n          return { reference: references.get(part) };\n        }));\n      }\n      if (!value || typeof value !== \"object\") return JSON.stringify(value);\n      if (Array.isArray(value)) {\n        const entries = [];\n        for (let index = 0; index < value.length; index += 1) entries.push(encode(value[index]) ?? \"null\");\n        return \"[\" + entries.join(\",\") + \"]\";\n      }\n      const descriptor = value.schemaVersion === \"seti-standard-action-v1\";\n      const entries = [];\n      let integerEntries = null;\n      for (const name of Object.keys(value).sort()) {\n        if (descriptor && [\"actionId\", \"stateVersion\", \"decisionVersion\"].includes(name)) continue;\n        const encoded = encode(value[name], name);\n        if (encoded === undefined) continue;\n        const entry = JSON.stringify(name) + \":\" + encoded;\n        // JSON.stringify enumerates array-index properties before other keys, even after lexical insertion.\n        const number = Number(name);\n        if (Number.isInteger(number) && number >= 0 && number < 4294967295 && String(number) === name) {\n          (integerEntries ||= []).push([number, entry]);\n        } else entries.push(entry);\n      }\n      if (integerEntries) entries.unshift(...integerEntries.sort((a, b) => a[0] - b[0]).map(entry => entry[1]));\n      return \"{\" + entries.join(\",\") + \"}\";\n    }\n    const pending = session ? {\n      phase: session.phase, queue: session.queue,\n      interruptContext: session.interruptContext,\n      irreversibleBarrier: session.irreversibleBarrier && {\n        code: session.irreversibleBarrier.code, reason: session.irreversibleBarrier.reason,\n      },\n      failure: session.failure,\n      family: session.journal.actions[0]?.action?.family || null,\n    } : null;\n    return encode({ state, pending, status, boundary });\n  }\n"
+  },
+  "functionHashes": {
+    "original": "6a5390a3adfd7aa51f402431b7c43f2b4613a40caa0b7f55f875265c8ef84c7a",
+    "imperative": "667821704ad6c09baaa17b11920fc49e27fdc78f330f2f503fadd09cac62e402",
+    "streaming": "c84b6e7719dd342ca9f9f6a5beb033af1da34f7d788082fd3c3b86294099d1e9"
+  },
+  "fixtures": [
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-001-20261023-v1.json",
+      "sha256": "f86194d3568b6ab4fdf04d23cbbf24707aafb872028433bfa66bd5e41f5bdbff"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-003-20261023-v1.json",
+      "sha256": "0b3f35ebc045aac1b4ae86131ab8f7cb8dba3c1898f9a7272082282c85452768"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-008-20261023-v1.json",
+      "sha256": "b436e02d566778ecd7e87a45e9e2cfca705a51e5ab3b2893ebfedcda2ce94be9"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-011-20261023-v1.json",
+      "sha256": "10ae734103d0bdacc79dc5d7d97ec0d5bb7d0152256b4d851faf12d6bbc711bb"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-009-20261023-v1.json",
+      "sha256": "01464efd955b55860f7718e4a31c0754ea8649c50db64b4b790ccd0d2586edea"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json",
+      "sha256": "e76dc0b1b72a00a07ae1e69c02ae3b0a2ad07ec4bc2702a8076ef4eaf6b82795"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json",
+      "sha256": "840d7625dd80b5a0186133b4aabc25fec65dd55aa79e1b82da9d733be2e5cb6c"
+    },
+    {
+      "path": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+      "sha256": "a0aaef74d6e6a272bcd89e9f2c9f3c764b673c16cdaec44d26b7457fafbd8023"
+    }
+  ],
+  "byteParity": true,
+  "rows": [
+    {
+      "round": 0,
+      "name": "original",
+      "milliseconds": 43.675166000000004,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 0,
+      "name": "imperative",
+      "milliseconds": 34.43779199999999,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 0,
+      "name": "streaming",
+      "milliseconds": 44.77599999999998,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 1,
+      "name": "streaming",
+      "milliseconds": 42.55108299999998,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 1,
+      "name": "imperative",
+      "milliseconds": 33.629166999999995,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 1,
+      "name": "original",
+      "milliseconds": 40.36391599999999,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 2,
+      "name": "original",
+      "milliseconds": 39.97274999999996,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 2,
+      "name": "imperative",
+      "milliseconds": 35.794167000000016,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 2,
+      "name": "streaming",
+      "milliseconds": 43.01166699999999,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 3,
+      "name": "streaming",
+      "milliseconds": 41.90416700000003,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 3,
+      "name": "imperative",
+      "milliseconds": 33.72025000000002,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 3,
+      "name": "original",
+      "milliseconds": 39.80641600000007,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 4,
+      "name": "original",
+      "milliseconds": 39.63166699999999,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 4,
+      "name": "imperative",
+      "milliseconds": 33.168290999999954,
+      "calls": 160,
+      "bytes": 4879700
+    },
+    {
+      "round": 4,
+      "name": "streaming",
+      "milliseconds": 41.883917,
+      "calls": 160,
+      "bytes": 4879700
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "scope": "Rejected seed-only witness schedulers; not production or game scores.",
+  "baseCommit": "1947bdae80fae26a31770232d142b910fbb92a9a",
+  "sourceArchive": "adhoc/ai-preparation-witness-prototypes-20261023-v1.json",
+  "sourceBindingsVerified": true,
+  "rows": [
+    {
+      "variant": "eagerQueueSource",
+      "reportPath": "reports/ai-foundation-20261023/late-semantic-case062-v7.json",
+      "complete": false,
+      "milliseconds": 6357.1855000000005,
+      "nodes": 3034,
+      "unresolved": 2453,
+      "preparationWitness": {
+        "status": "complete-boundary",
+        "submissions": 10,
+        "boundary": {
+          "node": 10,
+          "status": "information-barrier",
+          "value": 45
+        }
+      }
+    },
+    {
+      "variant": "deferredQueueSource",
+      "reportPath": "reports/ai-foundation-20261023/late-semantic-case062-v8.json",
+      "complete": false,
+      "milliseconds": 6285.987417,
+      "nodes": 2922,
+      "unresolved": 2289,
+      "preparationWitness": {
+        "status": "complete-boundary",
+        "submissions": 10,
+        "boundary": {
+          "node": 10,
+          "status": "information-barrier",
+          "value": 45
+        }
+      }
+    }
+  ],
+  "verdict": "not-adopted; actual V45 boundary found, but no complete graph or demonstrated total work reduction. Compare ordering prefixes conservatively.",
+  "artifacts": {
+    "adhoc/ai-preparation-witness-prototypes-20261023-v1.json": "8063271e760ed6751f9905ad46cf73001710cf3b32e1081d5bcbc8bda6571ceb",
+    "reports/ai-foundation-20261023/late-semantic-case062-v7.json": "6ca61260f385a98915550abe9ccb970fccedcd4664b154693bc028340f9d8c93",
+    "adhoc/ai-decision-corpus-20261023-v1/late-semantic-case062-v7.raw.json.gz": "30aa0b1a6fa2d76e5e470a59b6b6df44147f01c47b0138cf94d3d7fa1df3ab9c",
+    "adhoc/profile-ai-late-semantic-case062-20261023-v7.js": "3d4499937528358717195531fe0a14245db31c1775a081c87277cc28a8e25477",
+    "reports/ai-foundation-20261023/late-semantic-case062-v8.json": "2d89f4caf22eee86ae03726dfc555c06f907040be41197c00b8cb0e7dc2ab1f2",
+    "adhoc/ai-decision-corpus-20261023-v1/late-semantic-case062-v8.raw.json.gz": "54110a3e1624a8c8a77b8da7832f45629bd725f0e1c901bd9f311bddf0993f6b",
+    "adhoc/profile-ai-late-semantic-case062-20261023-v8.js": "b8219fa818fa359921467d04ee15c8ef5e69479aa763737659f25c5a747d5afa"
+  }
+}
