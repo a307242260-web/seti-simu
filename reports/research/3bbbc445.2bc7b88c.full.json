@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "seti-research-validation-record-v1",
+  "name": "ai-foundation-dev-07-20261022",
+  "fingerprint": "3bbbc4459b150cec3649a53105d58cf83174227377d31a160e803a24e63ee456",
+  "mode": "full",
+  "seed": "ai-dev-20261022-06",
+  "activePlayerCount": 4,
+  "world": {
+    "schemaVersion": "seti-initial-world-identity-v1",
+    "seed": "ai-dev-20261022-06",
+    "worldVersion": "seeded-world-v1",
+    "activePlayerCount": 4,
+    "fingerprint": "0492498d080835460a659be513002553fdcc2462f3cbcf2f357e0b07610c6102",
+    "components": {
+      "aliens": "71621c3152fce48d2b5ab21048dc5389c804fe103b97a5b7534f436029fa7de8",
+      "cards": "e3c3157f0889efe3d0714e338b4b95647412978f855a2d8338779e8713d0406e",
+      "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+      "finalScoring": "53ff22d2800d4d908272bffefe45a4c03c4910d73731907f1698d66fb64a588f",
+      "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+      "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+      "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+      "players": "26d76187da194b5eda1252fd7c35ad625d2198984c9fcccd12129e34118cce3a",
+      "solarSystem": "83fe441c099ba56bf285fb6a54ffa6909e06c4ab032d6e54c7ed94e21b3fc027",
+      "tech": "8aca25c54563aaa30a0b701f5b24dd570183cd867f551e385311f1f5fd97d7f2",
+      "turn": "c37d69b6313c01143467cc45610f7d7f629d16a9307b4157ca047b33830cbd8a",
+      "initialOffers": "25390c75acba6daf6a51e9ba20985cfceabe12d4a48c56dbf16249334e458627",
+      "initialRandom": "bc443e41dc9a778a995f7cf86a5e297be186f789692ccff1a0455643a8ddb105"
+    }
+  },
+  "aiDifficulty": "laughable",
+  "policyVersion": "seti-completion-agent-v1",
+  "agentType": "completion",
+  "agentTracePath": "reports/research/3bbbc445.2bc7b88c.full.json.decisions.jsonl",
+  "searchCoverage": "not-evaluated",
+  "flags": {
+    "compactReplay": true
+  },
+  "createdAt": "2026-10-22T09:31:04.625Z",
+  "gitCommit": "2bc7b88c",
+  "steps": 253,
+  "stepsLimit": null,
+  "terminal": true,
+  "wallMs": 9018,
+  "resumedFrom": null,
+  "resumeStep": 0,
+  "savePath": "seti-saves/seti-save-research-ai-foundation-dev-07-20261022-2bc7b88c-full-v122.json",
+  "summary": {
+    "round": 4,
+    "terminal": true,
+    "scores": {
+      "player-blue": 21,
+      "player-green": 42,
+      "player-brown": 42,
+      "player-white": 27
+    },
+    "avgScore": 33
+  },
+  "metrics": {
+    "famsBySeat": {
+      "player-white": {
+        "choose_card": 17,
+        "choose_payment": 2,
+        "scan": 3,
+        "choose_target": 15,
+        "end_turn": 11,
+        "play_card": 6,
+        "research_tech": 2,
+        "pass": 4
+      },
+      "player-blue": {
+        "choose_card": 20,
+        "choose_payment": 2,
+        "scan": 8,
+        "choose_target": 12,
+        "end_turn": 11,
+        "launch": 1,
+        "pass": 4,
+        "research_tech": 2
+      },
+      "player-green": {
+        "choose_card": 12,
+        "choose_payment": 2,
+        "scan": 3,
+        "choose_target": 13,
+        "end_turn": 13,
+        "launch": 1,
+        "research_tech": 2,
+        "play_card": 7,
+        "pass": 4,
+        "accept_optional_effect": 4
+      },
+      "player-brown": {
+        "choose_card": 17,
+        "choose_payment": 3,
+        "research_tech": 4,
+        "choose_target": 13,
+        "end_turn": 17,
+        "scan": 6,
+        "launch": 1,
+        "pass": 4,
+        "play_card": 6,
+        "choose_reward": 1
+      }
+    },
+    "whiteQuickTrade": 0,
+    "whiteResearchSteps": [
+      59,
+      230
+    ],
+    "traceEvents": [
+      {
+        "step": 39,
+        "seat": "player-green",
+        "slotId": 2,
+        "tt": "pink",
+        "owner": "green"
+      },
+      {
+        "step": 57,
+        "seat": "player-blue",
+        "slotId": 1,
+        "tt": "pink",
+        "owner": "blue"
+      }
+    ],
+    "revealEvents": [],
+    "budgetHits": [],
+    "searches": []
+  }
+}

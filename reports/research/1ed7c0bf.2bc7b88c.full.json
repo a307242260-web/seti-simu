@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "seti-research-validation-record-v1",
+  "name": "ai-foundation-dev-01-20261022",
+  "fingerprint": "1ed7c0bf85bd053eb36d4182420d7f26586b92fc7e99c1e1d4fa0e461ff4dc94",
+  "mode": "full",
+  "seed": "seti-107",
+  "activePlayerCount": 4,
+  "world": {
+    "schemaVersion": "seti-initial-world-identity-v1",
+    "seed": "seti-107",
+    "worldVersion": "seeded-world-v1",
+    "activePlayerCount": 4,
+    "fingerprint": "12fd1b8b599ea8b189bcdba0cd7af7fca248a7f99242cb6ebe5e4284c3bb2d10",
+    "components": {
+      "aliens": "6c1e7142a61cfa80a1171d7bfa70237c391a9fca4cfeabf74fef4f388577a8e5",
+      "cards": "23f43905854eafc9c1162258949b6b27fc684262fcbcf32b21b333f6bfa5724e",
+      "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+      "finalScoring": "f9d4ddf30c80a04bb1d6ad13a591434f9519e0c3e0d003caa936abac8af427a7",
+      "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+      "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+      "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+      "players": "2e982fbe21e91e31242c20889c215078dde10b2a71c64488155671a449f4d243",
+      "solarSystem": "a1a050e88fb7e3ba15d0cd9437842c59282a067a803fbecce4af9f419ab5c8bd",
+      "tech": "841d6c3039365709c53330e844a3156ec57548ee4a6b75bf27c97a57ae0c901d",
+      "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
+      "initialOffers": "a285f33c82b74cbe61c5b04985389d8470b7c6143581f24a6a9dacc34bf873ae",
+      "initialRandom": "8df5ef687d9cf0ed9692bb14aef31780fceab425a33b19f11594cfa670ad08e5"
+    }
+  },
+  "aiDifficulty": "laughable",
+  "policyVersion": "seti-completion-agent-v1",
+  "agentType": "completion",
+  "agentTracePath": "reports/research/1ed7c0bf.2bc7b88c.full.json.decisions.jsonl",
+  "searchCoverage": "not-evaluated",
+  "flags": {
+    "compactReplay": true
+  },
+  "createdAt": "2026-10-22T09:29:52.604Z",
+  "gitCommit": "2bc7b88c",
+  "steps": 250,
+  "stepsLimit": null,
+  "terminal": true,
+  "wallMs": 8110,
+  "resumedFrom": null,
+  "resumeStep": 0,
+  "savePath": "seti-saves/seti-save-research-ai-foundation-dev-01-20261022-2bc7b88c-full-v128.json",
+  "summary": {
+    "round": 4,
+    "terminal": true,
+    "scores": {
+      "player-blue": 38,
+      "player-green": 32,
+      "player-brown": 18,
+      "player-white": 48
+    },
+    "avgScore": 34
+  },
+  "metrics": {
+    "famsBySeat": {
+      "player-white": {
+        "choose_card": 15,
+        "choose_payment": 3,
+        "scan": 6,
+        "choose_target": 19,
+        "end_turn": 16,
+        "launch": 2,
+        "play_card": 5,
+        "pass": 4,
+        "research_tech": 2,
+        "land": 1
+      },
+      "player-green": {
+        "choose_card": 12,
+        "choose_payment": 3,
+        "launch": 1,
+        "end_turn": 17,
+        "play_card": 12,
+        "pass": 4,
+        "research_tech": 2,
+        "choose_target": 13,
+        "scan": 2,
+        "accept_optional_effect": 1
+      },
+      "player-blue": {
+        "choose_card": 14,
+        "choose_payment": 2,
+        "research_tech": 2,
+        "choose_target": 13,
+        "end_turn": 13,
+        "scan": 5,
+        "launch": 1,
+        "play_card": 5,
+        "pass": 4,
+        "accept_optional_effect": 3
+      },
+      "player-brown": {
+        "choose_card": 16,
+        "choose_payment": 3,
+        "scan": 5,
+        "choose_target": 6,
+        "end_turn": 9,
+        "launch": 1,
+        "pass": 4,
+        "play_card": 2,
+        "choose_reward": 1,
+        "research_tech": 1
+      }
+    },
+    "whiteQuickTrade": 0,
+    "whiteResearchSteps": [
+      106,
+      164
+    ],
+    "traceEvents": [
+      {
+        "step": 99,
+        "seat": "player-green",
+        "slotId": 2,
+        "tt": "pink",
+        "owner": "green"
+      },
+      {
+        "step": 117,
+        "seat": "player-white",
+        "slotId": 1,
+        "tt": "yellow",
+        "owner": "white"
+      },
+      {
+        "step": 153,
+        "seat": "player-white",
+        "slotId": 1,
+        "tt": "pink",
+        "owner": "white"
+      }
+    ],
+    "revealEvents": [],
+    "budgetHits": [],
+    "searches": []
+  }
+}

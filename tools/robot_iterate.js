@@ -32,6 +32,9 @@ const lib = require("./robot-iteration-lib.js");
 
 const {
   loadVersions,
+  scanResearchRecords,
+  recordAIGeneration,
+  versionAIGeneration,
   saveVersions,
   gitHeadShort,
   gitIsAncestor,
@@ -125,10 +128,10 @@ function today() {
 
 // ---------------- 子命令 ----------------
 
-function autoBaseline(versions, head) {
+function autoBaseline(versions, head, generation, records) {
   // 最近登记（数组靠前=最新）且 head 为当前 HEAD 祖先的版本作为基线
   for (const v of versions) {
-    if (!v.head) continue;
+    if (!v.head || versionAIGeneration(v,records) !== generation) continue;
     if (gitIsAncestor(v.head, head)) return v.id;
   }
   return null;
@@ -149,6 +152,15 @@ async function cmdRun(opts) {
       die(`[拒绝] 版本 ${vid} 已登记于当前代码版本（head=${existing.head}）。同一代码版本绝不重跑。\n  如确实要强制重跑，加 --force 并在提交说明写明覆盖原因（旧记录会被自动备份）。`, 2);
     }
   }
+
+  const records = scanResearchRecords();
+  let agentType = "heuristic";
+  for (const config of opts.config) for (const pair of config.split(",")) if (pair.split("=")[0].trim() === "agentType") agentType = pair.slice(pair.indexOf("=")+1).trim();
+  const aiGeneration = recordAIGeneration({ agentType });
+  if (existing && versionAIGeneration(existing,records) !== aiGeneration) die(`[拒绝] ${vid} 属于另一条 AI 主线，请使用新的版本 id。`);
+  const baselineId = opts.baseline || autoBaseline(versions, head, aiGeneration, records);
+  const baselineVersion = versions.find(v => v.id === baselineId) || null;
+  if (baselineVersion && versionAIGeneration(baselineVersion,records) !== aiGeneration) die("[拒绝] V1/V2 不能互为实验基线。");
 
   // 委托 run_research_validation（指纹去重 + 快速→全盘续跑一体）
   const runArgs = ["--name", opts.name];
@@ -171,13 +183,13 @@ async function cmdRun(opts) {
   if (!result.recordFile) die("[失败] 未从输出解析到记录文件");
 
   // 自动登记版本
-  const baselineId = opts.baseline || autoBaseline(versions, head);
-  const baselineVersion = versions.find((v) => v.id === baselineId) || null;
   const commits = gitRangeCommits(baselineVersion?.head || null, head);
   const newestCommit = gitCommitInfo(head);
   const summary = opts.summary || (newestCommit ? `（自动登记 ${newestCommit.date}）${newestCommit.subject}` : "");
   const entry = {
     id: vid,
+    aiGeneration,
+    agentType,
     name: opts.versionName || opts.name,
     date: opts.date || today(),
     baseline: baselineVersion ? baselineVersion.id : null,
@@ -236,6 +248,7 @@ function cmdRegister(opts) {
     : (idx >= 0 ? versions.find((v) => v.id === versions[idx].baseline) || null : null);
   const entry = {
     id: opts.versionId,
+    ...(idx >= 0 ? { aiGeneration: versions[idx].aiGeneration, agentType: versions[idx].agentType } : {}),
     name: opts.name || (idx >= 0 ? versions[idx].name : opts.versionId),
     date: opts.date || (idx >= 0 ? versions[idx].date : today()),
     baseline: base ? base.id : (idx >= 0 ? versions[idx].baseline : null),

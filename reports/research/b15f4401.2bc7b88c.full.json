@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "seti-research-validation-record-v1",
+  "name": "ai-foundation-dev-06-20261022",
+  "fingerprint": "b15f44013a59a683befd2e6fd879f6e5443fb40eac8f33a5f8614e8538c3b5da",
+  "mode": "full",
+  "seed": "ai-dev-20261022-05",
+  "activePlayerCount": 4,
+  "world": {
+    "schemaVersion": "seti-initial-world-identity-v1",
+    "seed": "ai-dev-20261022-05",
+    "worldVersion": "seeded-world-v1",
+    "activePlayerCount": 4,
+    "fingerprint": "cd8af71794470faba971ea6a37d5c6607b4f4b2753503113d6f5e7b501d11e6d",
+    "components": {
+      "aliens": "6308a45da1a954ac4c86cb7a183377f76be32304349e6b63e6c1fa52a94ded1a",
+      "cards": "4c6b09e0eb73e63f634bcf8fb9c7c505d288319fa2a45493b7ed716db9d9baed",
+      "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+      "finalScoring": "a2b14f9f5d17f64c4d51f087d203f0c464dd12eab11905274f4b14913846cd57",
+      "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+      "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+      "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+      "players": "9365e91855fa7b835faa8cde3ebe6b8a7dc07b17a07da65bd02789103888941b",
+      "solarSystem": "78cf1ca0d8c14db886df2072bdd5cfad679660ddbff3e2872261c55c08ba6868",
+      "tech": "d1c030f5070395a576fc8118dd395b5f4f2cae36cea03376a647750f39603928",
+      "turn": "c37d69b6313c01143467cc45610f7d7f629d16a9307b4157ca047b33830cbd8a",
+      "initialOffers": "d506d8609c66ded9b127f9a5dd7c97e64c5c57ea2638cf9ba7326883c3c3ee92",
+      "initialRandom": "d89cc4031e9daac3f7449a2a754773a08200d94861d46eefbc7fa27f236e826f"
+    }
+  },
+  "aiDifficulty": "laughable",
+  "policyVersion": "seti-completion-agent-v1",
+  "agentType": "completion",
+  "agentTracePath": "reports/research/b15f4401.2bc7b88c.full.json.decisions.jsonl",
+  "searchCoverage": "not-evaluated",
+  "flags": {
+    "compactReplay": true
+  },
+  "createdAt": "2026-10-22T09:30:52.001Z",
+  "gitCommit": "2bc7b88c",
+  "steps": 264,
+  "stepsLimit": null,
+  "terminal": true,
+  "wallMs": 8661,
+  "resumedFrom": null,
+  "resumeStep": 0,
+  "savePath": "seti-saves/seti-save-research-ai-foundation-dev-06-20261022-2bc7b88c-full-v126.json",
+  "summary": {
+    "round": 4,
+    "terminal": true,
+    "scores": {
+      "player-blue": 15,
+      "player-green": 17,
+      "player-brown": 25,
+      "player-white": 27
+    },
+    "avgScore": 21
+  },
+  "metrics": {
+    "famsBySeat": {
+      "player-white": {
+        "choose_card": 17,
+        "choose_payment": 2,
+        "scan": 5,
+        "choose_target": 20,
+        "end_turn": 14,
+        "launch": 1,
+        "play_card": 7,
+        "pass": 4,
+        "accept_optional_effect": 5,
+        "research_tech": 1
+      },
+      "player-blue": {
+        "choose_card": 13,
+        "research_tech": 2,
+        "choose_target": 5,
+        "end_turn": 12,
+        "scan": 3,
+        "launch": 1,
+        "pass": 4,
+        "play_card": 6,
+        "accept_optional_effect": 1
+      },
+      "player-green": {
+        "choose_card": 15,
+        "choose_payment": 3,
+        "scan": 4,
+        "choose_target": 14,
+        "end_turn": 14,
+        "launch": 1,
+        "play_card": 7,
+        "pass": 4,
+        "research_tech": 2
+      },
+      "player-brown": {
+        "choose_card": 13,
+        "choose_payment": 1,
+        "scan": 2,
+        "choose_target": 18,
+        "end_turn": 14,
+        "research_tech": 2,
+        "launch": 1,
+        "play_card": 9,
+        "pass": 4,
+        "accept_optional_effect": 13
+      }
+    },
+    "whiteQuickTrade": 0,
+    "whiteResearchSteps": [
+      218
+    ],
+    "traceEvents": [
+      {
+        "step": 44,
+        "seat": "player-brown",
+        "slotId": 2,
+        "tt": "pink",
+        "owner": "brown"
+      },
+      {
+        "step": 200,
+        "seat": "player-white",
+        "slotId": 1,
+        "tt": "pink",
+        "owner": "white"
+      }
+    ],
+    "revealEvents": [],
+    "budgetHits": [],
+    "searches": []
+  }
+}

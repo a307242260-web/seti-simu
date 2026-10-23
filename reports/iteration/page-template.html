@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SETI 机器人迭代总览（免电分析盘面）</title>
+<title>SETI AI 实验中心</title>
 <style>
 :root{--bg:#f6f7f9;--panel:#ffffff;--line:#dde3ea;--text:#1c2333;--muted:#7a8494;--accent:#2f6fed;--accent-bg:#e8eefa;--good:#1e7e46;--bad:#c0392b;--warn-bg:#fff7e6;--warn-line:#f0c36d}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:14px/1.65 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
 .page{width:min(1400px,calc(100% - 32px));margin:auto;padding:28px 0 70px}
+.generation-tabs{display:flex;gap:10px;margin:16px 0}.generation-tabs a{padding:8px 16px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}.generation-tabs a[aria-current="page"]{background:var(--accent);color:#fff}
 .eyebrow{color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.08em}
 h1{margin:4px 0 8px;font-size:26px}
 h2{font-size:17px;margin:0 0 12px;border-bottom:1px solid var(--line);padding-bottom:8px}
@@ -53,8 +54,10 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 <body>
 <main class="page">
   <span class="eyebrow">SETI · 机器人迭代记录与复盘体系</span>
-  <h1>机器人迭代总览</h1>
-  <p class="intro">固定盘面：<b id="board-name"></b> <code id="board-seed"></code>。4 人局全 AI（白色为人类席位）。<b>所有分数以完整终局总分为准</b>（2026-08-20 用户规定）。</p>
+  <h1 id="center-title">AI 实验中心</h1>
+  <nav class="generation-tabs" aria-label="AI 主线"><a id="tab-v2" href="?ai=v2">V2 · 新 AI</a><a id="tab-v1" href="?ai=v1">V1 · 旧 AI</a></nav>
+  <p class="intro" id="generation-scope"></p>
+  <p class="intro">默认盘面：<b id="board-name"></b> <code id="board-seed"></code>。4 人局全 AI（白色为人类席位）。<b>所有分数以完整终局总分为准</b>（2026-08-20 用户规定）。</p>
   <p class="note">机制说明见 <code>docs/robot-iteration-registry.md</code>；标准迭代入口 <code>node tools/robot_iterate.js run --name &lt;id&gt; --full --summary "..."</code>（跑验证→登记→复盘报告→本页一次完成，绝不重跑同一版本）。</p>
 
   <!-- 顶部：现在的 best version -->
@@ -67,7 +70,7 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 
   <!-- 迭代记录（当前 baseline + 历史归档） -->
   <section>
-    <h2>迭代记录（当前 baseline）</h2>
+    <h2 id="records-title">实验记录</h2>
     <div class="iter-table-wrap" id="iter-container"></div>
   </section>
 
@@ -77,7 +80,10 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 
 <script>
 "use strict";
-const REGISTRY = /*__REGISTRY_JSON__*/;
+const ALL_REGISTRY = /*__REGISTRY_JSON__*/;
+const generation = new URLSearchParams(location.search).get("ai") === "v1" ? "v1" : "v2";
+const REGISTRY = { ...ALL_REGISTRY, ...ALL_REGISTRY.generations[generation],
+  versions: ALL_REGISTRY.versions.filter(version => version.aiGeneration === generation) };
 
 const LABELS = {"player-blue":"蓝","player-green":"绿","player-brown":"棕","player-white":"白"};
 const ORDER = ["player-blue","player-green","player-brown","player-white"];
@@ -110,7 +116,7 @@ function bestGrid(){
   const b=REGISTRY.bestOf;
   document.getElementById("best-title").textContent=b.world?"当前世界最佳（完整终局）":"历史成绩（世界身份未核验）";
   document.getElementById("world-scope").textContent=b.world?
-    `${b.world.worldVersion} · ${b.world.fingerprint}。只比较同世界指纹的完整终局；其他世界和缺少身份的历史成绩不参与排名。`:
+    `seed ${b.world.seed||"未记录"} · ${b.world.worldVersion} · ${b.world.fingerprint}。只比较同世界指纹的完整终局；其他世界和缺少身份的历史成绩不参与排名。`:
     "当前版本没有世界身份记录；以下为历史汇总，不能据此判断同盘面策略涨跌。";
   const card=(label,value,sub,src,srcCls)=>
     `<div class="best-card"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub}</div><span class="src ${srcCls||""}">${src}</span></div>`;
@@ -145,7 +151,7 @@ function bestGrid(){
     const t=b.bestAvg.wallMs!=null?`${fmtMs(b.bestAvg.wallMs)} · 每步约 ${b.bestAvg.msPerStep} ms`:'—（roadmap 无实测）';
     timeLines.push(`最佳均分（${esc(b.bestAvg.versionId)} · ${b.bestAvg.value}）：${t}`);
   }
-  html.push(card("搜索耗时",
+  html.push(card("对局耗时",
     b.bestAvg&&b.bestAvg.wallMs!=null?fmtMs(b.bestAvg.wallMs):null,
     timeLines.join("<br>")||"尚无运行",
     "全盘运行实测 (wallMs)"));
@@ -179,6 +185,8 @@ function versionRow(v){
   const p=primaryResult(v);
   const r=p.result;
   const badges=[];
+  const types=[...new Set(v.results.filter(r=>!r.missingRecord).map(r=>r.agentType))];
+  badges.push(`<span class="badge">${types.map(type=>type==="completion"?"基础策略（无搜索）":type==="search"?"搜索 AI":"旧启发式 AI").join(" / ")||"尚无对局"}</span>`);
   if(v.isHead) badges.push('<span class="badge head">HEAD</span>');
   if(p.isRoadmap) badges.push('<span class="badge roadmap">roadmap</span>');
   const reportLink=r&&r.reportExists&&r.reportPath?`<a href="${rel(r.reportPath)}">复盘报告</a>`:(
@@ -190,7 +198,7 @@ function versionRow(v){
       : summaryCell(v))
     : summaryCell(v);
   return `<tr>
-    <td><b>${esc(v.id)}</b><br><span class="src">${esc(v.name)}</span>${badges.join("")}</td>
+    <td><b>${esc(v.id)}</b><br><span class="src">${esc(v.name)}</span>${badges.join("")}${r&&r.seed?`<br><span class="src">seed ${esc(r.seed)}</span>`:""}</td>
     <td class="num">${esc(v.date)}</td>
     <td>${summary}</td>
     <td class="num">${p.isRoadmap?(v.roadmap?v.roadmap.steps??"—":"—"):stepsCell(r)}</td>
@@ -214,11 +222,19 @@ function iterTable(){
 
 // ---- 初始化 ----
 function init(){
+  const label=generation.toUpperCase();
+  document.title=`SETI AI ${label} 实验中心`;
+  document.getElementById("center-title").textContent=`AI ${label} 实验中心`;
+  document.getElementById(`tab-${generation}`).setAttribute("aria-current","page");
+  document.getElementById("generation-scope").textContent=generation==="v2"
+    ? "新 AI 主线。基础策略与搜索 AI 分别标注；基础策略成绩不能用于搜索 AI 验收。"
+    : "旧 AI 主线。保留历史实验、成绩与复盘。";
+  document.getElementById("records-title").textContent=`${label} 实验记录（${REGISTRY.versionCount} 个版本 · ${REGISTRY.recordCount} 条记录）`;
   document.getElementById("board-name").textContent=REGISTRY.board.name||"";
   document.getElementById("board-seed").textContent=REGISTRY.board.seed||"";
   bestGrid();
   iterTable();
-  const head=REGISTRY.versions.find(v=>v.isHead);
+  const head=REGISTRY.versions.find(v=>v.id===REGISTRY.currentBaseline);
   document.getElementById("foot").innerHTML=
     `生成时间 ${esc(REGISTRY.builtAt)} · HEAD ${esc(REGISTRY.headCommit)}${REGISTRY.worktreeDirty?" · <span style='color:#b3261e'>工作树有未提交改动</span>":""}`+
     (head?` · 当前 HEAD 对应版本 <code>${esc(head.id)}</code>`:"")+

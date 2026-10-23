@@ -1,0 +1,144 @@
+{
+  "schemaVersion": "seti-research-validation-record-v1",
+  "name": "ai-foundation-dev-05-20261022",
+  "fingerprint": "7cd473bf3e5948d5426a65d06ede734c274d429f8d57560690573bb37642e155",
+  "mode": "full",
+  "seed": "ai-dev-20261022-04",
+  "activePlayerCount": 4,
+  "world": {
+    "schemaVersion": "seti-initial-world-identity-v1",
+    "seed": "ai-dev-20261022-04",
+    "worldVersion": "seeded-world-v1",
+    "activePlayerCount": 4,
+    "fingerprint": "9c3dcc6d2c923bf3a321220527ddcba31f34994d3e172f94da9cbf18ee0ffb1f",
+    "components": {
+      "aliens": "046f17764f845b016be8f463aacf3942f64223b8fc56ea2d8715b599dc63c8cb",
+      "cards": "a12a1d4880fa339c3779934412943e45440697ebbee554116660ddcf3417ece6",
+      "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+      "finalScoring": "b3a20594497f5af2959768045292cb44575b443b6717096f40f981fcc9d370f1",
+      "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+      "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+      "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+      "players": "418f7898c2c2b5eda54d5a616a0fee20e590b8fd4eaa663f25baed5d2bf8ddf2",
+      "solarSystem": "b46be7d976d3398473762db7375aa3c0ce1c9a0f8751e102ee655481a98f0bfa",
+      "tech": "59ec9767657c97b39e4d8353a8196e8bedc1e2b674358b1ea690e0e9afaf4a56",
+      "turn": "d852fa9571047c05ae3f54035aeb3d14c637edaf281bcf394db94260bf87b435",
+      "initialOffers": "7624021268d82b8c2363164ec240096604124087921070be76eca4fe1fadfa01",
+      "initialRandom": "ca3d95114c6960eadc6d4948ae0bc25a6efcd72098cdd48531b20e96288d9fa7"
+    }
+  },
+  "aiDifficulty": "laughable",
+  "policyVersion": "seti-completion-agent-v1",
+  "agentType": "completion",
+  "agentTracePath": "reports/research/7cd473bf.2bc7b88c.full.json.decisions.jsonl",
+  "searchCoverage": "not-evaluated",
+  "flags": {
+    "compactReplay": true
+  },
+  "createdAt": "2026-10-22T09:30:39.547Z",
+  "gitCommit": "2bc7b88c",
+  "steps": 254,
+  "stepsLimit": null,
+  "terminal": true,
+  "wallMs": 8130,
+  "resumedFrom": null,
+  "resumeStep": 0,
+  "savePath": "seti-saves/seti-save-research-ai-foundation-dev-05-20261022-2bc7b88c-full-v130.json",
+  "summary": {
+    "round": 4,
+    "terminal": true,
+    "scores": {
+      "player-blue": 38,
+      "player-green": 21,
+      "player-brown": 45,
+      "player-white": 21
+    },
+    "avgScore": 31.25
+  },
+  "metrics": {
+    "famsBySeat": {
+      "player-white": {
+        "choose_card": 13,
+        "research_tech": 3,
+        "choose_target": 9,
+        "end_turn": 14,
+        "scan": 4,
+        "launch": 1,
+        "play_card": 6,
+        "pass": 4
+      },
+      "player-brown": {
+        "choose_card": 18,
+        "choose_payment": 2,
+        "research_tech": 3,
+        "choose_target": 14,
+        "end_turn": 15,
+        "scan": 5,
+        "launch": 2,
+        "pass": 4,
+        "play_card": 4,
+        "land": 1
+      },
+      "player-green": {
+        "choose_card": 22,
+        "choose_payment": 2,
+        "scan": 7,
+        "choose_target": 10,
+        "end_turn": 11,
+        "play_card": 3,
+        "research_tech": 1,
+        "pass": 4
+      },
+      "player-blue": {
+        "choose_card": 18,
+        "choose_payment": 3,
+        "scan": 7,
+        "choose_target": 15,
+        "end_turn": 16,
+        "research_tech": 4,
+        "launch": 1,
+        "pass": 4,
+        "play_card": 4
+      }
+    },
+    "whiteQuickTrade": 0,
+    "whiteResearchSteps": [
+      25,
+      106,
+      197
+    ],
+    "traceEvents": [
+      {
+        "step": 17,
+        "seat": "player-blue",
+        "slotId": 2,
+        "tt": "yellow",
+        "owner": "green"
+      },
+      {
+        "step": 52,
+        "seat": "player-green",
+        "slotId": 2,
+        "tt": "pink",
+        "owner": "green"
+      },
+      {
+        "step": 68,
+        "seat": "player-blue",
+        "slotId": 1,
+        "tt": "pink",
+        "owner": "blue"
+      },
+      {
+        "step": 160,
+        "seat": "player-brown",
+        "slotId": 1,
+        "tt": "yellow",
+        "owner": "brown"
+      }
+    ],
+    "revealEvents": [],
+    "budgetHits": [],
+    "searches": []
+  }
+}

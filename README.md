@@ -23,6 +23,7 @@
 
 - `PROJECT_MEMORY.md`：仍有效的长期决定。
 - `docs/progress-20260912.md`：阶段目标、待办与历史进度。
+- [AI 实验中心](reports/robot-iteration.html)：V2 新 AI 与 V1 旧 AI 分区，默认 V2。
 - `reports/iteration/versions.json`：版本登记及实验记录归属。
 
 ## 验证

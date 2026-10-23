@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "seti-research-validation-record-v1",
+  "name": "ai-foundation-20261022",
+  "fingerprint": "cdbe799992f4b512e17f8e095809aa51abcf1df9afc0851014de9bba2a2c57d2",
+  "mode": "full",
+  "seed": "seti-free-analyze-v1",
+  "activePlayerCount": 4,
+  "world": {
+    "schemaVersion": "seti-initial-world-identity-v1",
+    "seed": "seti-free-analyze-v1",
+    "worldVersion": "human-405-world-v1",
+    "activePlayerCount": 4,
+    "fingerprint": "2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c",
+    "components": {
+      "aliens": "46dbcc69e2fca49b3b1fd3d6e93cbdf73ec6695f58026c25eae294c6af482de2",
+      "cards": "e5427e2ac14ea93859f820681a6957c5cdf3bb5f0c61a504927a7b3442a04d4a",
+      "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+      "finalScoring": "e8a14ecc0f4b523158eefbae19cee10874f65083ef2cb060aa6badf9540da7f4",
+      "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+      "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+      "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+      "players": "81760effc03c474b420cd154875a98942f428d4e82643d3f4c1d65b8a4358482",
+      "solarSystem": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
+      "tech": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
+      "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
+      "initialOffers": "76eacd007efd30ddff4d1a2e72ee375e3b45ea420b83a9fcc31ff87ae7e90879",
+      "initialRandom": "748c814e83ed7ffbc0d68c14175649c97eef71a94eeeff4605b52f779e729399"
+    }
+  },
+  "aiDifficulty": "laughable",
+  "policyVersion": "seti-completion-agent-v1",
+  "agentType": "completion",
+  "agentTracePath": "reports/research/cdbe7999.576bbc50.full.json.decisions.jsonl",
+  "searchCoverage": "not-evaluated",
+  "flags": {
+    "compactReplay": true
+  },
+  "createdAt": "2026-10-22T08:51:10.751Z",
+  "gitCommit": "576bbc50",
+  "steps": 229,
+  "stepsLimit": null,
+  "terminal": true,
+  "wallMs": 7728,
+  "resumedFrom": null,
+  "resumeStep": 0,
+  "savePath": "seti-saves/seti-save-research-ai-foundation-20261022-576bbc50-full-v126.json",
+  "summary": {
+    "round": 4,
+    "terminal": true,
+    "scores": {
+      "player-blue": 21,
+      "player-green": 21,
+      "player-brown": 19,
+      "player-white": 20
+    },
+    "avgScore": 20.25
+  },
+  "metrics": {
+    "famsBySeat": {
+      "player-white": {
+        "choose_card": 14,
+        "choose_payment": 3,
+        "scan": 2,
+        "choose_target": 12,
+        "end_turn": 15,
+        "launch": 1,
+        "play_card": 10,
+        "pass": 4,
+        "research_tech": 2,
+        "accept_optional_effect": 1
+      },
+      "player-green": {
+        "choose_card": 13,
+        "choose_payment": 2,
+        "scan": 2,
+        "choose_target": 8,
+        "end_turn": 13,
+        "play_card": 9,
+        "pass": 4,
+        "research_tech": 2
+      },
+      "player-blue": {
+        "choose_card": 13,
+        "choose_payment": 2,
+        "scan": 5,
+        "choose_target": 12,
+        "end_turn": 17,
+        "research_tech": 2,
+        "launch": 1,
+        "play_card": 9,
+        "pass": 4,
+        "choose_reward": 1,
+        "accept_optional_effect": 2
+      },
+      "player-brown": {
+        "choose_card": 13,
+        "research_tech": 2,
+        "choose_target": 9,
+        "end_turn": 9,
+        "scan": 2,
+        "launch": 1,
+        "play_card": 4,
+        "pass": 4
+      }
+    },
+    "whiteQuickTrade": 0,
+    "whiteResearchSteps": [
+      102,
+      218
+    ],
+    "traceEvents": [
+      {
+        "step": 36,
+        "seat": "player-green",
+        "slotId": 2,
+        "tt": "pink",
+        "owner": "green"
+      },
+      {
+        "step": 72,
+        "seat": "player-blue",
+        "slotId": 1,
+        "tt": "yellow",
+        "owner": "blue"
+      },
+      {
+        "step": 121,
+        "seat": "player-white",
+        "slotId": 1,
+        "tt": "pink",
+        "owner": "white"
+      }
+    ],
+    "revealEvents": [],
+    "budgetHits": [],
+    "searches": []
+  }
+}

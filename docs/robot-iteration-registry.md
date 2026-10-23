@@ -10,6 +10,27 @@
 预算截断专项循环与留档要求集中维护于此。调研工具说明及阶段计划引用本节，
 不另设一套通用门槛；历史版本成绩和阶段门限仅用于追溯。
 
+## V2 与 V1 实验隔离（2026-10-23）
+
+[实验中心](../reports/robot-iteration.html)默认显示 **V2 · 新 AI**，页面顶部可切换
+**V1 · 旧 AI**；直接地址分别为 `reports/robot-iteration.html?ai=v2` 和 `?ai=v1`。
+每个分区独立计算实验列表、当前基线、最佳完整终局分与耗时，并继续按同一世界指纹比较。
+V2 没有成绩时显示空结果，不借用 V1 的历史成绩。
+
+- V1：旧启发式策略（`agentType=heuristic`，以及没有新主线身份的历史记录）。
+- V2：新主线的 `completion` 基础策略和 `search` 搜索 AI。页面分别标注；基础策略成绩
+  不能证明搜索 AI 的必要探索或整局 180 秒验收。
+- 主线身份使用版本登记的 `aiGeneration`（`v1` / `v2`）及记录的算法身份校验。
+  `seti-completion-agent-v1` 中的 `v1` 是算法内部版本号，仍属于 **V2 主线**；
+  旧实验名称中出现 `v2` 也不会因此迁入 V2。
+- `robot_iterate run --config agentType=search` 或 `agentType=completion` 自动登记为 V2，
+  默认只选择同主线基线。跨主线基线在运行实验前拒绝；`register` 和 `build` 也校验，
+  同一个版本不接受 V1/V2 混合记录。没有所属主线的旧版本按 V1 处理。
+
+原始研究 JSON、存档和逐步复盘路径保持稳定，重建中心只读取已有记录，不重跑对局。
+构建产物中的 `generations.v1` / `generations.v2` 分别保存排行榜和基线；
+`versions[].aiGeneration` 标记列表归属。顶层 `bestOf` / `currentBaseline` 对应默认 V2。
+
 ## 1. 数据流与文件
 
 ```text
@@ -296,6 +317,7 @@ node tools/robot_iterate.js check                         # 完整性审计（ex
   "defaultBoard": { "seed": "seti-free-analyze-v1", "name": "免电分析盘面", "note": "…" },
   "versions": [                    // 数组顺序 = 最新在前（页面倒序展示）
     {
+      "aiGeneration": "v1",       // AI主线：v1旧策略 / v2新AI，不等于算法内部版本号
       "id": "v0",                 // 稳定 id（页面/回退/对比都用它）
       "name": "v0 基线（当前代码默认装配）",
       "date": "2026-08-18",

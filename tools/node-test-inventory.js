@@ -50,6 +50,7 @@ module.exports = Object.freeze({
     entry("tools/research-world-resume.test.js", "training/reporting", "研究续跑保留权威世界、行动快照与全部历史", "重建牌序、丢历史或改写未知RNG标签后续跑"),
     entry("tools/fixed-world-identity.test.js", "training/reporting", "正式开局完整世界分域指纹且不依赖策略配置", "隐藏牌序或人数变化仍被视为同盘面，记录暴露隐藏内容"),
     entry("tools/robot-report-replay.test.js", "training/reporting", "重放失败显式抛错，元数据刷新保持所有历史行动及得分正文", "部分重放或任意选项冒充成功并覆盖原报告，刷新元数据触发规则重放"),
+    entry("tools/robot-ai-generation.test.js", "training/reporting", "V1/V2记录、最佳成绩与基线独立，默认V2及切换URL只展示所属记录，跨主线登记先拒绝且保留真实复盘链接", "新基础策略内部v1号被误归旧AI、V1高分进入V2榜、跨主线基线或空V2回退旧成绩"),
     entry("tools/robot-report-link.test.js", "training/reporting", "版本复盘页研究链接解析到正式研究文件，无记录页不虚构链接", "重复目录前缀导致离线报告链接指向不存在的文件"),
     entry("randomizer/game/ai/public-card-goal.test.js", "policy/heuristic-policy", "指定公共牌目标贯穿根准入、成本代表、选择、实际入手完成、叶目的与复用", "错误完成、盲抽代替指定牌、成本代表不稳定、误删公司或未知支付、同槽替换漏检"),
     entry("randomizer/game/ai/quick-timing-contract.test.js", "architecture/policy-host", "主行动阶段及移动时机观察与正式执行、转动和恢复一致且读取无副作用", "过滤control后无法辨认阶段，未完成付款就计算时机收益，或恢复沿用旧转动缓存"),

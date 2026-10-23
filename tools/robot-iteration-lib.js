@@ -158,8 +158,40 @@ function loadVersions() {
   return data;
 }
 
+// V1 是旧启发式 AI；V2 包含新主线的 completion 基础策略和 search 玩家。
+function recordAIGeneration(record) {
+  const type = record?.agentType;
+  const policy = record?.policyVersion || "";
+  const policyGeneration = /^seti-(completion-agent|search-agent)-/.test(policy) ? "v2" : null;
+  if (type && !["heuristic", "completion", "search"].includes(type)) throw new Error(`AI_AGENT_TYPE_INVALID: ${type}`);
+  const generation = type ? (type === "heuristic" ? "v1" : "v2") : policyGeneration || "v1";
+  if (policyGeneration && generation !== policyGeneration) throw new Error("AI_RECORD_GENERATION_MISMATCH");
+  return generation;
+}
+
+function versionAIGeneration(version, recordsByFile) {
+  if (version.aiGeneration != null && !["v1", "v2"].includes(version.aiGeneration)) {
+    throw new Error(`AI_GENERATION_INVALID: ${version.id}`);
+  }
+  const generations = new Set(Object.keys(version.records || {}).filter(file => recordsByFile[file])
+    .map(file => recordAIGeneration(recordsByFile[file])));
+  if (version.agentType) generations.add(recordAIGeneration({ agentType: version.agentType }));
+  if (version.aiGeneration) generations.add(version.aiGeneration);
+  if (generations.size > 1) throw new Error(`AI_VERSION_GENERATION_MIXED: ${version.id}`);
+  return [...generations][0] || "v1";
+}
+
+function validateAIGenerations(versions, recordsByFile) {
+  const generations = new Map(versions.map(version => [version.id, versionAIGeneration(version, recordsByFile)]));
+  for (const version of versions) if (generations.has(version.baseline) && generations.get(version.baseline) !== generations.get(version.id)) {
+    throw new Error(`AI_BASELINE_GENERATION_MISMATCH: ${version.id} -> ${version.baseline}`);
+  }
+  return generations;
+}
+
 // 写回前先备份（保留对比基准），再原子写回。
 function saveVersions(data) {
+  validateAIGenerations(data.versions, scanResearchRecords());
   if (fs.existsSync(VERSIONS_PATH)) {
     fs.copyFileSync(VERSIONS_PATH, `${VERSIONS_PATH}.bak-${Date.now()}`);
   }
@@ -259,6 +291,9 @@ function resolveVersionResults(version, recordsByFile) {
       wallMs: rec.wallMs,
       flags: rec.flags || {},
       policyVersion: rec.policyVersion,
+      agentType: rec.agentType || (/^seti-completion-agent-/.test(rec.policyVersion || "") ? "completion"
+        : /^seti-search-agent-/.test(rec.policyVersion || "") ? "search" : "heuristic"),
+      aiGeneration: recordAIGeneration(rec),
       gitCommit: rec.gitCommit,
       createdAt: rec.createdAt,
       resumeStep: rec.resumeStep,
@@ -301,6 +336,7 @@ function resolveVersionResults(version, recordsByFile) {
 
 // 汇总各版本结果 + roadmap 条目，计算固定盘面最佳指标（仅全盘/完整终局口径）。
 function computeBestOf(versions, resolvedMap) {
+  if (new Set(versions.map(version => version.aiGeneration || "v1")).size > 1) throw new Error("AI_BEST_OF_GENERATION_MIXED");
   // versions 按登记顺序由新到旧。最新版本定义比较世界；缺身份不能借用旧版本身份。
   const currentResults = versions.length ? (resolvedMap[versions[0].id] || []) : [];
   const world = currentResults.find((r) => !r.missingRecord && r.world?.fingerprint)?.world || null;
@@ -426,6 +462,7 @@ function auditRegistry(versions, recordsByFile, resolvedMap, bestOf) {
       createdAt: rec.createdAt,
       steps: rec.steps,
       terminal: rec.terminal,
+      aiGeneration: recordAIGeneration(rec),
     });
   }
   for (const o of orphans) {
@@ -1280,6 +1317,32 @@ function renderPage(registry) {
 // 纯计算 registry（不落盘）：解析版本 → 结果 → best-of → 审计 → 版本详情。
 // generateReports=true 时为所有有存档但缺报告的记录生成复盘报告（纯重放）并落盘；
 // forceReports=true 时已存在的报告也重新生成（报告模板/逻辑改动后刷新用）。
+function selectCurrentBaseline(versions, nowHead) {
+  let currentBaseline = null;
+  for (const v of versions) {
+    if (v.head === nowHead || (nowHead && v.head && (nowHead.startsWith(v.head) || v.head.startsWith(nowHead)))) {
+      currentBaseline = v;
+      break;
+    }
+  }
+  if (!currentBaseline) {
+    let best = null;
+    let bestDist = -1;
+    for (const v of versions) {
+      if (!v.head || !gitIsAncestor(v.head, nowHead)) continue;
+      const distText = git(["rev-list", "--count", `${v.head}..${nowHead}`], { silent: true });
+      const dist = distText != null ? Number(distText) : -1;
+      if (dist >= 0 && (best == null || dist < bestDist)) {
+        best = v;
+        bestDist = dist;
+      }
+    }
+    currentBaseline = best;
+  }
+
+  return currentBaseline;
+}
+
 function computeRegistry({ generateReports = false, forceReports = false, refreshReportMetadata = false } = {}) {
   if (refreshReportMetadata && (generateReports || forceReports)) {
     throw new Error("REPORT_REFRESH_MODE_CONFLICT: 元数据刷新不能与完整重放混用");
@@ -1287,6 +1350,7 @@ function computeRegistry({ generateReports = false, forceReports = false, refres
   const versionsData = loadVersions();
   const versions = versionsData.versions;
   const recordsByFile = scanResearchRecords();
+  const generationByVersion = validateAIGenerations(versions, recordsByFile);
   const resolvedMap = {};
   for (const v of versions) resolvedMap[v.id] = resolveVersionResults(v, recordsByFile);
 
@@ -1320,33 +1384,17 @@ function computeRegistry({ generateReports = false, forceReports = false, refres
     }
   }
 
-  const bestOf = computeBestOf(versions, resolvedMap);
-  const { warnings, orphans } = auditRegistry(versions, recordsByFile, resolvedMap, bestOf);
-
-  // 当前 baseline 版本：优先 head 精确匹配 git HEAD；否则取 head 为 HEAD 最近祖先的
-  // 版本（策略提交后又有工具/文档提交时，HEAD 前进到非版本提交，策略基线不变）。
   const nowHead = gitHeadShort();
-  let currentBaseline = null;
-  for (const v of versions) {
-    if (v.head === nowHead || (nowHead && v.head && (nowHead.startsWith(v.head) || v.head.startsWith(nowHead)))) {
-      currentBaseline = v;
-      break;
-    }
-  }
-  if (!currentBaseline) {
-    let best = null;
-    let bestDist = -1;
-    for (const v of versions) {
-      if (!v.head || !gitIsAncestor(v.head, nowHead)) continue;
-      const distText = git(["rev-list", "--count", `${v.head}..${nowHead}`], { silent: true });
-      const dist = distText != null ? Number(distText) : -1;
-      if (dist >= 0 && (best == null || dist < bestDist)) {
-        best = v;
-        bestDist = dist;
-      }
-    }
-    currentBaseline = best;
-  }
+  const generations = Object.fromEntries(["v1", "v2"].map(aiGeneration => {
+    const members = versions.filter(version => generationByVersion.get(version.id) === aiGeneration);
+    const current = selectCurrentBaseline(members, nowHead);
+    return [aiGeneration, { currentBaseline: current?.id || null,
+      bestOf: computeBestOf(members.map(version => ({ ...version, aiGeneration })), resolvedMap),
+      versionCount: members.length, recordCount: members.reduce((count,version) => count+Object.keys(version.records || {}).length,0) }];
+  }));
+  const defaultGeneration = "v2", currentBaseline = generations[defaultGeneration].currentBaseline;
+  const bestOf = generations[defaultGeneration].bestOf;
+  const { warnings, orphans } = auditRegistry(versions, recordsByFile, resolvedMap, bestOf);
 
   // 组装版本列表（含提交信息、diff 摘要、完整性）
   const versionOut = versions.map((v) => {
@@ -1363,6 +1411,7 @@ function computeRegistry({ generateReports = false, forceReports = false, refres
       .map((r) => ({ runKey: r.recordFile.replace(/\.json$/, ""), path: r.reportPath, mode: r.mode }));
     return {
       id: v.id,
+      aiGeneration: generationByVersion.get(v.id),
       name: v.name,
       date: v.date,
       baseline: v.baseline,
@@ -1373,7 +1422,7 @@ function computeRegistry({ generateReports = false, forceReports = false, refres
       diffFiles,
       results,
       roadmap: v.roadmap || null,
-      isHead: currentBaseline ? v.id === currentBaseline.id : false,
+      isHead: v.id === generations[generationByVersion.get(v.id)].currentBaseline,
       completeness: { record: hasRecord, save: hasSave, report: hasReport, reportLinks },
     };
   });
@@ -1384,7 +1433,8 @@ function computeRegistry({ generateReports = false, forceReports = false, refres
       builtAt: new Date().toISOString(),
       board: versionsData.defaultBoard || { seed: "seti-free-analyze-v1", name: "免电分析盘面" },
       headCommit: nowHead,
-      currentBaseline: currentBaseline ? currentBaseline.id : null,
+      defaultGeneration, generations,
+      currentBaseline,
       worktreeDirty: gitIsDirty(),
       bestOf,
       versions: versionOut,
@@ -1470,6 +1520,10 @@ module.exports = {
   writeJson,
   loadVersions,
   saveVersions,
+  recordAIGeneration,
+  versionAIGeneration,
+  validateAIGenerations,
+  selectCurrentBaseline,
   scanResearchRecords,
   readSaveFinalScores,
   resolveVersionResults,

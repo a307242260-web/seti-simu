@@ -19,7 +19,8 @@
       "records": {
         "3bbbc445.2bc7b88c.full.json": {}
       },
-      "roadmap": null
+      "roadmap": null,
+      "aiGeneration": "v2"
     },
     {
       "id": "ai-foundation-dev-06-20261022",
@@ -34,7 +35,8 @@
       "records": {
         "b15f4401.2bc7b88c.full.json": {}
       },
-      "roadmap": null
+      "roadmap": null,
+      "aiGeneration": "v2"
     },
     {
       "id": "ai-foundation-dev-05-20261022",
@@ -49,7 +51,8 @@
       "records": {
         "7cd473bf.2bc7b88c.full.json": {}
       },
-      "roadmap": null
+      "roadmap": null,
+      "aiGeneration": "v2"
     },
     {
       "id": "ai-foundation-dev-04-20261022",
@@ -64,7 +67,8 @@
       "records": {
         "199abbfb.2bc7b88c.full.json": {}
       },
-      "roadmap": null
+      "roadmap": null,
+      "aiGeneration": "v2"
     },
     {
       "id": "ai-foundation-dev-03-20261022",
@@ -79,7 +83,8 @@
       "records": {
         "801a83ba.2bc7b88c.full.json": {}
       },
-      "roadmap": null
+      "roadmap": null,
+      "aiGeneration": "v2"
     },
     {
       "id": "ai-foundation-dev-02-20261022",
@@ -94,7 +99,8 @@
       "records": {
         "8cf00b93.2bc7b88c.full.json": {}
       },
-      "roadmap": null
+      "roadmap": null,
+      "aiGeneration": "v2"
     },
     {
       "id": "ai-foundation-dev-01-20261022",
@@ -109,7 +115,8 @@
       "records": {
         "1ed7c0bf.2bc7b88c.full.json": {}
       },
-      "roadmap": null
+      "roadmap": null,
+      "aiGeneration": "v2"
     },
     {
       "id": "ai-foundation-dev-00-20261022",
@@ -124,7 +131,8 @@
       "records": {
         "3558b009.2bc7b88c.full.json": {}
       },
-      "roadmap": null
+      "roadmap": null,
+      "aiGeneration": "v2"
     },
     {
       "id": "ai-foundation-20261022",
@@ -140,7 +148,8 @@
         "cdbe7999.576bbc50.full.json": {}
       },
       "roadmap": null,
-      "agentType": "completion"
+      "agentType": "completion",
+      "aiGeneration": "v2"
     },
     {
       "id": "budget-ladder-03-20260913",

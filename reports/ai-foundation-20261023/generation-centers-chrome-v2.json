@@ -1,0 +1,42 @@
+{
+  "status": "passed",
+  "rows": [
+    {
+      "query": "",
+      "generation": "v2",
+      "versionRows": 9,
+      "oppositeRows": 0,
+      "screenshot": "reports/ai-foundation-20261023/generation-centers-default-v2.png",
+      "domPath": "reports/ai-foundation-20261023/generation-centers-default-v2.dom.html.gz",
+      "domSha256": "f1120d200e62d7d22dbb73ed0a24c4f9d8b4237c01fa058a2adb20ff32c20e9d",
+      "exitCode": 0,
+      "domEncoding": "gzip",
+      "domCompressedSha256": "d21fcc27cdfc9ead1af9d22b473330858027db203ab49fe3d97b84dfc4bccae0"
+    },
+    {
+      "query": "?ai=v1",
+      "generation": "v1",
+      "versionRows": 141,
+      "oppositeRows": 0,
+      "screenshot": "reports/ai-foundation-20261023/generation-centers-v1-v2.png",
+      "domPath": "reports/ai-foundation-20261023/generation-centers-v1-v2.dom.html.gz",
+      "domSha256": "1aa97555c91530579cbc7d1ff39bdc7f9bc56e9da9a6c5f76a4d729f3237cdcf",
+      "exitCode": 0,
+      "domEncoding": "gzip",
+      "domCompressedSha256": "a9e9f62f0b84202b9844821e1f7c1b20d15cceff93f3021ed5151d9573a2887e"
+    },
+    {
+      "query": "?ai=v2",
+      "generation": "v2",
+      "versionRows": 9,
+      "oppositeRows": 0,
+      "screenshot": "reports/ai-foundation-20261023/generation-centers-v2-v2.png",
+      "domPath": "reports/ai-foundation-20261023/generation-centers-v2-v2.dom.html.gz",
+      "domSha256": "f1120d200e62d7d22dbb73ed0a24c4f9d8b4237c01fa058a2adb20ff32c20e9d",
+      "exitCode": 0,
+      "domEncoding": "gzip",
+      "domCompressedSha256": "d21fcc27cdfc9ead1af9d22b473330858027db203ab49fe3d97b84dfc4bccae0"
+    }
+  ],
+  "pageSha256": "99462c4506cda9f3bccd160dbde3b29fb6599193c67791e00caf749c2543c831"
+}
