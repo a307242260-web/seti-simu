@@ -274,6 +274,36 @@ try {
           if (!proof || rawValue !== evaluateSector(outcomeModel.createDecisionObservation(root.observation,
             { seatId: sectorFixture.seatId }))) throw new Error("异星实验室准备或扇区任务的证明/原始标准估值不一致");
           console.log(`[PASS] independent-alien-opening-sector-task: card=${cardId || "opening"} total=${rawValue}`);
+          if (cardId === "b_114.webp") {
+            const bound = sectorPort.postMainValueBound(root), attained = sectorPort.expandPostMainOptimalPlan(root);
+            if (!bound || bound.continuationProof !== proof.proof || !attained.complete) throw new Error("静止继续路径的组合界/实际见证缺失");
+            for (const node of [...attained.prefixes.map(prefix => prefix.node), attained.node]) {
+              if (evaluateSector(node.observation) !== evaluateSector(outcomeModel.createDecisionObservation(node.observation,
+                { seatId: sectorFixture.seatId }))) throw new Error("静止继续路径组合的原始/标准估值不一致");
+            }
+            if (evaluateSector(attained.node.observation) !== rawValue + bound.maximumValueIncrease) throw new Error("静止继续路径未达到组合上界");
+            console.log(`[PASS] independent-quiet-bound-composition: root=${rawValue} leaf=${evaluateSector(attained.node.observation)}`);
+          }
+          if (!cardId) {
+            const scan = root.legalActions.find(action => action.family === "scan"), bound = sectorPort.standardScanValueBound(root);
+            const first = sectorPort.expand(root, scan.actionId), firstBound = sectorPort.standardScanValueBound(first);
+            if (!bound || !firstBound) throw new Error("普通扫描根/已付款收益界缺失");
+            let leaves = 0;
+            for (const chosen of first.legalActions) {
+              const pub = sectorPort.expand(first, chosen.actionId), pubBound = sectorPort.standardScanValueBound(pub);
+              if (!pubBound) throw new Error("公共扫描收益界缺失");
+              for (const selected of pub.legalActions) {
+                const leaf = sectorPort.expand(pub, selected.actionId);
+                for (const node of [root, first, pub, leaf]) if (evaluateSector(node.observation) !== evaluateSector(
+                  outcomeModel.createDecisionObservation(node.observation, { seatId: sectorFixture.seatId }))) throw new Error("扫描阶段原始/标准估值不一致");
+                if (leaf.status !== "information-barrier" || evaluateSector(leaf.observation) > rawValue + bound.valueDelta
+                  || evaluateSector(leaf.observation) > evaluateSector(first.observation) + firstBound.valueDelta
+                  || evaluateSector(leaf.observation) > evaluateSector(pub.observation) + pubBound.valueDelta) throw new Error("真实补牌边界超出扫描上界");
+                leaves += 1;
+              }
+            }
+            console.log(`[PASS] independent-standard-scan-refill-bound: stages=3 leaves=${leaves}`);
+          }
           const trade = root.legalActions.find(action => action.target?.tradeId === "energy-for-card");
           const pending = sectorPort.expand(root, trade.actionId), bound = sectorPort.cardTradeBound(pending);
           const leaf = sectorPort.expand(pending, pending.legalActions[0].actionId);

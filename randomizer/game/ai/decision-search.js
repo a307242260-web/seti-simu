@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v29";
+  const VERSION = "seti-complete-decision-search-v30";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -64,7 +64,7 @@
           ? reused?.hit ? "disabled-for-selection-certificate" : "reused-complete-window" : "off",
         moneyCapacityPrunes: 0, moneyCapacityDominance: moneyCapacityDominance
           ? reused?.hit ? "disabled-for-selection-certificate" : "reused-complete-window" : "off",
-        postMainValuePrunes: 0,
+        postMainValuePrunes: 0, scanValuePrunes: 0, scanActionPrunes: 0,
         cardTradePrunes: 0, cardTradePruning: cardTradePruning
           ? reused?.hit ? "disabled-for-selection-certificate" : "reused-complete-window" : "off",
         postMainProofNodes: 0, postMainExcludedActions: 0, postMainPruning: postMainPruning ? "enabled" : "off",
@@ -84,8 +84,8 @@
     const useResourceDominance = resourceDominance && !port.selectionSpec?.(root);
     const useMoneyCapacity = moneyCapacityDominance && !port.selectionSpec?.(root);
     const useCardTradePruning = cardTradePruning && !port.selectionSpec?.(root);
+    const useScanBound = cardChoiceEquivalence && stateValue?.isDefaultStateValueEvaluator?.(evaluate) && !port.selectionSpec?.(root);
     const usePostMainValueBound = postMainPruning && !port.selectionSpec?.(root);
-    let cursor = 0;
     let transitions = 0;
     let equivalents = 0;
     let selectionMacros = 0;
@@ -95,6 +95,7 @@
     let moneyCapacityPrunes = 0;
     let cardTradePrunes = 0;
     let postMainValuePrunes = 0;
+    let scanValuePrunes = 0, scanActionPrunes = 0;
     let certificateNodes = 0, postMainOptimalPlans = 0, postMainOptimalPlanSteps = 0;
     let postMainProofNodes = 0, postMainExcludedActions = 0;
     let openingProofNodes = 0, openingExcludedActions = 0;
@@ -265,9 +266,9 @@
       return { index, equivalent: false };
     }
     add(root);
-    outer: while (cursor < queue.length) {
-      const entry = nodes[queue[cursor]];
-      if (entry.prunedBy) { cursor += 1; continue; }
+    outer: while (queue.length) {
+      const entry = nodes[queue.pop()];
+      if (entry.prunedBy) {  continue; }
       if (usePostMainValueBound && incumbent && entry.node.status === "stable") {
         if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
         const bound = port.postMainValueBound?.(entry.node);
@@ -285,7 +286,20 @@
               boundKind: "post-main-continuation", currentValue, bound };
             postMainValuePrunes += 1;
             if (entry.queued) { entry.queued = false; pendingFrontier -= 1; }
-            cursor += 1; continue;
+             continue;
+          }
+        }
+      }
+      if (useScanBound && incumbent && entry.node.status === "decision") {
+        if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break;}
+        const bound=port.standardScanValueBound?.(entry.node);
+        if(bound){const currentValue=evaluate(entry.node.observation),player=entry.node.observation.publicState.players.find(p=>p.playerId===evaluate.seatId);
+          const upperBound=currentValue+bound.valueDelta;
+          if(!Number.isSafeInteger(bound.valueDelta*2))throw new TypeError("SEARCH_SCAN_BOUND_INVALID");
+          if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break;}
+          if(player.finalScore===player.score && [currentValue,upperBound].every(v=>Number.isSafeInteger(v*2)&&v>=0&&v<Number.MAX_SAFE_INTEGER/64) && incumbent.value>upperBound){
+            entry.prunedByBound={...incumbent,upperBound,proof:bound.proof,modelKey:evaluate.modelKey,boundKind:"standard-scan-refill",currentValue,bound};scanValuePrunes+=1;
+            if(entry.queued){entry.queued=false;pendingFrontier-=1;}continue;
           }
         }
       }
@@ -322,7 +336,7 @@
           entry.alternatives = [{ firstActionId: first, submissions: macro.submissions }]; entry.alternativeCount = 1;
           entry.expanded = true; postMainOptimalPlans += 1;
           if (entry.queued) { entry.queued = false; pendingFrontier -= 1; }
-          cursor += 1; continue;
+           continue;
         }
       }
       let bound = null, upperBound = null, boundChecked = false;
@@ -336,7 +350,7 @@
           entry.prunedByBound = { ...incumbent, upperBound, proof: bound.proof, modelKey: evaluate.modelKey };
           cardTradePrunes += 1;
           if (entry.queued) { entry.queued = false; pendingFrontier -= 1; }
-          cursor += 1;
+          
           continue;
         }
       }
@@ -362,6 +376,17 @@
       }
       for (const alternative of entry.alternatives) {
         if (entry.prunedBy) break;
+        if(useScanBound && incumbent && entry.node.status==="stable" && entry.node.legalActions.some(action=>action.actionId===alternative.firstActionId && action.family==="scan" && action.target?.kind==="standard-scan")){
+          if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
+          const bound=port.standardScanValueBound?.(entry.node);
+          if(bound){const currentValue=evaluate(entry.node.observation),player=entry.node.observation.publicState.players.find(p=>p.playerId===evaluate.seatId),upperBound=currentValue+bound.valueDelta;
+            if(!Number.isSafeInteger(bound.valueDelta*2))throw new TypeError("SEARCH_SCAN_BOUND_INVALID");
+            if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
+            if(player.finalScore===player.score && [currentValue,upperBound].every(v=>Number.isSafeInteger(v*2)&&v>=0&&v<Number.MAX_SAFE_INTEGER/64) && incumbent.value>upperBound){
+              (entry.actionBounds ||= []).push({actionId:alternative.firstActionId,...incumbent,upperBound,proof:bound.proof,modelKey:evaluate.modelKey,boundKind:"standard-scan-refill",currentValue,bound});scanActionPrunes+=1;continue;
+            }
+          }
+        }
         if (transitions + alternative.submissions > limits.transitions) stopReason = "transition-budget";
         else if (nodes.length+certificateNodes >= limits.nodes) stopReason = "node-budget";
         else if (pendingFrontier > limits.frontier) stopReason = "frontier-budget";
@@ -391,7 +416,7 @@
       }
       entry.expanded = !entry.prunedBy;
       if (entry.queued) { entry.queued = false; pendingFrontier -= 1; }
-      cursor += 1;
+      
     }
 
     // 在完整有向图上从叶逆向传播；保留回边，不能把 DFS 栈上的节点误判成无解。
@@ -399,7 +424,7 @@
     if (!stopReason) {
       const parents = nodes.map(() => []);
       nodes.forEach((entry, index) => entry.edges.forEach(edge => parents[edge.target].push({ index, edge })));
-      const covered = nodes.flatMap((entry, index) => entry.prunedBy || entry.prunedByBound ? [index] : []);
+      const covered = nodes.flatMap((entry, index) => entry.prunedBy || entry.prunedByBound || entry.actionBounds?.length ? [index] : []);
       for (const index of covered) nodes[index].covered = true;
       for (let head = 0; head < covered.length; head += 1) {
         for (const { index } of parents[covered[head]]) if (!nodes[index].covered) {
@@ -427,7 +452,7 @@
     if (!stopReason && now() - startedAt >= limits.milliseconds) stopReason = "watchdog";
     const unresolved = nodes.flatMap((entry, index) => entry.expanded || entry.prunedBy || entry.prunedByBound ? [] : [{
       node: index, actionIds: (entry.selection ? entry.node.legalActions
-        : entry.alternatives.slice(entry.edges.length).map(alternative => ({ actionId: alternative.firstActionId })))
+        : entry.alternatives.slice(entry.edges.length+(entry.actionBounds?.length||0)).map(alternative => ({ actionId: alternative.firstActionId })))
         .map(action => action.actionId),
       ...(entry.attainmentAttempt ? { attainmentAttempt: entry.attainmentAttempt } : {}),
       ...(entry.selection ? { selectionPlansRemaining: entry.alternativeCount - entry.edges.length,
@@ -436,7 +461,7 @@
     const complete = !stopReason;
     function retainedWitness(index) {
       if (!complete) return null;
-      const start = nodes[index].localPlan?.kind !== "card-choice" && (dominancePrunes || cardTradePrunes || postMainBorrowProofNodes || postMainValuePrunes) ? 0 : index;
+      const start = nodes[index].localPlan?.kind !== "card-choice" && (dominancePrunes || cardTradePrunes || postMainBorrowProofNodes || postMainValuePrunes || scanValuePrunes || scanActionPrunes) ? 0 : index;
       let current = start;
       for (let depth = 0; depth <= nodes.length; depth += 1) {
         const entry = nodes[current];
@@ -466,6 +491,7 @@
           omittedContinuationFamilies: "all-except-pass", witness: retainedWitness(index), modelKey: evaluate.modelKey })) } : {}),
       ...(entry.borrowPlan ? { borrowPlan: { ...entry.borrowPlan, witness: retainedWitness(index),
         completion: complete ? "covered-by-origin-search" : "pending-origin-search", modelKey: evaluate.modelKey } } : {}),
+      ...(entry.actionBounds ? { actionBounds: entry.actionBounds } : {}),
       ...(entry.attainedPlan ? { attainedPlan: entry.attainedPlan } : {}),
       ...(entry.attainmentAttempt ? { attainmentAttempt: entry.attainmentAttempt } : {}),
       ...(entry.selection ? { selection: entry.selection, orderedExitCount: entry.alternativeCount } : {}),
@@ -474,6 +500,8 @@
       const excluded = lines[0].excludedActions?.find(exclusion => exclusion.actionId === action.actionId);
       if (excluded) return { actionId: action.actionId, target: null, value: null,
         completion: complete ? "proof-pruned" : "pending-retained-search", valueType: "not-executed", prunedByPlan: excluded };
+      const actionBound=nodes[0].actionBounds?.find(bound=>bound.actionId===action.actionId);
+      if(actionBound)return {actionId:action.actionId,target:null,value:null,valueType:"not-executed",completion:"proof-pruned",prunedByActionBound:actionBound};
       const selection = nodes[0].selection;
       // 纯点击的强连通部分可到达同一完整出口集；confirm 直接离开，只对应当前选择。
       const edge = selection && action.target?.confirm ? nodes[0].edges.find(edge =>
@@ -488,9 +516,9 @@
         actionId: action.actionId, target: edge?.target ?? null,
         value: edge ? nodes[edge.target].value : null,
         completion: stopReason || !edge ? "pending" : edge.openingPass ? "covered-by-opening-normal-form" : cardTradePrunes ? "covered-by-global-pruning"
-          : postMainValuePrunes ? "covered-by-global-value-bound" : postMainBorrowProofNodes ? "covered-by-global-borrow-simulation" : dominancePrunes ? "covered-by-global-dominance"
+          : scanValuePrunes || scanActionPrunes ? "covered-by-global-scan-bound" : postMainValuePrunes ? "covered-by-global-value-bound" : postMainBorrowProofNodes ? "covered-by-global-borrow-simulation" : dominancePrunes ? "covered-by-global-dominance"
           : nodes[edge.target].value == null ? "unreachable" : "complete",
-        ...(dominancePrunes || cardTradePrunes || postMainBorrowProofNodes || postMainValuePrunes || edge?.openingPass ? { valueType: "attained-lower-bound" } : {}),
+        ...(dominancePrunes || cardTradePrunes || postMainBorrowProofNodes || postMainValuePrunes || scanValuePrunes || scanActionPrunes || edge?.openingPass ? { valueType: "attained-lower-bound" } : {}),
         ...(edge?.openingPass ? { normalForm: edge.proof } : {}),
       };
     });
@@ -510,7 +538,7 @@
         if (!best) throw new Error("SEARCH_PLAN_WITNESS_MISSING");
         const roots = entry.node.legalActions.map(action => {
           const edge = entry.edges.find(edge => edge.actionId === action.actionId);
-          const exclusion = entry.localPlan?.excludedActionIds.includes(action.actionId) ? entry.localPlan.proof : null;
+          const exclusion = entry.localPlan?.excludedActionIds.includes(action.actionId) ? entry.localPlan.proof : entry.actionBounds?.find(bound=>bound.actionId===action.actionId)?.proof || null;
           return { actionId: action.actionId, value: exclusion ? null : edge ? nodes[edge.target].value : null,
             valueType: exclusion ? "not-executed" : "attained-lower-bound", completion: "covered-by-prior-complete-window",
             sourceNode: current, ...(exclusion ? { proof: exclusion } : {}),
@@ -559,7 +587,7 @@
           : resourceDominance ? "disabled-for-selection-certificate" : "off",
         moneyCapacityPrunes, moneyCapacityDominance: useMoneyCapacity ? "enabled"
           : moneyCapacityDominance ? "disabled-for-selection-certificate" : "off",
-        postMainValuePrunes,
+        postMainValuePrunes, scanValuePrunes, scanActionPrunes,
         cardTradePrunes, cardTradePruning: useCardTradePruning ? "enabled"
           : cardTradePruning ? "disabled-for-selection-certificate" : "off",
         postMainProofNodes, postMainExcludedActions, postMainPruning: postMainPruning ? "enabled" : "off",

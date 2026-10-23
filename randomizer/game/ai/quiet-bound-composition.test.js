@@ -1,0 +1,24 @@
+"use strict";
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),{createAnalysisPort}=require('./analysis-port'),{createStateValueEvaluator}=require('./state-value'),{searchDecision}=require('./decision-search'),data=require('../data'),cards=require('../cards/deck'),effects=require('../cards/effects');
+const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261023-v1/case-008-20261023-v1.json'))),seed=f.source.seed,seatId=f.seatId,evaluate=createStateValueEvaluator(seatId),own=s=>s.players.players.find(p=>p.id===seatId);
+const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const comp=k.composition;assert(comp.lifecycle.restore(f.compositionEnvelope).ok);
+const action=comp.inputPort.enumerateActions({}).find(a=>a.family==='play_card'&&a.target.cardInstanceId==='card-37-0');assert(action);assert(comp.inputPort.submitAction(action).ok);assert.notEqual(comp.inspect().phase,'awaiting_input');
+const envelope=comp.lifecycle.save().envelope,actual=JSON.parse(envelope.committedState),budget={transitions:4096,nodes:4097,frontier:4096,milliseconds:15000};
+function control(hand,pool,round=1){const s=structuredClone(actual),p=own(s);s.cards.discardPile.push(...p.hand.slice(hand));p.hand=p.hand.slice(0,hand);Object.assign(p.resources,{credits:2,energy:0,publicity:0,availableData:0,handSize:hand});p.dataState=data.createDefaultDataState();s.turn.roundNumber=round;for(let i=0;i<pool;i++)assert(data.gainData(p,{root:s}).ok);return s;}
+function open(s,cache=0){assert(comp.lifecycle.restore({...envelope,committedState:JSON.stringify(s)}).ok);const port=createAnalysisPort({composition:comp,seatId,maxCacheEntries:cache});return{port,root:port.openRoot(),before:comp.lifecycle.save().envelope};}
+function run(s,enabled,cache=0){const {port,root,before}=open(s,cache);try{
+ const quiet=port.postMainPlanSpec(root),bound=port.postMainValueBound(root);assert(quiet,JSON.stringify({hand:own(s).hand.length,pool:own(s).resources.availableData,round:s.turn.roundNumber}));assert(bound);assert.equal(bound.continuationProof,quiet.proof);
+ const wrapped=enabled?port:{...port,postMainPlanSpec:()=>null,postMainValueBound:()=>null,postMainOptimalPlanSpec:()=>null};
+ const r=searchDecision({port:wrapped,root,evaluate,postMainPruning:true,budget});assert(r.complete,r.stopReason);assert.deepEqual(comp.lifecycle.save().envelope,before);
+ for(const line of r.lines.filter(line=>['information-barrier','other-owner','terminal'].includes(line.status)))assert(line.value<=evaluate(root.observation)+bound.maximumValueIncrease);
+ return r;
+ }finally{port.close();}}
+const rows=[];
+for(const [name,s] of [['no-hand',control(0,0)],['unused-blind-card-and-task',control(1,4)],['two-data-cards-and-task',control(2,3)],['late-income',control(2,4,3)]]){
+ const raw=run(s,false),fast=run(s,true),cached=run(s,true,256);for(const r of [fast,cached]){assert.equal(r.actionId,raw.actionId);assert.equal(r.value,raw.value);assert.equal(r.lines[0].distance,raw.lines[0].distance);}assert(fast.diagnostics.transitions<raw.diagnostics.transitions);rows.push({name,raw:raw.diagnostics.transitions,composed:fast.diagnostics.transitions,value:fast.value,distance:fast.lines[0].distance});
+}
+function rejected(s){const {port,root}=open(s);assert.equal(port.postMainValueBound(root),null);port.close();}
+const ready=control(1,4);ready.data.sectorSettlements.winsByPlayerId[seatId]=[{nebulaId:'sector-2-a',sectorId:'sector-2-a'},{nebulaId:'sector-1-a',sectorId:'sector-1-a'}];
+assert(effects.getCardModel(own(ready).reservedCards.find(c=>c.cardId==='b_114.webp')).tasks.some(t=>effects.taskConditionMet(t,own(ready),{data:ready.data})));rejected(ready);
+const historical=control(1,4);assert(historical.cards.drawPileCardIds.includes('b_44.webp'));historical.cards.drawPileCardIds=historical.cards.drawPileCardIds.filter(id=>id!=='b_44.webp');const visit=cards.createCommittedCardInstance(historical,cards.CARD_CATALOG.find(c=>c.card_id==='b_44.webp'));own(historical).reservedCards.push(visit);effects.ensureCardEffectState(visit);historical.turn.type1TriggerEvents=[{type:'visitPlanet',planetId:'jupiter',playerId:seatId}];rejected(historical);
+const initial=open(actual);assert(initial.port.postMainValueBound(initial.root));initial.port.close();comp.dispose();console.log(JSON.stringify({quietBoundComposition:'passed',rows,actualB114Continuation:true,readyAndHistoricalRejected:true}));

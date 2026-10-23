@@ -16,10 +16,11 @@
     common ? require("../tech/board-state") : root.SetiTechBoardState,
     common ? require("../../solar-system/core") : root.SetiSolarSystem,
     common ? require("../rockets") : root.SetiRocketActions,
-    common ? require("../players") : root.SetiPlayers);
+    common ? require("../players") : root.SetiPlayers,
+    common ? require("../effects/science-session") : root.SetiScienceSession);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession) {
   "use strict";
 
   // 已逐项审计的 Production 公司组合：钱电模拟和取牌待选分别检查各自的队列前提。
@@ -239,6 +240,7 @@
     let preMainDataPlans = new WeakMap();
     let postMainPlans = new WeakMap();
     let postMainBorrows = new WeakMap();
+    let scanValueBounds = new WeakMap();
     let postMainValueBounds = new WeakMap();
     let postMainOptimalPlans = new WeakMap();
     const resourceGroups = new Map();
@@ -1029,6 +1031,90 @@
         excludedActionIds: excluded }) : null;
     }
 
+    function standardScanValueBound(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (scanValueBounds.has(node)) return scanValueBounds.get(node);
+      const result = describeStandardScanValueBound(stored,node);
+      scanValueBounds.set(node,result); return result;
+    }
+
+    function describeStandardScanValueBound(stored,node) {
+      const session=stored.envelope.session?.session;
+      if (node.status!=="stable" && node.status!=="decision" || node.status==="decision" && session?.queue?.[0]?.type!==scienceSession.EFFECT_TYPES.SCAN_STEP) return null;
+      const state=session?.workingState || readIdentityState(stored.envelope);
+      const owner=state.players.players.find(player=>player.id===seatId),company=industryCatalog.getPlayerIndustryDefinition(owner);
+      const quietCompany=company && (company.activeAbilityId==="turing_borrow_tech" && company.passiveIds.length===0
+        || company.activeAbilityId===null && company.passiveIds.length===1 && company.passiveIds[0]==="alien_lab_panels");
+      if (!quietCompany || !owner || state.turn.currentPlayerId!==seatId || state.match.initialSetup || owner.passCompletionPending
+        || state.turn.activePlayerCount!==4 || state.turn.passedPlayerIds.includes(seatId)
+        || state.turn.cardTurnEventBonuses?.length || state.turn.type1TriggerEvents && !Array.isArray(state.turn.type1TriggerEvents)
+        || Object.values(state.aliens.aliens).some(slot=>slot.revealed || alienState.isAlienReadyToReveal(slot))
+        || Object.keys(state.aliens.chong?.transportTasksByRocketId || {}).length
+        || owner.industryFutureSpan?.card || owner.industryStrategyPlayInteractionPending
+        || Object.values(state.finalScoring.tiles).some(tile=>tile.marks.some(mark=>[mark.playerId,mark.playerColor].some(id=>id===seatId || id===owner.color)))) return null;
+      for (const card of owner.reservedCards) {
+        const model=cardEffects.getCardModel(card),copy=structuredClone(card);cardEffects.ensureCardEffectState(copy);
+        if (!hasMoneyMonotoneCardModel(card) || model.tasks?.length || model.temporaryTasks?.length || model.endGameScoring || model.pluto
+          || (model.triggers||[]).some(trigger=>!copy.cardEffectState.consumedTriggerIds.includes(trigger.id)
+            && (trigger.event.types?.length?trigger.event.types:[trigger.event.type]).includes("signalMarked"))
+          || (state.turn.type1TriggerEvents||[]).some(event=>cardEffects.collectMatchingTriggers({...owner,reservedCards:[copy]},event).length)) return null;
+      }
+      if (owner.resources.availableData!==owner.dataState.poolTokens.length
+        || owner.resources.additionalPublicScan!==0 || state.cards.publicCards.length!==3
+        || state.cards.publicCards.some(card=>!card || !["basic","space-agency"].includes(card.set) || !cards.getCatalogEntryForCard(card))
+        || !cards.getAvailablePool({...state.cards},state.players).length
+        || Object.keys(state.data.nebulae).some(id=>data.isSectorReadyToSettle(state.data,id))) return null;
+      let firstChoices,stage,cost={};
+      if (node.status==="stable" && !session) {
+        if (!node.legalActions.some(action=>action.family==="scan" && action.phase==="main" && action.target?.kind==="standard-scan"
+          && Object.keys(action.target).length===1 && Object.keys(action.payload||{}).length===0)) return null;
+        const queue=scanEffects.buildScanEffectQueue(owner,{fullScanAction:true,includeFinalize:true,turn:state.turn});
+        if (queue.length!==2 || queue[0].type!==scanEffects.EFFECT_TYPES.EARTH_SECTOR_SCAN
+          || queue[1].type!==scanEffects.EFFECT_TYPES.PUBLIC_CARD_SCAN || queue.some(effect=>Object.keys(effect.options||{}).length)) return null;
+        const source=scienceSession.getPlanetScanSource(state,queue[0].type);if(!source)return null;
+        firstChoices=scienceSession.listNebulaChoices(state,{...source,gainData:true});
+        cost=scanEffects.getStandardScanCost(owner);if(Object.keys(cost).some(key=>!["credits","energy"].includes(key)||!Number.isSafeInteger(cost[key])||cost[key]<0))return null;
+        stage="before-scan";
+      } else if (node.status==="decision" && session && !session.interruptContext && !session.irreversibleBarrier
+        && session.journal?.actions?.[0]?.action?.family==="scan") {
+        const queue=session.queue,head=queue[0],opts=head?.payload?.options;
+        if (![2,3].includes(queue.length) || queue.some(effect=>effect.ownerId!==seatId || effect.allowQuickActions)
+          || queue.at(-1).type!==scienceSession.EFFECT_TYPES.SCAN_FINALIZE || Object.keys(queue.at(-1).payload||{}).length) return null;
+        const pub=queue.at(-2),pubOptions=pub.payload?.options;
+        if (pub.type!==scienceSession.EFFECT_TYPES.SCAN_STEP || pubOptions?.mode!=="public" || pubOptions.selected!==0
+          || pubOptions.max!==1 || pubOptions.consumeMarkers!==true || Object.keys(pub.payload).some(key=>key!=="options")
+          || Object.keys(pubOptions).some(key=>!["mode","selected","max","consumeMarkers"].includes(key))) return null;
+        if (queue.length===3) {
+          if (head.type!==scienceSession.EFFECT_TYPES.SCAN_STEP || opts?.mode!=="specified" || opts.gainData!==true
+            || opts.skippable || opts.cost || Object.keys(head.payload).some(key=>key!=="options")
+            || Object.keys(opts).some(key=>!["mode","sectorX","gainData","cost","label","skippable"].includes(key))
+            || node.legalActions.some(action=>action.family!=="choose_target" || !action.target?.nebulaId)) return null;
+          firstChoices=node.legalActions;stage="before-earth";
+        } else {firstChoices=[null];stage="before-public";}
+      } else return null;
+      const publicChoices=stage==="before-public"?node.legalActions:scienceSession.listPublicScanChoices(state);
+      if (!firstChoices.length || !publicChoices.length || publicChoices.some(action=>action.family!=="choose_card"
+        || !action.target?.nebulaId || !action.target.cardInstanceId || action.payload?.gainData!==true)) return null;
+      const openTokens=id=>data.listNebulaTokens(state.data,id).filter(token=>!token.replacedByPlayerColor && !token.playerColor)
+        .sort((a,b)=>a.slotIndex-b.slotIndex || a.index-b.index);
+      let maximumScore=0;
+      for(const first of firstChoices)for(const pub of publicChoices){
+        const a=first?.target.nebulaId,b=pub.target.nebulaId,firstTokens=a?openTokens(a):null,publicTokens=openTokens(b),same=a===b;
+        if (a && firstTokens.length<=1 || publicTokens.length<=(same?2:1)) return null;
+        const scores=[...(a?[data.getNebulaSlotScoreReward(a,firstTokens[0].slotIndex)]:[]),data.getNebulaSlotScoreReward(b,publicTokens[same?1:0].slotIndex)];
+        if(scores.some(score=>!Number.isSafeInteger(score)||score<0))return null;
+        maximumScore=Math.max(maximumScore,scores.reduce((sum,n)=>sum+n,0));
+      }
+      const thresholds=state.finalScoring.thresholds;
+      if(!thresholds.length || thresholds.some(n=>!Number.isSafeInteger(n)||n<=owner.resources.score+maximumScore))return null;
+      const scanCount=stage==="before-public"?1:2;
+      const dataGain=Math.min(scanCount,Math.max(0,players.RESOURCE_LIMITS.availableData-owner.dataState.poolTokens.length));
+      return freeze({proof:"seti-standard-scan-refill-value-upper-bound-v1",stage,maximumScore,dataGain,
+        valueDelta:maximumScore+dataGain*0.5-(cost.credits||0)-(cost.energy||0),cost,
+        firstChoiceCount:firstChoices.length,publicChoiceCount:publicChoices.length});
+    }
+
     function postMainValueBound(node) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
@@ -1042,14 +1128,15 @@
       if (node.status !== "stable" || stored.envelope.session) return null;
       const state = readIdentityState(stored.envelope), owner = state.players.players.find(player => player.id === seatId);
       const company = industryCatalog.getPlayerIndustryDefinition(owner);
+      const quietPlan = postMainPlanSpec(node);
       if (!owner?.mainActionCompleted || ![null, "turing_borrow_tech"].includes(company?.activeAbilityId)
-        || !knownCardMoneyOrder(node) || owner.industryFutureSpan?.card || owner.industryStrategyPlayInteractionPending
+        || (!knownCardMoneyOrder(node) && !quietPlan) || owner.industryFutureSpan?.card || owner.industryStrategyPlayInteractionPending
         || owner.industryHuanyuFreeMovesLeft || owner.blueBonusResources?.credits || owner.blueBonusResources?.energy
         || Object.keys(owner.techState.ownedTiles).some(id => id.startsWith("blue") && owner.techState.ownedTiles[id])
         || owner.industryBorrowedTechTileId && !/^(orange|purple)[1-4]$/.test(owner.industryBorrowedTechTileId)
         || Object.values(state.aliens.aliens).some(alienState.isAlienReadyToReveal)
         || Object.keys(state.aliens.chong?.transportTasksByRocketId || {}).length
-        || state.turn.type1TriggerEvents && (!Array.isArray(state.turn.type1TriggerEvents) || state.turn.type1TriggerEvents.length)
+        || state.turn.type1TriggerEvents && (!Array.isArray(state.turn.type1TriggerEvents) || state.turn.type1TriggerEvents.length && !quietPlan)
         || node.legalActions.some(action => !["end_turn", "place_data", "quick_trade", "card_corner", "move", "industry"].includes(action.family)
           || action.family === "card_corner" && action.payload?.multiplier !== 1)) return null;
       const thresholds = state.finalScoring.thresholds;
@@ -1091,7 +1178,7 @@
       const slots = []; let remainingData = 0, maximumDrawCount = 1;
       for (const card of owner.reservedCards) {
         const model = cardEffects.getCardModel(card);
-        if (model.pluto || model.endGameScoring || model.tasks?.length || model.temporaryTasks?.length) return null;
+        if (model.pluto || model.endGameScoring || model.tasks?.length && !quietPlan || model.temporaryTasks?.length) return null;
         const copy = structuredClone(card); cardEffects.ensureCardEffectState(copy);
         for (const trigger of model.triggers || []) {
           if (copy.cardEffectState?.consumedTriggerIds.includes(trigger.id)) continue;
@@ -1146,7 +1233,8 @@
       return freeze({ proof: "seti-post-main-visit-income-value-bound-v1", maximumValueIncrease: movementUpper+incomeUpper,
         movementUpper, incomeUpper, stockUpper, minimumDataCorners, minimumFirstPositiveMoves, positiveRewardSurplus,
         visitRewardSlots: slots.map(slot => ({ cardInstanceId: slot.card.id, ruleId: slot.trigger.id, value: slot.value })),
-        minimumMoveCostValue: 1, maximumNativeArrivalValue: 0.5 });
+        minimumMoveCostValue: 1, maximumNativeArrivalValue: 0.5,
+        ...(quietPlan ? { continuationProof: quietPlan.proof, continuationRetainedActionIds: quietPlan.retainedActionIds } : {}) });
     }
 
     function postMainOptimalPlanSpec(node) {
@@ -1671,6 +1759,7 @@
       preMainDataPlans = new WeakMap();
       postMainPlans = new WeakMap();
       postMainBorrows = new WeakMap();
+      scanValueBounds = new WeakMap();
       postMainValueBounds = new WeakMap();
       postMainOptimalPlans = new WeakMap();
       resourceGroups.clear();
@@ -1697,7 +1786,7 @@
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
-      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, postMainValueBound, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
+      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

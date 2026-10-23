@@ -1,0 +1,9 @@
+{"quietBoundComposition":"passed","rows":[{"name":"no-hand","raw":7,"composed":1,"value":27.5,"distance":1},{"name":"unused-blind-card-and-task","raw":116,"composed":9,"value":32,"distance":9},{"name":"two-data-cards-and-task","raw":471,"composed":10,"value":32,"distance":10},{"name":"late-income","raw":540,"composed":1,"value":16.5,"distance":1}],"actualB114Continuation":true,"readyAndHistoricalRejected":true}
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"sharedSearchAgent":"passed","fixture":"case-003","transitions":26,"postMainTransitions":9,"incompleteFixture":"case-062","reuseHits":2,"wholeGames":0}
+{"standardScanBound":"passed","rows":[{"name":"original","leaves":6,"dataGain":2,"maximumScore":0,"maximum":35.5},{"name":"one-space","leaves":6,"dataGain":1,"maximumScore":0,"maximum":36},{"name":"full-pool","leaves":6,"dataGain":0,"maximumScore":0,"maximum":36},{"name":"different-slot-points","leaves":6,"dataGain":2,"maximumScore":2,"maximum":37.5}],"strictAndTieAndWatchdog":true}
+SUMMARY unit passed=3 failed=0 total=3 time=6.48s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=2

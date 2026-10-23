@@ -1,0 +1,122 @@
+{
+  "date": "2026-10-23",
+  "baseCommit": "f97bf463d37a4d196fede15a26ef4f11e7f028b9",
+  "runtimeVersion": "seti-complete-decision-search-v30",
+  "analysisPortCacheVersion": "v31",
+  "nativeScienceCacheVersion": "v20",
+  "scope": "Exact standard scan refill upper bound, composition with existing quiet continuation proof, exhaustive deterministic LIFO scheduling; no full games, weaker identity, or increased fixed budget.",
+  "fixedDecisionGate": {
+    "path": "reports/ai-foundation-20261023/decision-corpus-audit-v28.json",
+    "passed": 5,
+    "total": 8,
+    "budget": {
+      "transitions": 256,
+      "nodes": 257,
+      "frontier": 256,
+      "milliseconds": 600
+    },
+    "case008": {
+      "transitions": 248,
+      "millisecondsIncludingRoot": 580.5352909999999,
+      "value": 37.5,
+      "distance": 10,
+      "samePriorFirstAction": true
+    },
+    "remaining": [
+      "case-062",
+      "case-105",
+      "case-152"
+    ]
+  },
+  "node": {
+    "unitPassed": 136,
+    "fullFlowPassed": 1
+  },
+  "browser": {
+    "passed": 3,
+    "actualChrome": true
+  },
+  "independentVInputPasses": 30,
+  "vInputLegacyFailure": [
+    "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+  ],
+  "syntaxChecks": 16,
+  "newSearchFullGames": 0,
+  "newSearchFinalScores": null,
+  "fullGame180SecondAcceptance": "Unproved; do not run full games before fixed decision gates pass.",
+  "nextBottleneck": {
+    "evidencePath": "reports/ai-foundation-20261023/case062-effect-source-replay-v1.json",
+    "replayedInputs": 4096,
+    "dlc40FiveMovementInputs": 2679,
+    "movementDirections": 2029,
+    "movementSkip": 650,
+    "scope": "Counts from an incomplete window, not an optimum or game grade."
+  },
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "3e8211983177820d03220438488fe3839dae2c096412c289968d5b6b503e1421",
+    "randomizer/game/ai/decision-search.js": "0912ece3192623b4de063a58433dceac95221b18c7bc1c95e25c2cc6b9e9d263",
+    "randomizer/game/effects/science-session.js": "9bcad445524010ddca9ef287d7cffdb94869f5eddd9e45f68c62a2a156ad58af",
+    "randomizer/game/ai/search-agent.test.js": "e73b7ba541d3fec820d92cf21e1f401dca7e10f5be158d55ba4a9bdf7cd8e3dc",
+    "randomizer/game/ai/standard-scan-bound.test.js": "d6698c08511c89a909e9abd1122b5a846384baff38f24ab709f789c7aa990fa5",
+    "randomizer/game/ai/quiet-bound-composition.test.js": "1c65683f0d8ada09ca1c4b75ab0093fc69503dadc2ac9596f3ecbeefbe14116c",
+    "randomizer/index.html": "268b4bf1a71d7af89b217375e9397e26d3f5042a88b5b8e6e9fd91718eb63677",
+    "tools/node-test-inventory.js": "f43c24ff3be9996e3491c4f18e233db969780ef9f960760133eeaff5b6fbcea7",
+    "tools/audit_v_state_inputs.js": "f1c735db209d1f0c96a37e5a8ba3f515f6029b6878d516daae97cca9ae256654",
+    "docs/ai-development-workflow.md": "e154167047cff46f1818b74d1076b18ec6587cec56abb8042d7db7e93d32a4f3",
+    "docs/ai-implementation-20261022.md": "c11cc390bfaf3d167e08bec5938dcd90593f36318b4f3064fe16bc362da7ee2a",
+    "docs/ai-interface-inventory-20261022.md": "eeb49b45b5cb782677c98794e61cf36c59ac32d193283f3d6eac53932ebc9adf",
+    "docs/ai-post-main-attained-bound-20261023.md": "04c0287cb04d2cb7bee85fb99a27138040d1740c1d494f5a89659e66f74246ae",
+    "docs/ai-search-agent-contract-20261023.md": "797be3152abda391a5183c13da2e045bed1e48b943cd14fa45a6c7f55bab7a07",
+    "docs/ai-standard-scan-bound-20261023.md": "28286de98ba19604c52fec797022df1ba78b5c242a009f7a6a2152a289e365a8"
+  },
+  "evidenceHashes": {
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-001-v28.raw.json.gz": "ba2427384d41f62fb115960810d7e6b4732f7a19b1e814f4744edadf3a719dbd",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-003-v28.raw.json.gz": "30e6d2192cf1d38a618dd445b354423ec38eb1a848912d4ef73d46a0b6504b9c",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-008-v28.raw.json.gz": "ffceaa0cb3dc815d63a1fb60b30d21d76e5c03beecae334ed3046453d5279fb4",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-009-v28.raw.json.gz": "99ed23f25a6eb40c86821f5d0c2a2ceee53c670cb279e6f89ae8392bab3c9d14",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-011-v28.raw.json.gz": "8a5ad6bd0af5d4609c2472904c16ef812c9678d4de2fce758033790949d8b04d",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-062-v28.raw.json.gz": "31be7a52d523af9d386326a5c7e6b8c70ab2fde34d929a6c47d852efd043d562",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-105-v28.raw.json.gz": "e907dfa2d9a212dda16a7b6487a77adc163a5a735511df2ce2edbb00af4870cc",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-152-v28.raw.json.gz": "13bc5646df1a148b2f56c233eccb9826542e7f34dc23d0f1a9044dd44d62abb9",
+    "adhoc/ai-decision-corpus-20261023-v1/case062-effect-source-replay-v1.raw.json.gz": "6823d8d683a8cf3c914c418da2f983ff934f55503e9849c916d013181f6fe8bd",
+    "adhoc/ai-decision-corpus-20261023-v1/choice-boundary-replay-v1.raw.json.gz": "93ad31ca92526a40a55d8b803b618f45fabf5e07c8fac1557b0144d4806b4a2f",
+    "adhoc/ai-decision-corpus-20261023-v1/composed-scheduling-conditional-first-v1.raw.json.gz": "23f4c5967eb690f87bd880e9fdc77795a8413b4d50c43c178e46592f2fd15d78",
+    "adhoc/ai-decision-corpus-20261023-v1/composed-scheduling-conditional-first-v2.raw.json.gz": "d79fe333edc2a9b1fa3672f2f2971360023d0a751157bbbaeb9b8e4331c924be",
+    "adhoc/ai-decision-corpus-20261023-v1/composed-scheduling-dfs-v1.raw.json.gz": "ae077fd4eb768521d67edd8e0a122cac92488bd1df138bb01813f5b989fe08a2",
+    "adhoc/ai-decision-corpus-20261023-v1/composed-scheduling-dfs-v2.raw.json.gz": "a89d22562d46e1beb96380b5856cee9dae4dbb5676a4bca56164aaaacef09d73",
+    "adhoc/ai-decision-corpus-20261023-v1/late-semantic-case062-v13.raw.json.gz": "efaa3c023ca4e85eaaa3c4ee6db47e178219451802d633c10006b9efc79d3129",
+    "adhoc/ai-decision-corpus-20261023-v1/quiet-composed-case008-prototype-v1.raw.json.gz": "86a439e1a3e5bcb03b7c897cb027290fd08ca9a1094aaa75d3fe26a9297efcd1",
+    "adhoc/ai-decision-corpus-20261023-v1/quiet-scan-composed-case008-prototype-v1.raw.json.gz": "1ed7bc8c4a61a12e9a80a07daeb622f187847aa4ac471d25227d0c3bfc52de8d",
+    "adhoc/ai-quiet-bound-composition-20261023-v1.md": "53dcac3d96be6a8d9ac674b01337d07cccedb41f8df01e832e3dc39dd657e6fb",
+    "adhoc/ai-quiet-composed-schedulers-prototypes-20261023-v1.json.gz": "dac0e264ebb65f28b5194e21c224454ba2b86c9b733a19776b04cea070cdf3c3",
+    "adhoc/ai-quiet-composed-schedulers-prototypes-20261023-v2.json.gz": "d7397fa1ab04ec8983025b0bd723b23a2553f578f7114a8eea6513a8be033f2c",
+    "adhoc/ai-scan-bound-design-20261023-v1.md": "57e91dd7385184f9ab1ab4d19bbf236c2a6c28ab499079ce7ebe82ae88c0a9a0",
+    "adhoc/audit-ai-decision-corpus-20261023-v28.js": "7228311e88cf25824c18775c9ef1e65ea65a8c93eead294da2fc0756ee1d4695",
+    "adhoc/deliver-ai-standard-scan-20261023-v1.py": "296744947aa63914c1683542c76a5a5090c2e368c54068b94d6ab00e8ca43837",
+    "adhoc/diagnose-ai-quiet-composed-case008-20261023-v1.js": "875811e8a07ba7c143723ef0a369cef92679acc648ed185f634fed551441165a",
+    "adhoc/diagnose-ai-quiet-scan-composed-case008-20261023-v1.js": "202eec5bef903a194e5a0c91dbaa8f955016612421c68c6a9de9324a99ef066c",
+    "adhoc/experiment-ai-composed-scheduling-20261023-v1.js": "e482bb865c1dd31a3dc5b7612a3526f2f01353998baa7e480fab6cb643a81b4d",
+    "adhoc/experiment-ai-composed-scheduling-20261023-v2.js": "a3b1d42c80b9e83c1286e33880e325414073ea0e86c818f65fa0f90dceb0d952",
+    "adhoc/finalize-ai-standard-scan-20261023-v1.py": "ebdacda5ab40142cebcd873e551b245b62de7852cb8302018a1eccdf195d78fd",
+    "adhoc/profile-ai-late-semantic-case062-20261023-v13.js": "229b3c4325b3b32d1087a00daea5525f63278c1cb9b8753034584186af5ffb6c",
+    "adhoc/replay-ai-case062-effect-sources-20261023-v1.js": "5cd745dd4ea8382b967ecfbed3772102b0c0b37afc10b23d6a2275c3f568e1a4",
+    "adhoc/replay-ai-choice-boundaries-20261023-v1.js": "f9fe94ca3b2030a654102a94c24f2274c865803e667c9c964a2c36dba2d9bdf6",
+    "reports/ai-foundation-20261023/case062-effect-source-replay-v1.json": "5bb9fbbc4b52b62621aaf94d053da72ab4af4a96dd22ed02a4bdcbcf7cd0fba3",
+    "reports/ai-foundation-20261023/case062-effect-source-replay-v1.log": "a3e53344596777443ab52a81f6f1827265061aa31e89b38445c4d74a6adcdbc2",
+    "reports/ai-foundation-20261023/choice-boundary-replay-summary-v1.json": "42af672f430a9855a31c36887975d99a422ce880e3b75cd94726097b5905adda",
+    "reports/ai-foundation-20261023/choice-boundary-replay-v1.json.gz": "cf9242bb222758509c973d884665f30b62f6584691f7a6a886215d5bda24d569",
+    "reports/ai-foundation-20261023/composed-scheduling-prototypes-v1.json": "81f189089afab425d6468fddb83b2aa3818c5aafbabfec64916d55cbb7cbb1ba",
+    "reports/ai-foundation-20261023/composed-scheduling-prototypes-v2.json": "a6dad679585148707162f61137230beb865e79261165b6989fc239aa02334f83",
+    "reports/ai-foundation-20261023/decision-corpus-audit-v28.json": "0bc2a87765bd59250ac7b2a8d4d62602f7394a15ca4242d33e3dc789dc8cb377",
+    "reports/ai-foundation-20261023/decision-corpus-audit-v28.log": "cd997a609fdf00e83f9a1b60a58dd58bff18e7fc145360d406585d61ef7e65dd",
+    "reports/ai-foundation-20261023/late-semantic-case062-v13.json": "e0d5ee47453a37d1d7e71dc3d6920c82b26504e269b509687bc213ad6b69ca40",
+    "reports/ai-foundation-20261023/late-semantic-case062-v13.log": "0cb4a94a5567c92907a7a127f29be8e8813fef84209bdf131a6b9e5c1b9789d7",
+    "reports/ai-foundation-20261023/quiet-composed-case008-prototype-v1.json": "6a3fa13d51351f6c5311c36a9ad9c30c8207a285dbf06c84f4f82acde4b5999b",
+    "reports/ai-foundation-20261023/quiet-scan-composed-case008-prototype-v1.json": "e31ae84e21097880bfdd6459dea32a5b7ab7dd3890db26276cd3a0a38e567e49",
+    "reports/ai-foundation-20261023/scan-bound-targeted-v3.log": "2b158b8988f4ac94cf97a0ba570ddb88dd729c1b8273c32254d4be2276b39186",
+    "reports/ai-foundation-20261023/standard-scan-browser-v1.log": "1ec841153057bfde1e6000b7b80f17ba44ece63574d56714be77f0130b6bfb42",
+    "reports/ai-foundation-20261023/standard-scan-node-v1.log": "785475dbb786f1df7981fb3c5dd2c0cc896290e6dba15cd2dbbc4f0d8c28e95d",
+    "reports/ai-foundation-20261023/standard-scan-syntax-v1.json": "9425740c1cb2d9f11b929f20cb97d9588b3bfca15e82b43cacdafc159d867eb5",
+    "reports/ai-foundation-20261023/standard-scan-v-input-audit-v1.log": "66c7196f2e550ed79dc0383fba1a5fbcdbf51b9988f21ffd135df79bf2ba3951"
+  }
+}

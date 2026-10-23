@@ -1,0 +1,10 @@
+{
+  "baseCommit": "f97bf463d37a4d196fede15a26ef4f11e7f028b9",
+  "testedSnapshot": "/private/tmp/seti-ai-stage40-pick-boundary-20261023-wspfrbq8",
+  "unchangedBaseFilesVerified": 3809,
+  "changedBaseFilesVerified": 12,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "explicitFiles": 65,
+  "runtimeImportsBoundToFinalSource": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot."
+}

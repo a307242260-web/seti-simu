@@ -1,0 +1,75 @@
+{
+  "scope": "Replay of every saved edge in the existing complete008 graph, no new AI search, no game or timing grade. Native state equivalence and all boundary values checked. Debug accessor exists only in this local instrumented adapter.",
+  "fixturePath": "adhoc/ai-decision-corpus-20261023-v1/case-008-20261023-v1.json",
+  "graphPath": "adhoc/ai-decision-corpus-20261023-v1/attained-case008-v2.raw.json.gz",
+  "graphSha256": "d76f5aefd74da847b09c3112cd76629d22119219cb45e73160b817a4d91bf0b1",
+  "nativeSubmissions": 577,
+  "mappedNodes": 491,
+  "rootUnchanged": true,
+  "counts": {
+    "stable/launch//": 20,
+    "stable/scan/standard-scan/": 20,
+    "stable/play_card//": 35,
+    "stable/pass/pass/": 20,
+    "stable/quick_trade//": 52,
+    "stable/card_corner//": 44,
+    "stable/place_data/place-data/": 58,
+    "stable/end_turn/end-turn/": 43,
+    "decision/choose_target//nebula": 20,
+    "decision/choose_target//tech": 72,
+    "decision/choose_target//data": 58,
+    "decision/choose_card//income": 15,
+    "decision/choose_card//public:card-17-0": 40,
+    "decision/choose_card//public:card-18-0": 40,
+    "decision/choose_card//public:card-19-0": 40
+  },
+  "detailPath": "adhoc/ai-decision-corpus-20261023-v1/choice-boundary-replay-v1.raw.json.gz",
+  "detailSha256": "93ad31ca92526a40a55d8b803b618f45fabf5e07c8fac1557b0144d4806b4a2f",
+  "analysisSourceSha256": "285b3bedb00dcdb094d3654df2738a0ece092e91189da1b1d62eee0f5b61d26f",
+  "instrumentedSourceSha256": "c4b00bea4555327139d1743606bba82963dd6afe8d66d9e4347e308994899827",
+  "groups": {
+    "choose_target//1": {
+      "nodes": 68,
+      "inputs": 68,
+      "allEdgesToSameBoundary": 0
+    },
+    "choose_target//4": {
+      "nodes": 18,
+      "inputs": 72,
+      "allEdgesToSameBoundary": 0
+    },
+    "choose_card/trade-card-selection/3": {
+      "nodes": 40,
+      "inputs": 0,
+      "allEdgesToSameBoundary": 0
+    },
+    "choose_payment/discard-hand-card/3": {
+      "nodes": 4,
+      "inputs": 0,
+      "allEdgesToSameBoundary": 0
+    },
+    "choose_card//6": {
+      "nodes": 20,
+      "inputs": 120,
+      "allEdgesToSameBoundary": 20
+    },
+    "choose_payment/discard-hand-card/2": {
+      "nodes": 8,
+      "inputs": 0,
+      "allEdgesToSameBoundary": 0
+    },
+    "choose_card//2": {
+      "nodes": 4,
+      "inputs": 8,
+      "allEdgesToSameBoundary": 0
+    },
+    "choose_card//1": {
+      "nodes": 3,
+      "inputs": 3,
+      "allEdgesToSameBoundary": 1
+    }
+  },
+  "baseCommit": "f97bf463d37a4d196fede15a26ef4f11e7f028b9",
+  "originalReportArchive": "reports/ai-foundation-20261023/choice-boundary-replay-v1.json.gz",
+  "originalReportSha256": "cf9242bb222758509c973d884665f30b62f6584691f7a6a886215d5bda24d569"
+}

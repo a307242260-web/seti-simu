@@ -753,6 +753,25 @@
     ];
   }
 
+  function publicScanChoices(root) {
+    const cardsState = getWorkingSlice(root, "cards");
+    return (cardsState.publicCards || []).flatMap((card, publicSlotIndex) => {
+      if (!card) return [];
+      const entry = cards.getCatalogEntryForCard(card);
+      const code = Number(card.scanActionCode ?? cards.getCatalogEntryForCard(card)?.scan_action_code);
+      return listNebulaChoices(root, { nebulaIds: NEBULA_IDS_BY_SCAN_CODE[code] || [], gainData: true })
+        .map((choice) => makeChoice(
+          "choose_card",
+          `public:${card.id}:${choice.target.nebulaId}`,
+          { cardInstanceId: card.id, publicSlotIndex, nebulaId: choice.target.nebulaId },
+          { gainData: true },
+          `${cards.getCardLabel(card)} → ${data.getNebulaLabel(choice.target.nebulaId)}`,
+          // 卡面统一由 cards.getCardPickPresentation 提供
+          cards.getCardPickPresentation(card),
+        ));
+    });
+  }
+
   function createScienceDomain(options = {}) {
     const runtime = options.runtime;
     const commitWorkingState = options.commitWorkingState;
@@ -1296,25 +1315,6 @@
         return resolveScanStep(state, root, effect, opts, actor, legal);
       },
     });
-
-    function publicScanChoices(root) {
-      const cardsState = getWorkingSlice(root, "cards");
-      return (cardsState.publicCards || []).flatMap((card, publicSlotIndex) => {
-        if (!card) return [];
-        const entry = cards.getCatalogEntryForCard(card);
-        const code = Number(card.scanActionCode ?? cards.getCatalogEntryForCard(card)?.scan_action_code);
-        return listNebulaChoices(root, { nebulaIds: NEBULA_IDS_BY_SCAN_CODE[code] || [], gainData: true })
-          .map((choice) => makeChoice(
-            "choose_card",
-            `public:${card.id}:${choice.target.nebulaId}`,
-            { cardInstanceId: card.id, publicSlotIndex, nebulaId: choice.target.nebulaId },
-            { gainData: true },
-            `${cards.getCardLabel(card)} → ${data.getNebulaLabel(choice.target.nebulaId)}`,
-            // 卡面统一由 cards.getCardPickPresentation 提供
-            cards.getCardPickPresentation(card),
-          ));
-      });
-    }
 
     runtime.registerExecutor(EFFECT_TYPES.PUBLIC_REFILL, (state, effect, workingContext) => {
       const root = getWorkingRoot(state, workingContext);
@@ -1944,6 +1944,7 @@
     createActionContext,
     getPlanetScanSource,
     listNebulaChoices,
+    listPublicScanChoices: publicScanChoices,
     executeNebulaScan,
     settleAfterScan,
     scanFinalizeEffect,

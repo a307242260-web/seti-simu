@@ -1,0 +1,28 @@
+"use strict";
+const fs=require('node:fs'),path=require('node:path'),Module=require('node:module'),zlib=require('node:zlib'),crypto=require('node:crypto'),assert=require('node:assert/strict');
+const {createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createStateValueEvaluator}=require('../randomizer/game/ai/state-value');
+const output='reports/ai-foundation-20261023/case062-effect-source-replay-v1.json';assert(!fs.existsSync(output),'Reuse existing replay checkpoint');
+const sourcePath='randomizer/game/ai/analysis-port.js',filename=path.resolve(sourcePath),source=fs.readFileSync(filename,'utf8'),needle='expandPostMainOptimalPlan, close, getDiagnostics });';assert(source.includes(needle));
+const instrumented=source.replace(needle,'expandPostMainOptimalPlan, proofDebugSession: node => { const s = nodes.get(node).envelope.session?.session; return s ? structuredClone({ queue: s.queue, sourceAction: s.journal?.actions?.[0]?.action, interruptContext: s.interruptContext }) : null; }, close, getDiagnostics });');
+const loader=new Module(filename,module);loader.filename=filename;loader.paths=Module._nodeModulePaths(path.dirname(filename));loader._compile(instrumented,filename);
+const fixturePath='adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json',graphPath='adhoc/ai-decision-corpus-20261023-v1/late-semantic-case062-v13.raw.json.gz';
+const f=JSON.parse(fs.readFileSync(fixturePath)),graph=JSON.parse(zlib.gunzipSync(fs.readFileSync(graphPath))),seed=f.source.seed;
+assert(!graph.complete);const kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const comp=kernel.composition;assert(comp.lifecycle.restore(f.compositionEnvelope).ok);
+const before=comp.lifecycle.save().envelope,port=loader.exports.createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:0}),evaluate=createStateValueEvaluator(f.seatId),mapped=new Map([[0,port.openRoot()]]),groups={},rows=[];let submissions=0,equivalentChecks=0,boundaryChecks=0;
+function describe(node){const session=port.proofDebugSession(node),head=session?.queue?.[0],a=node.legalActions?.[0];return{effect:head?.type||node.status,sourceFamily:session?.sourceAction?.family||null,decisionType:head?.payload?.decisionContext?.type||null,decisionKind:head?.payload?.decisionContext?.kind||null,choicePrefix:a?.target?.choiceId?.split(':')[0]||a?.target?.kind||null,queueTypes:session?.queue?.map(e=>e.type)||[],headPayload:head?.payload||null,legalCount:node.legalActions?.length||0};}
+try{
+ for(const line of graph.lines){const node=mapped.get(line.node);assert(node,`missing node ${line.node}`);assert.equal(node.status,line.status);
+  if(['information-barrier','other-owner','terminal'].includes(line.status)){assert.equal(evaluate(node.observation),line.value);boundaryChecks+=1;}
+  if(node.status==='decision'){const description=describe(node);rows.push({node:line.node,expanded:line.expanded,edgeCount:line.edges.length,description});}
+  for(const edge of line.edges){let child=node;const steps=edge.steps||[edge.actionId];assert.equal(steps.length,edge.cost);
+   for(const id of steps){const action=child.legalActions.find(a=>a.actionId===id);assert(action);const d=describe(child),key=[child.status,action.family,d.effect,d.sourceFamily||'',d.decisionType||'',d.decisionKind||'',action.target?.choiceId?.split(':')[0]||action.target?.kind||''].join('/');
+    const g=groups[key]||={inputs:0,sourceNodes:new Set(),sample:{action:{family:action.family,target:action.target,payload:action.payload},description:d}};g.inputs+=1;g.sourceNodes.add(line.node);
+    child=port.expand(child,id);submissions+=1;
+   }
+   if(mapped.has(edge.target)){assert.equal(port.identity(child),port.identity(mapped.get(edge.target)));equivalentChecks+=1;}else mapped.set(edge.target,child);
+  }
+ }
+ assert.equal(submissions,graph.diagnostics.transitions);assert.equal(mapped.size,graph.lines.length);assert.deepEqual(comp.lifecycle.save().envelope,before);
+ const sha=b=>crypto.createHash('sha256').update(b).digest('hex'),detailPath='adhoc/ai-decision-corpus-20261023-v1/case062-effect-source-replay-v1.raw.json.gz',detail=zlib.gzipSync(JSON.stringify({rows})+'\n');fs.writeFileSync(detailPath,detail);
+ const report={scope:'Replay of every already-recorded native edge from the incomplete case062-v13 diagnostic. No new search, budget expansion, full game or score/timing grade. Debug session query exists only in this local compiled adapter.',fixturePath,fixtureSha256:sha(fs.readFileSync(fixturePath)),graphPath,graphSha256:sha(fs.readFileSync(graphPath)),nativeSubmissions:submissions,mappedNodes:mapped.size,equivalentChecks,boundaryChecks,rootUnchanged:true,groups:Object.fromEntries(Object.entries(groups).sort((a,b)=>b[1].inputs-a[1].inputs).map(([key,g])=>[key,{...g,sourceNodes:g.sourceNodes.size}])),detailPath,detailSha256:sha(detail),analysisSourceSha256:sha(source),instrumentedSourceSha256:sha(instrumented),sourceHashes:Object.fromEntries(Object.keys(require.cache).filter(p=>p.includes('/randomizer/')).map(p=>[p.slice(process.cwd().length+1),sha(fs.readFileSync(p))]))};fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({submissions,nodes:mapped.size,groups:Object.entries(report.groups).slice(0,12).map(([key,g])=>({key,inputs:g.inputs,nodes:g.sourceNodes}))}));
+}finally{port.close();comp.dispose();}

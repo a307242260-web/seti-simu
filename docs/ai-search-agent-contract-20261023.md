@@ -74,6 +74,12 @@ Browser高频inspect不复制原始actionOutcomes，查看lastOutcomeSummary；�
 只有该见证的内部前缀取得独立完整依赖证书，其他宏沿用原行为。watchdog中断返回未完成集合、空动作和空证书。
 纯付款起点保留全部实体出口。默认工厂预算与reset/restore清空token语义不变。
 
+搜索v30加入[普通扫描信息边界上界及继续路径证明组合](ai-standard-scan-bound-20261023.md)。
+标准扫描只在严格低于实际完成见证时省略，稳定动作记actionBounds、未执行值为null；
+已付款Decision记prunedByBound，分别计scanActionPrunes/scanValuePrunes。相等继续探索，纯付款根关闭全局界。
+待展开表使用后进先出以尽早取得实际见证；最终仍在完整有向图上逆向求最高V、最少输入及actionId代表，
+保留回边和原全局预算。静止继续路径的旧证明可作为紧收益界的依赖，未放宽钱电单调闭包。
+
 ## 结果和失败
 
 成功的agentTrace.coverage为complete，search保存scope、根去向、完整图、等价/证明归属、
@@ -89,7 +95,7 @@ actionId为null。协调器保留cause，Simulation抛出，Browser返回明确c
 ## 验证范围
 
 search-agent.test比较真实收入检查点在直接搜索、Browser、Simulation的选择、估值和权威状态，
-检查缓存开关、一个输入对应一个replay，以及复杂开局超预算时两端根/RNG/replay不变。
+检查缓存开关、一个输入对应一个replay，以及第2轮复杂主行动超预算时两端根/RNG/replay不变。
 主行动后真实数据窗口也通过共享Simulation接入。
 实际付款点击的两次完成证据命中与恢复后重新计算后缀一致，非法payload和错误边界拒绝。
 主行动后窗口在共享Simulation中命中一般前缀证据，与恢复后的动作、估值、正式状态及会话引用关系一致。

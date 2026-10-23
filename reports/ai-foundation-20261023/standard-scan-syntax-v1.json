@@ -1,0 +1,84 @@
+{
+  "rows": [
+    {
+      "path": "randomizer/game/ai/analysis-port.js",
+      "sha256": "3e8211983177820d03220438488fe3839dae2c096412c289968d5b6b503e1421",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/decision-search.js",
+      "sha256": "0912ece3192623b4de063a58433dceac95221b18c7bc1c95e25c2cc6b9e9d263",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/effects/science-session.js",
+      "sha256": "9bcad445524010ddca9ef287d7cffdb94869f5eddd9e45f68c62a2a156ad58af",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/search-agent.test.js",
+      "sha256": "e73b7ba541d3fec820d92cf21e1f401dca7e10f5be158d55ba4a9bdf7cd8e3dc",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/standard-scan-bound.test.js",
+      "sha256": "d6698c08511c89a909e9abd1122b5a846384baff38f24ab709f789c7aa990fa5",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/quiet-bound-composition.test.js",
+      "sha256": "1c65683f0d8ada09ca1c4b75ab0093fc69503dadc2ac9596f3ecbeefbe14116c",
+      "exitCode": 0
+    },
+    {
+      "path": "tools/node-test-inventory.js",
+      "sha256": "f43c24ff3be9996e3491c4f18e233db969780ef9f960760133eeaff5b6fbcea7",
+      "exitCode": 0
+    },
+    {
+      "path": "tools/audit_v_state_inputs.js",
+      "sha256": "f1c735db209d1f0c96a37e5a8ba3f515f6029b6878d516daae97cca9ae256654",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/replay-ai-choice-boundaries-20261023-v1.js",
+      "sha256": "f9fe94ca3b2030a654102a94c24f2274c865803e667c9c964a2c36dba2d9bdf6",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/replay-ai-case062-effect-sources-20261023-v1.js",
+      "sha256": "5cd745dd4ea8382b967ecfbed3772102b0c0b37afc10b23d6a2275c3f568e1a4",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/diagnose-ai-quiet-composed-case008-20261023-v1.js",
+      "sha256": "875811e8a07ba7c143723ef0a369cef92679acc648ed185f634fed551441165a",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/diagnose-ai-quiet-scan-composed-case008-20261023-v1.js",
+      "sha256": "202eec5bef903a194e5a0c91dbaa8f955016612421c68c6a9de9324a99ef066c",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/experiment-ai-composed-scheduling-20261023-v1.js",
+      "sha256": "e482bb865c1dd31a3dc5b7612a3526f2f01353998baa7e480fab6cb643a81b4d",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/experiment-ai-composed-scheduling-20261023-v2.js",
+      "sha256": "a3b1d42c80b9e83c1286e33880e325414073ea0e86c818f65fa0f90dceb0d952",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/audit-ai-decision-corpus-20261023-v28.js",
+      "sha256": "7228311e88cf25824c18775c9ef1e65ea65a8c93eead294da2fc0756ee1d4695",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/profile-ai-late-semantic-case062-20261023-v13.js",
+      "sha256": "229b3c4325b3b32d1087a00daea5525f63278c1cb9b8753034584186af5ffb6c",
+      "exitCode": 0
+    }
+  ]
+}

@@ -156,3 +156,8 @@ node tools/run_node_tests.js --match policy-port --match machine-player-coordina
 前者只提供默认V的受限上界，后者执行并核对最短达到上界的正式见证。
 搜索v29分别报告图节点与内部证据状态，后者同样受全局预算约束；内部证书的完整依赖及失效
 沿用`rememberPlan`/`reusePlan`。范围与反例见[证明说明](ai-post-main-attained-bound-20261023.md)。
+
+分析端口v31新增`standardScanValueBound`，按实际扫描队列提供到公共补牌信息边界的默认V上界；
+原生ScienceSession导出只读`listPublicScanChoices`供正式Decision及可信分析共用。
+`postMainValueBound`可记录已有静止继续路径的证明依赖及保留动作。算法仍拿不到隐藏牌堆、完整状态或Session。
+详见[扫描界及组合证明](ai-standard-scan-bound-20261023.md)。

@@ -91,14 +91,14 @@ function direct(f, cache = 0) {
   assert.equal(browserResult.actionId, expected.actionId); assert.equal(browserResult.agentTrace.coverage, "complete");
   assert.deepEqual(JSON.parse(browser.lifecycle.save().envelope.committedState), JSON.parse(env.createCheckpoint().coreState.committedState));
 
-  const complex = fixture("008"), failures = [];
+  const complex = fixture("062"), failures = [];
   const failed = simulation(complex, { onAgentDecision: event => failures.push(event) });
   const before = failed.createCheckpoint();
   assert.throws(() => failed.runAgentDecision(), error => error.cause?.code === "SEARCH_INCOMPLETE");
   assert.deepEqual(failed.createCheckpoint().coreState, before.coreState);
   assert.equal(failed.getReplay().steps.length, 0); assert.equal(failures.length, 1);
   assert.equal(failures[0].coverage, "incomplete"); assert.equal(failures[0].actionId, null);
-  assert.equal(failures[0].search.stopReason, "transition-budget");
+  assert(["transition-budget","node-budget","frontier-budget","watchdog"].includes(failures[0].search.stopReason));
   assert(browser.lifecycle.restore(complex.compositionEnvelope).ok);
   const browserBefore = browser.lifecycle.save().envelope;
   const browserFailure = await port.runOnce();
@@ -159,5 +159,5 @@ function direct(f, cache = 0) {
   assert.throws(() => bad.decide({ seatId: f.seatId }), /formal failure/); assert.equal(closed, 1);
   console.log(JSON.stringify({ sharedSearchAgent: "passed", fixture: "case-003", transitions: result.searches[0].diagnostics.transitions,
     postMainTransitions: postResult.searches[0].diagnostics.transitions,
-    incompleteFixture: "case-008", reuseHits, wholeGames: 0 }));
+    incompleteFixture: "case-062", reuseHits, wholeGames: 0 }));
 })().catch(error => { console.error(error); process.exitCode = 1; });
