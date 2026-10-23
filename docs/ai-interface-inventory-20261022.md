@@ -151,3 +151,8 @@ node tools/run_node_tests.js --match policy-port --match machine-player-coordina
 
 通过范围为数据协议、协调器行为、环境基本提交、检查点恢复及无浏览器依赖。
 本轮未跑完整局、Browser smoke、训练或性能实验，也未验证新算法棋力。
+
+分析端口v30新增`postMainValueBound`、`postMainOptimalPlanSpec`及`expandPostMainOptimalPlan`：
+前者只提供默认V的受限上界，后者执行并核对最短达到上界的正式见证。
+搜索v29分别报告图节点与内部证据状态，后者同样受全局预算约束；内部证书的完整依赖及失效
+沿用`rememberPlan`/`reusePlan`。范围与反例见[证明说明](ai-post-main-attained-bound-20261023.md)。

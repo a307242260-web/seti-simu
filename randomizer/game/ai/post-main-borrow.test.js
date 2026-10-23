@@ -28,7 +28,7 @@ function run(s, enabled, cache = 0) {
   const { before, port, root } = open(s, cache);
   try {
     assert(port.postMainBorrowSpec(root));
-    const result = searchDecision({ port: enabled ? port : { ...port, postMainBorrowSpec: () => null }, root, evaluate,
+    const result = searchDecision({ port: { ...port, postMainOptimalPlanSpec: () => null, ...(!enabled ? { postMainBorrowSpec: () => null } : {}) }, root, evaluate,
       modelKey: evaluate.modelKey, planReuse: true, resourceDominance: true, moneyCapacityDominance: true, cardTradePruning: true,
       postMainPruning: true, openingPruning: true, cardChoiceEquivalence: true,
       budget: { transitions: 4096, nodes: 4097, frontier: 4096, milliseconds: 15000 } });
@@ -88,7 +88,7 @@ const pluto=controlled(1), other=pluto.players.players.find(p=>p.reservedCards.s
 const card=other.reservedCards.find(c=>c.cardId==="b_139.webp");other.reservedCards=other.reservedCards.filter(c=>c!==card);own(pluto).reservedCards.push(card);
 const extra=open(pluto);assert(extra.port.knownCardMoneyOrder(extra.root));assert.equal(extra.port.postMainBorrowSpec(extra.root),null);extra.port.close();
 const limited=open(controlled(1));
-const unfinished=searchDecision({port:limited.port,root:limited.root,evaluate,postMainPruning:true,
+const unfinished=searchDecision({port:{...limited.port,postMainOptimalPlanSpec:()=>null},root:limited.root,evaluate,postMainPruning:true,
   budget:{transitions:1,nodes:2,frontier:1,milliseconds:15000}});
 assert(!unfinished.complete);assert.equal(unfinished.actionId,null);assert.equal(unfinished.planContinuation,null);assert.deepEqual(comp.lifecycle.save().envelope,limited.before);limited.port.close();
 // Shared factory: one actual input per call, followed by a fresh mandatory borrow comparison.

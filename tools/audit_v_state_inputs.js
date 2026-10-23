@@ -383,6 +383,17 @@ try {
           throw new Error("主行动后借用输入计数或即时V变化不一致");
         }
         console.log(`[PASS] independent-post-main-borrow: root=${evaluate(root.observation)} inputs=2 excluded=${proof.excludedTileIds.length}`);
+        const bound = port.postMainValueBound(root), optimal = port.postMainOptimalPlanSpec(root);
+        if (!bound || !optimal || optimal.submissions !== 10) throw new Error("主行动后最优计划审计缺少上界或完整最短计划");
+        const attained = port.expandPostMainOptimalPlan(root);
+        for (const node of [...attained.prefixes.map(prefix => prefix.node), attained.node]) {
+          if (evaluate(node.observation) !== evaluate(outcomeModel.createDecisionObservation(node.observation, { seatId: fixture.seatId }))) {
+            throw new Error("达到上界的内部前缀原始/标准V不一致");
+          }
+        }
+        if (!attained.complete || attained.submissions !== 10 || evaluate(attained.node.observation)
+          !== evaluate(root.observation)+bound.maximumValueIncrease) throw new Error("主行动后上界与实际最短完成见证不一致");
+        console.log(`[PASS] independent-post-main-attainment: root=${evaluate(root.observation)} leaf=${evaluate(attained.node.observation)} prefixes=${attained.prefixes.length}`);
       } finally { port.close(); }
     }
     const cornerFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,

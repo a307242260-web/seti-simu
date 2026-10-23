@@ -34,6 +34,8 @@ module.exports = Object.freeze({
     entry("randomizer/game/initial-information-barrier.test.js", "rules/initial-setup", "初始发选项、结算盲抽和插收入牌报告实际新信息，移出集合去重并保持恢复重放", "搜索继续使用未知起始牌或收入盲抽牌，或空堆与非盲抽错误生成新屏障"),
     entry("randomizer/game/actions/quick-move-availability.test.js", "rules/quick-trades", "快速移动必须有正式一步可达方向；无路时拒绝且根状态不变", "只有探测器存在便提供快速移动，扣能量后生成空Decision"),
     entry("randomizer/game/ai/state-value.test.js", "policy/state-value", "独立估值只读标准事实，未来收入窗口明确且终局只计正式分", "终局重复加资源、未知牌身份进入估值或缺字段被静默补零"),
+    entry("randomizer/game/ai/post-main-value-bound.test.js", "policy/decision-search", "访问与收入收益上界覆盖原生完整窗口，严格低于实际见证才剪枝，保留中途无净收益数据访问", "误计距离、重复访问槽、过期消耗、金标或空牌堆，使可达收益超过声称上界"),
+    entry("randomizer/game/ai/post-main-attainment.test.js", "policy/decision-search", "实际达到收益上界的最短输入计划与完整图同选同值同距，内部状态计全局预算且真实逐步复用和恢复一致", "只以乐观上界选动作、漏计私有前缀预算、消耗唯一盲抽收入牌或未完成宏生成可提交证书"),
     entry("randomizer/game/ai/post-main-borrow.test.js", "policy/decision-search", "图灵主行动后无作用借用由更短原路径覆盖，保留orange2收益与已失效科技，宏计两次正式输入", "删除小行星移动折扣、越过已提交借用Decision或将两次输入算作一次而伪称覆盖"),
     entry("randomizer/game/ai/turn-preview.test.js", "architecture/policy-host", "正式回合推进在冻结非turn切片上与整局复制保持完整结果一致，覆盖PASS、跨轮、终局及同席", "推进函数越界写其他规则切片或部分复制共享可写turn，导致证明预览修改真实分支"),
     entry("randomizer/game/ai/analysis-port.test.js", "architecture/policy-host", "可信分支精确提交、结果缓存和权威根隔离", "策略取得权威envelope、同family代替动作或fork改变真实根/RNG"),

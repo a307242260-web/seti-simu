@@ -1,0 +1,38 @@
+{
+  "scope": "Reproduction against pre-guard v28 prototype. Final v29 declines the shortcut at the cap, verified by final unit.",
+  "publicityCap": 10,
+  "spec": {
+    "proof": "seti-post-main-attained-value-shortest-plan-v1",
+    "bound": {
+      "proof": "seti-post-main-visit-income-value-bound-v1",
+      "maximumValueIncrease": 0.5,
+      "movementUpper": 0,
+      "incomeUpper": 0.5,
+      "stockUpper": 4,
+      "minimumDataCorners": 0,
+      "minimumFirstPositiveMoves": 4,
+      "positiveRewardSurplus": 0.5,
+      "visitRewardSlots": [
+        {
+          "cardInstanceId": "card-36-0",
+          "ruleId": "b71-mercury-draw",
+          "value": 1
+        },
+        {
+          "cardInstanceId": "card-36-0",
+          "ruleId": "b71-venus-publicity",
+          "value": 0.5
+        }
+      ],
+      "minimumMoveCostValue": 1,
+      "maximumNativeArrivalValue": 0.5
+    },
+    "income": true,
+    "blind": false,
+    "dataCorners": 0,
+    "dataPlacements": 4,
+    "submissions": 10
+  },
+  "error": "SEARCH_ATTAINED_BOUND_WITNESS_MISMATCH",
+  "sourceBundlePath": "adhoc/ai-post-main-attainment-prototype-20261023-v1.json.gz"
+}

@@ -1,0 +1,64 @@
+{
+  "rows": [
+    {
+      "path": "randomizer/game/ai/analysis-port.js",
+      "sha256": "285b3bedb00dcdb094d3654df2738a0ece092e91189da1b1d62eee0f5b61d26f",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/decision-search.js",
+      "sha256": "dd72442d97556a2792affe26ecb678d023ca2f68d62a21fc6dea6a0e6123b7e2",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/post-main-borrow.test.js",
+      "sha256": "44a6e70e1260ec2ef2f039cb91fe78b507a2d865762b559a529c4666470ae445",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/post-main-value-bound.test.js",
+      "sha256": "18e207a2b0d39fda327bddb5e1dfdde7247101870e72a0fd976b35d1a2243ad0",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/post-main-attainment.test.js",
+      "sha256": "e3e089c181feb58771b4794de2bff9ae532122a355b0284bc327fac5a4841ce5",
+      "exitCode": 0
+    },
+    {
+      "path": "tools/node-test-inventory.js",
+      "sha256": "2e15cc04e4b5550309529da6c9f2c7ea7271973f4ab06bf84b950c6bba92b2bc",
+      "exitCode": 0
+    },
+    {
+      "path": "tools/audit_v_state_inputs.js",
+      "sha256": "73fe68b936411d3772e2b655dda2189093610abb52d34712c9cacdc9798d9f98",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/benchmark-ai-post-main-value-20261023-v1.js",
+      "sha256": "a072afd3d85dec80394ba433eb78e2138d1914d08d6340906812bb5d20909d9c",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/benchmark-ai-post-main-attainment-20261023-v4.js",
+      "sha256": "b071212dc1ecc272ced62d4f4350e0a7b53d6027117c0850a267a301a90d1a8a",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/audit-ai-decision-corpus-20261023-v26.js",
+      "sha256": "76c5c9600693f08cf7efaebecaf5e27f6d6273e127731e915aada8565fa02869",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/diagnose-ai-attained-case008-20261023-v2.js",
+      "sha256": "6511e2f958fabe468b873aac7f88fd2bbb8b555c063f36a5017bb7d381175f56",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/profile-ai-late-semantic-case062-20261023-v12.js",
+      "sha256": "584c584e1d786c4b1f50e5b35331b21e8423f6502644f89d732f57e455171603",
+      "exitCode": 0
+    }
+  ]
+}

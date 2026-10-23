@@ -1,0 +1,208 @@
+{
+  "schemaVersion": "seti-ai-post-main-attainment-validation-v1",
+  "date": "2026-10-23",
+  "baseCommit": "7ed6bf2ab9a166639c57bd476ec8f0c188cb4d3c",
+  "snapshot": "/private/tmp/seti-ai-stage39-attainment-20261023-hzpqptqa",
+  "searchVersion": "seti-complete-decision-search-v29",
+  "analysisEntryVersion": "v30",
+  "scope": "Default-V post-main scalar upper bound, actually attained shortest witnesses and certified interior prefixes. Exact identities, boundaries, all payment exits and fixed global budgets preserved.",
+  "controlled": {
+    "postMainAttainment": "passed",
+    "rows": [
+      {
+        "name": "end-now",
+        "raw": 18,
+        "attained": 1,
+        "value": 32,
+        "distance": 1
+      },
+      {
+        "name": "unprofitable-move",
+        "raw": 163,
+        "attained": 1,
+        "value": 33,
+        "distance": 1
+      },
+      {
+        "name": "cash-income",
+        "raw": 1373,
+        "attained": 10,
+        "value": 35.5,
+        "distance": 10
+      },
+      {
+        "name": "blind-income",
+        "raw": 351,
+        "attained": 9,
+        "value": 35.5,
+        "distance": 9
+      },
+      {
+        "name": "data-corner-cash",
+        "raw": 2305,
+        "attained": 11,
+        "value": 44,
+        "distance": 11
+      },
+      {
+        "name": "preserve-blind-data-card",
+        "raw": 2368,
+        "attained": 10,
+        "value": 44,
+        "distance": 10
+      },
+      {
+        "name": "must-retain-income-card",
+        "raw": 324,
+        "attained": 1,
+        "value": 42,
+        "distance": 1
+      },
+      {
+        "name": "late-income-tie",
+        "raw": 1373,
+        "attained": 1,
+        "value": 27.5,
+        "distance": 1
+      }
+    ],
+    "realFactoryInputs": 10,
+    "reusedInteriorPrefixes": 9
+  },
+  "publicityCapGuard": {
+    "reproducedPrototypeFailure": "reports/ai-foundation-20261023/attained-publicity-cap-repro-v1.json",
+    "finalGuardVerified": true,
+    "allowedAfterPublicitySlotPassed": true
+  },
+  "node": {
+    "unitPassed": 134,
+    "fullFlowPassed": 1,
+    "logPath": "reports/ai-foundation-20261023/post-main-attainment-full-node-v2.log"
+  },
+  "browser": {
+    "passed": 3,
+    "logPath": "reports/ai-foundation-20261023/post-main-attainment-browser-v2.log"
+  },
+  "valueAudit": {
+    "independentPassed": 28,
+    "legacyFailures": [
+      "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+    ],
+    "exitCode": 1,
+    "logPath": "reports/ai-foundation-20261023/state-value-input-audit-v27.log"
+  },
+  "syntaxPath": "reports/ai-foundation-20261023/post-main-attainment-syntax-v1.json",
+  "fixedGate": {
+    "path": "reports/ai-foundation-20261023/decision-corpus-audit-v26.json",
+    "passed": 4,
+    "failed": 4,
+    "budget": {
+      "transitions": 256,
+      "nodes": 257,
+      "frontier": 256,
+      "milliseconds": 600
+    }
+  },
+  "actualPostMain": {
+    "path": "reports/ai-foundation-20261023/post-main-attainment-actual-window-v4.json",
+    "firstSearchMilliseconds": 29.005083999999982,
+    "initialTransitions": 10,
+    "initialGraphNodes": 2,
+    "initialCertificateNodes": 9,
+    "value": 43.5,
+    "distance": 10,
+    "reusedClicks": 9,
+    "coldControls": 10,
+    "limitation": "Search timings exclude openRoot, diagnostic boundary checks and independent cold controls; not a full game or isolated process speed ratio."
+  },
+  "original008": {
+    "path": "reports/ai-foundation-20261023/attained-case008-v2.json",
+    "complete": true,
+    "transitions": 577,
+    "milliseconds": 1053.319625,
+    "distance": 10,
+    "value": 37.5
+  },
+  "original062": {
+    "path": "reports/ai-foundation-20261023/late-semantic-case062-v12.json",
+    "complete": false,
+    "transitions": 4096,
+    "milliseconds": 6942.7595,
+    "unresolved": 2001
+  },
+  "prototypeScope": {
+    "scalarReport": "reports/ai-foundation-20261023/post-main-value-actual-window-v1.json",
+    "scalarSourceBundle": "adhoc/ai-post-main-value-prototypes-20261023-v1.json",
+    "attainedSourceBundle": "adhoc/ai-post-main-attainment-prototype-20261023-v1.json.gz",
+    "finalSourceTiming": false
+  },
+  "newSearchFullGames": 0,
+  "newSearchFinalScores": null,
+  "fullGame180SecondAcceptance": "Not run; fixed necessary decision gates remain 4/8.",
+  "nextEvidencePath": "reports/ai-foundation-20261023/attained-before-main-bottleneck-v1.json",
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "285b3bedb00dcdb094d3654df2738a0ece092e91189da1b1d62eee0f5b61d26f",
+    "randomizer/game/ai/decision-search.js": "dd72442d97556a2792affe26ecb678d023ca2f68d62a21fc6dea6a0e6123b7e2",
+    "randomizer/game/ai/post-main-borrow.test.js": "44a6e70e1260ec2ef2f039cb91fe78b507a2d865762b559a529c4666470ae445",
+    "randomizer/game/ai/post-main-value-bound.test.js": "18e207a2b0d39fda327bddb5e1dfdde7247101870e72a0fd976b35d1a2243ad0",
+    "randomizer/game/ai/post-main-attainment.test.js": "e3e089c181feb58771b4794de2bff9ae532122a355b0284bc327fac5a4841ce5",
+    "randomizer/index.html": "18fc863c9fc81fbca59b21f7d3bc3c2e70e6b4f5fffa926a691941c5b8674fe9",
+    "tools/node-test-inventory.js": "2e15cc04e4b5550309529da6c9f2c7ea7271973f4ab06bf84b950c6bba92b2bc",
+    "tools/audit_v_state_inputs.js": "73fe68b936411d3772e2b655dda2189093610abb52d34712c9cacdc9798d9f98",
+    "docs/ai-post-main-attained-bound-20261023.md": "e5e4e58caed98bc93c3a7ea3a33132fa540c9af50c4cb6e5b1fe885a8c5eb699",
+    "docs/ai-implementation-20261022.md": "53911f9ee6f72dd99b114a46673e0d509ee3dc0537982c821553905cb95f80f9",
+    "docs/ai-development-workflow.md": "763af1704f19a3cb50c71710d8461eb4c2fced9fdaa3b9ace5469b3c9602091a",
+    "docs/ai-interface-inventory-20261022.md": "a2596867bec161342e55bacb13537b28068ba90bf85709a8c5b2f4742c07636d",
+    "docs/ai-search-agent-contract-20261023.md": "90948e1d00299cf16ab865d0e26bbb43320fa4027668d1c21bddcc8f7d9f5665",
+    "adhoc/benchmark-ai-post-main-value-20261023-v1.js": "a072afd3d85dec80394ba433eb78e2138d1914d08d6340906812bb5d20909d9c",
+    "adhoc/benchmark-ai-post-main-attainment-20261023-v4.js": "b071212dc1ecc272ced62d4f4350e0a7b53d6027117c0850a267a301a90d1a8a",
+    "adhoc/audit-ai-decision-corpus-20261023-v26.js": "76c5c9600693f08cf7efaebecaf5e27f6d6273e127731e915aada8565fa02869",
+    "adhoc/diagnose-ai-attained-case008-20261023-v2.js": "6511e2f958fabe468b873aac7f88fd2bbb8b555c063f36a5017bb7d381175f56",
+    "adhoc/profile-ai-late-semantic-case062-20261023-v12.js": "584c584e1d786c4b1f50e5b35331b21e8423f6502644f89d732f57e455171603",
+    "adhoc/finalize-ai-attainment-20261023-v1.py": "2b5d927da078c3a94027798885220949d57e3eba00ee102eaf3a7ce4ca7fb415",
+    "adhoc/deliver-ai-attainment-20261023-v1.py": "dc2f4ac11e75735d6ff6b3ad57ee7d3e2d430c108103f003e8af593588f24d3f"
+  },
+  "evidenceHashes": {
+    "adhoc/ai-decision-corpus-20261023-v1/attained-case008-v2.raw.json.gz": "d76f5aefd74da847b09c3112cd76629d22119219cb45e73160b817a4d91bf0b1",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-001-v26.raw.json.gz": "c016b01435548c31015067bc1f0651b3fce1d5a18c92bec84848f182c4b1cd21",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-003-v26.raw.json.gz": "c9b17d3b82badd3927706a6c79e647e6e7335b3cc70b180d59a9bd670575f4b2",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-008-v26.raw.json.gz": "9cc23ffecacd87e6ce5edb5fea45c990a54260621e4aec916e56a1b0b87e5814",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-009-v26.raw.json.gz": "e9fcc4ee5e07f1806b272e4e3e982847e025fd94d51359f4d9ea6d4e8251d731",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-011-v26.raw.json.gz": "c046acbce245005d6ace2ffa1e54f8373e62be07e409f9c705915895eea3512c",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-062-v26.raw.json.gz": "4de901ad93bf0febedaf8a068aaa051256c182a69839ca4e6cf565719907ae25",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-105-v26.raw.json.gz": "4f9d38238aeb7eb1b247315dbed1e72d488b5865916e344c54c9c401729d840f",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-152-v26.raw.json.gz": "d0f9a43ad8d978f42478c1b5f368767d27180865d26e87126dd57ca14f71efb9",
+    "adhoc/ai-decision-corpus-20261023-v1/late-semantic-case062-v12.raw.json.gz": "0de90e818aeb8857857a2f5060bc996644cae58c122c56d042139aee320e3ab7",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-attainment-actual-step00-v4.raw.json.gz": "de217da14542b48601dc9ce298e7ad8e90743e39993e3ecc633f1003fa461465",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-attainment-actual-step01-v4.raw.json.gz": "4761dfd860d29738880e9eb137833368a4dddd812657b73ecec195f45c3d3824",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-attainment-actual-step02-v4.raw.json.gz": "891e1d4cfb55d68950becaf9c3faa622085fd84d58f335a4a6a8dc65202578e1",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-attainment-actual-step03-v4.raw.json.gz": "ec479ac418b5d05374b10ae40aa0cf1ac658d7db162435e8d687cda826d474a1",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-attainment-actual-step04-v4.raw.json.gz": "e46763d6f7fcd5fb13cc3bf65d8dc194863af924c63f165d17ec21f5dfed507e",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-attainment-actual-step05-v4.raw.json.gz": "55f23cb21046f792983d1a790aef4052f0e04437ec72f58c9d3e4aca0907b81b",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-attainment-actual-step06-v4.raw.json.gz": "f568178ddf49f917877d9c8cd4d1ad6f0626e05c31648cad094c0c818468da9b",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-attainment-actual-step07-v4.raw.json.gz": "26318e49c9a53af6f3dd8adeb42ddf654c7fda77761253891d6933bff1a6cc97",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-attainment-actual-step08-v4.raw.json.gz": "73b9365020b5696a0f32f5592a7d8e3072d1e31de4fa55fff5bfeb55f2ee5ca7",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-attainment-actual-step09-v4.raw.json.gz": "b32f022c36391746d23597d4e7ad9eae9852044441173809651ca191c987c4bb",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-value-actual-off-v1.raw.json.gz": "436f607d54029e3854c366aae299f3e699836c031e6da9172703d0f3b4ef04b9",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-value-actual-on-v1.raw.json.gz": "a16fbf83661085c9f82ba30395d35b18734c5dc09ab4a5fa14cffd66cca649ad",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-value-actual-window-v1.json": "b4d65ab20f6924e53a16adb4b54fb3b4762d44c40cd09a61d7d973ce99781613",
+    "adhoc/ai-post-main-attainment-prototype-20261023-v1.json.gz": "be8902271a3422081fb42c5751cb4c3790e3acd85c9cf4a0ad12c3351b447852",
+    "adhoc/ai-post-main-value-prototypes-20261023-v1.json": "5b6051a5913d5659c289d1f58581dde3a53157a26b7eef1dc77054ac45b7e0f0",
+    "reports/ai-foundation-20261023/attained-before-main-bottleneck-v1.json": "738cbce8074de1db64d8642fbc2177634b894d8361595091a847b603241b7a88",
+    "reports/ai-foundation-20261023/attained-case008-v2.json": "3e65c30b3c199db3ac8d123f3b114c3502cdfec68ecceac3aed68f3886274d21",
+    "reports/ai-foundation-20261023/attained-case008-v2.log": "130ed6afdd30fd4f57c059838d98a54abc9c2f28dc482d12df9c7a7b783b399f",
+    "reports/ai-foundation-20261023/attained-publicity-cap-repro-v1.json": "b79ecb45c2530b055ac6a139324d53461cd6cb8f6a677fdddc6696a5dbd2bce6",
+    "reports/ai-foundation-20261023/decision-corpus-audit-v26.json": "b3e9ac2113ece3a4b3dca0eef10716c0c8634606571bacf9e6011c7f10ce4130",
+    "reports/ai-foundation-20261023/decision-corpus-audit-v26.log": "7390cc0831f0f244370b0825c754c946f3e21563e34951f8b66e29e3b58b3c3d",
+    "reports/ai-foundation-20261023/late-semantic-case062-v12.json": "a833ea2fb5506b5e5d3df0e5b69bbe9d2c4509904af96ce8eb4dc38741ac354f",
+    "reports/ai-foundation-20261023/late-semantic-case062-v12.log": "3ff3b89936a5ad4539a4b53da8a81ceeb982c514b2ca5adfdbed2f37e5732494",
+    "reports/ai-foundation-20261023/post-main-attainment-actual-window-v4.json": "e89d6d164cf59a57558592a606c2906bdd27613f1466818012a6e543d111c77d",
+    "reports/ai-foundation-20261023/post-main-attainment-actual-window-v4.log": "73d8391a57b960c8c6161d212778c331c69b720e25bc9dfa8c030ca8b59ad69b",
+    "reports/ai-foundation-20261023/post-main-attainment-browser-v2.log": "89f729b45632bb2b8a487450ad3f0cbde20b319478493f57445709b364109968",
+    "reports/ai-foundation-20261023/post-main-attainment-full-node-v2.log": "e28974550feda6412efd21a8d07bd173df7def0d9231db354013105aaa840205",
+    "reports/ai-foundation-20261023/post-main-attainment-syntax-v1.json": "20848882417a7278423e23bae03f320b7231a654d7a85ad7b02571ccdcb610cd",
+    "reports/ai-foundation-20261023/post-main-attainment-unit-v7.log": "bc4dbf03125f43ba2fd72c28967ec789462dc4efd197808d30cda4c70536e73c",
+    "reports/ai-foundation-20261023/post-main-value-actual-window-v1.json": "40ac3bb79dfd593fc849734eb5233f4fd1fb1640df5519495d2afbe0b63c4dc1",
+    "reports/ai-foundation-20261023/state-value-input-audit-v27.log": "4aaf0b9db29b573abad4fcc215602f7e4f9debe59fd20bad3a0d72249433d68e"
+  }
+}

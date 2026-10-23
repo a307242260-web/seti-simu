@@ -33,7 +33,8 @@ Browser高频inspect不复制原始actionOutcomes，查看lastOutcomeSummary；�
 关闭端口不删除该份证据；reset、恢复、Browser invalidate和dispose均丢弃旧算法实例及临时token。
 搜索v20另显式启用`planReuse`，复用[已闭合窗口的最优前缀](ai-plan-prefix-reuse-proof-20261023.md)。
 同一回合的假设种子按公开配置和回合身份重建；完整状态、RNG、队列及合法信封仍须一致。
-证书最多记录32个真实单输入前缀，宏内部、信息边界和其他owner不冒充已有节点。
+证书最多记录32个真实单输入前缀。普通宏内部、信息边界和其他owner不冒充已有节点；
+下述v29最短完成见证可为其实际执行并单独证明的内部前缀发证。
 它保留原完整比较结论及真实后缀见证；不能仅凭下一步合法就续用，也不能救活未闭合的首次搜索。
 
 搜索v21在原钱包证明不适用时增加[已知模型钱电证明](ai-known-card-money-proof-20261023.md)。
@@ -67,6 +68,12 @@ Browser高频inspect不复制原始actionOutcomes，查看lastOutcomeSummary；�
 闭包内无作用科技的借用可删去两次输入，保留orange2真实移动收益；宏执行启用与选择并按2输入计费。
 真实根已在借用Decision时不适用；普通前缀证书不跨宏内部，原预算和全图未闭合失败语义不变。
 
+搜索v29增加[主行动后标量上界和实际最短完成见证](ai-post-main-attained-bound-20261023.md)。
+严格低于已到达V的上界才能剪枝；实际达到上界、最少输入和平分代表均可证明时才构造完整计划。
+新宏内部状态计入全局node/frontier额度，`nodes=graphNodes+certificateNodes`；正式输入逐次收费。
+只有该见证的内部前缀取得独立完整依赖证书，其他宏沿用原行为。watchdog中断返回未完成集合、空动作和空证书。
+纯付款起点保留全部实体出口。默认工厂预算与reset/restore清空token语义不变。
+
 ## 结果和失败
 
 成功的agentTrace.coverage为complete，search保存scope、根去向、完整图、等价/证明归属、
@@ -89,6 +96,6 @@ search-agent.test比较真实收入检查点在直接搜索、Browser、Simulati
 真实Chrome的production-search-agent-entry检查脚本加载、机器提交和保存恢复。
 
 这些是具体输入与共享接入的验证，不构成全部规则状态、整个游戏、搜索质量或单局速度验收。
-复杂主行动、科技/任务/外星人更广范围、宏内部复用及完整局性能仍需继续。
+复杂主行动、科技/任务/外星人更广范围、其他宏内部复用及完整局性能仍需继续。
 旧heuristic的production-browser-full-parity未通过，本轮失败记录为60秒外层超时。
 最终版只重跑启动、新搜索和completion三项Chrome检查；没有将旧流程算作搜索速度通过。

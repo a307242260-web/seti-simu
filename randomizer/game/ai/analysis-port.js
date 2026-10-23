@@ -13,10 +13,13 @@
     common ? require("../abilities/rocket") : root.SetiAbilityRocket,
     common ? require("../tech/resolver") : root.SetiTechResolver,
     common ? require("../effects/probe-turn-session") : root.SetiProbeTurnSession,
-    common ? require("../tech/board-state") : root.SetiTechBoardState);
+    common ? require("../tech/board-state") : root.SetiTechBoardState,
+    common ? require("../../solar-system/core") : root.SetiSolarSystem,
+    common ? require("../rockets") : root.SetiRocketActions,
+    common ? require("../players") : root.SetiPlayers);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players) {
   "use strict";
 
   // 已逐项审计的 Production 公司组合：钱电模拟和取牌待选分别检查各自的队列前提。
@@ -236,6 +239,8 @@
     let preMainDataPlans = new WeakMap();
     let postMainPlans = new WeakMap();
     let postMainBorrows = new WeakMap();
+    let postMainValueBounds = new WeakMap();
+    let postMainOptimalPlans = new WeakMap();
     const resourceGroups = new Map();
     let fork = null;
     let loadedEnvelope = null;
@@ -1024,6 +1029,200 @@
         excludedActionIds: excluded }) : null;
     }
 
+    function postMainValueBound(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (postMainValueBounds.has(node)) return postMainValueBounds.get(node);
+      const result = describePostMainValueBound(stored, node);
+      postMainValueBounds.set(node, result);
+      return result;
+    }
+
+    function describePostMainValueBound(stored, node) {
+      if (node.status !== "stable" || stored.envelope.session) return null;
+      const state = readIdentityState(stored.envelope), owner = state.players.players.find(player => player.id === seatId);
+      const company = industryCatalog.getPlayerIndustryDefinition(owner);
+      if (!owner?.mainActionCompleted || ![null, "turing_borrow_tech"].includes(company?.activeAbilityId)
+        || !knownCardMoneyOrder(node) || owner.industryFutureSpan?.card || owner.industryStrategyPlayInteractionPending
+        || owner.industryHuanyuFreeMovesLeft || owner.blueBonusResources?.credits || owner.blueBonusResources?.energy
+        || Object.keys(owner.techState.ownedTiles).some(id => id.startsWith("blue") && owner.techState.ownedTiles[id])
+        || owner.industryBorrowedTechTileId && !/^(orange|purple)[1-4]$/.test(owner.industryBorrowedTechTileId)
+        || Object.values(state.aliens.aliens).some(alienState.isAlienReadyToReveal)
+        || Object.keys(state.aliens.chong?.transportTasksByRocketId || {}).length
+        || state.turn.type1TriggerEvents && (!Array.isArray(state.turn.type1TriggerEvents) || state.turn.type1TriggerEvents.length)
+        || node.legalActions.some(action => !["end_turn", "place_data", "quick_trade", "card_corner", "move", "industry"].includes(action.family)
+          || action.family === "card_corner" && action.payload?.multiplier !== 1)) return null;
+      const thresholds = state.finalScoring.thresholds;
+      if (!thresholds.length || thresholds.some(n => !Number.isSafeInteger(n) || n <= 0)
+        || owner.resources.score >= Math.min(...thresholds)
+        || Object.values(state.finalScoring.tiles).some(tile => tile.marks.some(mark => [mark.playerId,mark.playerColor].some(id => id === seatId || id === owner.color)))) return null;
+      const probes = state.pieces.rockets.filter(rocket => [rocket.playerId, rocket.color, rocket.playerColor]
+        .some(id => id === seatId || id === owner.color));
+      if (probes.some(rocket => (rocket.kind ?? "standard") !== "standard" || rocket.fossilId != null
+        || (rocket.surface ?? "solar-board") !== "solar-board" || !Number.isInteger(rocket.sectorX)
+        || rocket.sectorX < 0 || rocket.sectorX >= 8 || !Number.isInteger(rocket.sectorY)
+        || rocket.sectorY < 1 || rocket.sectorY > 4)
+        || rockets.SECTOR_RING_MIN !== 1 || rockets.SECTOR_RING_MAX !== 4
+        || JSON.stringify(rocketAbilities.MOVE_DIRECTIONS.map(d => [d.deltaX, d.deltaY])) !== "[[0,1],[1,0],[-1,0],[0,-1]]") return null;
+      const occupied = data.listComputerPlacedTokens(owner).map(token => token.placementSlot).sort((a,b) => a-b);
+      if (owner.resources.availableData !== owner.dataState.poolTokens.length
+        || owner.resources.handSize !== owner.hand.length || occupied.length !== owner.dataState.placedTokens.length
+        || occupied.some((slot,index) => slot !== index+1)
+        || JSON.stringify(data.getComputerSlotBonus(2)) !== '{"type":"publicity","publicity":1}'
+        || JSON.stringify(data.getComputerSlotBonus(4)) !== '{"type":"income"}'
+        || Object.keys(data.COMPUTER_DATA_SLOTS).some(slot => ![2,4].includes(Number(slot)) && data.getComputerSlotBonus(slot))) return null;
+      let dataCorners = 0;
+      for (const card of owner.hand) {
+        const corner = cards.getDiscardActionCodeForCard(card), income = cards.getIncomeCodeForCard(card);
+        const gain = cards.getIncomeGainForCard(card), key = ["credits", "energy", "handSize"][income];
+        if (![0,1,2].includes(corner) || !key || !gain || Object.keys(gain).length !== 1 || gain[key] !== 1) return null;
+        if (corner === 2) {
+          const reward = cards.getDiscardActionMoveRewardForCard(card);
+          if (reward.movementPoints !== 1 || Object.keys(reward.gain).length) return null;
+        } else {
+          const reward = cards.getDiscardActionRewardForCard(card);
+          if (corner === 0 ? reward.dataCount !== 0 || JSON.stringify(reward.gain) !== '{"publicity":1}'
+            : reward.dataCount !== 1 || Object.keys(reward.gain).length) return null;
+          if (corner === 1) dataCorners += 1;
+        }
+      }
+      const visitTypes = new Set(["visitPlanet", "visitAsteroid", "visitComet"]);
+      const inertTypes = new Set(["launch", "orbit", "land", "researchTech", "signalMarked", "playCard"]);
+      const slots = []; let remainingData = 0, maximumDrawCount = 1;
+      for (const card of owner.reservedCards) {
+        const model = cardEffects.getCardModel(card);
+        if (model.pluto || model.endGameScoring || model.tasks?.length || model.temporaryTasks?.length) return null;
+        const copy = structuredClone(card); cardEffects.ensureCardEffectState(copy);
+        for (const trigger of model.triggers || []) {
+          if (copy.cardEffectState?.consumedTriggerIds.includes(trigger.id)) continue;
+          const types = trigger.event.types?.length ? trigger.event.types : [trigger.event.type];
+          if (types.some(type => !visitTypes.has(type) && !inertTypes.has(type))) return null;
+          if (!types.some(type => visitTypes.has(type))) continue;
+          const effect = trigger.effect, options = effect.options || {};
+          let value;
+          if (effect.type === "gain_resources") {
+            if (Object.keys(options.gain || {}).some(key => !["credits", "energy", "publicity"].includes(key))) return null;
+            value = (options.gain?.credits || 0) + (options.gain?.energy || 0) + (options.gain?.publicity || 0)*0.5;
+          } else if (["gain_data", "draw_cards", "pick_card"].includes(effect.type)) {
+            const count = Math.max(1, options.count || 1);
+            value = count * (effect.type === "gain_data" ? 0.5 : 1);
+            if (effect.type === "gain_data") remainingData += count;
+            else maximumDrawCount = Math.max(maximumDrawCount, count);
+          } else return null;
+          slots.push({ card: copy, trigger, value });
+        }
+      }
+      // 付款/插收入和访问抽牌在首次信息屏障结束；此之前不会增加牌堆可用量。
+      if (cards.getAvailablePool({ ...state.cards }, state.players).length < maximumDrawCount) return null;
+      let movementUpper = 0, minimumFirstPositiveMoves = null, positiveRewardSurplus = 0;
+      if (probes.length && slots.some(slot => slot.value > 0.5)) {
+        const cells = [];
+        for (let y=1; y<=4; y+=1) for (let x=0; x<8; x+=1) {
+          const content = solar.resolveVisibleContent(x,y,state.solarSystem).content;
+          const type = content.kind === "planet" ? "visitPlanet" : content.kind === "asteroid" ? "visitAsteroid"
+            : content.kind === "comet" ? "visitComet" : null;
+          if (type) cells.push({ x,y,event: { type, planetId: content.planetId, playerId: seatId, source: "move", hasOwnOrbit: true } });
+        }
+        for (const slot of slots.filter(slot => slot.value > 0.5)) {
+          const targets = cells.filter(cell => cardEffects.collectMatchingTriggers(
+            { ...owner, reservedCards: [slot.card] }, cell.event).some(match => match.trigger.id === slot.trigger.id));
+          if (!targets.length) continue;
+          positiveRewardSurplus += slot.value - 0.5;
+          for (const target of targets) for (const probe of probes) {
+            const distance = Math.min(solar.mod8(target.x-probe.sectorX),solar.mod8(probe.sectorX-target.x))
+              + Math.abs(target.y-probe.sectorY);
+            minimumFirstPositiveMoves = Math.min(minimumFirstPositiveMoves ?? Infinity, Math.max(1,distance));
+          }
+        }
+        // 每步支付至少1V、原生到达最多0.5V；每个访问槽最多抵消一次步数损失。
+        const uncompensated = Math.max(0,(minimumFirstPositiveMoves || 0)-slots.length);
+        movementUpper = Math.max(0,positiveRewardSurplus-uncompensated*0.5);
+      }
+      const stockUpper = occupied.length + owner.dataState.poolTokens.length + dataCorners + remainingData;
+      const minimumDataCorners = Math.max(0,4-occupied.length-owner.dataState.poolTokens.length-remainingData);
+      const incomePossible = !occupied.includes(4) && stockUpper >= 4 && owner.hand.length > minimumDataCorners;
+      const incomeUpper = incomePossible ? Math.max(0,4-state.turn.roundNumber-(4-occupied.length)*0.5
+        + (occupied.length < 2 ? 0.5 : 0)-minimumDataCorners*0.5) : 0;
+      return freeze({ proof: "seti-post-main-visit-income-value-bound-v1", maximumValueIncrease: movementUpper+incomeUpper,
+        movementUpper, incomeUpper, stockUpper, minimumDataCorners, minimumFirstPositiveMoves, positiveRewardSurplus,
+        visitRewardSlots: slots.map(slot => ({ cardInstanceId: slot.card.id, ruleId: slot.trigger.id, value: slot.value })),
+        minimumMoveCostValue: 1, maximumNativeArrivalValue: 0.5 });
+    }
+
+    function postMainOptimalPlanSpec(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (postMainOptimalPlans.has(node)) return postMainOptimalPlans.get(node);
+      const bound = postMainValueBound(node);
+      let result = null;
+      if (bound?.movementUpper === 0) {
+        const state = readIdentityState(stored.envelope), owner = state.players.players.find(player => player.id === seatId);
+        const income = bound.incomeUpper > 0;
+        const fill = income ? 4-data.listComputerPlacedTokens(owner).length : 0;
+        const corners = income ? Math.max(0,fill-owner.dataState.poolTokens.length) : 0;
+        const canKeepBlind = (hand, needed) => hand.some(card => cards.getIncomeCodeForCard(card) === 2
+          && hand.filter(other => other !== card && cards.getDiscardActionCodeForCard(other) === 1).length >= needed);
+        const publicityFits = !income || fill <= 2 || owner.resources.publicity+1 <= players.RESOURCE_LIMITS.publicity;
+        if (publicityFits && (!income || corners === bound.minimumDataCorners && owner.hand.length > corners
+          && owner.hand.filter(card => cards.getDiscardActionCodeForCard(card) === 1).length >= corners)) {
+          const blind = income && canKeepBlind(owner.hand,corners);
+          const first = node.legalActions.find(action => action.family === (corners ? "card_corner" : income ? "place_data" : "end_turn")
+            && (!corners || cards.getDiscardActionCodeForCard(owner.hand.find(card => card.id === action.target?.cardInstanceId)) === 1));
+          if (first) result = freeze({ proof: "seti-post-main-attained-value-shortest-plan-v1", bound,
+            income, blind, dataCorners: corners, dataPlacements: fill,
+            submissions: income ? corners+fill*2+1+(blind?0:1) : 1 });
+        }
+      }
+      postMainOptimalPlans.set(node,result);
+      return result;
+    }
+
+    function expandPostMainOptimalPlan(node, hasTime = () => true) {
+      const spec = postMainOptimalPlanSpec(node);
+      if (!spec) throw new Error("ANALYSIS_POST_MAIN_OPTIMAL_PLAN_INVALID");
+      const prefixes = []; let current = node;
+      for (let step=0; step<spec.submissions; step+=1) {
+        if (!hasTime()) return { complete: false, node: current, prefixes, submissions: step, proof: spec.proof };
+        const stored = nodes.get(current), state = readIdentityState(stored.envelope);
+        const owner = state.players.players.find(player => player.id === seatId);
+        let choices;
+        if (step < spec.dataCorners) {
+          const remaining = spec.dataCorners-step-1;
+          choices = current.legalActions.filter(action => {
+            if (action.family !== "card_corner") return false;
+            const card = owner.hand.find(card => card.id === action.target?.cardInstanceId);
+            if (!card || cards.getDiscardActionCodeForCard(card) !== 1) return false;
+            const hand = owner.hand.filter(other => other !== card);
+            return hand.length > remaining && hand.filter(other => cards.getDiscardActionCodeForCard(other) === 1).length >= remaining
+              && (!spec.blind || hand.some(blind => cards.getIncomeCodeForCard(blind) === 2
+                && hand.filter(other => other !== blind && cards.getDiscardActionCodeForCard(other) === 1).length >= remaining));
+          });
+        } else if (spec.income && step < spec.dataCorners+spec.dataPlacements*2) {
+          const place = (step-spec.dataCorners)%2 === 0;
+          choices = current.legalActions.filter(action => place ? action.family === "place_data"
+            : action.family === "choose_target" && action.target?.target === "computer");
+          if (choices.length !== 1 || !place && current.legalActions.length !== 1) throw new Error("ANALYSIS_POST_MAIN_DATA_PLAN_CHANGED");
+        } else if (spec.income && step === spec.dataCorners+spec.dataPlacements*2) {
+          if (current.legalActions.some(action => action.family !== "choose_card" || !action.target?.choiceId?.startsWith("income:"))) {
+            throw new Error("ANALYSIS_POST_MAIN_INCOME_PLAN_CHANGED");
+          }
+          choices = current.legalActions.filter(action => {
+            const card = owner.hand.find(card => card.id === action.target?.cardInstanceId);
+            return card && (cards.getIncomeCodeForCard(card) === 2) === spec.blind;
+          });
+        } else choices = current.legalActions.filter(action => action.family === "end_turn");
+        choices.sort((a,b) => a.actionId < b.actionId ? -1 : a.actionId > b.actionId ? 1 : 0);
+        const action = choices[0];
+        if (!action) throw new Error("ANALYSIS_POST_MAIN_OPTIMAL_ACTION_MISSING");
+        prefixes.push({ node: current, action, distance: spec.submissions-step });
+        current = expand(current,action.actionId);
+        if (["information-barrier","other-owner","terminal"].includes(current.status) !== (step === spec.submissions-1)) {
+          throw new Error("ANALYSIS_POST_MAIN_OPTIMAL_BOUNDARY_CHANGED");
+        }
+      }
+      return { complete: true, node: current, prefixes, submissions: spec.submissions, proof: spec.proof };
+    }
+
     function postMainBorrowSpec(node) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
@@ -1472,6 +1671,8 @@
       preMainDataPlans = new WeakMap();
       postMainPlans = new WeakMap();
       postMainBorrows = new WeakMap();
+      postMainValueBounds = new WeakMap();
+      postMainOptimalPlans = new WeakMap();
       resourceGroups.clear();
       cache.clear();
       rootObservation = null;
@@ -1496,7 +1697,7 @@
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
-      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, close, getDiagnostics });
+      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, postMainValueBound, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });
