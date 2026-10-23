@@ -227,6 +227,7 @@
     let openingPlans = new WeakMap();
     let cardTradeBounds = new WeakMap();
     let passReserveBounds = new WeakMap();
+    let cornerChoices = new WeakMap();
     let postMainPlans = new WeakMap();
     const resourceGroups = new Map();
     let fork = null;
@@ -838,6 +839,80 @@
       return freeze({ proof: "seti-standard-pass-reserve-choice-value-equivalence-v1", handDelta: 1, expectedStatus: "other-owner" });
     }
 
+    function postMainCornerChoiceSpec(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (cornerChoices.has(node)) return cornerChoices.get(node);
+      const result = describePostMainCornerChoices(stored, node);
+      cornerChoices.set(node, result);
+      return result;
+    }
+
+    function describePostMainCornerChoices(stored, node) {
+      if (node.status !== "stable" || stored.envelope.session) return null;
+      const state = readIdentityState(stored.envelope), owner = state.players.players.find(player => player.id === seatId);
+      if (!owner?.mainActionCompleted) return null;
+      const corners = node.legalActions.filter(action => action.family === "card_corner");
+      if (corners.length < 2) return null;
+      const handById = new Map(owner.hand.map(card => [card.id, card]));
+      const signatureOf = action => JSON.stringify([cards.getDiscardActionCodeForCard(handById.get(action.target?.cardInstanceId)),
+        cards.getIncomeCodeForCard(handById.get(action.target?.cardInstanceId)), action.payload?.kind, action.payload?.multiplier]);
+      if (new Set(corners.map(signatureOf)).size === corners.length || !knownCardMoneyOrder(node)) return null;
+      const company = industryCatalog.getPlayerIndustryDefinition(owner);
+      // 图灵只借橙/紫科技；赫利昂的手牌输入仅为收入码。两者不读取手牌主行动牌面。
+      const featureOnlyIndustry = ["turing_borrow_tech", "helios_remove_tech_income"].includes(company.activeAbilityId);
+      if (company.activeAbilityId && !featureOnlyIndustry && owner.industryRoundMarkRound !== state.turn.roundNumber
+        || node.legalActions.some(action => action.family === "industry"
+          ? !featureOnlyIndustry || action.target?.abilityId !== company.activeAbilityId
+          : !["end_turn", "place_data", "quick_trade", "card_corner", "move", "complete_task"].includes(action.family))
+        || owner.industryFutureSpan?.card || company.activeAbilityId === "future_span_pick_advance" && !owner.industryFutureSpanInitialized
+        || Object.keys(state.aliens.chong?.transportTasksByRocketId || {}).length
+        || Object.values(state.aliens.aliens).some(alienState.isAlienReadyToReveal)
+        || state.pieces.rockets.some(rocket => [rocket.playerId, rocket.color, rocket.playerColor].some(id => id === seatId || id === owner.color)
+          && ((rocket.kind ?? "standard") !== "standard" || rocket.fossilId != null))) return null;
+      const quietTypes = new Set(["gain_resources", "gain_data", "draw_cards", "pick_card", "card_move",
+        "card_return_played_card_to_hand_if", "card_count_owned_tech_reward", "card_pay_credits_for_reward", "card_discard_any_for_income"]);
+      const quietReward = effect => quietTypes.has(effect.type) && (!effect.options?.reward || quietReward(effect.options.reward));
+      if (owner.reservedCards.some(card => {
+        const model = cardEffects.getCardModel(card);
+        return (model.tasks || []).some(task => !task.rewards.every(quietReward)) || (model.triggers || []).some(trigger =>
+          !quietReward(trigger.effect) || (trigger.event.types?.length ? trigger.event.types : [trigger.event.type]).includes("cardCorner"));
+      })) return null;
+      const quietBonus = bonus => !bonus || ["income", "choose_card"].includes(bonus.type) && Object.keys(bonus).length === 1
+        || ["credits", "energy", "publicity", "score"].includes(bonus.type)
+          && Object.keys(bonus).every(key => key === "type" || key === bonus.type)
+          && Number.isSafeInteger(bonus[bonus.type]) && bonus[bonus.type] >= 0;
+      if (Object.keys(data.COMPUTER_DATA_SLOTS).some(slot => !quietBonus(data.getComputerSlotBonus(slot))
+        || !quietBonus(data.getComputerSlotBlueColumnBonus(owner, Number(slot))))
+        || Object.keys(data.BLUE_BONUS_DATA_SLOTS).some(slot => !quietBonus(data.getBlueBonusPlacementReward(owner, Number(slot))))) return null;
+      const outside = { ...state, players: { ...state.players, players: state.players.players.map(player => player === owner
+        ? { ...owner, hand: [] } : player) } };
+      // 不以实体编号猜测引用位置，旧事件、对象key和编码引用也必须排除。
+      const external = forwardIdentity(stored.envelope, "post-main-corner-references", null, outside);
+      const groups = new Map();
+      for (const action of corners) {
+        const card = handById.get(action.target?.cardInstanceId);
+        if (!card || external.includes(card.id)) continue;
+        const corner = cards.getDiscardActionCodeForCard(card), income = cards.getIncomeCodeForCard(card);
+        if (![0, 1, 2].includes(corner) || ![0, 1, 2].includes(income)
+          || action.phase !== "quick" || Object.keys(action.target).some(key => key !== "cardInstanceId")
+          || Object.keys(action.payload).some(key => !["kind", "multiplier"].includes(key))
+          || ![1, 2].includes(action.payload.multiplier) || action.payload.kind !== (corner === 2 ? "move" : "resource")) return null;
+        const gain = cards.getIncomeGainForCard(card), key = ["credits", "energy", "handSize"][income];
+        if (!gain || Object.keys(gain).length !== 1 || gain[key] !== 1) return null;
+        const signature = signatureOf(action);
+        if (!groups.has(signature)) groups.set(signature, []);
+        groups.get(signature).push(action.actionId);
+      }
+      const equivalentGroups = [...groups].filter(([, ids]) => ids.length > 1).map(([signature, ids]) => ({
+        signature, representativeActionId: ids.slice().sort()[0], excludedActionIds: ids.slice().sort().slice(1),
+      }));
+      const excluded = equivalentGroups.flatMap(group => group.excludedActionIds);
+      return excluded.length ? freeze({ proof: "seti-post-main-corner-behavior-equivalence-v1", groups: equivalentGroups,
+        retainedActionIds: node.legalActions.filter(action => !excluded.includes(action.actionId)).map(action => action.actionId),
+        excludedActionIds: excluded }) : null;
+    }
+
     function postMainPlanSpec(node) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
@@ -1227,6 +1302,7 @@
       openingPlans = new WeakMap();
       cardTradeBounds = new WeakMap();
       passReserveBounds = new WeakMap();
+      cornerChoices = new WeakMap();
       postMainPlans = new WeakMap();
       resourceGroups.clear();
       cache.clear();
@@ -1252,7 +1328,7 @@
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
-      cardTradeBound, passReserveChoiceSpec, postMainPlanSpec, close, getDiagnostics });
+      cardTradeBound, passReserveChoiceSpec, postMainCornerChoiceSpec, postMainPlanSpec, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

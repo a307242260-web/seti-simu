@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "seti-ai-conditional-order-outcome-v1",
+  "baseCommit": "d1916751e23a699ee73a3b6e6c00abb6db26de00",
+  "notAdopted": true,
+  "scope": "Rejected queue-order prototype; all 83 runtime import hashes bind baseCommit except the archived prototype search. These results are not v23 runtime performance.",
+  "reason": "Original eight-checkpoint gate remained 4/8; complete case008 took 606 formal inputs with either queue. Insufficient evidence of less exploration work.",
+  "productionQueue": "Original FIFO block unchanged byte-for-byte.",
+  "matrixPath": "reports/ai-foundation-20261023/decision-corpus-audit-v16.json",
+  "completeWindowPath": "reports/ai-foundation-20261023/conditional-order-complete-window-v1.json",
+  "archivePath": "adhoc/ai-conditional-order-prototype-20261023-v1.json",
+  "archiveSha256": "c883eef8050e677c685ffb609dfdb93d0ce0dcdb8377a6b4ba4a37d93fd38bec",
+  "sourceVerification": {
+    "runtimeImportsPerReport": 83,
+    "originalSearchMatchesBaseCommit": true,
+    "prototypeSearchMatchesArchive": true,
+    "productionFifoBlockMatchesBaseCommit": true
+  },
+  "completeWindow": {
+    "actionId": "card_corner:72914895",
+    "value": 37.5,
+    "distance": 10,
+    "formalInputs": [
+      606,
+      606
+    ],
+    "peakFrontier": [
+      31,
+      19
+    ],
+    "sequentialMilliseconds": [
+      1095.126458,
+      1042.7420829999999
+    ]
+  },
+  "timingLimitation": "Same sequential process with warmup; no isolated speed ratio claim.",
+  "reproduction": "Create an isolated git-archive snapshot of baseCommit, write archive.prototypeSource to randomizer/game/ai/decision-search.js, then run adhoc/audit-ai-decision-corpus-20261023-v16.js and adhoc/benchmark-ai-conditional-order-20261023-v1.js. The complete-window driver verifies the archived prototype hash before running. Do not overwrite a working production checkout."
+}

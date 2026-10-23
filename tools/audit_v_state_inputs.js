@@ -361,6 +361,23 @@ try {
         console.log(`[PASS] independent-trade-reservation: case=${id} leaf=${evaluate(acquired.observation)}`);
       } finally { moneyPort.close(); }
     }
+    const cornerFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+      "../adhoc/ai-decision-corpus-20261023-v1/post-main-corner-pair-20261023-v1.json")));
+    const cornerComp = auditKernel.composition;
+    if (!cornerComp.lifecycle.restore(cornerFixture.compositionEnvelope).ok) throw new Error("主行动后角标审计恢复失败");
+    const cornerPort = createAnalysisPort({ composition: cornerComp, seatId: cornerFixture.seatId });
+    try {
+      const root = cornerPort.openRoot(), proof = cornerPort.postMainCornerChoiceSpec(root);
+      const evaluate = independentValue.createStateValueEvaluator(cornerFixture.seatId);
+      const values = root.legalActions.filter(action => action.family === "card_corner").map(action => {
+        const next = cornerPort.expand(root, action.actionId), raw = next.observation;
+        const normalized = outcomeModel.createDecisionObservation(raw, { seatId: cornerFixture.seatId });
+        if (evaluate(raw) !== evaluate(normalized)) throw new Error("主行动后角标原始/标准V不一致");
+        return evaluate(raw);
+      });
+      if (!proof || values.length !== 2 || values[0] !== values[1]) throw new Error("主行动后角标范围或实际一步值不一致");
+      console.log(`[PASS] independent-post-main-corner-choice: value=${values[0]} excluded=${proof.excludedActionIds.length}`);
+    } finally { cornerPort.close(); }
   } catch (error) {
     console.log(`[FAIL] independent-card-choice-equivalence: ${error.message}`);
     allPass = false;

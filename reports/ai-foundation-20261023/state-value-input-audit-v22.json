@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "seti-ai-state-value-input-audit-v1",
+  "baseCommit": "d1916751e23a699ee73a3b6e6c00abb6db26de00",
+  "snapshot": "/private/tmp/seti-ai-stage31-20261023-m_m3h6mr",
+  "command": "node tools/audit_v_state_inputs.js",
+  "exitCode": 1,
+  "overallPassed": false,
+  "independentChecksPassed": 24,
+  "newPathPassed": true,
+  "knownLegacyFailure": "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib",
+  "logPath": "reports/ai-foundation-20261023/state-value-input-audit-v22.log",
+  "logSha256": "14f6df277953f39896bc1a2a7d831a9669d6bc57b9c9e1b2b103de2e94b35deb",
+  "auditSourceSha256": "f8f0f946cb1fea96987761d1d5c3ff4bb216e3591001fb786cc69a0915594e40"
+}

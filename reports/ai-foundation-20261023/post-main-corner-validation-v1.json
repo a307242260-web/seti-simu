@@ -1,0 +1,250 @@
+{
+  "schemaVersion": "seti-ai-post-main-corner-validation-v1",
+  "baseCommit": "d1916751e23a699ee73a3b6e6c00abb6db26de00",
+  "snapshot": "/private/tmp/seti-ai-stage31-20261023-m_m3h6mr",
+  "date": "2026-10-23",
+  "searchVersion": "seti-complete-decision-search-v23",
+  "scope": "Phase-limited card-corner behavior equivalence; no state identity merge or payment-set reduction. Controlled windows prove local behavior, not original game completion.",
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "509d633845cddabec691591d4a712e97591251fd7802bc54f228ed2c22a7710a",
+    "randomizer/game/ai/decision-search.js": "da7de1c6a2b839289499088ef6f8649086042ecde9c82eddb60b56bee69ed520",
+    "randomizer/game/ai/post-main-corner-choice.test.js": "7df9241b9a800699d3f534dd39de3bf8f16c39cd3d05c9727ce2b1fd4dc87be9",
+    "randomizer/index.html": "cc44b8bb70ba7219e7d978ffdbc938aa8ab582de8b0f460c80501a421382a1c2",
+    "tools/node-test-inventory.js": "9b02d817234b4ea187f2e302191d82d0c63fe94c2e3ca514e080d55dc8aa01ca",
+    "tools/audit_v_state_inputs.js": "f8f0f946cb1fea96987761d1d5c3ff4bb216e3591001fb786cc69a0915594e40",
+    "docs/ai-development-workflow.md": "64351bdbfe65a0a9d68dada5b7c6caf31775b4240ef868d6f90cfa1e2e9dc708",
+    "docs/ai-search-agent-contract-20261023.md": "5029a36b77cf9fda8cc031a324bd1aa3972638e80095dd61ab168f69fbca72f4",
+    "docs/ai-interface-inventory-20261022.md": "cf3033f9dcbdab71aa63a8d2292224ee020aa58b09fe30850720d2bcb1423142",
+    "docs/ai-implementation-20261022.md": "27360ae9b28d13c4adf279136b931136233c22b31ba322ff11293e5b51de28b3",
+    "docs/ai-post-main-corner-choice-proof-20261023.md": "49877441cfbf6ae123385ef0244d7811fd367727c2bc4097be91868852855dc8",
+    "adhoc/ai-post-main-corner-equivalence-design-20261023-v1.md": "1a5c043196f5393ee6a6472f9b890463e607142651631a1b2f0ca0974acb4c80",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-corner-pair-20261023-v1.json": "2530fec9a1c6045aab8c624128e3f6404b992c07f0ea5530f1df1f24c0d44ac5",
+    "adhoc/ai-conditional-order-prototype-20261023-v1.json": "c883eef8050e677c685ffb609dfdb93d0ce0dcdb8377a6b4ba4a37d93fd38bec",
+    "adhoc/audit-ai-decision-corpus-20261023-v16.js": "88e4071a912293f3d34dc6cbcc7cbbad635b19fe68f26a0ab7028d1a39f713a8",
+    "adhoc/benchmark-ai-conditional-order-20261023-v1.js": "58c615462a9fb44a315fcb2bb81eac32361c4e4bb47f29cab4ff01934857cf60",
+    "adhoc/audit-ai-decision-corpus-20261023-v18.js": "0e853b2c6100371287ac24cf7d2a9e1c92d1c27558b13505c7dcf3c0fd880313",
+    "adhoc/profile-ai-late-semantic-case062-20261023-v4.js": "0e98b59c4f61cd9a5aff12e91a851d5272fd87ab1da754ea0d872ed94b52bcae"
+  },
+  "runtimeImportVerification": {
+    "finalReports": [
+      "decision-corpus-audit-v18.json",
+      "late-semantic-case062-v4.json"
+    ],
+    "importsPerReport": 83,
+    "allHashesMatchTestedSnapshot": true,
+    "prototypeReportsVerifiedSeparatelyAgainstArchivedBase": true
+  },
+  "node": {
+    "command": "node tools/run_node_tests.js",
+    "unit": {
+      "passed": 127,
+      "failed": 0,
+      "seconds": 193.84
+    },
+    "fullFlow": {
+      "passed": 1,
+      "failed": 0,
+      "seconds": 0.51
+    },
+    "logPath": "reports/ai-foundation-20261023/post-main-corner-full-node-v1.log"
+  },
+  "browser": {
+    "command": "node tools/run_browser_smokes.js --match production-start-button --match production-search-agent-entry --match production-completion-agent-parity",
+    "passed": 3,
+    "failed": 0,
+    "logPath": "reports/ai-foundation-20261023/post-main-corner-browser-v1.log",
+    "scope": "Three entry/completion checks; no full search game."
+  },
+  "syntaxPath": "reports/ai-foundation-20261023/post-main-corner-syntax-v1.json",
+  "stateValueAuditPath": "reports/ai-foundation-20261023/state-value-input-audit-v22.json",
+  "controlledComparison": {
+    "postMainCornerChoice": "passed",
+    "results": [
+      {
+        "label": "data-pair",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+        "raw": 66,
+        "pruned": 59,
+        "value": 26.5,
+        "excluded": 1
+      },
+      {
+        "label": "data-pair",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}",
+        "raw": 66,
+        "pruned": 59,
+        "value": 19.04,
+        "excluded": 1
+      },
+      {
+        "label": "data-triple",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+        "raw": 358,
+        "pruned": 282,
+        "value": 27.5,
+        "excluded": 4
+      },
+      {
+        "label": "data-triple",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}",
+        "raw": 358,
+        "pruned": 282,
+        "value": 19.439999999999998,
+        "excluded": 4
+      },
+      {
+        "label": "income-ready-data-pair",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+        "raw": 66,
+        "pruned": 59,
+        "value": 26.5,
+        "excluded": 1
+      },
+      {
+        "label": "income-ready-data-pair",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}",
+        "raw": 66,
+        "pruned": 59,
+        "value": 19.04,
+        "excluded": 1
+      },
+      {
+        "label": "unused-turing-data-pair",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+        "raw": 778,
+        "pruned": 697,
+        "value": 26.5,
+        "excluded": 9
+      },
+      {
+        "label": "unused-turing-data-pair",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}",
+        "raw": 778,
+        "pruned": 697,
+        "value": 19.04,
+        "excluded": 9
+      },
+      {
+        "label": "unused-helios-data-pair",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+        "raw": 94,
+        "pruned": 81,
+        "value": 27.5,
+        "excluded": 1
+      },
+      {
+        "label": "unused-helios-data-pair",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}",
+        "raw": 94,
+        "pruned": 81,
+        "value": 19.04,
+        "excluded": 1
+      },
+      {
+        "label": "move-pair-062-one-probe",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+        "raw": 119,
+        "pruned": 106,
+        "value": 34,
+        "excluded": 1
+      },
+      {
+        "label": "move-pair-062-one-probe",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}",
+        "raw": 120,
+        "pruned": 107,
+        "value": 19.78,
+        "excluded": 1
+      },
+      {
+        "label": "move-pair-152-one-probe",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+        "raw": 97,
+        "pruned": 84,
+        "value": 19,
+        "excluded": 1
+      },
+      {
+        "label": "move-pair-152-one-probe",
+        "modelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}",
+        "raw": 98,
+        "pruned": 85,
+        "value": 17.3,
+        "excluded": 1
+      }
+    ],
+    "incomeCounterexample": [
+      17.1,
+      17.2
+    ]
+  },
+  "controlledAssertions": [
+    "Same complete optimum, first action, shortest path, authoritative root; conversion-cache off/on agree.",
+    "Actual corner/place-fourth/income paths preserve equal credit income.",
+    "Low budget returns incomplete/null and no fake excluded-action value.",
+    "Different income same corner gives V17.1 vs17.2; actual corner observer produces five-credit divergence.",
+    "Pre-main, unreviewed active industry, external identity references, ready aliens, and corner observer reject proof."
+  ],
+  "fixedGate": {
+    "path": "reports/ai-foundation-20261023/decision-corpus-audit-v18.json",
+    "passed": 4,
+    "failed": 4,
+    "budget": {
+      "transitions": 256,
+      "nodes": 257,
+      "frontier": 256,
+      "milliseconds": 600
+    },
+    "status": "not-passed"
+  },
+  "complexDecision": {
+    "path": "reports/ai-foundation-20261023/late-semantic-case062-v4.json",
+    "complete": false,
+    "transitions": 4096,
+    "milliseconds": 5990.992542,
+    "unresolved": 2276,
+    "proofNodes": 364,
+    "excludedActions": 488,
+    "limitation": "Prefixes differ; unresolved counts do not establish a coverage improvement."
+  },
+  "queuePrototypeOutcomePath": "reports/ai-foundation-20261023/conditional-order-outcome-v1.json",
+  "evidenceHashes": {
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-001-v16.raw.json": "69bcbcf5578ffaa5c2c821e26f9717c7e6047491c788d92c6fd5ec6da1663680",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-003-v16.raw.json": "c9f098f1be34e0a4184aa790214d424d0a8b7916480a8ac1fe6165b196ebf503",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-008-v16.raw.json": "efe9f9c44df012eded5607fb06b8e60de0a3a8b1e7ed35e01bb28233f696854c",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-011-v16.raw.json": "7e7a02a126a459c91d31c53b0e668f62ba28eb1b4f31578bc2c98b3e932a869b",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-009-v16.raw.json": "eb5fbbb94e82f59d2a58c9f226e9e03f51e3e88eb59bd0f8b5a8f4360e5c531f",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-062-v16.raw.json": "13ebbc923bae872c884b4d68098abe4064ed8cc51cf2e1ff2552879ac610afac",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-105-v16.raw.json": "c12ae1e5d72ced0093484cb1f0167c11143484ba6e7025f0b111bde8f9ec01cd",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-152-v16.raw.json": "fc6b3901586dd6eab33d339e83adefceb8d67564d3c9500099bd3eb6f9c97d32",
+    "reports/ai-foundation-20261023/decision-corpus-audit-v16.json": "1bd001c7614f56a58ef4671f4dcde3efd9be00c56aa9a2a466aa01b04f62b254",
+    "reports/ai-foundation-20261023/decision-corpus-audit-v16.log": "0fb7788b1468dbc75214522c81e7050606319508ce10f6300fe1ae099b98258d",
+    "adhoc/ai-decision-corpus-20261023-v1/conditional-order-baseline-v1.raw.json": "0285acf64c5007bf284db0ab9ef5ef232a3d1e13cf84c5fcd893256bc5e32a5b",
+    "adhoc/ai-decision-corpus-20261023-v1/conditional-order-conditional-first-v1.raw.json": "9cead5ba4a457b1abd045a016aa3e0929e5c78854624b029ae83fb5b52bd89d1",
+    "reports/ai-foundation-20261023/conditional-order-complete-window-v1.json": "a4c85d3383201f3e152d8c011e01808aec51e964a2d13fa154f70d47adfb9cde",
+    "reports/ai-foundation-20261023/conditional-order-complete-window-v1.log": "413ca0a718da60d077fa99566f128e3fa0e5010ba82e10db39ae060ed950a618",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-001-v18.raw.json": "4a3605d08e1d2d73f1486af7f015e0678501ab2ba0e6332fe9e4fb297b825a69",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-003-v18.raw.json": "077b0997ad591faf38ec50a1798c2b5648d81810ec629303d023e24fc7674fb3",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-008-v18.raw.json": "25247eb68758f1e8b24b292232ee65794ab5328c98cb30627c02faabfef83038",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-011-v18.raw.json": "c6c75fcfca1bad2891c992d8dd55d64666f95640d8d487e067102582f7399f2a",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-009-v18.raw.json": "83dd2b4557f1b91437ca2bf93258a7e020534faf3c2c989e5cbcca38d34d7bb1",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-062-v18.raw.json": "59f30c0d3c75551b938f028c3c8a0d45cfc5f80e6c839c89d6c07c00663b357a",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-105-v18.raw.json": "15bb6fba381d1f2aac49c4565e7fb2368625f52abb9c794babe645902d9df01a",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-152-v18.raw.json": "24f8b8195551c7bdc7dfd41fea6b22410f4bcbb89e8c3470fc86f12d516c053f",
+    "reports/ai-foundation-20261023/decision-corpus-audit-v18.json": "1343d336ad7b312940a67df9801a7498dc001a2607f3415c0a5c0be0f1428990",
+    "reports/ai-foundation-20261023/decision-corpus-audit-v18.log": "b1f9e68c88eb3691ed36ebe39bbcbde61db9e1cdf2a9760f3dd8c6e193d0a875",
+    "adhoc/ai-decision-corpus-20261023-v1/late-semantic-case062-v4.raw.json": "68674df0a7ce63b51143a07b1467befef4215e72b67183034a39072553bd27ad",
+    "reports/ai-foundation-20261023/late-semantic-case062-v4.json": "3d9da6157cb0dfea0898963d3dcf85dc027a64c40a9a4743c0907451b17e65d3",
+    "reports/ai-foundation-20261023/late-semantic-case062-v4.log": "fa7e575c8d209d35eef0a115a7e95a80eeab3fbe782163a53b76f300c916cec6",
+    "reports/ai-foundation-20261023/post-main-corner-full-node-v1.log": "e4ceaaef379e8897406af360e8159354b3698f408456a656e327d1b38c2d5b4a",
+    "reports/ai-foundation-20261023/state-value-input-audit-v22.log": "14f6df277953f39896bc1a2a7d831a9669d6bc57b9c9e1b2b103de2e94b35deb",
+    "reports/ai-foundation-20261023/post-main-corner-browser-v1.log": "17856db635293ebce3fa2a248ee54dab800f9bcc35eebc78e49dcbb52d4a1c92",
+    "reports/ai-foundation-20261023/post-main-corner-syntax-v1.json": "beb2837d06cd6756bfeb43ff693ccd61297cf841f220d52028a89602c22d601a",
+    "reports/ai-foundation-20261023/state-value-input-audit-v22.json": "69e58661754fc8d9f30d20e8b37188977781ff5caa893b2bef89a511f9f8250e",
+    "reports/ai-foundation-20261023/conditional-order-outcome-v1.json": "20ff3bddd38c256266320a869e4d7c22c1eb8db1f97e9c51ac05d55008b5018a"
+  },
+  "newSearchFullGames": 0,
+  "newSearchFinalScores": null,
+  "fullGame180SecondAcceptance": "not-run; single-decision exploration/performance gate remains unmet",
+  "remainingWork": "Finish necessary exploration of original complex checkpoints within the decision performance gate, then run registered reproducible four-seat full games and measure end-to-end time and final scores."
+}

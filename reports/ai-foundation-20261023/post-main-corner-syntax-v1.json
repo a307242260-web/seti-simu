@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "seti-ai-syntax-validation-v1",
+  "baseCommit": "d1916751e23a699ee73a3b6e6c00abb6db26de00",
+  "snapshot": "/private/tmp/seti-ai-stage31-20261023-m_m3h6mr",
+  "checks": [
+    {
+      "path": "randomizer/game/ai/analysis-port.js",
+      "sha256": "509d633845cddabec691591d4a712e97591251fd7802bc54f228ed2c22a7710a",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/decision-search.js",
+      "sha256": "da7de1c6a2b839289499088ef6f8649086042ecde9c82eddb60b56bee69ed520",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/post-main-corner-choice.test.js",
+      "sha256": "7df9241b9a800699d3f534dd39de3bf8f16c39cd3d05c9727ce2b1fd4dc87be9",
+      "exitCode": 0
+    },
+    {
+      "path": "tools/node-test-inventory.js",
+      "sha256": "9b02d817234b4ea187f2e302191d82d0c63fe94c2e3ca514e080d55dc8aa01ca",
+      "exitCode": 0
+    },
+    {
+      "path": "tools/audit_v_state_inputs.js",
+      "sha256": "f8f0f946cb1fea96987761d1d5c3ff4bb216e3591001fb786cc69a0915594e40",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/audit-ai-decision-corpus-20261023-v16.js",
+      "sha256": "88e4071a912293f3d34dc6cbcc7cbbad635b19fe68f26a0ab7028d1a39f713a8",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/benchmark-ai-conditional-order-20261023-v1.js",
+      "sha256": "58c615462a9fb44a315fcb2bb81eac32361c4e4bb47f29cab4ff01934857cf60",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/audit-ai-decision-corpus-20261023-v18.js",
+      "sha256": "0e853b2c6100371287ac24cf7d2a9e1c92d1c27558b13505c7dcf3c0fd880313",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/profile-ai-late-semantic-case062-20261023-v4.js",
+      "sha256": "0e98b59c4f61cd9a5aff12e91a851d5272fd87ab1da754ea0d872ed94b52bcae",
+      "exitCode": 0
+    }
+  ],
+  "passed": 9,
+  "failed": 0
+}

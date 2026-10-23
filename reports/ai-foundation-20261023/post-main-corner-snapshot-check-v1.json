@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "seti-ai-tested-snapshot-check-v1",
+  "baseCommit": "d1916751e23a699ee73a3b6e6c00abb6db26de00",
+  "snapshot": "/private/tmp/seti-ai-stage31-20261023-m_m3h6mr",
+  "unchangedBaseBlobsVerified": 3507,
+  "changedBaseBlobsVerified": 9,
+  "explicitOverlayFilesVerified": 52,
+  "rootSnapshotManifestHashesAgree": true,
+  "runtimeFrozenBeforeFinalRegression": true,
+  "sharedIndexBeforeCommit": {
+    "sha256": "622e7bfce3d122b1a37562af7973296fc114d81a99b7921f2a2837c5871a9c02",
+    "entries": 2607
+  },
+  "note": "Every base tracked blob outside the explicit overlay is byte-identical in the independent tested snapshot. Private-index delivery must retain base file modes."
+}

@@ -47,6 +47,10 @@ Browser高频inspect不复制原始actionOutcomes，查看lastOutcomeSummary；�
 本席触发器须不响应交易事件，终局公式与手牌无关，并排除化石运输等额外事件。
 只作用于取牌信息边界；其他钱包、开局、主行动后证明及预算不变。
 
+搜索v23在同一`cardChoiceEquivalence`开关下增加[主行动后角标选择等价](ai-post-main-corner-choice-proof-20261023.md)。
+按相同收入/角标用途保留最小actionId，要求无外部实体引用及额外观察者，且后续规则闭包已审核。
+不改变向前状态身份、付款实体集合或计划复用的完整依赖；省略动作仍记录未执行及证明归属。
+
 ## 结果和失败
 
 成功的agentTrace.coverage为complete，search保存scope、根去向、完整图、等价/证明归属、

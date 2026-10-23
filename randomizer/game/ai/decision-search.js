@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v22";
+  const VERSION = "seti-complete-decision-search-v23";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -68,7 +68,8 @@
         postMainProofNodes: 0, postMainExcludedActions: 0, postMainPruning: postMainPruning ? "enabled" : "off",
         openingProofNodes: 0, openingExcludedActions: 0, openingPruning: openingPruning ? "enabled" : "off",
         openingPassMacros: 0,
-        cardChoiceProofNodes: 0, cardChoiceExcludedActions: 0, cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
+        cardChoiceProofNodes: 0, cardChoiceExcludedActions: 0, cardCornerProofNodes: 0, cardCornerExcludedActions: 0,
+        cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
         continuation: reused?.hit ? "hit" : reused ? reused.reason : "not-requested",
         planContinuation: reusedPlan?.hit ? "hit" : planReuse ? "not-requested" : "off",
         milliseconds: now() - startedAt, limits },
@@ -93,6 +94,7 @@
     let openingProofNodes = 0, openingExcludedActions = 0;
     let openingPassMacros = 0;
     let cardChoiceProofNodes = 0, cardChoiceExcludedActions = 0;
+    let cardCornerProofNodes = 0, cardCornerExcludedActions = 0;
     let incumbent = null;
     let stopReason = null;
     function dominates(upper, lower) {
@@ -139,6 +141,10 @@
         const opening = port.openingPlanSpec(node);
         if (opening) localPlan = { ...opening, kind: "opening" };
       }
+      if (!boundary && !selection && !localPlan && cardChoiceEquivalence && node.status === "stable") {
+        const corners = port.postMainCornerChoiceSpec?.(node);
+        if (corners) localPlan = { ...corners, kind: "card-corner-choice" };
+      }
       if (localPlan) {
         const kept = new Set(localPlan.retainedActionIds), removed = new Set(localPlan.excludedActionIds);
         if (!kept.size || !removed.size || kept.size !== localPlan.retainedActionIds.length
@@ -169,6 +175,9 @@
         if (!Number.isSafeInteger(player.finalScore) || player.finalScore < player.score
           || !Number.isSafeInteger(currentValue * 2) || currentValue < 0 || currentValue > Number.MAX_SAFE_INTEGER / 64) localPlan = null;
         else { openingProofNodes += 1; openingExcludedActions += localPlan.excludedActionIds.length; }
+      }
+      if (localPlan?.kind === "card-corner-choice") {
+        cardCornerProofNodes += 1; cardCornerExcludedActions += localPlan.excludedActionIds.length;
       }
       const retainedActions = localPlan ? node.legalActions.filter(action => localPlan.retainedActionIds.includes(action.actionId))
         : node.legalActions;
@@ -437,7 +446,8 @@
         postMainProofNodes, postMainExcludedActions, postMainPruning: postMainPruning ? "enabled" : "off",
         openingProofNodes, openingExcludedActions, openingPruning: openingPruning ? "enabled" : "off",
         openingPassMacros,
-        cardChoiceProofNodes, cardChoiceExcludedActions, cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
+        cardChoiceProofNodes, cardChoiceExcludedActions, cardCornerProofNodes, cardCornerExcludedActions,
+        cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
         ...(useResourceDominance || useMoneyCapacity || useCardTradePruning || postMainPruning || openingPruning || cardChoiceEquivalence
           ? { resourceModelKey: evaluate.modelKey } : {}),
         continuation: reused ? (reused.hit ? "validation-watchdog" : reused.reason) : "not-requested",
