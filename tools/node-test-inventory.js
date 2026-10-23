@@ -53,6 +53,7 @@ module.exports = Object.freeze({
     entry("tools/alien-reveal-hidden.test.js", "architecture/policy-host", "正式回合末揭示的隐藏牌序差分不改变搜索可见观察", "新物种身份或新外星牌宣传准备进入反事实观察"),
     entry("tools/research-world-resume.test.js", "training/reporting", "研究续跑保留权威世界、行动快照与全部历史", "重建牌序、丢历史或改写未知RNG标签后续跑"),
     entry("tools/fixed-world-identity.test.js", "training/reporting", "正式开局完整世界分域指纹且不依赖策略配置", "隐藏牌序或人数变化仍被视为同盘面，记录暴露隐藏内容"),
+    entry("tools/robot-report-compact.test.js", "training/reporting", "精简与完整存档重放生成相同回合、步骤及资源，结束输入归属交接前回合，原存档不变", "缺after时整局合为每人一回合、轮次与资源为空，或重放展示改写对局"),
     entry("tools/robot-report-replay.test.js", "training/reporting", "重放失败显式抛错，元数据刷新保持所有历史行动及得分正文", "部分重放或任意选项冒充成功并覆盖原报告，刷新元数据触发规则重放"),
     entry("tools/robot-ai-generation.test.js", "training/reporting", "V1/V2记录、最佳成绩与基线独立，默认V2及切换URL只展示所属记录，跨主线登记先拒绝且保留真实复盘链接", "新基础策略内部v1号被误归旧AI、V1高分进入V2榜、跨主线基线或空V2回退旧成绩"),
     entry("tools/robot-report-link.test.js", "training/reporting", "版本复盘页研究链接解析到正式研究文件，无记录页不虚构链接", "重复目录前缀导致离线报告链接指向不存在的文件"),

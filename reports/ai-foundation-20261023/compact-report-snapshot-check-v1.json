@@ -1,0 +1,10 @@
+{
+  "baseCommit": "71c74a67d1eb4b605d478e93dd80bfc74258990b",
+  "testedSnapshot": "/private/tmp/seti-v2-report-fix-20261023-rq164hra",
+  "unchangedBaseFilesVerified": 3863,
+  "changedBaseFilesVerified": 12,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "explicitFiles": 23,
+  "runtimeImportsBoundToFinalSource": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot."
+}

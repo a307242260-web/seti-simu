@@ -634,7 +634,7 @@ const FINAL_FORMULA_LABELS = {
 // 内核重放存档 replaySteps，提取 after 快照里没有的逐步信息（2026-08-21 用户口径）：
 //   1) 研究科技：研究了哪张科技（ownedTiles 新增）+ 获得的背面 bonus（研究前该堆堆顶 bonusId）
 //   2) 收入插牌：choose_card summary 为「收入 <cardId>」的步骤
-// 返回 Map: stepIndex -> { research?: {tileId, bonusId}, income?: {cardId} }
+// 返回 Map: stepIndex -> { before, after, research?, income?, ... }；精简存档也能恢复逐步时间与资源。
 // 重放必须完整匹配；失败抛出存档和步骤，不用部分增强覆盖历史报告。
 function replaySaveEnriched(savePath) {
   const enrich = new Map();
@@ -701,7 +701,16 @@ function replaySaveEnriched(savePath) {
       for (const [tileId, tile] of Object.entries(st.finalScoring?.tiles || {})) {
         finalMarks.set(tileId, new Set((tile?.marks || []).map((mk) => `${mk.playerColor}:${mk.slotIndex}:${mk.threshold}`)));
       }
-      return { owned, hands, incomes, bonus, finalMarks };
+      const summary = {
+        r: st.turn.roundNumber,
+        t: st.turn.turnNumber,
+        c: st.turn.currentPlayerId,
+        p: Object.fromEntries(st.players.players.map(player => [player.id, [
+          player.resources.score, player.resources.credits, player.resources.energy,
+          player.resources.publicity, player.hand.length, player.reservedCards.length,
+        ]])),
+      };
+      return { owned, hands, incomes, bonus, finalMarks, summary };
     }
 
     for (let index = 0; index < steps.length; index += 1) {
@@ -738,7 +747,7 @@ function replaySaveEnriched(savePath) {
         throw new Error(`REPORT_REPLAY_SUBMISSION_FAILED: ${savePath} step=${index} action=${action.actionId} result=${JSON.stringify(r)}`);
       }
       const after = snapshot();
-      const e = {};
+      const e = { before: before.summary, after: after.summary };
       // 研究科技：该步后 ownedTiles 新增（actor 在 step.actorPlayerId / action.actorId）
       const actorId = step.actorPlayerId || action.actorId;
       if (actorId) {
@@ -875,9 +884,9 @@ function buildActionLogReport(opts) {
   if (!save) throw new Error(`存档读取失败: ${opts.savePath}`);
   const steps = Array.isArray(save.replaySteps) ? save.replaySteps : [];
   const final = readSaveFinalScores(opts.savePath);
-  const lastAfter = steps.length ? steps[steps.length - 1].after : null;
   // 内核重放增强：研究科技（哪张科技+背面 bonus）与收入插牌（2026-08-21 用户口径）
   const enrichMap = replaySaveEnriched(opts.savePath);
+  const lastAfter = steps.length ? enrichMap.get(steps[steps.length - 1].stepIndex ?? steps.length - 1).after : null;
   const relRecord = opts.recordRelPath || (opts.recordFile ? relRecordPath(opts.recordFile) : null);
   const research = relRecord ? readJson(path.join(REPO_ROOT, relRecord)) : null;
   const worldText = research?.world?.fingerprint
@@ -885,19 +894,19 @@ function buildActionLogReport(opts) {
     : "未记录，不能仅凭同 seed 确认同盘面";
   const searchBudgetSection = renderSearchBudgetReport(research?.metrics?.searches);
 
-  // 逐玩家前序资源，计算每步分数/资源变化
-  const prev = {};
+  // 回合归属取输入前；资源取正式重放后，不能依赖compactReplay省略的after。
   const rows = [];
   for (let i = 0; i < steps.length; i += 1) {
     const step = steps[i];
     const actor = step.actorPlayerId;
-    const after = step.after || {};
+    const replayed = enrichMap.get(step.stepIndex ?? i);
+    const after = replayed.after;
     const cur = playerResourceRow(after.p, actor);
-    const before = prev[actor] || null;
+    const before = playerResourceRow(replayed.before.p, actor);
     rows.push({
       i: step.stepIndex ?? i,
-      r: after.r ?? null,
-      t: after.t ?? null,
+      r: replayed.before.r,
+      t: replayed.before.t,
       actor,
       phase: step.phase ?? (step.action?.phase ?? null),
       family: step.action?.family ?? null,
@@ -924,7 +933,6 @@ function buildActionLogReport(opts) {
         return mm ? { number: Number(mm[1]), label: INITIAL_CARD_LABELS[Number(mm[1])] || null } : null;
       })(),
     });
-    if (cur) prev[actor] = cur;
   }
 
   // 每玩家行动清单（过滤 actor）
@@ -1039,7 +1047,7 @@ function buildActionLogReport(opts) {
     const SEQ_NUM = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩"];
     const seqOf = (idx) => SEQ_NUM[idx] || `${idx + 1}.`;
     const mainSeq = shownRows.indexOf(m);
-    const mainLabel = mainSeq >= 0 ? `${seqOf(mainSeq)} ${mainTxt}（主行动）` : mainTxt;
+    const mainLabel = mainSeq >= 0 ? `${seqOf(mainSeq)} ${mainTxt}${m.phase === "main" ? "（主行动）" : ""}` : mainTxt;
     const extras = [];
     shownRows.forEach((row, idx) => {
       if (row === m) return;

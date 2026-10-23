@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-23",
+  "baseCommit": "71c74a67d1eb4b605d478e93dd80bfc74258990b",
+  "scope": "Repair compact replay reports from existing native replay, no AI runs or resume of paused goal.",
+  "rootCause": "compactReplay omits replaySteps[].after; report grouped every action for each player under unknown round/turn.",
+  "fix": "Recover native before/after summaries during existing replay; group by before-input round/turn and show after-input resources. Conditional-only groups are not labelled as main actions.",
+  "targetedUnitPassed": 5,
+  "jsSyntaxChecks": 4,
+  "actualChromeScreenshot": "reports/ai-foundation-20261023/compact-report-latest-v1.png",
+  "browserDOM": "reports/ai-foundation-20261023/compact-report-latest-v1.dom.html.gz",
+  "rebuiltReports": 9,
+  "latestReport": {
+    "version": "ai-foundation-dev-07-20261022",
+    "reportPath": "reports/iteration/ai-foundation-dev-07-20261022/3bbbc445.2bc7b88c.full.action-log.html",
+    "savePath": "seti-saves/seti-save-research-ai-foundation-dev-07-20261022-2bc7b88c-full-v122.json",
+    "sourceSaveSha256": "46a68cbdc9c452243f49805c776033d5542d82c5a56e2fb3aece5454d8161c8b",
+    "originalReportSha256": "7259191feba14f9b3b5b4d8216bbe54646265416da338b42397cf0d8925899fd",
+    "reportSha256": "ba0efdfd7115bac0883305a0bb9413c41f5141f661b9a701b57ac7672019b2b9",
+    "rawInputSteps": 253,
+    "playerTurns": {
+      "蓝": 18,
+      "绿": 18,
+      "棕": 24,
+      "白": 15
+    },
+    "finalRound": 4,
+    "finalScoreSectionUnchanged": true
+  },
+  "allSourceSavesUnchanged": true,
+  "allFinalScoreSectionsUnchanged": true,
+  "newAIGames": 0,
+  "pausedAIGoalResumed": false,
+  "sourceHashes": {
+    "tools/robot-iteration-lib.js": "5c5015265e709615f36141e7846540f6a031792b9afb17f18b6b9e5151d28eff",
+    "tools/robot-report-compact.test.js": "f18268d517327e706b42b25b6c48437bcec6c36aa2f77997da2a07d6d23d9d37",
+    "tools/node-test-inventory.js": "a06887b877123834e4dd8982437b22e2919ef5c1ff8ed6e8d2ba3f47a0ba74c4",
+    "adhoc/rebuild-v2-compact-reports-20261023-v1.js": "a6460458d164899359ac32168a0466781b202436cdee615b6fe7d91a9b220476"
+  },
+  "files": {
+    "tools/robot-iteration-lib.js": "5c5015265e709615f36141e7846540f6a031792b9afb17f18b6b9e5151d28eff",
+    "tools/robot-report-compact.test.js": "f18268d517327e706b42b25b6c48437bcec6c36aa2f77997da2a07d6d23d9d37",
+    "tools/node-test-inventory.js": "a06887b877123834e4dd8982437b22e2919ef5c1ff8ed6e8d2ba3f47a0ba74c4",
+    "docs/robot-iteration-registry.md": "b47a17a3bf72d62a9933d6126ec2265bff3fc33bfd7106907585e908b892c375",
+    "adhoc/rebuild-v2-compact-reports-20261023-v1.js": "a6460458d164899359ac32168a0466781b202436cdee615b6fe7d91a9b220476",
+    "adhoc/deliver-v2-compact-report-fix-20261023-v1.py": "50cb59a69b17c37f316e886f7b3b50a199c8a22ca13c5278aa0ea9dec0a06739",
+    "adhoc/report-compact-regression-before-20261023.log": "09d6e1244ddefb351af8d5c9012ccb7c9bd9b875c85251cd4e3627a03f80e7b2",
+    "adhoc/report-fix-targeted-20261023-v2.log": "ca39cf700042527b4760aa75cf4d7d79770473ca94edc05dc961fdaa2c7d0654",
+    "adhoc/report-rebuild-v2-20261023-v1.log": "3663b31889ed5e022808eb4ef6f02268366faa52d7d556ebd2d1914beac4512d",
+    "reports/ai-foundation-20261023/compact-report-rebuild-v1.json": "cf066f8fee48e7e054ab322879900623fd8c81e82cdd21e95b6cf937738f4898",
+    "reports/ai-foundation-20261023/compact-report-latest-v1.png": "e300b5287408a407da0200b865adc8ff08c612f793e66a70e439e20762618b44",
+    "reports/iteration/ai-foundation-dev-07-20261022/3bbbc445.2bc7b88c.full.action-log.html": "ba0efdfd7115bac0883305a0bb9413c41f5141f661b9a701b57ac7672019b2b9",
+    "reports/iteration/ai-foundation-dev-06-20261022/b15f4401.2bc7b88c.full.action-log.html": "e9dbff9de9985bd6a9d3eb4d01572277ad94c8f0559cd5ea5fc0314416d08c5c",
+    "reports/iteration/ai-foundation-dev-05-20261022/7cd473bf.2bc7b88c.full.action-log.html": "5e8dd5db3393df8f5556c586fb7d60a5c714372ac76b3c3c2d726ae27f69622c",
+    "reports/iteration/ai-foundation-dev-04-20261022/199abbfb.2bc7b88c.full.action-log.html": "383c209197627abd5d222bd653d0909c719ceb3bd767f00520d76d7f458fa30f",
+    "reports/iteration/ai-foundation-dev-03-20261022/801a83ba.2bc7b88c.full.action-log.html": "9462f4d8e3945cf1e95dfa8a6a2f6ebb68e33f45cdb3c003e58160d76843932e",
+    "reports/iteration/ai-foundation-dev-02-20261022/8cf00b93.2bc7b88c.full.action-log.html": "2698bf93c0005792bd9f689bc6de1e9b2c4e8860348d0f6f9fcf37f659eb6898",
+    "reports/iteration/ai-foundation-dev-01-20261022/1ed7c0bf.2bc7b88c.full.action-log.html": "bcdd372f32552ca420f369c6568578ae285b39fed887375e45ec15d571595f1a",
+    "reports/iteration/ai-foundation-dev-00-20261022/3558b009.2bc7b88c.full.action-log.html": "8ab3314fd8792a27e55444c797c0ef3bf510bf76ffa45b54acbb65c4e2512f1f",
+    "reports/iteration/ai-foundation-20261022/cdbe7999.576bbc50.full.action-log.html": "f2a8afe4af01217bf4c97ee0810ed8dd2298e120e5c63453be3316d5f63b1df1",
+    "reports/ai-foundation-20261023/compact-report-latest-v1.dom.html.gz": "0b8922c481dfb22749382548d03ac4793a589a93f5415a3bf2448a35c3f85b96"
+  }
+}

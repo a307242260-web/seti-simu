@@ -1,0 +1,160 @@
+{
+  "scope": "Rebuild existing V2 report presentation from native replay, no AI run or original save/record changes.",
+  "complete": true,
+  "rows": [
+    {
+      "version": "ai-foundation-dev-07-20261022",
+      "reportPath": "reports/iteration/ai-foundation-dev-07-20261022/3bbbc445.2bc7b88c.full.action-log.html",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-07-20261022-2bc7b88c-full-v122.json",
+      "sourceSaveSha256": "46a68cbdc9c452243f49805c776033d5542d82c5a56e2fb3aece5454d8161c8b",
+      "originalReportSha256": "7259191feba14f9b3b5b4d8216bbe54646265416da338b42397cf0d8925899fd",
+      "reportSha256": "ba0efdfd7115bac0883305a0bb9413c41f5141f661b9a701b57ac7672019b2b9",
+      "rawInputSteps": 253,
+      "playerTurns": {
+        "蓝": 18,
+        "绿": 18,
+        "棕": 24,
+        "白": 15
+      },
+      "finalRound": 4,
+      "finalScoreSectionUnchanged": true
+    },
+    {
+      "version": "ai-foundation-dev-06-20261022",
+      "reportPath": "reports/iteration/ai-foundation-dev-06-20261022/b15f4401.2bc7b88c.full.action-log.html",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-06-20261022-2bc7b88c-full-v126.json",
+      "sourceSaveSha256": "85e8748daa69b618ba12ba78da30bfd1a1bc70718707399996d8f82ccb901b70",
+      "originalReportSha256": "322f53d51cd266d36c5b1c93d0166cb44b4b2645f7772c25c9e9215dd7f8fcf3",
+      "reportSha256": "e9dbff9de9985bd6a9d3eb4d01572277ad94c8f0559cd5ea5fc0314416d08c5c",
+      "rawInputSteps": 264,
+      "playerTurns": {
+        "蓝": 17,
+        "绿": 19,
+        "棕": 21,
+        "白": 18
+      },
+      "finalRound": 4,
+      "finalScoreSectionUnchanged": true
+    },
+    {
+      "version": "ai-foundation-dev-05-20261022",
+      "reportPath": "reports/iteration/ai-foundation-dev-05-20261022/7cd473bf.2bc7b88c.full.action-log.html",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-05-20261022-2bc7b88c-full-v130.json",
+      "sourceSaveSha256": "b7c15691441726e4cd5d64cc347317f111b59d25d0d17cd0b9d346817807b2f7",
+      "originalReportSha256": "59395562c28c1bfcd4a74bd64a4b4fa36215bec512cbcf05c49e95b44727dcaf",
+      "reportSha256": "5e8dd5db3393df8f5556c586fb7d60a5c714372ac76b3c3c2d726ae27f69622c",
+      "rawInputSteps": 254,
+      "playerTurns": {
+        "蓝": 21,
+        "绿": 17,
+        "棕": 21,
+        "白": 18
+      },
+      "finalRound": 4,
+      "finalScoreSectionUnchanged": true
+    },
+    {
+      "version": "ai-foundation-dev-04-20261022",
+      "reportPath": "reports/iteration/ai-foundation-dev-04-20261022/199abbfb.2bc7b88c.full.action-log.html",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-04-20261022-2bc7b88c-full-v124.json",
+      "sourceSaveSha256": "8a6cec51f5a3f90bc41c145aa57808ada6447c445465da8d015d9032433ce31b",
+      "originalReportSha256": "91f809b05192ea70a0a2a58bcbad63ff15889663c3bbb7e256c5f1268a411aad",
+      "reportSha256": "383c209197627abd5d222bd653d0909c719ceb3bd767f00520d76d7f458fa30f",
+      "rawInputSteps": 264,
+      "playerTurns": {
+        "蓝": 20,
+        "绿": 19,
+        "棕": 17,
+        "白": 18
+      },
+      "finalRound": 4,
+      "finalScoreSectionUnchanged": true
+    },
+    {
+      "version": "ai-foundation-dev-03-20261022",
+      "reportPath": "reports/iteration/ai-foundation-dev-03-20261022/801a83ba.2bc7b88c.full.action-log.html",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-03-20261022-2bc7b88c-full-v120.json",
+      "sourceSaveSha256": "f94001c9d045c185cdbe8d3bf09ec250e101d9e55e1c20735b048baed6ddf7c4",
+      "originalReportSha256": "252f297af0b5c51afc0d0c166e56d986d438b1764c517d27fe89b04e1faac6be",
+      "reportSha256": "9462f4d8e3945cf1e95dfa8a6a2f6ebb68e33f45cdb3c003e58160d76843932e",
+      "rawInputSteps": 229,
+      "playerTurns": {
+        "蓝": 18,
+        "绿": 17,
+        "棕": 21,
+        "白": 16
+      },
+      "finalRound": 4,
+      "finalScoreSectionUnchanged": true
+    },
+    {
+      "version": "ai-foundation-dev-02-20261022",
+      "reportPath": "reports/iteration/ai-foundation-dev-02-20261022/8cf00b93.2bc7b88c.full.action-log.html",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-02-20261022-2bc7b88c-full-v116.json",
+      "sourceSaveSha256": "c98fc55ece5a2b812f433f250677a86a52a4a926ae9f619202603b352479a730",
+      "originalReportSha256": "61e34c2d9e542ec1d7713831cef64be4753d0777de531174ed31b9d004a32091",
+      "reportSha256": "2698bf93c0005792bd9f689bc6de1e9b2c4e8860348d0f6f9fcf37f659eb6898",
+      "rawInputSteps": 221,
+      "playerTurns": {
+        "蓝": 18,
+        "绿": 17,
+        "棕": 19,
+        "白": 16
+      },
+      "finalRound": 4,
+      "finalScoreSectionUnchanged": true
+    },
+    {
+      "version": "ai-foundation-dev-01-20261022",
+      "reportPath": "reports/iteration/ai-foundation-dev-01-20261022/1ed7c0bf.2bc7b88c.full.action-log.html",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-01-20261022-2bc7b88c-full-v128.json",
+      "sourceSaveSha256": "063ebd04eb54dc31a5b8dd1325f31b8716e5efe8c37689cba7935e06b800e804",
+      "originalReportSha256": "4e20bc82bb255fac3af787b071d2ee06b58784a87ed130be50337d1e32884351",
+      "reportSha256": "bcdd372f32552ca420f369c6568578ae285b39fed887375e45ec15d571595f1a",
+      "rawInputSteps": 250,
+      "playerTurns": {
+        "蓝": 19,
+        "绿": 22,
+        "棕": 14,
+        "白": 21
+      },
+      "finalRound": 4,
+      "finalScoreSectionUnchanged": true
+    },
+    {
+      "version": "ai-foundation-dev-00-20261022",
+      "reportPath": "reports/iteration/ai-foundation-dev-00-20261022/3558b009.2bc7b88c.full.action-log.html",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-dev-00-20261022-2bc7b88c-full-v126.json",
+      "sourceSaveSha256": "97824de4cfb14528a1e0dd92ecd20947a853e6ac27574d29e27d96c3f794347f",
+      "originalReportSha256": "2b6a24211fa496b2ca0d2f4cdf7f032b8b56c0f069aaa09289c50451b59450fc",
+      "reportSha256": "8ab3314fd8792a27e55444c797c0ef3bf510bf76ffa45b54acbb65c4e2512f1f",
+      "rawInputSteps": 229,
+      "playerTurns": {
+        "蓝": 22,
+        "绿": 19,
+        "棕": 14,
+        "白": 19
+      },
+      "finalRound": 4,
+      "finalScoreSectionUnchanged": true
+    },
+    {
+      "version": "ai-foundation-20261022",
+      "reportPath": "reports/iteration/ai-foundation-20261022/cdbe7999.576bbc50.full.action-log.html",
+      "savePath": "seti-saves/seti-save-research-ai-foundation-20261022-576bbc50-full-v126.json",
+      "sourceSaveSha256": "42f1f829a4867a59c5e6102d8a99f1ec88670c825ad110a943ca1f785bb4ae14",
+      "originalReportSha256": "086f6f53aed760d15f815e89f07892bb70ad0eaa7a9bd34500efaeb796e049fa",
+      "reportSha256": "f2a8afe4af01217bf4c97ee0810ed8dd2298e120e5c63453be3316d5f63b1df1",
+      "rawInputSteps": 229,
+      "playerTurns": {
+        "蓝": 22,
+        "绿": 19,
+        "棕": 14,
+        "白": 19
+      },
+      "finalRound": 4,
+      "finalScoreSectionUnchanged": true
+    }
+  ],
+  "sourceHash": "5c5015265e709615f36141e7846540f6a031792b9afb17f18b6b9e5151d28eff"
+}

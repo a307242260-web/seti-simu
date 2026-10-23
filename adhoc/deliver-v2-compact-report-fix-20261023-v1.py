@@ -1,0 +1,103 @@
+"""Deliver this tested snapshot through a private index; never edits the shared index."""
+import hashlib
+import json
+import os
+import pathlib
+import subprocess
+import tarfile
+
+root = pathlib.Path('/Users/bilibili/code/seti-simu')
+stage = pathlib.Path('/private/tmp/seti-v2-report-fix-20261023-rq164hra')
+manifest_path = 'adhoc/v2-report-fix-snapshot-20261023.json'
+manifest = json.loads((stage/manifest_path).read_text())
+base = manifest['baseCommit']
+
+def git(*args, env=None, data=None):
+    safe = dict(os.environ, GIT_OPTIONAL_LOCKS='0')
+    if env: safe.update(env)
+    return subprocess.check_output(['git', *args], cwd=root, env=safe, input=data)
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+assert git('rev-parse', 'HEAD').decode().strip() == base
+assert git('symbolic-ref', '--short', 'HEAD').decode().strip() == 'dev'
+assert sha((root/'.git/index').read_bytes()) == manifest['sharedIndexSha256Before']
+assert sha(git('ls-files','--stage','-z')) == manifest['sharedIndexEntriesSha256Before']
+files = dict(manifest['files'])
+files[manifest_path] = sha((stage/manifest_path).read_bytes())
+for p, expected in files.items():
+    assert sha((stage/p).read_bytes()) == expected, p
+index_path = root/'.git/index'
+shared_hash = sha(index_path.read_bytes())
+base_tree = {}
+for row in git('ls-tree', '-r', '-z', base).split(b'\0'):
+    if not row:
+        continue
+    header, name = row.split(b'\t', 1)
+    mode, kind, oid = header.decode().split()
+    base_tree[name.decode()] = (mode, oid)
+process = subprocess.Popen(['git', 'archive', base], cwd=root, stdout=subprocess.PIPE, env=dict(os.environ,GIT_OPTIONAL_LOCKS='0'))
+unchanged = changed = 0
+with tarfile.open(fileobj=process.stdout, mode='r|') as archive:
+    for member in archive:
+        if not member.isfile():
+            continue
+        p = member.name
+        original = archive.extractfile(member).read()
+        actual = (stage/p).read_bytes()
+        if p in files:
+            changed += 1
+        else:
+            assert actual == original, ('unowned snapshot change', p)
+            unchanged += 1
+        if p in files and (root/p).exists():
+            assert (root/p).read_bytes() in (original, actual), ('overlapping root edit', p)
+assert process.wait() == 0
+for p in files:
+    if p not in base_tree and (root/p).exists():
+        if p == manifest_path:
+            prior_manifest = json.loads((root/p).read_text())
+            assert prior_manifest['baseCommit'] == base and prior_manifest['snapshot'] == str(stage)
+        else:
+            assert (root/p).read_bytes() == (stage/p).read_bytes(), ('untracked overlap', p)
+check_path = 'reports/ai-foundation-20261023/compact-report-snapshot-check-v1.json'
+check = {'baseCommit': base, 'testedSnapshot': str(stage), 'unchangedBaseFilesVerified': unchanged,
+    'changedBaseFilesVerified': changed, 'sharedIndexSha256': shared_hash,
+    'explicitFiles': len(files), 'runtimeImportsBoundToFinalSource': True,
+    'notes': 'Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot.'}
+(stage/check_path).write_text(json.dumps(check, indent=2)+'\n')
+files[check_path] = sha((stage/check_path).read_bytes())
+if os.environ.get('SETI_DELIVER_COMPACT_REPORT') != '1':
+    print(json.dumps({'phase':'preflight', **check}, ensure_ascii=False))
+    raise SystemExit(0)
+remote = git('ls-remote', 'origin', 'refs/heads/dev').decode().split()[0]
+assert remote == base, ('remote advanced', remote)
+private = pathlib.Path('/private/tmp/seti-v2-report-fix-private-20261023.index')
+assert not private.exists(), 'Do not reuse a partial delivery index without inspecting it'
+env = dict(os.environ, GIT_INDEX_FILE=str(private))
+git('read-tree', base, env=env)
+for p, expected in sorted(files.items()):
+    data = (stage/p).read_bytes()
+    assert sha(data) == expected
+    destination = root/p
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_bytes(data)
+    mode = base_tree.get(p, ('100644', ''))[0]
+    blob = git('hash-object', '-w', '--stdin', env=env, data=data).decode().strip()
+    git('update-index', '--add', '--cacheinfo', mode, blob, p, env=env)
+listed = set(git('diff', '--cached', '--name-only', base, env=env).decode().splitlines())
+assert listed == set(files), (listed-set(files), set(files)-listed)
+assert sha(index_path.read_bytes()) == shared_hash
+message = stage/'adhoc/compact-report-commit-message-20261023.txt'
+message.write_text('修复精简存档复盘的回合归属并重建V2报告\n')
+git('commit', '--file', str(message), env=env)
+commit = git('rev-parse', 'HEAD').decode().strip()
+committed = set(git('diff-tree', '--no-commit-id', '--name-only', '-r', commit).decode().splitlines())
+assert committed == set(files)
+assert sha(index_path.read_bytes()) == shared_hash
+print(git('show', '--name-only', '--stat', '--format=short', 'HEAD').decode())
+git('push', 'origin', 'HEAD:dev', env=env)
+assert git('ls-remote', 'origin', 'refs/heads/dev').decode().split()[0] == commit
+assert sha(index_path.read_bytes()) == shared_hash
+print(json.dumps({'phase':'delivered', 'commit':commit,'files':len(files),'sharedIndexUnchanged':True,'originDevVerified':True}))

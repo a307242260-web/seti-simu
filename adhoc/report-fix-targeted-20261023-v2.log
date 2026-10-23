@@ -1,0 +1,9 @@
+research world resume tests passed
+{"aiGenerationIsolation":"passed","v2Versions":9,"v2CompleteGames":9,"searchGames":0,"templateQueries":3,"registrationRejects":2}
+{"compactReport":"passed","steps":253,"rounds":4,"richParity":true,"sourceSaveUnchanged":true}
+robot report record links passed
+robot report world comparison passed
+robot report replay failures and metadata preservation passed
+SUMMARY unit passed=5 failed=0 total=5 time=12.14s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER training/reporting tests=5
