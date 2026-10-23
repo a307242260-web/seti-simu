@@ -820,6 +820,33 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "search URL真实装配共享搜索、完成机器正式输入并在保存恢复后重建算法状态，记录覆盖证据",
   counterexample: "脚本依赖顺序错误、旧AI代选、搜索图被丢弃或恢复仍携带临时计划token",
 }), Object.freeze({
+  id: "production-goal-movement-plan",
+  file: "randomizer/index.html",
+  readyExpression: "Boolean(window.SetiGoalMovement && window.SetiAnalysisPort && window.SetiProductionKernel?.comparePlannedMovementTiming)",
+  actionExpression: `(async () => {
+    const f = await fetch('/adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json').then(r=>r.json());
+    const seed=f.source.seed;
+    const kernel=window.SetiProductionKernel.createSimulationRuleComposition({seed,
+      random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,
+      projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});
+    kernel.newGame({seed});const comp=kernel.composition;
+    if(!comp.lifecycle.restore(f.compositionEnvelope).ok)throw new Error('目标计划恢复失败');
+    const play=comp.inputPort.enumerateActions({}).find(a=>a.family==='play_card'&&a.target?.cardInstanceId==='card-40-0');
+    if(!comp.inputPort.submitAction(play).ok)throw new Error('目标计划打牌失败');
+    const before=JSON.stringify(comp.lifecycle.save().envelope),port=window.SetiAnalysisPort.createAnalysisPort({composition:comp,seatId:f.seatId});
+    try{const root=port.openRoot(),evaluate=window.SetiStateValue.createStateValueEvaluator(f.seatId);
+      const r=window.SetiDecisionSearch.searchDecision({port,root,evaluate,modelKey:evaluate.modelKey,
+        ...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:257,frontier:256,milliseconds:1500}});
+      if(!r.complete||!r.actionId||!r.candidates.some(c=>c.kind==='goal-plan'))throw new Error('未生成完整目标计划');
+      if(!r.lines.some(l=>l.edges.some(e=>e.goalPlan?.objective?.movementTiming)))throw new Error('缺少转盘时机比较');
+      if(JSON.stringify(comp.lifecycle.save().envelope)!==before)throw new Error('计划试算污染真实状态');
+      window.__setiGoalMovementSmoke={ok:true,inputs:r.diagnostics.transitions,wholeGames:0};
+    }finally{port.close();comp.dispose();}
+  })()`,
+  successExpression: "window.__setiGoalMovementSmoke?.ok === true",
+  obligation: "真实页面加载目标计划模块及延迟Production查询，执行DLC40目标路线与转盘对照，权威根不变",
+  counterexample: "脚本装配缺失、只在Node能查询路线、浏览器仍方向展开或试算污染正式状态",
+}), Object.freeze({
   ...smokes.find(smoke => smoke.id === "production-browser-full-parity"),
   id: "production-completion-agent-parity",
   file: "randomizer/index.html",

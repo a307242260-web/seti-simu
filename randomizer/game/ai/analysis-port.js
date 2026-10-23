@@ -17,10 +17,12 @@
     common ? require("../../solar-system/core") : root.SetiSolarSystem,
     common ? require("../rockets") : root.SetiRocketActions,
     common ? require("../players") : root.SetiPlayers,
-    common ? require("../effects/science-session") : root.SetiScienceSession);
+    common ? require("../effects/science-session") : root.SetiScienceSession,
+    common ? require("./goal-movement") : root.SetiGoalMovement,
+    common ? require("../production-kernel") : root.SetiProductionKernel);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel) {
   "use strict";
 
   // 已逐项审计的 Production 公司组合：钱电模拟和取牌待选分别检查各自的队列前提。
@@ -138,7 +140,8 @@
       .sort((a, b) => a.actionId < b.actionId ? -1 : a.actionId > b.actionId ? 1 : 0));
   }
 
-  // 只比较向前正式输入的行为；不提供 undo/abort，因而历史日志和撤销帧不参与身份。
+  // 规则身份只比较向前正式输入，不提供undo/abort。目标策略另从原生保存的移动起点
+  // 重建执行意图并加入搜索控制身份；不把整份历史日志或撤销帧当成规则差异。
   // 除下述已证明例外，实体编号、数组顺序、资源、规则 RNG 与剩余队列保留。会改变合法信封的
   // authority 版本单独由 expand 校验，不能作为循环状态的差异。
   function forwardIdentity(envelope, status, boundary, stateOverride = null) {
@@ -227,6 +230,12 @@
       || typeof seatId !== "string" || !seatId) throw new TypeError("ANALYSIS_PORT_INVALID");
     if (!Number.isSafeInteger(maxCacheEntries) || maxCacheEntries < 0) throw new TypeError("ANALYSIS_CACHE_LIMIT_INVALID");
     const viewer = Object.freeze({ playerId: seatId, role: "player" });
+    let movementPlanning = false;
+    let goalMovementGeometryNodes = 0;
+    let openedRoot = null;
+    let movementPolicies = new WeakMap();
+    const movementRouteCache = new Map();
+    const movementTimingCache = new Map();
     let nodes = new WeakMap();
     const identities = new Map();
     let resourceOrders = new WeakMap();
@@ -313,7 +322,7 @@
       return result;
     }
 
-    function createNode(envelope, observation, actions, status, barrier = null) {
+    function createNode(envelope, observation, actions, status, barrier = null, intent = null) {
       let visible = observation && freeze(structuredClone(observation));
       // 搜索内部节点只用合法集与身份；首次估值/记录时才投影。getter 不暴露快照。
       const node = Object.freeze({
@@ -324,9 +333,11 @@
         legalActions: freeze(structuredClone(actions)), status, boundary: barrier?.code || null,
       });
       const boundary = barrier?.code || null;
-      const key = forwardIdentity(envelope, status, boundary, readIdentityState(envelope));
+      if (movementPlanning && !intent) intent = recoverMovementIntent(envelope);
+      const physicalKey = forwardIdentity(envelope, status, boundary, readIdentityState(envelope));
+      const key = intent ? JSON.stringify([physicalKey, intent]) : physicalKey;
       if (!identities.has(key)) identities.set(key, Object.freeze({}));
-      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key });
+      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, physicalKey, intent });
       nodeCount += 1;
       return node;
     }
@@ -356,6 +367,7 @@
 
     function openRoot() {
       if (fork) throw new Error("ANALYSIS_ROOT_ALREADY_OPEN");
+      goalMovementGeometryNodes = 0;
       nodeCount = 0;
       submissionCount = 0;
       cacheHits = 0;
@@ -380,27 +392,188 @@
         branchKey: publicSeed, restoreRandomState: true,
       });
       loadedEnvelope = rootEnvelope;
-      return createNode(rootEnvelope, rootObservation, actions,
+      openedRoot = createNode(rootEnvelope, rootObservation, actions,
         composition.inspect().phase === "awaiting_input" ? "decision" : "stable");
+      return openedRoot;
     }
 
     function expand(node, actionId) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
-      if (["information-barrier", "other-owner", "terminal"].includes(node.status)) {
+      if (["information-barrier", "other-owner", "terminal", "plan-infeasible"].includes(node.status)) {
         throw new Error(`ANALYSIS_BOUNDARY_CLOSED: ${node.status}`);
       }
       const requested = node.legalActions.find(action => action.actionId === actionId);
       if (!requested || requested.actorId !== seatId) throw new Error("ANALYSIS_ACTION_NOT_LEGAL");
       // serial 只在本端口生命周期内绑定这一不可变快照；不按观察摘要跨节点复用。
-      const key = JSON.stringify([stored.serial, actionId]);
+      const key = JSON.stringify([stored.serial, actionId, movementPlanning]);
       if (cache.has(key)) {
         cacheHits += 1;
         return cache.get(key);
       }
       restoreEnvelope(stored.envelope, true);
       const { before, result } = executeCurrent(actionId);
-      return remember(key, finishChild(before, result));
+      return remember(key, finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null));
+    }
+
+    function setMovementPlanning(enabled) {
+      movementPlanning = enabled === true;
+      if (movementPlanning && openedRoot) {
+        const stored = nodes.get(openedRoot);
+        if (!stored.intent) {
+          stored.intent = recoverMovementIntent(stored.envelope);
+          if (stored.intent) {
+            stored.key = JSON.stringify([stored.physicalKey, stored.intent]);
+            if (!identities.has(stored.key)) identities.set(stored.key, Object.freeze({}));
+            stored.identity = identities.get(stored.key);
+          }
+        }
+      }
+    }
+
+    function movementTiming(state, id, path, freePoints) {
+      const owner = state.players.players.find(p => p.id === seatId);
+      const key = JSON.stringify([state.solarSystem,state.pieces,state.planets,state.aliens,owner,state.turn,id,path,freePoints]);
+      if (movementTimingCache.has(key)) return movementTimingCache.get(key);
+      const result = (productionKernel || globalThis.SetiProductionKernel).comparePlannedMovementTiming(state,seatId,id,path,freePoints);
+      if (movementTimingCache.size >= 64) movementTimingCache.delete(movementTimingCache.keys().next().value);
+      movementTimingCache.set(key,result);
+      return result;
+    }
+
+    function recoverMovementIntent(envelope) {
+      const session = envelope.session?.session, head = session?.queue?.[0], effect = head?.payload?.cardEffect;
+      const source = session?.journal?.actions?.[0]?.action;
+      if (source?.family === "move" && session.baseState) {
+        const state = session.baseState;
+        const selected = goalMovement.plan({state,seatId,actions:[],status:"stable",objectiveOnly:true,routeCache:movementRouteCache,
+          compareTiming:(id,path,free)=>movementTiming(state,id,path,free),
+          endpoints:()=> (productionKernel || globalThis.SetiProductionKernel).getProbeRouteRequirements(state,seatId)?.candidates || []});
+        goalMovementGeometryNodes += selected?.routingNodes || 0;
+        const intent = selected?.intent, first = intent?.path[0];
+        if (first && source.target.rocketId === intent.rocketId && source.target.deltaX === first.deltaX && source.target.deltaY === first.deltaY) return intent;
+      }
+      if (!effect || !session.undoFrames?.length || !(goalMovement.movementAllowance(head, session.workingState) > 0)) return null;
+      const frame = session.undoFrames.find(frame => {
+        const first = frame.queueBefore?.[0];
+        return first?.ownerId === seatId && first.payload?.cardInstanceId === head.payload.cardInstanceId
+          && first.payload?.cardEffect?.id === effect.id && goalMovement.movementAllowance(first, frame.stateBefore) > 0;
+      });
+      if (!frame) return null;
+      const anchor = frame.queueBefore[0];
+      const selected = goalMovement.plan({ state: frame.stateBefore, seatId, actions: [], status: "decision",
+        session: { queue: [anchor] }, objectiveOnly: true, routeCache: movementRouteCache,
+        compareTiming: (id,path,free) => movementTiming(frame.stateBefore,id,path,free),
+        endpoints: () => (productionKernel || globalThis.SetiProductionKernel).getProbeRouteRequirements(frame.stateBefore, seatId, anchor)?.candidates || [] });
+      goalMovementGeometryNodes += selected?.routingNodes || 0;
+      const intent = selected?.intent, ship = intent && session.workingState.pieces.rockets.find(r => r.id === intent.rocketId);
+      const at = ship && rockets.getRocketSectorCoordinate(ship);
+      if (!at || !intent) return null;
+      if (at.x === intent.goal.coordinate.x && at.y === intent.goal.coordinate.y) return { ...intent, path: [] };
+      const index = intent.path.findIndex(step => step.from.x === at.x && step.from.y === at.y);
+      return index < 0 ? null : { ...intent, path: intent.path.slice(index) };
+    }
+
+    function goalMovementSpec(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (movementPolicies.has(node)) return movementPolicies.get(node);
+      const result = goalMovement.plan({ state: readIdentityState(stored.envelope), seatId,
+        actions: node.legalActions, status: node.status, session: stored.envelope.session?.session,
+        intent: stored.intent, routeCache: movementRouteCache,
+        compareTiming: (id,path,free) => movementTiming(readIdentityState(stored.envelope),id,path,free), endpoints: () => (productionKernel || globalThis.SetiProductionKernel).getProbeRouteRequirements(readIdentityState(stored.envelope), seatId, stored.envelope.session?.session?.queue?.[0])?.candidates || [] });
+      goalMovementGeometryNodes += result?.routingNodes || 0;
+      const frozen = result && freeze(result);
+      movementPolicies.set(node, frozen);
+      return frozen;
+    }
+
+    function nextMovementIntent(node, action) {
+      const stored = nodes.get(node), spec = movementPolicies.get(node);
+      if (spec?.selectedActionId === action.actionId && goalMovement.isDirection(action)) return spec.intent;
+      if (spec?.selectedActionId === action.actionId && (action.target?.skip || action.target?.mode === "skip") || ["end_turn", "pass", "play_card", "scan", "analyze",
+        "research_tech", "orbit", "land"].includes(action.family)
+        || action.family === "card_corner" && action.payload?.kind === "move"
+        || action.target?.tradeId === "energy-for-move") return null;
+      return stored.intent;
+    }
+
+    function expandGoalMovementPlan(node, hasTime = () => true) {
+      const spec = goalMovementSpec(node);
+      if (!spec?.intent?.path.length || !spec.selectedActionId) throw new Error("ANALYSIS_GOAL_ROUTE_MISSING");
+      const goal = spec.chosenGoal, prefixes = [];
+      let current = node, endpointStarted = false, goalStatus = "route-in-progress";
+      const maxInputs = spec.intent.path.length*2+3;
+      function submit(action) {
+        if (!hasTime()) return false;
+        prefixes.push({ node: current, action });
+        current = expand(current, action.actionId);
+        return true;
+      }
+      function infeasible(reason) {
+        const stored = nodes.get(current);
+        current = createNode(stored.envelope, null, [], "plan-infeasible", null, stored.intent);
+        goalStatus = reason;
+      }
+      while (prefixes.length < maxInputs) {
+        if (["terminal", "other-owner", "information-barrier"].includes(current.status)) { goalStatus = "boundary"; break; }
+        if (spec.intent.prefixOnly && prefixes.length && current.status === "stable") { goalStatus = "preparation-step-completed"; break; }
+        const stored = nodes.get(current), intent = current === node ? spec.intent : stored.intent;
+        const state = readIdentityState(stored.envelope), owner = state.players.players.find(p => p.id === seatId);
+        const ship = state.pieces.rockets.find(r => r.id === spec.intent.rocketId), at = ship && rockets.getRocketSectorCoordinate(ship);
+        const reached = at?.x === goal.coordinate.x && at?.y === goal.coordinate.y;
+        const direction = current.legalActions.filter(goalMovement.isDirection);
+        if (current.status === "decision" && direction.length) {
+          const policy = goalMovementSpec(current);
+          const action = current.legalActions.find(a => a.actionId === policy?.selectedActionId);
+          if (!action || policy.chosenGoal?.id !== goal.id) { infeasible("route-invalidated"); break; }
+          if (!submit(action)) return { complete: false, node: current, submissions: prefixes.length, prefixes, goal };
+          continue;
+        }
+        if (current.status === "decision") {
+          const payment = current.legalActions.filter(a => a.family === "choose_payment" && a.target?.kind === "move-payment");
+          if (payment.length) {
+            const reserve = goal.timing === "current-turn" ? goal.endpointCost?.energy || 0 : 0;
+            const choices = payment.filter(a => owner.resources.energy-(a.payload.energyCost||0) >= reserve)
+              .sort((a,b) => (a.target.cardIds?.length||0)-(b.target.cardIds?.length||0) || (a.actionId<b.actionId?-1:1));
+            if (!choices.length) { infeasible("goal-payment-unavailable"); break; }
+            if (!submit(choices[0])) return { complete: false, node: current, submissions: prefixes.length, prefixes, goal };
+            continue;
+          }
+          if (endpointStarted) {
+            const target = goal.endpointTarget || {};
+            const choice = current.legalActions.find(a => a.target?.rocketId === spec.intent.rocketId && a.target?.planetId === goal.planetId
+              && (goal.kind !== "land" || a.target.landTarget?.type === target.type
+                && a.target.landTarget?.satelliteId === target.satelliteId));
+            if (choice) {
+              if (!submit(choice)) return { complete: false, node: current, submissions: prefixes.length, prefixes, goal };
+              goalStatus = "goal-completed"; break;
+            }
+          }
+          goalStatus = "awaiting-rule-decision"; break;
+        }
+        if (!reached && !intent?.path.length) { infeasible("goal-route-missing"); break; }
+        if (!reached) {
+          const policy = goalMovementSpec(current), action = current.legalActions.find(a => a.actionId === policy?.selectedActionId);
+          if (!action || policy.chosenGoal?.id !== goal.id) { infeasible("goal-route-unavailable"); break; }
+          if (!submit(action)) return { complete: false, node: current, submissions: prefixes.length, prefixes, goal };
+          continue;
+        }
+        if (goal.timing === "current-turn" && ["orbit","land"].includes(goal.kind) && !owner.mainActionCompleted) {
+          const action = current.legalActions.find(a => a.family === goal.kind
+            && (a.target.rocketId == null || a.target.rocketId === spec.intent.rocketId)
+            && (a.target.planetId == null || a.target.planetId === goal.planetId));
+          if (!action) { infeasible("goal-endpoint-unavailable"); break; }
+          endpointStarted = true;
+          if (!submit(action)) return { complete: false, node: current, submissions: prefixes.length, prefixes, goal };
+          goalStatus = "goal-completed";
+          if (current.status !== "decision") break;
+          continue;
+        }
+        goalStatus = goal.timing === "advance-before-rotation" ? "required-prefix-completed" : "goal-completed";
+        break;
+      }
+      return { complete: true, node: current, submissions: prefixes.length, prefixes, goal, goalStatus };
     }
 
     function executeCurrent(actionId) {
@@ -427,7 +600,7 @@
       return { before, result };
     }
 
-    function finishChild(before, result) {
+    function finishChild(before, result, intent = null) {
       const comp = fork.composition || fork;
       const inspection = comp.inspect();
       const barrier = result.irreversibleBarrier || inspection.session?.irreversibleBarrier;
@@ -444,9 +617,17 @@
         : actions.some(action => action.actorId !== seatId) ? "other-owner"
           : !actions.length ? "terminal"
             : inspection.phase === "awaiting_input" ? "decision" : "stable";
+      if (intent) {
+        const state = readIdentityState(envelope), ship = state.pieces.rockets.find(r => r.id === intent.rocketId);
+        const at = ship && rockets.getRocketSectorCoordinate(ship), step = intent.path[0];
+        if (intent.prefixOnly && status === "stable" || ["other-owner", "terminal", "information-barrier"].includes(status)
+          || state.turn.turnNumber !== intent.startedTurn || state.turn.roundNumber !== intent.startedRound) intent = null;
+        else if (step && at?.x === step.to.x && at?.y === step.to.y) intent = { ...intent, path: intent.path.slice(1) };
+        else if (step && (at?.x !== step.from.x || at?.y !== step.from.y)) intent = null;
+      }
       const child = createNode(envelope, observation,
         ["other-owner", "terminal"].includes(status) ? [] : actions, status,
-        newBarrier ? barrier : null);
+        newBarrier ? barrier : null, intent);
       return child;
     }
 
@@ -1747,6 +1928,11 @@
       loadedEnvelope = null;
       decodedSerialized = null; decodedState = null;
       nodes = new WeakMap();
+      movementPolicies = new WeakMap();
+      movementRouteCache.clear();
+      movementTimingCache.clear();
+      movementPlanning = false;
+      openedRoot = null;
       identities.clear();
       resourceOrders = new WeakMap();
       knownMoneyOrders = new WeakMap();
@@ -1769,7 +1955,7 @@
     }
 
     function getDiagnostics() {
-      return freeze({ nodeCount, submissionCount, cacheHits, cacheEntries: cache.size,
+      return freeze({ goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, cacheEntries: cache.size,
         observationCount, identityCount: identities.size, maxCacheEntries,
         decodedStateCacheEntries: decodedSerialized ? 1 : 0, maxDecodedStateCacheEntries: 1,
         committedDecodeCount, committedDecodeHits,
@@ -1784,7 +1970,7 @@
       return stored.identity;
     }
 
-    return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

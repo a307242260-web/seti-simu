@@ -6,13 +6,13 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v30";
+  const VERSION = "seti-complete-decision-search-v31";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
 
   function searchDecision({ port, root, evaluate, budget = {}, continuation = null, planContinuation = null, planReuse = false,
-    modelKey = null, resourceDominance = false, moneyCapacityDominance = false, cardTradePruning = false, postMainPruning = false, openingPruning = false, cardChoiceEquivalence = false,
+    modelKey = null, movementPlanning = false, resourceDominance = false, moneyCapacityDominance = false, cardTradePruning = false, postMainPruning = false, openingPruning = false, cardChoiceEquivalence = false,
     now = () => performance.now() } = {}) {
     if (typeof port?.expand !== "function" || typeof port?.identity !== "function"
       || typeof evaluate !== "function" || !root) throw new TypeError("SEARCH_INPUT_INVALID");
@@ -23,6 +23,8 @@
       }
     }
     const startedAt = now();
+    if (movementPlanning && typeof port.goalMovementSpec !== "function") throw new TypeError("SEARCH_MOVEMENT_PORT_REQUIRED");
+    port.setMovementPlanning?.(movementPlanning);
     if (openingPruning && (!stateValue?.isDefaultStateValueEvaluator?.(evaluate)
       || evaluate.seatId !== root.legalActions?.[0]?.actorId
       || typeof port.openingPlanSpec !== "function")) throw new TypeError("SEARCH_OPENING_MODEL_INVALID");
@@ -45,7 +47,7 @@
     if (planReuse && (!stateValue?.isStateValueEvaluator?.(evaluate) || evaluate.seatId !== root.legalActions?.[0]?.actorId
       || typeof port.rememberPlan !== "function" || typeof port.reusePlan !== "function")) throw new TypeError("SEARCH_PLAN_MODEL_INVALID");
     const planKey = JSON.stringify([VERSION, modelKey, evaluate.modelKey, resourceDominance, moneyCapacityDominance,
-      cardTradePruning, postMainPruning, openingPruning, cardChoiceEquivalence]);
+      cardTradePruning, postMainPruning, openingPruning, cardChoiceEquivalence, movementPlanning]);
     const reused = continuation && modelKey && port.reuseSelection?.(root, continuation, modelKey);
     const reusedPlan = !reused?.hit && planReuse && planContinuation && port.reusePlan(root, planContinuation, planKey);
     const hit = reused?.hit ? reused : reusedPlan?.hit ? reusedPlan : null;
@@ -56,9 +58,10 @@
       planContinuation: reusedPlan?.hit ? planContinuation : null,
       reusedCoverage: reused?.hit ? { evidenceId: reused.evidenceId, exitCount: reused.exitCount, proof: reused.proof }
         : { evidenceId: hit.evidenceId, proof: hit.proof, sourceNode: hit.sourceNode, source: hit.source, distance: hit.distance },
-      stopReason: null, scope: "own-visible-decision-window-to-owner-information-or-terminal-boundary",
+      stopReason: null, scope: movementPlanning ? "own-visible-window-with-goal-directed-movement-policy" : "own-visible-decision-window-to-owner-information-or-terminal-boundary",
       roots: hit.roots, lines: [], unresolved: [],
-      diagnostics: { transitions: 0, nodes: 1, equivalents: 0, selectionMacros: 0, peakFrontier: 0, graphNodes: 1, certificateNodes: 0,
+      diagnostics: { movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes: 0, movementDirectionsExcluded: 0, routeGeometryNodes: 0,
+        transitions: 0, nodes: 1, equivalents: 0, selectionMacros: 0, peakFrontier: 0, graphNodes: 1, certificateNodes: 0,
         postMainOptimalPlans: 0, postMainOptimalPlanSteps: 0,
         dominancePrunes: 0, resourceDominance: resourceDominance
           ? reused?.hit ? "disabled-for-selection-certificate" : "reused-complete-window" : "off",
@@ -81,11 +84,12 @@
     const known = new Map();
     const queue = [];
     const resourceGroups = new Map();
-    const useResourceDominance = resourceDominance && !port.selectionSpec?.(root);
-    const useMoneyCapacity = moneyCapacityDominance && !port.selectionSpec?.(root);
+    const useResourceDominance = !movementPlanning && resourceDominance && !port.selectionSpec?.(root);
+    const useMoneyCapacity = !movementPlanning && moneyCapacityDominance && !port.selectionSpec?.(root);
     const useCardTradePruning = cardTradePruning && !port.selectionSpec?.(root);
     const useScanBound = cardChoiceEquivalence && stateValue?.isDefaultStateValueEvaluator?.(evaluate) && !port.selectionSpec?.(root);
     const usePostMainValueBound = postMainPruning && !port.selectionSpec?.(root);
+    let movementPolicyNodes = 0, movementDirectionsExcluded = 0, routeGeometryNodes = 0;
     let transitions = 0;
     let equivalents = 0;
     let selectionMacros = 0;
@@ -137,11 +141,11 @@
       if (known.has(identity)) return { index: known.get(identity), equivalent: true };
       const index = nodes.length;
       known.set(identity, index);
-      const boundary = BOUNDARIES.has(node.status);
+      const boundary = BOUNDARIES.has(node.status) || node.status === "plan-infeasible";
       if (!boundary && !node.legalActions?.length) throw new Error("SEARCH_EMPTY_NONTERMINAL");
-      const value = boundary ? evaluate(node.observation) : null;
-      if (boundary && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
-      if (boundary && (!incumbent || value > incumbent.value)) incumbent = { node: index, value };
+      const value = BOUNDARIES.has(node.status) ? evaluate(node.observation) : null;
+      if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
+      if (BOUNDARIES.has(node.status) && (!incumbent || value > incumbent.value)) incumbent = { node: index, value };
       const selection = boundary ? null : port.selectionSpec?.(node) || null;
       const postMainPlan = !boundary && !selection && postMainPruning && node.status === "stable"
         ? port.postMainPlanSpec(node) : null;
@@ -219,10 +223,23 @@
           retainedActionIds: node.legalActions.filter(action => action.actionId !== borrowPlan.industryActionId).map(action => action.actionId),
           excludedActionIds: [borrowPlan.industryActionId] };
       }
-      const retainedActions = localPlan ? node.legalActions.filter(action => localPlan.retainedActionIds.includes(action.actionId))
-        : node.legalActions;
+      const needsMovementPlan = node.legalActions.some(action => (!localPlan || localPlan.retainedActionIds.includes(action.actionId))
+        && (Number.isInteger(action.target?.deltaX) || action.target?.kind === "move-payment"
+          || action.target?.tradeId === "energy-for-move" || action.family === "card_corner" && action.payload?.kind === "move"));
+      const movementPolicy = movementPlanning && !boundary && needsMovementPlan ? port.goalMovementSpec(node) : null;
+      if (movementPolicy) {
+        movementPolicyNodes += 1; movementDirectionsExcluded += movementPolicy.excludedDirectionCount;
+        routeGeometryNodes += movementPolicy.routingNodes;
+      }
+      const retainedActions = node.legalActions.filter(action => (!localPlan || localPlan.retainedActionIds.includes(action.actionId))
+        && (!movementPolicy || movementPolicy.retainedActionIds.includes(action.actionId)));
+      if (!boundary && !retainedActions.length) throw new Error("SEARCH_MOVEMENT_POLICY_CONFLICT");
       const alternatives = selection ? port.selectionPlans(node)
         : retainedActions.flatMap(action => {
+          if (movementPolicy?.plan && movementPolicy.selectedActionId === action.actionId
+            && movementPolicy.intent.path.length && Number.isInteger(action.target?.deltaX)) return {
+            firstActionId: action.actionId, submissions: movementPolicy.intent.path.length*2+3,
+            goalPlan: movementPolicy.plan };
           if (borrowPlan?.industryActionId === action.actionId) return borrowPlan.retainedTileIds.map(tileId => ({
             firstActionId: action.actionId, submissions: 2, borrowTileId: tileId }));
           const openingPass = localPlan?.kind === "opening" && localPlan.passPreparationActionIds?.includes(action.actionId);
@@ -248,7 +265,7 @@
         }
       }
       nodes.push({ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan, borrowPlan,
-        expanded: boundary, value, distance: boundary ? 0 : Infinity, best: null });
+        movementPolicy, expanded: boundary, value, distance: boundary ? 0 : Infinity, best: null });
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
         const upper = peers.find(i => dominates(nodes[i].resources, resources));
@@ -388,10 +405,31 @@
           }
         }
         if (transitions + alternative.submissions > limits.transitions) stopReason = "transition-budget";
-        else if (nodes.length+certificateNodes >= limits.nodes) stopReason = "node-budget";
-        else if (pendingFrontier > limits.frontier) stopReason = "frontier-budget";
+        else if (nodes.length+certificateNodes+(alternative.goalPlan ? alternative.submissions-1 : 0) >= limits.nodes) stopReason = "node-budget";
+        else if (pendingFrontier+(alternative.goalPlan ? alternative.submissions-1 : 0) > limits.frontier) stopReason = "frontier-budget";
         else if (now() - startedAt >= limits.milliseconds) stopReason = "watchdog";
         if (stopReason) break outer;
+        const goalExecution = alternative.goalPlan ? port.expandGoalMovementPlan(entry.node, () => now()-startedAt < limits.milliseconds) : null;
+        if (goalExecution) {
+          if (goalExecution.complete && goalExecution.submissions < 1 || goalExecution.submissions > alternative.submissions
+            || goalExecution.prefixes.length !== goalExecution.submissions
+            || goalExecution.prefixes.length && goalExecution.prefixes[0].action.actionId !== alternative.firstActionId) throw new Error("SEARCH_GOAL_PLAN_COST_INVALID");
+          transitions += goalExecution.submissions;
+          certificateNodes += goalExecution.submissions;
+          peakFrontier = Math.max(peakFrontier,pendingFrontier+goalExecution.submissions-1);
+          if (!goalExecution.complete) {
+            entry.goalAttempt = { goal: goalExecution.goal, submissions: goalExecution.submissions };
+            stopReason = "watchdog"; break outer;
+          }
+          certificateNodes -= 1;
+          const added = add(goalExecution.node);
+          if (added.equivalent) equivalents += 1;
+          entry.goalExecutions ||= new Map(); entry.goalExecutions.set(alternative.firstActionId,goalExecution);
+          entry.edges.push({ actionId: alternative.firstActionId, target: added.index, cost: goalExecution.submissions,
+            equivalent: added.equivalent, goalPlan: alternative.goalPlan, goalStatus: goalExecution.goalStatus,
+            steps: goalExecution.prefixes.map(p => p.action.actionId) });
+          continue;
+        }
         const macro = entry.selection ? port.expandSelection(entry.node, alternative.selectedIds)
           : alternative.openingPass ? port.expandOpeningPass(entry.node, alternative.firstActionId)
             : alternative.borrowTileId ? port.expandPostMainBorrow(entry.node, alternative.borrowTileId) : null;
@@ -455,6 +493,7 @@
         : entry.alternatives.slice(entry.edges.length+(entry.actionBounds?.length||0)).map(alternative => ({ actionId: alternative.firstActionId })))
         .map(action => action.actionId),
       ...(entry.attainmentAttempt ? { attainmentAttempt: entry.attainmentAttempt } : {}),
+      ...(entry.goalAttempt ? { goalAttempt: entry.goalAttempt } : {}),
       ...(entry.selection ? { selectionPlansRemaining: entry.alternativeCount - entry.edges.length,
         selection: entry.selection } : {}),
     }]);
@@ -491,9 +530,11 @@
           omittedContinuationFamilies: "all-except-pass", witness: retainedWitness(index), modelKey: evaluate.modelKey })) } : {}),
       ...(entry.borrowPlan ? { borrowPlan: { ...entry.borrowPlan, witness: retainedWitness(index),
         completion: complete ? "covered-by-origin-search" : "pending-origin-search", modelKey: evaluate.modelKey } } : {}),
+      ...(entry.movementPolicy ? { movementPolicy: entry.movementPolicy } : {}),
       ...(entry.actionBounds ? { actionBounds: entry.actionBounds } : {}),
       ...(entry.attainedPlan ? { attainedPlan: entry.attainedPlan } : {}),
       ...(entry.attainmentAttempt ? { attainmentAttempt: entry.attainmentAttempt } : {}),
+      ...(entry.goalAttempt ? { goalAttempt: entry.goalAttempt } : {}),
       ...(entry.selection ? { selection: entry.selection, orderedExitCount: entry.alternativeCount } : {}),
     }));
     const roots = root.legalActions.map(action => {
@@ -502,6 +543,10 @@
         completion: complete ? "proof-pruned" : "pending-retained-search", valueType: "not-executed", prunedByPlan: excluded };
       const actionBound=nodes[0].actionBounds?.find(bound=>bound.actionId===action.actionId);
       if(actionBound)return {actionId:action.actionId,target:null,value:null,valueType:"not-executed",completion:"proof-pruned",prunedByActionBound:actionBound};
+      if (nodes[0].movementPolicy?.excludedActionIds.includes(action.actionId)) return {
+        actionId: action.actionId, target: null, value: null, valueType: "not-executed",
+        completion: "excluded-by-movement-policy", policy: nodes[0].movementPolicy.policy,
+        chosenGoal: nodes[0].movementPolicy.chosenGoal, isEquivalence: false };
       const selection = nodes[0].selection;
       // 纯点击的强连通部分可到达同一完整出口集；confirm 直接离开，只对应当前选择。
       const edge = selection && action.target?.confirm ? nodes[0].edges.find(edge =>
@@ -515,6 +560,7 @@
       return {
         actionId: action.actionId, target: edge?.target ?? null,
         value: edge ? nodes[edge.target].value : null,
+        ...(edge?.goalPlan ? {kind:"goal-plan",plan:edge.goalPlan} : {}),
         completion: stopReason || !edge ? "pending" : edge.openingPass ? "covered-by-opening-normal-form" : cardTradePrunes ? "covered-by-global-pruning"
           : scanValuePrunes || scanActionPrunes ? "covered-by-global-scan-bound" : postMainValuePrunes ? "covered-by-global-value-bound" : postMainBorrowProofNodes ? "covered-by-global-borrow-simulation" : dominancePrunes ? "covered-by-global-dominance"
           : nodes[edge.target].value == null ? "unreachable" : "complete",
@@ -538,13 +584,25 @@
         if (!best) throw new Error("SEARCH_PLAN_WITNESS_MISSING");
         const roots = entry.node.legalActions.map(action => {
           const edge = entry.edges.find(edge => edge.actionId === action.actionId);
-          const exclusion = entry.localPlan?.excludedActionIds.includes(action.actionId) ? entry.localPlan.proof : entry.actionBounds?.find(bound=>bound.actionId===action.actionId)?.proof || null;
+          const policyExclusion = entry.movementPolicy?.excludedActionIds.includes(action.actionId) ? entry.movementPolicy.policy : null;
+          const exclusion = policyExclusion || (entry.localPlan?.excludedActionIds.includes(action.actionId) ? entry.localPlan.proof : entry.actionBounds?.find(bound=>bound.actionId===action.actionId)?.proof || null);
           return { actionId: action.actionId, value: exclusion ? null : edge ? nodes[edge.target].value : null,
             valueType: exclusion ? "not-executed" : "attained-lower-bound", completion: "covered-by-prior-complete-window",
-            sourceNode: current, ...(exclusion ? { proof: exclusion } : {}),
+            sourceNode: current, ...(exclusion ? policyExclusion ? { policy: exclusion, isEquivalence: false } : { proof: exclusion } : {}),
             ...(entry.selection ? { proof: entry.selection.proof, equivalentExitSet: !action.target?.confirm } : {}) };
         });
         entries.push({ node: entry.node, actionId: best.actionId, value: entry.value, distance: entry.distance, sourceNode: current, roots });
+        if (best.goalPlan) {
+          const macro = entry.goalExecutions.get(best.actionId);
+          for (let i=1;i<macro.prefixes.length && entries.length<32;i+=1) {
+            const prefix=macro.prefixes[i];
+            entries.push({node:prefix.node,actionId:prefix.action.actionId,value:entry.value,distance:entry.distance-i,
+              sourceNode:`goal:${current}:${i}`,roots:prefix.node.legalActions.map(action=>({actionId:action.actionId,
+                value:action.actionId===prefix.action.actionId?entry.value:null,valueType:action.actionId===prefix.action.actionId?"attained-lower-bound":"not-executed",
+                completion:"committed-goal-plan-execution",policy:"seti-goal-movement-policy-v1",isEquivalence:false}))});
+          }
+          current=best.target; continue;
+        }
         if (best.optimalPlan) {
           const macro = entry.optimalAttainment;
           for (let i=1; i<macro.prefixes.length && entries.length<32; i+=1) {
@@ -579,14 +637,17 @@
         proof: "seti-complete-window-best-prefix-reuse-v1", nodeCount: nodes.length+certificateNodes } : null,
       value: accepted ? nodes[0].value : null,
       stopReason: stopReason || (!accepted ? "watchdog" : nodes[0].value == null ? "no-reachable-boundary" : null),
-      scope: "own-visible-decision-window-to-owner-information-or-terminal-boundary",
+      scope: movementPlanning ? "own-visible-window-with-goal-directed-movement-policy" : "own-visible-decision-window-to-owner-information-or-terminal-boundary",
       roots, lines, unresolved,
-      diagnostics: { transitions, nodes: nodes.length+certificateNodes, graphNodes: nodes.length, certificateNodes,
+      candidates: Array.from(nodes[0].alternatives, a => a.goalPlan ? {kind:"goal-plan",plan:a.goalPlan,firstActionId:a.firstActionId}
+        : {kind:"action",actionId:a.firstActionId}),
+      diagnostics: { movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes, movementDirectionsExcluded, routeGeometryNodes,
+        transitions, nodes: nodes.length+certificateNodes, graphNodes: nodes.length, certificateNodes,
         postMainOptimalPlans, postMainOptimalPlanSteps, equivalents, selectionMacros, peakFrontier,
         dominancePrunes, resourceDominance: useResourceDominance ? "enabled"
-          : resourceDominance ? "disabled-for-selection-certificate" : "off",
+          : resourceDominance ? movementPlanning ? "disabled-for-movement-policy" : "disabled-for-selection-certificate" : "off",
         moneyCapacityPrunes, moneyCapacityDominance: useMoneyCapacity ? "enabled"
-          : moneyCapacityDominance ? "disabled-for-selection-certificate" : "off",
+          : moneyCapacityDominance ? movementPlanning ? "disabled-for-movement-policy" : "disabled-for-selection-certificate" : "off",
         postMainValuePrunes, scanValuePrunes, scanActionPrunes,
         cardTradePrunes, cardTradePruning: useCardTradePruning ? "enabled"
           : cardTradePruning ? "disabled-for-selection-certificate" : "off",

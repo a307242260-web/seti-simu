@@ -426,6 +426,24 @@ try {
         console.log(`[PASS] independent-post-main-attainment: root=${evaluate(root.observation)} leaf=${evaluate(attained.node.observation)} prefixes=${attained.prefixes.length}`);
       } finally { port.close(); }
     }
+    {
+      const fixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+        "../adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json")));
+      const comp = auditKernel.composition;
+      if (!comp.lifecycle.restore(fixture.compositionEnvelope).ok) throw new Error("目标移动审计恢复失败");
+      const play = comp.inputPort.enumerateActions({}).find(a => a.family === "play_card" && a.target?.cardInstanceId === "card-40-0");
+      if (!comp.inputPort.submitAction(play).ok) throw new Error("目标移动审计打牌失败");
+      const port = createAnalysisPort({ composition: comp, seatId: fixture.seatId });
+      try {
+        port.setMovementPlanning(true);
+        const root = port.openRoot(), spec = port.goalMovementSpec(root), evaluate = independentValue.createStateValueEvaluator(fixture.seatId);
+        const macro = port.expandGoalMovementPlan(root);
+        if (!spec?.chosenGoal || !macro.complete || macro.submissions !== 4) throw new Error("目标移动路线或成本错误");
+        for (const node of [...macro.prefixes.map(p => p.node), macro.node]) if (evaluate(node.observation) !== evaluate(
+          outcomeModel.createDecisionObservation(node.observation, { seatId: fixture.seatId }))) throw new Error("目标移动原始/标准估值不一致");
+        console.log(`[PASS] independent-goal-movement: inputs=${macro.submissions} goal=${spec.chosenGoal.id}`);
+      } finally { port.close(); }
+    }
     const cornerFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
       "../adhoc/ai-decision-corpus-20261023-v1/post-main-corner-pair-20261023-v1.json")));
     const cornerComp = auditKernel.composition;

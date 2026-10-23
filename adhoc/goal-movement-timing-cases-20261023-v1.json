@@ -1,0 +1,143 @@
+{
+  "scope": "Deterministic native geometry on controlled probe coordinates; no AI search or game run.",
+  "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json",
+  "seatId": "player-blue",
+  "cases": {
+    "advance": {
+      "coordinate": {
+        "x": 1,
+        "y": 1,
+        "slot": 0
+      },
+      "requirementId": "rocket:5:land:neptune:satellite:triton",
+      "path": [
+        {
+          "directionId": "out",
+          "deltaX": 0,
+          "deltaY": 1,
+          "rocketId": 5
+        },
+        {
+          "directionId": "out",
+          "deltaX": 0,
+          "deltaY": 1,
+          "rocketId": 5
+        },
+        {
+          "directionId": "out",
+          "deltaX": 0,
+          "deltaY": 1,
+          "rocketId": 5
+        }
+      ],
+      "timing": {
+        "comparable": true,
+        "assumption": "one-known-solar-rotation-before-the-future-goal",
+        "rotationCount": 1,
+        "waitPaidPoints": 4,
+        "bestPrefixLength": 1,
+        "bestTotalPaidPoints": 3,
+        "classification": "advance-before-rotation",
+        "alternatives": [
+          {
+            "prefixLength": 0,
+            "totalPaidPoints": 4,
+            "remainingPaidPoints": 4
+          },
+          {
+            "prefixLength": 1,
+            "prefixMovementPoints": 1,
+            "totalPaidPoints": 3,
+            "remainingPaidPoints": 2
+          },
+          {
+            "prefixLength": 2,
+            "prefixMovementPoints": 2,
+            "totalPaidPoints": 3,
+            "remainingPaidPoints": 1
+          },
+          {
+            "prefixLength": 3,
+            "prefixMovementPoints": 3,
+            "totalPaidPoints": 3,
+            "remainingPaidPoints": 0
+          }
+        ]
+      }
+    },
+    "wait-cheaper": {
+      "coordinate": {
+        "x": 2,
+        "y": 1,
+        "slot": 4
+      },
+      "requirementId": "rocket:5:land:neptune:satellite:triton",
+      "path": [
+        {
+          "directionId": "ccw",
+          "deltaX": -1,
+          "deltaY": 0,
+          "rocketId": 5
+        },
+        {
+          "directionId": "out",
+          "deltaX": 0,
+          "deltaY": 1,
+          "rocketId": 5
+        },
+        {
+          "directionId": "out",
+          "deltaX": 0,
+          "deltaY": 1,
+          "rocketId": 5
+        },
+        {
+          "directionId": "out",
+          "deltaX": 0,
+          "deltaY": 1,
+          "rocketId": 5
+        }
+      ],
+      "timing": {
+        "comparable": true,
+        "assumption": "one-known-solar-rotation-before-the-future-goal",
+        "rotationCount": 1,
+        "waitPaidPoints": 3,
+        "bestPrefixLength": 0,
+        "bestTotalPaidPoints": 3,
+        "classification": "defer",
+        "alternatives": [
+          {
+            "prefixLength": 0,
+            "totalPaidPoints": 3,
+            "remainingPaidPoints": 3
+          },
+          {
+            "prefixLength": 1,
+            "prefixMovementPoints": 1,
+            "totalPaidPoints": 5,
+            "remainingPaidPoints": 4
+          },
+          {
+            "prefixLength": 2,
+            "prefixMovementPoints": 2,
+            "totalPaidPoints": 4,
+            "remainingPaidPoints": 2
+          },
+          {
+            "prefixLength": 3,
+            "prefixMovementPoints": 3,
+            "totalPaidPoints": 4,
+            "remainingPaidPoints": 1
+          },
+          {
+            "prefixLength": 4,
+            "prefixMovementPoints": 4,
+            "totalPaidPoints": 4,
+            "remainingPaidPoints": 0
+          }
+        ]
+      }
+    }
+  }
+}

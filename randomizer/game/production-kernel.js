@@ -1766,7 +1766,49 @@ function createBrowserProductionKernel(options = {}) {
   return createProductionHostComposition({ ...options, hostKind: "browser" });
 }
 
+// Compare prefixes of one already selected route; this is deterministic geometry, not direction-tree search.
+function comparePlannedMovementTiming(state, seatId, requirementId, path, freePoints = 0) {
+  const owner = state.players.players.find(p => p.id === seatId);
+  if (!Number.isSafeInteger(freePoints) || freePoints < 0) throw new Error("PROBE_PLAN_FREE_POINTS_INVALID");
+  if (owner.industryBorrowedTechTileId || state.turn.cardTurnEventBonuses?.some(b => b.movementModifiers)
+    || industryCatalog.getPlayerIndustryDefinition(owner)?.activeAbilityId === "huanyu_free_moves") {
+    return { comparable: false, reason: "temporary-or-company-movement-context", rotationCount: 1 };
+  }
+  const afterRotation = snapshot => {
+    const rotation = turnFlowApi.rotateSolarSystem(snapshot, 1, seatId);
+    if (!rotation.ok) throw new Error(`PROBE_PLAN_ROTATION_FAILED: ${rotation.message}`);
+    return buildProbeRouteRequirements(snapshot, seatId, null, false).candidates.find(c => c.requirementId === requirementId);
+  };
+  const delayed = afterRotation(clone(state));
+  if (!delayed) return { comparable: false, reason: "target-unreachable-after-rotation", rotationCount: 1 };
+  const waitPoints = delayed.required.paidMovementPoints;
+  let prefixPoints = 0, best = { prefixLength: 0, totalPaidPoints: waitPoints }, current = clone(state);
+  const alternatives = [{ ...best, remainingPaidPoints: waitPoints }];
+  for (let index = 0; index < path.length; index += 1) {
+    const step = path[index], owner = current.players.players.find(p => p.id === seatId);
+    const ship = current.pieces.rockets.find(r => r.id === step.rocketId);
+    const points = rocketAbility.getRequiredMovePointsFromCoordinate({ ...current, state: current },owner,rockets.getRocketSectorCoordinate(ship));
+    if (!Number.isSafeInteger(points) || points < 1 || step.requiredMovePoints != null && step.requiredMovePoints !== points) throw new Error("PROBE_PLAN_MOVE_COST_INVALID");
+    const moved = rockets.moveRocket(current.pieces, step.rocketId, step.deltaX, step.deltaY);
+    if (!moved.ok) throw new Error(`PROBE_PLAN_PREFIX_INVALID: ${moved.message}`);
+    prefixPoints += points;
+    const future = afterRotation(clone(current));
+    if (!future) continue;
+    const totalPaidPoints = Math.max(0, prefixPoints-freePoints)+future.required.paidMovementPoints;
+    alternatives.push({ prefixLength: index+1, prefixMovementPoints: prefixPoints,
+      totalPaidPoints, remainingPaidPoints: future.required.paidMovementPoints });
+    if (totalPaidPoints < best.totalPaidPoints) best = alternatives[alternatives.length-1];
+  }
+  return { comparable: true, assumption: "one-known-solar-rotation-before-the-future-goal", rotationCount: 1,
+    waitPaidPoints: waitPoints, bestPrefixLength: best.prefixLength, bestTotalPaidPoints: best.totalPaidPoints,
+    classification: best.prefixLength ? "advance-before-rotation" : "defer", alternatives };
+}
+
 const productionKernelApi = Object.freeze({
+  comparePlannedMovementTiming,
+  getProbeRouteRequirements(state, seatId, currentEffect = null) {
+    return buildProbeRouteRequirements(state, seatId, currentEffect ? { currentEffect } : null, false);
+  },
   createProductionKernel(options = {}) {
     if (options.hostKind === "browser") return installProductionKernel(options);
     return createSimulationRuleComposition({ ...options, hostKind: "simulation" });

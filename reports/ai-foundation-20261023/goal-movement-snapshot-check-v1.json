@@ -1,0 +1,10 @@
+{
+  "baseCommit": "c1bd67889cfc00e14c31eb968885c3f9e0569435",
+  "testedSnapshot": "/private/tmp/seti-goal-movement-20261023-tu6b2q20",
+  "unchangedBaseFilesVerified": 3874,
+  "changedBaseFilesVerified": 13,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "explicitFiles": 51,
+  "runtimeImportsBoundToFinalSource": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot."
+}

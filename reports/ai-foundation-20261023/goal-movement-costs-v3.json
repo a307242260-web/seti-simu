@@ -1,0 +1,23 @@
+{
+  "scope": "Native asteroid exit cost and exact geometry cache invalidation; no game or AI search.",
+  "asteroid": {
+    "x": 0,
+    "y": 1
+  },
+  "rows": [
+    {
+      "orange2": false,
+      "firstStepPoints": 2,
+      "goal": "visit:5:5:1:card-36-0:b71-mercury-draw",
+      "routingNodes": 32
+    },
+    {
+      "orange2": true,
+      "firstStepPoints": 1,
+      "goal": "visit:5:5:1:card-36-0:b71-mercury-draw",
+      "routingNodes": 32
+    }
+  ],
+  "geometryCacheEntries": 2,
+  "readOnly": true
+}

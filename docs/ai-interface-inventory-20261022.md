@@ -161,3 +161,9 @@ node tools/run_node_tests.js --match policy-port --match machine-player-coordina
 原生ScienceSession导出只读`listPublicScanChoices`供正式Decision及可信分析共用。
 `postMainValueBound`可记录已有静止继续路径的证明依赖及保留动作。算法仍拿不到隐藏牌堆、完整状态或Session。
 详见[扫描界及组合证明](ai-standard-scan-bound-20261023.md)。
+
+分析端口缓存标记 v32 新增 `setMovementPlanning`、`goalMovementSpec`、`expandGoalMovementPlan`。
+Production Kernel 新增可信只读 `getProbeRouteRequirements`、`comparePlannedMovementTiming`；
+算法仍不能读取原始 state/session。方向候选变为目标计划，路线、时机及排除策略以公开证据返回，
+规则状态与搜索控制身份分别记录。Browser/Simulation 同一工厂启用；
+详见[目标移动契约及范围](ai-goal-movement-20261023.md)。

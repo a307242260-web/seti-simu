@@ -1,0 +1,9 @@
+{"label":"initial-selection","id":"case-001","choices":5,"complete":true,"stopReason":null,"inputs":144,"ms":194.42254099999997}
+{"label":"initial-income","id":"case-003","choices":5,"complete":true,"stopReason":null,"inputs":26,"ms":162.365584}
+{"label":"first-other-company-main","id":"case-008","choices":17,"complete":true,"stopReason":null,"inputs":248,"ms":546.1629999999999}
+{"label":"first-other-company-post-main","id":"case-011","choices":10,"complete":true,"stopReason":null,"inputs":9,"ms":16.863291000000117}
+{"label":"regular-conditional","id":"case-009","choices":1,"complete":true,"stopReason":null,"inputs":7,"ms":29.113292}
+{"label":"round2-main-with-tech","id":"case-062","choices":25,"complete":false,"stopReason":"watchdog","inputs":226,"ms":610.192417}
+{"label":"round3-main-with-reserved","id":"case-105","choices":28,"complete":false,"stopReason":"watchdog","inputs":173,"ms":614.2957089999998}
+{"label":"round4-main","id":"case-152","choices":24,"complete":false,"stopReason":"watchdog","inputs":242,"ms":610.6136660000002}
+reports/ai-foundation-20261023/goal-movement-corpus-v5.json

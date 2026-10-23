@@ -132,6 +132,22 @@ function direct(f, cache = 0) {
   recoveredPost.dispose();browser.dispose();
   post.dispose();
 
+  const movementSource = fixture("062"), movementSeed = movementSource.source.seed;
+  const movementKernel = createSimulationRuleComposition({seed:movementSeed,random:createSeededRandom(movementSeed),activePlayerCount:4});
+  movementKernel.newGame({seed:movementSeed});assert(movementKernel.composition.lifecycle.restore(movementSource.compositionEnvelope).ok);
+  const playMove = movementKernel.composition.inputPort.enumerateActions({}).find(a=>a.family==="play_card"&&a.target?.cardInstanceId==="card-40-0");
+  assert(movementKernel.composition.inputPort.submitAction(playMove).ok);
+  const moveFixture = {...movementSource,compositionEnvelope:movementKernel.composition.lifecycle.save().envelope};
+  movementKernel.composition.dispose();
+  const movementEnv = simulation(moveFixture), movementCold = simulation(moveFixture);
+  const firstMove = movementEnv.runAgentDecision();assert.equal(firstMove.searches[0].candidates[0].kind,"goal-plan");
+  let movementResult = firstMove;
+  for(let step=0;step<firstMove.searches[0].lines[0].distance;step++){
+    if(step){movementCold.loadCheckpoint(movementEnv.createCheckpoint());const a=movementEnv.runAgentDecision(),b=movementCold.runAgentDecision();assert.equal(a.actionId,b.actionId);assert.equal(a.searches[0].value,b.searches[0].value);assert.deepEqual(normalizeSessionHandles(movementEnv.createCheckpoint().coreState.compositionEnvelope),normalizeSessionHandles(movementCold.createCheckpoint().coreState.compositionEnvelope));movementResult=a;}
+    assert.equal(movementEnv.getReplay().steps.length,step+1);
+  }
+  assert(movementResult.searches[0].complete);movementEnv.dispose();movementCold.dispose();
+
   const base = read("reports/ai-foundation-20261022/analysis-root-input-v2.json");
   base.config.agentType = "search";
   const reused = createSimulationEnv(); reused.loadCheckpoint(base);
