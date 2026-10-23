@@ -84,7 +84,9 @@ for (const cardId of ["b_114.webp", "dlc_9.png"]) {
   restore(envelopeFor("异星实验室", ready));
   const port = createAnalysisPort({ composition: comp, seatId });
   const root = port.openRoot(), pending = port.expand(root, root.legalActions.find(action => action.target?.tradeId === "credits-for-card").actionId);
-  assert.equal(port.cardTradeBound(pending), null, "已可完成的任务不能使用不活动任务的界"); port.close();
+  assert.equal(port.cardTradeBound(pending)?.handDelta, 1, "可完成任务仍需显式行动，不在交易队列中自动结算");
+  assert.equal(evaluators[0](port.expand(pending, pending.legalActions[0].actionId).observation),
+    evaluateHandCountDelta(evaluators[0], pending.observation, 1)); port.close();
 }
 const extra = structuredClone(source);
 extra.turn.cardTurnEventBonuses = [{ id: "trade-reward", playerId: seatId, duration: "turn", eventType: "quick_trade_card_selected",
@@ -102,7 +104,7 @@ ownerOf(other).resources.handSize = ownerOf(other).hand.length;
 restore(envelopeFor("异星实验室", other));
 const blocked = createAnalysisPort({ composition: comp, seatId }), blockedRoot = blocked.openRoot();
 assert.equal(blocked.cardTradeBound(blocked.expand(blockedRoot, blockedRoot.legalActions.find(action =>
-  action.target?.tradeId === "credits-for-card").actionId)), null); blocked.close();
+  action.target?.tradeId === "credits-for-card").actionId))?.handDelta, 1, "对手标准保留牌不响应本席交易事件"); blocked.close();
 
 function paymentRun(equivalence, reuse, cache = 0) {
   restore(envelopeFor("异星实验室"));

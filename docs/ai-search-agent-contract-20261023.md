@@ -43,6 +43,10 @@ Browser高频inspect不复制原始actionOutcomes，查看lastOutcomeSummary；�
 分析端口最多保存一份完整冻结的已提交状态解码，按完整字节命中，关闭即释放；
 隔离store可复用只读根，工作副本和Session仍独立复制，见[分支状态复用](ai-fork-state-reuse-20261023.md)。
 
+搜索v22使用取牌界v4的交易局部保留牌闭包，不再统一拒绝对手保留牌或就绪任务。
+本席触发器须不响应交易事件，终局公式与手牌无关，并排除化石运输等额外事件。
+只作用于取牌信息边界；其他钱包、开局、主行动后证明及预算不变。
+
 ## 结果和失败
 
 成功的agentTrace.coverage为complete，search保存scope、根去向、完整图、等价/证明归属、

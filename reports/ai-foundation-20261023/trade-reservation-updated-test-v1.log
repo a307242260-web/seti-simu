@@ -1,0 +1,4 @@
+{"inertReservation":"passed","rawInputs":314,"prunedInputs":9,"boundLeaves":40}
+SUMMARY unit passed=1 failed=0 total=1 time=1.01s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1

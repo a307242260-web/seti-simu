@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "seti-trade-reservation-validation-v1",
+  "baseCommit": "73d6fa0a1cd85737bde098512b1ae04dc02448f6",
+  "snapshot": "/private/tmp/seti-ai-stage30-20261023-1ybgw5xs",
+  "searchVersion": "seti-complete-decision-search-v22",
+  "agentVersion": "seti-search-agent-v2",
+  "rulesetVersion": "seti-runtime-v1.3 (unchanged)",
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "aec21887ac0f9338c978ec63334b4d81bf06a37548638c5bb67cee574562560d",
+    "randomizer/game/ai/decision-search.js": "9532361c88f0ebcc1c68b3384a8f402390b09e3d6d061b01378deea4da4d1504",
+    "randomizer/game/ai/company-card-trade.test.js": "255dd2d5032942d0b54ba0ba3b2bfd43ebe16c5a0483685cba8703aaf4a27cf3",
+    "randomizer/game/ai/trade-reservation-bound.test.js": "78529eafc4f96f47eebbd1201b76412c5eb0e48879929b92f0b1ff9d73743697",
+    "tools/node-test-inventory.js": "4a581f7ca409998ca0881795cf22482cd252c5217443e4e8b226b8bd5286bb16",
+    "randomizer/index.html": "f2fe518347de08bffd1034ec86d284d187bbed25b108bc361b0610e3eea0bec6",
+    "adhoc/ai-trade-reservation-design-20261023-v1.md": "a545ff994d517661382bf6310aefd476e757b4433f101121f88eb22100ea517a",
+    "randomizer/game/ai/inert-reservation.test.js": "afebd8dadfaa8e7495f14ffda33dbb244c678c5a6ff6675dd0f5d4c61de9b715",
+    "tools/audit_v_state_inputs.js": "77fa22b8add8e3aea52c3090227324782486d4bd3e5be144f49a740708d5f74a",
+    "adhoc/audit-ai-decision-corpus-20261023-v15.js": "9109ed37dff0b5457690467e4e1770ba9076552f51fe49fd575792a6ccd51a33",
+    "adhoc/profile-ai-late-semantic-case062-20261023-v2.js": "134655268e30b8ac265328704190ed3c5bd4c6858b1df6069752014fc1438746",
+    "docs/ai-card-trade-bound-proof-20261022.md": "7bef9f5983876eec8bbd91f51ca2c76f086a82e60ebda08f66906c401c174344",
+    "docs/ai-search-agent-contract-20261023.md": "be13f7b0dd2f64cfb2a3519f975ee034dd6fd3ff0ba51cc2d9f31749f3d57bd5",
+    "docs/ai-development-workflow.md": "3705c4c5205bb035ecb4c84de953b349c3ecda23c3dfd93be995dc7c108ddf53",
+    "docs/ai-interface-inventory-20261022.md": "bc719106c0cc01d049e0c0406dcffbba817e7d6e5bb98539fe09149f198eb210",
+    "docs/ai-implementation-20261022.md": "6d8f82d7ce0481f0b554e92bb52f3d773b18e93f1e77ef0f42cb37dfdd2a6455"
+  },
+  "node": "v22.22.0",
+  "machine": {
+    "system": "Darwin",
+    "release": "24.6.0",
+    "machine": "arm64"
+  },
+  "unit": {
+    "verifiedPassed": 126,
+    "unresolvedFailures": 0,
+    "method": "full suite in independent child processes plus isolated rerun of the only revised obsolete assertion; runtime unchanged after full attempt",
+    "fullAttempt": {
+      "passed": 125,
+      "failed": 1,
+      "seconds": 179.25,
+      "log": "reports/ai-foundation-20261023/trade-reservation-full-node-v1.log",
+      "failedTest": "randomizer/game/ai/inert-reservation.test.js",
+      "initialFailedTestSha256": "71bc0174b3ca0b763ceb2c7cab36fe850d28ae617e771df5fa42653df0128051"
+    },
+    "updatedTest": {
+      "passed": 1,
+      "failed": 0,
+      "seconds": 1.01,
+      "log": "reports/ai-foundation-20261023/trade-reservation-updated-test-v1.log",
+      "file": "randomizer/game/ai/inert-reservation.test.js",
+      "sha256": "afebd8dadfaa8e7495f14ffda33dbb244c678c5a6ff6675dd0f5d4c61de9b715"
+    },
+    "postAttemptChanges": [
+      "revised obsolete shared post-main/trade refusal assertion into actual trade exit behavior",
+      "inventory obligation wording only"
+    ]
+  },
+  "fullFlow": {
+    "passed": 1,
+    "failed": 0,
+    "seconds": 0.51
+  },
+  "browser": {
+    "passed": 3,
+    "failed": 0,
+    "log": "reports/ai-foundation-20261023/trade-reservation-browser-v1.log",
+    "scope": [
+      "production-start-button",
+      "production-search-agent-entry",
+      "production-completion-agent-parity"
+    ]
+  },
+  "syntax": {
+    "passed": 9,
+    "report": "reports/ai-foundation-20261023/trade-reservation-syntax-v1.json"
+  },
+  "inputAudit": {
+    "exitCode": 1,
+    "independentPassed": 23,
+    "newTradeReservationPassed": 3,
+    "knownLegacyFailures": [
+      "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+    ],
+    "report": "reports/ai-foundation-20261023/state-value-input-audit-v21.json"
+  },
+  "actualTradeExits": [
+    {
+      "label": "062",
+      "trades": 3,
+      "manualInputs": 149,
+      "leaves": 86
+    },
+    {
+      "label": "105",
+      "trades": 4,
+      "manualInputs": 224,
+      "leaves": 130
+    },
+    {
+      "label": "152",
+      "trades": 3,
+      "manualInputs": 220,
+      "leaves": 127
+    },
+    {
+      "label": "ready-zero-resource-task",
+      "trades": 2,
+      "manualInputs": 20,
+      "leaves": 12
+    }
+  ],
+  "totalActualExits": 355,
+  "completeSmallWindows": [
+    {
+      "label": "062",
+      "raw": 415,
+      "pruned": 361,
+      "value": 36,
+      "prunes": 18
+    },
+    {
+      "label": "105",
+      "raw": 477,
+      "pruned": 387,
+      "value": 28.5,
+      "prunes": 30
+    },
+    {
+      "label": "152",
+      "raw": 231,
+      "pruned": 186,
+      "value": 21,
+      "prunes": 15
+    }
+  ],
+  "fixedColdGate": {
+    "passed": 4,
+    "total": 8,
+    "budget": {
+      "transitions": 256,
+      "nodes": 257,
+      "frontier": 256,
+      "milliseconds": 600
+    },
+    "report": "reports/ai-foundation-20261023/decision-corpus-audit-v15.json"
+  },
+  "lateDiagnostic": {
+    "report": "reports/ai-foundation-20261023/late-semantic-case062-v2.json",
+    "complete": false,
+    "inputs": 4096,
+    "unresolvedNodes": 2286,
+    "milliseconds": 5963.779292,
+    "cardTradePrunes": 53,
+    "scope": "same existing single-decision diagnostic input/node/frontier/time budgets; no whole games or coverage claim from prefix counts"
+  },
+  "negativeAndScopeChecks": [
+    "extra trade reward still rejected and really changes value by five credits",
+    "ready tasks are not auto-completed in this queue",
+    "post-main proof retains own original reservation limits",
+    "all ordered payments tested and every entity payment set retained",
+    "default and noninteger model exit equality",
+    "cache on/off complete-window parity"
+  ],
+  "limitations": [
+    "fixed cold gate remains four of eight",
+    "actual round2 main still incomplete at4096 inputs",
+    "no revealed aliens or fossil transport in trade proof",
+    "whole V audit retains old aomomo error",
+    "no new-search complete games, terminal score or four-seat 180-second acceptance"
+  ]
+}

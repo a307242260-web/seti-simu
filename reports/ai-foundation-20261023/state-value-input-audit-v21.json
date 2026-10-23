@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "seti-state-value-input-audit-v21",
+  "baseCommit": "73d6fa0a1cd85737bde098512b1ae04dc02448f6",
+  "exitCode": 1,
+  "independentPasses": [
+    "[PASS] independent-state-value: total=40.5 model=seti-linear-state-value-v1",
+    "[PASS] independent-card-choice-equivalence: total=36 inputs=1",
+    "[PASS] independent-public-pick-barrier: total=36",
+    "[PASS] independent-opening-money-capacity: delta=1",
+    "[PASS] independent-opening-plan: total=36.5",
+    "[PASS] independent-opening-pass-normal-form: total=36.5",
+    "[PASS] independent-initial-information: offer=24 income=30.5",
+    "[PASS] independent-post-main-income: delta=3 retainedData=2",
+    "[PASS] independent-alien-opening-sector-task: card=opening total=36.5",
+    "[PASS] independent-company-card-trade: card=opening total=35.5",
+    "[PASS] independent-alien-opening-sector-task: card=b_114.webp total=34.5",
+    "[PASS] independent-company-card-trade: card=b_114.webp total=33.5",
+    "[PASS] independent-alien-opening-sector-task: card=dlc_9.png total=36",
+    "[PASS] independent-company-card-trade: card=dlc_9.png total=35",
+    "[PASS] independent-pass-reserve-choice: total=37.5 inputs=1",
+    "[PASS] independent-shared-search-agent: root=27.5 leaf=36.5",
+    "[PASS] independent-plan-prefix-reuse: root=35.5 leaf=37 inputs=0",
+    "[PASS] independent-known-card-money: case=062 root=44.5 poor=42.5",
+    "[PASS] independent-trade-reservation: case=062 leaf=43.5",
+    "[PASS] independent-known-card-money: case=105 root=40 poor=38",
+    "[PASS] independent-trade-reservation: case=105 leaf=39",
+    "[PASS] independent-known-card-money: case=152 root=32.5 poor=30.5",
+    "[PASS] independent-trade-reservation: case=152 leaf=31.5"
+  ],
+  "knownLegacyFailures": [
+    "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+  ],
+  "log": "reports/ai-foundation-20261023/state-value-input-audit-v21.log",
+  "sourceHashes": {
+    "tools/audit_v_state_inputs.js": "77fa22b8add8e3aea52c3090227324782486d4bd3e5be144f49a740708d5f74a",
+    "randomizer/game/ai/analysis-port.js": "aec21887ac0f9338c978ec63334b4d81bf06a37548638c5bb67cee574562560d",
+    "randomizer/game/ai/decision-search.js": "9532361c88f0ebcc1c68b3384a8f402390b09e3d6d061b01378deea4da4d1504"
+  }
+}

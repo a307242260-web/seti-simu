@@ -350,6 +350,15 @@ try {
           || evaluate(poor.observation) !== evaluate(outcomeModel.createDecisionObservation(poor.observation, { seatId: moneyFixture.seatId }))
           || evaluate(root.observation) - evaluate(poor.observation) !== 2) throw new Error("已知模型钱包证明、原始/标准V或严格余额差不一致");
         console.log(`[PASS] independent-known-card-money: case=${id} root=${evaluate(root.observation)} poor=${evaluate(poor.observation)}`);
+        const purchase = moneyPort.expand(root, root.legalActions.find(action => action.target?.tradeId === "credits-for-card").actionId);
+        const tradeBound = moneyPort.cardTradeBound(purchase);
+        const acquired = moneyPort.expand(purchase, purchase.legalActions[0].actionId);
+        if (!tradeBound || acquired.status !== "information-barrier"
+          || evaluate(acquired.observation) !== independentValue.evaluateHandCountDelta(evaluate, purchase.observation, tradeBound.handDelta)
+          || evaluate(acquired.observation) !== evaluate(outcomeModel.createDecisionObservation(acquired.observation, { seatId: moneyFixture.seatId }))) {
+          throw new Error("保留牌交易数量界、实际出口或原始/标准V不一致");
+        }
+        console.log(`[PASS] independent-trade-reservation: case=${id} leaf=${evaluate(acquired.observation)}`);
       } finally { moneyPort.close(); }
     }
   } catch (error) {

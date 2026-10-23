@@ -672,6 +672,36 @@
       }));
     }
 
+    function hasTradeInertReservations(state) {
+      // 交易不推进回合或执行complete_task；任务可就绪，但不能在本队列中兑付。
+      // 化石运输会在任意effect后补visitPlanet，不能只检查显式交易事件。
+      if (Object.keys(state.aliens.chong?.transportTasksByRocketId || {}).length) return false;
+      const fields = ["cardType", "playEffects", "tasks", "temporaryTasks", "triggers", "endGameScoring", "source",
+        "reserveAfterPlay", "displayRow", "countsAsType3", "pluto"];
+      return state.players.players.every(player => player.reservedCards.every(card => {
+        const model = cardEffects.getCardModel(card);
+        if (!["basic", "space-agency"].includes(card.set) || !cards.getCatalogEntryForCard(card) || !model
+          || ![0, 1, 2, 3].includes(model.cardType) || Object.keys(model).some(key => !fields.includes(key))) return false;
+        // 事件只投给交易owner，对手不会在此信息边界前取得行动或任务结算。
+        if (player.id !== seatId) return true;
+        if (model.triggers && (!Array.isArray(model.triggers) || !model.triggers.every(trigger => {
+          const event = trigger.event;
+          if (Object.keys(trigger).some(key => !["id", "event", "effect"].includes(key)) || !event
+            || Object.keys(event).some(key => !["type", "types", "planetIds", "includePlanetIds", "excludePlanetIds",
+              "requiresOwnOrbit", "techType", "color", "cornerKind", "cornerCode", "timing", "price", "cardIds",
+              "includeCardIds", "excludeCardIds"].includes(key)) || event.types != null && !Array.isArray(event.types)) return false;
+          return (event.types?.length ? event.types : [event.type]).every(type => MONEY_INDEPENDENT_EVENTS.has(type));
+        }))) return false;
+        const scoring = model.endGameScoring;
+        if (model.cardType === 3 && !scoring) return false;
+        return !scoring || Object.keys(scoring).every(key => ["kind", "color", "traceType", "techType", "planetId",
+          "scorePer", "locationType", "score", "resource", "count"].includes(key))
+          && ["sectorWinsByColor", "traceCount", "techCount", "distinctSignalSectors", "planetOrbitOrLand", "probeLocation",
+            "unmarkedFinalRightmost", "remainingResource", "planetLandingPairs", "allOrbitOrLand"].includes(scoring.kind)
+          && (scoring.kind !== "remainingResource" || ["availableData", "publicity"].includes(scoring.resource));
+      }));
+    }
+
     function describeCardTradeBound(stored, node) {
       const session = stored.envelope.session?.session;
       const effect = session?.queue?.[0];
@@ -694,7 +724,7 @@
       const passives = company && POST_MAIN_MONEY_COMPANIES[company.activeAbilityId ?? "no_active"];
       if (state.turn.currentPlayerId !== seatId || owner.passCompletionPending
         || state.turn.passedPlayerIds.includes(seatId) || state.match.initialSetup
-        || !hasOnlyOwnInertReservations(state, { sectorTasks: true })
+        || !hasTradeInertReservations(state)
         || state.turn.cardTurnEventBonuses?.length
         || Object.values(state.aliens.aliens).some(slot => slot.revealed)
         || !passives || passives.length !== company.passiveIds.length
@@ -703,7 +733,7 @@
         || state.cards.publicCards.some(card => card && !["basic", "space-agency"].includes(card.set))) return null;
       // getAvailablePool 会清理副本上的牌堆目录，不能写入冻结的工作状态。
       if (!cards.getAvailablePool({ ...state.cards }, state.players).length) return null;
-      return freeze({ proof: "seti-card-trade-information-value-bound-v3", tradeId: pending.tradeId, handDelta });
+      return freeze({ proof: "seti-card-trade-information-value-bound-v4", tradeId: pending.tradeId, handDelta });
     }
 
     function postMainResourceOrder(node) {

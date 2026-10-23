@@ -119,23 +119,32 @@ for (const state of [postState, active]) {
   port.close();
 }
 assert.equal(leaves, 40, "无探测器34个组合出口及有探测器6个出口均实际提交");
-function declined(state) {
-  const { port, root } = open(state);
+function declinedPostMain(state) {
+  const { port, root, before } = open(state);
   assert.equal(port.postMainPlanSpec(root), null);
   const draw = root.legalActions.find(action => action.target?.tradeId === "credits-for-card");
-  if (draw) assert.equal(port.cardTradeBound(port.expand(root, draw.actionId)), null);
+  if (draw) {
+    const pending = port.expand(root, draw.actionId), bound = port.cardTradeBound(pending);
+    assert.equal(bound?.handDelta, 1, "主行动后证明仍拒绝，但交易窗口内无额外事件或手牌计分变化");
+    for (const choice of pending.legalActions) {
+      const leaf = port.expand(pending, choice.actionId);
+      assert.equal(leaf.status, "information-barrier");
+      for (const model of [evaluate, fractional]) assert.equal(model(leaf.observation), evaluateHandCountDelta(model, pending.observation, 1));
+    }
+  }
+  assert.deepEqual(comp.lifecycle.save().envelope, before);
   port.close();
 }
 const opponent = structuredClone(prepared);
 opponent.players.players.find(player => player.id !== seatId).reservedCards.push(
   opponent.players.players.find(player => player.id === seatId).reservedCards.pop());
-declined(opponent);
+declinedPostMain(opponent);
 const unknown = structuredClone(prepared), unknownOwner = unknown.players.players.find(player => player.id === seatId);
 const entry = cards.CARD_CATALOG.find(card => card.card_id === "b_45.webp");
 assert(unknown.cards.drawPileCardIds.includes(entry.card_id));
 unknown.cards.drawPileCardIds = unknown.cards.drawPileCardIds.filter(id => id !== entry.card_id);
 unknownOwner.reservedCards.push(cards.createCommittedCardInstance(unknown, entry));
-declined(unknown);
+declinedPostMain(unknown);
 comp.dispose();
 console.log(JSON.stringify({ inertReservation: "passed", rawInputs: raw.diagnostics.transitions,
   prunedInputs: pruned.diagnostics.transitions, boundLeaves: leaves }));

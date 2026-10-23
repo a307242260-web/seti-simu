@@ -1,0 +1,24 @@
+{
+  "passed": [
+    "randomizer/game/ai/analysis-port.js",
+    "randomizer/game/ai/decision-search.js",
+    "randomizer/game/ai/company-card-trade.test.js",
+    "randomizer/game/ai/trade-reservation-bound.test.js",
+    "tools/node-test-inventory.js",
+    "randomizer/game/ai/inert-reservation.test.js",
+    "tools/audit_v_state_inputs.js",
+    "adhoc/audit-ai-decision-corpus-20261023-v15.js",
+    "adhoc/profile-ai-late-semantic-case062-20261023-v2.js"
+  ],
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "aec21887ac0f9338c978ec63334b4d81bf06a37548638c5bb67cee574562560d",
+    "randomizer/game/ai/decision-search.js": "9532361c88f0ebcc1c68b3384a8f402390b09e3d6d061b01378deea4da4d1504",
+    "randomizer/game/ai/company-card-trade.test.js": "255dd2d5032942d0b54ba0ba3b2bfd43ebe16c5a0483685cba8703aaf4a27cf3",
+    "randomizer/game/ai/trade-reservation-bound.test.js": "78529eafc4f96f47eebbd1201b76412c5eb0e48879929b92f0b1ff9d73743697",
+    "tools/node-test-inventory.js": "4a581f7ca409998ca0881795cf22482cd252c5217443e4e8b226b8bd5286bb16",
+    "randomizer/game/ai/inert-reservation.test.js": "afebd8dadfaa8e7495f14ffda33dbb244c678c5a6ff6675dd0f5d4c61de9b715",
+    "tools/audit_v_state_inputs.js": "77fa22b8add8e3aea52c3090227324782486d4bd3e5be144f49a740708d5f74a",
+    "adhoc/audit-ai-decision-corpus-20261023-v15.js": "9109ed37dff0b5457690467e4e1770ba9076552f51fe49fd575792a6ccd51a33",
+    "adhoc/profile-ai-late-semantic-case062-20261023-v2.js": "134655268e30b8ac265328704190ed3c5bd4c6858b1df6069752014fc1438746"
+  }
+}
