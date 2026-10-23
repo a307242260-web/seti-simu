@@ -119,13 +119,19 @@ for (const state of [postState, active]) {
   port.close();
 }
 assert.equal(leaves, 40, "无探测器34个组合出口及有探测器6个出口均实际提交");
-function declinedPostMain(state) {
+function checkedInertExtra(state) {
   const { port, root, before } = open(state);
-  assert.equal(port.postMainPlanSpec(root), null);
+  assert(port.postMainPlanSpec(root), "对手保留牌和窗口内不变的本席公式通过v6不活动检查");
+  const budget = { transitions: 4096, nodes: 4097, frontier: 4096, milliseconds: 10000 };
+  const raw = searchDecision({ port, root, evaluate, budget });
+  const reduced = searchDecision({ port, root, evaluate, postMainPruning: true, budget });
+  assert(raw.complete && reduced.complete);
+  assert.equal(reduced.actionId, raw.actionId); assert.equal(reduced.value, raw.value);
+  assert.equal(reduced.lines[0].distance, raw.lines[0].distance);
   const draw = root.legalActions.find(action => action.target?.tradeId === "credits-for-card");
   if (draw) {
     const pending = port.expand(root, draw.actionId), bound = port.cardTradeBound(pending);
-    assert.equal(bound?.handDelta, 1, "主行动后证明仍拒绝，但交易窗口内无额外事件或手牌计分变化");
+    assert.equal(bound?.handDelta, 1, "固定保留牌公式在交易信息边界前也不改变");
     for (const choice of pending.legalActions) {
       const leaf = port.expand(pending, choice.actionId);
       assert.equal(leaf.status, "information-barrier");
@@ -138,13 +144,13 @@ function declinedPostMain(state) {
 const opponent = structuredClone(prepared);
 opponent.players.players.find(player => player.id !== seatId).reservedCards.push(
   opponent.players.players.find(player => player.id === seatId).reservedCards.pop());
-declinedPostMain(opponent);
-const unknown = structuredClone(prepared), unknownOwner = unknown.players.players.find(player => player.id === seatId);
+checkedInertExtra(opponent);
+const staticScoring = structuredClone(prepared), scoringOwner = staticScoring.players.players.find(player => player.id === seatId);
 const entry = cards.CARD_CATALOG.find(card => card.card_id === "b_45.webp");
-assert(unknown.cards.drawPileCardIds.includes(entry.card_id));
-unknown.cards.drawPileCardIds = unknown.cards.drawPileCardIds.filter(id => id !== entry.card_id);
-unknownOwner.reservedCards.push(cards.createCommittedCardInstance(unknown, entry));
-declinedPostMain(unknown);
+assert(staticScoring.cards.drawPileCardIds.includes(entry.card_id));
+staticScoring.cards.drawPileCardIds = staticScoring.cards.drawPileCardIds.filter(id => id !== entry.card_id);
+scoringOwner.reservedCards.push(cards.createCommittedCardInstance(staticScoring, entry));
+checkedInertExtra(staticScoring);
 comp.dispose();
 console.log(JSON.stringify({ inertReservation: "passed", rawInputs: raw.diagnostics.transitions,
   prunedInputs: pruned.diagnostics.transitions, boundLeaves: leaves }));

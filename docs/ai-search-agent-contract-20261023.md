@@ -51,6 +51,10 @@ Browser高频inspect不复制原始actionOutcomes，查看lastOutcomeSummary；�
 按相同收入/角标用途保留最小actionId，要求无外部实体引用及额外观察者，且后续规则闭包已审核。
 不改变向前状态身份、付款实体集合或计划复用的完整依赖；省略动作仍记录未执行及证明归属。
 
+搜索v24将`postMainPruning`的保留牌检查扩展为[不活动闭包](ai-post-main-plan-proof-20261022.md)：
+逐项排除可达触发、历史待结算事件、就绪任务及移动/资源相关计分；其他阶段和预算不变。
+全部牌与消耗/完成记录仍进入正式状态及精确身份，没有把保留区抽象为空。
+
 ## 结果和失败
 
 成功的agentTrace.coverage为complete，search保存scope、根去向、完整图、等价/证明归属、

@@ -14,6 +14,8 @@ Browser/Simulation都可显式选择实验search玩家，未闭合仍失败，�
 由冻结模型计算界并以真实信息边界核对，见[取牌界v4](ai-card-trade-bound-proof-20261022.md)。
 搜索v23新增`postMainCornerChoiceSpec`，只对主行动后已证明的同用途角标给出代表/省略动作，
 范围和身份限制见[角标选择等价](ai-post-main-corner-choice-proof-20261023.md)。
+搜索v24扩展既有`postMainPlanSpec`的[不活动保留牌范围](ai-post-main-plan-proof-20261022.md)，
+不增加接口、状态合并或新预算；未知和活动保留牌仍回到普通搜索。
 新的开发顺序见 [AI 开发流程](ai-development-workflow.md)。
 
 ## 机器决策调用链

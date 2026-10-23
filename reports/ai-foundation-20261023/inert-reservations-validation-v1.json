@@ -1,0 +1,180 @@
+{
+  "schemaVersion": "seti-ai-inert-reservations-validation-v1",
+  "date": "2026-10-23",
+  "baseCommit": "7bf025bed4410373c900b454158a478d1dfc8733",
+  "snapshot": "/private/tmp/seti-ai-stage32-20261023-zgr_jyca",
+  "searchVersion": "seti-complete-decision-search-v24",
+  "proof": "seti-quiet-post-main-default-value-plan-v6",
+  "scope": "Only phase-limited post-main proof eligibility changes. State identity, payment exit sets, factory budgets, and evaluator unchanged. No full-game claim.",
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "18994107faa08d94deb06980ae4d6a41e3894baf56f52cf49e6dfb983b16c961",
+    "randomizer/game/ai/decision-search.js": "d922236bf3a58b5a9a7cc4e57130d62fe804d0062c0fe2779dc76ff97afb5d60",
+    "randomizer/game/ai/post-main-inert-reservations.test.js": "cee971a4f5680e0619d372266c02681b5c61c7f4fd9d5b8574b574619da5b611",
+    "randomizer/game/ai/inert-reservation.test.js": "817e74ca521a08a9b728f9a670811166beab486a00ab19b6e869e9d912936cce",
+    "randomizer/index.html": "fb7a4db8aed1eaf2c284dc1d5e94fcb91b92841919932231d937ffad9c136ad5",
+    "tools/node-test-inventory.js": "0d960d5af8f8a302a4193eb1aaab49d3b1cf0e05684174ff5fc073dfb13aa76a",
+    "tools/audit_v_state_inputs.js": "f7329bde3b4ad05ec73b0a02a59c879e921150c7bbbd955432a6c64f148e851d",
+    "adhoc/audit-ai-decision-corpus-20261023-v19.js": "0e5c78a450826a04a85e9a971d38f14bc14a0a63a58980af0fe21f62a37ed0a6",
+    "adhoc/profile-ai-late-semantic-case062-20261023-v5.js": "e5165a2351bdc0243b65d0d80a8148cf179759fb7eab1e0169bb19ea3d53cba1",
+    "adhoc/ai-inert-reservations-design-20261023-v1.md": "2a9ccd7286240bb715837923b35e7d7b7573f8a45445c70495acf154f28fd178",
+    "docs/ai-development-workflow.md": "7414dba9a831d8c7f06631062e410d2ba71744b878f558d5073493ae2c96a075",
+    "docs/ai-search-agent-contract-20261023.md": "60b83803a861f8130a3a1baff346c7265632aa525051d0ad410e91a187e0ddf2",
+    "docs/ai-interface-inventory-20261022.md": "9c11742734518d9badbb53141a0e10b518bb21344ee5ffbe4bd3788484e191cc",
+    "docs/ai-post-main-plan-proof-20261022.md": "fb4cd48c33df918dce012f1baa7eb82c8c0a686465d16d47b9183f58d736d25e",
+    "docs/ai-implementation-20261022.md": "94e9a5390d462f7d7e85b271f41a7e3ed284d2951865b8f3d2b0ea6cb73e0203"
+  },
+  "runtimeImportVerification": {
+    "reports": [
+      "decision-corpus-audit-v19.json",
+      "late-semantic-case062-v5.json"
+    ],
+    "importsPerReport": 83,
+    "allHashesMatchSnapshot": true
+  },
+  "node": {
+    "command": "node tools/run_node_tests.js",
+    "initialExitCode": 1,
+    "initialUnit": {
+      "passed": 127,
+      "failed": 1,
+      "total": 128,
+      "seconds": 196.3
+    },
+    "fullFlow": {
+      "passed": 1,
+      "failed": 0,
+      "seconds": 0.51
+    },
+    "initialLogPath": "reports/ai-foundation-20261023/inert-reservations-full-node-v1.log",
+    "failure": "One old test still required all opponent reservations and B45 static scoring to reject the post-main proof. These are now accepted by the reviewed phase closure.",
+    "revisedContractTest": {
+      "path": "randomizer/game/ai/inert-reservation.test.js",
+      "originalSha256": "afebd8dadfaa8e7495f14ffda33dbb244c678c5a6ff6675dd0f5d4c61de9b715",
+      "finalSha256": "817e74ca521a08a9b728f9a670811166beab486a00ab19b6e869e9d912936cce",
+      "command": "node randomizer/game/ai/inert-reservation.test.js",
+      "exitCode": 0,
+      "logPath": "reports/ai-foundation-20261023/inert-reservations-revised-contract-v1.log",
+      "changes": "Replace the two stale eligibility assertions with actual full unpruned/pruned optimum, first-action and shortest-input comparisons; keep all 40 formal trade leaves and the profitable active-B44 movement counterexample."
+    },
+    "runtimeChangedAfterInitialSuite": false,
+    "allOther127TestsUnchangedAfterInitialSuite": true,
+    "effectiveUnitFilesVerified": 128,
+    "limitation": "This combines the initial 127 passes with the corrected test rerun; it is not a single all-green full-run log."
+  },
+  "browser": {
+    "command": "node tools/run_browser_smokes.js --match production-start-button --match production-search-agent-entry --match production-completion-agent-parity",
+    "passed": 3,
+    "failed": 0,
+    "logPath": "reports/ai-foundation-20261023/inert-reservations-browser-v1.log"
+  },
+  "syntaxPath": "reports/ai-foundation-20261023/inert-reservations-syntax-v1.json",
+  "stateValueAuditPath": "reports/ai-foundation-20261023/state-value-input-audit-v23.json",
+  "baselineReproduction": {
+    "baseCommit": "7bf025bed4410373c900b454158a478d1dfc8733",
+    "newTestPath": "randomizer/game/ai/post-main-inert-reservations.test.js",
+    "logPath": "reports/ai-foundation-20261023/inert-reservations-before-v1.log",
+    "failure": "The new test first formally plays DLC39 from original case152 and skips its free movement; base postMainPlanSpec returns null at the new eligibility assertion. Running the current test against the base fails at this same assertion before later cases."
+  },
+  "semanticComparison": {
+    "postMainInertReservations": "passed",
+    "rows": [
+      {
+        "label": "cash-data-income",
+        "raw": 145,
+        "pruned": 41,
+        "value": 21
+      },
+      {
+        "label": "cash-move",
+        "raw": 259,
+        "pruned": 1,
+        "value": 20
+      },
+      {
+        "label": "consumed-visits",
+        "raw": 259,
+        "pruned": 1,
+        "value": 20
+      },
+      {
+        "label": "unreachable-launch-orbit-land",
+        "raw": 259,
+        "pruned": 1,
+        "value": 20
+      },
+      {
+        "label": "no-probe-visits",
+        "raw": 28,
+        "pruned": 1,
+        "value": 19
+      },
+      {
+        "label": "actual152-after-dlc39",
+        "pruned": 608,
+        "value": 31,
+        "actionId": "place_data:50a9ac16",
+        "distance": 14,
+        "scope": "Actual formal continuation; no unpruned complete-graph comparison claimed."
+      }
+    ]
+  },
+  "rejectedStates": [
+    "Before main action",
+    "Unconsumed reachable visit trigger",
+    "Stale modelCardId consumption record",
+    "Historical launch trigger pending at turn end (actual formal decision observed)",
+    "Already satisfied blue-trace task",
+    "Probe-location scoring"
+  ],
+  "fixedGate": {
+    "path": "reports/ai-foundation-20261023/decision-corpus-audit-v19.json",
+    "passed": 4,
+    "failed": 4,
+    "budget": {
+      "transitions": 256,
+      "nodes": 257,
+      "frontier": 256,
+      "milliseconds": 600
+    },
+    "case152ProofNodes": 1,
+    "case152ExcludedActions": 11,
+    "status": "not-passed"
+  },
+  "complexDecision": {
+    "path": "reports/ai-foundation-20261023/late-semantic-case062-v5.json",
+    "complete": false,
+    "transitions": 4096,
+    "nodes": 2910,
+    "unresolved": 2276,
+    "milliseconds": 6280.315167,
+    "sameCallCountsAsPreviousRuntime": true,
+    "explanation": "Turing is outside this post-main plan company scope. The diagnostic graph does not shrink; do not attribute time variation to speedup."
+  },
+  "evidenceHashes": {
+    "reports/ai-foundation-20261023/post-main-rule-census-v1.json": "228b6c52d4e1315a70a0799fc8c00cd6fdd73503e670ccef6c0b69ab566d7494",
+    "reports/ai-foundation-20261023/inert-reservations-before-v1.log": "6c047eabfdd41ffefb2bd2e15a634f6267f841a0526ad5d02dcac24e6c15505f",
+    "reports/ai-foundation-20261023/inert-reservations-full-node-v1.log": "41bdad7d5ee3785c7b784040361726e6e2686ae4bdbbfb8253f1358948ca4461",
+    "reports/ai-foundation-20261023/inert-reservations-revised-contract-v1.log": "f95e04c87083513365956a1826e235eb3d4e3275491c7c7ef8999219ccf39d54",
+    "reports/ai-foundation-20261023/state-value-input-audit-v23.log": "598387182d029935b2223086ef0a1dcac4c308c1aeb2d3e3e57f34f0db895c80",
+    "reports/ai-foundation-20261023/inert-reservations-browser-v1.log": "329fc970ecd340bad18e78fb597e03fc8cdfe83b6b3334b4917ed29c285ea95f",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-001-v19.raw.json": "9f45e368127aaed0735bc4bc156dacf6627d45a910f4f650461e53eecf731816",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-003-v19.raw.json": "5af2c4f3518f51be5a517f6fda787273817549bd17a4ea14ce20427944e21788",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-008-v19.raw.json": "bf4b4112e15aadd1ae59ca8931a8b6930dcef54528d4d2661ed8405fd0ecfb9e",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-011-v19.raw.json": "85dd914df33cef17246f76817d706d62f0bd79627a277aa5a2f1562ee2320a1c",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-009-v19.raw.json": "1860eb43aa09254e74e501c42f45feeea78e22476cb24918fe20fe4f495dc6e6",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-062-v19.raw.json": "73833cc5fbf63fb0b348c1c601b392fd78e513f4213a953420bcee1538f0292b",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-105-v19.raw.json": "070be1788a90c461d32a05314f00f2ccf51959fe498a9c046aeb40fd66a9466c",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-152-v19.raw.json": "7ce01c121efe83056c48f9d03675e1d9e382433342399784df412ffef702ba35",
+    "reports/ai-foundation-20261023/decision-corpus-audit-v19.json": "cf5a8a251c5fd77f4ada8dd7d8b9191344d21b04eb019860374cd6bda3cbf45f",
+    "reports/ai-foundation-20261023/decision-corpus-audit-v19.log": "fa84a1ed779ba38c882a76d52b2ccb892e591c20fd56bbbc8428d661c194ef7d",
+    "adhoc/ai-decision-corpus-20261023-v1/late-semantic-case062-v5.raw.json": "6a6c2b5ae6284b4b4dfef27d7d272041a3c4aa996a66565440ac1d1c16648518",
+    "reports/ai-foundation-20261023/late-semantic-case062-v5.json": "68912f66929cd3a14b68a63c49a36acf49a4ddbfacb147aa6de8726a771460ac",
+    "reports/ai-foundation-20261023/late-semantic-case062-v5.log": "d5defbdb6efbfdb9edfe34ace1c5abe04aca2933669e0c49969b81c5f72c76e0",
+    "reports/ai-foundation-20261023/inert-reservations-syntax-v1.json": "08aee61bbe36eaf95bad45f918ca075c26000b85dc1aece6f08c2e3aab953b3d",
+    "reports/ai-foundation-20261023/state-value-input-audit-v23.json": "07414fd27621ae67001f2927c62306a535efafefad98bd153b54540aaf21e096"
+  },
+  "newSearchFullGames": 0,
+  "newSearchFinalScores": null,
+  "fullGame180SecondAcceptance": "not-run; decision completion gate remains unmet",
+  "nextAction": "Investigate before-main preparation-chain state expansion. Do not repeat identical Turing diagnostics until a new mechanism can affect that scope."
+}

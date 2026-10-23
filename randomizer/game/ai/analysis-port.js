@@ -703,6 +703,40 @@
       }));
     }
 
+    function hasPostMainInertReservations(state, hasOwnRockets) {
+      if (!hasTradeInertReservations(state)) return false;
+      const owner = state.players.players.find(player => player.id === seatId);
+      const reserved = owner.reservedCards.map(card => {
+        const copy = structuredClone(card);
+        // 旧modelCardId下的消耗记录在正式流程中会重置，不能据此证明触发器已用完。
+        cardEffects.ensureCardEffectState(copy);
+        return copy;
+      });
+      // turn_end还会重新收集历史事件；没有新事件不等于没有待结算触发。
+      if ((state.turn.type1TriggerEvents || []).some(event => cardEffects.collectMatchingTriggers(
+        { ...owner, reservedCards: reserved }, event).length)) return false;
+      const unreachableEvents = new Set(["launch", "orbit", "land", "researchTech", "signalMarked", "playCard"]);
+      if (!hasOwnRockets) for (const type of ["move", "visitPlanet", "visitAsteroid", "visitComet"]) unreachableEvents.add(type);
+      return reserved.every(card => {
+        const model = cardEffects.getCardModel(card), scoring = model.endGameScoring;
+        if (scoring && !["sectorWinsByColor", "traceCount", "techCount", "distinctSignalSectors", "planetOrbitOrLand",
+          "unmarkedFinalRightmost", "planetLandingPairs", "allOrbitOrLand"].includes(scoring.kind)
+          || model.tasks != null && !Array.isArray(model.tasks)) return false;
+        if ((model.triggers || []).some(trigger => !card.cardEffectState.consumedTriggerIds.includes(trigger.id)
+          && !(trigger.event.types?.length ? trigger.event.types : [trigger.event.type]).every(type => unreachableEvents.has(type)))) return false;
+        return (model.tasks || []).every(task => {
+          const condition = task.condition, fields = { traceCount: ["traceType", "count"], completedSectors: ["count"],
+            completedSectorsByColor: ["color", "count"] }[condition?.type];
+          if (!fields || Object.keys(task).some(key => !["id", "condition", "rewards"].includes(key))
+            || Object.keys(condition).some(key => key !== "type" && !fields.includes(key))
+            || !Number.isSafeInteger(condition.count) || condition.count < 1
+            || condition.type === "traceCount" && !["blue", "pink", "yellow"].includes(condition.traceType)) return false;
+          return card.cardEffectState.completedTaskIds.includes(task.id)
+            || !cardEffects.taskConditionMet(task, owner, { data: state.data, aliens: state.aliens });
+        });
+      });
+    }
+
     function describeCardTradeBound(stored, node) {
       const session = stored.envelope.session?.session;
       const effect = session?.queue?.[0];
@@ -939,7 +973,7 @@
       if (state.turn.currentPlayerId !== seatId || !owner?.mainActionCompleted
         || owner.passCompletionPending || state.turn.passedPlayerIds.includes(seatId) || state.match.initialSetup
         || state.turn.activePlayerCount !== 4 || owner.industryBorrowedTechTileId
-        || !hasOnlyOwnInertReservations(state, { sectorTasks: true }) || (owner.reservedCards.length && ownRockets.length)
+        || !hasPostMainInertReservations(state, ownRockets.length > 0)
         || state.turn.cardTurnEventBonuses?.length
         || Object.values(state.aliens.aliens).some(slot => slot.revealed || alienState.isAlienReadyToReveal(slot))
         || !quietCompany
@@ -1042,7 +1076,7 @@
       if (scoreUpperBound >= scoreThreshold) return null;
       const transition = turnFlow.advanceTurnAfterPlayerAction(structuredClone(state), seatId);
       if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded || transition.nextPlayerId === seatId) return null;
-      return freeze({ proof: "seti-quiet-post-main-default-value-plan-v5", retainedActionIds: kept.map(action => action.actionId),
+      return freeze({ proof: "seti-quiet-post-main-default-value-plan-v6", retainedActionIds: kept.map(action => action.actionId),
         excludedActionIds: excluded.map(action => action.actionId), maximumValueIncrease, scoreUpperBound, scoreThreshold,
         incomeReachable, retainedDataCardCount: dataCornerIds.size });
     }

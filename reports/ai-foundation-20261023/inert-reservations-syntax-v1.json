@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "seti-ai-syntax-validation-v1",
+  "checks": [
+    {
+      "path": "randomizer/game/ai/analysis-port.js",
+      "sha256": "18994107faa08d94deb06980ae4d6a41e3894baf56f52cf49e6dfb983b16c961",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/decision-search.js",
+      "sha256": "d922236bf3a58b5a9a7cc4e57130d62fe804d0062c0fe2779dc76ff97afb5d60",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/post-main-inert-reservations.test.js",
+      "sha256": "cee971a4f5680e0619d372266c02681b5c61c7f4fd9d5b8574b574619da5b611",
+      "exitCode": 0
+    },
+    {
+      "path": "randomizer/game/ai/inert-reservation.test.js",
+      "sha256": "817e74ca521a08a9b728f9a670811166beab486a00ab19b6e869e9d912936cce",
+      "exitCode": 0
+    },
+    {
+      "path": "tools/node-test-inventory.js",
+      "sha256": "0d960d5af8f8a302a4193eb1aaab49d3b1cf0e05684174ff5fc073dfb13aa76a",
+      "exitCode": 0
+    },
+    {
+      "path": "tools/audit_v_state_inputs.js",
+      "sha256": "f7329bde3b4ad05ec73b0a02a59c879e921150c7bbbd955432a6c64f148e851d",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/audit-ai-decision-corpus-20261023-v19.js",
+      "sha256": "0e5c78a450826a04a85e9a971d38f14bc14a0a63a58980af0fe21f62a37ed0a6",
+      "exitCode": 0
+    },
+    {
+      "path": "adhoc/profile-ai-late-semantic-case062-20261023-v5.js",
+      "sha256": "e5165a2351bdc0243b65d0d80a8148cf179759fb7eab1e0169bb19ea3d53cba1",
+      "exitCode": 0
+    }
+  ],
+  "passed": 8,
+  "failed": 0
+}

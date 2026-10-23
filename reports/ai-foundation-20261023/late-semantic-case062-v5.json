@@ -1,0 +1,685 @@
+{
+  "scope": "case062 after inert reservation closure at existing 4096/15s diagnostic budget; not fixed256 or game acceptance",
+  "fixturePath": "adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json",
+  "fixtureSha256": "e76dc0b1b72a00a07ae1e69c02ae3b0a2ad07ec4bc2702a8076ef4eaf6b82795",
+  "complete": false,
+  "stopReason": "transition-budget",
+  "unresolvedCount": 2276,
+  "rootUnchanged": true,
+  "milliseconds": 6280.315167,
+  "diagnostics": {
+    "transitions": 4096,
+    "nodes": 2910,
+    "equivalents": 663,
+    "selectionMacros": 262,
+    "peakFrontier": 2276,
+    "dominancePrunes": 79,
+    "resourceDominance": "enabled",
+    "moneyCapacityPrunes": 0,
+    "moneyCapacityDominance": "enabled",
+    "cardTradePrunes": 55,
+    "cardTradePruning": "enabled",
+    "postMainProofNodes": 0,
+    "postMainExcludedActions": 0,
+    "postMainPruning": "enabled",
+    "openingProofNodes": 0,
+    "openingExcludedActions": 0,
+    "openingPruning": "enabled",
+    "openingPassMacros": 0,
+    "cardChoiceProofNodes": 2,
+    "cardChoiceExcludedActions": 4,
+    "cardCornerProofNodes": 364,
+    "cardCornerExcludedActions": 488,
+    "cardChoiceEquivalence": "enabled",
+    "resourceModelKey": "{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+    "continuation": "not-requested",
+    "planContinuation": "off",
+    "milliseconds": 6279.921166,
+    "limits": {
+      "transitions": 4096,
+      "nodes": 4097,
+      "frontier": 4096,
+      "milliseconds": 15000
+    }
+  },
+  "port": {
+    "nodeCount": 3573,
+    "submissionCount": 4096,
+    "cacheHits": 0,
+    "cacheEntries": 0,
+    "observationCount": 365,
+    "identityCount": 2910,
+    "maxCacheEntries": 0,
+    "decodedStateCacheEntries": 1,
+    "maxDecodedStateCacheEntries": 1,
+    "committedDecodeCount": 3189,
+    "committedDecodeHits": 5961,
+    "selectionEvidenceEntries": 0,
+    "maxSelectionEvidenceEntries": 1,
+    "planEvidenceEntries": 0,
+    "planPrefixEntries": 0,
+    "maxPlanPrefixEntries": 32,
+    "milliseconds": {
+      "restore": 449.6657209999932,
+      "execute": 1933.3537310000188,
+      "observation": 388.71316399999887,
+      "checkpoint": 585.784644999999,
+      "resourceOrder": 367.2984219999657,
+      "valueBound": 4.320708999990302,
+      "postMainPlan": 49.1402060000064
+    }
+  },
+  "calls": {
+    "stable/scan/standard-scan": 48,
+    "stable/play_card/": 205,
+    "stable/pass/pass": 54,
+    "stable/move/": 475,
+    "stable/quick_trade/": 1080,
+    "stable/industry/": 136,
+    "stable/card_corner/": 446,
+    "stable/place_data/place-data": 152,
+    "decision/choose_target/": 209,
+    "stable/end_turn/end-turn": 98,
+    "decision/choose_card/pass-hand-limit": 15,
+    "decision/choose_payment/move-payment": 196,
+    "decision/choose_card/trade-card-selection": 2,
+    "decision/choose_target/quick-move": 43,
+    "decision/choose_target/residual-domain": 144,
+    "decision/choose_card/": 6,
+    "stable/launch/": 1
+  },
+  "details": {
+    "stable/scan/standard-scan/standard-scan/": {
+      "count": 48,
+      "milliseconds": 61.292412000000425,
+      "target": {
+        "kind": "standard-scan"
+      },
+      "payload": {},
+      "childStatuses": {
+        "decision": 48
+      }
+    },
+    "stable/play_card///": {
+      "count": 205,
+      "milliseconds": 316.99728400000413,
+      "target": {
+        "cardInstanceId": "card-3-0"
+      },
+      "payload": {
+        "cost": {
+          "credits": 1
+        },
+        "handIndex": 0
+      },
+      "childStatuses": {
+        "stable": 123,
+        "decision": 82
+      }
+    },
+    "stable/pass/pass/pass/": {
+      "count": 54,
+      "milliseconds": 78.92674700000026,
+      "target": {
+        "kind": "pass"
+      },
+      "payload": {},
+      "childStatuses": {
+        "decision": 15,
+        "information-barrier": 39
+      }
+    },
+    "stable/move///": {
+      "count": 475,
+      "milliseconds": 459.94495299999653,
+      "target": {
+        "rocketId": 5,
+        "deltaX": 0,
+        "deltaY": 1
+      },
+      "payload": {
+        "direction": "out",
+        "requiredMovePoints": 1
+      },
+      "childStatuses": {
+        "decision": 475
+      }
+    },
+    "stable/quick_trade///": {
+      "count": 1080,
+      "milliseconds": 1647.5238410000106,
+      "target": {
+        "tradeId": "credits-for-energy"
+      },
+      "payload": {
+        "cost": {
+          "credits": 2
+        },
+        "gain": {
+          "energy": 1
+        }
+      },
+      "childStatuses": {
+        "stable": 247,
+        "decision": 833
+      }
+    },
+    "stable/industry///": {
+      "count": 136,
+      "milliseconds": 125.76449899999957,
+      "target": {
+        "companyId": "图灵系统",
+        "abilityId": "turing_borrow_tech"
+      },
+      "payload": {},
+      "childStatuses": {
+        "decision": 136
+      }
+    },
+    "stable/card_corner///move": {
+      "count": 220,
+      "milliseconds": 256.20233400000086,
+      "target": {
+        "cardInstanceId": "card-3-0"
+      },
+      "payload": {
+        "kind": "move",
+        "multiplier": 1
+      },
+      "childStatuses": {
+        "decision": 220
+      }
+    },
+    "stable/card_corner///resource": {
+      "count": 226,
+      "milliseconds": 379.27291800000137,
+      "target": {
+        "cardInstanceId": "card-40-0"
+      },
+      "payload": {
+        "kind": "resource",
+        "multiplier": 1
+      },
+      "childStatuses": {
+        "stable": 226
+      }
+    },
+    "stable/place_data/place-data/place-data/": {
+      "count": 152,
+      "milliseconds": 123.77704100000281,
+      "target": {
+        "kind": "place-data"
+      },
+      "payload": {},
+      "childStatuses": {
+        "decision": 152
+      }
+    },
+    "decision/choose_target///": {
+      "count": 209,
+      "milliseconds": 321.91237399999807,
+      "target": {
+        "choiceId": "nebula:sector-2-a",
+        "nebulaId": "sector-2-a",
+        "sectorX": 1
+      },
+      "payload": {
+        "gainData": true
+      },
+      "childStatuses": {
+        "decision": 53,
+        "stable": 156
+      }
+    },
+    "stable/end_turn/end-turn/end-turn/": {
+      "count": 98,
+      "milliseconds": 165.67045399999887,
+      "target": {
+        "kind": "end-turn"
+      },
+      "payload": {},
+      "childStatuses": {
+        "other-owner": 98
+      }
+    },
+    "decision/choose_card/pass-hand-limit/pass-hand-limit/": {
+      "count": 15,
+      "milliseconds": 17.25066600000008,
+      "target": {
+        "kind": "pass-hand-limit",
+        "choiceId": "card-3-0",
+        "cardIds": [
+          "card-3-0"
+        ]
+      },
+      "payload": {
+        "discardCount": 1
+      },
+      "childStatuses": {
+        "information-barrier": 15
+      }
+    },
+    "decision/choose_payment/move-payment/move-payment/": {
+      "count": 196,
+      "milliseconds": 321.65417100000485,
+      "target": {
+        "kind": "move-payment",
+        "choiceId": "energy",
+        "cardIds": []
+      },
+      "payload": {
+        "energyCost": 1,
+        "requiredMovePoints": 1
+      },
+      "childStatuses": {
+        "stable": 186,
+        "decision": 10
+      }
+    },
+    "decision/choose_card/trade-card-selection/trade-card-selection/": {
+      "count": 2,
+      "milliseconds": 3.2967080000000806,
+      "target": {
+        "kind": "trade-card-selection",
+        "choiceId": "public:2",
+        "source": "public",
+        "slotIndex": 2,
+        "cardInstanceId": "card-45-0"
+      },
+      "payload": {
+        "slotIndex": 2
+      },
+      "childStatuses": {
+        "information-barrier": 2
+      }
+    },
+    "decision/choose_target/quick-move/quick-move/": {
+      "count": 43,
+      "milliseconds": 83.15224999999941,
+      "target": {
+        "kind": "quick-move",
+        "choiceId": "move:5:out",
+        "rocketId": 5,
+        "deltaX": 0,
+        "deltaY": 1,
+        "direction": "out"
+      },
+      "payload": {
+        "direction": "out"
+      },
+      "childStatuses": {
+        "stable": 42,
+        "decision": 1
+      }
+    },
+    "decision/choose_target/residual-domain/residual-domain/": {
+      "count": 144,
+      "milliseconds": 220.70308100000307,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "tech:orange1",
+        "tileId": "orange1"
+      },
+      "payload": {},
+      "childStatuses": {
+        "stable": 144
+      }
+    },
+    "decision/choose_card///": {
+      "count": 6,
+      "milliseconds": 9.55375099999992,
+      "target": {
+        "choiceId": "public:card-46-0:sector-2-b",
+        "cardInstanceId": "card-46-0",
+        "publicSlotIndex": 0,
+        "nebulaId": "sector-2-b"
+      },
+      "payload": {
+        "gainData": true
+      },
+      "childStatuses": {
+        "information-barrier": 6
+      }
+    },
+    "stable/launch///": {
+      "count": 1,
+      "milliseconds": 1.9692500000001019,
+      "target": null,
+      "payload": {},
+      "childStatuses": {
+        "stable": 1
+      }
+    }
+  },
+  "costs": [
+    {
+      "key": "stable/quick_trade/",
+      "milliseconds": 73.64795800000047
+    },
+    {
+      "key": "stable/quick_trade/",
+      "milliseconds": 10.210792000000026
+    },
+    {
+      "key": "stable/quick_trade/",
+      "milliseconds": 6.499165999999832
+    },
+    {
+      "key": "stable/scan/standard-scan",
+      "milliseconds": 4.342042000000006
+    },
+    {
+      "key": "stable/play_card/",
+      "milliseconds": 4.172582999999804
+    },
+    {
+      "key": "stable/play_card/",
+      "milliseconds": 3.8807919999999996
+    },
+    {
+      "key": "stable/quick_trade/",
+      "milliseconds": 3.6330830000006245
+    },
+    {
+      "key": "stable/quick_trade/",
+      "milliseconds": 3.580500000000029
+    },
+    {
+      "key": "stable/end_turn/end-turn",
+      "milliseconds": 3.3635829999993803
+    },
+    {
+      "key": "decision/choose_payment/move-payment",
+      "milliseconds": 3.2832919999999604
+    }
+  ],
+  "roots": [
+    {
+      "actionId": "scan:96a13338",
+      "target": 1,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "scan"
+    },
+    {
+      "actionId": "play_card:3b8ed751",
+      "target": 2,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "play_card"
+    },
+    {
+      "actionId": "play_card:6c2cb108",
+      "target": 3,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "play_card"
+    },
+    {
+      "actionId": "play_card:893952c3",
+      "target": 4,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "play_card"
+    },
+    {
+      "actionId": "play_card:3c03b8cf",
+      "target": 5,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "play_card"
+    },
+    {
+      "actionId": "play_card:69f1c2e9",
+      "target": 6,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "play_card"
+    },
+    {
+      "actionId": "pass:c858282e",
+      "target": 7,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "pass"
+    },
+    {
+      "actionId": "move:378fd8ec",
+      "target": 8,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "move"
+    },
+    {
+      "actionId": "move:f91253b6",
+      "target": 9,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "move"
+    },
+    {
+      "actionId": "move:dc23438a",
+      "target": 10,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "move"
+    },
+    {
+      "actionId": "quick_trade:e49b3d11",
+      "target": 11,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "quick_trade"
+    },
+    {
+      "actionId": "quick_trade:0989fdbb",
+      "target": 12,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "quick_trade"
+    },
+    {
+      "actionId": "quick_trade:cd9ee5f5",
+      "target": 13,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "quick_trade"
+    },
+    {
+      "actionId": "quick_trade:c6858538",
+      "target": 14,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "quick_trade"
+    },
+    {
+      "actionId": "quick_trade:e58a3c02",
+      "target": 15,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "quick_trade"
+    },
+    {
+      "actionId": "quick_trade:8dc6d95d",
+      "target": 16,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "quick_trade"
+    },
+    {
+      "actionId": "quick_trade:7c6bb482",
+      "target": 17,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "quick_trade"
+    },
+    {
+      "actionId": "quick_trade:86448258",
+      "target": 18,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "quick_trade"
+    },
+    {
+      "actionId": "industry:f3c9eca0",
+      "target": 19,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "industry"
+    },
+    {
+      "actionId": "card_corner:b1d66006",
+      "target": 20,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "card_corner"
+    },
+    {
+      "actionId": "card_corner:66bedbdc",
+      "target": 21,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "card_corner"
+    },
+    {
+      "actionId": "card_corner:b1337749",
+      "target": 22,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "card_corner"
+    },
+    {
+      "actionId": "card_corner:173af3f0",
+      "target": 23,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "card_corner"
+    },
+    {
+      "actionId": "card_corner:884cff75",
+      "target": 24,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "card_corner"
+    },
+    {
+      "actionId": "place_data:01c038e2",
+      "target": 25,
+      "value": null,
+      "completion": "pending",
+      "valueType": "attained-lower-bound",
+      "family": "place_data"
+    }
+  ],
+  "rawPath": "adhoc/ai-decision-corpus-20261023-v1/late-semantic-case062-v5.raw.json",
+  "rawSha256": "6a6c2b5ae6284b4b4dfef27d7d272041a3c4aa996a66565440ac1d1c16648518",
+  "sourceHashes": {
+    "randomizer/training/simulation-rule-composition.js": "24d04512bcd67fd226dfc272a2369bfd769dfc2c04b40e01a75a40bdfbbbe0a3",
+    "randomizer/game/production-kernel.js": "49ebd31c0db6a75fe662dea8f2cd7077e409b13c1244ccac73769e305040a1eb",
+    "randomizer/game/state/state-store.js": "25f452041322fb493c750ace6407ee15018dc0c767ca48db0f4a3290eeb35ed5",
+    "randomizer/game/state/high-coupling-slices.js": "86e4a9ccc20e8804e008c25b3354cfd964fe091248d1755fad7a59495d57fd2b",
+    "randomizer/game/state/low-coupling-slices.js": "5104bca6ef4cea25856ca88c5ecc07b2d363aa732f8d70fc89cb34d4f6ca08b7",
+    "randomizer/game/cards/task-state.js": "b7bdd2c0b559f731523f4ce37b485d6b40d53dd881e6ebce37d311a788d0cd90",
+    "randomizer/game/tech/catalog.js": "fa2f805c29052eab58f26855174dd5d76da9f70c50865b4ace781d89ccdb5bda",
+    "randomizer/game/effects/session-runtime.js": "eb3eb1be726780192d96525b2326bc9142d597c76c389b7b34bd3f66a8f36167",
+    "randomizer/game/actions/standard-action.js": "9bfd8d8a1bd6120807dfeb7f3a4364ae7c39bba9443b243821a6d3789ca93b7d",
+    "randomizer/game/state/initial-game-state.js": "5bdd4c17e0d737415b324205b9a66b0bff5c8675170001688f0edd72aba66d98",
+    "randomizer/game/random.js": "92f4d5c9257f8c36f0766c431ccedd3aef6dce87c089836951c9ebae9678686a",
+    "randomizer/game/state/fixed-world-config.js": "f507dfdfe4c2a0b857a01fea361b86a866e22e622e9ffd1dd060d355c2fd5459",
+    "randomizer/game/players.js": "f98ff1eced6fbdefa139cfb34f32f46e7afab1d66bd85458cab0ea240cb0bbbe",
+    "randomizer/solar-system/core.js": "3acb2281591e7b22322ed9bc1624f5ceb2831e209477270e3b49e90798309164",
+    "randomizer/solar-system/layout.js": "fb757393f99426784b23b8e42effb09055ec17951082923c85e2e9794609d477",
+    "randomizer/game/rockets.js": "a3924ee4ee1392a20671699b51b1e25b40fd08d0536c38acff4f882bba76ca74",
+    "randomizer/game/state/sequences.js": "a55ca5951946dfd5429741672ff36e2094dc198c466afc5ec240fadb2084ec9f",
+    "randomizer/game/planet-stats.js": "ef82551c1ea8b6f43262816cb80a7cc3cd11652c64b5175cff8cd8fcafc7f3c2",
+    "randomizer/game/planet-reference-layout.js": "c8ccd4452e92630708d23dfab1ee7d528ed0fe55977c8706935600f0bc17af1f",
+    "randomizer/game/actions/planet-rewards.js": "498db93607e3d13fb6bb5c359a3f60b537de7bc38bb2a9cc7b4d7e108fe8c705",
+    "randomizer/game/actions/scan-effects.js": "ea334dbde70c8002952569a15f15fd0e3f136efde7ae9092614753b9c48999eb",
+    "randomizer/game/tech/player-tech.js": "bb44ec09fb871e0c92053218823694ac48df57f3635dc0acfa517ef04168dbf2",
+    "randomizer/game/industry/passives.js": "d3d3215cc33467f7ceed675bcf4f6064436aa66e8c4dbeac4e6748aa96e3c111",
+    "randomizer/game/industry/catalog.js": "d94dbc9aae18cb1a5515e5686e88aa00dad61c922688baaa88e121037133901c",
+    "randomizer/game/effects/science-session.js": "029de78c50a1a064bb876022cfcb18ae56d27c51f07bdbb5903f6008043dadc1",
+    "randomizer/game/actions/research-tech.js": "1ae3e6b3dce07e8a92ad28c4c282e79d1381b6fff48fa150f2ae6e4db82cc534",
+    "randomizer/game/tech/resolver.js": "e52c3dc535c85ecef2c288e6fcf821f18611c2c2bae1ee30970c82574efbac03",
+    "randomizer/game/tech/board-state.js": "a0694120d45db58574a527694836bc3688337d787e90baae0dac3972d15211c2",
+    "randomizer/game/tech/bonuses.js": "6541ccf6de5b865f67faa478ff42c42d5fce3c8a11299ac6f6a8201c387f58a3",
+    "randomizer/game/tech/placement.js": "ea524c964e954fbf98d8b7b56122f4e252c53e2f15b0ecb521c5a99d52263473",
+    "randomizer/game/abilities/index.js": "58f01c1059e0f3cf3dbffdb03252943252f1097e279fb06b51bb7439496220dc",
+    "randomizer/game/abilities/rocket.js": "082d3bebe6a9cdb46d050c7d3e12bc04c4b62c50a05257a3833fe3bf9286a3af",
+    "randomizer/game/abilities/scan.js": "01709beb1dfc27af91b89ecf4bc9871dd919a1dddcaf4b40c2e340a4b8f955b2",
+    "randomizer/game/data/index.js": "68f79323130653fa1f2a292f19b6d01143785ed09b6b4b829cf6fe412c40d928",
+    "randomizer/game/data/placement.js": "c22364549c3a3bc5ce019b3a11de8951d829023f99a387a7f7d87cf8a65389e8",
+    "randomizer/game/data/state.js": "b6b9061cce1679e09342e208213fcff6959f381424787a5f01f5aebfd361e96c",
+    "randomizer/game/data/nebula-placement.js": "f1e099066d87d3ece7d24ac142cc4eee0f7ad5acd2d41753911b6f1d01ecc227",
+    "randomizer/game/data/nebula-state.js": "d7ac07b41e1317cf15ba019482165558a6e39060b1a76abd4d402be792995a88",
+    "randomizer/game/abilities/planet.js": "f95f41290c99457fa28265bd87a1ce7deee73190b38c0f5d9edef2bddd0ae9c8",
+    "randomizer/game/actions/shared.js": "2f35f3317c7d4d509f4c8ad8847c27176a25031909e5ebb72cd667f5f5ad5966",
+    "randomizer/game/aliens/aomomo.js": "986413d7da56665ac423b507f92832dce83519a6f94aa79280caa6d4377e4a3d",
+    "randomizer/game/aliens/placement.js": "3ec5839029fd04ab29ee9796ac05de49c42d12967880098b60cdaed160341596",
+    "randomizer/game/aliens/state.js": "34c637fe28acebda33f5018e0ac53373968785268c6328d500c947826a118829",
+    "randomizer/game/abilities/data.js": "1bf1cdb886f3a691938a0661695ae67b4ba2af4309c1f31697c0ee718008eef4",
+    "randomizer/game/abilities/tech.js": "567c269a3788fe67143828e992eff0619b8baedc4847780d7ecee291109c08c8",
+    "randomizer/game/tech/index.js": "1a9f59b462a90d40bab2a4567f4ee90288f9c076df2034f0f52f862f559d8c99",
+    "randomizer/game/cards/deck.js": "9ce529094559c5e14016962ab57157780fb210ca4ac868364981bba1d8f94121",
+    "randomizer/game/aliens/index.js": "adcd3fa19f71d904eb0a1af063fa71b4d5d82203d82d39c717164dc8b51ccb04",
+    "randomizer/game/aliens/catalog.js": "9f8d8998fdc6650890ce9e9abf722854bbfc316ac6fc42235d9002e67e3894c7",
+    "randomizer/game/aliens/jiuzhe.js": "82d776ae6879b88ea3ba0c654994d89772a6b7d1545c532947c5e59e714bf2f7",
+    "randomizer/game/aliens/yichangdian.js": "ba72c77d4605f78cd545daabc7fa5591139a8acce103f90bac3c28001afeebcf",
+    "randomizer/game/aliens/fangzhou.js": "9d80fac9fbd84ce947adcc86ad98cd3ec5a1c56bb98ce6ea96399294c619a47b",
+    "randomizer/game/aliens/banrenma.js": "38fd7776fb8bd7c343c9a59f37da237d48d52588e5f1ef28e4ae4504a343defe",
+    "randomizer/game/aliens/chong.js": "de65614f5aae989b2d79902fe51724a6ed85c2292a2d7677decbfff85f120838",
+    "randomizer/game/aliens/amiba.js": "81eefb293c298fd194d2570854c980b17606ff79fa765db5d0cfbfb9761b0648",
+    "randomizer/game/aliens/runezu.js": "338983840374234912cd3db00ce5994d1cb0b1a031dfbc51e58d103054d04768",
+    "randomizer/game/aliens/fangzhou-card1-queue.js": "8dbdaa750ec55fd2caae46b02946a7108ee1b0dcaa15d90fa91a1a12a997faf7",
+    "randomizer/game/aliens/reveal-card-grants.js": "e944721eef70a7df1ac0abc8004c26f9ee584dd768533940c5d66ac048e5cadb",
+    "randomizer/game/aliens/randomizer.js": "2ab1d5e42925e563dbf36da8306be17b4f2e730274711014d7197dc10411f73a",
+    "randomizer/game/industry/state.js": "07ae0e61fd21f349202c30260997302c54e6d6cb3e5735bdc340c130ad99c231",
+    "randomizer/game/industry/helios-passive.js": "8860a1c368226b1257c772cd8c671f19a55089af137f76c9de5b0b1cc3d9bd33",
+    "randomizer/game/industry/placement.js": "b3b3a127439b167e703bfc231135dda359604bc39ef344674681ada732e2b972",
+    "randomizer/game/cards/effects.js": "2fcbf8dcdadd16fb00ff7f0fc423780226cc123f5eb30ef53cdbb5932ec59bb9",
+    "randomizer/game/final-scoring.js": "4770b83ca0153b7ba0490fd10dc821334b9a36b3e559b1671b9b7b1328f943f3",
+    "randomizer/game/effects/residual-domain-session.js": "bdfc516c562c49186101f695065b1df12b9ffdda7106fd812bcbf4d62c4548a7",
+    "randomizer/game/industry/index.js": "f24fc4ad4b3351b21248d04c569a48ab480ff8356a3115872e1e2679f23a2a31",
+    "randomizer/game/industry/abilities.js": "3330f3e64519ddeed4b7c4f9c08b5a047b4525b48ce358cf58e1eb0ad6d6a5e9",
+    "randomizer/game/industry/strategy-passive.js": "8bae3cdb34075fe7df8c1963c2e6d9cb2ba8c64a5e773e775ff4bf969b22e77b",
+    "randomizer/game/end-game-scoring.js": "13c2989df4f601cc5677544f925e0dccc46e8775b64516e5027cd8e50ab8458f",
+    "randomizer/game/cards/play-domain.js": "964c5735c9d61fe6c87fcb711f94acf52416a5e0385b5608319985b9ad53a689",
+    "randomizer/game/initial-cards.js": "b0a0fa47c241d5e68a4a2e3c55adca8f687bf94c751346bde42cee682637b235",
+    "randomizer/game/rule-composition.js": "76c369648150153c62f8a9bf6fe66eadae3dc6635030fa3eac6584d918a3c4d9",
+    "randomizer/game/production-composition.js": "4347d4cf0b1bd3898527aea6b790777185b5791f71a0caf80901d9dc7be2ef0c",
+    "randomizer/game/effects/standard-action-session.js": "5b6c60ebdee4b05963ab861be8465e15c26039b5b1343059e7651d6d87433d81",
+    "randomizer/game/effects/probe-turn-session.js": "71d5f8a4890bc8b214d23997e50ded3693e5c235108760d1e12fe1f895e088f3",
+    "randomizer/game/turn-flow.js": "efae9c17ad7eab1698a2c20f7ba77b63eaeeb4f1d33133bf7a58f080522e39fc",
+    "randomizer/game/initial-setup.js": "e30d48741330426c2801f3b70766c720bd8440a539df3a92295c8c7de5b08b46",
+    "randomizer/game/actions/quick-trades.js": "508e5ba1b3e46f48525513ec1bc7628779aa89ec7ea4bae1d745c58a1fd20722",
+    "randomizer/app/rule-observation.js": "d1dc58cc707eb5f57db761c39ebf327abfadc0c45eb8f191f35fc7c7ef62c295",
+    "randomizer/app/simulation-contract.js": "3531d126a450c812ea0894834be9f85709ac28e1ebfb5a9dec657708b03f290a",
+    "randomizer/game/ai/analysis-port.js": "18994107faa08d94deb06980ae4d6a41e3894baf56f52cf49e6dfb983b16c961",
+    "randomizer/game/ai/decision-search.js": "d922236bf3a58b5a9a7cc4e57130d62fe804d0062c0fe2779dc76ff97afb5d60",
+    "randomizer/game/ai/state-value.js": "31f0718b2723190ec318262ae28241249ca0c2f3eafd36d0c22d9862c396d4cd"
+  }
+}

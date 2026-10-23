@@ -378,6 +378,27 @@ try {
       if (!proof || values.length !== 2 || values[0] !== values[1]) throw new Error("主行动后角标范围或实际一步值不一致");
       console.log(`[PASS] independent-post-main-corner-choice: value=${values[0]} excluded=${proof.excludedActionIds.length}`);
     } finally { cornerPort.close(); }
+    const inertFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+      "../adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json")));
+    if (!cornerComp.lifecycle.restore(inertFixture.compositionEnvelope).ok) throw new Error("不活动保留牌审计恢复失败");
+    const inertPlay = cornerComp.inputPort.enumerateActions({}).find(action => action.family === "play_card"
+      && action.target?.cardInstanceId === "card-41-0");
+    if (!inertPlay || !cornerComp.inputPort.submitAction(inertPlay).ok) throw new Error("不活动保留牌审计出牌失败");
+    const inertDecision = cornerComp.inspect().session.decision;
+    const inertSkip = inertDecision.choices.find(action => action.target?.skip);
+    if (!inertSkip || !cornerComp.inputPort.submitDecision({ decisionId: inertDecision.decisionId,
+      decisionVersion: inertDecision.decisionVersion, ownerId: inertDecision.ownerId, choice: inertSkip }).ok) throw new Error("不活动保留牌审计结束移动失败");
+    const inertPort = createAnalysisPort({ composition: cornerComp, seatId: inertFixture.seatId });
+    try {
+      const root = inertPort.openRoot(), proof = inertPort.postMainPlanSpec(root);
+      const evaluate = independentValue.createStateValueEvaluator(inertFixture.seatId);
+      const raw = root.observation, normalized = outcomeModel.createDecisionObservation(raw, { seatId: inertFixture.seatId });
+      if (!proof || evaluate(raw) !== evaluate(normalized)) throw new Error("不活动保留牌原始/标准V不一致");
+      const end = root.legalActions.find(action => action.family === "end_turn");
+      const after = inertPort.expand(root, end.actionId);
+      if (after.status !== "other-owner" || evaluate(after.observation) !== evaluate(raw)) throw new Error("不活动保留牌正式结束值改变");
+      console.log(`[PASS] independent-post-main-inert-reservations: value=${evaluate(raw)} excluded=${proof.excludedActionIds.length}`);
+    } finally { inertPort.close(); }
   } catch (error) {
     console.log(`[FAIL] independent-card-choice-equivalence: ${error.message}`);
     allPass = false;
