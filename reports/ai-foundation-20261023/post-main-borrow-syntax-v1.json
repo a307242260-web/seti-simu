@@ -1,0 +1,64 @@
+{
+  "rows": [
+    {
+      "path": "randomizer/game/ai/analysis-port.js",
+      "exitCode": 0,
+      "sha256": "33de9b9516c1387ae3b994e4ee2710a4d2c19becef70e85478a7d2a1d5d92d62",
+      "output": ""
+    },
+    {
+      "path": "randomizer/game/ai/decision-search.js",
+      "exitCode": 0,
+      "sha256": "e5e3a3a072bb3f37811cd84356dc6282a8ce5d198a4c4ab41d8dcc0cfdca2330",
+      "output": ""
+    },
+    {
+      "path": "randomizer/game/ai/post-main-borrow.test.js",
+      "exitCode": 0,
+      "sha256": "11110e1c0a8a3c9ca117e1ab5c2e7f9ddc86fa3dc53888f72ce09d675fd56568",
+      "output": ""
+    },
+    {
+      "path": "tools/node-test-inventory.js",
+      "exitCode": 0,
+      "sha256": "9b87d63fee3900ce5e0229ca54b885c8561790dba602a03115c03c83335db96b",
+      "output": ""
+    },
+    {
+      "path": "tools/audit_v_state_inputs.js",
+      "exitCode": 0,
+      "sha256": "f5ac9c89554f0c5179cdb9e705296fed502464a38917e39b4f2b21423937c19c",
+      "output": ""
+    },
+    {
+      "path": "adhoc/diagnose-ai-identity-projections-20261023-v1.js",
+      "exitCode": 0,
+      "sha256": "1213c5c60822179e9eb447cf1aab38e32c5f49093678e7c8e518ac2842bd8080",
+      "output": ""
+    },
+    {
+      "path": "adhoc/diagnose-ai-identity-projections-20261023-v2.js",
+      "exitCode": 0,
+      "sha256": "7f27284535e021e03385a62abea404c54ddd1cc864fa7ebabd5be7fc802bb489",
+      "output": ""
+    },
+    {
+      "path": "adhoc/benchmark-ai-post-main-borrow-20261023-v1.js",
+      "exitCode": 0,
+      "sha256": "150db89a9ea5f1d9bc57870be1cbd82ef630e3611218294b8ef2d5ddd1ebddba",
+      "output": ""
+    },
+    {
+      "path": "adhoc/audit-ai-decision-corpus-20261023-v24.js",
+      "exitCode": 0,
+      "sha256": "38ecbcfbeb02eb1a9cf3c30d63230ffc6feaa1679cf85287708f7b93e55d474e",
+      "output": ""
+    },
+    {
+      "path": "adhoc/profile-ai-late-semantic-case062-20261023-v10.js",
+      "exitCode": 0,
+      "sha256": "4edba77780fe3d243eb09479599b225ff5fe094e24b0d986ae939423a5e8b2f5",
+      "output": ""
+    }
+  ]
+}

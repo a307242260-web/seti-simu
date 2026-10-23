@@ -1,0 +1,10 @@
+{
+  "baseCommit": "17e92a1316721fec5e3dcb461bcd9909a8b71bf7",
+  "testedSnapshot": "/private/tmp/seti-ai-stage36-20261023-pi1wn5te",
+  "unchangedBaseFilesVerified": 3688,
+  "changedBaseFilesVerified": 9,
+  "sharedIndexSha256": "622e7bfce3d122b1a37562af7973296fc114d81a99b7921f2a2837c5871a9c02",
+  "explicitFiles": 43,
+  "runtimeImportsBoundToFinalSource": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot."
+}

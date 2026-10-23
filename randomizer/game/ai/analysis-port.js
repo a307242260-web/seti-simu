@@ -12,10 +12,11 @@
     common ? require("../actions/scan-effects") : root.SetiScanEffects,
     common ? require("../abilities/rocket") : root.SetiAbilityRocket,
     common ? require("../tech/resolver") : root.SetiTechResolver,
-    common ? require("../effects/probe-turn-session") : root.SetiProbeTurnSession);
+    common ? require("../effects/probe-turn-session") : root.SetiProbeTurnSession,
+    common ? require("../tech/board-state") : root.SetiTechBoardState);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState) {
   "use strict";
 
   // 已逐项审计的 Production 公司组合：钱电模拟和取牌待选分别检查各自的队列前提。
@@ -234,6 +235,7 @@
     let cornerChoices = new WeakMap();
     let preMainDataPlans = new WeakMap();
     let postMainPlans = new WeakMap();
+    let postMainBorrows = new WeakMap();
     const resourceGroups = new Map();
     let fork = null;
     let loadedEnvelope = null;
@@ -1022,6 +1024,62 @@
         excludedActionIds: excluded }) : null;
     }
 
+    function postMainBorrowSpec(node) {
+      const stored = nodes.get(node);
+      if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
+      if (postMainBorrows.has(node)) return postMainBorrows.get(node);
+      const result = describePostMainBorrow(stored, node);
+      postMainBorrows.set(node, result);
+      return result;
+    }
+
+    function describePostMainBorrow(stored, node) {
+      if (node.status !== "stable" || stored.envelope.session) return null;
+      const state = readIdentityState(stored.envelope), owner = state.players.players.find(player => player.id === seatId);
+      const company = industryCatalog.getPlayerIndustryDefinition(owner);
+      const start = node.legalActions.find(action => action.family === "industry" && action.target?.abilityId === "turing_borrow_tech");
+      if (!owner?.mainActionCompleted || owner.industryBorrowedTechTileId || !start
+        || company?.activeAbilityId !== "turing_borrow_tech" || !knownCardMoneyOrder(node)
+        || Object.values(state.aliens.aliens).some(alienState.isAlienReadyToReveal)
+        || Object.keys(state.aliens.chong?.transportTasksByRocketId || {}).length
+        || state.pieces.rockets.some(rocket => [rocket.playerId, rocket.color, rocket.playerColor].some(id => id === seatId || id === owner.color)
+          && ((rocket.kind ?? "standard") !== "standard" || rocket.fossilId != null))
+        || node.legalActions.some(action => !["end_turn", "place_data", "quick_trade", "card_corner", "move", "industry", "complete_task"].includes(action.family))) return null;
+      // 主行动已结束，保留区不得再开启发射/扫描/轨道/登陆/研究等科技相关流程。
+      // 后续移动仍保留 orange2；不把有收益的访问触发器当作无效任务。
+      const quiet = effect => ["gain_resources", "gain_data", "draw_cards", "pick_card", "card_move"].includes(effect.type);
+      if (owner.reservedCards.some(card => {
+        const model = cardEffects.getCardModel(card);
+        return Boolean(model.pluto) || [...(model.tasks || []), ...(model.temporaryTasks || [])].some(task => !task.rewards.every(quiet))
+          || (model.triggers || []).some(trigger => !quiet(trigger.effect));
+      })) return null;
+      const available = Object.keys(state.tech.stacks).filter(id => /^(orange|purple)[1-4]$/.test(id)
+        && techBoardState.isSlotAvailable(state.tech, id));
+      const retained = available.filter(id => id === "orange2"
+        && (!owner.techState.ownedTiles.orange2 || owner.techState.disabledTiles.orange2));
+      const excluded = available.filter(id => !retained.includes(id));
+      return excluded.length ? freeze({ proof: "seti-post-main-turing-shorter-continuation-v1",
+        industryActionId: start.actionId, availableTileIds: available, retainedTileIds: retained,
+        excludedTileIds: excluded, omittedSubmissions: 2 }) : null;
+    }
+
+    function expandPostMainBorrow(node, tileId) {
+      const spec = postMainBorrowSpec(node);
+      if (!spec?.retainedTileIds.includes(tileId)) throw new Error("ANALYSIS_POST_MAIN_BORROW_INVALID");
+      const stored = nodes.get(node), key = JSON.stringify([stored.serial, "post-main-borrow", tileId]);
+      if (cache.has(key)) { cacheHits += 1; return cache.get(key); }
+      restoreEnvelope(stored.envelope, true);
+      const comp = fork.composition || fork, start = node.legalActions.find(action => action.actionId === spec.industryActionId);
+      executeCurrent(start.actionId);
+      const choices = legalActions(comp);
+      if (choices.length !== spec.availableTileIds.length || choices.some(action => action.family !== "choose_target"
+        || !spec.availableTileIds.includes(action.target?.tileId))) throw new Error("ANALYSIS_POST_MAIN_BORROW_CHOICES_CHANGED");
+      const choice = choices.find(action => action.target.tileId === tileId), outcome = executeCurrent(choice.actionId);
+      const child = finishChild(outcome.before, outcome.result);
+      if (child.status !== "stable") throw new Error("ANALYSIS_POST_MAIN_BORROW_BOUNDARY_CHANGED");
+      return remember(key, freeze({ node: child, submissions: 2, actions: [start, choice], proof: spec.proof }));
+    }
+
     function postMainPlanSpec(node) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
@@ -1413,6 +1471,7 @@
       cornerChoices = new WeakMap();
       preMainDataPlans = new WeakMap();
       postMainPlans = new WeakMap();
+      postMainBorrows = new WeakMap();
       resourceGroups.clear();
       cache.clear();
       rootObservation = null;
@@ -1437,7 +1496,7 @@
 
     return Object.freeze({ openRoot, expand, identity, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
-      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, close, getDiagnostics });
+      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

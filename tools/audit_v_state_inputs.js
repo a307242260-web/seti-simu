@@ -361,6 +361,30 @@ try {
         console.log(`[PASS] independent-trade-reservation: case=${id} leaf=${evaluate(acquired.observation)}`);
       } finally { moneyPort.close(); }
     }
+    {
+      const fixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+        "../adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json")));
+      const comp = auditKernel.composition;
+      if (!comp.lifecycle.restore(fixture.compositionEnvelope).ok) throw new Error("主行动后借用审计恢复失败");
+      const play = comp.inputPort.enumerateActions({}).find(action => action.family === "play_card"
+        && action.target?.cardInstanceId === "card-3-0");
+      if (!play || !comp.inputPort.submitAction(play).ok) throw new Error("主行动后借用审计正式打牌失败");
+      const port = createAnalysisPort({ composition: comp, seatId: fixture.seatId });
+      try {
+        const root = port.openRoot(), proof = port.postMainBorrowSpec(root);
+        const evaluate = independentValue.createStateValueEvaluator(fixture.seatId);
+        if (!proof || proof.retainedTileIds.join(",") !== "orange2") throw new Error("主行动后借用审计缺少可达移动科技");
+        const macro = port.expandPostMainBorrow(root, "orange2");
+        for (const node of [root, macro.node]) if (evaluate(node.observation)
+          !== evaluate(outcomeModel.createDecisionObservation(node.observation, { seatId: fixture.seatId }))) {
+          throw new Error("主行动后借用原始/标准V不一致");
+        }
+        if (macro.submissions !== 2 || evaluate(root.observation) !== evaluate(macro.node.observation)) {
+          throw new Error("主行动后借用输入计数或即时V变化不一致");
+        }
+        console.log(`[PASS] independent-post-main-borrow: root=${evaluate(root.observation)} inputs=2 excluded=${proof.excludedTileIds.length}`);
+      } finally { port.close(); }
+    }
     const cornerFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
       "../adhoc/ai-decision-corpus-20261023-v1/post-main-corner-pair-20261023-v1.json")));
     const cornerComp = auditKernel.composition;

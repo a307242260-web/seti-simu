@@ -1,0 +1,167 @@
+{
+  "schemaVersion": "seti-ai-post-main-borrow-validation-v1",
+  "date": "2026-10-23",
+  "baseCommit": "17e92a1316721fec5e3dcb461bcd9909a8b71bf7",
+  "snapshot": "/private/tmp/seti-ai-stage36-20261023-pi1wn5te",
+  "searchVersion": "seti-complete-decision-search-v26",
+  "scope": "Post-main Turing continuation simulation. Exact identities, all payment entity sets, tie policy, boundaries and fixed global budgets preserved.",
+  "controlled": [
+    {
+      "name": "no-energy",
+      "raw": 18,
+      "reduced": 4,
+      "value": 32
+    },
+    {
+      "name": "one-energy",
+      "raw": 163,
+      "reduced": 37,
+      "value": 33
+    },
+    {
+      "name": "two-energy",
+      "raw": 532,
+      "reduced": 147,
+      "value": 34
+    },
+    {
+      "name": "one-move-card",
+      "raw": 190,
+      "reduced": 43,
+      "value": 33
+    },
+    {
+      "name": "asteroid-mercury-useful",
+      "raw": 35,
+      "reduced": 21,
+      "value": 33.5
+    },
+    {
+      "name": "owned-orange2",
+      "raw": 162,
+      "reduced": 14,
+      "value": 33
+    }
+  ],
+  "sharedFactory": {
+    "passed": true,
+    "actualInputs": 2,
+    "mandatoryChoicesAfterFirstInput": 8,
+    "source": "final post-main-borrow.test.js and targeted unit-v2 log"
+  },
+  "node": {
+    "command": "node tools/run_node_tests.js",
+    "unitPassed": 131,
+    "fullFlowPassed": 1,
+    "logPath": "reports/ai-foundation-20261023/post-main-borrow-full-node-v1.log",
+    "finalTargetLogPath": "reports/ai-foundation-20261023/post-main-borrow-unit-v2.log",
+    "scopeNote": "Production runtime stayed frozen through full regression. The new unit was then extended with shared-factory actual-click assertions; the final superset unit passed separately. Other tests are unchanged."
+  },
+  "browser": {
+    "passed": 3,
+    "logPath": "reports/ai-foundation-20261023/post-main-borrow-browser-v1.log"
+  },
+  "syntaxPath": "reports/ai-foundation-20261023/post-main-borrow-syntax-v1.json",
+  "valueAudit": {
+    "logPath": "reports/ai-foundation-20261023/state-value-input-audit-v25.log",
+    "exitCode": 1,
+    "independentPassed": 27,
+    "legacyFailures": [
+      "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+    ]
+  },
+  "fixedGate": {
+    "path": "reports/ai-foundation-20261023/decision-corpus-audit-v24.json",
+    "passed": 4,
+    "failed": 4,
+    "budget": {
+      "transitions": 256,
+      "nodes": 257,
+      "frontier": 256,
+      "milliseconds": 600
+    }
+  },
+  "original062": {
+    "path": "reports/ai-foundation-20261023/late-semantic-case062-v10.json",
+    "complete": false,
+    "transitions": 4096,
+    "nodes": 2805,
+    "unresolved": 2158,
+    "milliseconds": 6374.014625000001,
+    "eligibleProofNodes": 453,
+    "executedBorrowMacros": 90,
+    "limitation": "Different FIFO prefix and still incomplete; no total-work or speed claim."
+  },
+  "actualPostMainWindow": {
+    "path": "reports/ai-foundation-20261023/post-main-borrow-actual-window-v1.json",
+    "rows": [
+      {
+        "enabled": false,
+        "complete": false,
+        "milliseconds": 5693.273959,
+        "unresolved": 1660,
+        "transitions": 4096,
+        "nodes": 2494
+      },
+      {
+        "enabled": true,
+        "complete": false,
+        "milliseconds": 6043.947166999999,
+        "unresolved": 1597,
+        "transitions": 4096,
+        "nodes": 2472
+      }
+    ],
+    "limitation": "Both off/on remain incomplete; same-process sequential timing does not establish speed improvement."
+  },
+  "diagnosticProjectionScope": "Both identity projection reports bind the base commit runtime and leave the exact search graph unchanged. They are not production projections or speed benchmarks.",
+  "newSearchFullGames": 0,
+  "newSearchFinalScores": null,
+  "fullGame180SecondAcceptance": "Not run; necessary decision coverage remains incomplete.",
+  "nextDesignPath": "adhoc/ai-post-main-upper-bound-next-20261023-v1.md",
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "33de9b9516c1387ae3b994e4ee2710a4d2c19becef70e85478a7d2a1d5d92d62",
+    "randomizer/game/ai/decision-search.js": "e5e3a3a072bb3f37811cd84356dc6282a8ce5d198a4c4ab41d8dcc0cfdca2330",
+    "randomizer/game/ai/post-main-borrow.test.js": "11110e1c0a8a3c9ca117e1ab5c2e7f9ddc86fa3dc53888f72ce09d675fd56568",
+    "randomizer/index.html": "1fd045260350787cfc0c040b1578653950826a48df27cc3e432b8dc61fae8b07",
+    "tools/node-test-inventory.js": "9b87d63fee3900ce5e0229ca54b885c8561790dba602a03115c03c83335db96b",
+    "tools/audit_v_state_inputs.js": "f5ac9c89554f0c5179cdb9e705296fed502464a38917e39b4f2b21423937c19c",
+    "docs/ai-post-main-borrow-proof-20261023.md": "70032423956e3849d6542ce9a70a062ca5f1d7ce9c7d09aa0d09bac197a119d8",
+    "docs/ai-implementation-20261022.md": "44e81415348f235b3ac3c102b6c1a3e6f9995940a83826a600093e318b0e4b63",
+    "docs/ai-development-workflow.md": "76138eef360ca01553c00b8797d939fe3438f05bda589a35aebe38a4f73cc6d0",
+    "docs/ai-interface-inventory-20261022.md": "7e2ee6b6c65e1ad9c37291bbb1ca5edb5b1ec9cd7fe960ac8b380444c71b59de",
+    "docs/ai-search-agent-contract-20261023.md": "10f2634ad1a68a773d8f24e6add6e86b9aa9ca8127de3d4fb2f6dae2b75b1c0d",
+    "adhoc/diagnose-ai-identity-projections-20261023-v1.js": "1213c5c60822179e9eb447cf1aab38e32c5f49093678e7c8e518ac2842bd8080",
+    "adhoc/diagnose-ai-identity-projections-20261023-v2.js": "7f27284535e021e03385a62abea404c54ddd1cc864fa7ebabd5be7fc802bb489",
+    "adhoc/benchmark-ai-post-main-borrow-20261023-v1.js": "150db89a9ea5f1d9bc57870be1cbd82ef630e3611218294b8ef2d5ddd1ebddba",
+    "adhoc/audit-ai-decision-corpus-20261023-v24.js": "38ecbcfbeb02eb1a9cf3c30d63230ffc6feaa1679cf85287708f7b93e55d474e",
+    "adhoc/profile-ai-late-semantic-case062-20261023-v10.js": "4edba77780fe3d243eb09479599b225ff5fe094e24b0d986ae939423a5e8b2f5",
+    "adhoc/ai-post-main-upper-bound-next-20261023-v1.md": "2f5bfecbf501ba9ee3ad1a50e047c469b388d747c746b9f39d7b7746ca3af7ee",
+    "adhoc/finalize-ai-post-main-borrow-20261023-v1.py": "b703b70b655b933956d985f2080ee7e14d9ebd31d2e01e8bca77f1846a8d83db",
+    "adhoc/deliver-ai-post-main-borrow-20261023-v1.py": "33a0569b8c1b77143eebc6a696438b53d01b493a2d960b9f732681688533b926"
+  },
+  "evidenceHashes": {
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-001-v24.raw.json.gz": "2039b7aa0eeb2bd1c50f02150c5e745c687011ae445593364c4e1d4bd88bf773",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-003-v24.raw.json.gz": "0018c38714246488f37ba130001c4d624d65f2e12b941e0454ff5c978a9fb1c9",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-008-v24.raw.json.gz": "cdb88e375f2b8cfd8ece6e0f8c61bd92b25ea537f3c6f4548c382b4816971f8c",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-009-v24.raw.json.gz": "e8b766e8ade82ce3509af69409449230f42552a6c9a9bc3c381171c65ebe6b7e",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-011-v24.raw.json.gz": "667a0ecea11208fc16994d8a8a1416e1df88ed1720f42945fdd3797567e83a29",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-062-v24.raw.json.gz": "b16218d18a1cca18ea5323e433585b62f83bd603a66b115c880642a3c5e4ec9d",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-105-v24.raw.json.gz": "dac412f75e12eb13b94bbf4074fcab81a26760256251633402cd94f0e5aafcbb",
+    "adhoc/ai-decision-corpus-20261023-v1/audit-case-152-v24.raw.json.gz": "489be8b81a7e9e634abca229d7765c3fc170c193011833b4dc3ce62a1556ce4c",
+    "adhoc/ai-decision-corpus-20261023-v1/late-semantic-case062-v10.raw.json.gz": "6a56201b407e67c41ae6939c558581e87908350a0407cba7b239169e9e28521a",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-borrow-actual-off-v1.raw.json.gz": "6c174c8de6d80713f456140a4562816a9a6c46bb88c9b31a666ed027182d80de",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-borrow-actual-on-v1.raw.json.gz": "b062b2d8b89a434b2179a9bf65ee37ae1a658b3d5f3bb299f78d373d07ba499a",
+    "adhoc/ai-decision-corpus-20261023-v1/post-main-borrow-actual-window-v1.json": "b4d65ab20f6924e53a16adb4b54fb3b4762d44c40cd09a61d7d973ce99781613",
+    "reports/ai-foundation-20261023/decision-corpus-audit-v24.json": "7f36b548f717e6a0d27ba1574cd5dad6658265a2b36977d93fd4aeba6ab656c8",
+    "reports/ai-foundation-20261023/identity-projections-case062-v1.json": "7ae3b810063a55d966619818ba22a64f581e36eef70073811c9c294334230f60",
+    "reports/ai-foundation-20261023/identity-projections-case062-v2.json": "3d13aa81a7c3b237038ab730b98e16c4c7b0b1ef8ef7b5ff1256d0d6ec3ad6f1",
+    "reports/ai-foundation-20261023/late-semantic-case062-v10.json": "4776387d02066554e483507cfb5dfa1d823053df9608c8c6cfa96dc8953abaf9",
+    "reports/ai-foundation-20261023/post-main-borrow-actual-window-v1.json": "71044fb554b98053995bdf75be4de2b57eae2fc0a21ca18b64d1cd25e8266d97",
+    "reports/ai-foundation-20261023/post-main-borrow-browser-v1.log": "5400c6b5567e3d4ba7ba8760b09842534f65a4190d5250f3d316f070e5485e91",
+    "reports/ai-foundation-20261023/post-main-borrow-full-node-v1.log": "51ad4aee5f181d2a4eb330247b55b302c4ad47a9149c41febbf8d53c5f5f2dc8",
+    "reports/ai-foundation-20261023/post-main-borrow-syntax-v1.json": "a94c5adec3f4a58c17848181d91ec27d0a9b0eca23b9bcaff8ebee4773bd8097",
+    "reports/ai-foundation-20261023/post-main-borrow-unit-v2.log": "2d75e455eb61a85529ce7040e59163413c733b997fc58eb42bdf5fdba805edf5",
+    "reports/ai-foundation-20261023/state-value-input-audit-v25.log": "b9e605a758c61bbd68e4ec8f422868f5407b87c6b0ebd44a7813d0a1032d86cf"
+  }
+}

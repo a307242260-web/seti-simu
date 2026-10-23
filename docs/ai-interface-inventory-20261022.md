@@ -18,6 +18,8 @@ Browser/Simulation都可显式选择实验search玩家，未闭合仍失败，�
 不增加接口、状态合并或新预算；未知和活动保留牌仍回到普通搜索。
 搜索v25新增`preMainDataPlanSpec`，输出[主行动前数据资源下界与严格省略](ai-pre-main-data-proof-20261023.md)，
 可与原开局计划合成；算法不读取私有状态，也不把未完成图作为计划证据。
+搜索v26新增`postMainBorrowSpec/expandPostMainBorrow`，以[图灵主行动后更短继续路径](ai-post-main-borrow-proof-20261023.md)
+省略无效借用，保留有效orange2，宏计两次正式输入；已提交的借用Decision仍比较所有选项。
 新的开发顺序见 [AI 开发流程](ai-development-workflow.md)。
 
 ## 机器决策调用链

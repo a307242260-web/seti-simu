@@ -63,6 +63,10 @@ Browser高频inspect不复制原始actionOutcomes，查看lastOutcomeSummary；�
 身份JSON逐字节保持，回合预览仅独立复制正式推进所写的turn；其他切片共享冻结快照。
 正式动作和Session恢复仍完整隔离，搜索版本、全部证明及预算不变；这不代表覆盖门槛或整局性能已通过。
 
+搜索v26在`postMainPruning`下增加[图灵主行动后借用归约](ai-post-main-borrow-proof-20261023.md)。
+闭包内无作用科技的借用可删去两次输入，保留orange2真实移动收益；宏执行启用与选择并按2输入计费。
+真实根已在借用Decision时不适用；普通前缀证书不跨宏内部，原预算和全图未闭合失败语义不变。
+
 ## 结果和失败
 
 成功的agentTrace.coverage为complete，search保存scope、根去向、完整图、等价/证明归属、

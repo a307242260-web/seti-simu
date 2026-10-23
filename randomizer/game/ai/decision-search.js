@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v25";
+  const VERSION = "seti-complete-decision-search-v26";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -67,7 +67,7 @@
           ? reused?.hit ? "disabled-for-selection-certificate" : "reused-complete-window" : "off",
         postMainProofNodes: 0, postMainExcludedActions: 0, postMainPruning: postMainPruning ? "enabled" : "off",
         openingProofNodes: 0, openingExcludedActions: 0, openingPruning: openingPruning ? "enabled" : "off",
-        openingPassMacros: 0,
+        openingPassMacros: 0, postMainBorrowProofNodes: 0, postMainBorrowExcludedChoices: 0, postMainBorrowMacros: 0,
         cardChoiceProofNodes: 0, cardChoiceExcludedActions: 0, cardCornerProofNodes: 0, cardCornerExcludedActions: 0,
         preMainDataProofNodes: 0, preMainDataExcludedActions: 0,
         cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
@@ -94,6 +94,7 @@
     let postMainProofNodes = 0, postMainExcludedActions = 0;
     let openingProofNodes = 0, openingExcludedActions = 0;
     let openingPassMacros = 0;
+    let postMainBorrowProofNodes = 0, postMainBorrowExcludedChoices = 0, postMainBorrowMacros = 0;
     let cardChoiceProofNodes = 0, cardChoiceExcludedActions = 0;
     let cardCornerProofNodes = 0, cardCornerExcludedActions = 0;
     let preMainDataProofNodes = 0, preMainDataExcludedActions = 0;
@@ -199,10 +200,25 @@
       if (localPlan?.kind === "card-corner-choice") {
         cardCornerProofNodes += 1; cardCornerExcludedActions += localPlan.excludedActionIds.length;
       }
+      let borrowPlan = !boundary && !selection && postMainPruning && limits.transitions <= 4096
+        ? port.postMainBorrowSpec?.(node) : null;
+      if (borrowPlan) {
+        const value = evaluate(node.observation);
+        if (!Number.isSafeInteger(value * 2) || value < 0 || value > Number.MAX_SAFE_INTEGER / 64) borrowPlan = null;
+        else if (!borrowPlan.retainedTileIds.length && localPlan) borrowPlan = null;
+      }
+      if (borrowPlan) {
+        postMainBorrowProofNodes += 1; postMainBorrowExcludedChoices += borrowPlan.excludedTileIds.length;
+        if (!borrowPlan.retainedTileIds.length) localPlan = { kind: "post-main-borrow-skip", proof: borrowPlan.proof,
+          retainedActionIds: node.legalActions.filter(action => action.actionId !== borrowPlan.industryActionId).map(action => action.actionId),
+          excludedActionIds: [borrowPlan.industryActionId] };
+      }
       const retainedActions = localPlan ? node.legalActions.filter(action => localPlan.retainedActionIds.includes(action.actionId))
         : node.legalActions;
       const alternatives = selection ? port.selectionPlans(node)
-        : retainedActions.map(action => {
+        : retainedActions.flatMap(action => {
+          if (borrowPlan?.industryActionId === action.actionId) return borrowPlan.retainedTileIds.map(tileId => ({
+            firstActionId: action.actionId, submissions: 2, borrowTileId: tileId }));
           const openingPass = localPlan?.kind === "opening" && localPlan.passPreparationActionIds?.includes(action.actionId);
           if (openingPass && typeof port.expandOpeningPass !== "function") throw new TypeError("SEARCH_OPENING_PASS_PORT_INVALID");
           return { firstActionId: action.actionId, submissions: openingPass ? 2 : 1, ...(openingPass ? { openingPass: true } : {}) };
@@ -225,7 +241,7 @@
           }
         }
       }
-      nodes.push({ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan,
+      nodes.push({ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan, borrowPlan,
         expanded: boundary, value, distance: boundary ? 0 : Infinity, best: null });
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
@@ -290,19 +306,21 @@
         else if (now() - startedAt >= limits.milliseconds) stopReason = "watchdog";
         if (stopReason) break outer;
         const macro = entry.selection ? port.expandSelection(entry.node, alternative.selectedIds)
-          : alternative.openingPass ? port.expandOpeningPass(entry.node, alternative.firstActionId) : null;
+          : alternative.openingPass ? port.expandOpeningPass(entry.node, alternative.firstActionId)
+            : alternative.borrowTileId ? port.expandPostMainBorrow(entry.node, alternative.borrowTileId) : null;
         const child = macro ? macro.node : port.expand(entry.node, alternative.firstActionId);
         if (macro && macro.submissions !== alternative.submissions) throw new Error("SEARCH_MACRO_COST_MISMATCH");
         transitions += alternative.submissions;
-        if (macro) { if (alternative.openingPass) openingPassMacros += 1; else selectionMacros += 1; }
+        if (macro) { if (alternative.openingPass) openingPassMacros += 1;
+          else if (alternative.borrowTileId) postMainBorrowMacros += 1; else selectionMacros += 1; }
         const added = add(child);
         if (entry.localPlan?.kind === "card-choice" && (child.status !== entry.localPlan.expectedStatus
           || nodes[added.index].value !== entry.localPlan.expectedValue)) throw new Error("SEARCH_CARD_CHOICE_WITNESS_MISMATCH");
         if (added.equivalent) equivalents += 1;
         entry.edges.push({ actionId: alternative.firstActionId, target: added.index,
           equivalent: added.equivalent, cost: alternative.submissions,
-          ...(macro ? { ...(alternative.openingPass ? { openingPass: true } : { selectedIds: alternative.selectedIds }),
-            proof: alternative.openingPass ? macro.proof : alternative.proof,
+          ...(macro ? { ...(alternative.openingPass ? { openingPass: true } : alternative.borrowTileId ? { borrowTileId: alternative.borrowTileId } : { selectedIds: alternative.selectedIds }),
+            proof: alternative.openingPass || alternative.borrowTileId ? macro.proof : alternative.proof,
             steps: macro.actions.map(action => action.actionId) } : {}) });
         if (now() - startedAt >= limits.milliseconds) {
           stopReason = "watchdog";
@@ -355,7 +373,7 @@
     const complete = !stopReason;
     function retainedWitness(index) {
       if (!complete) return null;
-      const start = nodes[index].localPlan?.kind !== "card-choice" && (dominancePrunes || cardTradePrunes) ? 0 : index;
+      const start = nodes[index].localPlan?.kind !== "card-choice" && (dominancePrunes || cardTradePrunes || postMainBorrowProofNodes) ? 0 : index;
       let current = start;
       for (let depth = 0; depth <= nodes.length; depth += 1) {
         const entry = nodes[current];
@@ -383,6 +401,8 @@
       ...(entry.edges.some(edge => edge.openingPass) ? { normalizedPreparations: entry.edges.filter(edge => edge.openingPass)
         .map(edge => ({ actionId: edge.actionId, proof: edge.proof, steps: edge.steps,
           omittedContinuationFamilies: "all-except-pass", witness: retainedWitness(index), modelKey: evaluate.modelKey })) } : {}),
+      ...(entry.borrowPlan ? { borrowPlan: { ...entry.borrowPlan, witness: retainedWitness(index),
+        completion: complete ? "covered-by-origin-search" : "pending-origin-search", modelKey: evaluate.modelKey } } : {}),
       ...(entry.selection ? { selection: entry.selection, orderedExitCount: entry.alternativeCount } : {}),
     }));
     const roots = root.legalActions.map(action => {
@@ -403,9 +423,9 @@
         actionId: action.actionId, target: edge?.target ?? null,
         value: edge ? nodes[edge.target].value : null,
         completion: stopReason || !edge ? "pending" : edge.openingPass ? "covered-by-opening-normal-form" : cardTradePrunes ? "covered-by-global-pruning"
-          : dominancePrunes ? "covered-by-global-dominance"
+          : postMainBorrowProofNodes ? "covered-by-global-borrow-simulation" : dominancePrunes ? "covered-by-global-dominance"
           : nodes[edge.target].value == null ? "unreachable" : "complete",
-        ...(dominancePrunes || cardTradePrunes || edge?.openingPass ? { valueType: "attained-lower-bound" } : {}),
+        ...(dominancePrunes || cardTradePrunes || postMainBorrowProofNodes || edge?.openingPass ? { valueType: "attained-lower-bound" } : {}),
         ...(edge?.openingPass ? { normalForm: edge.proof } : {}),
       };
     });
@@ -465,7 +485,7 @@
           : cardTradePruning ? "disabled-for-selection-certificate" : "off",
         postMainProofNodes, postMainExcludedActions, postMainPruning: postMainPruning ? "enabled" : "off",
         openingProofNodes, openingExcludedActions, openingPruning: openingPruning ? "enabled" : "off",
-        openingPassMacros,
+        openingPassMacros, postMainBorrowProofNodes, postMainBorrowExcludedChoices, postMainBorrowMacros,
         cardChoiceProofNodes, cardChoiceExcludedActions, cardCornerProofNodes, cardCornerExcludedActions,
         preMainDataProofNodes, preMainDataExcludedActions,
         cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
