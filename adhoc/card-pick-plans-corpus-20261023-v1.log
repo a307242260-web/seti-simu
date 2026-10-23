@@ -1,0 +1,9 @@
+{"label":"initial-selection","id":"case-001","choices":5,"complete":true,"stopReason":null,"inputs":144,"ms":201.022625}
+{"label":"initial-income","id":"case-003","choices":5,"complete":true,"stopReason":null,"inputs":26,"ms":167.500625}
+{"label":"first-other-company-main","id":"case-008","choices":17,"complete":true,"stopReason":null,"inputs":234,"ms":520.1463749999999}
+{"label":"first-other-company-post-main","id":"case-011","choices":10,"complete":true,"stopReason":null,"inputs":9,"ms":17.59504200000015}
+{"label":"regular-conditional","id":"case-009","choices":1,"complete":true,"stopReason":null,"inputs":7,"ms":27}
+{"label":"round2-main-with-tech","id":"case-062","choices":25,"complete":false,"stopReason":"watchdog","inputs":203,"ms":609.7481670000002}
+{"label":"round3-main-with-reserved","id":"case-105","choices":28,"complete":false,"stopReason":"watchdog","inputs":149,"ms":610.191709}
+{"label":"round4-main","id":"case-152","choices":24,"complete":false,"stopReason":"watchdog","inputs":216,"ms":610.3630410000001}
+reports/ai-foundation-20261023/card-pick-plans-corpus-v1.json

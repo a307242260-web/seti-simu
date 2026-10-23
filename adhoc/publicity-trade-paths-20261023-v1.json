@@ -1,0 +1,187 @@
+[
+  {
+    "node": 97,
+    "path": [
+      {
+        "node": 0,
+        "actionId": "place_data:01c038e2",
+        "steps": null
+      },
+      {
+        "node": 18,
+        "actionId": "choose_target:e695bb51",
+        "steps": null
+      },
+      {
+        "node": 19,
+        "actionId": "place_data:01c038e2",
+        "steps": null
+      },
+      {
+        "node": 37,
+        "actionId": "choose_target:e695bb51",
+        "steps": null
+      },
+      {
+        "node": 38,
+        "actionId": "place_data:01c038e2",
+        "steps": null
+      },
+      {
+        "node": 56,
+        "actionId": "choose_target:e695bb51",
+        "steps": null
+      },
+      {
+        "node": 57,
+        "actionId": "place_data:01c038e2",
+        "steps": null
+      },
+      {
+        "node": 75,
+        "actionId": "choose_target:e695bb51",
+        "steps": null
+      },
+      {
+        "node": 76,
+        "actionId": "choose_card:6b385ac5",
+        "steps": null
+      },
+      {
+        "node": 81,
+        "actionId": "card_corner:b1337749",
+        "steps": null
+      }
+    ]
+  },
+  {
+    "node": 119,
+    "path": [
+      {
+        "node": 0,
+        "actionId": "place_data:01c038e2",
+        "steps": null
+      },
+      {
+        "node": 18,
+        "actionId": "choose_target:e695bb51",
+        "steps": null
+      },
+      {
+        "node": 19,
+        "actionId": "place_data:01c038e2",
+        "steps": null
+      },
+      {
+        "node": 37,
+        "actionId": "choose_target:e695bb51",
+        "steps": null
+      },
+      {
+        "node": 38,
+        "actionId": "place_data:01c038e2",
+        "steps": null
+      },
+      {
+        "node": 56,
+        "actionId": "choose_target:e695bb51",
+        "steps": null
+      },
+      {
+        "node": 57,
+        "actionId": "place_data:01c038e2",
+        "steps": null
+      },
+      {
+        "node": 75,
+        "actionId": "choose_target:e695bb51",
+        "steps": null
+      },
+      {
+        "node": 76,
+        "actionId": "choose_card:6b385ac5",
+        "steps": null
+      },
+      {
+        "node": 81,
+        "actionId": "card_corner:b1337749",
+        "steps": null
+      },
+      {
+        "node": 97,
+        "actionId": "industry:f3c9eca0",
+        "steps": null
+      },
+      {
+        "node": 112,
+        "actionId": "choose_target:dd16a166",
+        "steps": null
+      }
+    ]
+  },
+  {
+    "node": 120,
+    "path": [
+      {
+        "node": 0,
+        "actionId": "place_data:01c038e2",
+        "steps": null
+      },
+      {
+        "node": 18,
+        "actionId": "choose_target:e695bb51",
+        "steps": null
+      },
+      {
+        "node": 19,
+        "actionId": "place_data:01c038e2",
+        "steps": null
+      },
+      {
+        "node": 37,
+        "actionId": "choose_target:e695bb51",
+        "steps": null
+      },
+      {
+        "node": 38,
+        "actionId": "place_data:01c038e2",
+        "steps": null
+      },
+      {
+        "node": 56,
+        "actionId": "choose_target:e695bb51",
+        "steps": null
+      },
+      {
+        "node": 57,
+        "actionId": "place_data:01c038e2",
+        "steps": null
+      },
+      {
+        "node": 75,
+        "actionId": "choose_target:e695bb51",
+        "steps": null
+      },
+      {
+        "node": 76,
+        "actionId": "choose_card:6b385ac5",
+        "steps": null
+      },
+      {
+        "node": 81,
+        "actionId": "card_corner:b1337749",
+        "steps": null
+      },
+      {
+        "node": 97,
+        "actionId": "industry:f3c9eca0",
+        "steps": null
+      },
+      {
+        "node": 112,
+        "actionId": "choose_target:505cd48a",
+        "steps": null
+      }
+    ]
+  }
+]

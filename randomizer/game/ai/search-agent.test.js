@@ -153,16 +153,16 @@ function direct(f, cache = 0) {
   const reused = createSimulationEnv(); reused.loadCheckpoint(base);
   reused.step(reused.legalActions().find(a => a.target?.tradeId === "cards-for-pick-card"));
   const first = reused.runAgentDecision();
-  assert(first.searches[0].selectionPlan); assert(first.searches[0].diagnostics.transitions > 0);
+  assert.equal(first.searches[0].candidates[0].kind,"fixed-card-plan"); assert(first.searches[0].diagnostics.transitions > 0);
   const restored = createSimulationEnv(); restored.loadCheckpoint(reused.createCheckpoint());
   let reuseHits = 0;
-  for (let step = 0; step < 2; step += 1) {
+  for (let step = 0; step < 3; step += 1) {
     const a = reused.runAgentDecision(), b = restored.runAgentDecision();
     assert.equal(a.actionId, b.actionId); assert.deepEqual(a.observation, b.observation);
-    if (a.searches[0].diagnostics.continuation === "hit") reuseHits += 1;
+    if (a.searches[0].diagnostics.planContinuation === "hit") reuseHits += 1;
     if (step === 0) assert(b.searches[0].diagnostics.transitions > 0, "恢复不能携带旧临时token");
   }
-  assert.equal(reuseHits, 2);
+  assert.equal(reuseHits, 3);
   assert.deepEqual(reused.createCheckpoint().coreState, restored.createCheckpoint().coreState);
   reused.dispose(); restored.dispose();
 

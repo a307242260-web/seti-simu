@@ -444,6 +444,20 @@ try {
         console.log(`[PASS] independent-goal-movement: inputs=${macro.submissions} goal=${spec.chosenGoal.id}`);
       } finally { port.close(); }
     }
+    {
+      const fixture=JSON.parse(fs.readFileSync(path.resolve(__dirname,"../adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json")));
+      const comp=auditKernel.composition;
+      if(!comp.lifecycle.restore(fixture.compositionEnvelope).ok)throw new Error("固定选牌审计恢复失败");
+      const start=comp.inputPort.enumerateActions({}).find(a=>a.target?.tradeId==="cards-for-pick-card");
+      if(!comp.inputPort.submitQuickAction(start).ok)throw new Error("固定选牌审计启动失败");
+      const port=createAnalysisPort({composition:comp,seatId:fixture.seatId});
+      try{port.setCardPickPlanning(true);const root=port.openRoot(),spec=port.cardPickSpec(root),evaluate=independentValue.createStateValueEvaluator(fixture.seatId);
+        const macro=port.expandWithCardPick(root,spec.selectedActionId,()=>null);
+        if(!macro.complete||macro.submissions!==4)throw new Error("固定选牌原生输入数错误");
+        for(const node of [...macro.prefixes.map(p=>p.node),macro.node])if(evaluate(node.observation)!==evaluate(outcomeModel.createDecisionObservation(node.observation,{seatId:fixture.seatId})))throw new Error("固定选牌原始/标准估值不一致");
+        console.log(`[PASS] independent-fixed-card-pick: inputs=${macro.submissions} fixedChoices=${macro.fixedChoices.length}`);
+      }finally{port.close();}
+    }
     const cornerFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
       "../adhoc/ai-decision-corpus-20261023-v1/post-main-corner-pair-20261023-v1.json")));
     const cornerComp = auditKernel.composition;

@@ -1,0 +1,189 @@
+{
+  "scope": "Exact shortest recorded 062 branch to publicity-for-card; one hypothetical path, no authoritative input.",
+  "rows": [
+    {
+      "round": 2,
+      "turn": 2,
+      "publicity": 1,
+      "credits": 3,
+      "energy": 2,
+      "handCount": 5,
+      "status": "stable"
+    },
+    {
+      "actionId": "place_data:01c038e2",
+      "family": "place_data",
+      "summary": "放置数据",
+      "target": {
+        "kind": "place-data"
+      },
+      "round": 2,
+      "turn": 2,
+      "publicity": 1,
+      "credits": 3,
+      "energy": 2,
+      "handCount": 5,
+      "status": "decision"
+    },
+    {
+      "actionId": "choose_target:e695bb51",
+      "family": "choose_target",
+      "summary": "第一排放置位 1",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "round": 2,
+      "turn": 2,
+      "publicity": 1,
+      "credits": 3,
+      "energy": 2,
+      "handCount": 5,
+      "status": "stable"
+    },
+    {
+      "actionId": "place_data:01c038e2",
+      "family": "place_data",
+      "summary": "放置数据",
+      "target": {
+        "kind": "place-data"
+      },
+      "round": 2,
+      "turn": 2,
+      "publicity": 1,
+      "credits": 3,
+      "energy": 2,
+      "handCount": 5,
+      "status": "decision"
+    },
+    {
+      "actionId": "choose_target:e695bb51",
+      "family": "choose_target",
+      "summary": "第一排放置位 2",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "round": 2,
+      "turn": 2,
+      "publicity": 2,
+      "credits": 3,
+      "energy": 2,
+      "handCount": 5,
+      "status": "stable"
+    },
+    {
+      "actionId": "place_data:01c038e2",
+      "family": "place_data",
+      "summary": "放置数据",
+      "target": {
+        "kind": "place-data"
+      },
+      "round": 2,
+      "turn": 2,
+      "publicity": 2,
+      "credits": 3,
+      "energy": 2,
+      "handCount": 5,
+      "status": "decision"
+    },
+    {
+      "actionId": "choose_target:e695bb51",
+      "family": "choose_target",
+      "summary": "第一排放置位 3",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "round": 2,
+      "turn": 2,
+      "publicity": 2,
+      "credits": 3,
+      "energy": 2,
+      "handCount": 5,
+      "status": "stable"
+    },
+    {
+      "actionId": "place_data:01c038e2",
+      "family": "place_data",
+      "summary": "放置数据",
+      "target": {
+        "kind": "place-data"
+      },
+      "round": 2,
+      "turn": 2,
+      "publicity": 2,
+      "credits": 3,
+      "energy": 2,
+      "handCount": 5,
+      "status": "decision"
+    },
+    {
+      "actionId": "choose_target:e695bb51",
+      "family": "choose_target",
+      "summary": "第一排放置位 4",
+      "target": {
+        "choiceId": "data:computer",
+        "target": "computer",
+        "blueSlot": null
+      },
+      "round": 2,
+      "turn": 2,
+      "publicity": 2,
+      "credits": 3,
+      "energy": 2,
+      "handCount": 5,
+      "status": "decision"
+    },
+    {
+      "actionId": "choose_card:6b385ac5",
+      "family": "choose_card",
+      "summary": "收入 b_10.webp",
+      "target": {
+        "choiceId": "income:card-53-0",
+        "cardInstanceId": "card-53-0"
+      },
+      "round": 2,
+      "turn": 2,
+      "publicity": 2,
+      "credits": 3,
+      "energy": 3,
+      "handCount": 4,
+      "status": "stable"
+    },
+    {
+      "actionId": "card_corner:b1337749",
+      "family": "card_corner",
+      "summary": "dlc_5.png：弃牌角标",
+      "target": {
+        "cardInstanceId": "card-24-pass-1-5"
+      },
+      "round": 2,
+      "turn": 2,
+      "publicity": 3,
+      "credits": 3,
+      "energy": 3,
+      "handCount": 3,
+      "status": "stable"
+    },
+    {
+      "actionId": "quick_trade:d389daee",
+      "family": "quick_trade",
+      "summary": "3宣传 → 精选1张牌",
+      "target": {
+        "tradeId": "publicity-for-card"
+      },
+      "round": 2,
+      "turn": 2,
+      "publicity": 0,
+      "credits": 3,
+      "energy": 3,
+      "handCount": 3,
+      "status": "decision"
+    }
+  ],
+  "rootUnchanged": true
+}

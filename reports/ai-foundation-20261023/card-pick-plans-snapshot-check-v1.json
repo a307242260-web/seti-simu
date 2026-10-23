@@ -1,0 +1,10 @@
+{
+  "baseCommit": "0c35bf4ba9c3867a368e25e71dd7a61ae82c0919",
+  "testedSnapshot": "/private/tmp/seti-resource-plans-20261023-1gwywu3f",
+  "unchangedBaseFilesVerified": 3914,
+  "changedBaseFilesVerified": 12,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "explicitFiles": 45,
+  "runtimeImportsBoundToFinalSource": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot."
+}

@@ -1,0 +1,87 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const api=require('./card-pick-planning'),cards=require('../cards/deck'),effects=require('../cards/effects'),data=require('../data');
+const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json'))),initial=JSON.parse(f.compositionEnvelope.committedState),seatId=f.seatId;
+const own=s=>s.players.players.find(p=>p.id===seatId);
+const card=(entry,id)=>cards.createCardInstance(entry,id);
+const catalog=cards.CARD_CATALOG;
+const weak=catalog.filter(e=>!effects.buildPlayEffects(card(e,'probe')).every(e=>e.type==='gain_resources'&&Object.keys(e.options?.gain||{}).every(k=>k==='score')));
+function state(){const s=structuredClone(initial),p=own(s);p.mainActionCompleted=true;p.reservedCards=[];p.hand=weak.slice(0,5).map((e,i)=>card(e,'h'+i));p.resources.handSize=p.hand.length;p.dataState=data.createDefaultDataState();p.resources.availableData=0;p.resources.credits=6;p.resources.energy=6;p.resources.publicity=3;s.cards.publicCards=weak.slice(5,8).map((e,i)=>card(e,'offer'+i));return s;}
+const trades=[['credits-for-card',{credits:2}],['energy-for-card',{energy:2}],['publicity-for-card',{publicity:3}],['cards-for-pick-card',{handSize:2}]].map(([id,cost])=>({actionId:id,family:'quick_trade',target:{tradeId:id},payload:{cost,gain:{handSize:1}}}));
+const stop={actionId:'end',family:'end_turn',target:{}};
+const offers=s=>s.cards.publicCards.map((c,i)=>({actionId:'pick:'+c.id,family:'choose_card',target:{source:'public',slotIndex:i,cardInstanceId:c.id},payload:{}}));
+function plan(s,actions=trades.concat(stop),planner=api.createCardPickPlanner(),extra={}){return planner.plan({state:s,seatId,actions,status:'stable',...extra});}
+// A legal trade is not a purpose. No shortage and remaining technology means no acquisition branch.
+{
+ const s=state(),before=structuredClone(s),r=plan(s);assert.equal(r.reason,'no-pick-purpose');assert.equal(r.selectedActionId,null);assert.deepEqual(r.retainedActionIds,['end']);assert.deepEqual(s,before);assert.equal(r.isEquivalence,false);
+}
+// The funded fourth computer slot genuinely lacks a spare income card.
+{
+ const s=state(),p=own(s);p.hand=[];p.resources.handSize=0;p.resources.availableData=4;const r=plan(s);assert.equal(r.goal.kind,'income');assert(r.selectedActionId);assert(r.selection.cardId);
+ const blocked=structuredClone(s);own(blocked).resources.availableData=3;assert.equal(plan(blocked).selectedActionId,null);
+}
+// One missing data point is attached to completing analysis, rather than filling an arbitrary pool.
+{
+ const s=state(),p=own(s);p.mainActionCompleted=false;
+ const neutral=weak.filter(e=>!(cards.getDiscardActionRewardForCard(card(e,'x'))?.dataCount));p.hand=neutral.slice(0,2).map((e,i)=>card(e,'nd'+i));p.resources.handSize=2;p.resources.availableData=5;
+ const dataEntry=catalog.find(e=>cards.getDiscardActionRewardForCard(card(e,'x'))?.dataCount===1);s.cards.publicCards=[card(dataEntry,'data-offer')];
+ const r=plan(s);assert.equal(r.goal.kind,'data');assert.equal(r.selection.cardId,'card-data-offer');
+ const blocked=structuredClone(s);own(blocked).resources.availableData=4;assert.equal(plan(blocked).selectedActionId,null);
+}
+// A concrete movement target lacks exactly one point, with endpoint funds preserved after paying.
+{
+ const s=state(),p=own(s);p.mainActionCompleted=false;p.hand=[];p.resources.handSize=0;p.resources.energy=2;
+ const moveEntry=catalog.find(e=>cards.getDiscardActionMoveRewardForCard(card(e,'x'))?.movementPoints===1);s.cards.publicCards=[card(moveEntry,'move-offer')];
+ const target={requirementId:'rocket:goal',required:{credits:1,energy:3},targetBenefit:{score:8}};
+ const r=plan(s,trades.concat(stop),undefined,{endpoints:()=>[target]});assert.equal(r.goal.kind,'move');assert.equal(r.selection.cardId,'card-move-offer');assert.notEqual(r.selectedActionId,'energy-for-card');
+}
+// Publicity with no takeable technology can buy a card; retained publicity scoring prevents declaring it useless.
+{
+ const s=state(),p=own(s);p.hand=p.hand.slice(0,2);p.resources.handSize=2;for(const id of Object.keys(s.tech.stacks))p.techState.ownedTiles[id]=true;
+ const r=plan(s);assert.equal(r.goal.kind,'unused-publicity');assert.equal(r.selectedActionId,'publicity-for-card');
+}
+// Conditional card benefits do not become an unrestricted exceptional-card permission.
+{
+ const s=state();s.cards.publicCards=[card(catalog.find(e=>e.card_id==='b_13.webp'),'conditional-marker-card')];
+ assert.equal(plan(s).selectedActionId,null);
+}
+// Ordinary publicity scoring remains a reason to keep publicity even after technologies are exhausted.
+{
+ const s=state(),p=own(s);p.hand=p.hand.slice(0,2);p.resources.handSize=2;for(const id of Object.keys(s.tech.stacks))p.techState.ownedTiles[id]=true;
+ const entry=catalog.find(e=>{const score=effects.getCardModel(card(e,'score'))?.endGameScoring;return score?.kind==='remainingResource'&&score.resource==='publicity';});assert(entry);p.reservedCards=[card(entry,'pub-score')];assert.equal(plan(s).selectedActionId,null);
+}
+// A fixed native acquisition selects exactly one card and caches that selection across changed wallets and envelopes.
+{
+ const s=state(),planner=api.createCardPickPlanner(),before=structuredClone(s);
+ const first=plan(s,offers(s),planner,{status:'decision'});assert(first.fixed);assert.equal(first.retainedActionIds.length,1);assert.equal(first.kind,'fixed-card-plan');const stats=planner.getDiagnostics();
+ const changed=structuredClone(s);own(changed).resources.credits+=1;own(changed).resources.energy-=1;
+ const second=plan(changed,offers(changed).map(a=>({...a,actionId:a.actionId+':new-version',stateVersion:99})),planner,{status:'decision'});
+ assert.equal(second.selection.cardId,first.selection.cardId);assert.equal(second.selection.cache,'hit');assert.equal(planner.getDiagnostics().rankingCacheMisses,stats.rankingCacheMisses);assert.equal(planner.getDiagnostics().rankedCards,stats.rankedCards);assert.deepEqual(s,before);
+ const changedOffer=structuredClone(s);changedOffer.cards.publicCards[0]=card(weak[10],'new-offer');plan(changedOffer,offers(changedOffer),planner,{status:'decision'});assert.equal(planner.getDiagnostics().rankingCacheMisses,stats.rankingCacheMisses+1);
+ const newGoal=structuredClone(s);own(newGoal).hand=[];own(newGoal).resources.handSize=0;own(newGoal).resources.availableData=4;const income=plan(newGoal,offers(newGoal),planner,{status:'decision'});assert.equal(income.goal.kind,'income');assert.equal(planner.getDiagnostics().rankingCacheMisses,stats.rankingCacheMisses+2);
+ const hidden=structuredClone(s);hidden.cards.drawPileCardIds.reverse();assert.equal(plan(hidden,offers(hidden),planner,{status:'decision'}).selectedActionId,first.selectedActionId);
+}
+// Native fixed payment and selection are one plan edge; all four physical inputs remain charged.
+{
+ const {createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),{createAnalysisPort}=require('./analysis-port'),{searchDecision}=require('./decision-search'),{createStateValueEvaluator}=require('./state-value'),agent=require('./search-agent');
+ const seed=f.source.seed,k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);
+ assert(c.inputPort.submitQuickAction(c.inputPort.enumerateActions({}).find(a=>a.target?.tradeId==='cards-for-pick-card')).ok);const before=c.lifecycle.save().envelope,evaluate=createStateValueEvaluator(seatId);
+ function run(budget,clock){const port=createAnalysisPort({composition:c,seatId,maxCacheEntries:0}),root=port.openRoot();let wrapped=port;
+  if(clock)wrapped={...port,expandWithCardPick(node,id,check){return port.expandWithCardPick(node,id,count=>{clock.time+=2;return check(count);});}};
+  const r=searchDecision({port:wrapped,root,evaluate,modelKey:evaluate.modelKey,...agent.OPTIONS,budget,...(clock?{now:()=>clock.time}:{})});assert.deepEqual(c.lifecycle.save().envelope,before);port.close();return r;}
+ const complete=run({transitions:256,nodes:257,frontier:256,milliseconds:15000});assert(complete.complete);assert.equal(complete.diagnostics.transitions,4);assert.equal(complete.diagnostics.graphNodes,2);assert.equal(complete.diagnostics.certificateNodes,3);assert.equal(complete.candidates.length,1);assert.equal(complete.candidates[0].kind,'fixed-card-plan');assert(complete.lines[0].edges[0].fixedChoices.some(s=>s.reason==='fixed-card-pick'));
+ const limited=run({transitions:1,nodes:257,frontier:256,milliseconds:15000});assert(!limited.complete);assert.equal(limited.stopReason,'transition-budget');assert.equal(limited.diagnostics.transitions,1);assert.equal(limited.actionId,null);assert.equal(limited.planContinuation,null);
+ for(const [kind,budget] of [['node-budget',{transitions:256,nodes:2,frontier:256,milliseconds:15000}],['frontier-budget',{transitions:256,nodes:257,frontier:1,milliseconds:15000}]]){const r=run(budget);assert(!r.complete);assert.equal(r.stopReason,kind);assert.equal(r.diagnostics.transitions,1);assert.equal(r.actionId,null);assert.equal(r.planContinuation,null);}
+ const timed=run({transitions:256,nodes:257,frontier:256,milliseconds:5},{time:0});assert(!timed.complete);assert.equal(timed.stopReason,'watchdog');assert.equal(timed.actionId,null);assert.equal(timed.planContinuation,null);assert(timed.diagnostics.transitions<4);c.dispose();
+}
+// Legacy equal-V pick reductions cannot override the card identity fixed by the purpose.
+{
+ const {searchDecision}=require('./decision-search'),{createStateValueEvaluator}=require('./state-value');
+ const obs={terminal:false,selfState:{playerId:'p1',hand:[]},publicState:{roundNumber:2,players:[{playerId:'p1',score:0,finalScore:0,credits:1,energy:0,publicity:0,availableData:0,additionalPublicScan:0,income:{credits:0,energy:0,publicity:0,availableData:0,additionalPublicScan:0,handSize:0}}]}};
+ const actions=['a-wrong','z-fixed'].map(actionId=>({actionId,actorId:'p1',family:'choose_card',target:{kind:'trade-card-selection'}})),root={status:'decision',observation:obs,legalActions:actions},leaf={status:'information-barrier',observation:{...obs,selfState:{playerId:'p1',hand:[{id:'known-fixed-card'}]}},legalActions:[]};
+ const spec={fixed:true,kind:'fixed-card-plan',policy:api.VERSION,goal:{kind:'data',id:'critical-data'},selectedActionId:'z-fixed',retainedActionIds:['z-fixed'],excludedActionIds:['a-wrong'],isEquivalence:false};
+ const port={identity:n=>n===root?'root':'leaf',expand:()=>assert.fail('fixed plan must use its native macro'),cardPickSpec:n=>n===root?spec:null,cardTradeBound:()=>({handDelta:1,proof:'old-numeric-equivalence'}),
+  expandWithCardPick(node,id){assert.equal(id,'z-fixed');return{complete:true,node:leaf,submissions:1,prefixes:[{node:root,action:actions[1]}],fixedChoices:[spec]};}};
+ const r=searchDecision({port,root,evaluate:createStateValueEvaluator('p1'),cardPickPlanning:true,cardChoiceEquivalence:true});assert(r.complete);assert.equal(r.actionId,'z-fixed');
+}
+console.log(JSON.stringify({purposeCardPick:'passed',noUnmotivatedTrades:true,incomeMoveDataAndUnusedPublicity:true,fixedCardAndSemanticCache:true}));

@@ -847,6 +847,28 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "真实页面加载目标计划模块及延迟Production查询，执行DLC40目标路线与转盘对照，权威根不变",
   counterexample: "脚本装配缺失、只在Node能查询路线、浏览器仍方向展开或试算污染正式状态",
 }), Object.freeze({
+  id: "production-fixed-card-pick-plan",
+  file: "randomizer/index.html",
+  readyExpression: "Boolean(window.SetiCardPickPlanning && window.SetiSearchAgent && window.SetiProductionKernel)",
+  actionExpression: `(async () => {
+    const f=await fetch('/adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const kernel=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});
+    kernel.newGame({seed});const comp=kernel.composition;
+    if(!comp.lifecycle.restore(f.compositionEnvelope).ok)throw new Error('固定选牌恢复失败');
+    const start=comp.inputPort.enumerateActions({}).find(a=>a.target?.tradeId==='cards-for-pick-card');
+    if(!comp.inputPort.submitQuickAction(start).ok)throw new Error('固定选牌启动失败');
+    const before=JSON.stringify(comp.lifecycle.save().envelope),port=window.SetiAnalysisPort.createAnalysisPort({composition:comp,seatId:f.seatId});
+    try{const root=port.openRoot(),evaluate=window.SetiStateValue.createStateValueEvaluator(f.seatId);
+      const r=window.SetiDecisionSearch.searchDecision({port,root,evaluate,modelKey:evaluate.modelKey,...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:257,frontier:256,milliseconds:1500}});
+      if(!r.complete||r.candidates.length!==1||r.candidates[0].kind!=='fixed-card-plan'||r.diagnostics.transitions!==4||r.diagnostics.graphNodes!==2)throw new Error('选牌仍产生搜索分支或漏记原生输入');
+      if(JSON.stringify(comp.lifecycle.save().envelope)!==before)throw new Error('固定选牌试算污染真实状态');
+      window.__fixedCardPickSmoke={ok:true,inputs:r.diagnostics.transitions,graphNodes:r.diagnostics.graphNodes,cache:port.getDiagnostics().cardPick};
+    }finally{port.close();comp.dispose();}
+  })()`,
+  successExpression: "window.__fixedCardPickSmoke?.ok === true",
+  obligation: "真实页面将两张牌付款和精选折为固定计划，4次原生输入、2个图节点，权威状态不变",
+  counterexample: "缺失脚本装配、逐卡分支、固定付款未记录回放或试算污染正式状态",
+}), Object.freeze({
   ...smokes.find(smoke => smoke.id === "production-browser-full-parity"),
   id: "production-completion-agent-parity",
   file: "randomizer/index.html",

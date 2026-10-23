@@ -9,7 +9,7 @@
   "use strict";
   const VERSION = `seti-search-agent-v2/${search.VERSION}/${stateValue.MODEL_VERSION}`;
   const BUDGET = Object.freeze({ transitions: 256, nodes: 257, frontier: 256, milliseconds: 600 });
-  const OPTIONS = Object.freeze({ movementPlanning: true, resourceDominance: true, moneyCapacityDominance: true,
+  const OPTIONS = Object.freeze({ movementPlanning: true, cardPickPlanning: true, resourceDominance: true, moneyCapacityDominance: true,
     cardTradePruning: true, postMainPruning: true, openingPruning: true, cardChoiceEquivalence: true, planReuse: true });
   const MODEL_CHECKSUM = JSON.stringify({ searchVersion: search.VERSION, valueVersion: stateValue.MODEL_VERSION,
     weights: stateValue.DEFAULT_WEIGHTS, budget: BUDGET, options: OPTIONS });

@@ -167,3 +167,8 @@ Production Kernel 新增可信只读 `getProbeRouteRequirements`、`comparePlann
 算法仍不能读取原始 state/session。方向候选变为目标计划，路线、时机及排除策略以公开证据返回，
 规则状态与搜索控制身份分别记录。Browser/Simulation 同一工厂启用；
 详见[目标移动契约及范围](ai-goal-movement-20261023.md)。
+
+分析缓存标记 v33 新增 `setCardPickPlanning`、`cardPickSpec`、`expandWithCardPick`。
+`card-pick-planning.js` 的有界语义缓存保存“同一诉求拿哪张牌”，不缓存另一钱包状态的收益。
+固定付款及精选的所有原生步骤仍记录在计划边和独立 replay 输入中；
+详见[用途、缓存键、预算及恢复](ai-card-pick-plans-20261023.md)。

@@ -19,10 +19,11 @@
     common ? require("../players") : root.SetiPlayers,
     common ? require("../effects/science-session") : root.SetiScienceSession,
     common ? require("./goal-movement") : root.SetiGoalMovement,
-    common ? require("../production-kernel") : root.SetiProductionKernel);
+    common ? require("../production-kernel") : root.SetiProductionKernel,
+    common ? require("./card-pick-planning") : root.SetiCardPickPlanning);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi) {
   "use strict";
 
   // 已逐项审计的 Production 公司组合：钱电模拟和取牌待选分别检查各自的队列前提。
@@ -231,6 +232,11 @@
     if (!Number.isSafeInteger(maxCacheEntries) || maxCacheEntries < 0) throw new TypeError("ANALYSIS_CACHE_LIMIT_INVALID");
     const viewer = Object.freeze({ playerId: seatId, role: "player" });
     let movementPlanning = false;
+    let cardPickPlanning = false;
+    const cardPickPlanner = cardPickPlanningApi.createCardPickPlanner();
+    let cardPickRootStats = cardPickPlanner.getDiagnostics();
+    let cardPickSpecs = new WeakMap();
+    let envelopeCardSpecs = new WeakMap();
     let goalMovementGeometryNodes = 0;
     let openedRoot = null;
     let movementPolicies = new WeakMap();
@@ -335,9 +341,12 @@
       const boundary = barrier?.code || null;
       if (movementPlanning && !intent) intent = recoverMovementIntent(envelope);
       const physicalKey = forwardIdentity(envelope, status, boundary, readIdentityState(envelope));
-      const key = intent ? JSON.stringify([physicalKey, intent]) : physicalKey;
+      const movementKey = intent ? JSON.stringify([physicalKey, intent]) : physicalKey;
+      const pick = cardPickPlanning && status === "decision" && actions.length ? describeCardPick(envelope,actions,status) : null;
+      const cardControl = pick?.fixed ? {goal:pick.goal,selection:pick.selection&&{cardId:pick.selection.cardId,blind:pick.selection.blind},discardIds:pick.discardIds} : null;
+      const key = cardControl ? JSON.stringify([movementKey,cardControl]) : movementKey;
       if (!identities.has(key)) identities.set(key, Object.freeze({}));
-      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, physicalKey, intent });
+      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, physicalKey, intent, cardControl });
       nodeCount += 1;
       return node;
     }
@@ -368,6 +377,7 @@
     function openRoot() {
       if (fork) throw new Error("ANALYSIS_ROOT_ALREADY_OPEN");
       goalMovementGeometryNodes = 0;
+      cardPickRootStats = cardPickPlanner.getDiagnostics();
       nodeCount = 0;
       submissionCount = 0;
       cacheHits = 0;
@@ -406,7 +416,7 @@
       const requested = node.legalActions.find(action => action.actionId === actionId);
       if (!requested || requested.actorId !== seatId) throw new Error("ANALYSIS_ACTION_NOT_LEGAL");
       // serial 只在本端口生命周期内绑定这一不可变快照；不按观察摘要跨节点复用。
-      const key = JSON.stringify([stored.serial, actionId, movementPlanning]);
+      const key = JSON.stringify([stored.serial, actionId, movementPlanning, cardPickPlanning]);
       if (cache.has(key)) {
         cacheHits += 1;
         return cache.get(key);
@@ -429,6 +439,48 @@
           }
         }
       }
+    }
+
+    function describeCardPick(envelope,actions,status) {
+      if (envelopeCardSpecs.has(envelope)) return envelopeCardSpecs.get(envelope);
+      const state=readIdentityState(envelope);
+      const result=cardPickPlanner.plan({state,seatId,actions,status,session:envelope.session?.session,
+        endpoints:(candidateState=state)=>(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(candidateState,seatId)?.candidates||[]});
+      const frozen=result&&freeze(result);envelopeCardSpecs.set(envelope,frozen);return frozen;
+    }
+
+    function cardPickSpec(node) {
+      const stored=nodes.get(node);
+      if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
+      if(!cardPickPlanning||!["stable","decision"].includes(node.status)||!node.legalActions.length)return null;
+      if(cardPickSpecs.has(node))return cardPickSpecs.get(node);
+      const result=describeCardPick(stored.envelope,node.legalActions,node.status);cardPickSpecs.set(node,result);return result;
+    }
+
+    function setCardPickPlanning(enabled) {
+      cardPickPlanning=enabled===true;
+      if(cardPickPlanning&&openedRoot){
+        const stored=nodes.get(openedRoot),pick=cardPickSpec(openedRoot);
+        if(pick?.fixed&&!stored.cardControl){
+          stored.cardControl={goal:pick.goal,selection:pick.selection&&{cardId:pick.selection.cardId,blind:pick.selection.blind},discardIds:pick.discardIds};
+          stored.key=JSON.stringify([stored.key,stored.cardControl]);
+          if(!identities.has(stored.key))identities.set(stored.key,Object.freeze({}));stored.identity=identities.get(stored.key);
+        }
+      }
+    }
+
+    function expandWithCardPick(node,actionId,hasCapacity) {
+      const prefixes=[],fixedChoices=[];let current=node,next=actionId;
+      while(next){
+        const stopped=hasCapacity(prefixes.length);
+        if(stopped)return{complete:false,stopReason:stopped,node:current,submissions:prefixes.length,prefixes,fixedChoices};
+        const action=current.legalActions.find(a=>a.actionId===next);if(!action)throw new Error("ANALYSIS_FIXED_CARD_ACTION_STALE");
+        const spec=cardPickSpec(current);
+        if(spec?.fixed)fixedChoices.push({prefix:prefixes.length,...spec});
+        prefixes.push({node:current,action});current=expand(current,next);
+        const following=cardPickSpec(current);next=following?.fixed?following.selectedActionId:null;
+      }
+      return{complete:true,node:current,submissions:prefixes.length,prefixes,fixedChoices};
     }
 
     function movementTiming(state, id, path, freePoints) {
@@ -642,7 +694,7 @@
     function selectionSpec(node) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
-      if (node.status !== "decision") return null;
+      if (node.status !== "decision" || cardPickPlanning && cardPickSpec(node)?.fixed) return null;
       const session = stored.envelope.session?.session;
       const effect = session?.queue?.[0];
       const pending = effect?.payload?.decisionContext;
@@ -1932,6 +1984,9 @@
       movementRouteCache.clear();
       movementTimingCache.clear();
       movementPlanning = false;
+      cardPickPlanning = false;
+      cardPickSpecs = new WeakMap();
+      envelopeCardSpecs = new WeakMap();
       openedRoot = null;
       identities.clear();
       resourceOrders = new WeakMap();
@@ -1955,7 +2010,9 @@
     }
 
     function getDiagnostics() {
-      return freeze({ goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, cacheEntries: cache.size,
+      const picks=cardPickPlanner.getDiagnostics();
+      return freeze({ cardPick:{...picks,rankingCacheHitsThisRoot:picks.rankingCacheHits-cardPickRootStats.rankingCacheHits,
+        rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, cacheEntries: cache.size,
         observationCount, identityCount: identities.size, maxCacheEntries,
         decodedStateCacheEntries: decodedSerialized ? 1 : 0, maxDecodedStateCacheEntries: 1,
         committedDecodeCount, committedDecodeHits,
@@ -1970,7 +2027,7 @@
       return stored.identity;
     }
 
-    return Object.freeze({ openRoot, expand, identity, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }
