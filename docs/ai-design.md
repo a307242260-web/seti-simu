@@ -5,7 +5,7 @@
 新开发主线通过`createAgentDecisionFunction`注册completion与实验search factory，
 两端仍使用本文的同一协调器和正式输入端口。search使用独立analysis-port/decision-search/state-value，
 不调用下文旧heuristic的目标选择、估值或计划缓存；具体入口、完成证据与失败语义见
-[共享搜索玩家](ai-search-agent-contract-20261023.md)。实验search尚未通过复杂决策及整局速度验收。
+[共享搜索玩家](ai-search-agent-contract-20261023.md)。实验search尚未通过复杂决策及整局速度验收。资源兑换与角标采用[先需求、再贪心、最后目标内搜索](ai-resource-demand-20261027.md)，不再是独立探索动作。
 
 ## 1. 决策流程
 

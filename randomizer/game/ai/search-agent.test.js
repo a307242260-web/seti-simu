@@ -128,7 +128,7 @@ function direct(f, cache = 0) {
     assert.equal(Object.hasOwn(browserNext.agentTrace.search,"planContinuation"),false);
     if(reusedPost.searches[0].diagnostics.planContinuation==="hit")prefixHits+=1;
   }
-  assert(prefixHits>0,"共享Simulation运行时须沿完整窗口命中一般前缀证据");
+  assert.equal(prefixHits,0,"资源准备中间步骤须从物理状态重算，不沿用没有持久目标的前缀证据");
   recoveredPost.dispose();browser.dispose();
   post.dispose();
 

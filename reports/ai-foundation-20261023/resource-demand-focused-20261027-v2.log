@@ -1,0 +1,10 @@
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+{"postMainAttainment":"passed","rows":[{"name":"end-now","raw":18,"attained":1,"value":32,"distance":1},{"name":"unprofitable-move","raw":163,"attained":1,"value":33,"distance":1},{"name":"cash-income","raw":1373,"attained":10,"value":35.5,"distance":10},{"name":"blind-income","raw":351,"attained":9,"value":35.5,"distance":9},{"name":"data-corner-cash","raw":2305,"attained":11,"value":44,"distance":11},{"name":"preserve-blind-data-card","raw":2368,"attained":10,"value":44,"distance":10},{"name":"must-retain-income-card","raw":324,"attained":1,"value":42,"distance":1},{"name":"late-income-tie","raw":1373,"attained":1,"value":27.5,"distance":1}],"realFactoryInputs":10,"reusedInteriorPrefixes":0}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"sharedSearchAgent":"passed","fixture":"case-003","transitions":26,"postMainTransitions":9,"incompleteFixture":"case-062","reuseHits":3,"wholeGames":0}
+SUMMARY unit passed=4 failed=0 total=4 time=19.75s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=3

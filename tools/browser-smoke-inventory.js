@@ -869,6 +869,25 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "真实页面将两张牌付款和精选折为固定计划，4次原生输入、2个图节点，权威状态不变",
   counterexample: "缺失脚本装配、逐卡分支、固定付款未记录回放或试算污染正式状态",
 }), Object.freeze({
+  id: "production-resource-goal-plan",
+  file: "randomizer/index.html",
+  readyExpression: "Boolean(window.SetiResourceDemand && window.SetiProductionKernel?.getResourceGoalRequirements)",
+  actionExpression: `(async () => {
+    const f=await fetch('/adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});
+    k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw new Error('资源准备恢复失败');
+    const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId});
+    try{p.setResourcePlanning(true);p.setCardPickPlanning(true);const root=p.openRoot(),spec=p.resourceSpec(root),goal=spec.plans.find(x=>x.goal.kind==='income');
+      if(!goal||root.legalActions.filter(window.SetiResourceDemand.isPreparation).some(a=>spec.retainedActionIds.includes(a.actionId)))throw new Error('资源准备仍是独立搜索动作');
+      const r=p.expandResourcePlan(root,goal,()=>null);if(!r.complete||r.goalStatus!=='completed'||r.submissions!==9)throw new Error('目标资源链未完整执行');
+      if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw new Error('资源试算改变真实根');
+      window.__resourceGoalSmoke={ok:true,inputs:r.submissions,goal:goal.goal.id};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression: "window.__resourceGoalSmoke?.ok === true",
+  obligation: "真实页面按收入数据需求固定准备流程，原生输入逐笔计数且权威状态不变",
+  counterexample: "模块装配丢失、兑换或角标独立展开、缺少需求仍准备、宏漏记输入或修改权威根",
+}), Object.freeze({
   ...smokes.find(smoke => smoke.id === "production-browser-full-parity"),
   id: "production-completion-agent-parity",
   file: "randomizer/index.html",

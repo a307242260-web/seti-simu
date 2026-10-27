@@ -359,10 +359,10 @@ try {
       prefixEnv.loadCheckpoint(checkpoint);
       const first = prefixEnv.runAgentDecision(), raw = prefixEnv.observe(prefixFixture.seatId);
       const next = prefixEnv.runAgentDecision(), evaluate = independentValue.createStateValueEvaluator(prefixFixture.seatId);
-      if (!first.searches[0].planEvidence || next.searches[0].diagnostics.planContinuation !== "hit"
-        || next.searches[0].diagnostics.transitions !== 0 || first.searches[0].value !== next.searches[0].value
-        || evaluate(raw) !== evaluate(next.agentTrace.context.observation)) throw new Error("最优前缀复用的完成证据或原始/标准输入不一致");
-      console.log(`[PASS] independent-plan-prefix-reuse: root=${evaluate(raw)} leaf=${next.searches[0].value} inputs=0`);
+      if (!first.searches[0].planEvidence || next.searches[0].diagnostics.planContinuation === "hit"
+        || next.searches[0].diagnostics.transitions <= 0 || first.searches[0].value !== next.searches[0].value
+        || evaluate(raw) !== evaluate(next.agentTrace.context.observation)) throw new Error("资源准备重算的完成证据或原始/标准输入不一致");
+      console.log(`[PASS] independent-resource-prefix-replan: root=${evaluate(raw)} leaf=${next.searches[0].value} inputs=${next.searches[0].diagnostics.transitions}`);
     } finally { prefixEnv.dispose(); }
     for (const id of ["062", "105", "152"]) {
       const moneyFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
@@ -456,6 +456,18 @@ try {
         if(!macro.complete||macro.submissions!==4)throw new Error("固定选牌原生输入数错误");
         for(const node of [...macro.prefixes.map(p=>p.node),macro.node])if(evaluate(node.observation)!==evaluate(outcomeModel.createDecisionObservation(node.observation,{seatId:fixture.seatId})))throw new Error("固定选牌原始/标准估值不一致");
         console.log(`[PASS] independent-fixed-card-pick: inputs=${macro.submissions} fixedChoices=${macro.fixedChoices.length}`);
+      }finally{port.close();}
+    }
+    {
+      const fixture=JSON.parse(fs.readFileSync(path.resolve(__dirname,"../adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json"))),comp=auditKernel.composition;
+      if(!comp.lifecycle.restore(fixture.compositionEnvelope).ok)throw new Error("资源准备审计恢复失败");
+      const before=JSON.stringify(comp.lifecycle.save().envelope),port=createAnalysisPort({composition:comp,seatId:fixture.seatId});
+      try{port.setResourcePlanning(true);port.setCardPickPlanning(true);const root=port.openRoot(),spec=port.resourceSpec(root),evaluate=independentValue.createStateValueEvaluator(fixture.seatId);
+        const plan=spec.plans.find(p=>p.goal.kind==="income");if(!plan)throw new Error("缺少收入数据目标");
+        const macro=port.expandResourcePlan(root,plan,()=>null);if(!macro.complete||macro.goalStatus!=="completed")throw new Error("资源准备目标未完成");
+        for(const node of [...macro.prefixes.map(p=>p.node),macro.node])if(evaluate(node.observation)!==evaluate(outcomeModel.createDecisionObservation(node.observation,{seatId:fixture.seatId})))throw new Error("资源准备原始/标准估值不一致");
+        if(JSON.stringify(comp.lifecycle.save().envelope)!==before)throw new Error("资源准备改变权威根");
+        console.log(`[PASS] independent-resource-goal-preparation: inputs=${macro.submissions} goal=${plan.goal.id}`);
       }finally{port.close();}
     }
     const cornerFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,

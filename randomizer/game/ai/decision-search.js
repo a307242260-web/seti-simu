@@ -6,13 +6,13 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v32";
+  const VERSION = "seti-complete-decision-search-v33";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
 
   function searchDecision({ port, root, evaluate, budget = {}, continuation = null, planContinuation = null, planReuse = false,
-    modelKey = null, movementPlanning = false, cardPickPlanning = false, resourceDominance = false, moneyCapacityDominance = false, cardTradePruning = false, postMainPruning = false, openingPruning = false, cardChoiceEquivalence = false,
+    modelKey = null, movementPlanning = false, cardPickPlanning = false, resourcePlanning = false, resourceDominance = false, moneyCapacityDominance = false, cardTradePruning = false, postMainPruning = false, openingPruning = false, cardChoiceEquivalence = false,
     now = () => performance.now() } = {}) {
     if (typeof port?.expand !== "function" || typeof port?.identity !== "function"
       || typeof evaluate !== "function" || !root) throw new TypeError("SEARCH_INPUT_INVALID");
@@ -23,11 +23,13 @@
       }
     }
     const startedAt = now();
-    const scope=(movementPlanning?"own-visible-window-with-goal-directed-movement-policy":"own-visible-decision-window-to-owner-information-or-terminal-boundary")+(cardPickPlanning?"+fixed-card-pick-policy":"");
+    const scope=(movementPlanning?"own-visible-window-with-goal-directed-movement-policy":"own-visible-decision-window-to-owner-information-or-terminal-boundary")+(cardPickPlanning?"+fixed-card-pick-policy":"")+(resourcePlanning?"+goal-bound-greedy-resource-policy":"");
     if (movementPlanning && typeof port.goalMovementSpec !== "function") throw new TypeError("SEARCH_MOVEMENT_PORT_REQUIRED");
     port.setMovementPlanning?.(movementPlanning);
     if(cardPickPlanning&&typeof port.expandWithCardPick!=="function")throw new TypeError("SEARCH_CARD_PICK_PORT_REQUIRED");
     port.setCardPickPlanning?.(cardPickPlanning);
+    if(resourcePlanning&&typeof port.expandResourcePlan!=="function")throw new TypeError("SEARCH_RESOURCE_PORT_REQUIRED");
+    port.setResourcePlanning?.(resourcePlanning);
     if (openingPruning && (!stateValue?.isDefaultStateValueEvaluator?.(evaluate)
       || evaluate.seatId !== root.legalActions?.[0]?.actorId
       || typeof port.openingPlanSpec !== "function")) throw new TypeError("SEARCH_OPENING_MODEL_INVALID");
@@ -50,7 +52,7 @@
     if (planReuse && (!stateValue?.isStateValueEvaluator?.(evaluate) || evaluate.seatId !== root.legalActions?.[0]?.actorId
       || typeof port.rememberPlan !== "function" || typeof port.reusePlan !== "function")) throw new TypeError("SEARCH_PLAN_MODEL_INVALID");
     const planKey = JSON.stringify([VERSION, modelKey, evaluate.modelKey, resourceDominance, moneyCapacityDominance,
-      cardTradePruning, postMainPruning, openingPruning, cardChoiceEquivalence, movementPlanning, cardPickPlanning]);
+      cardTradePruning, postMainPruning, openingPruning, cardChoiceEquivalence, movementPlanning, cardPickPlanning, resourcePlanning]);
     const reused = continuation && modelKey && port.reuseSelection?.(root, continuation, modelKey);
     const reusedPlan = !reused?.hit && planReuse && planContinuation && port.reusePlan(root, planContinuation, planKey);
     const hit = reused?.hit ? reused : reusedPlan?.hit ? reusedPlan : null;
@@ -63,7 +65,7 @@
         : { evidenceId: hit.evidenceId, proof: hit.proof, sourceNode: hit.sourceNode, source: hit.source, distance: hit.distance },
       stopReason: null, scope,
       roots: hit.roots, lines: [], unresolved: [],
-      diagnostics: { cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes: 0, movementDirectionsExcluded: 0, routeGeometryNodes: 0,
+      diagnostics: { resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes: 0, movementDirectionsExcluded: 0, routeGeometryNodes: 0,
         transitions: 0, nodes: 1, equivalents: 0, selectionMacros: 0, peakFrontier: 0, graphNodes: 1, certificateNodes: 0,
         postMainOptimalPlans: 0, postMainOptimalPlanSteps: 0,
         dominancePrunes: 0, resourceDominance: resourceDominance
@@ -87,9 +89,9 @@
     const known = new Map();
     const queue = [];
     const resourceGroups = new Map();
-    const useResourceDominance = !movementPlanning && !cardPickPlanning && resourceDominance && !port.selectionSpec?.(root);
-    const useMoneyCapacity = !movementPlanning && !cardPickPlanning && moneyCapacityDominance && !port.selectionSpec?.(root);
-    const useCardTradePruning = cardTradePruning && !port.selectionSpec?.(root);
+    const useResourceDominance = !resourcePlanning && !movementPlanning && !cardPickPlanning && resourceDominance && !port.selectionSpec?.(root);
+    const useMoneyCapacity = !resourcePlanning && !movementPlanning && !cardPickPlanning && moneyCapacityDominance && !port.selectionSpec?.(root);
+    const useCardTradePruning = !resourcePlanning && cardTradePruning && !port.selectionSpec?.(root);
     const useScanBound = cardChoiceEquivalence && stateValue?.isDefaultStateValueEvaluator?.(evaluate) && !port.selectionSpec?.(root);
     const usePostMainValueBound = postMainPruning && !port.selectionSpec?.(root);
     let movementPolicyNodes = 0, movementDirectionsExcluded = 0, routeGeometryNodes = 0;
@@ -150,15 +152,16 @@
       if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
       if (BOUNDARIES.has(node.status) && (!incumbent || value > incumbent.value)) incumbent = { node: index, value };
       const pickPolicy = !boundary && cardPickPlanning ? port.cardPickSpec(node) : null;
-      const selection = boundary || pickPolicy?.fixed ? null : port.selectionSpec?.(node) || null;
-      const postMainPlan = !boundary && !selection && postMainPruning && node.status === "stable"
+      const resourcePolicy=!boundary&&resourcePlanning?port.resourceSpec(node):null;
+      const selection = boundary || pickPolicy?.fixed || resourcePolicy?.bound || resourcePolicy?.plans.length ? null : port.selectionSpec?.(node) || null;
+      const postMainPlan = !boundary && !selection && !resourcePlanning && postMainPruning && node.status === "stable"
         ? port.postMainPlanSpec(node) : null;
       let localPlan = postMainPlan ? { ...postMainPlan, kind: "post-main" } : null;
-      if (!boundary && !selection && !localPlan && openingPruning && node.status === "stable") {
+      if (!boundary && !selection && !localPlan && !resourcePlanning && openingPruning && node.status === "stable") {
         const opening = port.openingPlanSpec(node);
         if (opening) localPlan = { ...opening, kind: "opening" };
       }
-      if (!boundary && !selection && openingPruning && node.status === "stable") {
+      if (!boundary && !selection && !resourcePlanning && openingPruning && node.status === "stable") {
         const data = port.preMainDataPlanSpec?.(node);
         const fresh = data?.excludedActionIds.filter(id => !localPlan?.excludedActionIds.includes(id));
         if (fresh?.length) {
@@ -171,7 +174,7 @@
           localPlan.preMainDataExcludedActions = fresh.length;
         }
       }
-      if (!boundary && !selection && !localPlan && cardChoiceEquivalence && node.status === "stable") {
+      if (!boundary && !selection && !localPlan && !resourcePlanning && cardChoiceEquivalence && node.status === "stable") {
         const corners = port.postMainCornerChoiceSpec?.(node);
         if (corners) localPlan = { ...corners, kind: "card-corner-choice" };
       }
@@ -214,7 +217,7 @@
       if (localPlan?.kind === "card-corner-choice") {
         cardCornerProofNodes += 1; cardCornerExcludedActions += localPlan.excludedActionIds.length;
       }
-      let borrowPlan = !boundary && !selection && postMainPruning && limits.transitions <= 4096
+      let borrowPlan = !boundary && !selection && !resourcePolicy?.bound && postMainPruning && limits.transitions <= 4096
         ? port.postMainBorrowSpec?.(node) : null;
       if (borrowPlan) {
         const value = evaluate(node.observation);
@@ -227,7 +230,7 @@
           retainedActionIds: node.legalActions.filter(action => action.actionId !== borrowPlan.industryActionId).map(action => action.actionId),
           excludedActionIds: [borrowPlan.industryActionId] };
       }
-      const needsMovementPlan = node.legalActions.some(action => (!localPlan || localPlan.retainedActionIds.includes(action.actionId))
+      const needsMovementPlan = !resourcePolicy?.bound && node.legalActions.some(action => (!localPlan || localPlan.retainedActionIds.includes(action.actionId))
         && (Number.isInteger(action.target?.deltaX) || action.target?.kind === "move-payment"
           || action.target?.tradeId === "energy-for-move" || action.family === "card_corner" && action.payload?.kind === "move"));
       const movementPolicy = movementPlanning && !boundary && needsMovementPlan ? port.goalMovementSpec(node) : null;
@@ -237,8 +240,9 @@
       }
       const retainedActions = node.legalActions.filter(action => (!localPlan || localPlan.retainedActionIds.includes(action.actionId))
         && (!movementPolicy || movementPolicy.retainedActionIds.includes(action.actionId))
-        && (!pickPolicy || pickPolicy.retainedActionIds.includes(action.actionId)));
-      if (!boundary && !retainedActions.length) throw new Error("SEARCH_MOVEMENT_POLICY_CONFLICT");
+        && (!pickPolicy || pickPolicy.retainedActionIds.includes(action.actionId))
+        && (!resourcePolicy || resourcePolicy.retainedActionIds.includes(action.actionId)));
+      if (!boundary && !retainedActions.length && !resourcePolicy?.plans.length && !resourcePolicy?.bound) throw new Error("SEARCH_MOVEMENT_POLICY_CONFLICT");
       const alternatives = selection ? port.selectionPlans(node)
         : retainedActions.flatMap(action => {
           if (movementPolicy?.plan && movementPolicy.selectedActionId === action.actionId
@@ -252,9 +256,10 @@
           if (openingPass && typeof port.expandOpeningPass !== "function") throw new TypeError("SEARCH_OPENING_PASS_PORT_INVALID");
           return { firstActionId: action.actionId, submissions: openingPass ? 2 : 1, ...(pickPlan?{cardPickPlan:pickPlan}:{}), ...(openingPass ? { openingPass: true } : {}) };
         });
+      if(resourcePolicy?.plans.length)alternatives.push(...resourcePolicy.plans.map(plan=>({firstActionId:plan.firstActionId,submissions:1,resourcePlan:plan})));
       const alternativeCount = selection ? Array.from({ length: selection.requiredCount }, (_, i) =>
         (selection.cardIds.length - i) / (selection.unordered ? i + 1 : 1))
-        .reduce((count, n) => count * n, 1) : retainedActions.length;
+        .reduce((count, n) => count * n, 1) : alternatives.length;
       let resources = !boundary && !selection && useMoneyCapacity ? port.openingMoneyCapacity(node) : null;
       if (resources?.moneyCapacity) {
         const currentValue = evaluate(node.observation);
@@ -271,7 +276,7 @@
         }
       }
       nodes.push({ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan, borrowPlan,
-        movementPolicy, pickPolicy, expanded: boundary, value, distance: boundary ? 0 : Infinity, best: null });
+        movementPolicy, pickPolicy, resourcePolicy, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, distance: boundary ? 0 : Infinity, best: null });
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
         const upper = peers.find(i => dominates(nodes[i].resources, resources));
@@ -282,7 +287,7 @@
           resourceGroups.set(resources.group, [...peers, index]);
         }
       }
-      if (!boundary && !nodes[index].prunedBy) {
+      if (!nodes[index].expanded && !nodes[index].prunedBy) {
         queue.push(index); nodes[index].queued = true; pendingFrontier += 1;
       }
       peakFrontier = Math.max(peakFrontier, pendingFrontier);
@@ -326,7 +331,7 @@
           }
         }
       }
-      const optimal = usePostMainValueBound && entry.node.status === "stable" ? port.postMainOptimalPlanSpec?.(entry.node) : null;
+      const optimal = usePostMainValueBound && !entry.resourcePolicy?.bound && entry.node.status === "stable" ? port.postMainOptimalPlanSpec?.(entry.node) : null;
       if (optimal && transitions+optimal.submissions <= limits.transitions
         && nodes.length+certificateNodes+optimal.submissions <= limits.nodes
         && pendingFrontier+optimal.submissions-1 <= limits.frontier) {
@@ -349,7 +354,7 @@
           if (nodes[added.index].value !== currentValue+increase) throw new Error("SEARCH_ATTAINED_BOUND_IDENTITY_MISMATCH");
           if (added.equivalent) equivalents += 1;
           entry.optimalAttainment = macro;
-          entry.attainedPlan = { ...optimal, expectedValue: currentValue+increase, actualBoundary: added.index,
+          entry.attainedPlan = { ...optimal, ...(resourcePlanning?{resourceGoal:optimal.income?"data:income:4":"end-turn"}:{}), expectedValue: currentValue+increase, actualBoundary: added.index,
             certificatePrefixes: macro.prefixes.length, minimumInputs: optimal.submissions };
           const excluded = entry.node.legalActions.filter(action => action.actionId !== first).map(action => action.actionId);
           entry.localPlan = excluded.length ? { kind: "post-main-attained-bound", proof: optimal.proof,
@@ -377,7 +382,7 @@
           continue;
         }
       }
-      if (cardChoiceEquivalence && !entry.selection && !entry.pickPolicy?.fixed && entry.node.status === "decision" && entry.node.legalActions.length > 1
+      if (cardChoiceEquivalence && !entry.resourcePolicy && !entry.selection && !entry.pickPolicy?.fixed && entry.node.status === "decision" && entry.node.legalActions.length > 1
         && entry.node.legalActions.every(action => action.family === "choose_card")) {
         if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
         const tradeChoice = entry.node.legalActions.every(action => action.target?.kind === "trade-card-selection");
@@ -415,6 +420,24 @@
         else if (pendingFrontier+(alternative.goalPlan ? alternative.submissions-1 : 0) > limits.frontier) stopReason = "frontier-budget";
         else if (now() - startedAt >= limits.milliseconds) stopReason = "watchdog";
         if (stopReason) break outer;
+        if(alternative.resourcePlan){
+          const fixed=port.expandResourcePlan(entry.node,alternative.resourcePlan,(count,contexts,input)=>{
+            if(now()-startedAt>=limits.milliseconds)return "watchdog";
+            if(transitions+count+(input?1:0)>limits.transitions)return "transition-budget";
+            if(nodes.length+certificateNodes+count+contexts+(input?1:0)>limits.nodes)return "node-budget";
+            if(pendingFrontier+count+contexts+(input?0:-1)>limits.frontier)return "frontier-budget";
+            return null;
+          });
+          transitions+=fixed.submissions;certificateNodes+=fixed.submissions+fixed.contexts;
+          peakFrontier=Math.max(peakFrontier,pendingFrontier+fixed.submissions+fixed.contexts-(fixed.complete?1:0));
+          if(!fixed.complete){entry.resourceAttempt={goal:fixed.goal,submissions:fixed.submissions,preparations:fixed.preparations};stopReason=fixed.stopReason;break outer;}
+          if(!fixed.submissions)throw new Error("SEARCH_RESOURCE_PLAN_EMPTY");
+          certificateNodes-=1;const added=add(fixed.node);if(added.equivalent)equivalents+=1;
+          entry.edges.push({actionId:alternative.firstActionId,target:added.index,cost:fixed.submissions,equivalent:added.equivalent,
+            resourcePlan:alternative.resourcePlan,goalStatus:fixed.goalStatus,fallbackReason:fixed.fallbackReason||null,
+            preparations:fixed.preparations,steps:fixed.prefixes.map(p=>p.action.actionId)});
+          continue;
+        }
         const goalExecution = alternative.goalPlan ? port.expandGoalMovementPlan(entry.node, () => now()-startedAt < limits.milliseconds) : null;
         if (goalExecution) {
           if (goalExecution.complete && goalExecution.submissions < 1 || goalExecution.submissions > alternative.submissions
@@ -513,12 +536,13 @@
     }
     if (!stopReason && now() - startedAt >= limits.milliseconds) stopReason = "watchdog";
     const unresolved = nodes.flatMap((entry, index) => entry.expanded || entry.prunedBy || entry.prunedByBound ? [] : [{
-      node: index, actionIds: (entry.selection ? entry.node.legalActions
+      node: index, ...(entry.resourcePolicy?{resourceGoals:entry.alternatives.slice(entry.edges.length+(entry.actionBounds?.length||0)).filter(a=>a.resourcePlan).map(a=>({goalId:a.resourcePlan.goal.id,mode:a.resourcePlan.mode,firstActionId:a.firstActionId,fallbackReason:a.resourcePlan.fallbackReason||null}))}:{}), actionIds: (entry.selection ? entry.node.legalActions
         : entry.alternatives.slice(entry.edges.length+(entry.actionBounds?.length||0)).map(alternative => ({ actionId: alternative.firstActionId })))
         .map(action => action.actionId),
       ...(entry.attainmentAttempt ? { attainmentAttempt: entry.attainmentAttempt } : {}),
       ...(entry.goalAttempt ? { goalAttempt: entry.goalAttempt } : {}),
       ...(entry.fixedCardAttempt ? { fixedCardAttempt: entry.fixedCardAttempt } : {}),
+      ...(entry.resourceAttempt?{resourceAttempt:entry.resourceAttempt}:{}),
       ...(entry.selection ? { selectionPlansRemaining: entry.alternativeCount - entry.edges.length,
         selection: entry.selection } : {}),
     }]);
@@ -557,11 +581,13 @@
         completion: complete ? "covered-by-origin-search" : "pending-origin-search", modelKey: evaluate.modelKey } } : {}),
       ...(entry.movementPolicy ? { movementPolicy: entry.movementPolicy } : {}),
       ...(entry.pickPolicy ? { cardPickPolicy: entry.pickPolicy } : {}),
+      ...(entry.resourcePolicy?{resourcePolicy:entry.resourcePolicy}:{}),
       ...(entry.actionBounds ? { actionBounds: entry.actionBounds } : {}),
       ...(entry.attainedPlan ? { attainedPlan: entry.attainedPlan } : {}),
       ...(entry.attainmentAttempt ? { attainmentAttempt: entry.attainmentAttempt } : {}),
       ...(entry.goalAttempt ? { goalAttempt: entry.goalAttempt } : {}),
       ...(entry.fixedCardAttempt ? { fixedCardAttempt: entry.fixedCardAttempt } : {}),
+      ...(entry.resourceAttempt?{resourceAttempt:entry.resourceAttempt}:{}),
       ...(entry.selection ? { selection: entry.selection, orderedExitCount: entry.alternativeCount } : {}),
     }));
     const roots = root.legalActions.map(action => {
@@ -576,11 +602,12 @@
         actionId: action.actionId, target: null, value: null, valueType: "not-executed",
         completion: "excluded-by-movement-policy", policy: nodes[0].movementPolicy.policy,
         chosenGoal: nodes[0].movementPolicy.chosenGoal, isEquivalence: false };
+      if(nodes[0].resourcePolicy?.excludedActionIds.includes(action.actionId)&&!nodes[0].edges.some(e=>e.actionId===action.actionId))return{actionId:action.actionId,target:null,value:null,valueType:"not-executed",completion:"excluded-by-resource-policy",policy:nodes[0].resourcePolicy.policy,isEquivalence:false};
       const selection = nodes[0].selection;
       // 纯点击的强连通部分可到达同一完整出口集；confirm 直接离开，只对应当前选择。
       const edge = selection && action.target?.confirm ? nodes[0].edges.find(edge =>
         JSON.stringify(edge.selectedIds) === JSON.stringify(selection.selectedIds))
-        : nodes[0].edges.find(edge => edge.actionId === action.actionId);
+        : nodes[0].edges.filter(edge => edge.actionId === action.actionId).sort((a,b)=>(nodes[b.target].value??-Infinity)-(nodes[a.target].value??-Infinity)||nodes[a.target].distance+a.cost-nodes[b.target].distance-b.cost)[0];
       if (selection && !action.target?.confirm) return {
         actionId: action.actionId, target: null, value: nodes[0].value,
         completion: stopReason ? "pending" : nodes[0].value == null ? "unreachable" : "complete",
@@ -589,6 +616,7 @@
       return {
         actionId: action.actionId, target: edge?.target ?? null,
         value: edge ? nodes[edge.target].value : null,
+        ...(edge?.resourcePlan?{kind:"resource-goal-plan",goal:edge.resourcePlan.goal,resourceGoalCount:nodes[0].edges.filter(e=>e.actionId===action.actionId&&e.resourcePlan).length}:{}),
         ...(edge?.goalPlan ? {kind:"goal-plan",plan:edge.goalPlan} : {}),
         completion: stopReason || !edge ? "pending" : edge.openingPass ? "covered-by-opening-normal-form" : cardTradePrunes ? "covered-by-global-pruning"
           : scanValuePrunes || scanActionPrunes ? "covered-by-global-scan-bound" : postMainValuePrunes ? "covered-by-global-value-bound" : postMainBorrowProofNodes ? "covered-by-global-borrow-simulation" : dominancePrunes ? "covered-by-global-dominance"
@@ -622,6 +650,9 @@
             ...(entry.selection ? { proof: entry.selection.proof, equivalentExitSet: !action.target?.confirm } : {}) };
         });
         entries.push({ node: entry.node, actionId: best.actionId, value: entry.value, distance: entry.distance, sourceNode: current, roots });
+        // Resource preparation is replanned from physical state after every actual atomic action.
+        // Do not certify interior prefixes using a goal that is not persisted in the native save.
+        if(best.resourcePlan)break;
         if(entry.fixedCardExecutions?.has(best.actionId)){
           const fixed=entry.fixedCardExecutions.get(best.actionId);
           for(let i=1;i<fixed.prefixes.length&&entries.length<32;i++){
@@ -644,6 +675,7 @@
           current=best.target; continue;
         }
         if (best.optimalPlan) {
+          if(resourcePlanning)break;
           const macro = entry.optimalAttainment;
           for (let i=1; i<macro.prefixes.length && entries.length<32; i+=1) {
             const prefix = macro.prefixes[i];
@@ -679,9 +711,13 @@
       stopReason: stopReason || (!accepted ? "watchdog" : nodes[0].value == null ? "no-reachable-boundary" : null),
       scope,
       roots, lines, unresolved,
-      candidates: Array.from(nodes[0].alternatives, a => a.goalPlan ? {kind:"goal-plan",plan:a.goalPlan,firstActionId:a.firstActionId}
+      candidates: Array.from(nodes[0].alternatives, a => a.resourcePlan?{kind:"resource-goal-plan",plan:a.resourcePlan,firstActionId:a.firstActionId}:a.goalPlan ? {kind:"goal-plan",plan:a.goalPlan,firstActionId:a.firstActionId}
         : a.cardPickPlan?{kind:a.cardPickPlan.kind,plan:a.cardPickPlan,firstActionId:a.firstActionId}:{kind:"action",actionId:a.firstActionId}),
-      diagnostics: { cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes, movementDirectionsExcluded, routeGeometryNodes,
+      diagnostics: { resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes, movementDirectionsExcluded, routeGeometryNodes,
+        resourceGoalPlans:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.resourcePlan).length,0),
+        resourcePreparationInputs:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.resourcePlan).reduce((v,x)=>v+x.cost,0),0),
+        resourceFallbacks:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.fallbackReason).length,0),
+        resourceExcludedActions:nodes.reduce((n,e)=>n+(e.resourcePolicy?.excludedActionIds.length||0),0),
         transitions, nodes: nodes.length+certificateNodes, graphNodes: nodes.length, certificateNodes,
         postMainOptimalPlans, postMainOptimalPlanSteps, equivalents, selectionMacros, peakFrontier,
         dominancePrunes, resourceDominance: useResourceDominance ? "enabled"

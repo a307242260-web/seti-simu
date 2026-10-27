@@ -20,10 +20,11 @@
     common ? require("../effects/science-session") : root.SetiScienceSession,
     common ? require("./goal-movement") : root.SetiGoalMovement,
     common ? require("../production-kernel") : root.SetiProductionKernel,
-    common ? require("./card-pick-planning") : root.SetiCardPickPlanning);
+    common ? require("./card-pick-planning") : root.SetiCardPickPlanning,
+    common ? require("./resource-demand") : root.SetiResourceDemand);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi, resourceDemand) {
   "use strict";
 
   // 已逐项审计的 Production 公司组合：钱电模拟和取牌待选分别检查各自的队列前提。
@@ -233,6 +234,9 @@
     const viewer = Object.freeze({ playerId: seatId, role: "player" });
     let movementPlanning = false;
     let cardPickPlanning = false;
+    let resourcePlanning = false;
+    let resourceSpecs = new WeakMap();
+    let resourceRequirements = new WeakMap();
     const cardPickPlanner = cardPickPlanningApi.createCardPickPlanner();
     let cardPickRootStats = cardPickPlanner.getDiagnostics();
     let cardPickSpecs = new WeakMap();
@@ -328,7 +332,7 @@
       return result;
     }
 
-    function createNode(envelope, observation, actions, status, barrier = null, intent = null) {
+    function createNode(envelope, observation, actions, status, barrier = null, intent = null, resourceControl = null) {
       let visible = observation && freeze(structuredClone(observation));
       // 搜索内部节点只用合法集与身份；首次估值/记录时才投影。getter 不暴露快照。
       const node = Object.freeze({
@@ -344,9 +348,10 @@
       const movementKey = intent ? JSON.stringify([physicalKey, intent]) : physicalKey;
       const pick = cardPickPlanning && status === "decision" && actions.length ? describeCardPick(envelope,actions,status) : null;
       const cardControl = pick?.fixed ? {goal:pick.goal,selection:pick.selection&&{cardId:pick.selection.cardId,blind:pick.selection.blind},discardIds:pick.discardIds} : null;
-      const key = cardControl ? JSON.stringify([movementKey,cardControl]) : movementKey;
+      const cardKey = cardControl ? JSON.stringify([movementKey,cardControl]) : movementKey;
+      const key = resourceControl ? JSON.stringify([cardKey,resourceControl]) : cardKey;
       if (!identities.has(key)) identities.set(key, Object.freeze({}));
-      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, physicalKey, intent, cardControl });
+      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, physicalKey, intent, cardControl, resourceControl });
       nodeCount += 1;
       return node;
     }
@@ -416,14 +421,14 @@
       const requested = node.legalActions.find(action => action.actionId === actionId);
       if (!requested || requested.actorId !== seatId) throw new Error("ANALYSIS_ACTION_NOT_LEGAL");
       // serial 只在本端口生命周期内绑定这一不可变快照；不按观察摘要跨节点复用。
-      const key = JSON.stringify([stored.serial, actionId, movementPlanning, cardPickPlanning]);
+      const key = JSON.stringify([stored.serial, actionId, movementPlanning, cardPickPlanning, resourcePlanning]);
       if (cache.has(key)) {
         cacheHits += 1;
         return cache.get(key);
       }
       restoreEnvelope(stored.envelope, true);
       const { before, result } = executeCurrent(actionId);
-      return remember(key, finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null));
+      return remember(key, finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null, stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null));
     }
 
     function setMovementPlanning(enabled) {
@@ -481,6 +486,115 @@
         const following=cardPickSpec(current);next=following?.fixed?following.selectedActionId:null;
       }
       return{complete:true,node:current,submissions:prefixes.length,prefixes,fixedChoices};
+    }
+
+    function setResourcePlanning(enabled) { resourcePlanning=enabled===true; }
+
+    function resourceQuery(state) {
+      return (productionKernel||globalThis.SetiProductionKernel).getResourceGoalRequirements(state,seatId);
+    }
+
+    function resourceStep(node,goal,operation={}) {
+      const stored=nodes.get(node);
+      return resourceDemand.step({state:readIdentityState(stored.envelope),seatId,goal,actions:node.legalActions,status:node.status,
+        session:stored.envelope.session?.session,operation});
+    }
+
+    function resourceSpec(node) {
+      const stored=nodes.get(node);
+      if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
+      if(!resourcePlanning||!["stable","decision"].includes(node.status)||!node.legalActions.length)return null;
+      if(resourceSpecs.has(node))return resourceSpecs.get(node);
+      if(cardPickSpec(node)?.fixed){resourceSpecs.set(node,null);return null;}
+      const envelope=stored.envelope,state=readIdentityState(envelope),session=envelope.session?.session;
+      let goals=[],source=null,operation={};
+      if(stored.resourceControl){
+        const control=stored.resourceControl,step=resourceStep(node,control.goal,control.operation);
+        const ids=step.kind==="fallback"?step.actionIds:step.actionId?[step.actionId]:[];
+        if(step.kind==="complete"){resourceSpecs.set(node,null);return null;}
+        const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,bound:true,goal:control.goal,operation:control.operation,step,
+          retainedActionIds:[],excludedActionIds:node.legalActions.map(a=>a.actionId),plans:ids.map(id=>({id:control.goal.id+":"+id,goal:control.goal,operation:control.operation,firstActionId:id,mode:step.kind==="fallback"?"search-fallback":"greedy",fallbackReason:step.kind==="fallback"?step.reason:null}))});
+        resourceSpecs.set(node,result);return result;
+      }
+      if(node.status==="stable"){
+        if(!resourceRequirements.has(node))resourceRequirements.set(node,resourceQuery(state));
+        goals=resourceDemand.catalog({state,seatId,requirements:resourceRequirements.get(node),actions:node.legalActions});
+      }else{
+        source=session?.journal?.actions?.[0]?.action;
+        if(session?.baseState&&(resourceDemand.isPreparation(source||{})||source?.family==="move")){
+          goals=resourceDemand.catalog({state:session.baseState,seatId,requirements:resourceQuery(session.baseState),actions:[source]})
+            .filter(goal=>{
+              const first=resourceDemand.step({state:session.baseState,seatId,goal,actions:[source],status:"stable"});
+              return first.actionId===source.actionId||first.kind==="fallback"&&first.actionIds.includes(source.actionId);
+            });
+          operation={placing:source.family==="place_data",finalPlacement:false};
+        }
+      }
+      const plans=[];
+      for(const goal of goals){
+        const op={...operation,finalPlacement:source?.family==="place_data"&&goal.kind==="blue-data"};
+        const step=resourceStep(node,goal,op);
+        if(step.actionId)plans.push({id:goal.id,goal,operation:op,firstActionId:step.actionId,mode:"greedy",reason:step.reason});
+        else if(step.kind==="fallback")for(const id of step.actionIds)plans.push({id:goal.id+":"+id,goal,operation:op,firstActionId:id,mode:"search-fallback",fallbackReason:step.reason});
+      }
+      if(node.status==="decision"&&!plans.length){
+        const pending=session?.queue?.[0]?.payload?.decisionContext;
+        if(pending?.kind==="discard"&&resourceDemand.MONEY.has(pending.tradeId)){
+          const goal={id:"committed-resource-payment:"+pending.tradeId,kind:"committed-payment",required:{}},op={committedPayment:true};
+          const step=resourceStep(node,goal,op);
+          if(step.actionId)plans.push({id:goal.id,goal,operation:op,firstActionId:step.actionId,mode:"greedy",reason:step.reason});
+          else if(step.kind==="fallback")for(const id of step.actionIds)plans.push({id:goal.id+":"+id,goal,operation:op,firstActionId:id,mode:"search-fallback",fallbackReason:step.reason});
+        }
+      }
+      const owner=state.players.players.find(p=>p.id===seatId);
+      const excluded=node.status==="stable"?node.legalActions.filter(a=>resourceDemand.isPreparation(a)||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
+      const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans,
+        retainedActionIds:node.legalActions.filter(a=>!excluded.includes(a)).map(a=>a.actionId),excludedActionIds:excluded.map(a=>a.actionId)});
+      resourceSpecs.set(node,result);return result;
+    }
+
+    function resourceView(node,control) {
+      const stored=nodes.get(node);
+      return createNode(stored.envelope,null,node.legalActions,node.status,null,stored.intent,control);
+    }
+
+    function expandResourcePlan(node,plan,hasCapacity) {
+      const prefixes=[],preparations=[];let current=node,operation={...plan.operation},contexts=0,forced=plan.firstActionId;
+      const finish=(extra={})=>({complete:true,node:current,submissions:prefixes.length,prefixes,contexts,preparations,goal:plan.goal,...extra});
+      function stop(reason){return{complete:false,stopReason:reason,node:current,submissions:prefixes.length,prefixes,contexts,preparations,goal:plan.goal};}
+      function bind(reason,operationNext){
+        const blocked=hasCapacity(prefixes.length,contexts+1,false);if(blocked)return stop(blocked);
+        current=resourceView(current,{goal:plan.goal,operation:operationNext});contexts++;
+        return finish({fallbackReason:reason});
+      }
+      function invalid(reason){
+        const stored=nodes.get(current),blocked=hasCapacity(prefixes.length,contexts+1,false);if(blocked)return stop(blocked);
+        current=createNode(stored.envelope,null,[],"plan-infeasible",null,stored.intent);contexts++;
+        return finish({goalStatus:"infeasible",reason});
+      }
+      while(true){
+        if(["other-owner","information-barrier","terminal"].includes(current.status))return finish({goalStatus:"boundary"});
+        const spec=cardPickSpec(current),step=spec?.fixed?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}:resourceStep(current,plan.goal,operation);
+        if(step.kind==="complete"){
+          if(nodes.get(current).resourceControl){const blocked=hasCapacity(prefixes.length,contexts+1,false);if(blocked)return stop(blocked);current=resourceView(current,null);contexts++;}
+          return finish({goalStatus:"completed"});
+        }
+        if(step.kind==="infeasible")return invalid(step.reason);
+        if(step.kind==="fallback"&&!forced)return bind(step.reason,operation);
+        const id=forced||step.actionId,action=current.legalActions.find(a=>a.actionId===id);
+        if(!action)throw new Error("RESOURCE_PLAN_ACTION_NOT_LEGAL");
+        const chosen=step.kind==="fallback"?step.candidates?.find(c=>c.actionId===id)||{}:step;
+        const blocked=hasCapacity(prefixes.length,contexts,true);if(blocked)return stop(blocked);
+        preparations.push({input:prefixes.length,reason:step.reason,goalId:plan.goal.id,demand:resourceDemand.needs(readIdentityState(nodes.get(current).envelope),seatId,plan.goal),actionId:id});
+        operation={...operation,...(chosen.discardIds?{discardIds:chosen.discardIds}:{}),...(chosen.placing!==undefined?{placing:chosen.placing}:{}),...(chosen.finalPlacement!==undefined?{finalPlacement:chosen.finalPlacement}:{}),...(step.kind==="start-target"?{targetStarted:true}:{})};
+        prefixes.push({node:current,action});current=expand(current,id);forced=null;
+        if(step.kind==="target"){
+          if(nodes.get(current).resourceControl){const stopped=hasCapacity(prefixes.length,contexts+1,false);if(stopped)return stop(stopped);current=resourceView(current,null);contexts++;}
+          return finish({goalStatus:"completed"});
+        }
+        if(step.kind==="start-target"&&current.status!=="decision")return finish({goalStatus:"completed"});
+        if(operation.committedPayment&&nodes.get(current).envelope.session?.session?.queue?.[0]?.payload?.decisionContext?.kind!=="discard")return finish({goalStatus:"committed-payment-completed"});
+      }
     }
 
     function movementTiming(state, id, path, freePoints) {
@@ -652,7 +766,7 @@
       return { before, result };
     }
 
-    function finishChild(before, result, intent = null) {
+    function finishChild(before, result, intent = null, resourceControl = null) {
       const comp = fork.composition || fork;
       const inspection = comp.inspect();
       const barrier = result.irreversibleBarrier || inspection.session?.irreversibleBarrier;
@@ -679,7 +793,7 @@
       }
       const child = createNode(envelope, observation,
         ["other-owner", "terminal"].includes(status) ? [] : actions, status,
-        newBarrier ? barrier : null, intent);
+        newBarrier ? barrier : null, intent, ["other-owner","terminal","information-barrier"].includes(status)?null:resourceControl);
       return child;
     }
 
@@ -694,7 +808,7 @@
     function selectionSpec(node) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
-      if (node.status !== "decision" || cardPickPlanning && cardPickSpec(node)?.fixed) return null;
+      if (node.status !== "decision" || cardPickPlanning && cardPickSpec(node)?.fixed || resourcePlanning && (resourceSpec(node)?.bound||resourceSpec(node)?.plans.length)) return null;
       const session = stored.envelope.session?.session;
       const effect = session?.queue?.[0];
       const pending = effect?.payload?.decisionContext;
@@ -1486,11 +1600,13 @@
         const publicityFits = !income || fill <= 2 || owner.resources.publicity+1 <= players.RESOURCE_LIMITS.publicity;
         if (publicityFits && (!income || corners === bound.minimumDataCorners && owner.hand.length > corners
           && owner.hand.filter(card => cards.getDiscardActionCodeForCard(card) === 1).length >= corners)) {
-          const blind = income && canKeepBlind(owner.hand,corners);
+          const resourcePlan=resourcePlanning&&income?resourceSpec(node)?.plans.find(p=>p.goal.kind==="income"):null;
+          if(resourcePlanning&&income&&!resourcePlan){postMainOptimalPlans.set(node,null);return null;}
+          const blind = income && (resourcePlan?cards.getIncomeCodeForCard(owner.hand.find(c=>c.id===resourcePlan.goal.incomeCardId))===2:canKeepBlind(owner.hand,corners));
           const first = node.legalActions.find(action => action.family === (corners ? "card_corner" : income ? "place_data" : "end_turn")
             && (!corners || cards.getDiscardActionCodeForCard(owner.hand.find(card => card.id === action.target?.cardInstanceId)) === 1));
           if (first) result = freeze({ proof: "seti-post-main-attained-value-shortest-plan-v1", bound,
-            income, blind, dataCorners: corners, dataPlacements: fill,
+            income, blind, ...(resourcePlan?{resourceGoal:resourcePlan.goal.id}:{}), dataCorners: corners, dataPlacements: fill,
             submissions: income ? corners+fill*2+1+(blind?0:1) : 1 });
         }
       }
@@ -1502,6 +1618,19 @@
       const spec = postMainOptimalPlanSpec(node);
       if (!spec) throw new Error("ANALYSIS_POST_MAIN_OPTIMAL_PLAN_INVALID");
       const prefixes = []; let current = node;
+      if(resourcePlanning&&spec.income){
+        const plan=resourceSpec(node)?.plans.find(p=>p.goal.kind==="income");
+        const fixed=expandResourcePlan(node,plan,()=>hasTime()?null:"watchdog");
+        prefixes.push(...fixed.prefixes);current=fixed.node;
+        if(!fixed.complete)return{complete:false,node:current,prefixes,submissions:prefixes.length,proof:spec.proof};
+        if(!["information-barrier","other-owner","terminal"].includes(current.status)){
+          if(fixed.goalStatus!=="completed")throw new Error("ANALYSIS_RESOURCE_ATTAINMENT_NOT_COMPLETE");
+          const end=current.legalActions.find(a=>a.family==="end_turn");if(!end)throw new Error("ANALYSIS_RESOURCE_ATTAINMENT_END_MISSING");
+          if(!hasTime())return{complete:false,node:current,prefixes,submissions:prefixes.length,proof:spec.proof};
+          prefixes.push({node:current,action:end});current=expand(current,end.actionId);
+        }
+        return{complete:true,node:current,prefixes:prefixes.map((p,i)=>({...p,distance:prefixes.length-i})),submissions:prefixes.length,proof:spec.proof};
+      }
       for (let step=0; step<spec.submissions; step+=1) {
         if (!hasTime()) return { complete: false, node: current, prefixes, submissions: step, proof: spec.proof };
         const stored = nodes.get(current), state = readIdentityState(stored.envelope);
@@ -1985,6 +2114,9 @@
       movementTimingCache.clear();
       movementPlanning = false;
       cardPickPlanning = false;
+      resourcePlanning = false;
+      resourceSpecs = new WeakMap();
+      resourceRequirements = new WeakMap();
       cardPickSpecs = new WeakMap();
       envelopeCardSpecs = new WeakMap();
       openedRoot = null;
@@ -2027,7 +2159,7 @@
       return stored.identity;
     }
 
-    return Object.freeze({ openRoot, expand, identity, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

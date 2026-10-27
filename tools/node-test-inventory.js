@@ -35,6 +35,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/actions/quick-move-availability.test.js", "rules/quick-trades", "快速移动必须有正式一步可达方向；无路时拒绝且根状态不变", "只有探测器存在便提供快速移动，扣能量后生成空Decision"),
     entry("randomizer/game/ai/state-value.test.js", "policy/state-value", "独立估值只读标准事实，未来收入窗口明确且终局只计正式分", "终局重复加资源、未知牌身份进入估值或缺字段被静默补零"),
     entry("randomizer/game/ai/goal-movement.test.js", "policy/decision-search", "移动按明确目标和确定路线执行，原生费用、真实逐步提交及恢复一致，策略排除不冒充等价剪枝", "免费移动展开方向树、每步换目标、目标完成仍乱走、读暗牌定路线或恢复丢失路线目的"),
+    entry("randomizer/game/ai/resource-demand.test.js", "policy/decision-search", "资源准备绑定真实目标和精确缺口，贪心付款保护目标牌，原生逐步输入及恢复一致", "无需求兑换、为付款丢掉目标牌、资金满足后继续兑换、身份敏感弃牌不显式回退或恢复重开兑换树"),
     entry("randomizer/game/ai/card-pick-planning.test.js", "policy/decision-search", "取牌须绑定明确诉求，选牌与付款按固定计划执行，牌面及诉求相同复用排序", "无目的兑换、同一牌列重复展开、缓存跨诉求复用或读取暗牌决定选牌"),
     entry("randomizer/game/ai/standard-scan-bound.test.js", "policy/decision-search", "标准扫描按原生目标、槽位奖励与容量推导信息边界上界，严格落后实际见证才省略，支付出口与中断义务保留", "扫描完成扇区、满池、不同得分槽或活跃触发仍套统一值，或同值/未完成路径被错误删除"),
     entry("randomizer/game/ai/quiet-bound-composition.test.js", "policy/decision-search", "已证明静默继续集与收入上界组合，未再打出的手牌效果及不活动任务不强迫完整展开，原生窗口最优保持", "就绪任务或历史触发被当作静默，或把保留集上界外推到未被覆盖的路径"),

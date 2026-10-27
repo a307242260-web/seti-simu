@@ -1,0 +1,4 @@
+Error: Runtime.evaluate 超时
+    at Timeout._onTimeout (/private/tmp/seti-resource-demand-20261027-niqk2d2a/tools/run_browser_smokes.js:148:16)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)

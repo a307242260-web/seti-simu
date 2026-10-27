@@ -1804,7 +1804,21 @@ function comparePlannedMovementTiming(state, seatId, requirementId, path, freePo
     classification: best.prefixLength ? "advance-before-rotation" : "defer", alternatives };
 }
 
+function getResourceGoalRequirements(state, seatId) {
+  const owner=state.players.players.find(p=>p.id===seatId);
+  if(!owner||state.turn.gameEnded)return null;
+  const context={...state,state},earth=solar.collectPlanetLocations(state.solarSystem).find(p=>p.planetId==='earth');
+  const launchPossible=!!earth&&rocketAbility.getActiveRocketCountForPlayer(state.pieces,seatId)<rocketAbility.getRocketLimitForPlayer(owner,context)
+    &&rockets.findAvailableSlotIndex(state.pieces,earth.x,earth.y)!==null;
+  // Native structural placement query on an owner copy; it must not normalize a frozen source in place.
+  const bluePlacements=data.listPlaceDataChoices(structuredClone(owner)).filter(choice=>choice.target===data.PLACEMENT_KIND_BLUE_BONUS);
+  return{techPlans:owner.mainActionCompleted?[]:buildTechGainRequirements(state,seatId)?.plans||[],probeCandidates:owner.mainActionCompleted?[]:buildProbeRouteRequirements(state,seatId,null,false)?.candidates||[],
+    scanCost:scanEffects.getStandardScanCost(owner),launchCost:rocketAbility.getLaunchCost(context,owner),launchPossible,bluePlacements,
+    analyzeCost:industryPassives.canAnalyzeWithoutEnergy(owner)?{}:{energy:data.ANALYZE_ENERGY_COST}};
+}
+
 const productionKernelApi = Object.freeze({
+  getResourceGoalRequirements,
   comparePlannedMovementTiming,
   getProbeRouteRequirements(state, seatId, currentEffect = null) {
     return buildProbeRouteRequirements(state, seatId, currentEffect ? { currentEffect } : null, false);

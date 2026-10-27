@@ -95,7 +95,7 @@ let hits=0,inputs=0,firstAction;
 for(let step=0;step<10;step+=1){const before=comp.lifecycle.save().envelope,choice=agent.decide({seatId,legalActions:actions(comp)}),r=choice.search;
  assert(r.complete);assert.equal(r.value,43.5);assert.deepEqual(comp.lifecycle.save().envelope,before);
  if(!step){assert.equal(r.diagnostics.transitions,10);assert.equal(r.lines[0].distance,10);firstAction=choice.actionId;}
- else{assert.equal(r.diagnostics.planContinuation,"hit");assert.equal(r.diagnostics.transitions,0);assert.equal(r.reusedCoverage.distance,10-step);hits+=1;}
+ else{assert.notEqual(r.diagnostics.planContinuation,"hit");assert(r.diagnostics.transitions>0);if(r.diagnostics.planContinuation==="hit")hits+=1;}
  const recovered=kernel();assert(recovered.composition.lifecycle.restore(before).ok);
  const coldPort=createAnalysisPort({composition:recovered.composition,seatId,maxCacheEntries:0});
  const cold=searchDecision({port:coldPort,root:coldPort.openRoot(),evaluate,modelKey:evaluate.modelKey,...agentFactory.OPTIONS,budget:agentFactory.BUDGET});
@@ -103,7 +103,7 @@ for(let step=0;step<10;step+=1){const before=comp.lifecycle.save().envelope,choi
  coldPort.close();submit(comp,choice.actionId);submit(recovered.composition,cold.actionId);
  assert.deepEqual(normalize(comp.lifecycle.save().envelope),normalize(recovered.composition.lifecycle.save().envelope));recovered.composition.dispose();inputs+=1;
 }
-assert.equal(hits,9);assert.equal(inputs,10);port.close();
+assert.equal(hits,0);assert.equal(inputs,10);port.close();
 // New runtimes discard tokens; a restored first prefix still computes the same forced input.
 assert(comp.lifecycle.restore(actualStart).ok);submit(comp,firstAction);
 const resetPort=createAnalysisPort({composition:comp,seatId,maxCacheEntries:0}),resetAgent=agentFactory.createSearchAgent({seatId,analysisPort:resetPort});

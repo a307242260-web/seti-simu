@@ -1,0 +1,10 @@
+{
+  "baseCommit": "8638c71d74cd914f319c9e244a2a83108bd45f53",
+  "testedSnapshot": "/private/tmp/seti-resource-demand-20261027-niqk2d2a",
+  "unchangedBaseFilesVerified": 3947,
+  "changedBaseFilesVerified": 13,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "explicitFiles": 37,
+  "runtimeImportsBoundToFinalSource": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot."
+}
