@@ -497,21 +497,28 @@
         const stopped=hasCapacity(prefixes.length);
         if(stopped)return{complete:false,stopReason:stopped,node:current,submissions:prefixes.length,prefixes,fixedChoices};
         const action=current.legalActions.find(a=>a.actionId===next);if(!action)throw new Error("ANALYSIS_FIXED_CARD_ACTION_STALE");
-        const spec=cardPickSpec(current);
-        if(spec?.fixed)fixedChoices.push({prefix:prefixes.length,...spec});
+        const spec=cardPickSpec(current)?.fixed?cardPickSpec(current):localDecisionSpec(current);
+        if(spec?.fixed||spec?.selectedActionId)fixedChoices.push({prefix:prefixes.length,...spec});
         prefixes.push({node:current,action});current=expand(current,next);
-        const following=cardPickSpec(current);next=following?.fixed?following.selectedActionId:null;
+        const following=cardPickSpec(current)?.fixed?cardPickSpec(current):localDecisionSpec(current);
+        next=following?.fixed||following?.selectedActionId?following.selectedActionId:null;
       }
       return{complete:true,node:current,submissions:prefixes.length,prefixes,fixedChoices};
     }
 
-    function setResourcePlanning(enabled) { resourcePlanning=enabled===true;clearPrefixGraph(); }
+    function setResourcePlanning(enabled) { resourcePlanning=enabled===true;localSpecs=new WeakMap();clearPrefixGraph(); }
 
     function setDecisionPlanning(options={}){finalMarkPlanning=options.finalMarkPlanning===true;scanPlanning=options.scanPlanning===true;localSpecs=new WeakMap();resourceSpecs=new WeakMap();}
     function localDecisionSpec(node){
-      if(!finalMarkPlanning||node.status!=="decision")return null;
+      if((!finalMarkPlanning&&!resourcePlanning)||node.status!=="decision")return null;
       if(localSpecs.has(node))return localSpecs.get(node);
-      const result=localPlans.finalMark({state:readIdentityState(nodes.get(node).envelope),seatId,actions:node.legalActions});
+      const stored=nodes.get(node),state=readIdentityState(stored.envelope);
+      let result=finalMarkPlanning?localPlans.finalMark({state,seatId,actions:node.legalActions}):null;
+      if(!result&&resourcePlanning){
+        const fixed=resourceDemand.fixedDataChoice({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal});
+        if(fixed)result={policy:"seti-greedy-data-execution-v1",kind:"fixed-data-choice",fixed:true,isEquivalence:false,
+          selectedActionId:fixed.actionId,retainedActionIds:[fixed.actionId],excludedActionIds:node.legalActions.filter(a=>a.actionId!==fixed.actionId).map(a=>a.actionId),reason:fixed.reason};
+      }
       const spec=result&&freeze(result);localSpecs.set(node,spec);return spec;
     }
 
@@ -521,8 +528,10 @@
 
     function resourceStep(node,goal,operation={}) {
       const stored=nodes.get(node),state=readIdentityState(stored.envelope),session=stored.envelope.session?.session;
-      const local=localDecisionSpec(node);if(local)return{kind:"fixed",actionId:local.selectedActionId,reason:"fixed-local-final-mark"};
+      const local=localDecisionSpec(node);if(local?.kind==="fixed-final-mark")return{kind:"fixed",actionId:local.selectedActionId,reason:"fixed-local-final-mark"};
       if(goal.kind==="scan-flow"){
+        const dataStep=resourceDemand.fixedDataChoice({state,seatId,goal,actions:node.legalActions});
+        if(node.status==="decision"&&dataStep)return dataStep;
         const source=session?.journal?.actions?.[0]?.action;
         if(node.status==="stable"&&!state.players.players.find(p=>p.id===seatId).mainActionCompleted&&Object.values(resourceDemand.needs(state,seatId,goal)).some(v=>v>0)
           ||node.status==="decision"&&(resourceDemand.isPreparation(source||{})))
@@ -589,7 +598,7 @@
         }
       }
       const owner=state.players.players.find(p=>p.id===seatId);
-      const excluded=node.status==="stable"?node.legalActions.filter(a=>resourceDemand.isPreparation(a)||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
+      const excluded=node.status==="stable"?node.legalActions.filter(a=>a.family==="industry"&&a.target?.abilityId==="turing_borrow_tech"||resourceDemand.isPreparation(a)||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans,
         retainedActionIds:node.legalActions.filter(a=>!excluded.includes(a)).map(a=>a.actionId),excludedActionIds:excluded.map(a=>a.actionId)});
       resourceSpecs.set(node,result);return result;
@@ -602,7 +611,7 @@
 
     function expandResourcePlan(node,plan,hasCapacity) {
       const prefixes=[],preparations=[],sharedPath=[],sharedStates=[];let newSubmissions=0;
-      let current=node,operation={...plan.operation},contexts=0,forced=plan.firstActionId;
+      let current=node,operation={...plan.operation},contexts=0,forced=plan.firstActionId,targetReached=false;
       const work=(extra={})=>({newSubmissions,sharedStates,...extra});
       const finish=(extra={})=>({complete:true,node:current,submissions:prefixes.length,prefixes,contexts,preparations,goal:plan.goal,sharedPath,sharedStates,newSubmissions,...extra});
       function stop(reason){return{...finish(),complete:false,stopReason:reason};}
@@ -618,7 +627,10 @@
       }
       while(true){
         if(["other-owner","information-barrier","terminal"].includes(current.status))return finish({goalStatus:"boundary"});
-        const spec=cardPickSpec(current),step=spec?.fixed?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}:resourceStep(current,plan.goal,operation);
+        const spec=cardPickSpec(current),tail=targetReached?localDecisionSpec(current):null;
+        if(targetReached&&!spec?.fixed&&!tail?.selectedActionId)return finish({goalStatus:"completed"});
+        const step=spec?.fixed?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}
+          :tail?.selectedActionId?{kind:"fixed",actionId:tail.selectedActionId,reason:tail.reason||tail.kind}:resourceStep(current,plan.goal,operation);
         if(step.kind==="complete"){
           if(nodes.get(current).resourceControl){const blocked=hasCapacity(prefixes.length,contexts+1,false,work({additionalStates:1}));if(blocked)return stop(blocked);current=resourceView(current,null);sharedStates.push(current);contexts++;}
           return finish({goalStatus:"completed"});
@@ -638,9 +650,9 @@
         if(resourcePlanning)sharedPath.push(prefixEdges.get(key).id);
         if(step.kind==="target"){
           if(nodes.get(current).resourceControl){const stopped=hasCapacity(prefixes.length,contexts+1,false,work({additionalStates:1}));if(stopped)return stop(stopped);current=resourceView(current,null);sharedStates.push(current);contexts++;}
-          return finish({goalStatus:"completed"});
+          targetReached=true;
         }
-        if(step.kind==="start-target"&&current.status!=="decision")return finish({goalStatus:"completed"});
+        if(step.kind==="start-target"&&current.status!=="decision")targetReached=true;
         if(operation.committedPayment&&nodes.get(current).envelope.session?.session?.queue?.[0]?.payload?.decisionContext?.kind!=="discard")return finish({goalStatus:"committed-payment-completed"});
       }
     }

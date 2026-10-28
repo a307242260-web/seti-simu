@@ -498,6 +498,16 @@ try {
         console.log('[PASS] independent-scan-purpose: allNativePrefixes');
       }finally{port.close();}
     }
+    {
+      const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,"../adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json"))),comp=auditKernel.composition;
+      if(!comp.lifecycle.restore(f.compositionEnvelope).ok)throw new Error("固定数据计划审计恢复失败");
+      const p=createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:0});try{p.setResourcePlanning(true);p.setDecisionPlanning({finalMarkPlanning:true});const root=p.openRoot(),goal=p.resourceSpec(root).plans.find(g=>g.goal.kind==='income'),r=p.expandResourcePlan(root,goal,()=>null),evaluate=independentValue.createStateValueEvaluator(f.seatId);
+        if(!r.complete||r.fallbackReason)throw new Error("数据计划回退到搜索");
+        for(const n of [...r.prefixes.map(x=>x.node),r.node])if(evaluate(n.observation)!==evaluate(outcomeModel.createDecisionObservation(n.observation,{seatId:f.seatId})))throw new Error("固定数据原始/标准估值不一致");
+        const income=r.prefixes.find(x=>x.action.target?.choiceId?.startsWith('income:')),fixed=p.localDecisionSpec(income.node);if(!fixed||fixed.retainedActionIds.length!==1)throw new Error("收入没有固定");
+        console.log('[PASS] independent-fixed-data-plan: nativePrefixesAndSingleIncome');
+      }finally{p.close();}
+    }
     const cornerFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
       "../adhoc/ai-decision-corpus-20261023-v1/post-main-corner-pair-20261023-v1.json")));
     const cornerComp = auditKernel.composition;

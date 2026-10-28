@@ -85,7 +85,8 @@
       }).find(c=>capacity(state,seatId,{kind:'income',targetComputerSlot:4,incomeCardId:c.id,required:{}}));
       if(incomeCard)add({id:'data:income:4',kind:'income',targetComputerSlot:4,incomeCardId:incomeCard.id,incomeBefore:Object.values(p.income).reduce((a,b)=>a+b,0),required:{}});
     }
-    for(const b of requirements.bluePlacements)add({id:`data:blue:${b.blueSlot}`,kind:'blue-data',blueSlot:b.blueSlot,required:{}});
+    const blue=[...requirements.bluePlacements].sort((a,b)=>blueValue(p,b.blueSlot)-blueValue(p,a.blueSlot)||a.blueSlot-b.blueSlot)[0];
+    if(blue)add({id:`data:blue:${blue.blueSlot}`,kind:'blue-data',blueSlot:blue.blueSlot,required:{}});
     // The destination is fixed by policy, just as its route is. Funding cannot reopen all destinations.
     const routes=goals.filter(g=>g.kind==='route').map(g=>({goal:g,net:g.benefit.score+g.benefit.dataCount*.5+g.benefit.incomeCount*(4-state.turn.roundNumber)
       -(g.endpointCost.credits||0)-(g.endpointCost.energy||0)-g.movementPoints})).filter(x=>x.net>0)
@@ -161,6 +162,23 @@
     }).filter(x=>x.feasible).sort((a,b)=>b.value-a.value||(a.action.actionId<b.action.actionId?-1:1));
     return scored[0]?{kind:'fixed',actionId:scored[0].action.actionId,reason:'greedy-income-for-goal'}:{kind:'infeasible',reason:'income-would-consume-goal-card'};
   }
+  function blueValue(p,slot){
+    const bonus=data.getBlueBonusPlacementReward(structuredClone(p),slot);
+    if(!bonus)return 0;
+    return (bonus.score||0)+(bonus.credits||0)+(bonus.energy||0)+(bonus.publicity||0)*.5+(bonus.type==='choose_card'?1:0);
+  }
+  function fixedDataChoice({state,seatId,actions,goal={required:{}}}){
+    if(!actions.length)return null;
+    const income=incomeChoice({state,seatId,goal,actions});
+    if(income)return income.kind==='fixed'?income:null;
+    if(!actions.every(a=>a.family==='choose_target'&&['computer','blueBonus'].includes(a.target?.target)))return null;
+    const p=owner(state,seatId),ranked=[...actions].sort((a,b)=>{
+      const score=a=>a.target.target==='computer'?100:blueValue(p,a.target.blueSlot);
+      return score(b)-score(a)||(a.actionId<b.actionId?-1:1);
+    });
+    const chosen=goal.kind==='blue-data'?ranked.find(a=>a.target.blueSlot===goal.blueSlot):ranked[0];
+    return chosen?{kind:'fixed',actionId:chosen.actionId,reason:'greedy-data-placement'}:null;
+  }
   function step({state,seatId,goal,actions,status,session,operation={}}){
     goal=currentGoal(state,goal);
     const p=owner(state,seatId),d=needs(state,seatId,goal);
@@ -216,5 +234,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice});
+  return Object.freeze({VERSION,MONEY,isPreparation,fixedDataChoice,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice});
 });

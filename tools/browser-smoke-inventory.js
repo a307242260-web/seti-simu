@@ -931,6 +931,10 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     try{p.setResourcePlanning(true);p.setCardPickPlanning(true);const root=p.openRoot(),spec=p.resourceSpec(root),goal=spec.plans.find(x=>x.goal.kind==='income');
       if(!goal||root.legalActions.filter(window.SetiResourceDemand.isPreparation).some(a=>spec.retainedActionIds.includes(a.actionId)))throw new Error('资源准备仍是独立搜索动作');
       const r=p.expandResourcePlan(root,goal,()=>null);if(!r.complete||r.goalStatus!=='completed'||r.submissions!==9)throw new Error('目标资源链未完整执行');
+      const borrow=root.legalActions.find(a=>a.target?.abilityId==='turing_borrow_tech');if(borrow&&spec.retainedActionIds.includes(borrow.actionId))throw new Error('生产仍可发起借科技');
+      const income=r.prefixes.find(p=>p.node.legalActions.every(a=>a.target?.choiceId?.startsWith('income:')));if(!income)throw new Error('缺少真实收入选择');
+      const fixed=p.localDecisionSpec(income.node);if(fixed?.kind!=='fixed-data-choice'||fixed.retainedActionIds.length!==1)throw new Error('收入仍参与多路搜索');
+      const tail=p.expandWithCardPick(income.node,fixed.selectedActionId,()=>null);if(!tail.complete||tail.fixedChoices.filter(c=>c.kind==='fixed-data-choice').length!==1)throw new Error('收入未作为固定计划执行');
       if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw new Error('资源试算改变真实根');
       window.__resourceGoalSmoke={ok:true,inputs:r.submissions,goal:goal.goal.id};
     }finally{p.close();c.dispose();}

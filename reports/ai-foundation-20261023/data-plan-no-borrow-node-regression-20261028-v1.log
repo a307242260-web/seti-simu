@@ -1,0 +1,329 @@
+browser machine player tests passed
+action bar tests passed
+browser host tests passed
+browser decision UI tests passed
+resident-renderer tests passed
+browser trajectory recording tests passed
+game recovery composition lifecycle tests passed
+host architecture audit tests passed
+income target classification tests passed
+public-api tests passed
+rule composition tests passed
+simulation counterfactual outcome tests passed
+simulation decision owner tests passed
+simulation Effect Session worker crash recovery tests passed
+simulation host public contract tests passed
+simulation no-browser-globals tests passed
+simulation committed-state checkpoint tests passed
+simulation-training-replay tests passed
+standard full-flow v2 passed
+action ability tests passed
+quick move requires an affordable one-point direction; blocked routes leave root unchanged
+quick trade tests passed
+standard action protocol tests passed
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+agent runtime isolation, completion and recovery tests passed
+{"alienOpeningPlan":"passed","fullInputs":651,"value":37.5,"small":[{"cardId":null,"rawInputs":186,"prunedInputs":78,"value":32.5},{"cardId":"dlc_9.png","rawInputs":594,"prunedInputs":200,"value":33.5},{"cardId":"b_86.webp","rawInputs":472,"prunedInputs":200,"value":33.5},{"cardId":"b_114.webp","rawInputs":404,"prunedInputs":82,"value":33.5}]}
+trusted analysis fork isolation and exact reuse passed
+blue bonus value tests passed
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+card trade information bounds match all 90 formal leaves and reject extra rewards
+{"companyCardTrade":"passed","rows":[{"label":"层云核心","physicalLeaves":34},{"label":"图灵系统","physicalLeaves":34},{"label":"哨兵探测网络","physicalLeaves":34},{"label":"寰宇动力","physicalLeaves":34},{"label":"赫利昂联合体","physicalLeaves":34},{"label":"任务中继站","physicalLeaves":34},{"label":"芬威克研究中心","physicalLeaves":34},{"label":"深空探测","physicalLeaves":34},{"label":"未来跨度研究所","physicalLeaves":34},{"label":"异星实验室","physicalLeaves":34},{"label":"宇宙战略集团","physicalLeaves":34},{"label":"b_114.webp","physicalLeaves":18},{"label":"dlc_9.png","physicalLeaves":18}],"physicalLeaves":410,"paymentInputs":{"raw":[21,20,19,4],"equivalence":[12,11,10,1],"reused":[12,0,0,1]},"reuseHits":2}
+{"companyMoneyDominance":"passed","results":[{"label":"层云核心","rawInputs":54,"prunedInputs":46,"value":30},{"label":"图灵系统","rawInputs":144,"prunedInputs":126,"value":28.5},{"label":"哨兵探测网络","rawInputs":29,"prunedInputs":26,"value":28.5},{"label":"寰宇动力","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"赫利昂联合体","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"任务中继站","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"芬威克研究中心","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"深空探测","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"未来跨度研究所","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"异星实验室","rawInputs":13,"prunedInputs":12,"value":28.5},{"label":"宇宙战略集团","rawInputs":25,"prunedInputs":20,"value":29.5}],"abilityResults":[{"label":"层云核心","inputsPerWallet":3,"leaves":1},{"label":"图灵系统","inputsPerWallet":9,"leaves":8},{"label":"哨兵探测网络","inputsPerWallet":1,"leaves":1},{"label":"寰宇动力","inputsPerWallet":5,"leaves":4},{"label":"赫利昂联合体","inputsPerWallet":3,"leaves":1},{"label":"任务中继站","inputsPerWallet":4,"leaves":3},{"label":"芬威克研究中心","inputsPerWallet":4,"leaves":3},{"label":"深空探测","inputsPerWallet":5,"leaves":3},{"label":"未来跨度研究所","inputsPerWallet":4,"leaves":3},{"label":"宇宙战略集团","inputsPerWallet":4,"leaves":3}]}
+conditional resolution tests passed
+data token fungibility, real placement diamonds and every immediate successor passed
+data resource greedy contracts passed
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+失效科技：所有权/计数不变，V、叶排序与搜索优先级共同扣除能力未来价值
+final mark company income and required inputs passed
+{"fixedDataPlan":"passed","incomeOptions":6,"selected":1,"greedyPlacement":true,"coldRecovery":true,"productionBorrowMacros":0}
+{"goalMovement":"passed","goal":{"id":"rocket:5:land:neptune:satellite:triton","kind":"land","label":"land neptune","coordinate":{"x":1,"y":4},"timing":"advance-before-rotation","planetId":"neptune","endpointTarget":{"type":"satellite","satelliteId":"triton","rocketId":5},"endpointCost":{"energy":2},"targetCoordinate":{"x":1,"y":4},"movementTiming":{"comparable":true,"assumption":"one-known-solar-rotation-before-the-future-goal","rotationCount":1,"waitPaidPoints":4,"bestPrefixLength":3,"bestTotalPaidPoints":0,"classification":"advance-before-rotation","alternatives":[{"prefixLength":0,"totalPaidPoints":4,"remainingPaidPoints":4},{"prefixLength":1,"prefixMovementPoints":1,"totalPaidPoints":2,"remainingPaidPoints":2},{"prefixLength":2,"prefixMovementPoints":2,"totalPaidPoints":1,"remainingPaidPoints":1},{"prefixLength":3,"prefixMovementPoints":3,"totalPaidPoints":0,"remainingPaidPoints":0}],"availablePrefixPoints":5}},"routeSteps":3,"searchInputs":14,"policyExclusions":5,"cacheAndRestore":true}
+heuristic evaluator outcome behavior tests passed
+heuristic policy outcome behavior tests passed
+{"inertReservation":"passed","rawInputs":314,"prunedInputs":9,"boundLeaves":40}
+{"inertSectorTasks":"passed","rows":[{"cardId":"b_114.webp","rawInputs":1900,"prunedInputs":9,"value":36},{"cardId":"dlc_9.png","rawInputs":1729,"prunedInputs":10,"value":37.5}]}
+{"knownCardMoney":"passed","results":[{"raw":483,"pruned":417,"value":36},{"raw":489,"pruned":477,"value":28.5},{"raw":237,"pruned":231,"value":21}],"paired":[{"inputs":1576,"leaves":278,"extraStops":0},{"inputs":2745,"leaves":472,"extraStops":1},{"inputs":1816,"leaves":185,"extraStops":0}]}
+{"localFinalMarkAndScan":"passed","nativeMarkOptions":4,"retainedMarkOptions":1,"scanPurposes":5,"nativeRecoveryAndRootIsolation":true,"stableRestoreSkipped":true}
+machine-player-coordinator.test.js ok
+{"openingMoneyCapacity":"passed","results":[{"cardId":null,"value":28.5,"raw":734,"capacityOnly":592,"pruned":34,"capacityPrunes":4},{"cardId":"dlc_27.png","value":29.5,"raw":1690,"capacityOnly":1376,"pruned":76,"capacityPrunes":8},{"cardId":"b_44.webp","value":29.5,"raw":3386,"capacityOnly":3042,"pruned":78,"capacityPrunes":8},{"cardId":"b_23.webp","value":29.5,"raw":1744,"capacityOnly":1284,"pruned":102,"capacityPrunes":8},{"cardId":"dlc_22.png","value":29.5,"raw":1690,"capacityOnly":1376,"pruned":76,"capacityPrunes":8},{"cardId":"b_48.webp","value":29.5,"raw":1600,"capacityOnly":1260,"pruned":78,"capacityPrunes":8}]}
+{"openingPlan":"passed","results":[{"cardId":null,"value":32.5,"baseline":86,"pruned":42},{"cardId":"dlc_27.png","value":33.5,"baseline":180,"pruned":47},{"cardId":"b_44.webp","value":33.5,"baseline":182,"pruned":47},{"cardId":"b_23.webp","value":33.5,"baseline":206,"pruned":58},{"cardId":"dlc_22.png","value":33.5,"baseline":180,"pruned":47},{"cardId":"b_48.webp","value":33.5,"baseline":182,"pruned":46}],"passPaymentExits":20,"directPassValue":36,"directPassInputs":2,"publicityPassValue":36.5,"dataAuditInputs":332,"dataAuditLeaves":120,"fullHandBeforePassMacros":676,"fullHandAfterPassMacros":92,"fullHandCachedInputs":92,"passMacroCacheHits":2}
+{"openingMoney":"passed","rawInputs":325,"prunedInputs":264,"boundedInputs":201,"proofPrunes":5,"cardTradePrunes":21}
+outcome projection tests passed
+{"passOfferBarrier":"passed","hiddenWorldVariants":2,"actualOfferStillSelectable":true,"forcedDiscardPreserved":true,"emptyAndFinalRoundNoBarrier":true,"replayAndUndo":true}
+{"passReserveChoice":"passed","companies":11,"inertTaskModels":2,"physicalLeaves":65,"extraRewardRejected":true}
+plan-continuation.test.js ok
+{"planPrefixReuse":"passed","hits":9,"actions":10,"inputs":[248,0,0,0,0,0,0,0,0,0]}
+policy port protocol tests passed
+{"postMainAttainment":"passed","rows":[{"name":"end-now","raw":18,"attained":1,"value":32,"distance":1},{"name":"unprofitable-move","raw":163,"attained":1,"value":33,"distance":1},{"name":"cash-income","raw":1373,"attained":10,"value":35.5,"distance":10},{"name":"blind-income","raw":351,"attained":9,"value":35.5,"distance":9},{"name":"data-corner-cash","raw":2305,"attained":11,"value":44,"distance":11},{"name":"preserve-blind-data-card","raw":2368,"attained":10,"value":44,"distance":10},{"name":"must-retain-income-card","raw":324,"attained":1,"value":42,"distance":1},{"name":"late-income-tie","raw":1373,"attained":1,"value":27.5,"distance":1}],"realFactoryInputs":10,"reusedInteriorPrefixes":0}
+{"postMainBorrow":"passed","rows":[{"name":"no-energy","raw":18,"reduced":4,"value":32},{"name":"one-energy","raw":108,"reduced":24,"value":33},{"name":"two-energy","raw":126,"reduced":28,"value":34},{"name":"one-move-card","raw":117,"reduced":26,"value":33},{"name":"asteroid-mercury-useful","raw":32,"reduced":18,"value":33.5},{"name":"owned-orange2","raw":108,"reduced":11,"value":33}]}
+{"postMainCornerChoice":"passed","results":[{"label":"data-pair","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":66,"pruned":59,"value":26.5,"excluded":1},{"label":"data-pair","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":66,"pruned":59,"value":19.04,"excluded":1},{"label":"data-triple","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":358,"pruned":282,"value":27.5,"excluded":4},{"label":"data-triple","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":358,"pruned":282,"value":19.439999999999998,"excluded":4},{"label":"income-ready-data-pair","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":66,"pruned":59,"value":26.5,"excluded":1},{"label":"income-ready-data-pair","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":66,"pruned":59,"value":19.04,"excluded":1},{"label":"unused-turing-data-pair","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":778,"pruned":697,"value":26.5,"excluded":9},{"label":"unused-turing-data-pair","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":778,"pruned":697,"value":19.04,"excluded":9},{"label":"unused-helios-data-pair","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":94,"pruned":81,"value":27.5,"excluded":1},{"label":"unused-helios-data-pair","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":94,"pruned":81,"value":19.04,"excluded":1},{"label":"move-pair-062-one-probe","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":120,"pruned":107,"value":34,"excluded":1},{"label":"move-pair-062-one-probe","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-blue\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":120,"pruned":107,"value":19.78,"excluded":1},{"label":"move-pair-152-one-probe","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}","raw":98,"pruned":85,"value":19,"excluded":1},{"label":"move-pair-152-one-probe","modelKey":"{\"version\":\"seti-linear-state-value-v1\",\"seatId\":\"player-brown\",\"weights\":{\"credits\":0.1,\"energy\":0.2,\"publicity\":0.3,\"availableData\":0.4,\"additionalPublicScan\":0.5,\"handSize\":0.07}}","raw":98,"pruned":85,"value":17.3,"excluded":1}],"incomeCounterexample":[17.1,17.2]}
+{"postMainIncome":"passed","prunedInputs":9,"value":37,"small":[{"rawInputs":60,"prunedInputs":4,"value":32.5},{"rawInputs":60,"prunedInputs":1,"value":7.5},{"rawInputs":284,"prunedInputs":3,"value":33.5},{"rawInputs":276,"prunedInputs":1,"value":8.5},{"rawInputs":561,"prunedInputs":34,"value":36.5}],"paymentCases":[{"tradeId":"cards-for-credit","rawInputs":1141,"prunedInputs":83,"exits":3},{"tradeId":"cards-for-energy","rawInputs":1304,"prunedInputs":83,"exits":3}]}
+{"postMainInertReservations":"passed","rows":[{"label":"cash-data-income","raw":145,"pruned":41,"value":21},{"label":"cash-move","raw":259,"pruned":1,"value":20},{"label":"consumed-visits","raw":259,"pruned":1,"value":20},{"label":"unreachable-launch-orbit-land","raw":259,"pruned":1,"value":20},{"label":"no-probe-visits","raw":28,"pruned":1,"value":19},{"label":"actual152-after-dlc39","pruned":608,"value":31,"actionId":"place_data:50a9ac16","distance":14,"scope":"Actual formal continuation; no unpruned complete-graph comparison claimed."}]}
+{"postMainMovement":"passed","rawInputs":282,"prunedInputs":4,"payments":95,"arrivals":29,"twoPointPayments":16}
+{"postMainPlan":"passed","rawInputs":314,"prunedInputs":9,"excludedActions":20}
+{"postMainValueBound":"passed","rows":[{"name":"no-energy","raw":18,"bounded":18,"prunes":0,"upper":32,"value":32},{"name":"one-energy","raw":163,"bounded":108,"prunes":27,"upper":33,"value":33},{"name":"two-energy","raw":563,"bounded":153,"prunes":36,"upper":34,"value":34},{"name":"cash-income","raw":1373,"bounded":657,"prunes":171,"upper":35.5,"value":35.5},{"name":"reachable-mercury","raw":35,"bounded":32,"prunes":3,"upper":33.5,"value":33.5},{"name":"neutral-data-visits","raw":409,"bounded":301,"prunes":53,"upper":33.5,"value":33}]}
+{"preMainDataPlan":"passed","rows":[{"label":"one-cash-round2","raw":34,"pruned":14,"value":35.5},{"label":"one-cash-round4","raw":34,"pruned":14,"value":20},{"label":"cash-and-move","raw":2002,"pruned":1192,"value":37.5},{"label":"main-return","raw":237,"pruned":191,"value":36.5},{"label":"alien-composed","raw":89,"pruned":51,"value":35}],"passRows":[{"round":2,"delta":1,"oldInputs":2,"replacementInputs":10},{"round":3,"delta":0,"oldInputs":2,"replacementInputs":10},{"round":4,"delta":-1,"oldInputs":2,"replacementInputs":10}]}
+probe move greedy tests passed
+secondary company probe greedy contracts passed
+probe resource greedy tests passed
+probe source binding tests passed
+public card acquisition goal tests passed
+company acquisition policy and plan dependencies passed
+public card publicity preparation boundaries passed
+public card trade cost representative tests passed
+quick timing phase observation contract passed
+TAP version 13
+# Subtest: 主行动后根目录保留真实转动窗口与指定公共牌，不放行普通准备
+ok 1 - 主行动后根目录保留真实转动窗口与指定公共牌，不放行普通准备
+  ---
+  duration_ms: 0.620375
+  type: 'test'
+  ...
+# Subtest: 主行动后已绑定的普通准备延至下一turn，保留原目标
+ok 2 - 主行动后已绑定的普通准备延至下一turn，保留原目标
+  ---
+  duration_ms: 0.632375
+  type: 'test'
+  ...
+# Subtest: 目标完成后的未绑定后继不能重新引入主行动后普通准备
+ok 3 - 目标完成后的未绑定后继不能重新引入主行动后普通准备
+  ---
+  duration_ms: 0.955917
+  type: 'test'
+  ...
+# Subtest: 计划身份和盘面依赖未变化也不能绕过主行动后时机判断
+ok 4 - 计划身份和盘面依赖未变化也不能绕过主行动后时机判断
+  ---
+  duration_ms: 0.160292
+  type: 'test'
+  ...
+# Subtest: 移动窗口绑定方向，消失后计划失效；正式付款与结束不受裁剪
+ok 5 - 移动窗口绑定方向，消失后计划失效；正式付款与结束不受裁剪
+  ---
+  duration_ms: 0.89925
+  type: 'test'
+  ...
+# Subtest: 机会资源准备只补第一步缺口，已满足时不为未来终点囤资源
+ok 6 - 机会资源准备只补第一步缺口，已满足时不为未来终点囤资源
+  ---
+  duration_ms: 0.505292
+  type: 'test'
+  ...
+# Subtest: 移动角标共用机会准入，缺牌、无窗口和点数不足均拒绝
+ok 7 - 移动角标共用机会准入，缺牌、无窗口和点数不足均拒绝
+  ---
+  duration_ms: 0.904
+  type: 'test'
+  ...
+# Subtest: 扫描准备保留仍有效的扇区目标，不因填数据改做分析
+ok 8 - 扫描准备保留仍有效的扇区目标，不因填数据改做分析
+  ---
+  duration_ms: 0.408833
+  type: 'test'
+  ...
+# Subtest: 扫描根和绑定后继保留准备方案，池数据变化使准备计划失效
+ok 9 - 扫描根和绑定后继保留准备方案，池数据变化使准备计划失效
+  ---
+  duration_ms: 1.351958
+  type: 'test'
+  ...
+# Subtest: 真实叶同收益优先少丢数据，再少步骤；不以防溢出压过较高收益
+ok 10 - 真实叶同收益优先少丢数据，再少步骤；不以防溢出压过较高收益
+  ---
+  duration_ms: 4.738375
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 16.018083
+{"quietBoundComposition":"passed","rows":[{"name":"no-hand","raw":7,"composed":1,"value":27.5,"distance":1},{"name":"unused-blind-card-and-task","raw":116,"composed":9,"value":32,"distance":9},{"name":"two-data-cards-and-task","raw":471,"composed":10,"value":32,"distance":10},{"name":"late-income","raw":540,"composed":1,"value":16.5,"distance":1}],"actualB114Continuation":true,"readyAndHistoricalRejected":true}
+research potential tests passed
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+{"resourceDominance":"passed","rawInputs":318,"prunedInputs":150,"proofPrunes":6}
+resource value tests passed
+score corner target tests passed
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"sharedSearchAgent":"passed","fixture":"case-003","transitions":26,"postMainTransitions":9,"incompleteFixture":"case-062","reuseHits":3,"wholeGames":0}
+{"sharedResourcePrefixes":"passed","goals":20,"pathLength":8,"uniqueInputs":27,"states":28,"sharedInputs":133,"nativeRootAndRecovery":true}
+{"standardScanBound":"passed","rows":[{"name":"original","leaves":6,"dataGain":2,"maximumScore":0,"maximum":35.5},{"name":"one-space","leaves":6,"dataGain":1,"maximumScore":0,"maximum":36},{"name":"full-pool","leaves":6,"dataGain":0,"maximumScore":0,"maximum":36},{"name":"different-slot-points","leaves":6,"dataGain":2,"maximumScore":2,"maximum":37.5}],"strictAndTieAndWatchdog":true}
+independent state value accounting and strict inputs passed
+同色额外位贪心、原生输入与任务/特殊边界通过
+虫族跨颜色纯分数贪心、正式奖励、任务与特殊奖励边界通过
+外星人普通槽位贪心：根/绑定/未绑定、末轮、特殊位置及方舟边界通过
+strategic goal evaluator tests passed
+terminal value tests passed
+{"tradeReservationBound":"passed","rows":[{"label":"062","trades":3,"manualInputs":149,"leaves":86},{"label":"105","trades":4,"manualInputs":224,"leaves":130},{"label":"152","trades":3,"manualInputs":220,"leaves":127},{"label":"ready-zero-resource-task","trades":2,"manualInputs":20,"leaves":12}],"completeWindows":[{"label":"062","raw":417,"pruned":363,"value":36,"prunes":18},{"label":"105","raw":477,"pruned":387,"value":28.5,"prunes":30},{"label":"152","raw":231,"pruned":186,"value":21,"prunes":15}]}
+turing active tech pruning tests passed
+turing immediate expiry tests passed
+{"turnPreviewCases":1104,"outcomes":["game-ended","other-owner","round-advanced","same-owner"],"rootFrozen":true}
+amiba.test.js: all tests passed
+aomomo.test.js: all tests passed
+aliens/banrenma.test.js ok
+chong.test.js: all tests passed
+fangzhou.test.js: all tests passed
+aliens/jiuzhe.test.js ok
+aliens/reveal-card-grants.test.js ok
+runezu.test.js: all tests passed
+aliens/trace-placement-legality.test.js ok
+aliens/yichangdian.test.js ok
+card deck tests passed
+card effects tests passed
+PASS 普通牌按顶牌盲抽
+PASS 公共牌补充按同一牌堆顶牌
+PASS 耗尽不回洗弃牌
+PASS amiba盲抽按顶牌
+PASS amiba盲抽耗尽不重建
+PASS amiba领取最后展示牌后不重建
+PASS chong盲抽按顶牌
+PASS chong盲抽耗尽不重建
+PASS chong领取最后展示牌后不重建
+PASS aomomo盲抽按顶牌
+PASS aomomo盲抽耗尽不重建
+PASS aomomo领取最后展示牌后不重建
+PASS banrenma盲抽按顶牌
+PASS banrenma盲抽耗尽不重建
+PASS banrenma领取最后展示牌后不重建
+PASS runezu盲抽按顶牌
+PASS runezu盲抽耗尽不重建
+PASS runezu领取最后展示牌后不重建
+PASS yichangdian盲抽按顶牌
+PASS yichangdian盲抽耗尽不重建
+PASS yichangdian领取最后展示牌后不重建
+PASS amiba配置生成不执行揭示且同seed完整排列一致
+PASS chong配置生成不执行揭示且同seed完整排列一致
+PASS aomomo随机配置可独立生成且不冻结揭示时动态状态
+PASS banrenma随机配置可独立生成且不冻结揭示时动态状态
+PASS runezu随机配置可独立生成且不冻结揭示时动态状态
+PASS yichangdian随机配置可独立生成且不冻结揭示时动态状态
+PASS jiuzhe随机配置可独立生成且不冻结揭示时动态状态
+PASS 方舟配置固定九张奖励牌及各玩家三色解锁牌
+PASS amiba揭示读取预生成配置且不重抽
+PASS chong揭示读取预生成配置且不重抽
+PASS aomomo揭示读取预生成配置且不重抽
+PASS banrenma揭示读取预生成配置且不重抽
+PASS runezu揭示读取预生成配置且不重抽
+PASS yichangdian揭示读取预生成配置且不重抽
+PASS jiuzhe揭示读取预生成配置且不重抽
+PASS fangzhou揭示读取预生成配置且不重抽
+PASS 方舟缺少玩家配置时不得临时随机补牌或部分揭示
+PASS 方舟多次混洗与外部随机消耗隔离且非零检查点恢复一致
+PASS 正式内核隐藏配置差分与lifecycle恢复
+PASS 开局仅两个槽位分配互异物种且尚未揭示
+PASS 预定物种的揭示次序不改身份也不再抽随机数
+PASS 免电固定盘面只分配阿米巴与虫且不抽取其他身份
+PASS 未揭示身份差异不进入公共物种观察
+PASS 405分局四席起始公司与起始卡选项继承原局
+固定牌堆与物种契约：45/45通过
+card play domain production composition tests passed
+public picks preserve hidden-refill boundaries, known cards and recovery across 8 cases
+task-state.test.js: all tests passed
+data.test.js: all tests passed
+nebula.test.js: all tests passed
+event-bonus-progress.test.js: 访问进度、阈值、领取、所有权和只读契约通过
+probe-turn-session tests passed
+residual-domain-session production proofs passed
+runezu trace panel symbol rewards passed
+science scan and blue reward tests passed
+search budget tests passed
+search payment choice tests passed
+hidden payment boundaries passed
+search placement boundary tests passed
+search root attribution tests passed
+effect session journal stage 5 tests passed
+effect session runtime tests passed
+standard action Effect Session tests passed
+StateStore Effect Session stage 6 tests passed
+end-game-scoring tests passed
+final-scoring tests passed
+initial offer, settlement and income information boundaries, removal equivalence and recovery passed
+initial-setup mission startup final mark passed
+planet stats tests passed
+player tests passed
+probe directory borrowed-tech, owner cache and scan allowance tests passed
+rocket move tests passed
+rocket action tests passed
+high coupling state tests passed
+low coupling state tests passed
+state-store tests passed
+bonuses.test.js passed
+tech.test.js passed
+solar-system-core tests passed
+heuristic turn report search trace tests passed
+self-play demo ingestion tests passed
+simulation rules-only composition tests passed
+simulation production Standard Action composition tests passed
+trajectory recorder tests passed
+amiba/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+amiba/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+chong/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+chong/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+chong/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+chong/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+aomomo/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+aomomo/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+banrenma/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+banrenma/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+runezu/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+runezu/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+yichangdian/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+yichangdian/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+jiuzhe/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+jiuzhe/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+fangzhou/cards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+fangzhou/cards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+fangzhou/rewards reverse=false status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+fangzhou/rewards reverse=true status=settled leaves=1 confidence=low code=null reasons=["counterfactual-hidden-information"]
+alien reveal hidden information tests passed
+all eight hidden species yield the same search observation for an identical player-visible root
+fangzhou hypothesis resources fund a real subsequent launch; unfunded branch cannot launch
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+fixed world identity tests passed
+research search statistics tests passed
+[搜索触限] 步42 p1 strategic #0 frontier={"enabled":true,"limit":256,"reached":true,"truncated":true,"trimCount":3} action=scan:<a>
+[搜索触限] 步42 p1 strategic #0 execution={"enabled":true,"limit":4096,"reached":true,"truncated":false} action=scan:<a>
+research world resume tests passed
+{"aiGenerationIsolation":"passed","v2Versions":9,"v2CompleteGames":9,"searchGames":0,"templateQueries":3,"registrationRejects":2}
+{"compactReport":"passed","steps":253,"rounds":4,"richParity":true,"sourceSaveUnchanged":true}
+robot report record links passed
+robot report world comparison passed
+robot report replay failures and metadata preservation passed
+SUMMARY unit passed=143 failed=0 total=143 time=248.14s
+SUMMARY fullFlow passed=1 failed=0 total=1 time=0.57s
+OWNER architecture/browser-host tests=7
+OWNER architecture/effect-session tests=10
+OWNER architecture/host-source-zero tests=1
+OWNER architecture/policy-host tests=12
+OWNER architecture/rule-composition tests=1
+OWNER architecture/simulation-host tests=7
+OWNER architecture/standard-action tests=2
+OWNER architecture/state-store tests=3
+OWNER full-flow/standard-flow-v1 tests=1
+OWNER policy/decision-search tests=32
+OWNER policy/heuristic-evaluator tests=8
+OWNER policy/heuristic-policy tests=12
+OWNER policy/machine-player-coordinator tests=1
+OWNER policy/plan-continuation tests=1
+OWNER policy/state-value tests=1
+OWNER rules/actions tests=9
+OWNER rules/alien-runezu tests=1
+OWNER rules/aliens tests=10
+OWNER rules/card-event-bonus tests=1
+OWNER rules/card-play tests=1
+OWNER rules/cards tests=5
+OWNER rules/data tests=3
+OWNER rules/initial-setup tests=1
+OWNER rules/quick-trades tests=1
+OWNER rules/scoring tests=2
+OWNER rules/tech tests=2
+OWNER training/reporting tests=6
+OWNER training/research-statistics tests=1
+OWNER training/trajectory tests=2

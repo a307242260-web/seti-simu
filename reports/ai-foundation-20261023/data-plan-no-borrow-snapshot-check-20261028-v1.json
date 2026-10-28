@@ -1,0 +1,10 @@
+{
+  "baseCommit": "35f81da38570b11e0d09d8c92df0841c9ec444e3",
+  "testedSnapshot": "/private/tmp/seti-data-plan-no-borrow-20261028-io4yfpla",
+  "unchangedBaseFilesVerified": 4039,
+  "changedBaseFilesVerified": 12,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "explicitFiles": 36,
+  "runtimeImportsBoundToFinalSource": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot."
+}

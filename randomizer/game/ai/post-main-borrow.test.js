@@ -91,16 +91,19 @@ const limited=open(controlled(1));
 const unfinished=searchDecision({port:{...limited.port,postMainOptimalPlanSpec:()=>null},root:limited.root,evaluate,postMainPruning:true,
   budget:{transitions:1,nodes:2,frontier:1,milliseconds:15000}});
 assert(!unfinished.complete);assert.equal(unfinished.actionId,null);assert.equal(unfinished.planContinuation,null);assert.deepEqual(comp.lifecycle.save().envelope,limited.before);limited.port.close();
-// Shared factory: one actual input per call, followed by a fresh mandatory borrow comparison.
+// Production factory disables initiating borrowing; an already pending native choice can still finish.
 assert(comp.lifecycle.restore({...fixture.compositionEnvelope,committedState:JSON.stringify(useful)}).ok);
 const factoryPort=createAnalysisPort({composition:comp,seatId,maxCacheEntries:256});
 const agent=require("./search-agent").createSearchAgent({seatId,analysisPort:factoryPort});
 function actions() { const inspect=comp.inspect();return inspect.phase==="awaiting_input"?inspect.session.decision.choices:comp.inputPort.enumerateActions({}); }
 const factoryBefore=comp.lifecycle.save().envelope;
 const firstDecision=agent.decide({seatId,legalActions:actions()});
-assert(firstDecision.search.complete);assert(firstDecision.search.diagnostics.postMainBorrowMacros>0);
-assert(firstDecision.actionId.startsWith("industry:"));assert.deepEqual(comp.lifecycle.save().envelope,factoryBefore);
-assert(comp.inputPort.submitQuickAction(actions().find(a=>a.actionId===firstDecision.actionId)).ok);
+assert(firstDecision.search.complete);assert.equal(firstDecision.search.diagnostics.postMainBorrowMacros,0);
+assert(!firstDecision.actionId.startsWith("industry:"));assert.deepEqual(comp.lifecycle.save().envelope,factoryBefore);
+assert(firstDecision.search.lines.every(l=>l.edges.every(e=>!e.borrowTileId)));
+const manualBorrow=actions().find(a=>a.target?.abilityId==="turing_borrow_tech");assert(manualBorrow);
+assert(firstDecision.search.roots.find(a=>a.actionId===manualBorrow.actionId).completion==='excluded-by-resource-policy');
+assert(comp.inputPort.submitQuickAction(manualBorrow).ok);
 assert.equal(comp.inspect().phase,"awaiting_input");assert.equal(actions().length,8);
 const pendingBefore=comp.lifecycle.save().envelope,secondDecision=agent.decide({seatId,legalActions:actions()});
 assert(secondDecision.search.complete);assert.equal(secondDecision.search.diagnostics.postMainBorrowProofNodes,0);

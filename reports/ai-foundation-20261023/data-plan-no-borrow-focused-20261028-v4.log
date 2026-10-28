@@ -1,0 +1,12 @@
+{"fixedDataPlan":"passed","incomeOptions":6,"selected":1,"greedyPlacement":true,"coldRecovery":true,"productionBorrowMacros":0}
+{"localFinalMarkAndScan":"passed","nativeMarkOptions":4,"retainedMarkOptions":1,"scanPurposes":5,"nativeRecoveryAndRootIsolation":true,"stableRestoreSkipped":true}
+{"postMainBorrow":"passed","rows":[{"name":"no-energy","raw":18,"reduced":4,"value":32},{"name":"one-energy","raw":108,"reduced":24,"value":33},{"name":"two-energy","raw":126,"reduced":28,"value":34},{"name":"one-move-card","raw":117,"reduced":26,"value":33},{"name":"asteroid-mercury-useful","raw":32,"reduced":18,"value":33.5},{"name":"owned-orange2","raw":108,"reduced":11,"value":33}]}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"sharedSearchAgent":"passed","fixture":"case-003","transitions":26,"postMainTransitions":9,"incompleteFixture":"case-062","reuseHits":3,"wholeGames":0}
+{"sharedResourcePrefixes":"passed","goals":20,"pathLength":8,"uniqueInputs":27,"states":28,"sharedInputs":133,"nativeRootAndRecovery":true}
+SUMMARY unit passed=6 failed=0 total=6 time=10.69s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=5

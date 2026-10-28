@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v35";
+  const VERSION = "seti-complete-decision-search-v36";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -70,6 +70,7 @@
       roots: hit.roots, lines: [], unresolved: [],
       diagnostics: { finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes: 0, movementDirectionsExcluded: 0, routeGeometryNodes: 0,
         nativeExecutions:0,logicalResourceInputs:0,sharedResourceInputHits:0,sharedResourceInternalStates:0,
+        fixedDataChoiceStates:0,fixedDataChoicesExcluded:0,branchingStates:0,singleAlternativeStates:0,disabledBorrowStarts:0,
         transitions: 0, nodes: 1, equivalents: 0, selectionMacros: 0, peakFrontier: 0, graphNodes: 1, certificateNodes: 0,
         postMainOptimalPlans: 0, postMainOptimalPlanSteps: 0,
         dominancePrunes: 0, resourceDominance: resourceDominance
@@ -161,7 +162,7 @@
       if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
       if (BOUNDARIES.has(node.status) && (!incumbent || value > incumbent.value)) incumbent = { node: index, value };
       const pickPolicy = !boundary && cardPickPlanning ? port.cardPickSpec(node) : null;
-      const decisionPolicy=!boundary&&finalMarkPlanning?port.localDecisionSpec(node):null;
+      const decisionPolicy=!boundary&&(finalMarkPlanning||resourcePlanning)?port.localDecisionSpec?.(node):null;
       const resourcePolicy=!boundary&&resourcePlanning?port.resourceSpec(node):null;
       const selection = boundary || decisionPolicy || pickPolicy?.fixed || resourcePolicy?.bound || resourcePolicy?.plans.length ? null : port.selectionSpec?.(node) || null;
       const postMainPlan = !boundary && !selection && !resourcePlanning && postMainPruning && node.status === "stable"
@@ -227,7 +228,7 @@
       if (localPlan?.kind === "card-corner-choice") {
         cardCornerProofNodes += 1; cardCornerExcludedActions += localPlan.excludedActionIds.length;
       }
-      let borrowPlan = !boundary && !selection && !resourcePolicy?.bound && postMainPruning && limits.transitions <= 4096
+      let borrowPlan = !resourcePlanning && !boundary && !selection && !resourcePolicy?.bound && postMainPruning && limits.transitions <= 4096
         ? port.postMainBorrowSpec?.(node) : null;
       if (borrowPlan) {
         const value = evaluate(node.observation);
@@ -580,7 +581,7 @@
     }
     const lines = nodes.map((entry, index) => ({
       node: index, status: entry.node.status, boundary: entry.node.boundary || null,
-      expanded: entry.expanded, edges: entry.edges,
+      expanded: entry.expanded, alternatives:entry.alternativeCount, edges: entry.edges,
       distance: Number.isFinite(entry.distance) ? entry.distance : null,
       value: entry.value, completion: entry.prunedBy || entry.prunedByBound ? "proof-pruned"
         : entry.value == null ? (stopReason ? "pending" : entry.covered ? "covered-by-global-pruning" : "unreachable") : "reachable",
@@ -675,10 +676,10 @@
         if(entry.fixedCardExecutions?.has(best.actionId)){
           const fixed=entry.fixedCardExecutions.get(best.actionId);
           for(let i=1;i<fixed.prefixes.length&&entries.length<32;i++){
-            const prefix=fixed.prefixes[i];entries.push({node:prefix.node,actionId:prefix.action.actionId,value:entry.value,distance:entry.distance-i,
+            const prefix=fixed.prefixes[i],policy=fixed.fixedChoices.find(choice=>choice.prefix===i)?.policy||"seti-purpose-card-pick-policy-v1";entries.push({node:prefix.node,actionId:prefix.action.actionId,value:entry.value,distance:entry.distance-i,
               sourceNode:`fixed-card:${current}:${i}`,roots:prefix.node.legalActions.map(action=>({actionId:action.actionId,
                 value:action.actionId===prefix.action.actionId?entry.value:null,valueType:action.actionId===prefix.action.actionId?"attained-lower-bound":"not-executed",
-                completion:"fixed-card-plan-execution",policy:"seti-purpose-card-pick-policy-v1",isEquivalence:false}))});
+                completion:"fixed-plan-execution",policy,isEquivalence:false}))});
           }
           current=best.target;continue;
         }
@@ -735,8 +736,13 @@
         : a.cardPickPlan?{kind:a.cardPickPlan.kind,plan:a.cardPickPlan,firstActionId:a.firstActionId}:{kind:"action",actionId:a.firstActionId}),
       diagnostics: { finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes, movementDirectionsExcluded, routeGeometryNodes,
         nativeExecutions:port.getDiagnostics?.().submissionCount??null,logicalResourceInputs,sharedResourceInputHits,sharedResourceInternalStates:sharedInternalStates.size,
-        localFinalMarkStates:nodes.filter(e=>e.decisionPolicy).length,
-        localFinalMarkExcluded:nodes.reduce((n,e)=>n+(e.decisionPolicy?.excludedActionIds.length||0),0),
+        localFinalMarkStates:nodes.filter(e=>e.decisionPolicy?.kind==="fixed-final-mark").length,
+        localFinalMarkExcluded:nodes.reduce((n,e)=>n+(e.decisionPolicy?.kind==="fixed-final-mark"?e.decisionPolicy.excludedActionIds.length:0),0),
+        fixedDataChoiceStates:nodes.filter(e=>e.decisionPolicy?.kind==="fixed-data-choice").length,
+        fixedDataChoicesExcluded:nodes.reduce((n,e)=>n+(e.decisionPolicy?.kind==="fixed-data-choice"?e.decisionPolicy.excludedActionIds.length:0),0),
+        branchingStates:nodes.filter(e=>!BOUNDARIES.has(e.node.status)&&e.alternativeCount>1).length,
+        singleAlternativeStates:nodes.filter(e=>!BOUNDARIES.has(e.node.status)&&e.alternativeCount===1).length,
+        disabledBorrowStarts:nodes.reduce((n,e)=>n+e.node.legalActions.filter(a=>resourcePlanning&&a.family==="industry"&&a.target?.abilityId==="turing_borrow_tech").length,0),
         scanPurposePlans:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.resourcePlan?.goal.kind==="scan-flow").length,0),
         resourceGoalPlans:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.resourcePlan).length,0),
         resourcePreparationInputs:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.resourcePlan).reduce((v,x)=>v+x.cost,0),0),

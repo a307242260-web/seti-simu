@@ -58,6 +58,16 @@ function direct(f, cache = 0) {
   comp.dispose();
   return result;
 }
+// Host failure handling is tested with an explicitly exhausted input ledger,
+// rather than requiring a particular real fixture to remain slow forever.
+let forceBudgetExhaustion=false;
+function controlledAgentFactory(context){
+  const original=context.analysisPort;
+  return createSearchAgent({...context,analysisPort:{...original,
+    expandWithCardPick(node,id,capacity){return original.expandWithCardPick(node,id,forceBudgetExhaustion?()=>"transition-budget":capacity);},
+    expandResourcePlan(node,plan,capacity){return original.expandResourcePlan(node,plan,forceBudgetExhaustion?()=>"transition-budget":capacity);},
+  }});
+}
 (async () => {
   const f = fixture("003"), expected = direct(f), cached = direct(f, 256), env = simulation(f);
   assert.equal(expected.actionId, cached.actionId);
@@ -83,7 +93,7 @@ function direct(f, cache = 0) {
   const port = createBrowserAiBootstrap({ ruleComposition: browser, machinePlayerCoordinatorModule: coordinator,
     heuristicDecisionFunctionModule: { createHeuristicDecisionFunction() { assert.fail("新玩家不得调用旧AI"); } },
     agentRuntimeModule: require("./agent-runtime"), analysisPortModule: require("./analysis-port"),
-    agentFactory: createSearchAgent, machineConfig: { agentType: "search" }, isMachineSeat: () => true,
+    agentFactory: controlledAgentFactory, machineConfig: { agentType: "search" }, isMachineSeat: () => true,
     inputAdapter: { dispatchAction(action) { submissions += 1; return browser.inputPort.submitAction(action); },
       submitDecision(decision) { submissions += 1; return browser.inputPort.submitDecision(decision); } } }).machinePlayerPort;
   const browserResult = await port.runOnce();
@@ -91,8 +101,8 @@ function direct(f, cache = 0) {
   assert.equal(browserResult.actionId, expected.actionId); assert.equal(browserResult.agentTrace.coverage, "complete");
   assert.deepEqual(JSON.parse(browser.lifecycle.save().envelope.committedState), JSON.parse(env.createCheckpoint().coreState.committedState));
 
-  const complex = fixture("062"), failures = [];
-  const failed = simulation(complex, { onAgentDecision: event => failures.push(event) });
+  const complex = fixture("062"), failures = [];forceBudgetExhaustion=true;
+  const failed = simulation(complex, { agentFactory:controlledAgentFactory, onAgentDecision: event => failures.push(event) });
   const before = failed.createCheckpoint();
   assert.throws(() => failed.runAgentDecision(), error => error.cause?.code === "SEARCH_INCOMPLETE");
   assert.deepEqual(failed.createCheckpoint().coreState, before.coreState);
@@ -105,7 +115,7 @@ function direct(f, cache = 0) {
   assert.equal(browserFailure.ok, false); assert.equal(browserFailure.code, "SEARCH_INCOMPLETE");
   assert.equal(browserFailure.search.complete, false); assert.equal(submissions, 1);
   assert.deepEqual(browser.lifecycle.save().envelope, browserBefore);
-  env.dispose(); failed.dispose();
+  env.dispose(); failed.dispose();forceBudgetExhaustion=false;
 
   const postFixture = fixture("011"), post = simulation(postFixture), postExpected = direct(postFixture);
   const postResult = post.runAgentDecision();
