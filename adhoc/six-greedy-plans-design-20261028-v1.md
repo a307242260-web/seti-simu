@@ -1,0 +1,11 @@
+# Six ordered greedy plan contractions (2026-10-28)
+
+Baseline: search v36 at 8fe28753, fixed corpus 6/8. Implement in order: (1) one marginal-benefit paid-repeat budget, greedy funding and fixed native payments; (2) execute an already selected advance-before-rotation prefix without end-turn alternative; (3) choose post-main income completion by known local net value and make it a fixed tail; (4) fixed PASS hand-limit discard combinations; (5) one blue board slot per tech type, preserving tech-type comparison; (6) accept optional pure nonnegative resource gains without a skip branch.
+
+State equivalence and reuse: exact immutable native root, Session queue, journal, RNG and current goal controls remain the identity. No merging by action name, deficit, resources alone or chosen slot. Cold recovery recomputes from native facts; no decision may depend on a lost process-only counter. Changed physical roots may still require native execution. New policy scope/version prevents old plan certificate reuse.
+
+Reachability and pruning: reuse existing resource capacity/deficit bounds and legal native choices. Greedy payment sources preserve the beneficiary card. Paid-repeat support is limited to known positive resource-gain reward bodies, not unknown draws, movement or nonlinear choices. Other effects explicitly remain normal decisions. Slot selection uses current computer coverage, blue reward and stable tie breaks; no hidden future card or opponent behavior.
+
+Budgets: global 256 actual/charged inputs, 257 states, 256 frontier and 600ms unchanged. Fixed tails check time/input/state capacity before every native input, including reused edges. Native execution and branching counters remain separate. No full games until the complete single-decision corpus passes. Lossy policy choices are not equivalence proofs.
+
+Acceptance per stage: targeted real native fixtures, preserved legal roots, exactly one retained fixed subchoice, native/recovered continuation parity, budget interruption yields no action/certificate. Final validation: source-bound eight-case corpus, native branch distribution, relevant Node/Chrome and independent V-input audit. Scores from a decision window are not whole-game results or 180-second acceptance.

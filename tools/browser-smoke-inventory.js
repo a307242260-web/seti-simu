@@ -900,6 +900,28 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "真实页面保留已知可达扫描目的，每个目的按固定牌/扇区执行，稳定边界省恢复且权威根不变",
   counterexample: "扫描仍牌序组合展开、丢失所有目的、跨冻结Session跳过必要恢复或污染真实根",
 }), Object.freeze({
+  id: "production-six-greedy-plans",
+  file: "randomizer/index.html",
+  readyExpression: "Boolean(window.SetiLocalDecisionPlans?.pureOptional && window.SetiResidualDomainSession?.queryCardSettlement)",
+  actionExpression: `(async () => {
+    const fixtures=await fetch('/adhoc/six-greedy-plan-fixtures-20261028-v1.json').then(r=>r.json());
+    const rootFixture=await fetch('/adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json').then(r=>r.json());
+    for(const [name,f] of [...Object.entries(fixtures.cases),['paid',rootFixture]]){
+      const seed=f.source.seed,k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw new Error('固定计划恢复失败');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+      try{p.setResourcePlanning(true);p.setCardPickPlanning(true);p.setMovementPlanning(true);p.setDecisionPlanning({scanPlanning:true,finalMarkPlanning:true});const n=p.openRoot();
+        if(name==='advance'){const r=window.SetiDecisionSearch.searchDecision({port:p,root:n,evaluate:window.SetiStateValue.createStateValueEvaluator(f.seatId),...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:257,frontier:256,milliseconds:1500}});if(!r.complete||!r.lines[0].movementPolicy?.forceExecution||r.lines[0].alternatives!==1)throw new Error('移动时机重新分叉');}
+        else if(name==='income'){const s=p.resourceSpec(n);if(s.incomeTail?.selected!==false||s.plans.some(g=>g.goal.kind==='income'))throw new Error('无净收益收入仍展开');}
+        else if(name==='paid'){const plans=p.resourceSpec(n).plans.filter(g=>g.goal.paidRewardPolicy);if(plans.length!==1)throw new Error('付款额度仍枚举');const r=p.expandResourcePlan(n,plans[0],()=>null);if(!r.complete||r.prefixes.filter(p=>p.action.target?.pay).length!==4)throw new Error('付款计划未固定');}
+        else{const s=p.localDecisionSpec(n),want=name==='blue'?10:1;if(!s||s.retainedActionIds.length!==want)throw new Error(name+'仍产生多余候选');if(name!=='blue'){const r=p.expandWithCardPick(n,s.selectedActionId,()=>null);if(!r.complete)throw new Error(name+'固定执行失败');}}
+        if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw new Error(name+'污染真实根');
+      }finally{p.close();c.dispose();}
+    }
+    window.__sixGreedyPlansSmoke={ok:true,stages:6};
+  })()`,
+  successExpression: "window.__sixGreedyPlansSmoke?.ok === true",
+  obligation: "真实页面六类贪心计划均收束候选且通过原生执行，保存与真实根隔离",
+  counterexample: "脚本导出缺失、付停或移动时机重开分支、PASS/蓝槽组合恢复或试算污染真实根",
+}), Object.freeze({
   id: "production-shared-resource-prefix",
   file: "randomizer/index.html",
   readyExpression: "Boolean(window.SetiAnalysisPort && window.SetiResourceDemand)",
@@ -908,17 +930,17 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});
     k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw new Error('共享前缀恢复失败');
     const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
-    try{const root=p.openRoot(),port={...p,resourceSpec(n){const s=p.resourceSpec(n);return n===root?{...s,retainedActionIds:[],plans:s.plans.filter(x=>x.goal.kind==='research_tech').slice(0,20)}:s;}};
-      const r=window.SetiDecisionSearch.searchDecision({port,root,evaluate:window.SetiStateValue.createStateValueEvaluator(f.seatId),resourcePlanning:true,budget:{transitions:27,nodes:28,frontier:256,milliseconds:1500}});
-      if(!r.complete||r.lines[0].edges.length!==20||r.diagnostics.transitions!==27||r.diagnostics.nodes!==28||r.diagnostics.logicalResourceInputs!==160||r.diagnostics.sharedResourceInputHits!==133||p.getDiagnostics().submissionCount!==27)throw new Error('共享前缀重复执行/预算计费');
+    try{const root=p.openRoot(),port={...p,resourceSpec(n){const s=p.resourceSpec(n);return n===root?{...s,retainedActionIds:[],plans:s.plans.filter(x=>x.goal.kind==='research_tech')}:s;}};
+      const r=window.SetiDecisionSearch.searchDecision({port,root,evaluate:window.SetiStateValue.createStateValueEvaluator(f.seatId),resourcePlanning:true,budget:{transitions:18,nodes:19,frontier:256,milliseconds:1500}});
+      if(!r.complete||r.lines[0].edges.length!==11||r.diagnostics.transitions!==18||r.diagnostics.nodes!==19||r.diagnostics.logicalResourceInputs!==88||r.diagnostics.sharedResourceInputHits!==70||p.getDiagnostics().submissionCount!==18)throw new Error('共享前缀重复执行/预算计费');
       if(r.lines[0].edges.some(e=>e.cost!==8||e.sharedPath.length!==8))throw new Error('共享改变真实执行长度');
       if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw new Error('共享前缀改变真实根');
-      window.__sharedResourcePrefixSmoke={ok:true,goals:20,inputs:27,states:28,reused:133};
+      window.__sharedResourcePrefixSmoke={ok:true,goals:11,inputs:18,states:19,reused:70};
     }finally{p.close();c.dispose();}
   })()`,
   successExpression: "window.__sharedResourcePrefixSmoke?.ok === true",
-  obligation: "真实页面20个科技目标共享7步原生前缀，27输入/28状态通过，保留每个目标8步路径及权威状态",
-  counterexample: "页面未加载新版分析端口、复用后仍重复计费、目标被删减或试算污染根/RNG",
+  obligation: "真实页面11种科技目标共享7步原生前缀，18输入/19状态通过，保留每个目标8步路径及权威状态",
+  counterexample: "页面未加载新版分析端口、复用后仍重复计费、科技种类被丢弃或试算污染根/RNG",
 }), Object.freeze({
   id: "production-resource-goal-plan",
   file: "randomizer/index.html",

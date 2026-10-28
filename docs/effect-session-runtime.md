@@ -246,3 +246,7 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 `restoreCheckpoint(checkpoint, { trustedFrozenState: true })` 仅在可信隔离runtime且checkpoint Session/起始根已经冻结时共享只读 `baseState`/`committedState`；
 其余working state、queue、journal等仍复制。普通恢复保持完整复制语义，checkpoint schema不变。
 共享规则composition只在其trusted fork路径传入该选项，不把此能力暴露给机器策略。冻结历史不得成为可写工作副本，原生逐输入回放和失败回滚继续适用。
+
+### 触发结算的只读查询
+
+Residual导出 `queryCardSettlement(root, ownerId, payload)`，复用原生结算候选解析。AI在隔离副本上查询已知触发的奖励体，用于纯非负资源奖励的贪心决定；不执行或消费真实触发。正式输入仍走同一结算内核，查询不会替代消费、移出、事件或计分。

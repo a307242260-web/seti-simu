@@ -474,12 +474,12 @@ try {
       const fixture=JSON.parse(fs.readFileSync(path.resolve(__dirname,"../adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json"))),comp=auditKernel.composition;
       if(!comp.lifecycle.restore(fixture.compositionEnvelope).ok)throw new Error("共享资源前缀审计恢复失败");
       const before=JSON.stringify(comp.lifecycle.save().envelope),port=createAnalysisPort({composition:comp,seatId:fixture.seatId,maxCacheEntries:0});
-      try{port.setResourcePlanning(true);const root=port.openRoot(),plans=port.resourceSpec(root).plans.filter(p=>p.goal.kind==="research_tech").slice(0,20),evaluate=independentValue.createStateValueEvaluator(fixture.seatId);
+      try{port.setResourcePlanning(true);const root=port.openRoot(),plans=port.resourceSpec(root).plans.filter(p=>p.goal.kind==="research_tech"),evaluate=independentValue.createStateValueEvaluator(fixture.seatId);
         for(const plan of plans){const macro=port.expandResourcePlan(root,plan,()=>null);if(!macro.complete||macro.submissions!==8)throw new Error("共享前缀改变科技路径");
           for(const node of [...macro.prefixes.map(p=>p.node),macro.node])if(evaluate(node.observation)!==evaluate(outcomeModel.createDecisionObservation(node.observation,{seatId:fixture.seatId})))throw new Error("共享前缀原始/标准估值不一致");}
-        if(port.getDiagnostics().submissionCount!==27||port.getResourcePrefixGraph().nodes.length!==28)throw new Error("共享前缀未合并实际执行");
+        if(port.getDiagnostics().submissionCount!==18||port.getResourcePrefixGraph().nodes.length!==19)throw new Error("共享前缀未合并实际执行");
         if(JSON.stringify(comp.lifecycle.save().envelope)!==before)throw new Error("共享前缀改变权威根");
-        console.log('[PASS] independent-shared-resource-prefix: goals=20 nativeInputs=27 states=28');
+        console.log('[PASS] independent-shared-resource-prefix: goals=11 nativeInputs=18 states=19');
       }finally{port.close();}
     }
     {
@@ -507,6 +507,20 @@ try {
         const income=r.prefixes.find(x=>x.action.target?.choiceId?.startsWith('income:')),fixed=p.localDecisionSpec(income.node);if(!fixed||fixed.retainedActionIds.length!==1)throw new Error("收入没有固定");
         console.log('[PASS] independent-fixed-data-plan: nativePrefixesAndSingleIncome');
       }finally{p.close();}
+    }
+    {
+      const captured=JSON.parse(fs.readFileSync(path.resolve(__dirname,"../adhoc/six-greedy-plan-fixtures-20261028-v1.json")));
+      const paid=JSON.parse(fs.readFileSync(path.resolve(__dirname,"../adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json")));
+      for(const [name,f] of [...Object.entries(captured.cases),['paid',paid]]){
+        const comp=auditKernel.composition;if(!comp.lifecycle.restore(f.compositionEnvelope).ok)throw new Error("六类贪心审计恢复失败");
+        const p=createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:0});try{p.setResourcePlanning(true);p.setCardPickPlanning(true);p.setMovementPlanning(true);p.setDecisionPlanning({scanPlanning:true,finalMarkPlanning:true});const n=p.openRoot(),evaluate=independentValue.createStateValueEvaluator(f.seatId);let nodes=[n];
+          if(name==='paid'){const plan=p.resourceSpec(n).plans.find(g=>g.goal.paidRewardPolicy),r=p.expandResourcePlan(n,plan,()=>null);if(!r.complete)throw new Error("付款计划未完成");nodes.push(...r.prefixes.map(s=>s.node),r.node);}
+          else if(name==='advance'){const r=p.expandGoalMovementPlan(n,()=>true);if(!r.complete)throw new Error("移动计划未完成");nodes.push(...r.prefixes.map(s=>s.node),r.node);}
+          else if(name!=='income'&&name!=='blue'){const spec=p.localDecisionSpec(n),r=p.expandWithCardPick(n,spec.selectedActionId,()=>null);if(!r.complete)throw new Error("固定决定未完成");nodes.push(...r.prefixes.map(s=>s.node),r.node);}
+          for(const node of nodes)if(evaluate(node.observation)!==evaluate(outcomeModel.createDecisionObservation(node.observation,{seatId:f.seatId})))throw new Error("六类贪心原始/标准估值不一致");
+        }finally{p.close();}
+      }
+      console.log('[PASS] independent-six-greedy-plans: allNativePrefixesAndPolicyRoots');
     }
     const cornerFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
       "../adhoc/ai-decision-corpus-20261023-v1/post-main-corner-pair-20261023-v1.json")));

@@ -57,16 +57,13 @@
       for(const card of p.hand){
         const cost=effects.getCardPlayCost(card);
         if(Object.entries(cost).some(([k,v])=>p.resources[k]<v))add({id:`play:${card.id}`,kind:'play_card',cardId:card.id,required:cost});
-        // A repeated paid reward is an explicit resource budget, rather than an invitation to exchange indefinitely.
-        if(effects.buildPlayEffects(card).some(e=>e.type==='card_pay_credits_for_reward')){
-          const maximum=p.resources.credits+Math.floor(p.resources.energy/2)+Math.floor((p.hand.length-1)/2);
-          for(let amount=1;amount<=maximum-(cost.credits||0);amount++)if((cost.credits||0)+amount>p.resources.credits)
-            add({id:`play:${card.id}:paid-reward:${amount}`,kind:'play_card',cardId:card.id,required:{...cost,credits:(cost.credits||0)+amount},paidRewardBudget:amount});
-        }
+        const paid=paidBudget({state,seatId,card,actions});
+        if(paid)add({id:`play:${card.id}:paid-reward:${paid.amount}`,kind:'play_card',cardId:card.id,
+          required:{...cost,credits:(cost.credits||0)+paid.amount},paidRewardBudget:paid.amount,paidRewardPolicy:paid});
       }
       if(Object.entries(requirements.scanCost).some(([k,v])=>p.resources[k]<v))add({id:'scan:standard',kind:'scan',required:requirements.scanCost});
       if(requirements.launchPossible&&Object.entries(requirements.launchCost).some(([k,v])=>p.resources[k]<v))add({id:'launch:earth',kind:'launch',required:requirements.launchCost});
-      for(const t of requirements.techPlans)add({id:t.planId,kind:'research_tech',tileId:t.tileId,blueSlot:t.blueSlot,required:t.required});
+      for(const t of greedyTechPlans({state,seatId,plans:requirements.techPlans}))add({id:t.planId,kind:'research_tech',tileId:t.tileId,blueSlot:t.blueSlot,required:t.required});
       for(const c of requirements.probeCandidates.filter(c=>!c.launchRequired&&c.rocketId!=null)){
         const probe=state.pieces.rockets.find(r=>r.id===c.rocketId);if(!probe)continue;
         let at=rockets.getRocketSectorCoordinate(probe),path=[],points=0;
@@ -93,6 +90,46 @@
       .sort((a,b)=>b.net-a.net||a.goal.movementPoints-b.goal.movementPoints||a.goal.path.length-b.goal.path.length||(a.goal.id<b.goal.id?-1:1));
     const chosen=routes[0]?.goal;
     return goals.filter(g=>g.kind!=='route'||g===chosen).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
+  }
+  const localWeights={score:1,credits:1,energy:1,publicity:.5,availableData:.5,additionalPublicScan:.5};
+  const resourceValue=p=>Object.entries(localWeights).reduce((n,[k,w])=>n+(p.resources[k]||0)*w,0)+p.hand.length;
+  function positiveResourceGain(effect){
+    const gain=effect?.options?.gain;
+    return effect?.type==='gain_resources'&&gain&&Object.keys(gain).length&&Object.entries(gain).every(([k,v])=>k in localWeights&&Number.isFinite(v)&&v>=0)?gain:null;
+  }
+  function paidChoice({state,seatId,actions,session}){
+    if(!actions.length||!actions.every(a=>a.family==='choose_reward'&&(a.target?.pay||a.target?.skip)))return null;
+    const effect=session?.queue?.[0]?.payload?.cardEffect;
+    if(effect?.type!=='card_pay_credits_for_reward')return null;
+    const gain=positiveResourceGain(effect.options?.reward);if(!gain||gain.credits||gain.energy)return null;
+    const p=owner(state,seatId),copy=structuredClone(p),before=resourceValue(copy);
+    const paid=players.spendResources(copy,{credits:1});if(paid.ok)players.gainResources(copy,gain);
+    const net=paid.ok?resourceValue(copy)-before:0;
+    const a=actions.find(a=>net>0?a.target?.pay:a.target?.skip);
+    return a?{kind:'fixed',actionId:a.actionId,reason:'fixed-positive-paid-repeat',netGain:net}:null;
+  }
+  function paidBudget({state,seatId,card,actions}){
+    const list=effects.buildPlayEffects(card),effect=list.length===1&&list[0];
+    if(effect?.type!=='card_pay_credits_for_reward')return null;
+    const gain=positiveResourceGain(effect.options?.reward),cost=effects.getCardPlayCost(card);
+    if(!gain||gain.credits||gain.energy||!players.canAfford(owner(state,seatId),cost))return null;
+    let current={...state,players:{...state.players,players:state.players.players.map(p=>p.id===seatId?structuredClone(p):p)}};
+    if(!players.spendResources(owner(current,seatId),cost).ok)return null;
+    let amount=0,net=0;
+    while(true){
+      const before=resourceValue(owner(current,seatId));let next=current;
+      if(owner(next,seatId).resources.credits<1){
+        const goal={kind:'play_card',cardId:card.id,required:{credits:1}};
+        const choice=preparations({state:next,seatId,goal,actions}).find(c=>!c.observer);
+        if(!choice)break;
+        next=project(next,seatId,actions.find(a=>a.actionId===choice.actionId),choice.discardIds);
+        if(!next||owner(next,seatId).resources.credits<1)break;
+      }
+      const p=structuredClone(owner(next,seatId));if(!players.spendResources(p,{credits:1}).ok)break;
+      players.gainResources(p,gain);const delta=resourceValue(p)-before;if(!(delta>0))break;
+      current={...next,players:{...next.players,players:next.players.players.map(v=>v.id===seatId?p:v)}};amount++;net+=delta;
+    }
+    return{policy:'seti-greedy-paid-budget-v1',amount,netGain:net,assumption:'positive known resource reward; greedy funding; beneficiary card preserved'};
   }
   function paymentCards(state,seatId,goal,count){
     const p=owner(state,seatId),spare=p.hand.filter(c=>!protectedCard(c,goal));
@@ -161,6 +198,30 @@
       return{action:a,value:Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0)*(5-state.turn.roundNumber),feasible:capacity(next,seatId,goal)};
     }).filter(x=>x.feasible).sort((a,b)=>b.value-a.value||(a.action.actionId<b.action.actionId?-1:1));
     return scored[0]?{kind:'fixed',actionId:scored[0].action.actionId,reason:'greedy-income-for-goal'}:{kind:'infeasible',reason:'income-would-consume-goal-card'};
+  }
+  function greedyTechPlans({state,seatId,plans}){
+    const p=owner(state,seatId),computer=new Set(data.listComputerPlacedTokens(p).map(t=>t.placementSlot)),byTile=new Map();
+    const rank=plan=>{const required=data.getComputerSlotForBlueBoardSlot(plan.blueSlot);return{covered:computer.has(required),distance:Math.max(0,required-placed(p)),slot:plan.blueSlot};};
+    for(const plan of plans){
+      if(plan.blueSlot==null){byTile.set(plan.tileId,plan);continue;}
+      const prior=byTile.get(plan.tileId),a=rank(plan),b=prior&&rank(prior);
+      if(!prior||Number(a.covered)>Number(b.covered)||a.covered===b.covered&&(a.distance<b.distance||a.distance===b.distance&&a.slot<b.slot))byTile.set(plan.tileId,plan);
+    }
+    return [...byTile.values()];
+  }
+  function previewIncomeTail({state,seatId,goal}){
+    const original=owner(state,seatId),p=structuredClone(original),card=p.hand.find(c=>c.id===goal.incomeCardId);
+    const remaining=Math.max(0,4-placed(p));
+    if(!card||p.resources.availableData<remaining)return{available:false,reason:'income-tail-needs-additional-funding'};
+    for(let i=0;i<remaining;i++){
+      const result=data.placeDataToComputer(p);if(!result.ok)return{available:false,reason:'income-tail-slot-unavailable'};
+      for(const bonus of result.slotBonuses||[]){if(bonus.type==='publicity')players.gainResources(p,{publicity:bonus.publicity});else if(bonus.type==='score')players.gainResources(p,{score:bonus.score});}
+    }
+    p.hand=p.hand.filter(c=>c.id!==card.id);const gain=cards.getIncomeGainForCard(card);let blindHandValue=0;
+    players.gainIncome(p,gain,{blindDraw:()=>{blindHandValue++;},gainData:target=>data.gainData(target)});
+    const future=Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,publicity:.5,availableData:.5,additionalPublicScan:.5,handSize:1}[k]||0),0)*(4-state.turn.roundNumber);
+    return{available:true,player:p,netGain:resourceValue(p)-resourceValue(original)+blindHandValue+future,
+      immediateScoreGain:p.resources.score-original.resources.score,placements:remaining,assumption:'known income reward and remaining official income rounds; unknown drawn identities excluded'};
   }
   function blueValue(p,slot){
     const bonus=data.getBlueBonusPlacementReward(structuredClone(p),slot);
@@ -234,5 +295,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,fixedDataChoice,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice});
 });

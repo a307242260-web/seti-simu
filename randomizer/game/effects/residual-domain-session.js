@@ -2352,6 +2352,7 @@
     HANDOFF_SCHEMA,
     EFFECT_TYPES,
     SPECIES_IDS,
+    queryCardSettlement: findCardSettlement,
     describeEventBonusProgress,
     getCompanyMovementAllowance,
     augmentEffectResult,

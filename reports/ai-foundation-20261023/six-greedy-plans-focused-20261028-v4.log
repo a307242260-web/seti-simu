@@ -1,0 +1,14 @@
+{"fixedDataPlan":"passed","incomeOptions":6,"selected":1,"greedyPlacement":true,"coldRecovery":true,"productionBorrowMacros":0}
+{"goalMovement":"passed","goal":{"id":"rocket:5:land:neptune:satellite:triton","kind":"land","label":"land neptune","coordinate":{"x":1,"y":4},"timing":"advance-before-rotation","planetId":"neptune","endpointTarget":{"type":"satellite","satelliteId":"triton","rocketId":5},"endpointCost":{"energy":2},"targetCoordinate":{"x":1,"y":4},"movementTiming":{"comparable":true,"assumption":"one-known-solar-rotation-before-the-future-goal","rotationCount":1,"waitPaidPoints":4,"bestPrefixLength":3,"bestTotalPaidPoints":0,"classification":"advance-before-rotation","alternatives":[{"prefixLength":0,"totalPaidPoints":4,"remainingPaidPoints":4},{"prefixLength":1,"prefixMovementPoints":1,"totalPaidPoints":2,"remainingPaidPoints":2},{"prefixLength":2,"prefixMovementPoints":2,"totalPaidPoints":1,"remainingPaidPoints":1},{"prefixLength":3,"prefixMovementPoints":3,"totalPaidPoints":0,"remainingPaidPoints":0}],"availablePrefixPoints":5}},"routeSteps":3,"searchInputs":14,"policyExclusions":5,"cacheAndRestore":true}
+{"localFinalMarkAndScan":"passed","nativeMarkOptions":4,"retainedMarkOptions":1,"scanPurposes":5,"nativeRecoveryAndRootIsolation":true,"stableRestoreSkipped":true}
+{"postMainBorrow":"passed","rows":[{"name":"no-energy","raw":18,"reduced":4,"value":32},{"name":"one-energy","raw":108,"reduced":24,"value":33},{"name":"two-energy","raw":126,"reduced":28,"value":34},{"name":"one-move-card","raw":117,"reduced":26,"value":33},{"name":"asteroid-mercury-useful","raw":32,"reduced":18,"value":33.5},{"name":"owned-orange2","raw":108,"reduced":11,"value":33}]}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"sharedSearchAgent":"passed","fixture":"case-003","transitions":26,"postMainTransitions":9,"incompleteFixture":"case-062","reuseHits":3,"wholeGames":0}
+{"sharedResourcePrefixes":"passed","goals":8,"pathLength":8,"uniqueInputs":15,"states":16,"sharedInputs":49,"nativeRootAndRecovery":true}
+{"sixGreedyPlans":"passed","stages":6,"globalBudgetPreserved":true}
+SUMMARY unit passed=8 failed=0 total=8 time=12.64s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=7

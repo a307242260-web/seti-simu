@@ -1,0 +1,10 @@
+{
+  "baseCommit": "8fe2875343ee99207047f00fecbf34b3eaa52799",
+  "testedSnapshot": "/private/tmp/seti-six-greedy-plans-20261028-b4rnme1v",
+  "unchangedBaseFilesVerified": 4062,
+  "changedBaseFilesVerified": 14,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "explicitFiles": 40,
+  "runtimeImportsBoundToFinalSource": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot."
+}

@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v36";
+  const VERSION = "seti-complete-decision-search-v37";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -244,7 +244,12 @@
       const needsMovementPlan = !resourcePolicy?.bound && node.legalActions.some(action => (!localPlan || localPlan.retainedActionIds.includes(action.actionId))
         && (Number.isInteger(action.target?.deltaX) || action.target?.kind === "move-payment"
           || action.target?.tradeId === "energy-for-move" || action.family === "card_corner" && action.payload?.kind === "move"));
-      const movementPolicy = movementPlanning && !boundary && needsMovementPlan ? port.goalMovementSpec(node) : null;
+      let movementPolicy = movementPlanning && !boundary && needsMovementPlan ? port.goalMovementSpec(node) : null;
+      if(resourcePlanning&&movementPolicy?.chosenGoal?.timing==="advance-before-rotation"&&movementPolicy.selectedActionId){
+        movementPolicy={...movementPolicy,forceExecution:true,reason:"execute-selected-advance-timing",
+          retainedActionIds:[movementPolicy.selectedActionId],excludedActionIds:node.legalActions.filter(a=>a.actionId!==movementPolicy.selectedActionId).map(a=>a.actionId),
+          suppressedResourceGoals:resourcePolicy?.plans.map(p=>p.goal.id)||[]};
+      }
       if (movementPolicy) {
         movementPolicyNodes += 1; movementDirectionsExcluded += movementPolicy.excludedDirectionCount;
         routeGeometryNodes += movementPolicy.routingNodes;
@@ -268,7 +273,7 @@
           if (openingPass && typeof port.expandOpeningPass !== "function") throw new TypeError("SEARCH_OPENING_PASS_PORT_INVALID");
           return { firstActionId: action.actionId, submissions: openingPass ? 2 : 1, ...(pickPlan?{cardPickPlan:pickPlan}:{}), ...(openingPass ? { openingPass: true } : {}) };
         });
-      if(resourcePolicy?.plans.length)alternatives.push(...resourcePolicy.plans.map(plan=>({firstActionId:plan.firstActionId,submissions:1,resourcePlan:plan})));
+      if(resourcePolicy?.plans.length&&!movementPolicy?.forceExecution)alternatives.push(...resourcePolicy.plans.map(plan=>({firstActionId:plan.firstActionId,submissions:1,resourcePlan:plan})));
       const alternativeCount = selection ? Array.from({ length: selection.requiredCount }, (_, i) =>
         (selection.cardIds.length - i) / (selection.unordered ? i + 1 : 1))
         .reduce((count, n) => count * n, 1) : alternatives.length;

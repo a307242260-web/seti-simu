@@ -35,6 +35,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/actions/quick-move-availability.test.js", "rules/quick-trades", "快速移动必须有正式一步可达方向；无路时拒绝且根状态不变", "只有探测器存在便提供快速移动，扣能量后生成空Decision"),
     entry("randomizer/game/ai/state-value.test.js", "policy/state-value", "独立估值只读标准事实，未来收入窗口明确且终局只计正式分", "终局重复加资源、未知牌身份进入估值或缺字段被静默补零"),
     entry("randomizer/game/ai/goal-movement.test.js", "policy/decision-search", "移动按明确目标和确定路线执行，原生费用、真实逐步提交及恢复一致，策略排除不冒充等价剪枝", "免费移动展开方向树、每步换目标、目标完成仍乱走、读暗牌定路线或恢复丢失路线目的"),
+    entry("randomizer/game/ai/six-greedy-plans.test.js", "policy/decision-search", "六类准备及条件选择按贪心计划固定，原生费用、恢复与预算隔离保持", "付费预算重开付停、已定移动时机回退结束、补收入双路、PASS组合或蓝槽重复展开、纯奖励仍跳过"),
     entry("randomizer/game/ai/fixed-data-plan.test.js", "policy/decision-search", "放数据、收入与标记作为固定计划执行，生产禁止发起借科技且冷恢复一致", "固定收入回退到多分支、计划奖励尾部重新展开、借科技绕过禁用或原生合法根被修改"),
     entry("randomizer/game/ai/local-decision-plans.test.js", "policy/decision-search", "终局标记按原生公式局部定点，扫描保留可达目的并固定步骤，根与恢复一致", "标记读取冻结状态越界写、扫描重新展开牌序、漏目标或目标不同仍复用控制、固定步骤绕过预算"),
     entry("randomizer/game/ai/shared-resource-prefix.test.js", "policy/decision-search", "多目标共用原生准备前缀，唯一执行/状态预算与方案长度分开且全部目标估值、恢复与根状态一致", "相同准备反复模拟或计费、不同目标保护牌被混用、缓存命中绕过时间限制或未完成共享图产生提交"),

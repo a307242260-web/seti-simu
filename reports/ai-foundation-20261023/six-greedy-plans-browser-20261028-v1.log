@@ -1,0 +1,11 @@
+PASS production-start-button http://127.0.0.1:57940/randomizer/index.html
+PASS production-search-agent-entry http://127.0.0.1:57940/randomizer/index.html?agent=search
+PASS production-goal-movement-plan http://127.0.0.1:57940/randomizer/index.html
+PASS production-fixed-card-pick-plan http://127.0.0.1:57940/randomizer/index.html
+PASS production-local-final-mark http://127.0.0.1:57940/randomizer/index.html
+PASS production-scan-purpose-plan http://127.0.0.1:57940/randomizer/index.html
+PASS production-six-greedy-plans http://127.0.0.1:57940/randomizer/index.html
+PASS production-shared-resource-prefix http://127.0.0.1:57940/randomizer/index.html
+PASS production-resource-goal-plan http://127.0.0.1:57940/randomizer/index.html
+PASS production-completion-agent-parity http://127.0.0.1:57940/randomizer/index.html?agent=completion
+SUMMARY browserSmoke passed=10 failed=0 total=10
