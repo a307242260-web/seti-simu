@@ -869,6 +869,26 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "真实页面将两张牌付款和精选折为固定计划，4次原生输入、2个图节点，权威状态不变",
   counterexample: "缺失脚本装配、逐卡分支、固定付款未记录回放或试算污染正式状态",
 }), Object.freeze({
+  id: "production-shared-resource-prefix",
+  file: "randomizer/index.html",
+  readyExpression: "Boolean(window.SetiAnalysisPort && window.SetiResourceDemand)",
+  actionExpression: `(async () => {
+    const f=await fetch('/adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});
+    k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw new Error('共享前缀恢复失败');
+    const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+    try{const root=p.openRoot(),port={...p,resourceSpec(n){const s=p.resourceSpec(n);return n===root?{...s,retainedActionIds:[],plans:s.plans.filter(x=>x.goal.kind==='research_tech').slice(0,20)}:s;}};
+      const r=window.SetiDecisionSearch.searchDecision({port,root,evaluate:window.SetiStateValue.createStateValueEvaluator(f.seatId),resourcePlanning:true,budget:{transitions:27,nodes:28,frontier:256,milliseconds:1500}});
+      if(!r.complete||r.lines[0].edges.length!==20||r.diagnostics.transitions!==27||r.diagnostics.nodes!==28||r.diagnostics.logicalResourceInputs!==160||r.diagnostics.sharedResourceInputHits!==133||p.getDiagnostics().submissionCount!==27)throw new Error('共享前缀重复执行/预算计费');
+      if(r.lines[0].edges.some(e=>e.cost!==8||e.sharedPath.length!==8))throw new Error('共享改变真实执行长度');
+      if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw new Error('共享前缀改变真实根');
+      window.__sharedResourcePrefixSmoke={ok:true,goals:20,inputs:27,states:28,reused:133};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression: "window.__sharedResourcePrefixSmoke?.ok === true",
+  obligation: "真实页面20个科技目标共享7步原生前缀，27输入/28状态通过，保留每个目标8步路径及权威状态",
+  counterexample: "页面未加载新版分析端口、复用后仍重复计费、目标被删减或试算污染根/RNG",
+}), Object.freeze({
   id: "production-resource-goal-plan",
   file: "randomizer/index.html",
   readyExpression: "Boolean(window.SetiResourceDemand && window.SetiProductionKernel?.getResourceGoalRequirements)",

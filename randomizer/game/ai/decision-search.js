@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v33";
+  const VERSION = "seti-complete-decision-search-v34";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -66,6 +66,7 @@
       stopReason: null, scope,
       roots: hit.roots, lines: [], unresolved: [],
       diagnostics: { resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes: 0, movementDirectionsExcluded: 0, routeGeometryNodes: 0,
+        nativeExecutions:0,logicalResourceInputs:0,sharedResourceInputHits:0,sharedResourceInternalStates:0,
         transitions: 0, nodes: 1, equivalents: 0, selectionMacros: 0, peakFrontier: 0, graphNodes: 1, certificateNodes: 0,
         postMainOptimalPlans: 0, postMainOptimalPlanSteps: 0,
         dominancePrunes: 0, resourceDominance: resourceDominance
@@ -95,7 +96,11 @@
     const useScanBound = cardChoiceEquivalence && stateValue?.isDefaultStateValueEvaluator?.(evaluate) && !port.selectionSpec?.(root);
     const usePostMainValueBound = postMainPruning && !port.selectionSpec?.(root);
     let movementPolicyNodes = 0, movementDirectionsExcluded = 0, routeGeometryNodes = 0;
-    let transitions = 0;
+    let transitions = 0, logicalResourceInputs = 0, sharedResourceInputHits = 0;
+    const sharedInternalStates=new Set();
+    function resourceStateAdditions(states){
+      const fresh=new Set();for(const node of states){const id=port.identity(node);if(!known.has(id)&&!sharedInternalStates.has(id))fresh.add(id);}return fresh;
+    }
     let equivalents = 0;
     let selectionMacros = 0;
     let peakFrontier = 0;
@@ -145,6 +150,7 @@
       const identity = port.identity(node);
       if (known.has(identity)) return { index: known.get(identity), equivalent: true };
       const index = nodes.length;
+      if(sharedInternalStates.delete(identity))certificateNodes--;
       known.set(identity, index);
       const boundary = BOUNDARIES.has(node.status) || node.status === "plan-infeasible";
       if (!boundary && !node.legalActions?.length) throw new Error("SEARCH_EMPTY_NONTERMINAL");
@@ -415,26 +421,32 @@
             }
           }
         }
-        if (transitions + alternative.submissions > limits.transitions) stopReason = "transition-budget";
-        else if (nodes.length+certificateNodes+(alternative.goalPlan ? alternative.submissions-1 : 0) >= limits.nodes) stopReason = "node-budget";
-        else if (pendingFrontier+(alternative.goalPlan ? alternative.submissions-1 : 0) > limits.frontier) stopReason = "frontier-budget";
+        if (!alternative.resourcePlan && transitions + alternative.submissions > limits.transitions) stopReason = "transition-budget";
+        else if (!alternative.resourcePlan && nodes.length+certificateNodes+(alternative.goalPlan ? alternative.submissions-1 : 0) >= limits.nodes) stopReason = "node-budget";
+        else if (!alternative.resourcePlan && pendingFrontier+(alternative.goalPlan ? alternative.submissions-1 : 0) > limits.frontier) stopReason = "frontier-budget";
         else if (now() - startedAt >= limits.milliseconds) stopReason = "watchdog";
         if (stopReason) break outer;
         if(alternative.resourcePlan){
-          const fixed=port.expandResourcePlan(entry.node,alternative.resourcePlan,(count,contexts,input)=>{
+          const fixed=port.expandResourcePlan(entry.node,alternative.resourcePlan,(count,contexts,input,work)=>{
             if(now()-startedAt>=limits.milliseconds)return "watchdog";
-            if(transitions+count+(input?1:0)>limits.transitions)return "transition-budget";
-            if(nodes.length+certificateNodes+count+contexts+(input?1:0)>limits.nodes)return "node-budget";
-            if(pendingFrontier+count+contexts+(input?0:-1)>limits.frontier)return "frontier-budget";
+            const inputs=work?work.newSubmissions+(input?work.nextNewInput:0):count+(input?1:0);
+            const fresh=work?resourceStateAdditions([...work.sharedStates,...(work.nextNode?[work.nextNode]:[])]).size+(work.additionalStates||0):count+contexts+(input?1:0);
+            if(transitions+inputs>limits.transitions)return "transition-budget";
+            if(nodes.length+certificateNodes+fresh>limits.nodes)return "node-budget";
+            if(pendingFrontier+Math.max(0,fresh-1)>limits.frontier)return "frontier-budget";
             return null;
           });
-          transitions+=fixed.submissions;certificateNodes+=fixed.submissions+fixed.contexts;
-          peakFrontier=Math.max(peakFrontier,pendingFrontier+fixed.submissions+fixed.contexts-(fixed.complete?1:0));
+          const newInputs=fixed.newSubmissions??fixed.submissions;
+          transitions+=newInputs;logicalResourceInputs+=fixed.submissions;sharedResourceInputHits+=fixed.submissions-newInputs;
+          const fresh=fixed.sharedStates?resourceStateAdditions(fixed.sharedStates):null;
+          if(fresh){for(const id of fresh)sharedInternalStates.add(id);certificateNodes+=fresh.size;}
+          else certificateNodes+=fixed.submissions+fixed.contexts;
+          peakFrontier=Math.max(peakFrontier,pendingFrontier+(fresh?Math.max(0,fresh.size-1):fixed.submissions+fixed.contexts-(fixed.complete?1:0)));
           if(!fixed.complete){entry.resourceAttempt={goal:fixed.goal,submissions:fixed.submissions,preparations:fixed.preparations};stopReason=fixed.stopReason;break outer;}
           if(!fixed.submissions)throw new Error("SEARCH_RESOURCE_PLAN_EMPTY");
-          certificateNodes-=1;const added=add(fixed.node);if(added.equivalent)equivalents+=1;
+          if(!fresh)certificateNodes-=1;const added=add(fixed.node);if(added.equivalent)equivalents+=1;
           entry.edges.push({actionId:alternative.firstActionId,target:added.index,cost:fixed.submissions,equivalent:added.equivalent,
-            resourcePlan:alternative.resourcePlan,goalStatus:fixed.goalStatus,fallbackReason:fixed.fallbackReason||null,
+            newInputs,sharedPath:fixed.sharedPath||[],resourcePlan:alternative.resourcePlan,goalStatus:fixed.goalStatus,fallbackReason:fixed.fallbackReason||null,
             preparations:fixed.preparations,steps:fixed.prefixes.map(p=>p.action.actionId)});
           continue;
         }
@@ -711,9 +723,11 @@
       stopReason: stopReason || (!accepted ? "watchdog" : nodes[0].value == null ? "no-reachable-boundary" : null),
       scope,
       roots, lines, unresolved,
+      ...(resourcePlanning?{sharedPrefixGraph:port.getResourcePrefixGraph?.()||null}:{}),
       candidates: Array.from(nodes[0].alternatives, a => a.resourcePlan?{kind:"resource-goal-plan",plan:a.resourcePlan,firstActionId:a.firstActionId}:a.goalPlan ? {kind:"goal-plan",plan:a.goalPlan,firstActionId:a.firstActionId}
         : a.cardPickPlan?{kind:a.cardPickPlan.kind,plan:a.cardPickPlan,firstActionId:a.firstActionId}:{kind:"action",actionId:a.firstActionId}),
       diagnostics: { resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes, movementDirectionsExcluded, routeGeometryNodes,
+        nativeExecutions:port.getDiagnostics?.().submissionCount??null,logicalResourceInputs,sharedResourceInputHits,sharedResourceInternalStates:sharedInternalStates.size,
         resourceGoalPlans:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.resourcePlan).length,0),
         resourcePreparationInputs:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.resourcePlan).reduce((v,x)=>v+x.cost,0),0),
         resourceFallbacks:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.fallbackReason).length,0),

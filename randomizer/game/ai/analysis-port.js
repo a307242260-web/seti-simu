@@ -274,6 +274,19 @@
     let cacheHits = 0;
     let observationCount = 0;
     const cache = new Map();
+    // Search-local native execution DAG. Keys use the exact immutable source node and input.
+    let prefixEdges = new Map(), prefixNodes = new Map(), prefixHits = 0;
+    function clearPrefixGraph(){prefixEdges=new Map();prefixNodes=new Map();prefixHits=0;}
+    function expansionKey(stored,actionId){return JSON.stringify([stored.serial,actionId,movementPlanning,cardPickPlanning,resourcePlanning]);}
+    function prefixNodeId(node){if(!prefixNodes.has(node))prefixNodes.set(node,prefixNodes.size);return prefixNodes.get(node);}
+    function rememberPrefix(key,node,actionId,child){
+      if(resourcePlanning)prefixEdges.set(key,{id:prefixEdges.size,from:prefixNodeId(node),to:prefixNodeId(child),actionId,node:child});
+      return child;
+    }
+    function getResourcePrefixGraph(){return freeze({
+      nodes:Array.from(prefixNodes,([node,id])=>({id,status:node.status})),
+      edges:Array.from(prefixEdges.values(),({node,...edge})=>edge),
+    });}
     // 每席只保留最近一份完成证据；close 结束分支，不丢失下一次点击的证据。
     let selectionCertificate = null;
     let planCertificate = null;
@@ -381,6 +394,7 @@
 
     function openRoot() {
       if (fork) throw new Error("ANALYSIS_ROOT_ALREADY_OPEN");
+      clearPrefixGraph();
       goalMovementGeometryNodes = 0;
       cardPickRootStats = cardPickPlanner.getDiagnostics();
       nodeCount = 0;
@@ -421,14 +435,15 @@
       const requested = node.legalActions.find(action => action.actionId === actionId);
       if (!requested || requested.actorId !== seatId) throw new Error("ANALYSIS_ACTION_NOT_LEGAL");
       // serial 只在本端口生命周期内绑定这一不可变快照；不按观察摘要跨节点复用。
-      const key = JSON.stringify([stored.serial, actionId, movementPlanning, cardPickPlanning, resourcePlanning]);
+      const key = expansionKey(stored,actionId);
+      if(resourcePlanning&&prefixEdges.has(key)){prefixHits++;return prefixEdges.get(key).node;}
       if (cache.has(key)) {
         cacheHits += 1;
-        return cache.get(key);
+        return rememberPrefix(key,node,actionId,cache.get(key));
       }
       restoreEnvelope(stored.envelope, true);
       const { before, result } = executeCurrent(actionId);
-      return remember(key, finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null, stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null));
+      return rememberPrefix(key,node,actionId,remember(key, finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null, stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null)));
     }
 
     function setMovementPlanning(enabled) {
@@ -488,7 +503,7 @@
       return{complete:true,node:current,submissions:prefixes.length,prefixes,fixedChoices};
     }
 
-    function setResourcePlanning(enabled) { resourcePlanning=enabled===true; }
+    function setResourcePlanning(enabled) { resourcePlanning=enabled===true;clearPrefixGraph(); }
 
     function resourceQuery(state) {
       return (productionKernel||globalThis.SetiProductionKernel).getResourceGoalRequirements(state,seatId);
@@ -559,24 +574,26 @@
     }
 
     function expandResourcePlan(node,plan,hasCapacity) {
-      const prefixes=[],preparations=[];let current=node,operation={...plan.operation},contexts=0,forced=plan.firstActionId;
-      const finish=(extra={})=>({complete:true,node:current,submissions:prefixes.length,prefixes,contexts,preparations,goal:plan.goal,...extra});
-      function stop(reason){return{complete:false,stopReason:reason,node:current,submissions:prefixes.length,prefixes,contexts,preparations,goal:plan.goal};}
+      const prefixes=[],preparations=[],sharedPath=[],sharedStates=[];let newSubmissions=0;
+      let current=node,operation={...plan.operation},contexts=0,forced=plan.firstActionId;
+      const work=(extra={})=>({newSubmissions,sharedStates,...extra});
+      const finish=(extra={})=>({complete:true,node:current,submissions:prefixes.length,prefixes,contexts,preparations,goal:plan.goal,sharedPath,sharedStates,newSubmissions,...extra});
+      function stop(reason){return{...finish(),complete:false,stopReason:reason};}
       function bind(reason,operationNext){
-        const blocked=hasCapacity(prefixes.length,contexts+1,false);if(blocked)return stop(blocked);
-        current=resourceView(current,{goal:plan.goal,operation:operationNext});contexts++;
+        const blocked=hasCapacity(prefixes.length,contexts+1,false,work({additionalStates:1}));if(blocked)return stop(blocked);
+        current=resourceView(current,{goal:plan.goal,operation:operationNext});sharedStates.push(current);contexts++;
         return finish({fallbackReason:reason});
       }
       function invalid(reason){
-        const stored=nodes.get(current),blocked=hasCapacity(prefixes.length,contexts+1,false);if(blocked)return stop(blocked);
-        current=createNode(stored.envelope,null,[],"plan-infeasible",null,stored.intent);contexts++;
+        const stored=nodes.get(current),blocked=hasCapacity(prefixes.length,contexts+1,false,work({additionalStates:1}));if(blocked)return stop(blocked);
+        current=createNode(stored.envelope,null,[],"plan-infeasible",null,stored.intent);sharedStates.push(current);contexts++;
         return finish({goalStatus:"infeasible",reason});
       }
       while(true){
         if(["other-owner","information-barrier","terminal"].includes(current.status))return finish({goalStatus:"boundary"});
         const spec=cardPickSpec(current),step=spec?.fixed?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}:resourceStep(current,plan.goal,operation);
         if(step.kind==="complete"){
-          if(nodes.get(current).resourceControl){const blocked=hasCapacity(prefixes.length,contexts+1,false);if(blocked)return stop(blocked);current=resourceView(current,null);contexts++;}
+          if(nodes.get(current).resourceControl){const blocked=hasCapacity(prefixes.length,contexts+1,false,work({additionalStates:1}));if(blocked)return stop(blocked);current=resourceView(current,null);sharedStates.push(current);contexts++;}
           return finish({goalStatus:"completed"});
         }
         if(step.kind==="infeasible")return invalid(step.reason);
@@ -584,12 +601,16 @@
         const id=forced||step.actionId,action=current.legalActions.find(a=>a.actionId===id);
         if(!action)throw new Error("RESOURCE_PLAN_ACTION_NOT_LEGAL");
         const chosen=step.kind==="fallback"?step.candidates?.find(c=>c.actionId===id)||{}:step;
-        const blocked=hasCapacity(prefixes.length,contexts,true);if(blocked)return stop(blocked);
+        const key=expansionKey(nodes.get(current),id),shared=resourcePlanning?prefixEdges.get(key):null;
+        const next=shared?.node||cache.get(key)||null;
+        const blocked=hasCapacity(prefixes.length,contexts,true,work({nextNode:next,nextNewInput:shared?0:1,additionalStates:next?0:1}));if(blocked)return stop(blocked);
         preparations.push({input:prefixes.length,reason:step.reason,goalId:plan.goal.id,demand:resourceDemand.needs(readIdentityState(nodes.get(current).envelope),seatId,plan.goal),actionId:id});
         operation={...operation,...(chosen.discardIds?{discardIds:chosen.discardIds}:{}),...(chosen.placing!==undefined?{placing:chosen.placing}:{}),...(chosen.finalPlacement!==undefined?{finalPlacement:chosen.finalPlacement}:{}),...(step.kind==="start-target"?{targetStarted:true}:{})};
         prefixes.push({node:current,action});current=expand(current,id);forced=null;
+        sharedStates.push(current);if(!shared)newSubmissions++;
+        if(resourcePlanning)sharedPath.push(prefixEdges.get(key).id);
         if(step.kind==="target"){
-          if(nodes.get(current).resourceControl){const stopped=hasCapacity(prefixes.length,contexts+1,false);if(stopped)return stop(stopped);current=resourceView(current,null);contexts++;}
+          if(nodes.get(current).resourceControl){const stopped=hasCapacity(prefixes.length,contexts+1,false,work({additionalStates:1}));if(stopped)return stop(stopped);current=resourceView(current,null);sharedStates.push(current);contexts++;}
           return finish({goalStatus:"completed"});
         }
         if(step.kind==="start-target"&&current.status!=="decision")return finish({goalStatus:"completed"});
@@ -2137,6 +2158,7 @@
       postMainOptimalPlans = new WeakMap();
       resourceGroups.clear();
       cache.clear();
+      clearPrefixGraph();
       rootObservation = null;
       publicSeed = null;
     }
@@ -2145,7 +2167,7 @@
       const picks=cardPickPlanner.getDiagnostics();
       return freeze({ cardPick:{...picks,rankingCacheHitsThisRoot:picks.rankingCacheHits-cardPickRootStats.rankingCacheHits,
         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, cacheEntries: cache.size,
-        observationCount, identityCount: identities.size, maxCacheEntries,
+        observationCount, identityCount: identities.size, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedSerialized ? 1 : 0, maxDecodedStateCacheEntries: 1,
         committedDecodeCount, committedDecodeHits,
         selectionEvidenceEntries: selectionCertificate ? 1 : 0, maxSelectionEvidenceEntries: 1,
@@ -2159,7 +2181,7 @@
       return stored.identity;
     }
 
-    return Object.freeze({ openRoot, expand, identity, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, getResourcePrefixGraph, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

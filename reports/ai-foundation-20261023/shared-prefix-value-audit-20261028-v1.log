@@ -1,0 +1,41 @@
+[INFO(需装配)] env.observe(原始, 需装配): schema=false scoring=false progress=false assets=false hand=true V=THROW: V 只接受同 viewer 的标准 outcome projection
+[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib
+[PASS] independent-state-value: total=40.5 model=seti-linear-state-value-v1
+[PASS] independent-card-choice-equivalence: total=36 inputs=1
+[PASS] independent-public-pick-barrier: total=36
+[PASS] independent-opening-money-capacity: delta=1
+[PASS] independent-opening-plan: total=36.5
+[PASS] independent-opening-pass-normal-form: total=36.5
+[PASS] independent-initial-information: offer=24 income=30.5
+[PASS] independent-post-main-income: delta=3 retainedData=2
+[PASS] independent-alien-opening-sector-task: card=opening total=36.5
+[PASS] independent-standard-scan-refill-bound: stages=3 leaves=6
+[PASS] independent-company-card-trade: card=opening total=35.5
+[PASS] independent-alien-opening-sector-task: card=b_114.webp total=34.5
+[PASS] independent-quiet-bound-composition: root=34.5 leaf=36
+[PASS] independent-company-card-trade: card=b_114.webp total=33.5
+[PASS] independent-alien-opening-sector-task: card=dlc_9.png total=36
+[PASS] independent-company-card-trade: card=dlc_9.png total=35
+[PASS] independent-pass-reserve-choice: total=37.5 inputs=1
+[PASS] independent-shared-search-agent: root=27.5 leaf=36.5
+[PASS] independent-resource-prefix-replan: root=35.5 leaf=37 inputs=8
+[PASS] independent-known-card-money: case=062 root=44.5 poor=42.5
+[PASS] independent-trade-reservation: case=062 leaf=43.5
+[PASS] independent-known-card-money: case=105 root=40 poor=38
+[PASS] independent-trade-reservation: case=105 leaf=39
+[PASS] independent-known-card-money: case=152 root=32.5 poor=30.5
+[PASS] independent-trade-reservation: case=152 leaf=31.5
+[PASS] independent-post-main-borrow: root=43 inputs=2 excluded=7
+[PASS] independent-post-main-attainment: root=43 leaf=43.5 prefixes=10
+[PASS] independent-goal-movement: inputs=4 goal=rocket:5:land:neptune:satellite:triton
+[PASS] independent-fixed-card-pick: inputs=4 fixedChoices=4
+[PASS] independent-resource-goal-preparation: inputs=9 goal=data:income:4
+[PASS] independent-shared-resource-prefix: goals=20 nativeInputs=27 states=28
+[PASS] independent-post-main-corner-choice: value=26 excluded=1
+[PASS] independent-post-main-inert-reservations: value=29.5 excluded=11
+[PASS] independent-pre-main-data-plan: root=44.5 cashPass=45 oldPass=44
+[PASS] heuristic-leaf(反事实叶): schema=true scoring=true progress=true assets=true hand=true V=total=223.0
+[INFO(需装配)] vguided-fork(原始, 需装配): schema=false scoring=false progress=false assets=false hand=true V=THROW: V 只接受同 viewer 的标准 outcome projection
+[PASS] browser-info-layer(机器席位观察): schema=true scoring=true progress=true assets=true hand=true V=total=0.0
+
+V 输入审计有 FAIL（见上，检查对应调用点装配）
