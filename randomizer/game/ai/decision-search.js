@@ -6,13 +6,13 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v34";
+  const VERSION = "seti-complete-decision-search-v35";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
 
   function searchDecision({ port, root, evaluate, budget = {}, continuation = null, planContinuation = null, planReuse = false,
-    modelKey = null, movementPlanning = false, cardPickPlanning = false, resourcePlanning = false, resourceDominance = false, moneyCapacityDominance = false, cardTradePruning = false, postMainPruning = false, openingPruning = false, cardChoiceEquivalence = false,
+    modelKey = null, movementPlanning = false, cardPickPlanning = false, resourcePlanning = false, finalMarkPlanning = false, scanPlanning = false, resourceDominance = false, moneyCapacityDominance = false, cardTradePruning = false, postMainPruning = false, openingPruning = false, cardChoiceEquivalence = false,
     now = () => performance.now() } = {}) {
     if (typeof port?.expand !== "function" || typeof port?.identity !== "function"
       || typeof evaluate !== "function" || !root) throw new TypeError("SEARCH_INPUT_INVALID");
@@ -23,13 +23,16 @@
       }
     }
     const startedAt = now();
-    const scope=(movementPlanning?"own-visible-window-with-goal-directed-movement-policy":"own-visible-decision-window-to-owner-information-or-terminal-boundary")+(cardPickPlanning?"+fixed-card-pick-policy":"")+(resourcePlanning?"+goal-bound-greedy-resource-policy":"");
+    const scope=(movementPlanning?"own-visible-window-with-goal-directed-movement-policy":"own-visible-decision-window-to-owner-information-or-terminal-boundary")+(cardPickPlanning?"+fixed-card-pick-policy":"")+(resourcePlanning?"+goal-bound-greedy-resource-policy":"")+(finalMarkPlanning?"+local-final-mark-policy":"")+(scanPlanning?"+scan-purpose-policy":"");
     if (movementPlanning && typeof port.goalMovementSpec !== "function") throw new TypeError("SEARCH_MOVEMENT_PORT_REQUIRED");
     port.setMovementPlanning?.(movementPlanning);
     if(cardPickPlanning&&typeof port.expandWithCardPick!=="function")throw new TypeError("SEARCH_CARD_PICK_PORT_REQUIRED");
     port.setCardPickPlanning?.(cardPickPlanning);
     if(resourcePlanning&&typeof port.expandResourcePlan!=="function")throw new TypeError("SEARCH_RESOURCE_PORT_REQUIRED");
     port.setResourcePlanning?.(resourcePlanning);
+    if(scanPlanning&&!resourcePlanning)throw new TypeError("SEARCH_SCAN_RESOURCE_PLANNING_REQUIRED");
+    if((finalMarkPlanning||scanPlanning)&&typeof port.setDecisionPlanning!=="function")throw new TypeError("SEARCH_LOCAL_PLANNING_PORT_REQUIRED");
+    port.setDecisionPlanning?.({finalMarkPlanning,scanPlanning});
     if (openingPruning && (!stateValue?.isDefaultStateValueEvaluator?.(evaluate)
       || evaluate.seatId !== root.legalActions?.[0]?.actorId
       || typeof port.openingPlanSpec !== "function")) throw new TypeError("SEARCH_OPENING_MODEL_INVALID");
@@ -52,7 +55,7 @@
     if (planReuse && (!stateValue?.isStateValueEvaluator?.(evaluate) || evaluate.seatId !== root.legalActions?.[0]?.actorId
       || typeof port.rememberPlan !== "function" || typeof port.reusePlan !== "function")) throw new TypeError("SEARCH_PLAN_MODEL_INVALID");
     const planKey = JSON.stringify([VERSION, modelKey, evaluate.modelKey, resourceDominance, moneyCapacityDominance,
-      cardTradePruning, postMainPruning, openingPruning, cardChoiceEquivalence, movementPlanning, cardPickPlanning, resourcePlanning]);
+      cardTradePruning, postMainPruning, openingPruning, cardChoiceEquivalence, movementPlanning, cardPickPlanning, resourcePlanning, finalMarkPlanning, scanPlanning]);
     const reused = continuation && modelKey && port.reuseSelection?.(root, continuation, modelKey);
     const reusedPlan = !reused?.hit && planReuse && planContinuation && port.reusePlan(root, planContinuation, planKey);
     const hit = reused?.hit ? reused : reusedPlan?.hit ? reusedPlan : null;
@@ -65,7 +68,7 @@
         : { evidenceId: hit.evidenceId, proof: hit.proof, sourceNode: hit.sourceNode, source: hit.source, distance: hit.distance },
       stopReason: null, scope,
       roots: hit.roots, lines: [], unresolved: [],
-      diagnostics: { resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes: 0, movementDirectionsExcluded: 0, routeGeometryNodes: 0,
+      diagnostics: { finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes: 0, movementDirectionsExcluded: 0, routeGeometryNodes: 0,
         nativeExecutions:0,logicalResourceInputs:0,sharedResourceInputHits:0,sharedResourceInternalStates:0,
         transitions: 0, nodes: 1, equivalents: 0, selectionMacros: 0, peakFrontier: 0, graphNodes: 1, certificateNodes: 0,
         postMainOptimalPlans: 0, postMainOptimalPlanSteps: 0,
@@ -158,8 +161,9 @@
       if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
       if (BOUNDARIES.has(node.status) && (!incumbent || value > incumbent.value)) incumbent = { node: index, value };
       const pickPolicy = !boundary && cardPickPlanning ? port.cardPickSpec(node) : null;
+      const decisionPolicy=!boundary&&finalMarkPlanning?port.localDecisionSpec(node):null;
       const resourcePolicy=!boundary&&resourcePlanning?port.resourceSpec(node):null;
-      const selection = boundary || pickPolicy?.fixed || resourcePolicy?.bound || resourcePolicy?.plans.length ? null : port.selectionSpec?.(node) || null;
+      const selection = boundary || decisionPolicy || pickPolicy?.fixed || resourcePolicy?.bound || resourcePolicy?.plans.length ? null : port.selectionSpec?.(node) || null;
       const postMainPlan = !boundary && !selection && !resourcePlanning && postMainPruning && node.status === "stable"
         ? port.postMainPlanSpec(node) : null;
       let localPlan = postMainPlan ? { ...postMainPlan, kind: "post-main" } : null;
@@ -247,7 +251,8 @@
       const retainedActions = node.legalActions.filter(action => (!localPlan || localPlan.retainedActionIds.includes(action.actionId))
         && (!movementPolicy || movementPolicy.retainedActionIds.includes(action.actionId))
         && (!pickPolicy || pickPolicy.retainedActionIds.includes(action.actionId))
-        && (!resourcePolicy || resourcePolicy.retainedActionIds.includes(action.actionId)));
+        && (!resourcePolicy || resourcePolicy.retainedActionIds.includes(action.actionId))
+        && (!decisionPolicy||decisionPolicy.retainedActionIds.includes(action.actionId)));
       if (!boundary && !retainedActions.length && !resourcePolicy?.plans.length && !resourcePolicy?.bound) throw new Error("SEARCH_MOVEMENT_POLICY_CONFLICT");
       const alternatives = selection ? port.selectionPlans(node)
         : retainedActions.flatMap(action => {
@@ -282,7 +287,7 @@
         }
       }
       nodes.push({ node, edges: [], selection, alternatives, alternativeCount, resources, localPlan, borrowPlan,
-        movementPolicy, pickPolicy, resourcePolicy, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, distance: boundary ? 0 : Infinity, best: null });
+        movementPolicy, pickPolicy, resourcePolicy, decisionPolicy, expanded: boundary || resourcePolicy?.step?.kind==="infeasible", value, distance: boundary ? 0 : Infinity, best: null });
       if (resources) {
         const peers = (resourceGroups.get(resources.group) || []).filter(i => !nodes[i].prunedBy);
         const upper = peers.find(i => dominates(nodes[i].resources, resources));
@@ -594,6 +599,7 @@
       ...(entry.movementPolicy ? { movementPolicy: entry.movementPolicy } : {}),
       ...(entry.pickPolicy ? { cardPickPolicy: entry.pickPolicy } : {}),
       ...(entry.resourcePolicy?{resourcePolicy:entry.resourcePolicy}:{}),
+      ...(entry.decisionPolicy?{decisionPolicy:entry.decisionPolicy}:{}),
       ...(entry.actionBounds ? { actionBounds: entry.actionBounds } : {}),
       ...(entry.attainedPlan ? { attainedPlan: entry.attainedPlan } : {}),
       ...(entry.attainmentAttempt ? { attainmentAttempt: entry.attainmentAttempt } : {}),
@@ -615,6 +621,7 @@
         completion: "excluded-by-movement-policy", policy: nodes[0].movementPolicy.policy,
         chosenGoal: nodes[0].movementPolicy.chosenGoal, isEquivalence: false };
       if(nodes[0].resourcePolicy?.excludedActionIds.includes(action.actionId)&&!nodes[0].edges.some(e=>e.actionId===action.actionId))return{actionId:action.actionId,target:null,value:null,valueType:"not-executed",completion:"excluded-by-resource-policy",policy:nodes[0].resourcePolicy.policy,isEquivalence:false};
+      if(nodes[0].decisionPolicy?.excludedActionIds.includes(action.actionId))return{actionId:action.actionId,target:null,value:null,valueType:"not-executed",completion:"excluded-by-local-decision-policy",policy:nodes[0].decisionPolicy.policy,isEquivalence:false};
       const selection = nodes[0].selection;
       // 纯点击的强连通部分可到达同一完整出口集；confirm 直接离开，只对应当前选择。
       const edge = selection && action.target?.confirm ? nodes[0].edges.find(edge =>
@@ -653,7 +660,7 @@
         if (!best) throw new Error("SEARCH_PLAN_WITNESS_MISSING");
         const roots = entry.node.legalActions.map(action => {
           const edge = entry.edges.find(edge => edge.actionId === action.actionId);
-          const policyExclusion = entry.pickPolicy?.excludedActionIds.includes(action.actionId)?entry.pickPolicy.policy
+          const policyExclusion = entry.decisionPolicy?.excludedActionIds.includes(action.actionId)?entry.decisionPolicy.policy:entry.pickPolicy?.excludedActionIds.includes(action.actionId)?entry.pickPolicy.policy
             :entry.movementPolicy?.excludedActionIds.includes(action.actionId) ? entry.movementPolicy.policy : null;
           const exclusion = policyExclusion || (entry.localPlan?.excludedActionIds.includes(action.actionId) ? entry.localPlan.proof : entry.actionBounds?.find(bound=>bound.actionId===action.actionId)?.proof || null);
           return { actionId: action.actionId, value: exclusion ? null : edge ? nodes[edge.target].value : null,
@@ -726,8 +733,11 @@
       ...(resourcePlanning?{sharedPrefixGraph:port.getResourcePrefixGraph?.()||null}:{}),
       candidates: Array.from(nodes[0].alternatives, a => a.resourcePlan?{kind:"resource-goal-plan",plan:a.resourcePlan,firstActionId:a.firstActionId}:a.goalPlan ? {kind:"goal-plan",plan:a.goalPlan,firstActionId:a.firstActionId}
         : a.cardPickPlan?{kind:a.cardPickPlan.kind,plan:a.cardPickPlan,firstActionId:a.firstActionId}:{kind:"action",actionId:a.firstActionId}),
-      diagnostics: { resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes, movementDirectionsExcluded, routeGeometryNodes,
+      diagnostics: { finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes, movementDirectionsExcluded, routeGeometryNodes,
         nativeExecutions:port.getDiagnostics?.().submissionCount??null,logicalResourceInputs,sharedResourceInputHits,sharedResourceInternalStates:sharedInternalStates.size,
+        localFinalMarkStates:nodes.filter(e=>e.decisionPolicy).length,
+        localFinalMarkExcluded:nodes.reduce((n,e)=>n+(e.decisionPolicy?.excludedActionIds.length||0),0),
+        scanPurposePlans:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.resourcePlan?.goal.kind==="scan-flow").length,0),
         resourceGoalPlans:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.resourcePlan).length,0),
         resourcePreparationInputs:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.resourcePlan).reduce((v,x)=>v+x.cost,0),0),
         resourceFallbacks:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.fallbackReason).length,0),

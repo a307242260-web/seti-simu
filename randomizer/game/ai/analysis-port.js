@@ -21,10 +21,11 @@
     common ? require("./goal-movement") : root.SetiGoalMovement,
     common ? require("../production-kernel") : root.SetiProductionKernel,
     common ? require("./card-pick-planning") : root.SetiCardPickPlanning,
-    common ? require("./resource-demand") : root.SetiResourceDemand);
+    common ? require("./resource-demand") : root.SetiResourceDemand,
+    common ? require("./local-decision-plans") : root.SetiLocalDecisionPlans);
   if (common) module.exports = api;
   else root.SetiAnalysisPort = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi, resourceDemand) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (ruleComposition, cardEffects, cards, industryCatalog, turnFlow, data, alienState, quickTrades, scanEffects, rocketAbilities, techResolver, probeTurnSession, techBoardState, solar, rockets, players, scienceSession, goalMovement, productionKernel, cardPickPlanningApi, resourceDemand, localPlans) {
   "use strict";
 
   // 已逐项审计的 Production 公司组合：钱电模拟和取牌待选分别检查各自的队列前提。
@@ -234,7 +235,8 @@
     const viewer = Object.freeze({ playerId: seatId, role: "player" });
     let movementPlanning = false;
     let cardPickPlanning = false;
-    let resourcePlanning = false;
+    let resourcePlanning = false, finalMarkPlanning = false, scanPlanning = false;
+    let localSpecs=new WeakMap();
     let resourceSpecs = new WeakMap();
     let resourceRequirements = new WeakMap();
     const cardPickPlanner = cardPickPlanningApi.createCardPickPlanner();
@@ -271,13 +273,13 @@
     let publicSeed = null;
     let nodeCount = 0;
     let submissionCount = 0;
-    let cacheHits = 0;
+    let cacheHits = 0, stableRestoreSkips = 0;
     let observationCount = 0;
     const cache = new Map();
     // Search-local native execution DAG. Keys use the exact immutable source node and input.
     let prefixEdges = new Map(), prefixNodes = new Map(), prefixHits = 0;
     function clearPrefixGraph(){prefixEdges=new Map();prefixNodes=new Map();prefixHits=0;}
-    function expansionKey(stored,actionId){return JSON.stringify([stored.serial,actionId,movementPlanning,cardPickPlanning,resourcePlanning]);}
+    function expansionKey(stored,actionId){return JSON.stringify([stored.serial,actionId,movementPlanning,cardPickPlanning,resourcePlanning,finalMarkPlanning,scanPlanning]);}
     function prefixNodeId(node){if(!prefixNodes.has(node))prefixNodes.set(node,prefixNodes.size);return prefixNodes.get(node);}
     function rememberPrefix(key,node,actionId,child){
       if(resourcePlanning)prefixEdges.set(key,{id:prefixEdges.size,from:prefixNodeId(node),to:prefixNodeId(child),actionId,node:child});
@@ -319,7 +321,7 @@
 
     function restoreEnvelope(envelope, forWrite = false) {
       // trusted save 会冻结当前 session。只读投影可直接复用，下一次提交必须恢复可写副本。
-      if (!forWrite && loadedEnvelope === envelope) return;
+      if(loadedEnvelope===envelope&&(!forWrite||!envelope.session)){if(forWrite)stableRestoreSkips++;return;}
       const restoreAt = now();
       const comp = fork.composition || fork;
       const restored = comp.lifecycle.restore(envelope, {
@@ -399,7 +401,7 @@
       cardPickRootStats = cardPickPlanner.getDiagnostics();
       nodeCount = 0;
       submissionCount = 0;
-      cacheHits = 0;
+      cacheHits = 0;stableRestoreSkips=0;
       observationCount = 0;
       committedDecodeCount = 0; committedDecodeHits = 0;
       for (const key of Object.keys(milliseconds)) milliseconds[key] = 0;
@@ -505,14 +507,33 @@
 
     function setResourcePlanning(enabled) { resourcePlanning=enabled===true;clearPrefixGraph(); }
 
+    function setDecisionPlanning(options={}){finalMarkPlanning=options.finalMarkPlanning===true;scanPlanning=options.scanPlanning===true;localSpecs=new WeakMap();resourceSpecs=new WeakMap();}
+    function localDecisionSpec(node){
+      if(!finalMarkPlanning||node.status!=="decision")return null;
+      if(localSpecs.has(node))return localSpecs.get(node);
+      const result=localPlans.finalMark({state:readIdentityState(nodes.get(node).envelope),seatId,actions:node.legalActions});
+      const spec=result&&freeze(result);localSpecs.set(node,spec);return spec;
+    }
+
     function resourceQuery(state) {
       return (productionKernel||globalThis.SetiProductionKernel).getResourceGoalRequirements(state,seatId);
     }
 
     function resourceStep(node,goal,operation={}) {
-      const stored=nodes.get(node);
-      return resourceDemand.step({state:readIdentityState(stored.envelope),seatId,goal,actions:node.legalActions,status:node.status,
-        session:stored.envelope.session?.session,operation});
+      const stored=nodes.get(node),state=readIdentityState(stored.envelope),session=stored.envelope.session?.session;
+      const local=localDecisionSpec(node);if(local)return{kind:"fixed",actionId:local.selectedActionId,reason:"fixed-local-final-mark"};
+      if(goal.kind==="scan-flow"){
+        const source=session?.journal?.actions?.[0]?.action;
+        if(node.status==="stable"&&!state.players.players.find(p=>p.id===seatId).mainActionCompleted&&Object.values(resourceDemand.needs(state,seatId,goal)).some(v=>v>0)
+          ||node.status==="decision"&&(resourceDemand.isPreparation(source||{})))
+          return resourceDemand.step({state,seatId,goal:{...goal,kind:"scan"},actions:node.legalActions,status:node.status,session,operation});
+        if(node.status==="decision"&&node.legalActions.some(a=>goalMovement.isDirection(a)||a.target?.kind==="move-payment")){
+          const route=goalMovementSpec(node);if(route?.selectedActionId)return{kind:"fixed",actionId:route.selectedActionId,reason:"fixed-movement-in-scan"};
+          if(route?.retainedActionIds?.length===1)return{kind:"fixed",actionId:route.retainedActionIds[0],reason:"fixed-movement-in-scan"};
+        }
+        return localPlans.scanStep({state,seatId,goal,actions:node.legalActions,status:node.status,session});
+      }
+      return resourceDemand.step({state,seatId,goal,actions:node.legalActions,status:node.status,session,operation});
     }
 
     function resourceSpec(node) {
@@ -545,6 +566,12 @@
           operation={placing:source.family==="place_data",finalPlacement:false};
         }
       }
+      if(scanPlanning){
+        const purposeState=node.status==="decision"&&resourceDemand.isPreparation(source||{})?session.baseState:state;
+        const build=required=>localPlans.scanGoals({state:purposeState,seatId,actions:node.legalActions,session:node.status==="decision"&&!resourceDemand.isPreparation(source||{})?session:null,required});
+        const needed=goals.some(g=>g.kind==="scan");goals=goals.flatMap(g=>g.kind==="scan"?build(g.required):[g]);
+        if(!needed&&(node.status==="stable"&&node.legalActions.some(a=>a.family==="scan")||node.status==="decision"&&localPlans.scanDecision(node.legalActions)))goals.push(...build(node.status==="stable"?scanEffects.getStandardScanCost(state.players.players.find(p=>p.id===seatId)):{}));
+      }
       const plans=[];
       for(const goal of goals){
         const op={...operation,finalPlacement:source?.family==="place_data"&&goal.kind==="blue-data"};
@@ -562,7 +589,7 @@
         }
       }
       const owner=state.players.players.find(p=>p.id===seatId);
-      const excluded=node.status==="stable"?node.legalActions.filter(a=>resourceDemand.isPreparation(a)||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
+      const excluded=node.status==="stable"?node.legalActions.filter(a=>resourceDemand.isPreparation(a)||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans,
         retainedActionIds:node.legalActions.filter(a=>!excluded.includes(a)).map(a=>a.actionId),excludedActionIds:excluded.map(a=>a.actionId)});
       resourceSpecs.set(node,result);return result;
@@ -2135,7 +2162,7 @@
       movementTimingCache.clear();
       movementPlanning = false;
       cardPickPlanning = false;
-      resourcePlanning = false;
+      resourcePlanning = false;finalMarkPlanning=false;scanPlanning=false;localSpecs=new WeakMap();
       resourceSpecs = new WeakMap();
       resourceRequirements = new WeakMap();
       cardPickSpecs = new WeakMap();
@@ -2166,7 +2193,7 @@
     function getDiagnostics() {
       const picks=cardPickPlanner.getDiagnostics();
       return freeze({ cardPick:{...picks,rankingCacheHitsThisRoot:picks.rankingCacheHits-cardPickRootStats.rankingCacheHits,
-        rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, cacheEntries: cache.size,
+        rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, stableRestoreSkips, cacheEntries: cache.size,
         observationCount, identityCount: identities.size, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedSerialized ? 1 : 0, maxDecodedStateCacheEntries: 1,
         committedDecodeCount, committedDecodeHits,
@@ -2181,7 +2208,7 @@
       return stored.identity;
     }
 
-    return Object.freeze({ openRoot, expand, identity, getResourcePrefixGraph, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

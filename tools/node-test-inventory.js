@@ -35,6 +35,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/actions/quick-move-availability.test.js", "rules/quick-trades", "快速移动必须有正式一步可达方向；无路时拒绝且根状态不变", "只有探测器存在便提供快速移动，扣能量后生成空Decision"),
     entry("randomizer/game/ai/state-value.test.js", "policy/state-value", "独立估值只读标准事实，未来收入窗口明确且终局只计正式分", "终局重复加资源、未知牌身份进入估值或缺字段被静默补零"),
     entry("randomizer/game/ai/goal-movement.test.js", "policy/decision-search", "移动按明确目标和确定路线执行，原生费用、真实逐步提交及恢复一致，策略排除不冒充等价剪枝", "免费移动展开方向树、每步换目标、目标完成仍乱走、读暗牌定路线或恢复丢失路线目的"),
+    entry("randomizer/game/ai/local-decision-plans.test.js", "policy/decision-search", "终局标记按原生公式局部定点，扫描保留可达目的并固定步骤，根与恢复一致", "标记读取冻结状态越界写、扫描重新展开牌序、漏目标或目标不同仍复用控制、固定步骤绕过预算"),
     entry("randomizer/game/ai/shared-resource-prefix.test.js", "policy/decision-search", "多目标共用原生准备前缀，唯一执行/状态预算与方案长度分开且全部目标估值、恢复与根状态一致", "相同准备反复模拟或计费、不同目标保护牌被混用、缓存命中绕过时间限制或未完成共享图产生提交"),
     entry("randomizer/game/ai/resource-demand.test.js", "policy/decision-search", "资源准备绑定真实目标和精确缺口，贪心付款保护目标牌，原生逐步输入及恢复一致", "无需求兑换、为付款丢掉目标牌、资金满足后继续兑换、身份敏感弃牌不显式回退或恢复重开兑换树"),
     entry("randomizer/game/ai/card-pick-planning.test.js", "policy/decision-search", "取牌须绑定明确诉求，选牌与付款按固定计划执行，牌面及诉求相同复用排序", "无目的兑换、同一牌列重复展开、缓存跨诉求复用或读取暗牌决定选牌"),

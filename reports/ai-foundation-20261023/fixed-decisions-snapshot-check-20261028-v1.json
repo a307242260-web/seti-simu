@@ -1,0 +1,10 @@
+{
+  "baseCommit": "9b872d3a1037258ab8d180ec2dd81915bae3a4ef",
+  "testedSnapshot": "/private/tmp/seti-fixed-decisions-20261028-jpodyn9s",
+  "unchangedBaseFilesVerified": 4000,
+  "changedBaseFilesVerified": 14,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "explicitFiles": 50,
+  "runtimeImportsBoundToFinalSource": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot."
+}

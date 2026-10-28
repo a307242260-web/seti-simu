@@ -869,6 +869,37 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "真实页面将两张牌付款和精选折为固定计划，4次原生输入、2个图节点，权威状态不变",
   counterexample: "缺失脚本装配、逐卡分支、固定付款未记录回放或试算污染正式状态",
 }), Object.freeze({
+  id: "production-local-final-mark",
+  file: "randomizer/index.html",
+  readyExpression: "Boolean(window.SetiLocalDecisionPlans && window.SetiAnalysisPort)",
+  actionExpression: `(async () => {
+    const f=await fetch('/adhoc/fixed-decision-final-mark-20261028-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw new Error('标记测试恢复失败');
+    const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+    try{const root=p.openRoot(),r=window.SetiDecisionSearch.searchDecision({port:p,root,evaluate:window.SetiStateValue.createStateValueEvaluator(f.seatId),...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:257,frontier:256,milliseconds:1500}});
+      if(!r.complete||r.lines[0].decisionPolicy.scores.length!==4||r.lines[0].edges.length!==1||r.roots.filter(a=>a.completion==='excluded-by-local-decision-policy').length!==3)throw new Error('标记仍四路展开');
+      if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw new Error('标记试算改变真实根');window.__localFinalMarkSmoke={ok:true,options:4,expanded:1};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression: "window.__localFinalMarkSmoke?.ok === true",
+  obligation: "真实页面按原生终局公式评分四个落点，只扩展固定标记，权威根不变",
+  counterexample: "脚本依赖缺失、标记仍分四路、分数与原生公式不符或修改真实状态",
+}), Object.freeze({
+  id: "production-scan-purpose-plan",
+  file: "randomizer/index.html",
+  readyExpression: "Boolean(window.SetiLocalDecisionPlans && window.SetiScienceSession?.listHandScanChoices)",
+  actionExpression: `(async () => {
+    const f=await fetch('/adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw new Error('扫描目的恢复失败');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+    try{p.setResourcePlanning(true);p.setDecisionPlanning({scanPlanning:true,finalMarkPlanning:true});const root=p.openRoot(),spec=p.resourceSpec(root),plans=spec.plans.filter(p=>p.goal.kind==='scan-flow');if(plans.length<2)throw new Error('扫描丢失可达目的');
+      for(const plan of plans){const r=p.expandResourcePlan(root,plan,()=>null);if(!r.complete||!r.preparations.some(p=>p.reason==='fixed-scan-card-and-sector'))throw new Error('扫描没有固定牌和扇区');}
+      if(p.getDiagnostics().stableRestoreSkips<1||JSON.stringify(c.lifecycle.save().envelope)!==before)throw new Error('固定链执行或根隔离失效');window.__scanPurposeSmoke={ok:true,purposes:plans.length};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression: "window.__scanPurposeSmoke?.ok === true",
+  obligation: "真实页面保留已知可达扫描目的，每个目的按固定牌/扇区执行，稳定边界省恢复且权威根不变",
+  counterexample: "扫描仍牌序组合展开、丢失所有目的、跨冻结Session跳过必要恢复或污染真实根",
+}), Object.freeze({
   id: "production-shared-resource-prefix",
   file: "randomizer/index.html",
   readyExpression: "Boolean(window.SetiAnalysisPort && window.SetiResourceDemand)",

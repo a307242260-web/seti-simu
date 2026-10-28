@@ -881,7 +881,7 @@
           const state = restoreOptions.trustedState || JSON.parse(envelope.committedState);
           const restoredSession = envelope.session == null
             ? null
-            : runtime.restoreCheckpoint(envelope.session);
+            : runtime.restoreCheckpoint(envelope.session,{trustedFrozenState:true});
           if (restoredSession?.ok === false) return deepFreeze(clone(restoredSession));
           validated = { ok: true, state, session: restoredSession?.session || null };
         } catch (error) {

@@ -482,6 +482,22 @@ try {
         console.log('[PASS] independent-shared-resource-prefix: goals=20 nativeInputs=27 states=28');
       }finally{port.close();}
     }
+    {
+      const fixture=JSON.parse(fs.readFileSync(path.resolve(__dirname,"../adhoc/fixed-decision-final-mark-20261028-v1.json"))),comp=auditKernel.composition;
+      if(!comp.lifecycle.restore(fixture.compositionEnvelope).ok)throw new Error("局部标记审计恢复失败");
+      const port=createAnalysisPort({composition:comp,seatId:fixture.seatId});try{port.setDecisionPlanning({finalMarkPlanning:true});const root=port.openRoot(),spec=port.localDecisionSpec(root),child=port.expand(root,spec.selectedActionId),evaluate=independentValue.createStateValueEvaluator(fixture.seatId);
+        for(const n of [root,child])if(evaluate(n.observation)!==evaluate(outcomeModel.createDecisionObservation(n.observation,{seatId:fixture.seatId})))throw new Error("局部标记原始/标准估值不一致");
+        const own=o=>o.publicState.players.find(p=>p.playerId===fixture.seatId);if(own(child.observation).finalScore-own(root.observation).finalScore!==spec.scores[0].currentValue)throw new Error("局部标记公式与正式分不一致");
+        console.log('[PASS] independent-local-final-mark: nativeFormulaAndSelectedSuccessor');
+      }finally{port.close();}
+    }
+    {
+      const fixture=JSON.parse(fs.readFileSync(path.resolve(__dirname,"../adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json"))),comp=auditKernel.composition;if(!comp.lifecycle.restore(fixture.compositionEnvelope).ok)throw new Error("扫描目的审计恢复失败");
+      const port=createAnalysisPort({composition:comp,seatId:fixture.seatId,maxCacheEntries:0});try{port.setResourcePlanning(true);port.setDecisionPlanning({scanPlanning:true,finalMarkPlanning:true});const root=port.openRoot(),plans=port.resourceSpec(root).plans.filter(p=>p.goal.kind==='scan-flow'),evaluate=independentValue.createStateValueEvaluator(fixture.seatId);
+        for(const p of plans){const r=port.expandResourcePlan(root,p,()=>null);if(!r.complete)throw new Error("扫描目的未完成");for(const n of [...r.prefixes.map(p=>p.node),r.node])if(evaluate(n.observation)!==evaluate(outcomeModel.createDecisionObservation(n.observation,{seatId:fixture.seatId})))throw new Error("扫描目的原始/标准估值不一致");}
+        console.log('[PASS] independent-scan-purpose: allNativePrefixes');
+      }finally{port.close();}
+    }
     const cornerFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
       "../adhoc/ai-decision-corpus-20261023-v1/post-main-corner-pair-20261023-v1.json")));
     const cornerComp = auditKernel.composition;

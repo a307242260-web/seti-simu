@@ -240,3 +240,9 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 - 未注册 executor、未知 priority/family、stale Decision 和超限 drain 结构化 fail-closed，不调用 resolver、recover 或 skip fallback。
 
 任何机制扩展都必须同时给出真实状态构造、Effect/Decision 枚举、执行 trace、禁止依赖调用为零、失败语义和 replay/checkpoint 证据。只修改 label、删除字段或跑通一条 happy path 不构成完成证据。
+
+### 可信分析fork的冻结根恢复
+
+`restoreCheckpoint(checkpoint, { trustedFrozenState: true })` 仅在可信隔离runtime且checkpoint Session/起始根已经冻结时共享只读 `baseState`/`committedState`；
+其余working state、queue、journal等仍复制。普通恢复保持完整复制语义，checkpoint schema不变。
+共享规则composition只在其trusted fork路径传入该选项，不把此能力暴露给机器策略。冻结历史不得成为可写工作副本，原生逐输入回放和失败回滚继续适用。

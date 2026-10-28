@@ -895,11 +895,14 @@
       };
     }
 
-    function restoreCheckpoint(checkpoint) {
+    function restoreCheckpoint(checkpoint, options = {}) {
       if (!checkpoint || checkpoint.schemaVersion !== CHECKPOINT_SCHEMA_VERSION) {
         return fail("EFFECT_CHECKPOINT_SCHEMA_UNSUPPORTED", "未知 Effect Session checkpoint schema");
       }
-      const restored = clone(checkpoint.session);
+      const source=checkpoint.session;
+      const shareBase=options.trustedFrozenState===true&&trustedIsolatedOwnership
+        &&source&&Object.isFrozen(source)&&Object.isFrozen(source.baseState)&&(!source.committedState||Object.isFrozen(source.committedState));
+      const restored=shareBase?{...clone({...source,baseState:null,committedState:null}),baseState:source.baseState,committedState:source.committedState}:clone(source);
       if (!restored || restored.schemaVersion !== SCHEMA_VERSION) {
         return fail("EFFECT_CHECKPOINT_SESSION_INVALID", "checkpoint 缺少合法 session");
       }
