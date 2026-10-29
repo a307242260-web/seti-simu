@@ -1,0 +1,35 @@
+{
+  "baseCommit": "c2a0c8fb7f3487ac3a23f08abf54663743ccddec",
+  "snapshot": "/private/tmp/seti-v40-overrun-list-20261029-26ddt79d",
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "files": {
+    "adhoc/audit-v40-baseline-overruns-20261029-v1.js": "0f55823aedeab3b18b754f7b497b1c0fcd50cd0298ebfe832112ec9b81470503",
+    "adhoc/summarize-v40-overruns-20261029-v1.py": "cd9ea502abd402362d106810f49691353afaf2e979cea6ced8ced01dc33fb054",
+    "reports/ai-foundation-20261023/v40-overrun-list-20261029-v1.json": "93272d89529a82f762bc9cea5c885374cfd16223cb4395cccb858521a4c24258",
+    "reports/ai-foundation-20261023/v40-overrun-list-20261029-v1.md": "e032f9404cc5792f5a1c9622bbda69bae12579784a600c2893c52a97706a6086",
+    "reports/ai-foundation-20261023/v40-baseline-overruns-20261029-v1.json": "9a79232fb4cce67186b1ab3c7c5bcd321efd6158dac5689a12ce474def8b90a3",
+    "reports/ai-foundation-20261023/v40-baseline-overruns-20261029-v1.log": "69a7fee6a3084b6b5998332a9280be04530e816560c7352e1cf2cbb842df3e3e",
+    "reports/ai-foundation-20261023/v40-baseline-overruns-20261029-v1.step181.raw.json.gz": "c575f94c24d842900b0c650f2098829fc835bb42ba70480992f38930e1714bca",
+    "reports/ai-foundation-20261023/v40-baseline-overruns-20261029-v1.step199.raw.json.gz": "e54254551c0e594b1b5be5eb2b0863af986c45149aebf5b50037534325894e93",
+    "reports/ai-foundation-20261023/v40-baseline-overruns-20261029-v1.step206.raw.json.gz": "3741e03ffe10f9ea9881dcaef47f0aa79eff03279488018c56baf299d2b40533",
+    "reports/ai-foundation-20261023/v40-baseline-overruns-20261029-v1.step215.raw.json.gz": "bc0ae3b4abc3660277ef12bc25e47a081b9bdb0799d584981113bf80880ab390",
+    "reports/ai-foundation-20261023/v40-baseline-overruns-20261029-v1.step272.raw.json.gz": "4788548c755c5aa3c19fc7cdadcc60726b1febd2c70cf1a68be4f22a5513b158",
+    "reports/ai-foundation-20261023/v40-baseline-overruns-20261029-v1.step317.raw.json.gz": "1569a3f906455504e6a4e87c9da50695d5f90ad1d3ade6a36e105cc3e0ef8826",
+    "adhoc/ai-decision-corpus-20261029-reorg-v1/step181-20261029-v1.json": "292cb103a306381c3d74baacae52f609761de5f7e2d51f75689372e37815bac3",
+    "adhoc/ai-decision-corpus-20261029-reorg-v1/step199-20261029-v1.json": "eecd41841719c2cb8556039ca6854dbaa3410ff7d816b95881959421f4940bd7",
+    "adhoc/ai-decision-corpus-20261029-reorg-v1/step206-20261029-v1.json": "ea02da61bedd3e2fddece0ca2755d65c1cb295d3b4bd9d914100b49990390817",
+    "adhoc/ai-decision-corpus-20261029-reorg-v1/step215-20261029-v1.json": "6155e249a2e4065f485d0559fc2ab6fe51e47d3d690a4d52386717fa54008718",
+    "adhoc/ai-decision-corpus-20261029-reorg-v1/step272-20261029-v1.json": "361bb5fda1a18364ed3c64ced1a460ffc904834680fa369e61bce6ec95d01743",
+    "adhoc/ai-decision-corpus-20261029-reorg-v1/step317-20261029-v1.json": "3968665750a7a891f4dfad3149c6123f9fd2c06180092f4f8b204aaa717a87ed"
+  },
+  "validation": {
+    "sixNewColdSearchesComplete": true,
+    "sevenSameActionsAndValues": true,
+    "rootAndRngUnchanged": true,
+    "measuredRoots": 17,
+    "remainingOverTime": 3,
+    "remainingOverInputs": 1,
+    "runtimeSourceMatchesHead": true,
+    "fullGameRerun": false
+  }
+}
