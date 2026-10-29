@@ -237,7 +237,10 @@
     else{
       normalizedState=normalize(buildState());
       if(stateCache&&Object.isFrozen(source)){
-        if(!variants){variants=new Map();stateCache.set(source,variants);}
+        if(!variants){
+          if(stateCache.size>=64)stateCache.delete(stateCache.keys().next().value);
+          variants=new Map();stateCache.set(source,variants);
+        }
         variants.set(key,normalizedState);
       }
     }
@@ -265,7 +268,8 @@
     const movementRouteCache = new Map();
     const movementTimingCache = new Map();
     let nodes = new WeakMap();
-    let normalizedIdentityStates = new WeakMap();
+    let observationReleasers = new WeakMap(), observationReleases = 0;
+    let normalizedIdentityStates = new Map();
     const identities = new Map();
     let resourceOrders = new WeakMap();
     let knownMoneyOrders = new WeakMap();
@@ -291,7 +295,7 @@
     let observationCacheHits = 0, resourceQueryHits = 0, resourceQueryMisses = 0, goalCatalogHits = 0, goalCatalogMisses = 0;
     let committedDecodeCount = 0, committedDecodeHits = 0;
     let rootObservation = null;
-    let publicSeed = null;
+    let publicSeed = null, rootTurnKey = null;
     let nodeCount = 0;
     let submissionCount = 0;
     let cacheHits = 0, stableRestoreSkips = 0, movementTimingCacheHits = 0, movementTimingCacheMisses = 0;
@@ -361,7 +365,7 @@
       restoreEnvelope(envelope);
       const observationAt = now();
       const observation = project(fork.composition || fork);
-      const visible = barrier
+      const visible = barrier && ruleComposition.isHiddenInformationBarrier(barrier)
         ? ruleComposition.sanitizeHiddenInformationObservation(rootObservation, observation, barrier)
         : observation;
       observationCount += 1;
@@ -393,6 +397,7 @@
       const cardKey = cardControl ? JSON.stringify([movementKey,cardControl]) : movementKey;
       const key = resourceControl ? JSON.stringify([cardKey,resourceControl]) : cardKey;
       if (!identities.has(key)) identities.set(key, Object.freeze({}));
+      observationReleasers.set(node, () => { visible = null; envelopeObservations.delete(envelope); observationReleases++; });
       nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, policyKey: cardKey, physicalKey, intent, cardControl, resourceControl });
       nodeCount += 1;
       return node;
@@ -437,7 +442,7 @@
       nodeCount = 0;
       submissionCount = 0;
       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
-      observationCount = 0;
+      observationCount = 0; observationReleases = 0;
       committedDecodeCount = 0; committedDecodeHits = 0;
       observationCacheHits = 0; resourceQueryHits = 0; resourceQueryMisses = 0; goalCatalogHits = 0; goalCatalogMisses = 0;
       for (const key of Object.keys(milliseconds)) milliseconds[key] = 0;
@@ -450,6 +455,7 @@
       // 完整节点身份仍包括假设/RNG，不能因种子稳定而忽略实际依赖变化。
       const authoritative = snapshot(composition);
       const state = authoritative.session?.session?.workingState || JSON.parse(authoritative.committedState);
+      rootTurnKey = JSON.stringify([state.turn.roundNumber,state.turn.turnNumber,state.turn.actionCycleNumber]);
       publicSeed = JSON.stringify(["seti-turn-hypothesis-v1", state.meta.seed, state.meta.gameId, seatId,
         state.turn.roundNumber, state.turn.turnNumber, state.turn.actionCycleNumber, state.turn.activePlayerIds]);
       const rootEnvelope = composition.counterfactualPort.prepareRoot(authoritative, {
@@ -467,7 +473,7 @@
     function expand(node, actionId) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
-      if (["information-barrier", "other-owner", "terminal", "plan-infeasible"].includes(node.status)) {
+      if (["information-barrier", "other-owner", "terminal", "plan-infeasible","turn-boundary"].includes(node.status)) {
         throw new Error(`ANALYSIS_BOUNDARY_CLOSED: ${node.status}`);
       }
       const requested = node.legalActions.find(action => action.actionId === actionId);
@@ -691,7 +697,7 @@
         return finish({goalStatus:"infeasible",reason});
       }
       while(true){
-        if(["other-owner","information-barrier","terminal"].includes(current.status))return finish({goalStatus:"boundary"});
+        if(["other-owner","information-barrier","terminal","turn-boundary"].includes(current.status))return finish({goalStatus:"boundary"});
         const spec=cardPickSpec(current),tail=targetReached?localDecisionSpec(current):null;
         if(targetReached&&!spec?.fixed&&!tail?.selectedActionId)return finish({goalStatus:"completed"});
         const step=spec?.fixed?{kind:"fixed",actionId:spec.selectedActionId,reason:"fixed-card-in-resource-plan"}
@@ -709,7 +715,8 @@
         const next=shared?.node||cache.get(key)||null;
         const blocked=hasCapacity(prefixes.length,contexts,true,work({nextNode:next,nextNewInput:shared?0:1,additionalStates:next?0:1}));if(blocked)return stop(blocked);
         preparations.push({input:prefixes.length,reason:step.reason,goalId:plan.goal.id,demand:resourceDemand.needs(readIdentityState(nodes.get(current).envelope),seatId,plan.goal),actionId:id});
-        operation={...operation,...(chosen.discardIds?{discardIds:chosen.discardIds}:{}),...(chosen.placing!==undefined?{placing:chosen.placing}:{}),...(chosen.finalPlacement!==undefined?{finalPlacement:chosen.finalPlacement}:{}),...(step.kind==="start-target"?{targetStarted:true}:{})};
+        // Discard identities belong to one native action, not the whole resource goal.
+        operation={...operation,...(current.status==="stable"?{discardIds:null}:{}),...(chosen.discardIds?{discardIds:chosen.discardIds}:{}),...(chosen.placing!==undefined?{placing:chosen.placing}:{}),...(chosen.finalPlacement!==undefined?{finalPlacement:chosen.finalPlacement}:{}),...(step.kind==="start-target"?{targetStarted:true}:{})};
         prefixes.push({node:current,action});current=expand(current,id);forced=null;
         sharedStates.push(current);if(!shared)newSubmissions++;
         if(resourcePlanning)sharedPath.push(prefixEdges.get(key).id);
@@ -808,7 +815,7 @@
         goalStatus = reason;
       }
       while (prefixes.length < maxInputs) {
-        if (["terminal", "other-owner", "information-barrier"].includes(current.status)) { goalStatus = "boundary"; break; }
+        if (["terminal", "other-owner", "information-barrier","turn-boundary"].includes(current.status)) { goalStatus = "boundary"; break; }
         if (spec.intent.prefixOnly && prefixes.length && current.status === "stable") { goalStatus = "preparation-step-completed"; break; }
         const stored = nodes.get(current), intent = current === node ? spec.intent : stored.intent;
         const state = readIdentityState(stored.envelope), owner = state.players.players.find(p => p.id === seatId);
@@ -905,21 +912,24 @@
       if (observation && observation.terminal !== true) {
         throw new Error("ANALYSIS_EMPTY_NONTERMINAL");
       }
+      const childState = readIdentityState(envelope);
+      const turnChanged = JSON.stringify([childState.turn.roundNumber,childState.turn.turnNumber,childState.turn.actionCycleNumber]) !== rootTurnKey;
       const status = newBarrier ? "information-barrier"
         : actions.some(action => action.actorId !== seatId) ? "other-owner"
           : !actions.length ? "terminal"
-            : inspection.phase === "awaiting_input" ? "decision" : "stable";
+            : turnChanged ? "turn-boundary"
+              : inspection.phase === "awaiting_input" ? "decision" : "stable";
       if (intent) {
         const state = readIdentityState(envelope), ship = state.pieces.rockets.find(r => r.id === intent.rocketId);
         const at = ship && rockets.getRocketSectorCoordinate(ship), step = intent.path[0];
-        if (intent.prefixOnly && status === "stable" || ["other-owner", "terminal", "information-barrier"].includes(status)
+        if (intent.prefixOnly && status === "stable" || ["other-owner", "terminal", "information-barrier","turn-boundary"].includes(status)
           || state.turn.turnNumber !== intent.startedTurn || state.turn.roundNumber !== intent.startedRound) intent = null;
         else if (step && at?.x === step.to.x && at?.y === step.to.y) intent = { ...intent, path: intent.path.slice(1) };
         else if (step && (at?.x !== step.from.x || at?.y !== step.from.y)) intent = null;
       }
       const child = createNode(envelope, observation,
-        ["other-owner", "terminal"].includes(status) ? [] : actions, status,
-        newBarrier ? barrier : null, intent, ["other-owner","terminal","information-barrier"].includes(status)?null:resourceControl);
+        ["other-owner", "terminal", "turn-boundary"].includes(status) ? [] : actions, status,
+        newBarrier ? barrier : status === "turn-boundary" ? {code:"own-turn-complete"} : null, intent, ["other-owner","terminal","information-barrier","turn-boundary"].includes(status)?null:resourceControl);
       return child;
     }
 
@@ -1769,7 +1779,7 @@
         const fixed=expandResourcePlan(node,plan,()=>hasTime()?null:"watchdog");
         prefixes.push(...fixed.prefixes);current=fixed.node;
         if(!fixed.complete)return{complete:false,node:current,prefixes,submissions:prefixes.length,proof:spec.proof};
-        if(!["information-barrier","other-owner","terminal"].includes(current.status)){
+        if(!["information-barrier","other-owner","terminal","turn-boundary"].includes(current.status)){
           if(fixed.goalStatus!=="completed")throw new Error("ANALYSIS_RESOURCE_ATTAINMENT_NOT_COMPLETE");
           const end=current.legalActions.find(a=>a.family==="end_turn");if(!end)throw new Error("ANALYSIS_RESOURCE_ATTAINMENT_END_MISSING");
           if(!hasTime())return{complete:false,node:current,prefixes,submissions:prefixes.length,proof:spec.proof};
@@ -1812,7 +1822,7 @@
         if (!action) throw new Error("ANALYSIS_POST_MAIN_OPTIMAL_ACTION_MISSING");
         prefixes.push({ node: current, action, distance: spec.submissions-step });
         current = expand(current,action.actionId);
-        if (["information-barrier","other-owner","terminal"].includes(current.status) !== (step === spec.submissions-1)) {
+        if (["information-barrier","other-owner","terminal","turn-boundary"].includes(current.status) !== (step === spec.submissions-1)) {
           throw new Error("ANALYSIS_POST_MAIN_OPTIMAL_BOUNDARY_CHANGED");
         }
       }
@@ -2256,7 +2266,8 @@
       decodedStates.clear(); decodedStateCacheBytes = 0;
       envelopeObservations = new WeakMap(); stateRequirements = new WeakMap(); goalCatalogs = new WeakMap();
       nodes = new WeakMap();
-      normalizedIdentityStates = new WeakMap();
+      observationReleasers = new WeakMap();
+      normalizedIdentityStates = new Map();
       movementPolicies = new WeakMap();
       movementRouteCache.clear();
       movementTimingCache.clear();
@@ -2286,14 +2297,20 @@
       cache.clear();
       clearPrefixGraph();
       rootObservation = null;
-      publicSeed = null;
+      publicSeed = null;rootTurnKey=null;
+    }
+
+    function releaseBoundaryObservation(node) {
+      if (!fork || !nodes.has(node)) throw new Error("ANALYSIS_NODE_INVALID");
+      if (!["other-owner","terminal","information-barrier","turn-boundary"].includes(node.status)) throw new Error("ANALYSIS_BOUNDARY_REQUIRED");
+      observationReleasers.get(node)();
     }
 
     function getDiagnostics() {
       const picks=cardPickPlanner.getDiagnostics();
       return freeze({ cardPick:{...picks,rankingCacheHitsThisRoot:picks.rankingCacheHits-cardPickRootStats.rankingCacheHits,
         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, stableRestoreSkips, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
-        observationCount, identityCount: identities.size, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+        observationCount, observationReleases, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,
         committedDecodeCount, committedDecodeHits,
@@ -2308,7 +2325,7 @@
       return stored.identity;
     }
 
-    return Object.freeze({ openRoot, expand, identity, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, releaseBoundaryObservation, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

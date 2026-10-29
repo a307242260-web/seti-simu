@@ -436,11 +436,12 @@ function runValidation(options) {
       env.reset(resetConfig);
     }
 
-    const limit = options.full ? MAX_DECISIONS : options.steps;
+    const unboundedSearch = identity.agentType === "search" && Object.values(searchAgent.BUDGET).every(value => value === null);
+    const limit = options.full ? (unboundedSearch ? null : MAX_DECISIONS) : options.steps;
     // 持续进度输出（stderr）：单次决策可能耗时数秒，逐决策行让终端实时可见而非"卡住"；
     // 与 --progress 的固定步数节流并存（--progress 保持原语义）。
     const progress = createStepProgressReporter({ label: mode, minIntervalMs: 1000 });
-    while (!env.isTerminal() && steps < limit) {
+    while (!env.isTerminal() && (limit === null || steps < limit)) {
       const obsBefore = env.observe();
       const seat = obsBefore?.decision?.actorPlayerId || null;
       const result = env.runAgentDecision();

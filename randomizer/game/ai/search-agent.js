@@ -8,7 +8,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (search, stateValue) {
   "use strict";
   const VERSION = `seti-search-agent-v2/${search.VERSION}/${stateValue.MODEL_VERSION}`;
-  const BUDGET = Object.freeze({ transitions: 1024, nodes: 1025, frontier: 1024, milliseconds: 2000 });
+  const BUDGET = Object.freeze({ transitions: null, nodes: null, frontier: null, milliseconds: null });
   const OPTIONS = Object.freeze({ movementPlanning: true, cardPickPlanning: true, resourcePlanning: true, finalMarkPlanning: true, scanPlanning: true, resourceDominance: true, moneyCapacityDominance: true,
     cardTradePruning: true, postMainPruning: true, openingPruning: true, cardChoiceEquivalence: true, planReuse: true });
   const MODEL_CHECKSUM = JSON.stringify({ searchVersion: search.VERSION, valueVersion: stateValue.MODEL_VERSION,

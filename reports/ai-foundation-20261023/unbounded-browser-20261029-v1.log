@@ -1,0 +1,4 @@
+PASS production-search-agent-entry http://127.0.0.1:51924/randomizer/index.html?agent=search
+PASS production-search-hotpath http://127.0.0.1:51924/randomizer/index.html
+PASS production-resource-goal-plan http://127.0.0.1:51924/randomizer/index.html
+SUMMARY browserSmoke passed=3 failed=0 total=3

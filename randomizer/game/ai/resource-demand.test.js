@@ -80,4 +80,19 @@ function native(s){s=structuredClone(s);const hand=own(s).hand,ids=new Set(hand.
  }
  port.close();c.dispose();
 }
+// Real unbounded-search counterexample: a spent data corner's one-card discard set
+// must expire before a later two-card trade with identity-sensitive fallback.
+{
+ const captured=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/unbounded-payment-failure-20261029-v1.json')));
+ const base=captured.envelope.session.session.baseState,seed=base.meta.seed;
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+ assert(c.lifecycle.restore({...captured.envelope,committedState:JSON.stringify(base),session:null}).ok);
+ const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:captured.seatId,maxCacheEntries:0});p.setResourcePlanning(true);const root=p.openRoot();
+ const source=captured.envelope.session.session.journal.actions[0].action,action=root.legalActions.find(a=>a.actionId===source.actionId);assert(action);
+ const result=p.expandResourcePlan(root,{id:'expired-corner-discard',goal:captured.goal,operation:captured.operation,firstActionId:action.actionId},()=>null);
+ assert(result.complete);assert.equal(result.submissions,1);assert.equal(result.fallbackReason,'greedy-payment-cannot-preserve-goal');
+ const pending=p.resourceSpec(result.node);assert(pending.bound);assert.equal(pending.goal.id,captured.goal.id);assert.equal(pending.operation.discardIds,null);
+ assert.equal(pending.plans.length,2);assert(pending.plans.every(plan=>plan.mode==='search-fallback'));
+ assert.deepEqual(c.lifecycle.save().envelope,before);p.close();c.dispose();
+}
 console.log(JSON.stringify({resourceDemand:'passed',noLoosePreparations:true,protectedCards:true,exactNeed:true,nativePaymentAndRestore:true,boundedFallback:true}));

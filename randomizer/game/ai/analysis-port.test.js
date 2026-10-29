@@ -30,6 +30,11 @@ const startRoot = startPort.openRoot(), offered = startPort.expand(startRoot, st
 assert.equal(offered.status, "information-barrier", "发出未知初始选项后不能继续规划选择");
 assert.deepEqual(offered.legalActions, []);
 assert.equal(offered.observation.publicState.resident.initialSetup.offer, null);
+const maskedOffer = offered.observation;
+startPort.releaseBoundaryObservation(offered);
+assert.deepEqual(offered.observation,maskedOffer,"已评分边界的完整观察可精确重建，遮蔽与全部字段不变");
+assert(Object.isFrozen(maskedOffer));assert.equal(startPort.getDiagnostics().observationReleases,1);
+assert.throws(()=>startPort.releaseBoundaryObservation(startRoot),/BOUNDARY_REQUIRED/);
 assert.deepEqual(comp.lifecycle.save().envelope, beforeStart);
 startPort.close();
 assert.equal(comp.inputPort.submitDecision({ decisionId: startDecision.decisionId,
@@ -361,3 +366,15 @@ for (const eventType of ["quick_trade_payment", "quick_trade_discard_selection"]
 env.dispose();
 comp.dispose();
 console.log("trusted analysis fork isolation and exact reuse passed");
+
+// When every opponent has passed, end_turn still closes this search window even
+// though the same seat owns the next native turn.
+{
+ const fs=require('node:fs'),path=require('node:path'),f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261029-budget1024-v1/baseline-r2-t9-white-20261029-v1.json')));
+ const state=JSON.parse(f.compositionEnvelope.committedState);state.players.players.find(p=>p.id===f.seatId).mainActionCompleted=true;
+ const k=createSimulationRuleComposition({seed:f.source.seed,random:createSeededRandom(f.source.seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,f.source.seed,v?.playerId)});k.newGame({seed:f.source.seed});const c=k.composition;
+ assert(c.lifecycle.restore({...f.compositionEnvelope,committedState:JSON.stringify(state)}).ok);const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId});const root=p.openRoot(),end=root.legalActions.find(a=>a.family==='end_turn');assert(end);
+ const next=p.expand(root,end.actionId);assert.equal(next.status,'turn-boundary');assert.equal(next.boundary,'own-turn-complete');assert.deepEqual(next.legalActions,[]);
+ assert.equal(next.observation.publicState.turnNumber,state.turn.turnNumber+1);assert.equal(next.observation.publicState.currentPlayerId,f.seatId);
+ assert.throws(()=>p.expand(next,end.actionId),/BOUNDARY_CLOSED/);assert.deepEqual(c.lifecycle.save().envelope,before);p.close();c.dispose();
+}

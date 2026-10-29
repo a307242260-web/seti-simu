@@ -6,8 +6,8 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v38";
-  const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier"]);
+  const VERSION = "seti-complete-decision-search-v39";
+  const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
 
@@ -16,12 +16,14 @@
     now = () => performance.now() } = {}) {
     if (typeof port?.expand !== "function" || typeof port?.identity !== "function"
       || typeof evaluate !== "function" || !root) throw new TypeError("SEARCH_INPUT_INVALID");
-    const limits = { ...DEFAULT_BUDGET, ...budget };
-    for (const [key, value] of Object.entries(limits)) {
-      if (!Object.hasOwn(DEFAULT_BUDGET, key) || !Number.isSafeInteger(value) || value < 1) {
+    const configuredLimits = { ...DEFAULT_BUDGET, ...budget };
+    for (const [key, value] of Object.entries(configuredLimits)) {
+      if (!Object.hasOwn(DEFAULT_BUDGET, key) || value !== null && (!Number.isSafeInteger(value) || value < 1)) {
         throw new TypeError(`SEARCH_BUDGET_INVALID: ${key}`);
       }
     }
+    // null is an explicit, JSON-safe opt-out; Infinity never leaves this calculation.
+    const limits = Object.fromEntries(Object.entries(configuredLimits).map(([key,value])=>[key,value === null ? Infinity : value]));
     const valueCache = new WeakMap();
     let valueCacheHits=0,valueEvaluations=0;
     function valueOf(observation) {
@@ -29,7 +31,7 @@
       valueEvaluations++; const value = evaluate(observation); valueCache.set(observation,value); return value;
     }
     const startedAt = now();
-    const scope=(movementPlanning?"own-visible-window-with-goal-directed-movement-policy":"own-visible-decision-window-to-owner-information-or-terminal-boundary")+(cardPickPlanning?"+fixed-card-pick-policy":"")+(resourcePlanning?"+goal-bound-greedy-resource-policy":"")+(finalMarkPlanning?"+local-final-mark-policy":"")+(scanPlanning?"+scan-purpose-policy":"");
+    const scope=(movementPlanning?"own-turn-visible-window-with-goal-directed-movement-policy":"own-turn-visible-decision-window-to-turn-owner-information-or-terminal-boundary")+(cardPickPlanning?"+fixed-card-pick-policy":"")+(resourcePlanning?"+goal-bound-greedy-resource-policy":"")+(finalMarkPlanning?"+local-final-mark-policy":"")+(scanPlanning?"+scan-purpose-policy":"");
     if (movementPlanning && typeof port.goalMovementSpec !== "function") throw new TypeError("SEARCH_MOVEMENT_PORT_REQUIRED");
     port.setMovementPlanning?.(movementPlanning);
     if(cardPickPlanning&&typeof port.expandWithCardPick!=="function")throw new TypeError("SEARCH_CARD_PICK_PORT_REQUIRED");
@@ -94,7 +96,7 @@
         cardChoiceEquivalence: cardChoiceEquivalence ? "enabled" : "off",
         continuation: reused?.hit ? "hit" : reused ? reused.reason : "not-requested",
         planContinuation: reusedPlan?.hit ? "hit" : planReuse ? "not-requested" : "off",
-        milliseconds: now() - startedAt, limits },
+        milliseconds: now() - startedAt, limits: configuredLimits },
     };
     const nodes = [];
     const known = new Map();
@@ -167,6 +169,9 @@
       if (!boundary && !node.legalActions?.length) throw new Error("SEARCH_EMPTY_NONTERMINAL");
       const value = BOUNDARIES.has(node.status) ? valueOf(node.observation) : null;
       if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
+      // A closed leaf retains its exact native envelope and scalar V; its full
+      // observation can be regenerated, rather than pinning a second large tree.
+      if (BOUNDARIES.has(node.status)) port.releaseBoundaryObservation?.(node);
       if (BOUNDARIES.has(node.status) && (!incumbent || value > incumbent.value)) incumbent = { node: index, value };
       const pickPolicy = !boundary && cardPickPlanning ? port.cardPickSpec(node) : null;
       const decisionPolicy=!boundary&&(finalMarkPlanning||resourcePlanning)?port.localDecisionSpec?.(node):null;
@@ -788,7 +793,7 @@
           ? { resourceModelKey: evaluate.modelKey } : {}),
         continuation: reused ? (reused.hit ? "validation-watchdog" : reused.reason) : "not-requested",
         planContinuation: reusedPlan ? (reusedPlan.hit ? "validation-watchdog" : reusedPlan.reason) : planReuse ? "not-requested" : "off",
-        milliseconds: elapsed, limits },
+        milliseconds: elapsed, limits: configuredLimits },
     };
   }
 

@@ -53,6 +53,19 @@ assert.equal(timed.stopReason, "watchdog");
 assert.equal(timed.actionId, null);
 assert.throws(() => searchDecision({ ...graph(fixture), evaluate: () => NaN }), /VALUE_INVALID/);
 
+// Unbounded mode removes every global cap without leaking non-JSON Infinity to the host.
+const unlimited = {transitions:null,nodes:null,frontier:null,milliseconds:null};
+const wide = {root:{next:{}}};
+for(let i=0;i<256;i++){wide.root.next['a'+i]='m'+i;wide['m'+i]={next:{finish:'l'+i}};wide['l'+i]={status:'terminal',value:i};}
+assert.equal(searchDecision(graph(wide)).complete,false);
+let unboundedTick=0;
+const exhausted=searchDecision({...graph(wide),budget:unlimited,now:()=>unboundedTick+=10000});
+assert(exhausted.complete);assert.equal(exhausted.value,255);assert.equal(exhausted.diagnostics.transitions,512);
+assert(exhausted.diagnostics.nodes>129);assert(exhausted.diagnostics.peakFrontier>128);
+assert.deepEqual(exhausted.diagnostics.limits,unlimited);assert.deepEqual(JSON.parse(JSON.stringify(exhausted)).diagnostics.limits,unlimited);
+for(const value of [Infinity,0,-1,NaN])assert.throws(()=>searchDecision({...graph(fixture),budget:{transitions:value}}),/BUDGET_INVALID/);
+const sameOwnerTurn=searchDecision({...graph({root:{next:{end:'nextTurn'}},nextTurn:{status:'turn-boundary',value:7,next:{illegalFuture:'future'}},future:{status:'terminal',value:1000}}),budget:unlimited});
+assert(sameOwnerTurn.complete);assert.equal(sameOwnerTurn.value,7);assert.equal(sameOwnerTurn.diagnostics.transitions,1,"同一玩家下个turn也必须结束当前turn的搜索");
 const ties = { root: { next: { b: "best", a: "best", detour: "via" } },
   via: { next: { finish: "best" } }, best: { status: "terminal", value: 4 } };
 assert.equal(searchDecision(graph(ties)).actionId, "a", "平分按最短路径与稳定 actionId 选择");
