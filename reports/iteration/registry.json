@@ -1,12 +1,12 @@
 {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-10-29T09:17:12.397Z",
+  "builtAt": "2026-10-29T11:55:18.288Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "ff4b36c1",
+  "headCommit": "8565526e",
   "defaultGeneration": "v2",
   "generations": {
     "v1": {
@@ -123,31 +123,10 @@
       "recordCount": 157
     },
     "v2": {
-      "currentBaseline": "ai-search-v39-unbounded-20261029",
+      "currentBaseline": "ai-search-v41-baseline-20261029",
       "bestOf": {
-        "world": {
-          "schemaVersion": "seti-initial-world-identity-v1",
-          "seed": "seti-free-analyze-v1",
-          "worldVersion": "human-405-world-v1",
-          "activePlayerCount": 4,
-          "fingerprint": "2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c",
-          "components": {
-            "aliens": "46dbcc69e2fca49b3b1fd3d6e93cbdf73ec6695f58026c25eae294c6af482de2",
-            "cards": "e5427e2ac14ea93859f820681a6957c5cdf3bb5f0c61a504927a7b3442a04d4a",
-            "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
-            "finalScoring": "e8a14ecc0f4b523158eefbae19cee10874f65083ef2cb060aa6badf9540da7f4",
-            "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
-            "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
-            "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
-            "players": "81760effc03c474b420cd154875a98942f428d4e82643d3f4c1d65b8a4358482",
-            "solarSystem": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
-            "tech": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
-            "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
-            "initialOffers": "76eacd007efd30ddff4d1a2e72ee375e3b45ea420b83a9fcc31ff87ae7e90879",
-            "initialRandom": "748c814e83ed7ffbc0d68c14175649c97eef71a94eeeff4605b52f779e729399"
-          }
-        },
-        "comparisonScope": "current-world",
+        "world": null,
+        "comparisonScope": "historical-unverified",
         "bestWhite": {
           "value": 62,
           "versionId": "ai-search-v39-unbounded-20261029",
@@ -183,23 +162,23 @@
           "scoreSourceNote": null
         },
         "fastestWall": {
-          "versionId": "ai-foundation-dev-00-20261022",
-          "name": "ai-foundation-dev-00-20261022",
-          "runKey": "3558b009.2bc7b88c.full",
+          "versionId": "ai-foundation-dev-03-20261022",
+          "name": "ai-foundation-dev-03-20261022",
+          "runKey": "801a83ba.2bc7b88c.full",
           "provenance": "save-final",
           "steps": 229,
-          "wallMs": 7360,
-          "msPerStep": 32,
+          "wallMs": 7063,
+          "msPerStep": 31,
           "scoreSourceNote": null
         },
         "fastestPerStep": {
-          "versionId": "ai-foundation-dev-00-20261022",
-          "name": "ai-foundation-dev-00-20261022",
-          "runKey": "3558b009.2bc7b88c.full",
+          "versionId": "ai-foundation-dev-03-20261022",
+          "name": "ai-foundation-dev-03-20261022",
+          "runKey": "801a83ba.2bc7b88c.full",
           "provenance": "save-final",
           "steps": 229,
-          "wallMs": 7360,
-          "msPerStep": 32,
+          "wallMs": 7063,
+          "msPerStep": 31,
           "scoreSourceNote": null
         },
         "topByAvg": [
@@ -220,69 +199,48 @@
             "scoreSourceNote": null
           },
           {
-            "value": 20.25,
-            "white": 20,
+            "value": 34,
+            "white": 48,
             "bestPlayer": {
-              "color": "蓝",
-              "score": 21
+              "color": "白",
+              "score": 48
             },
-            "versionId": "ai-foundation-dev-00-20261022",
-            "name": "ai-foundation-dev-00-20261022",
-            "runKey": "3558b009.2bc7b88c.full",
+            "versionId": "ai-foundation-dev-01-20261022",
+            "name": "ai-foundation-dev-01-20261022",
+            "runKey": "1ed7c0bf.2bc7b88c.full",
             "provenance": "save-final",
-            "steps": 229,
-            "wallMs": 7360,
+            "steps": 250,
+            "wallMs": 8110,
             "msPerStep": 32,
             "scoreSourceNote": null
           },
           {
-            "value": 20.25,
-            "white": 20,
+            "value": 33,
+            "white": 27,
             "bestPlayer": {
-              "color": "蓝",
-              "score": 21
+              "color": "绿",
+              "score": 42
             },
-            "versionId": "ai-foundation-20261022",
-            "name": "ai-foundation-20261022",
-            "runKey": "cdbe7999.576bbc50.full",
+            "versionId": "ai-foundation-dev-07-20261022",
+            "name": "ai-foundation-dev-07-20261022",
+            "runKey": "3bbbc445.2bc7b88c.full",
             "provenance": "save-final",
-            "steps": 229,
-            "wallMs": 7728,
-            "msPerStep": 34,
+            "steps": 253,
+            "wallMs": 9018,
+            "msPerStep": 36,
             "scoreSourceNote": null
           }
         ]
       },
-      "versionCount": 12,
+      "versionCount": 13,
       "recordCount": 12
     }
   },
-  "currentBaseline": "ai-search-v39-unbounded-20261029",
+  "currentBaseline": "ai-search-v41-baseline-20261029",
   "worktreeDirty": true,
   "bestOf": {
-    "world": {
-      "schemaVersion": "seti-initial-world-identity-v1",
-      "seed": "seti-free-analyze-v1",
-      "worldVersion": "human-405-world-v1",
-      "activePlayerCount": 4,
-      "fingerprint": "2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c",
-      "components": {
-        "aliens": "46dbcc69e2fca49b3b1fd3d6e93cbdf73ec6695f58026c25eae294c6af482de2",
-        "cards": "e5427e2ac14ea93859f820681a6957c5cdf3bb5f0c61a504927a7b3442a04d4a",
-        "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
-        "finalScoring": "e8a14ecc0f4b523158eefbae19cee10874f65083ef2cb060aa6badf9540da7f4",
-        "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
-        "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
-        "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
-        "players": "81760effc03c474b420cd154875a98942f428d4e82643d3f4c1d65b8a4358482",
-        "solarSystem": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
-        "tech": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
-        "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
-        "initialOffers": "76eacd007efd30ddff4d1a2e72ee375e3b45ea420b83a9fcc31ff87ae7e90879",
-        "initialRandom": "748c814e83ed7ffbc0d68c14175649c97eef71a94eeeff4605b52f779e729399"
-      }
-    },
-    "comparisonScope": "current-world",
+    "world": null,
+    "comparisonScope": "historical-unverified",
     "bestWhite": {
       "value": 62,
       "versionId": "ai-search-v39-unbounded-20261029",
@@ -318,23 +276,23 @@
       "scoreSourceNote": null
     },
     "fastestWall": {
-      "versionId": "ai-foundation-dev-00-20261022",
-      "name": "ai-foundation-dev-00-20261022",
-      "runKey": "3558b009.2bc7b88c.full",
+      "versionId": "ai-foundation-dev-03-20261022",
+      "name": "ai-foundation-dev-03-20261022",
+      "runKey": "801a83ba.2bc7b88c.full",
       "provenance": "save-final",
       "steps": 229,
-      "wallMs": 7360,
-      "msPerStep": 32,
+      "wallMs": 7063,
+      "msPerStep": 31,
       "scoreSourceNote": null
     },
     "fastestPerStep": {
-      "versionId": "ai-foundation-dev-00-20261022",
-      "name": "ai-foundation-dev-00-20261022",
-      "runKey": "3558b009.2bc7b88c.full",
+      "versionId": "ai-foundation-dev-03-20261022",
+      "name": "ai-foundation-dev-03-20261022",
+      "runKey": "801a83ba.2bc7b88c.full",
       "provenance": "save-final",
       "steps": 229,
-      "wallMs": 7360,
-      "msPerStep": 32,
+      "wallMs": 7063,
+      "msPerStep": 31,
       "scoreSourceNote": null
     },
     "topByAvg": [
@@ -355,40 +313,373 @@
         "scoreSourceNote": null
       },
       {
-        "value": 20.25,
-        "white": 20,
+        "value": 34,
+        "white": 48,
         "bestPlayer": {
-          "color": "蓝",
-          "score": 21
+          "color": "白",
+          "score": 48
         },
-        "versionId": "ai-foundation-dev-00-20261022",
-        "name": "ai-foundation-dev-00-20261022",
-        "runKey": "3558b009.2bc7b88c.full",
+        "versionId": "ai-foundation-dev-01-20261022",
+        "name": "ai-foundation-dev-01-20261022",
+        "runKey": "1ed7c0bf.2bc7b88c.full",
         "provenance": "save-final",
-        "steps": 229,
-        "wallMs": 7360,
+        "steps": 250,
+        "wallMs": 8110,
         "msPerStep": 32,
         "scoreSourceNote": null
       },
       {
-        "value": 20.25,
-        "white": 20,
+        "value": 33,
+        "white": 27,
         "bestPlayer": {
-          "color": "蓝",
-          "score": 21
+          "color": "绿",
+          "score": 42
         },
-        "versionId": "ai-foundation-20261022",
-        "name": "ai-foundation-20261022",
-        "runKey": "cdbe7999.576bbc50.full",
+        "versionId": "ai-foundation-dev-07-20261022",
+        "name": "ai-foundation-dev-07-20261022",
+        "runKey": "3bbbc445.2bc7b88c.full",
         "provenance": "save-final",
-        "steps": 229,
-        "wallMs": 7728,
-        "msPerStep": 34,
+        "steps": 253,
+        "wallMs": 9018,
+        "msPerStep": 36,
         "scoreSourceNote": null
       }
     ]
   },
   "versions": [
+    {
+      "id": "ai-search-v41-baseline-20261029",
+      "aiGeneration": "v2",
+      "name": "搜索v41 baseline（11单点验收）",
+      "date": "2026-10-29",
+      "baseline": "ai-search-v39-unbounded-20261029",
+      "head": "8565526e",
+      "commits": [
+        {
+          "hash": "c2a0c8fb",
+          "date": "2026-10-29",
+          "subject": "将重组弃牌改为正收益贪心固定计划"
+        },
+        {
+          "hash": "8565526e",
+          "date": "2026-10-29",
+          "subject": "禁止搜索移除科技换收入并拆解第317步剩余分叉"
+        }
+      ],
+      "summary": "用户确认的开发baseline；v41已通过11个单点600ms/256次模拟验收，最慢562.4ms/200次；第317步97次/263.4ms。重组弃牌正收益贪心，禁用借科技及移除科技换收入。新版整局尚未复跑，无新版正式终局分数。",
+      "diffStat": "139 files changed, 994374 insertions(+), 118 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-reorg-v1/step181-20261029-v1.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-reorg-v1/step199-20261029-v1.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-reorg-v1/step206-20261029-v1.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-reorg-v1/step215-20261029-v1.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-reorg-v1/step272-20261029-v1.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-reorg-v1/step295-20261029-v1.json",
+          "insertions": 18,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-reorg-v1/step317-20261029-v1.json",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/no-helios-baseline-r1-t8-blue-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/no-helios-baseline-r2-t9-white-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/no-helios-case-001-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/no-helios-case-003-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/no-helios-case-008-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/no-helios-case-009-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/no-helios-case-011-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/no-helios-case-062-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/no-helios-case-105-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/no-helios-case-152-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/reorg-baseline-r1-t8-blue-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/reorg-baseline-r2-t9-white-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/reorg-case-001-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/reorg-case-003-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/reorg-case-008-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/reorg-case-009-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/reorg-case-011-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/reorg-case-062-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/reorg-case-105-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-unbounded-v1/reorg-case-152-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/analyze-no-helios-step317-20261029-v1.py",
+          "insertions": 25,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/analyze-search-step295-20261029-v1.py",
+          "insertions": 67,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-no-helios-corpus-20261029-v1.js",
+          "insertions": 44,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-reorg-greedy-corpus-20261029-v1.js",
+          "insertions": 44,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/audit-v40-baseline-overruns-20261029-v1.js",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-no-helios-step317-20261029-v1.js",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/benchmark-reorg-step295-20261029-v1.js",
+          "insertions": 25,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/capture-reorg-step295-20261029-v1.js",
+          "insertions": 20,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/deliver-no-helios-20261029-v1.py",
+          "insertions": 125,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/deliver-reorg-greedy-20261029-v1.py",
+          "insertions": 125,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/deliver-unbounded-results-20261029-v1.py",
+          "insertions": 125,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/finalize-reorg-greedy-20261029-v1.py",
+          "insertions": 49,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/inspect-search-step295-20261029-v1.js",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/no-helios-snapshot-20261029.json",
+          "insertions": 47,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/preserve-unbounded-center-worktree-20261029-v1.js",
+          "insertions": 25,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/reorg-greedy-snapshot-20261029.json",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/summarize-v40-overruns-20261029-v1.py",
+          "insertions": 54,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/unbounded-results-snapshot-20261029.json",
+          "insertions": 76,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/v40-overrun-list-snapshot-20261029.json",
+          "insertions": 35,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/verify-unbounded-baseline-20261029-v1.js",
+          "insertions": 36,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-design.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "docs/ai-development-workflow.md",
+          "insertions": 2,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-fixed-data-no-borrow-20261028.md",
+          "insertions": 2,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-no-helios-20261029.md",
+          "insertions": 81,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-reorg-greedy-20261029.md",
+          "insertions": 46,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-search-agent-contract-20261023.md",
+          "insertions": 8,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-search-unbounded-20261029.md",
+          "insertions": 26,
+          "deletions": 0
+        },
+        {
+          "file": "docs/robot-iteration-registry.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/game/ai/analysis-port.js",
+          "insertions": 3,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/ai/decision-search.js",
+          "insertions": 3,
+          "deletions": 2
+        },
+        {
+          "file": "randomizer/game/ai/fixed-data-plan.test.js",
+          "insertions": 12,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/local-decision-plans.js",
+          "insertions": 27,
+          "deletions": 3
+        },
+        {
+          "file": "randomizer/game/ai/local-decision-plans.test.js",
+          "insertions": 35,
+          "deletions": 0
+        }
+      ],
+      "results": [],
+      "roadmap": null,
+      "isHead": true,
+      "completeness": {
+        "record": false,
+        "save": false,
+        "report": false,
+        "reportLinks": []
+      }
+    },
     {
       "id": "ai-search-v39-unbounded-20261029",
       "aiGeneration": "v2",
@@ -842,7 +1133,7 @@
         }
       ],
       "roadmap": null,
-      "isHead": true,
+      "isHead": false,
       "completeness": {
         "record": true,
         "save": true,

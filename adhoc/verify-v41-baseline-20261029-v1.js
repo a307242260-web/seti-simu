@@ -1,0 +1,15 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const lib=require('../tools/robot-iteration-lib'),agent=require('../randomizer/game/ai/search-agent');
+const id='ai-search-v41-baseline-20261029',versionPath='reports/iteration/versions.json',registryPath='reports/iteration/registry.json',pagePath='reports/robot-iteration.html';
+const read=p=>JSON.parse(fs.readFileSync(p,'utf8')),sha=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const freeze=read('reports/ai-foundation-20261023/v41-baseline-freeze-20261029-v1.json'),versions=read(versionPath),registry=read(registryPath),version=versions.versions.find(v=>v.id===id),row=registry.versions.find(v=>v.id===id);
+assert.equal(version.aiGeneration,'v2');assert.equal(version.agentType,'search');assert.equal(version.baselineEligible,true);assert.equal(version.head,'8565526e');assert.deepEqual(version.records,{});assert.equal(version.baseline,'ai-search-v39-unbounded-20261029');
+assert.equal(registry.currentBaseline,id);assert.equal(registry.generations.v2.currentBaseline,id);assert.equal(row.isHead,true);assert.deepEqual(row.results,[]);assert.equal(row.completeness.record,false);assert.equal(row.completeness.save,false);assert.equal(row.completeness.report,false);
+assert.equal(registry.bestOf.bestAvg.versionId,'ai-search-v39-unbounded-20261029');assert.equal(registry.bestOf.bestAvg.value,57.75);
+assert.equal(freeze.modelChecksum,agent.MODEL_CHECKSUM);assert.deepEqual(freeze.budget,agent.BUDGET);assert.equal(freeze.acceptance.rows.length,11);assert(freeze.acceptance.rows.every(r=>r.complete&&r.nativeInputs<=256&&r.milliseconds<=600));assert.equal(freeze.fullGame.run,false);assert.equal(freeze.fullGame.formalScores,null);
+for(const [p,h]of Object.entries(freeze.sourceHashes))assert.equal(sha(p),h,p);
+const render=r=>fs.readFileSync(lib.TEMPLATE_PATH,'utf8').replace('/*__REGISTRY_JSON__*/',JSON.stringify(r,null,2).replace(/</g,'\\u003c'));
+assert.equal(fs.readFileSync(pagePath,'utf8'),render(registry));
+const summary={schemaVersion:'seti-v41-baseline-registration-check-v1',versionId:id,currentBaseline:id,runtimeCommit:freeze.runtimeCommit,sourceHashesVerified:true,acceptedElevenColdDecisions:true,maxNativeInputs:freeze.acceptance.maxNativeInputs,maxRootAndSearchMilliseconds:freeze.acceptance.maxRootAndSearchMilliseconds,fullGameScoresEmpty:true,previousV39ResultsPreserved:true,currentBestAvgStillV39:57.75,pageMatchesRegistry:true,hashes:Object.fromEntries([versionPath,registryPath,pagePath,'reports/ai-foundation-20261023/v41-baseline-freeze-20261029-v1.json'].map(p=>[p,sha(p)]))};
+fs.writeFileSync('reports/ai-foundation-20261023/v41-baseline-registration-check-20261029-v1.json',JSON.stringify(summary,null,2)+'\n');console.log(JSON.stringify(summary,null,2));

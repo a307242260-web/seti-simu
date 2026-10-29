@@ -456,3 +456,5 @@ node tools/robot_iterate.js review --best           # 固定盘面最佳（白�
 在其之上增加**版本登记与复盘层**：`run_research_validation` 只管跑与记录，版本归属、
 报告生成、总览页全部由 `robot_iterate` 接管。默认盘面一致（免电分析盘面
 `seti-free-analyze-v1`）。
+
+2026-10-29用户在知晓新版尚未复跑整局的前提下，明确确认`ai-search-v41-baseline-20261029`为开发代码baseline。本版本以11个已闭合单点验收登记`baselineEligible=true`、`records={}`，总览显示当前baseline，完整局耗时/分数留空。该例只代表本次用户确认的开发基线，不改变此前中途失败候选的排除标记。冻结配置和证据见[版本说明](ai-search-v41-baseline-20261029.md)。

@@ -7,6 +7,23 @@
   },
   "versions": [
     {
+      "id": "ai-search-v41-baseline-20261029",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "搜索v41 baseline（11单点验收）",
+      "date": "2026-10-29",
+      "baseline": "ai-search-v39-unbounded-20261029",
+      "baselineEligible": true,
+      "head": "8565526e",
+      "commits": [
+        "c2a0c8fb",
+        "8565526e"
+      ],
+      "summary": "用户确认的开发baseline；v41已通过11个单点600ms/256次模拟验收，最慢562.4ms/200次；第317步97次/263.4ms。重组弃牌正收益贪心，禁用借科技及移除科技换收入。新版整局尚未复跑，无新版正式终局分数。",
+      "records": {},
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v39-unbounded-20261029",
       "aiGeneration": "v2",
       "agentType": "search",

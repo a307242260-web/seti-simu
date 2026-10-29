@@ -1,0 +1,42 @@
+{
+  "baseCommit": "8565526e06476591f255f85c6ad17d79fbe23a83",
+  "snapshot": "/private/tmp/seti-v41-baseline-20261029-3qc7u1ud",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "4c66649e8aa7fbfdab4479e13e238f2a349e479fcab80b62f1e8edfed799c372",
+      "path": "/private/tmp/seti-v41-baseline-center-working-overlay-20261029/versions.json",
+      "sha256": "042fee263be239dcc7492519dec227939d2806ecc740a5d8bbe4be97c3699e21"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "c89f4f6a36faea10520de8c9d51bf2557b09d244a4dd033a70fe85982bfa2765",
+      "path": "/private/tmp/seti-v41-baseline-center-working-overlay-20261029/registry.json",
+      "sha256": "73bbff66db6896d6c2e94e44316e167f440ad4ee62d427858c7453fd0aacc748"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "f50b2f6fd0f9c2c0e3d500a5dc1e508366204d32ce6e3b49d15ac70832d1f670",
+      "path": "/private/tmp/seti-v41-baseline-center-working-overlay-20261029/robot-iteration.html",
+      "sha256": "9160c8baf1ba9f095cce60dc773034f9d895213c5a50156baa4257b133fcd1f8"
+    }
+  },
+  "sourceBoundReports": [
+    "reports/ai-foundation-20261023/v41-baseline-freeze-20261029-v1.json"
+  ],
+  "files": {
+    "reports/iteration/versions.json": "adecb4b10fe5be5c37072215c2862af6c05c075398d8640e8016c598bb6238ce",
+    "reports/iteration/registry.json": "8d119c55eb964225ce67c442b0f9e67f482477707a06300c1332f88abebddd5a",
+    "reports/robot-iteration.html": "6f1da855ce49f9523efd295383f119f68ac6faf146bda178040e2eaeada559d2",
+    "docs/ai-development-workflow.md": "93a22b9843aae60c9b026369a0e130bb29f730953774ddb93d5909eb4c7aec2d",
+    "docs/robot-iteration-registry.md": "233056e535d59f6d29b88dc4a90654e0e5cc4df7a1a9220692962336572464f7",
+    "docs/ai-search-v41-baseline-20261029.md": "bef4db7d1c1a46fb69e2a7c78dc3c8b9d33c02f8abc644c2d2fd4871f3dd86ce",
+    "reports/ai-foundation-20261023/v41-baseline-freeze-20261029-v1.json": "4e0b9555d386ca02c26f7400b94d8767be1dc0e98dc2a95af5c0ee1eb7a207a8",
+    "reports/ai-foundation-20261023/v41-baseline-registration-check-20261029-v1.json": "38d30b503f804aea92311b895789da87e503089cf7e8d121a8fc6efc6e491040",
+    "reports/ai-foundation-20261023/v41-baseline-register-20261029-v1.log": "fc71dd8b850b7b4be8174f63c13bd359aff5ac58163940f06411a65e8e08df51",
+    "reports/ai-foundation-20261023/v41-baseline-tests-20261029-v1.log": "6e2a0af722ee13d6befdd03dc158713e89235199cbd3c1c2845ccfddf82203e3",
+    "adhoc/preserve-v41-baseline-center-worktree-20261029-v1.js": "b5bda215937398b43e6dcdb900df198f9ffe505aec2c5ebb0c8d39ee609ded31",
+    "adhoc/verify-v41-baseline-20261029-v1.js": "000bffe8d3098db45255a075443efa9e7fbffb0a93705a16c4bd12166cbd7837",
+    "adhoc/deliver-v41-baseline-20261029-v1.py": "d3c5b815c8e51b2a8f722076cb675fc8c7011fe2e699cab7975a1d4f499151f2"
+  },
+  "validation": "reports/ai-foundation-20261023/v41-baseline-registration-check-20261029-v1.json"
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "seti-v41-baseline-registration-check-v1",
+  "versionId": "ai-search-v41-baseline-20261029",
+  "currentBaseline": "ai-search-v41-baseline-20261029",
+  "runtimeCommit": "8565526e06476591f255f85c6ad17d79fbe23a83",
+  "sourceHashesVerified": true,
+  "acceptedElevenColdDecisions": true,
+  "maxNativeInputs": 200,
+  "maxRootAndSearchMilliseconds": 562.3901249999997,
+  "fullGameScoresEmpty": true,
+  "previousV39ResultsPreserved": true,
+  "currentBestAvgStillV39": 57.75,
+  "pageMatchesRegistry": true,
+  "hashes": {
+    "reports/iteration/versions.json": "adecb4b10fe5be5c37072215c2862af6c05c075398d8640e8016c598bb6238ce",
+    "reports/iteration/registry.json": "8d119c55eb964225ce67c442b0f9e67f482477707a06300c1332f88abebddd5a",
+    "reports/robot-iteration.html": "6f1da855ce49f9523efd295383f119f68ac6faf146bda178040e2eaeada559d2",
+    "reports/ai-foundation-20261023/v41-baseline-freeze-20261029-v1.json": "4e0b9555d386ca02c26f7400b94d8767be1dc0e98dc2a95af5c0ee1eb7a207a8"
+  }
+}
