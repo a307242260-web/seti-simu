@@ -3,9 +3,9 @@
  const api=factory(common?require('../final-scoring'):root.SetiFinalScoring,common?require('../end-game-scoring'):root.SetiEndGameScoring,
   common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
   common?require('../data'):root.SetiData,common?require('../players'):root.SetiPlayers,
-  common?require('../actions/scan-effects'):root.SetiScanEffects,common?require('../effects/science-session'):root.SetiScienceSession,common?require('./resource-demand'):root.SetiResourceDemand,common?require('../effects/residual-domain-session'):root.SetiResidualDomainSession);
+  common?require('../actions/scan-effects'):root.SetiScanEffects,common?require('../effects/science-session'):root.SetiScienceSession,common?require('./resource-demand'):root.SetiResourceDemand,common?require('../effects/residual-domain-session'):root.SetiResidualDomainSession,common?require('./state-value'):root.SetiStateValue);
  if(common)module.exports=api;else root.SetiLocalDecisionPlans=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual){
+})(typeof globalThis!=='undefined'?globalThis:window,function(finalScoring,endScoring,cards,effects,data,players,scanEffects,science,demand,residual,stateValue){
  'use strict';
  const VERSION='seti-local-mark-and-scan-purpose-v1';
  const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -77,6 +77,30 @@
   ranks.sort((a,b)=>b.value-a.value||tie(a.action,b.action));
   return fixedChoice(actions,ranks[0].value>0?ranks[0].action:skip,'fixed-positive-optional',{reason:'greedy-pure-resource-trigger',gains:ranks.map(r=>({actionId:r.action.actionId,value:r.value})),assumption:'only known nonnegative resource-only trigger bodies; native consumption still executes'});
  }
+ function reorganization({state,seatId,actions,session}){
+  const payload=session?.queue?.[0]?.payload;
+  if(payload?.cardEffect?.type!=='card_discard_any_for_income')return null;
+  const done=actions.find(a=>a.family==='choose_card'&&a.target?.done);
+  if(!done||actions.some(a=>a.family!=='choose_card'||!a.target?.done&&!a.target?.cardInstanceId))throw new Error('REORGANIZATION_CHOICES_INVALID');
+  const p=owner(state,seatId),weights=stateValue.DEFAULT_WEIGHTS;
+  const context={...state,aliens:structuredClone(state.aliens),data:structuredClone(state.data),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
+  // Compare finishing now with discarding one more card. Previously selected
+  // rewards are pending until done, and must consume capacity in both previews.
+  function value(card=null){
+   const copy=structuredClone(p),gain={...(payload.pendingIncomeGain||{})};
+   if(card){copy.hand=copy.hand.filter(c=>c.id!==card.id);for(const [k,n] of Object.entries(cards.getIncomeGainForCard(card)||{}))gain[k]=(gain[k]||0)+n;}
+   const {handSize=0,...resources}=gain;players.gainResources(copy,resources);copy.resources.handSize=copy.hand.length+handSize;
+   const final=endScoring.computePlayerFinalScore({...context,players:state.players.players.map(v=>v.id===seatId?copy:v)},copy).totalScore;
+   return final+Object.entries(weights).reduce((n,[k,w])=>n+(k==='handSize'?copy.hand.length+handSize:copy.resources[k]||0)*w,0);
+  }
+  const before=value(),gains=actions.filter(a=>!a.target.done).map(action=>{
+   const card=p.hand.find(c=>c.id===action.target.cardInstanceId);if(!card)throw new Error('REORGANIZATION_CARD_MISSING');
+   const netGain=value(card)-before;if(!Number.isFinite(netGain))throw new Error('REORGANIZATION_VALUE_INVALID');
+   return{actionId:action.actionId,cardId:card.id,netGain};
+  }).sort((a,b)=>b.netGain-a.netGain||tie(a,b));
+  const positive=gains[0]?.netGain>0?gains[0]:null,chosen=positive?actions.find(a=>a.actionId===positive.actionId):done;
+  return fixedChoice(actions,chosen,'fixed-reorganization',{reason:'greedy-positive-reorganization',netGain:positive?.netGain||0,gains,assumption:'current default value; capped known income-corner rewards and current native final scoring; unknown draws counted only; ties kept; no subset exploration'});
+ }
  function incomeCompletion({state,seatId,goal}){
   const preview=demand.previewIncomeTail({state,seatId,goal});if(!preview.available)return{...preview,selected:false};
   const p=owner(state,seatId),context={...state,players:state.players.players,aliens:structuredClone(state.aliens),data:structuredClone(state.data),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
@@ -137,5 +161,5 @@
   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
  }
- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,incomeCompletion,scanDecision,scanGoals,scanStep});
+ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,reorganization,incomeCompletion,scanDecision,scanGoals,scanStep});
 });

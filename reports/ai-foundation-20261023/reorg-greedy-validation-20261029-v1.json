@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "seti-reorg-greedy-validation-v1",
+  "searchVersion": "seti-complete-decision-search-v40",
+  "isolatedSnapshot": "/private/tmp/seti-reorg-greedy-20261029-gb102206",
+  "sourceHashes": {
+    "randomizer/game/ai/local-decision-plans.js": "b7548d7d522f5828fac11dea13ce7ebd1f44d4178a0c2b7b0bde777878304d2d",
+    "randomizer/game/ai/analysis-port.js": "7bf56b17fb7371aece5a308e0515605c1274fd143847f553ba321714ca2a5eb6",
+    "randomizer/game/ai/decision-search.js": "cda996a291986b0a7ded544e73237745d6070b442f6af93989845cc5aaaa2dee",
+    "randomizer/index.html": "910402d05e32ed67477e3c1a39d1e32f6418dd8b91d72dc258351a95507ba944",
+    "randomizer/game/ai/local-decision-plans.test.js": "383ed2f1cdbae19a367e1937004879ef12c6ee192ecfec9c4397c446a4efcc47"
+  },
+  "behavior": {
+    "beforeTestFailed": true,
+    "nativePositiveRewardChain": true,
+    "zeroAndNegativeStop": true,
+    "pendingRewardsConsumeCapacity": true,
+    "coldRestoreSuffixMatches": true,
+    "canonicalRootAndRngUnchanged": true,
+    "hiddenDrawIdentityIndependent": true,
+    "finiteBudgetInterruption": true
+  },
+  "fullNode": {
+    "unitPassed": 145,
+    "unitFailed": 0,
+    "fullFlowPassed": 1,
+    "fullFlowFailed": 0
+  },
+  "browserSmoke": {
+    "passed": 3,
+    "failed": 0,
+    "sandboxAttempt": "EPERM listening localhost; rerun outside sandbox succeeded"
+  },
+  "valueAudit": {
+    "status": "known-preexisting-failure",
+    "message": "decisionObs Cannot add property aomomo, object is not extensible; independent search value checks passed"
+  },
+  "coldCorpus": {
+    "passed": 10,
+    "sameActionsAndValues": true
+  },
+  "step295": {
+    "beforeInputs": 1095,
+    "afterInputs": 193,
+    "beforeCountedStates": 698,
+    "afterCountedStates": 196,
+    "afterMs": 542.9690840000001,
+    "sameAction": true,
+    "sameValue": true
+  },
+  "fullGameRun": false,
+  "logs": {
+    "before": "reports/ai-foundation-20261023/reorg-greedy-before-20261029-v1.log",
+    "focused": "reports/ai-foundation-20261023/reorg-greedy-focused-20261029-v1.log",
+    "node": "reports/ai-foundation-20261023/reorg-greedy-node-20261029-v1.log",
+    "browserSandboxDenied": "reports/ai-foundation-20261023/reorg-greedy-browserSandboxDenied-20261029-v1.log",
+    "browser": "reports/ai-foundation-20261023/reorg-greedy-browser-20261029-v1.log",
+    "valueAudit": "reports/ai-foundation-20261023/reorg-greedy-valueAudit-20261029-v1.log",
+    "corpus": "reports/ai-foundation-20261023/reorg-greedy-corpus-20261029-v1.log"
+  }
+}

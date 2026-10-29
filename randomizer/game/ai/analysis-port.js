@@ -556,7 +556,7 @@
       if(localSpecs.has(node))return localSpecs.get(node);
       const stored=nodes.get(node),state=readIdentityState(stored.envelope);
       let result=finalMarkPlanning?localPlans.finalMark({state,seatId,actions:node.legalActions}):null;
-      if(!result&&resourcePlanning)result=localPlans.passDiscard({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal})||localPlans.blueResearch({state,seatId,actions:node.legalActions})||localPlans.pureOptional({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session});
+      if(!result&&resourcePlanning)result=localPlans.reorganization({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})||localPlans.passDiscard({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal})||localPlans.blueResearch({state,seatId,actions:node.legalActions})||localPlans.pureOptional({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session});
       if(!result&&resourcePlanning){
         const fixed=resourceDemand.paidChoice({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})
           ||resourceDemand.fixedDataChoice({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal});
@@ -585,7 +585,7 @@
 
     function resourceStep(node,goal,operation={}) {
       const stored=nodes.get(node),state=readIdentityState(stored.envelope),session=stored.envelope.session?.session;
-      const local=localDecisionSpec(node);if(["fixed-final-mark","fixed-paid-repeat","fixed-positive-optional","fixed-pass-discard"].includes(local?.kind))return{kind:"fixed",actionId:local.selectedActionId,reason:local.kind};
+      const local=localDecisionSpec(node);if(["fixed-final-mark","fixed-paid-repeat","fixed-positive-optional","fixed-pass-discard","fixed-reorganization"].includes(local?.kind))return{kind:"fixed",actionId:local.selectedActionId,reason:local.kind};
       if(goal.kind==="effect-purpose"&&operation.targetStarted){
         if(node.status==="stable")return{kind:"complete",reason:"purpose-effect-completed"};
         const fixed=local?.selectedActionId?{kind:"fixed",actionId:local.selectedActionId,reason:local.kind}:null;

@@ -1,0 +1,10 @@
+{
+  "baseCommit": "9c2e035009b5901fbe5d9d1663cb85ce1acac4da",
+  "testedSnapshot": "/private/tmp/seti-reorg-greedy-20261029-gb102206",
+  "unchangedBaseFilesVerified": 4353,
+  "changedBaseFilesVerified": 7,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "explicitFiles": 36,
+  "runtimeImportsBoundToFinalSource": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot."
+}

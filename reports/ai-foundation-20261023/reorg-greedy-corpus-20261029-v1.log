@@ -1,0 +1,11 @@
+{"label":"initial-selection","id":"case-001","choices":5,"complete":true,"stopReason":null,"inputs":144,"native":144,"logicalResourceInputs":0,"reusedResourceInputs":0,"states":42,"pending":0,"ms":221.336084}
+{"label":"initial-income","id":"case-003","choices":5,"complete":true,"stopReason":null,"inputs":26,"native":26,"logicalResourceInputs":0,"reusedResourceInputs":0,"states":22,"pending":0,"ms":185.25004199999995}
+{"label":"first-other-company-main","id":"case-008","choices":17,"complete":true,"stopReason":null,"inputs":25,"native":25,"logicalResourceInputs":20,"reusedResourceInputs":0,"states":28,"pending":0,"ms":107.58887500000003}
+{"label":"first-other-company-post-main","id":"case-011","choices":10,"complete":true,"stopReason":null,"inputs":9,"native":9,"logicalResourceInputs":0,"reusedResourceInputs":0,"states":10,"pending":0,"ms":22.003708999999958}
+{"label":"regular-conditional","id":"case-009","choices":1,"complete":true,"stopReason":null,"inputs":5,"native":5,"logicalResourceInputs":8,"reusedResourceInputs":3,"states":6,"pending":0,"ms":24.487499999999955}
+{"label":"round2-main-with-tech","id":"case-062","choices":25,"complete":true,"stopReason":null,"inputs":73,"native":73,"logicalResourceInputs":64,"reusedResourceInputs":18,"states":73,"pending":0,"ms":304.9207500000001}
+{"label":"round3-main-with-reserved","id":"case-105","choices":28,"complete":true,"stopReason":null,"inputs":156,"native":156,"logicalResourceInputs":176,"reusedResourceInputs":90,"states":157,"pending":0,"ms":644.3639579999999}
+{"label":"round4-main","id":"case-152","choices":24,"complete":true,"stopReason":null,"inputs":200,"native":200,"logicalResourceInputs":155,"reusedResourceInputs":51,"states":204,"pending":0,"ms":732.1650000000002}
+{"label":"previous-full-attempt-R1T8-blue","id":"baseline-r1-t8-blue","choices":17,"complete":true,"stopReason":null,"inputs":18,"native":18,"logicalResourceInputs":12,"reusedResourceInputs":6,"states":19,"pending":0,"ms":56.187916000000314}
+{"label":"previous-2s-failure-R2T9-white","id":"baseline-r2-t9-white","choices":21,"complete":true,"stopReason":null,"inputs":91,"native":91,"logicalResourceInputs":105,"reusedResourceInputs":40,"states":92,"pending":0,"ms":212.06470799999988}
+reports/ai-foundation-20261023/reorg-greedy-corpus-20261029-v1.json
