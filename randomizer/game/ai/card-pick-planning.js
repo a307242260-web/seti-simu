@@ -6,7 +6,7 @@
   if(common)module.exports=api;else root.SetiCardPickPlanning=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,tech){
   'use strict';
-  const VERSION='seti-purpose-card-pick-policy-v1';
+  const VERSION='seti-purpose-card-pick-policy-v3';
   const TRADE_IDS=new Set(['credits-for-card','energy-for-card','publicity-for-card','cards-for-pick-card']);
   const isTrade=a=>a.family==='quick_trade'&&TRADE_IDS.has(a.target?.tradeId);
   const isOffer=a=>a.family==='choose_card'&&!a.target?.nebulaId&&(a.target?.source==='public'||a.target?.source==='blind'
@@ -89,6 +89,17 @@
     function plan({state,seatId,actions,status,session,endpoints=()=>[]}){
       const source=session?.journal?.actions?.[0]?.action,head=session?.queue?.[0],pending=head?.payload?.decisionContext;
       const tradePending=pending?.type==='trade'&&TRADE_IDS.has(pending.tradeId)&&['discard','card_selection'].includes(pending.kind);
+      if(status==='decision'&&head?.payload?.step==='swap_hand'&&actions.length>0&&actions.every(a=>a.family==='choose_card'&&a.target?.choiceId?.startsWith('hand:')&&state.players.players.find(p=>p.id===seatId).hand.some(c=>c.id===a.target.cardInstanceId))){
+        const hand=state.players.players.find(p=>p.id===seatId).hand;
+        const utility=card=>{
+          const f=facts(card),income=Object.entries(cards.getIncomeGainForCard(card)||{}).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0);
+          return (effects.getCardPrice(card)||0)+income*Math.max(0,4-state.turn.roundNumber)+(f.data+f.move)*.5;
+        };
+        const ranked=actions.map(action=>({action,value:utility(hand.find(c=>c.id===action.target.cardInstanceId))}))
+          .sort((a,b)=>a.value-b.value||(a.action.target.cardInstanceId<b.action.target.cardInstanceId?-1:1));
+        return {...fixed(ranked[0].action,{kind:'company-swap',id:'committed-company-swap'},null,[ranked[0].action.target.cardInstanceId],actions,'fixed-swap-outgoing'),
+          knownCardValues:ranked.map(r=>({cardId:r.action.target.cardInstanceId,value:r.value})),assumption:'greedy known price, remaining income and corner utility; does not prove interchangeable card identities'};
+      }
       if(status==='stable'){
         const trades=actions.filter(isTrade);if(!trades.length)return null;
         const chosen=paid(state,seatId,actions,endpoints),selected=chosen?.action;
@@ -97,7 +108,12 @@
           retainedActionIds:actions.filter(a=>!isTrade(a)||a===selected).map(a=>a.actionId),excludedActionIds:trades.filter(a=>a!==selected).map(a=>a.actionId),
           reason:chosen?'explicit-pick-purpose':'no-pick-purpose'};
       }
-      if(!tradePending&&!actions.every(isOffer))return null;
+      // DeepSpace's committed swap offers public cards without source/pick fields.
+      // Match its exact native menu; income/corner company rewards need their own purpose.
+      const companySwap=head?.payload?.step==='swap_public'&&actions.length>0&&actions.every(a=>a.family==='choose_card'
+        &&!a.target?.nebulaId&&Number.isInteger(a.target?.slotIndex)&&a.target?.choiceId?.startsWith('public:')
+        &&state.cards.publicCards[a.target.slotIndex]?.id===a.target.cardInstanceId);
+      if(!tradePending&&!companySwap&&!actions.every(isOffer))return null;
       let committed;
       if(tradePending&&source&&session.baseState)committed=paid(session.baseState,seatId,[source],()=>endpoints(session.baseState));
       const availableGoals=!tradePending?goals(state,seatId,endpoints):[];

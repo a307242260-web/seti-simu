@@ -7,6 +7,25 @@
   },
   "versions": [
     {
+      "id": "ai-search-v42-human405-reference-20261029",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-v42-human405-reference-20261029",
+      "date": "2026-10-29",
+      "baseline": "ai-search-v41-baseline-20261029",
+      "head": "5d1cae64",
+      "commits": [
+        "f24600c7",
+        "5d1cae64"
+      ],
+      "summary": "终局边界修复后的完整学习参照：372步32.569秒，蓝69/绿72/棕20/白71，均分58；估值及目的策略与v41一致。完整终局已严格重放核对；第93步1222.651ms原样保留，非替代baseline。",
+      "records": {
+        "8929fac4.5d1cae64.full.json": {}
+      },
+      "roadmap": null,
+      "baselineEligible": false
+    },
+    {
       "id": "ai-search-v41-human405-reference-20261029",
       "name": "v41学习参照（终局边界失败）",
       "date": "2026-10-29",

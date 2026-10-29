@@ -1,0 +1,5 @@
+PASS production-start-button http://127.0.0.1:64347/randomizer/index.html
+PASS production-trajectory-recording http://127.0.0.1:64347/randomizer/index.html
+PASS production-fixed-board http://127.0.0.1:64347/randomizer/index.html
+PASS production-custom-seed http://127.0.0.1:64347/randomizer/index.html
+PASS production-fixed-board-free-analyze http://127.0.0.1:64347/randomizer/index.html

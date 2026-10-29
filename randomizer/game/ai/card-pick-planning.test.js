@@ -61,6 +61,26 @@ function plan(s,actions=trades.concat(stop),planner=api.createCardPickPlanner(),
  const newGoal=structuredClone(s);own(newGoal).hand=[];own(newGoal).resources.handSize=0;own(newGoal).resources.availableData=4;const income=plan(newGoal,offers(newGoal),planner,{status:'decision'});assert.equal(income.goal.kind,'income');assert.equal(planner.getDiagnostics().rankingCacheMisses,stats.rankingCacheMisses+2);
  const hidden=structuredClone(s);hidden.cards.drawPileCardIds.reverse();assert.equal(plan(hidden,offers(hidden),planner,{status:'decision'}).selectedActionId,first.selectedActionId);
 }
+// A committed company swap uses its native public menu without source/pick prefixes.
+// Hand-swap identity and other company rewards keep their existing policy boundary.
+{
+ const s=state(),planner=api.createCardPickPlanner(),native=s.cards.publicCards.map((c,i)=>({actionId:'company-public:'+c.id,family:'choose_card',target:{choiceId:`public:${i}:${c.id}`,slotIndex:i,cardInstanceId:c.id},payload:{handCardInstanceId:own(s).hand[0].id}}));
+ const session={queue:[{payload:{step:'swap_public',handCardInstanceId:own(s).hand[0].id}}]};
+ const first=plan(s,native,planner,{status:'decision',session});assert(first?.fixed);assert.equal(first.retainedActionIds.length,1);assert.equal(first.goal.kind,'free-reward');
+ const changed=structuredClone(s);own(changed).resources.credits++;
+ const next=plan(changed,native.map(a=>({...a,actionId:a.actionId+':new'})),planner,{status:'decision',session});assert.equal(next.selection.cardId,first.selection.cardId);assert.equal(next.selection.cache,'hit');
+ assert.equal(plan(s,native,planner,{status:'decision',session:{queue:[{payload:{step:'public_card',abilityId:'mission_publicity_pick_income'}}]}}),null);
+ const scan=native.map(a=>({...a,target:{...a.target,nebulaId:'sector-1-a'}}));assert.equal(plan(s,scan,planner,{status:'decision',session}),null);
+}
+// A committed swap drops one least useful known hand card, keeping the incoming purpose explicit.
+{
+ const s=state(),p=own(s),planner=api.createCardPickPlanner();
+ const available=p.hand.map(c=>({actionId:'swap:'+c.id,family:'choose_card',target:{choiceId:'hand:'+c.id,cardInstanceId:c.id}}));
+ const session={queue:[{payload:{step:'swap_hand'}}]};
+ const r=plan(s,available,planner,{status:'decision',session});assert(r?.fixed);assert.equal(r.retainedActionIds.length,1);assert.equal(r.goal.kind,'company-swap');assert.equal(r.reason,'fixed-swap-outgoing');assert.equal(r.isEquivalence,false);
+ assert.equal(plan(s,available,planner,{status:'decision',session:{queue:[{payload:{step:'income_card'}}]}}),null);
+ const b=structuredClone(s);b.cards.drawPileCardIds.reverse();assert.equal(plan(b,available,planner,{status:'decision',session}).selectedActionId,r.selectedActionId);
+}
 // Native fixed payment and selection are one plan edge; all four physical inputs remain charged.
 {
  const {createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),{createAnalysisPort}=require('./analysis-port'),{searchDecision}=require('./decision-search'),{createStateValueEvaluator}=require('./state-value'),agent=require('./search-agent');

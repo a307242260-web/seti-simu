@@ -1,0 +1,232 @@
+{
+  "schemaVersion": "seti-teacher-current-replay-v1",
+  "sourcePath": "seti-saves/seti-save-537-merged.json",
+  "sourceSha256": "bdff1283bc052ec3e833d958f369f0c0ef286ebca1c7a48034efe5a612f029b7",
+  "scope": "Strict native replay from current initial state, checked against every saved resource/round summary. Stop at first difference; no adaptation across rule differences.",
+  "matchedInputs": 161,
+  "sampled": [
+    {
+      "step": 2,
+      "key": "company",
+      "fixturePath": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-002-20261029-v1.json",
+      "fixtureSha256": "407e718bcf728462045f779ed48e5cf2b8f519e404827409072525397f288466",
+      "actionId": "choose_card:fed6a493",
+      "summary": "选择公司：深空探测",
+      "round": 1,
+      "turn": 1
+    },
+    {
+      "step": 24,
+      "key": "1:play_card",
+      "fixturePath": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-024-20261029-v1.json",
+      "fixtureSha256": "1caefb981a284e359dfa9b89971f1f0c2f062a785c0a2737ef98876334f795d6",
+      "actionId": "play_card:124d76d3",
+      "summary": "b_117.webp",
+      "round": 1,
+      "turn": 1
+    },
+    {
+      "step": 35,
+      "key": "1:research_tech",
+      "fixturePath": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-035-20261029-v1.json",
+      "fixtureSha256": "26f7d02e6a8baeca55f28b495f028b95ca0d3e6319e5ab89fd48d3ce5d5cf200",
+      "actionId": "research_tech:806ccfc8",
+      "summary": "研究科技",
+      "round": 1,
+      "turn": 5
+    },
+    {
+      "step": 39,
+      "key": "1:orbit",
+      "fixturePath": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-039-20261029-v1.json",
+      "fixtureSha256": "f01629bc9febe4632342747a63484153d00e4a6187d1bdd185b3b21689bd27eb",
+      "actionId": "orbit:44937d1f",
+      "summary": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R3，1信用点 + 1能量）",
+      "round": 1,
+      "turn": 6
+    },
+    {
+      "step": 72,
+      "key": "2:scan",
+      "fixturePath": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-072-20261029-v1.json",
+      "fixtureSha256": "7046e3b6761fa61159aecb7ec27df21660623c5d41d92598929c6e524677b5fe",
+      "actionId": "scan:2d21a323",
+      "summary": "扫描",
+      "round": 2,
+      "turn": 4
+    },
+    {
+      "step": 78,
+      "key": "2:play_card",
+      "fixturePath": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-078-20261029-v1.json",
+      "fixtureSha256": "f9e32cd2eda82397014fa33203a869351bf8ae8ffa21074312dfe7a0c90d53e9",
+      "actionId": "play_card:720c219a",
+      "summary": "dlc_5.png",
+      "round": 2,
+      "turn": 5
+    },
+    {
+      "step": 92,
+      "key": "2:research_tech",
+      "fixturePath": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-092-20261029-v1.json",
+      "fixtureSha256": "75b6b3a3a3f01ff7d5d6616a5b97cdd38f6602babf740acaa61c6401fbd00891",
+      "actionId": "research_tech:806ccfc8",
+      "summary": "研究科技",
+      "round": 2,
+      "turn": 8
+    },
+    {
+      "step": 98,
+      "key": "2:analyze",
+      "fixturePath": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-098-20261029-v1.json",
+      "fixtureSha256": "c33c18ffbca304e1c979115f636d9a3c82df23d8125a790f0c55900f54172307",
+      "actionId": "analyze:a5629aa3",
+      "summary": "分析",
+      "round": 2,
+      "turn": 9
+    },
+    {
+      "step": 113,
+      "key": "3:play_card",
+      "fixturePath": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-113-20261029-v1.json",
+      "fixtureSha256": "c6603cf8bc91cf79ffaaa0a27d3a20367b1135b89197f1838432996fc897ca3c",
+      "actionId": "play_card:ec548c50",
+      "summary": "dlc_31.png",
+      "round": 3,
+      "turn": 3
+    },
+    {
+      "step": 127,
+      "key": "3:research_tech",
+      "fixturePath": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-127-20261029-v1.json",
+      "fixtureSha256": "f594b3a63cac6210318e7cc009bbeda13a3f09812f835f4725050c951752c95a",
+      "actionId": "research_tech:806ccfc8",
+      "summary": "研究科技",
+      "round": 3,
+      "turn": 6
+    },
+    {
+      "step": 141,
+      "key": "3:scan",
+      "fixturePath": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-141-20261029-v1.json",
+      "fixtureSha256": "4be7292dae0c3c9500d36e7a4b1e396c61eb3740d287331b61b28596f66d0a16",
+      "actionId": "scan:2d21a323",
+      "summary": "扫描",
+      "round": 3,
+      "turn": 9
+    },
+    {
+      "step": 160,
+      "key": "3:analyze",
+      "fixturePath": "adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-160-20261029-v1.json",
+      "fixtureSha256": "a610c5e09f410ccbcbd8b56a576d2590da389f1df5847eccec47576089e7c78b",
+      "actionId": "analyze:a5629aa3",
+      "summary": "分析",
+      "round": 3,
+      "turn": 10
+    }
+  ],
+  "divergence": {
+    "step": 161,
+    "reason": "saved-summary-mismatch",
+    "action": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:c5e2c9c0",
+      "actorId": "player-white",
+      "stateVersion": 65,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "residual-domain",
+        "choiceId": "amiba:blind",
+        "source": "blind"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "盲抽阿米巴牌"
+    },
+    "expected": {
+      "p": {
+        "player-blue": [
+          7,
+          11,
+          6,
+          4,
+          5,
+          0
+        ],
+        "player-green": [
+          7,
+          8,
+          5,
+          3,
+          5,
+          0
+        ],
+        "player-brown": [
+          8,
+          9,
+          4,
+          9,
+          5,
+          0
+        ],
+        "player-white": [
+          61,
+          3,
+          2,
+          0,
+          1,
+          6
+        ]
+      },
+      "r": 3,
+      "t": 10,
+      "c": "player-white"
+    },
+    "actual": {
+      "r": 3,
+      "t": 10,
+      "c": "player-white",
+      "p": {
+        "player-blue": [
+          7,
+          11,
+          6,
+          4,
+          5,
+          0
+        ],
+        "player-green": [
+          7,
+          8,
+          5,
+          3,
+          5,
+          0
+        ],
+        "player-brown": [
+          8,
+          9,
+          4,
+          9,
+          5,
+          0
+        ],
+        "player-white": [
+          65,
+          3,
+          2,
+          1,
+          2,
+          6
+        ]
+      }
+    }
+  },
+  "terminal": false,
+  "totalHistoricalInputs": 516,
+  "lastTrustedIndex": 160,
+  "currentWorldVersion": "human-405-world-v1"
+}

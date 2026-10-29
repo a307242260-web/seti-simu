@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "seti-human405-learning-validation-v1",
+  "node": {
+    "unitPassed": 145,
+    "unitFailed": 0,
+    "fullFlowPassed": 1,
+    "fullFlowFailed": 0,
+    "log": "reports/ai-foundation-20261023/human405-learning-phase2-20261029-v1.node-tests.log"
+  },
+  "browserTargeted": {
+    "passed": 3,
+    "failed": 0,
+    "log": "reports/ai-foundation-20261023/human405-learning-phase2-20261029-v1.browser-targeted.log"
+  },
+  "browserBroad": {
+    "completed": false,
+    "passedBeforeStop": 5,
+    "failedCheck": "production-browser-full-parity",
+    "error": "Runtime.evaluate timeout",
+    "log": "reports/ai-foundation-20261023/human405-learning-phase2-20261029-v1.browser-broad-partial.log",
+    "note": "Initial attempt was blocked from listening on localhost; permitted retry passed five opening checks before timeout. Targeted checks ran separately and passed; broad suite is not claimed as passed."
+  },
+  "syntaxChecked": [
+    "randomizer/game/ai/card-pick-planning.js",
+    "randomizer/game/ai/card-pick-planning.test.js",
+    "randomizer/game/ai/decision-search.js"
+  ],
+  "candidateFullGameRun": false,
+  "candidateBaselinePromotion": false,
+  "reason": "One teacher root still uses281 native inputs; candidate full-game gate not satisfied."
+}

@@ -1,0 +1,4 @@
+PASS production-search-agent-entry http://127.0.0.1:64771/randomizer/index.html?agent=search
+PASS production-fixed-card-pick-plan http://127.0.0.1:64771/randomizer/index.html
+PASS production-search-hotpath http://127.0.0.1:64771/randomizer/index.html
+SUMMARY browserSmoke passed=3 failed=0 total=3

@@ -1,0 +1,156 @@
+[world] human-405-world-v1 2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c
+[full进度] 第 1 轮 · 第 1 回合 · 决策#1 · 席位=player-white · 动作=choose_card:04955932 · 蓝色玩家=0 绿色玩家=0 棕色玩家=0 白色玩家=0 · 用时=0.063s · 15.9步/s
+[full进度] 第 1 轮 · 第 1 回合 · 决策#10 · 席位=player-blue · 动作=choose_card:032691f3 · 蓝色玩家=0 绿色玩家=0 棕色玩家=0 白色玩家=0 · 用时=1.253s · 8.0步/s
+[full进度] 第 1 轮 · 第 1 回合 · 决策#18 · 席位=player-white · 动作=choose_payment:1b209b35 · 蓝色玩家=10 绿色玩家=6 棕色玩家=8 白色玩家=3 · 用时=2.299s · 7.8步/s
+[full进度] 第 1 轮 · 第 2 回合 · 决策#36 · 席位=player-white · 动作=choose_card:29c580eb · 蓝色玩家=10 绿色玩家=6 棕色玩家=8 白色玩家=3 · 用时=3.353s · 10.7步/s
+[full进度] 第 1 轮 · 第 3 回合 · 决策#51 · 席位=player-blue · 动作=play_card:2df0a317 · 蓝色玩家=10 绿色玩家=11 棕色玩家=8 白色玩家=3 · 用时=4.428s · 11.5步/s
+[full进度] 第 1 轮 · 第 6 回合 · 决策#69 · 席位=player-blue · 动作=research_tech:b5bf67f7 · 蓝色玩家=15 绿色玩家=11 棕色玩家=13 白色玩家=3 · 用时=5.442s · 12.7步/s
+[full进度] 第 2 轮 · 第 1 回合 · 决策#79 · 席位=player-green · 动作=move:2729ba3d · 蓝色玩家=17 绿色玩家=11 棕色玩家=13 白色玩家=3 · 用时=6.684s · 11.8步/s
+[full进度] 第 2 轮 · 第 1 回合 · 决策#87 · 席位=player-green · 动作=choose_target:6377ebf1 · 蓝色玩家=17 绿色玩家=24 棕色玩家=13 白色玩家=3 · 用时=7.712s · 11.3步/s
+[full进度] 第 2 轮 · 第 4 回合 · 决策#93 · 席位=player-white · 动作=card_corner:6785c989 · 蓝色玩家=17 绿色玩家=24 棕色玩家=15 白色玩家=3 · 用时=9.282s · 10.0步/s
+[full进度] 第 2 轮 · 第 7 回合 · 决策#109 · 席位=player-brown · 动作=place_data:50a9ac16 · 蓝色玩家=17 绿色玩家=27 棕色玩家=15 白色玩家=8 · 用时=10.383s · 10.5步/s
+[full进度] 第 2 轮 · 第 11 回合 · 决策#125 · 席位=player-white · 动作=pass:a1f33c73 · 蓝色玩家=17 绿色玩家=27 棕色玩家=18 白色玩家=10 · 用时=11.492s · 10.9步/s
+[full进度] 第 3 轮 · 第 1 回合 · 决策#145 · 席位=player-blue · 动作=choose_target:e695bb51 · 蓝色玩家=19 绿色玩家=30 棕色玩家=18 白色玩家=10 · 用时=12.517s · 11.6步/s
+[full进度] 第 3 轮 · 第 4 回合 · 决策#155 · 席位=player-green · 动作=quick_trade:ee5652be · 蓝色玩家=19 绿色玩家=30 棕色玩家=20 白色玩家=10 · 用时=13.536s · 11.5步/s
+[full进度] 第 3 轮 · 第 4 回合 · 决策#163 · 席位=player-green · 动作=move:cc916f6c · 蓝色玩家=19 绿色玩家=30 棕色玩家=20 白色玩家=10 · 用时=14.668s · 11.1步/s
+[full进度] 第 3 轮 · 第 6 回合 · 决策#180 · 席位=player-white · 动作=play_card:cc286ace · 蓝色玩家=19 绿色玩家=47 棕色玩家=20 白色玩家=10 · 用时=15.951s · 11.3步/s
+[full进度] 第 3 轮 · 第 8 回合 · 决策#192 · 席位=player-white · 动作=choose_payment:55e62302 · 蓝色玩家=19 绿色玩家=49 棕色玩家=20 白色玩家=10 · 用时=16.958s · 11.3步/s
+[full进度] 第 3 轮 · 第 10 回合 · 决策#208 · 席位=player-white · 动作=quick_trade:f385e2ac · 蓝色玩家=19 绿色玩家=52 棕色玩家=20 白色玩家=10 · 用时=18.057s · 11.5步/s
+[full进度] 第 3 轮 · 第 13 回合 · 决策#219 · 席位=player-white · 动作=quick_trade:f385e2ac · 蓝色玩家=19 绿色玩家=52 棕色玩家=20 白色玩家=24 · 用时=19.133s · 11.4步/s
+[full进度] 第 3 轮 · 第 15 回合 · 决策#242 · 席位=player-white · 动作=pass:a1f33c73 · 蓝色玩家=19 绿色玩家=52 棕色玩家=20 白色玩家=29 · 用时=20.313s · 11.9步/s
+[full进度] 第 4 轮 · 第 2 回合 · 决策#252 · 席位=player-white · 动作=choose_reward:7d165d38 · 蓝色玩家=19 绿色玩家=52 棕色玩家=20 白色玩家=39 · 用时=21.345s · 11.8步/s
+[full进度] 第 4 轮 · 第 6 回合 · 决策#262 · 席位=player-white · 动作=quick_trade:df811f99 · 蓝色玩家=19 绿色玩家=52 棕色玩家=20 白色玩家=43 · 用时=22.816s · 11.5步/s
+[full进度] 第 4 轮 · 第 8 回合 · 决策#281 · 席位=player-blue · 动作=play_card:cc7c8ad5 · 蓝色玩家=19 绿色玩家=52 棕色玩家=20 白色玩家=43 · 用时=23.943s · 11.7步/s
+[full进度] 第 4 轮 · 第 10 回合 · 决策#297 · 席位=player-green · 动作=research_tech:f86fc96a · 蓝色玩家=21 绿色玩家=52 棕色玩家=20 白色玩家=50 · 用时=24.956s · 11.9步/s
+[full进度] 第 4 轮 · 第 12 回合 · 决策#312 · 席位=player-white · 动作=analyze:c4264d3c · 蓝色玩家=25 绿色玩家=54 棕色玩家=20 白色玩家=50 · 用时=25.974s · 12.0步/s
+[full进度] 第 4 轮 · 第 16 回合 · 决策#321 · 席位=player-white · 动作=pass:a1f33c73 · 蓝色玩家=25 绿色玩家=54 棕色玩家=20 白色玩家=55 · 用时=26.975s · 11.9步/s
+[full进度] 第 4 轮 · 第 18 回合 · 决策#327 · 席位=player-blue · 动作=play_card:3b8ed751 · 蓝色玩家=25 绿色玩家=54 棕色玩家=20 白色玩家=55 · 用时=28.347s · 11.5步/s
+[full进度] 第 4 轮 · 第 20 回合 · 决策#333 · 席位=player-blue · 动作=play_card:273d4888 · 蓝色玩家=25 绿色玩家=54 棕色玩家=20 白色玩家=55 · 用时=29.35s · 11.3步/s
+[full进度] 第 4 轮 · 第 22 回合 · 决策#344 · 席位=player-blue · 动作=place_data:01c038e2 · 蓝色玩家=25 绿色玩家=54 棕色玩家=20 白色玩家=55 · 用时=30.853s · 11.1步/s
+[full进度] 第 4 轮 · 第 22 回合 · 决策#359 · 席位=player-blue · 动作=accept_optional_effect:51f32320 · 蓝色玩家=41 绿色玩家=54 棕色玩家=20 白色玩家=55 · 用时=31.868s · 11.3步/s
+
+===== full（seti-free-analyze-v1）=====
+步骤=372 终局=true 耗时=32.6s
+均分=58 各席=player-blue=69 player-green=72 player-brown=20 player-white=71
+  player-blue 行动族={"choose_card":12,"choose_payment":9,"play_card":11,"choose_target":16,"end_turn":16,"research_tech":3,"pass":4,"card_corner":3,"place_data":6,"quick_trade":5,"launch":1,"accept_optional_effect":6,"move":4,"land":1}
+  player-green 行动族={"choose_card":13,"choose_payment":7,"place_data":13,"choose_target":26,"card_corner":5,"research_tech":3,"end_turn":11,"pass":4,"quick_trade":3,"move":5,"industry":2,"land":2,"play_card":4,"analyze":2}
+  player-brown 行动族={"choose_card":10,"place_data":6,"choose_target":10,"research_tech":2,"end_turn":5,"pass":4,"play_card":2,"analyze":1,"card_corner":1}
+  player-white 行动族={"choose_card":16,"choose_payment":16,"card_corner":3,"place_data":18,"choose_target":34,"pass":4,"analyze":3,"end_turn":13,"research_tech":1,"launch":1,"play_card":5,"scan":2,"move":4,"quick_trade":6,"orbit":1,"choose_reward":7}
+白色 quick_trade=6 研究步=[117]
+外星人: 首放 5 次、揭示 1 次
+终局轮=4
+反事实搜索触顶: 0 次（无决策触碰 maxExecutionNodes 预算耗尽）
+
+记录: reports/research/8929fac4.5d1cae64.full.json
+存档: seti-saves/seti-save-research-ai-search-v42-human405-reference-20261029-5d1cae64-full-v192.json
+
+[登记] 版本 ai-search-v42-human405-reference-20261029（head=5d1cae64，baseline=ai-search-v41-baseline-20261029，commits=2 个）
+  记录: reports/research/8929fac4.5d1cae64.full.json
+  存档: seti-saves/seti-save-research-ai-search-v42-human405-reference-20261029-5d1cae64-full-v192.json
+[页面] /private/tmp/seti-human405-v42-reference-20261029-7lcfw4_3/reports/robot-iteration.html
+[报告] 生成 1 份复盘报告
+[复盘报告] reports/iteration/ai-search-v42-human405-reference-20261029/8929fac4.5d1cae64.full.action-log.html
+
+===== 当前世界最佳（完整终局 · human-405-world-v1 · 2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c）=====
+最佳白分: 71（ai-search-v42-human405-reference-20261029 / ai-search-v42-human405-reference-20261029 / 8929fac4.5d1cae64.full · 372 步 · 32.6s · 来源 save-final · 每步 88ms）
+最佳均分: 58（ai-search-v42-human405-reference-20261029 / ai-search-v42-human405-reference-20261029 / 8929fac4.5d1cae64.full · 372 步 · 32.6s · 来源 save-final · 每步 88ms）
+最快全盘（总耗时）: 32ms/步（ai-foundation-dev-00-20261022 / ai-foundation-dev-00-20261022 / 3558b009.2bc7b88c.full · 229 步 · 7.4s · 来源 save-final · 每步 32ms）
+最快全盘（每步均耗时）: 32ms/步（ai-foundation-dev-00-20261022 / ai-foundation-dev-00-20261022 / 3558b009.2bc7b88c.full · 229 步 · 7.4s · 来源 save-final · 每步 32ms）
+
+[警告 91]
+  ! budget-ladder-03-20260913 声明的记录缺失：c1f12df6.6de4067a.full.json
+  ! budget-clone-01-20260913 声明的记录缺失：0397dbca.c0189da2.full.json
+  ! card-terminal-value-20260913 声明的记录缺失：6d617096.22891395.full.json
+  ! counterfactual-identity-20260908 声明的记录缺失：362fa7f3.0b01af15.full.json
+  ! quick-turn-order-20260908 声明的记录缺失：95016f07.438305b4.full.json
+  ! grant-data-route-20260908 声明的记录缺失：1a061690.1501ebfd.full.json
+  ! income-boundary-company-base-20260908 声明的记录缺失：73d04d3a.670441bc.full.json
+  ! income-blind-boundary-20260908 声明的记录缺失：197640a3.f520347d.full.json
+  ! ordinary-movement-demand-20260907 声明的记录缺失：1066a36f.0b586daa.full.json
+  ! company-delayed-allowance-20260907 声明的记录缺失：b347c0e8.9968644b.full.json
+  ! main-goal-movement-20260907 声明的记录缺失：14114d45.77d36854.full.json
+  ! asteroid-movement-modifier-20260907 声明的记录缺失：7feb57c3.96e60c14.full.json
+  ! input-classification-20260907 声明的记录缺失：6eb79d83.18839186.full.json
+  ! visit-progress-read-20260907 声明的记录缺失：2a4865e5.1585d689.full.json
+  ! data-event-contract-20260907 声明的记录缺失：7f66d3e1.c555bc33.full.json
+  ! any-alien-contract-20260907 声明的记录缺失：0b8c855d.0caa713a.full.json
+  ! probe-scan-scope-20260907 声明的记录缺失：ddc98722.1f0d82ec.full.json
+  ! probe-scan-contract-20260907 声明的记录缺失：b48d2904.def25c80.full.json
+  ! trade-confirm-20260907 声明的记录缺失：7ac3da29.de8a4056.full.json
+  ! orbit-visit-trigger-20260907 声明的记录缺失：64334dc7.7613a096.full.json
+  ! probe-location-data-20260907 声明的记录缺失：ac62e0db.a41ae85a.full.json
+  ! final-probe-location-20260907 声明的记录缺失：c292b693.01b4d49e.full.json
+  ! probe-location-read-20260907 声明的记录缺失：beaacd3e.b8be61a5.full.json
+  ! card-launch-limit-20260907 声明的记录缺失：39fc344f.b10ae543.full.json
+  ! projection-isolation-20260907 声明的记录缺失：0eee8b82.744c5cf9.full.json
+  ! alien-card-cancel-20260907 声明的记录缺失：e81fab58.61cc94af.full.json
+  ! shared-leaf-observation-20260907 声明的记录缺失：dd9a1dab.a4453b64.full.json
+  ! policy-plan-evidence-20260906 声明的记录缺失：91f9a83a.73e7b2ca.full.json
+  ! amiba-data-overflow-20260906 声明的记录缺失：25c65ece.795cd6eb.full.json
+  ! company-free-move-20260906 声明的记录缺失：ffb71a57.553e19c6.full.json
+  ! card-trace-owner-20260906 声明的记录缺失：220d6a11.6cd56452.quick-200.json
+  ! card-trace-owner-20260906 声明的记录缺失：220d6a11.6cd56452.full.json
+  ! amiba-region-rule-20260906 声明的记录缺失：857426ea.be6bd7b6.quick-200.json
+  ! amiba-region-rule-20260906 声明的记录缺失：857426ea.be6bd7b6.full.json
+  ! search-statistics-p1-20260906 声明的记录缺失：4e84be21.06738145.quick-200.json
+  ! search-statistics-p1-20260906 声明的记录缺失：4e84be21.06738145.full.json
+  ! observe-decision-r4-20260906 声明的记录缺失：2848eba2.213f34db.quick-200.json
+  ! observe-decision-r4-20260906 声明的记录缺失：2848eba2.213f34db.full.json
+  ! round-data-income-r4-20260906 声明的记录缺失：cdcd5d61.6d67a974.quick-200.json
+  ! score-corner-r4-20260906 声明的记录缺失：7a4c63fd.0d21aebf.quick-200.json
+  ! score-corner-r4-20260906 声明的记录缺失：7a4c63fd.0d21aebf.full.json
+  ! search-deadline-r4-20260906 声明的记录缺失：76d49ed1.8a6ef25e.quick-200.json
+  ! search-deadline-r4-20260906 声明的记录缺失：76d49ed1.8a6ef25e.full.json
+  ! probe-source-r3p1-20260906 声明的记录缺失：c9b29e5a.d969b727.quick-200.json
+  ! probe-source-r3p1-20260906 声明的记录缺失：c9b29e5a.d969b727.full.json
+  ! card-income-id-r3c1-20260906 声明的记录缺失：22cf8cea.cf4280fd.quick-200.json
+  ! card-income-id-r3c1-20260906 声明的记录缺失：22cf8cea.cf4280fd.full.json
+  ! income-reserve-r3i1-20260906 声明的记录缺失：990c007e.082d3e12.quick-200.json
+  ! scan-earth-r3s1-20260906 声明的记录缺失：c3eebca2.4fba7beb.quick-200.json
+  ! scan-earth-r3s1-20260906 声明的记录缺失：c3eebca2.4fba7beb.full.json
+  ! sector-directory-s2-20260906 声明的记录缺失：5216eea5.904acf13.quick-200.json
+  ! sector-directory-s2-20260906 声明的记录缺失：5216eea5.904acf13.full.json
+  ! tile-dependency-r3t1-20260906 声明的记录缺失：6fbffdcf.5ebc336e.quick-200.json
+  ! tile-dependency-r3t1-20260906 声明的记录缺失：6fbffdcf.5ebc336e.full.json
+  ! plan-steps-r3-20260906 声明的记录缺失：e529366a.d7a78140.quick-200.json
+  ! plan-steps-r3-20260906 声明的记录缺失：e529366a.d7a78140.full.json
+  ! blue-future-r2e-20260905 声明的记录缺失：baea50cc.20feca27.quick-200.json
+  ! blue-future-r2e-20260905 声明的记录缺失：baea50cc.20feca27.full.json
+  ! search-result-retention-s1-20260905 声明的记录缺失：1ed8224b.e80ca9e7.quick-200.json
+  ! search-result-retention-s1-20260905 声明的记录缺失：1ed8224b.e80ca9e7.full.json
+  ! conditional-progress-r2c-20260905 声明的记录缺失：39530f19.fda901b9.quick-200.json
+  ! conditional-progress-r2c-20260905 声明的记录缺失：39530f19.fda901b9.full.json
+  ! resource-realization-r2b-20260905 声明的记录缺失：60664a0b.c1b7bd49.quick-200.json
+  ! resource-attribution-r2-20260905 声明的记录缺失：241f6fc0.4f994f86.quick-200.json
+  ! resource-attribution-r2-20260905 声明的记录缺失：241f6fc0.4f994f86.full.json
+  ! terminal-value-r1-20260905 声明的记录缺失：16bce41e.d9283ce5.quick-200.json
+  ! terminal-value-r1-20260905 声明的记录缺失：16bce41e.d9283ce5.full.json
+  ! fold-chain-real 声明的记录缺失：e749439d.0a377f88.full.json
+  ! elig-sum4 声明的记录缺失：3eb9e994.56e9a9c0.full.json
+  ! elig-threshold4 声明的记录缺失：aeaabc4b.3ebcf7f0.full.json
+  ! elig-aligned 声明的记录缺失：81738624.e9b52a49.full.json
+  ! completes-v4-placement 声明的记录缺失：ceddb30f.3c78eed2.full.json
+  ! placement-full 声明的记录缺失：5484d4eb.b8cfb508.full.json
+  ! pure-profit 声明的记录缺失：dd6cc9dd.4e6acd93.full.json
+  ! data-chain-fix 声明的记录缺失：a67b0b40.7de69080.full.json
+  ! place-chain 声明的记录缺失：1bafe69d.b355ccd6.full.json
+  ! unified-restore 声明的记录缺失：38e7df89.5cf59018.full.json
+  ! no-overflow 声明的记录缺失：074c68aa.0da417cc.full.json
+  ! overflow-fixed 声明的记录缺失：91b4195c.ba807548.full.json
+  ! overflow-target 声明的记录缺失：f04f92c6.d68e931b.full.json
+  ! place-trigger-final 声明的记录缺失：3c70096b.5e662798.full.json
+  ! place-data-unified 声明的记录缺失：b2570520.f6398808.full.json
+  ! blue-unified 声明的记录缺失：ef14823c.908a41e7.full.json
+  ! blue-analyze-pre 声明的记录缺失：346fb75c.c741f537.full.json
+  ! design-completion-fix 声明的记录缺失：b631c7f0.7b1c0afd.full.json
+  ! budget-4096-fixed 声明的记录缺失：7c12296c.0fc257dd.full.json
+  ! v4-need-placement 声明的记录缺失：efec250b.f6e4c887.full.json
+  ! v3-income-value 声明的记录缺失：c2f5eda1.0058821c.full.json
+  ! v2-countsgoal-removal 声明的记录缺失：085be66b.eae598e8.full.json
+  ! v1-simplify 声明的记录缺失：1d1505c5.294708a6.full.json
+  ! v0 声明的记录缺失：2c23b9bb.c5e0beab.full.json
+
+[提示 1]
+  · 工作树有未提交改动——记录 gitCommit 取 HEAD，若实验运行于脏树，代码版本与记录可能不完全对应（历史上有脏树运行的记录在注记里标注了 gitCommit 偏差）
+
+下一步：人工核对 versions.json 的 summary/records 注记后，提交记录体系产物（改动即文档，同一次提交）。
