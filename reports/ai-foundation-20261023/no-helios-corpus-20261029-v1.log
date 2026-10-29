@@ -1,0 +1,11 @@
+{"label":"initial-selection","id":"case-001","choices":5,"complete":true,"stopReason":null,"inputs":144,"native":144,"logicalResourceInputs":0,"reusedResourceInputs":0,"states":42,"pending":0,"ms":191.440042}
+{"label":"initial-income","id":"case-003","choices":5,"complete":true,"stopReason":null,"inputs":26,"native":26,"logicalResourceInputs":0,"reusedResourceInputs":0,"states":22,"pending":0,"ms":164.062792}
+{"label":"first-other-company-main","id":"case-008","choices":17,"complete":true,"stopReason":null,"inputs":25,"native":25,"logicalResourceInputs":20,"reusedResourceInputs":0,"states":28,"pending":0,"ms":93.730458}
+{"label":"first-other-company-post-main","id":"case-011","choices":10,"complete":true,"stopReason":null,"inputs":9,"native":9,"logicalResourceInputs":0,"reusedResourceInputs":0,"states":10,"pending":0,"ms":19.698417000000063}
+{"label":"regular-conditional","id":"case-009","choices":1,"complete":true,"stopReason":null,"inputs":5,"native":5,"logicalResourceInputs":8,"reusedResourceInputs":3,"states":6,"pending":0,"ms":21.679250000000025}
+{"label":"round2-main-with-tech","id":"case-062","choices":25,"complete":true,"stopReason":null,"inputs":73,"native":73,"logicalResourceInputs":64,"reusedResourceInputs":18,"states":73,"pending":0,"ms":255.21687499999996}
+{"label":"round3-main-with-reserved","id":"case-105","choices":28,"complete":true,"stopReason":null,"inputs":156,"native":156,"logicalResourceInputs":176,"reusedResourceInputs":90,"states":157,"pending":0,"ms":536.0842080000001}
+{"label":"round4-main","id":"case-152","choices":24,"complete":true,"stopReason":null,"inputs":200,"native":200,"logicalResourceInputs":155,"reusedResourceInputs":51,"states":204,"pending":0,"ms":562.3901249999997}
+{"label":"previous-full-attempt-R1T8-blue","id":"baseline-r1-t8-blue","choices":17,"complete":true,"stopReason":null,"inputs":18,"native":18,"logicalResourceInputs":12,"reusedResourceInputs":6,"states":19,"pending":0,"ms":45.51429199999984}
+{"label":"previous-2s-failure-R2T9-white","id":"baseline-r2-t9-white","choices":21,"complete":true,"stopReason":null,"inputs":91,"native":91,"logicalResourceInputs":105,"reusedResourceInputs":40,"states":92,"pending":0,"ms":169.06333399999994}
+reports/ai-foundation-20261023/no-helios-corpus-20261029-v1.json

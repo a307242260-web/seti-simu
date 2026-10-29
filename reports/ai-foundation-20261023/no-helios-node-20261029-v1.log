@@ -1,0 +1,11 @@
+{"fixedDataPlan":"passed","incomeOptions":6,"selected":1,"greedyPlacement":true,"coldRecovery":true,"productionBorrowMacros":0}
+{"localFinalMarkAndScan":"passed","nativeMarkOptions":4,"retainedMarkOptions":1,"scanPurposes":5,"nativeRecoveryAndRootIsolation":true,"stableRestoreSkipped":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"sharedSearchAgent":"passed","fixture":"case-003","transitions":26,"postMainTransitions":9,"incompleteFixture":"case-062","reuseHits":3,"wholeGames":0}
+{"sharedResourcePrefixes":"passed","goals":8,"pathLength":8,"uniqueInputs":15,"states":16,"sharedInputs":49,"nativeRootAndRecovery":true}
+SUMMARY unit passed=5 failed=0 total=5 time=9.15s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=4

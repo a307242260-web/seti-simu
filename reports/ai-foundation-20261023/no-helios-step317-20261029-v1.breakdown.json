@@ -1,0 +1,1033 @@
+{
+  "schemaVersion": "seti-no-helios-step317-breakdown-v1",
+  "nativeInputs": 97,
+  "countedStates": 99,
+  "searchGraphStates": 44,
+  "planEdges": 43,
+  "branchingStates": 5,
+  "singleAlternativeStates": 13,
+  "boundaryLeaves": 26,
+  "disabledRemoveTechIncomeStarts": 11,
+  "disabledSkillNativeInputs": 0,
+  "rootGoals": [
+    {
+      "actionId": "pass:ac4b4ab2",
+      "summary": "PASS",
+      "target": {
+        "kind": "pass"
+      },
+      "goal": null,
+      "card": null,
+      "cost": 2,
+      "newInputs": null,
+      "targetNode": 1,
+      "bestValue": 78
+    },
+    {
+      "actionId": "card_corner:467bdef2",
+      "summary": "dlc_14.png：弃牌角标",
+      "target": {
+        "cardInstanceId": "card-68-0"
+      },
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-11-0",
+        "incomeBefore": 10,
+        "required": {}
+      },
+      "card": null,
+      "cost": 12,
+      "newInputs": 12,
+      "targetNode": 2,
+      "bestValue": 80
+    },
+    {
+      "actionId": "quick_trade:adfe3e7e",
+      "summary": "2能量 → 1信用点",
+      "target": {
+        "tradeId": "energy-for-credit"
+      },
+      "goal": {
+        "id": "effect:tech:card:card-11-0",
+        "kind": "effect-purpose",
+        "purpose": "tech",
+        "cardId": "card-11-0",
+        "sourceFamily": "play_card",
+        "required": {
+          "credits": 3
+        }
+      },
+      "card": {
+        "cardId": "b_65.webp",
+        "name": "大型强子对撞机"
+      },
+      "cost": 10,
+      "newInputs": 10,
+      "targetNode": 3,
+      "bestValue": 82.5
+    },
+    {
+      "actionId": "quick_trade:adfe3e7e",
+      "summary": "2能量 → 1信用点",
+      "target": {
+        "tradeId": "energy-for-credit"
+      },
+      "goal": {
+        "id": "launch:earth",
+        "kind": "launch",
+        "required": {
+          "credits": 2
+        }
+      },
+      "card": null,
+      "cost": 6,
+      "newInputs": 1,
+      "targetNode": 4,
+      "bestValue": 77
+    },
+    {
+      "actionId": "quick_trade:adfe3e7e",
+      "summary": "2能量 → 1信用点",
+      "target": {
+        "tradeId": "energy-for-credit"
+      },
+      "goal": {
+        "id": "play:card-52-0",
+        "kind": "play_card",
+        "cardId": "card-52-0",
+        "required": {
+          "credits": 2
+        }
+      },
+      "card": {
+        "cardId": "dlc_30.png",
+        "name": "晓号轨道器"
+      },
+      "cost": 6,
+      "newInputs": 3,
+      "targetNode": 5,
+      "bestValue": 76.5
+    },
+    {
+      "actionId": "quick_trade:adfe3e7e",
+      "summary": "2能量 → 1信用点",
+      "target": {
+        "tradeId": "energy-for-credit"
+      },
+      "goal": {
+        "id": "play:card-68-0",
+        "kind": "play_card",
+        "cardId": "card-68-0",
+        "required": {
+          "credits": 2
+        }
+      },
+      "card": {
+        "cardId": "dlc_14.png",
+        "name": "可重复使用火箭"
+      },
+      "cost": 6,
+      "newInputs": 1,
+      "targetNode": 6,
+      "bestValue": 76.5
+    },
+    {
+      "actionId": "quick_trade:adfe3e7e",
+      "summary": "2能量 → 1信用点",
+      "target": {
+        "tradeId": "energy-for-credit"
+      },
+      "goal": {
+        "id": "play:card-70-0",
+        "kind": "play_card",
+        "cardId": "card-70-0",
+        "required": {
+          "credits": 3
+        }
+      },
+      "card": {
+        "cardId": "b_60.webp",
+        "name": "朱诺号探测器"
+      },
+      "cost": 10,
+      "newInputs": 1,
+      "targetNode": 7,
+      "bestValue": 74.5
+    },
+    {
+      "actionId": "quick_trade:adfe3e7e",
+      "summary": "2能量 → 1信用点",
+      "target": {
+        "tradeId": "energy-for-credit"
+      },
+      "goal": {
+        "id": "play:card-80-0",
+        "kind": "play_card",
+        "cardId": "card-80-0",
+        "required": {
+          "credits": 1
+        }
+      },
+      "card": {
+        "cardId": "dlc_1.png",
+        "name": "可重复使用着陆器"
+      },
+      "cost": 2,
+      "newInputs": 1,
+      "targetNode": 8,
+      "bestValue": 78
+    },
+    {
+      "actionId": "quick_trade:adfe3e7e",
+      "summary": "2能量 → 1信用点",
+      "target": {
+        "tradeId": "energy-for-credit"
+      },
+      "goal": {
+        "id": "play:card-81-0",
+        "kind": "play_card",
+        "cardId": "card-81-0",
+        "required": {
+          "credits": 1
+        }
+      },
+      "card": {
+        "cardId": "b_140.webp",
+        "name": "火星轨遒门户"
+      },
+      "cost": 2,
+      "newInputs": 1,
+      "targetNode": 9,
+      "bestValue": 78
+    },
+    {
+      "actionId": "quick_trade:adfe3e7e",
+      "summary": "2能量 → 1信用点",
+      "target": {
+        "tradeId": "energy-for-credit"
+      },
+      "goal": {
+        "id": "play:card-83-0",
+        "kind": "play_card",
+        "cardId": "card-83-0",
+        "required": {
+          "credits": 2
+        }
+      },
+      "card": {
+        "cardId": "b_136.webp",
+        "name": "Wow!讯号"
+      },
+      "cost": 6,
+      "newInputs": 1,
+      "targetNode": 10,
+      "bestValue": 77.5
+    },
+    {
+      "actionId": "quick_trade:952695f9",
+      "summary": "2张牌 → 1信用点",
+      "target": {
+        "tradeId": "cards-for-credit"
+      },
+      "goal": {
+        "id": "scan:sector:sector-1-a",
+        "kind": "scan-flow",
+        "nebulaId": "sector-1-a",
+        "required": {
+          "credits": 1,
+          "energy": 2
+        },
+        "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+      },
+      "card": null,
+      "cost": 8,
+      "newInputs": 8,
+      "targetNode": 11,
+      "bestValue": 78
+    },
+    {
+      "actionId": "quick_trade:952695f9",
+      "summary": "2张牌 → 1信用点",
+      "target": {
+        "tradeId": "cards-for-credit"
+      },
+      "goal": {
+        "id": "scan:sector:sector-2-a",
+        "kind": "scan-flow",
+        "nebulaId": "sector-2-a",
+        "required": {
+          "credits": 1,
+          "energy": 2
+        },
+        "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+      },
+      "card": null,
+      "cost": 8,
+      "newInputs": 2,
+      "targetNode": 12,
+      "bestValue": 78
+    },
+    {
+      "actionId": "quick_trade:952695f9",
+      "summary": "2张牌 → 1信用点",
+      "target": {
+        "tradeId": "cards-for-credit"
+      },
+      "goal": {
+        "id": "scan:sector:sector-3-a",
+        "kind": "scan-flow",
+        "nebulaId": "sector-3-a",
+        "required": {
+          "credits": 1,
+          "energy": 2
+        },
+        "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+      },
+      "card": null,
+      "cost": 8,
+      "newInputs": 2,
+      "targetNode": 13,
+      "bestValue": 78
+    },
+    {
+      "actionId": "quick_trade:952695f9",
+      "summary": "2张牌 → 1信用点",
+      "target": {
+        "tradeId": "cards-for-credit"
+      },
+      "goal": {
+        "id": "scan:sector:sector-4-a",
+        "kind": "scan-flow",
+        "nebulaId": "sector-4-a",
+        "required": {
+          "credits": 1,
+          "energy": 2
+        },
+        "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+      },
+      "card": null,
+      "cost": 8,
+      "newInputs": 2,
+      "targetNode": 14,
+      "bestValue": 78
+    }
+  ],
+  "branchPoints": [
+    {
+      "node": 0,
+      "status": "stable",
+      "alternatives": 14,
+      "goal": null,
+      "edges": [
+        {
+          "actionId": "pass:ac4b4ab2",
+          "summary": "PASS",
+          "target": {
+            "kind": "pass"
+          },
+          "goal": null,
+          "card": null,
+          "cost": 2,
+          "newInputs": null,
+          "targetNode": 1,
+          "bestValue": 78
+        },
+        {
+          "actionId": "card_corner:467bdef2",
+          "summary": "dlc_14.png：弃牌角标",
+          "target": {
+            "cardInstanceId": "card-68-0"
+          },
+          "goal": {
+            "id": "data:income:4",
+            "kind": "income",
+            "targetComputerSlot": 4,
+            "incomeCardId": "card-11-0",
+            "incomeBefore": 10,
+            "required": {}
+          },
+          "card": null,
+          "cost": 12,
+          "newInputs": 12,
+          "targetNode": 2,
+          "bestValue": 80
+        },
+        {
+          "actionId": "quick_trade:adfe3e7e",
+          "summary": "2能量 → 1信用点",
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "goal": {
+            "id": "effect:tech:card:card-11-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-11-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "card": {
+            "cardId": "b_65.webp",
+            "name": "大型强子对撞机"
+          },
+          "cost": 10,
+          "newInputs": 10,
+          "targetNode": 3,
+          "bestValue": 82.5
+        },
+        {
+          "actionId": "quick_trade:adfe3e7e",
+          "summary": "2能量 → 1信用点",
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "goal": {
+            "id": "launch:earth",
+            "kind": "launch",
+            "required": {
+              "credits": 2
+            }
+          },
+          "card": null,
+          "cost": 6,
+          "newInputs": 1,
+          "targetNode": 4,
+          "bestValue": 77
+        },
+        {
+          "actionId": "quick_trade:adfe3e7e",
+          "summary": "2能量 → 1信用点",
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "goal": {
+            "id": "play:card-52-0",
+            "kind": "play_card",
+            "cardId": "card-52-0",
+            "required": {
+              "credits": 2
+            }
+          },
+          "card": {
+            "cardId": "dlc_30.png",
+            "name": "晓号轨道器"
+          },
+          "cost": 6,
+          "newInputs": 3,
+          "targetNode": 5,
+          "bestValue": 76.5
+        },
+        {
+          "actionId": "quick_trade:adfe3e7e",
+          "summary": "2能量 → 1信用点",
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "goal": {
+            "id": "play:card-68-0",
+            "kind": "play_card",
+            "cardId": "card-68-0",
+            "required": {
+              "credits": 2
+            }
+          },
+          "card": {
+            "cardId": "dlc_14.png",
+            "name": "可重复使用火箭"
+          },
+          "cost": 6,
+          "newInputs": 1,
+          "targetNode": 6,
+          "bestValue": 76.5
+        },
+        {
+          "actionId": "quick_trade:adfe3e7e",
+          "summary": "2能量 → 1信用点",
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "goal": {
+            "id": "play:card-70-0",
+            "kind": "play_card",
+            "cardId": "card-70-0",
+            "required": {
+              "credits": 3
+            }
+          },
+          "card": {
+            "cardId": "b_60.webp",
+            "name": "朱诺号探测器"
+          },
+          "cost": 10,
+          "newInputs": 1,
+          "targetNode": 7,
+          "bestValue": 74.5
+        },
+        {
+          "actionId": "quick_trade:adfe3e7e",
+          "summary": "2能量 → 1信用点",
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "goal": {
+            "id": "play:card-80-0",
+            "kind": "play_card",
+            "cardId": "card-80-0",
+            "required": {
+              "credits": 1
+            }
+          },
+          "card": {
+            "cardId": "dlc_1.png",
+            "name": "可重复使用着陆器"
+          },
+          "cost": 2,
+          "newInputs": 1,
+          "targetNode": 8,
+          "bestValue": 78
+        },
+        {
+          "actionId": "quick_trade:adfe3e7e",
+          "summary": "2能量 → 1信用点",
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "goal": {
+            "id": "play:card-81-0",
+            "kind": "play_card",
+            "cardId": "card-81-0",
+            "required": {
+              "credits": 1
+            }
+          },
+          "card": {
+            "cardId": "b_140.webp",
+            "name": "火星轨遒门户"
+          },
+          "cost": 2,
+          "newInputs": 1,
+          "targetNode": 9,
+          "bestValue": 78
+        },
+        {
+          "actionId": "quick_trade:adfe3e7e",
+          "summary": "2能量 → 1信用点",
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "goal": {
+            "id": "play:card-83-0",
+            "kind": "play_card",
+            "cardId": "card-83-0",
+            "required": {
+              "credits": 2
+            }
+          },
+          "card": {
+            "cardId": "b_136.webp",
+            "name": "Wow!讯号"
+          },
+          "cost": 6,
+          "newInputs": 1,
+          "targetNode": 10,
+          "bestValue": 77.5
+        },
+        {
+          "actionId": "quick_trade:952695f9",
+          "summary": "2张牌 → 1信用点",
+          "target": {
+            "tradeId": "cards-for-credit"
+          },
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "card": null,
+          "cost": 8,
+          "newInputs": 8,
+          "targetNode": 11,
+          "bestValue": 78
+        },
+        {
+          "actionId": "quick_trade:952695f9",
+          "summary": "2张牌 → 1信用点",
+          "target": {
+            "tradeId": "cards-for-credit"
+          },
+          "goal": {
+            "id": "scan:sector:sector-2-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-2-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "card": null,
+          "cost": 8,
+          "newInputs": 2,
+          "targetNode": 12,
+          "bestValue": 78
+        },
+        {
+          "actionId": "quick_trade:952695f9",
+          "summary": "2张牌 → 1信用点",
+          "target": {
+            "tradeId": "cards-for-credit"
+          },
+          "goal": {
+            "id": "scan:sector:sector-3-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-3-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "card": null,
+          "cost": 8,
+          "newInputs": 2,
+          "targetNode": 13,
+          "bestValue": 78
+        },
+        {
+          "actionId": "quick_trade:952695f9",
+          "summary": "2张牌 → 1信用点",
+          "target": {
+            "tradeId": "cards-for-credit"
+          },
+          "goal": {
+            "id": "scan:sector:sector-4-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-4-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "card": null,
+          "cost": 8,
+          "newInputs": 2,
+          "targetNode": 14,
+          "bestValue": 78
+        }
+      ]
+    },
+    {
+      "node": 2,
+      "status": "stable",
+      "alternatives": 9,
+      "goal": null,
+      "edges": [
+        {
+          "actionId": "pass:ac4b4ab2",
+          "summary": "PASS",
+          "target": {
+            "kind": "pass"
+          },
+          "goal": null,
+          "card": null,
+          "cost": 1,
+          "newInputs": null,
+          "targetNode": 26,
+          "bestValue": 80
+        },
+        {
+          "actionId": "quick_trade:adfe3e7e",
+          "summary": "2能量 → 1信用点",
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "goal": {
+            "id": "launch:earth",
+            "kind": "launch",
+            "required": {
+              "credits": 2
+            }
+          },
+          "card": null,
+          "cost": 6,
+          "newInputs": 6,
+          "targetNode": 27,
+          "bestValue": 76
+        },
+        {
+          "actionId": "quick_trade:adfe3e7e",
+          "summary": "2能量 → 1信用点",
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "goal": {
+            "id": "play:card-52-0",
+            "kind": "play_card",
+            "cardId": "card-52-0",
+            "required": {
+              "credits": 2
+            }
+          },
+          "card": {
+            "cardId": "dlc_30.png",
+            "name": "晓号轨道器"
+          },
+          "cost": 6,
+          "newInputs": 3,
+          "targetNode": 28,
+          "bestValue": 76
+        },
+        {
+          "actionId": "quick_trade:adfe3e7e",
+          "summary": "2能量 → 1信用点",
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "goal": {
+            "id": "play:card-80-0",
+            "kind": "play_card",
+            "cardId": "card-80-0",
+            "required": {
+              "credits": 1
+            }
+          },
+          "card": {
+            "cardId": "dlc_1.png",
+            "name": "可重复使用着陆器"
+          },
+          "cost": 2,
+          "newInputs": 1,
+          "targetNode": 29,
+          "bestValue": 77
+        },
+        {
+          "actionId": "quick_trade:adfe3e7e",
+          "summary": "2能量 → 1信用点",
+          "target": {
+            "tradeId": "energy-for-credit"
+          },
+          "goal": {
+            "id": "play:card-83-0",
+            "kind": "play_card",
+            "cardId": "card-83-0",
+            "required": {
+              "credits": 2
+            }
+          },
+          "card": {
+            "cardId": "b_136.webp",
+            "name": "Wow!讯号"
+          },
+          "cost": 6,
+          "newInputs": 1,
+          "targetNode": 30,
+          "bestValue": 77
+        },
+        {
+          "actionId": "quick_trade:952695f9",
+          "summary": "2张牌 → 1信用点",
+          "target": {
+            "tradeId": "cards-for-credit"
+          },
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "card": null,
+          "cost": 8,
+          "newInputs": 8,
+          "targetNode": 31,
+          "bestValue": 77
+        },
+        {
+          "actionId": "quick_trade:952695f9",
+          "summary": "2张牌 → 1信用点",
+          "target": {
+            "tradeId": "cards-for-credit"
+          },
+          "goal": {
+            "id": "scan:sector:sector-2-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-2-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "card": null,
+          "cost": 8,
+          "newInputs": 2,
+          "targetNode": 32,
+          "bestValue": 77
+        },
+        {
+          "actionId": "quick_trade:952695f9",
+          "summary": "2张牌 → 1信用点",
+          "target": {
+            "tradeId": "cards-for-credit"
+          },
+          "goal": {
+            "id": "scan:sector:sector-3-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-3-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "card": null,
+          "cost": 8,
+          "newInputs": 2,
+          "targetNode": 33,
+          "bestValue": 77
+        },
+        {
+          "actionId": "quick_trade:952695f9",
+          "summary": "2张牌 → 1信用点",
+          "target": {
+            "tradeId": "cards-for-credit"
+          },
+          "goal": {
+            "id": "scan:sector:sector-4-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-4-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "card": null,
+          "cost": 8,
+          "newInputs": 2,
+          "targetNode": 34,
+          "bestValue": 77
+        }
+      ]
+    },
+    {
+      "node": 3,
+      "status": "decision",
+      "alternatives": 3,
+      "goal": {
+        "id": "effect:tech:card:card-11-0",
+        "kind": "effect-purpose",
+        "purpose": "tech",
+        "cardId": "card-11-0",
+        "sourceFamily": "play_card",
+        "required": {
+          "credits": 3
+        }
+      },
+      "edges": [
+        {
+          "actionId": "choose_target:4fdf614c",
+          "summary": "研究 blue1（蓝槽 2）",
+          "target": {
+            "choiceId": "tech:blue1:slot:2",
+            "tileId": "blue1",
+            "blueSlot": 2
+          },
+          "goal": {
+            "id": "effect:tech:card:card-11-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-11-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "card": {
+            "cardId": "b_65.webp",
+            "name": "大型强子对撞机"
+          },
+          "cost": 1,
+          "newInputs": 1,
+          "targetNode": 23,
+          "bestValue": 82.5
+        },
+        {
+          "actionId": "choose_target:475f1e7c",
+          "summary": "研究 blue3（蓝槽 2）",
+          "target": {
+            "choiceId": "tech:blue3:slot:2",
+            "tileId": "blue3",
+            "blueSlot": 2
+          },
+          "goal": {
+            "id": "effect:tech:card:card-11-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-11-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "card": {
+            "cardId": "b_65.webp",
+            "name": "大型强子对撞机"
+          },
+          "cost": 1,
+          "newInputs": 1,
+          "targetNode": 24,
+          "bestValue": 82
+        },
+        {
+          "actionId": "choose_target:9c2152c4",
+          "summary": "研究 blue4（蓝槽 2）",
+          "target": {
+            "choiceId": "tech:blue4:slot:2",
+            "tileId": "blue4",
+            "blueSlot": 2
+          },
+          "goal": {
+            "id": "effect:tech:card:card-11-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-11-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "card": {
+            "cardId": "b_65.webp",
+            "name": "大型强子对撞机"
+          },
+          "cost": 1,
+          "newInputs": 1,
+          "targetNode": 25,
+          "bestValue": 81.5
+        }
+      ]
+    },
+    {
+      "node": 28,
+      "status": "stable",
+      "alternatives": 2,
+      "goal": null,
+      "edges": [
+        {
+          "actionId": "end_turn:d59ab08c",
+          "summary": "结束回合",
+          "target": {
+            "kind": "end-turn"
+          },
+          "goal": null,
+          "card": null,
+          "cost": 1,
+          "newInputs": null,
+          "targetNode": 40,
+          "bestValue": 75.5
+        },
+        {
+          "actionId": "place_data:50a9ac16",
+          "summary": "放置数据",
+          "target": {
+            "kind": "place-data"
+          },
+          "goal": {
+            "id": "data:blue:1",
+            "kind": "blue-data",
+            "blueSlot": 1,
+            "required": {}
+          },
+          "card": null,
+          "cost": 2,
+          "newInputs": 2,
+          "targetNode": 41,
+          "bestValue": 76
+        }
+      ]
+    },
+    {
+      "node": 35,
+      "status": "stable",
+      "alternatives": 2,
+      "goal": null,
+      "edges": [
+        {
+          "actionId": "end_turn:d59ab08c",
+          "summary": "结束回合",
+          "target": {
+            "kind": "end-turn"
+          },
+          "goal": null,
+          "card": null,
+          "cost": 1,
+          "newInputs": null,
+          "targetNode": 36,
+          "bestValue": 76.5
+        },
+        {
+          "actionId": "place_data:50a9ac16",
+          "summary": "放置数据",
+          "target": {
+            "kind": "place-data"
+          },
+          "goal": {
+            "id": "data:blue:1",
+            "kind": "blue-data",
+            "blueSlot": 1,
+            "required": {}
+          },
+          "card": null,
+          "cost": 2,
+          "newInputs": 2,
+          "targetNode": 37,
+          "bestValue": 77
+        }
+      ]
+    }
+  ],
+  "nativeActionFamilies": {
+    "choose_target": 23,
+    "choose_payment": 19,
+    "end_turn": 13,
+    "choose_card": 10,
+    "play_card": 10,
+    "quick_trade": 7,
+    "place_data": 6,
+    "card_corner": 3,
+    "pass": 2,
+    "launch": 2,
+    "scan": 2
+  },
+  "resourceGoalNewInputs": {
+    "scan:sector:sector-1-a": 16,
+    "effect:tech:card:card-11-0": 13,
+    "data:income:4": 12,
+    "scan:sector:sector-3-a": 8,
+    "launch:earth": 7,
+    "play:card-52-0": 6,
+    "scan:sector:sector-2-a": 4,
+    "scan:sector:sector-4-a": 4,
+    "data:blue:1": 4,
+    "play:card-80-0": 2,
+    "play:card-83-0": 2,
+    "play:card-68-0": 1,
+    "play:card-70-0": 1,
+    "play:card-81-0": 1
+  },
+  "alreadySharedInputs": 74
+}

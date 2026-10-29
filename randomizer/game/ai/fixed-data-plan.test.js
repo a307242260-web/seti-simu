@@ -29,4 +29,16 @@ for(const line of r.lines){assert(!line.borrowPlan);assert(line.edges.every(e=>!
 const graph=port.getResourcePrefixGraph(),forbidden=new Set(r.roots.filter(x=>x.completion==='excluded-by-resource-policy').map(x=>x.actionId));
 const nativeBorrow=borrow.inputPort.enumerateActions({}).find(a=>a.target?.abilityId==='turing_borrow_tech');assert(nativeBorrow);assert(forbidden.has(nativeBorrow.actionId));assert(graph.edges.every(e=>e.actionId!==nativeBorrow.actionId));
 assert.deepEqual(borrow.lifecycle.save().envelope,borrowBefore);port.close();borrow.dispose();p.close();c.dispose();
+// The production policy disables Helios at the root and every successor,
+// while a save already inside its native choice still has a legal continuation.
+{
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261029-reorg-v1/step317-20261029-v1.json'))),seed=f.source.seed;
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const comp=k.composition;assert(comp.lifecycle.restore(f.compositionEnvelope).ok);
+ const saved=comp.lifecycle.save().envelope,q=createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:0});q.setResourcePlanning(true);q.setCardPickPlanning(true);const n=q.openRoot(),native=n.legalActions.find(a=>a.family==='industry'&&a.target?.abilityId==='helios_remove_tech_income');assert(native);
+ const spec=q.resourceSpec(n);assert(spec.excludedActionIds.includes(native.actionId));assert(!spec.plans.some(p=>p.goal.abilityId==='helios_remove_tech_income'));
+ const seen=new Set(),wrapped={...q,identity(node){for(const a of node.legalActions)if(node.status==='stable'&&a.family==='industry'&&a.target?.abilityId==='helios_remove_tech_income'){seen.add(a.actionId);assert(q.resourceSpec(node).excludedActionIds.includes(a.actionId));}return q.identity(node);}};
+ const r=searchDecision({port:wrapped,root:n,evaluate:createStateValueEvaluator(f.seatId),...agent.OPTIONS,budget:agent.BUDGET});assert(r.complete);assert(r.diagnostics.disabledRemoveTechIncomeStarts>0);assert(seen.size>0);assert(q.getResourcePrefixGraph().edges.every(e=>!seen.has(e.actionId)));assert(r.lines.every(n=>n.edges.every(e=>e.resourcePlan?.goal.abilityId!=='helios_remove_tech_income')));assert.deepEqual(comp.lifecycle.save().envelope,saved);q.close();
+ const submitted=native.phase==='quick'?comp.inputPort.submitQuickAction(native):comp.inputPort.submitAction(native);assert(submitted.ok);const pending=comp.lifecycle.save().envelope,decision=comp.inspect().session.decision;assert(decision.choices.length>0);
+ const cold=createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:0}),root=cold.openRoot(),continued=searchDecision({port:cold,root,evaluate:createStateValueEvaluator(f.seatId),...agent.OPTIONS,budget:agent.BUDGET});assert(continued.complete);assert(root.legalActions.some(a=>a.actionId===continued.actionId),'an already committed native choice remains completable');assert.deepEqual(comp.lifecycle.save().envelope,pending);cold.close();comp.dispose();
+}
 console.log(JSON.stringify({fixedDataPlan:'passed',incomeOptions:6,selected:1,greedyPlacement:true,coldRecovery:true,productionBorrowMacros:0}));

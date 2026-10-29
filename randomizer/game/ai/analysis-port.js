@@ -667,7 +667,7 @@
         }
       }
       const owner=state.players.players.find(p=>p.id===seatId);
-      const excluded=node.status==="stable"?node.legalActions.filter(a=>a.family==="industry"&&a.target?.abilityId==="turing_borrow_tech"||plans.some(p=>p.goal.kind==="effect-purpose"&&p.firstActionId===a.actionId)||a.family==="play_card"&&plans.some(p=>p.goal.cardId===a.target.cardInstanceId&&p.goal.paidRewardPolicy)||resourceDemand.isPreparation(a)||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
+      const excluded=node.status==="stable"?node.legalActions.filter(a=>a.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(a.target?.abilityId)||plans.some(p=>p.goal.kind==="effect-purpose"&&p.firstActionId===a.actionId)||a.family==="play_card"&&plans.some(p=>p.goal.cardId===a.target.cardInstanceId&&p.goal.paidRewardPolicy)||resourceDemand.isPreparation(a)||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
       const forceIncome=node.status==="stable"&&incomeTail?.selected&&plans.some(p=>p.goal.kind==="income");
       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans:forceIncome?plans.filter(p=>p.goal.kind==="income"):plans,
         ...(incomeTail?{incomeTail}:{}),

@@ -83,7 +83,7 @@
       if(purpose)add({id:`effect:${purpose}:card:${card.id}`,kind:'effect-purpose',purpose,cardId:card.id,sourceFamily:'play_card',required:effects.getCardPlayCost(card)});
     }
     for(const action of actions){
-      if(action.family==='industry'&&['helios_remove_tech_income','mission_publicity_pick_income'].includes(action.target?.abilityId)){
+      if(action.family==='industry'&&action.target?.abilityId==='mission_publicity_pick_income'){
         add({id:`effect:income:industry:${action.target.abilityId}`,kind:'effect-purpose',purpose:'income',abilityId:action.target.abilityId,sourceFamily:'industry',required:{}});
       }
     }

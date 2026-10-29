@@ -1,0 +1,23 @@
+{
+  "complete": true,
+  "nativeInputs": 97,
+  "states": 99,
+  "ms": 263.363917,
+  "sameAction": false,
+  "sameValue": false,
+  "rootAlternatives": 14,
+  "disabledSkillNativeExecutions": 0,
+  "families": {
+    "choose_target": 23,
+    "choose_payment": 19,
+    "end_turn": 13,
+    "choose_card": 10,
+    "play_card": 10,
+    "quick_trade": 7,
+    "place_data": 6,
+    "card_corner": 3,
+    "pass": 2,
+    "launch": 2,
+    "scan": 2
+  }
+}

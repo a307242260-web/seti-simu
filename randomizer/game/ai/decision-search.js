@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v40";
+  const VERSION = "seti-complete-decision-search-v41";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -78,7 +78,7 @@
       roots: hit.roots, lines: [], unresolved: [],
       diagnostics: { valueEvaluations,valueCacheHits, finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes: 0, movementDirectionsExcluded: 0, routeGeometryNodes: 0,
         nativeExecutions:0,logicalResourceInputs:0,sharedResourceInputHits:0,sharedResourceInternalStates:0,
-        fixedDataChoiceStates:0,fixedDataChoicesExcluded:0,branchingStates:0,singleAlternativeStates:0,disabledBorrowStarts:0,
+        fixedDataChoiceStates:0,fixedDataChoicesExcluded:0,branchingStates:0,singleAlternativeStates:0,disabledBorrowStarts:0,disabledRemoveTechIncomeStarts:0,
         transitions: 0, nodes: 1, equivalents: 0, selectionMacros: 0, peakFrontier: 0, graphNodes: 1, certificateNodes: 0,
         postMainOptimalPlans: 0, postMainOptimalPlanSteps: 0,
         dominancePrunes: 0, resourceDominance: resourceDominance
@@ -769,6 +769,7 @@
         branchingStates:nodes.filter(e=>!BOUNDARIES.has(e.node.status)&&e.alternativeCount>1).length,
         singleAlternativeStates:nodes.filter(e=>!BOUNDARIES.has(e.node.status)&&e.alternativeCount===1).length,
         disabledBorrowStarts:nodes.reduce((n,e)=>n+e.node.legalActions.filter(a=>resourcePlanning&&a.family==="industry"&&a.target?.abilityId==="turing_borrow_tech").length,0),
+        disabledRemoveTechIncomeStarts:nodes.reduce((n,e)=>n+e.node.legalActions.filter(a=>resourcePlanning&&a.family==="industry"&&a.target?.abilityId==="helios_remove_tech_income").length,0),
         scanPurposePlans:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.resourcePlan?.goal.kind==="scan-flow").length,0),
         resourceGoalPlans:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.resourcePlan).length,0),
         resourcePreparationInputs:nodes.reduce((n,e)=>n+e.edges.filter(x=>x.resourcePlan).reduce((v,x)=>v+x.cost,0),0),

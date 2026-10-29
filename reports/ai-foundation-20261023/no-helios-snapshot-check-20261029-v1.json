@@ -1,0 +1,10 @@
+{
+  "baseCommit": "cf81ef984a1037c510200792d368e8f7a5ae53ae",
+  "testedSnapshot": "/private/tmp/seti-no-helios-20261029-0q9xx3eg",
+  "unchangedBaseFilesVerified": 4401,
+  "changedBaseFilesVerified": 8,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "explicitFiles": 35,
+  "runtimeImportsBoundToFinalSource": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot."
+}

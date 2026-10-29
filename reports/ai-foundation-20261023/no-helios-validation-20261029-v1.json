@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "seti-no-helios-validation-v1",
+  "searchVersion": "seti-complete-decision-search-v41",
+  "sourceHashes": {
+    "randomizer/game/ai/resource-demand.js": "6882588e75d44e4f66ce77fd1e0f32e091c79b78feea2ff4e532586766352b9a",
+    "randomizer/game/ai/analysis-port.js": "2a070c2d1ead4b59b8ab6782a6d206db7df2d1a2ec5e70ed13f9343240afefec",
+    "randomizer/game/ai/decision-search.js": "93063cd5bb0fd10859735665791b057e51c947732aaaa1beba02bb11ea5d6c00",
+    "randomizer/game/ai/fixed-data-plan.test.js": "6c46bea3e44f428c6172cc12744c5f4cf4c74c82bd76c5e6c5e79fc0d2a86aaa",
+    "randomizer/index.html": "6739b901a8af6b8b47ff13ba82c15c505bb27f5652d9fa75ca2836d02e8ae7c7"
+  },
+  "checks": {
+    "rootAndAllSuccessorInitiationsDisabled": true,
+    "catalogHasNoHeliosGoal": true,
+    "nativeLegalFactsRemain": true,
+    "alreadySubmittedChoiceCompletable": true,
+    "rootAndRngUnchanged": true,
+    "oldBorrowBanRetained": true
+  },
+  "node": {
+    "passed": 5,
+    "failed": 0
+  },
+  "browser": {
+    "passed": 3,
+    "failed": 0
+  },
+  "coldCorpus": {
+    "passed": 10,
+    "failed": 0,
+    "sameActionsAndValues": true,
+    "allCurrentSamplesWithin600ms256Inputs": true
+  },
+  "step317": {
+    "beforeInputs": 602,
+    "afterInputs": 97,
+    "afterMs": 263.363917,
+    "disabledSkillInputs": 0,
+    "branchingStates": 5,
+    "rootPurposes": 14,
+    "windowValueBefore": 84,
+    "windowValueAfter": 82.5,
+    "actionChangedAsExpected": true
+  },
+  "valueAudit": {
+    "status": "known-preexisting-failure",
+    "message": "decisionObs aomomo frozen-object write; independent search value checks passed"
+  },
+  "fullGameRun": false,
+  "logs": {
+    "before": "reports/ai-foundation-20261023/no-helios-before-20261029-v1.log",
+    "node": "reports/ai-foundation-20261023/no-helios-node-20261029-v1.log",
+    "browser": "reports/ai-foundation-20261023/no-helios-browser-20261029-v1.log",
+    "valueAudit": "reports/ai-foundation-20261023/no-helios-valueAudit-20261029-v1.log",
+    "corpus": "reports/ai-foundation-20261023/no-helios-corpus-20261029-v1.log",
+    "step317": "reports/ai-foundation-20261023/no-helios-step317-20261029-v1.log"
+  }
+}
