@@ -1,0 +1,57 @@
+{
+  "baseCommit": "f0615b17e618ad3e6fec9de9b815ba7323d94be9",
+  "snapshot": "/private/tmp/seti-budget1024-20261029-3oqamvjx",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "scope": "Register the one 1024/2s full attempt and exact R2T9 timeout evidence, preserve existing records and add the next single-decision fixture. AI runtime unchanged.",
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "894b1c57fa0880a1ccdbc5df2aae75200a4b7a657d25f7d4e761d810651f5e1f",
+      "path": "/private/tmp/seti-budget1024-center-working-overlay-20261029/versions.json",
+      "sha256": "094ffd80d38abf7f4f9d599cd9b43054c868b2ef8767abff3a26d638ef1b0855"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "3039d918684778d9265ef604c0b5a2ef8927c7f9317b67987c4a294ffd263061",
+      "path": "/private/tmp/seti-budget1024-center-working-overlay-20261029/registry.json",
+      "sha256": "5419c2f64128e458f65c5fe2ec50a87981304efa46550f587ba27c94cdb7d9f3"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "bc34407e1f5e519a1f6c731f1273160be1a6e072f300c4ca67defa943ecdebfc",
+      "path": "/private/tmp/seti-budget1024-center-working-overlay-20261029/robot-iteration.html",
+      "sha256": "bbdd6dd484504ba67ed7860f4a708a5e11479e0617061b14eabb76cd81f064b5"
+    }
+  },
+  "files": {
+    "adhoc/ai-decision-corpus-20261029-budget1024-v1/baseline-r2-t9-white-20261029-v1.json": "01b96b913feeb9c7832d8767ec4df7257abfa0d292f4ee18967f1b2e7c75175f",
+    "adhoc/deliver-budget1024-results-20261029-v1.py": "86fa5337e8861674012c6c6b45da77a3cd8c0ff9ffd7143e9276190a11badea8",
+    "adhoc/finalize-budget1024-baseline-20261029-v1.js": "92275f3b49586fb2583465c0ea2400191d698809d6ee300ecab6d14b3a92a3b1",
+    "adhoc/finalize-budget1024-results-delivery-20261029-v1.py": "d81cc077a22daa4be37623e4427f770f8d5147af1e132c5467396ff1dd6bfd76",
+    "adhoc/preserve-budget1024-center-worktree-20261029-v1.js": "702fe2b5f726aafc4fa5b6f727acb93bad5ab944165590d6ca3fd869e08e49a3",
+    "docs/ai-development-workflow.md": "f737b4df6307ca4520b8a95ecf9a00060b282fa82a1ee988c3fd9a373d17bcc1",
+    "docs/ai-search-budget1024-20261029.md": "a5f8142c91e30cd4f5a199648c412b42306b2e0d8ab5ba8132be3b3a0eb6037c",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.aggregation-validation.json": "cd75a1806347d8ac0faa8f84124b9e0679f5e496273d18baaf30ad82013568fc",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.centerBuild.log": "34e41e933dd5a87bacdee00b3016168628a68c1cc4ef68e5c17728aee1a9c917",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.delivery-validation.json": "d265b19a728668e9a5b160d5e0fc52567355205d25d70cdcc24546989b89a934",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.failed-checkpoint.json": "9c0875e658df924c44f6613b15e38c0e8b3ea11958d7776c277b9ad0f7f1098b",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.failure.json": "4fdfa55e824e87dcd28a8c4ef9dc7e9df7a309a47e61314394fe4143be5315ff",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.manifest.json": "538103d516c0eb3fb7dfed68bb8ddb2c9e5149ae3b5cccdc5c0e4b98bba5131f",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.observer-summary.json": "6a31875d7253ec15a2717dd42a8796ec3940e5506efe3255c21e34e592858a3d",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.recovery-validation.json": "ff9abd823992b403e901e15083e383b0110d494908e322d757b3c5b6f29a5b7e",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.registration.log": "d3220fb23cb48bb508c7ab507a865372533627bed6fa6c79d785d3aa72b56046",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.reportTests.log": "23ef97c9e1fcc10a45c67bf77ea820f726d25811482d3063ceaa57d0137617b1",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.run.log": "180ecd34395fb4b80ea0bb9cecfd47927225f1307bedbda8dfa1fdb3221f6294",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.summary.json": "6c27f115e34261f45515b4ca6d9e50db94a96484b152dd288fef3843947c5733",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.telemetry.jsonl": "3e7c2e6024e3c3a8c0e833301d60567530e4812f36de35a55a0d7f19e2305607",
+    "reports/iteration/ai-search-v38-budget1024-20261029/559718b4.f0615b17.full.action-log.html": "7dd3a795a5250446bf479ac14175acb9856b5fa470b432f2dbe3955562c500e4",
+    "reports/iteration/registry.json": "9835347415ee09bcd77574130af7348c4377645e02ef120e704469d8e8b29b3d",
+    "reports/iteration/versions.json": "854653ffe2137f85ea78f100597f565355931aba8cc4aa9637480b8dd644c140",
+    "reports/research/559718b4.f0615b17.full.json": "c8bcf429f013f8956667d8621d7f8cf78f27818cac43174f94eeaab9680efd6a",
+    "reports/research/559718b4.f0615b17.full.json.decisions.jsonl": "c07a8c20482447bae189e2ac404332de8a918c4f3af2378da450fee93f93a6f5",
+    "reports/robot-iteration.html": "f9f583e61aed975118b9d92473c2e99c1bc8f92882cf29cf2540cf742ab0e33d",
+    "seti-saves/seti-save-research-ai-search-v38-budget1024-20261029-f0615b17-full-failed-v70.json": "761c310de66802cebce1d1b19f2e039da4edf661a4fdc295ef7db3e16dd54a89"
+  },
+  "sourceBoundReports": [
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.summary.json",
+    "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.delivery-validation.json"
+  ]
+}

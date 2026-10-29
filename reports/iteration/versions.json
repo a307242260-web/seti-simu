@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "ai-search-v38-budget1024-20261029",
+      "name": "搜索v38 1024次／2秒试跑（未完成）",
+      "date": "2026-10-29",
+      "baseline": null,
+      "head": "f0615b17",
+      "commits": [
+        "f0615b17"
+      ],
+      "summary": "1024次模拟、2秒搜索限时，九点验收通过；单局完成152步约15.46秒、98步计划复用，第2轮第9回合白席在595次输入时触发2秒时限，余21个未闭合节点。未终局，无正式分数，不能作为完整baseline。",
+      "records": {
+        "559718b4.f0615b17.full.json": {}
+      },
+      "roadmap": null,
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "baselineEligible": false
+    },
+    {
       "id": "ai-search-v38-baseline-20261029",
       "name": "搜索v38 单局尝试（未完成）",
       "date": "2026-10-29",

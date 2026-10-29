@@ -1,0 +1,27 @@
+{
+  "status": "passed",
+  "rootAndRngExact": true,
+  "legalEnvelopesMatch": true,
+  "confirmedReplayInputs": 152,
+  "previousRunMatchingPrefix": 76,
+  "failedDecisionCommitted": false,
+  "terminal": false,
+  "nativeInputFamilies": {
+    "launch": 16,
+    "play_card": 22,
+    "pass": 28,
+    "choose_card": 19,
+    "quick_trade": 22,
+    "scan": 6,
+    "choose_target": 378,
+    "card_corner": 3,
+    "research_tech": 28,
+    "end_turn": 33,
+    "place_data": 20,
+    "analyze": 8,
+    "move": 6,
+    "choose_payment": 6
+  },
+  "fixturePath": "adhoc/ai-decision-corpus-20261029-budget1024-v1/baseline-r2-t9-white-20261029-v1.json",
+  "fixtureSha256": "01b96b913feeb9c7832d8767ec4df7257abfa0d292f4ee18967f1b2e7c75175f"
+}

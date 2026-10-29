@@ -1,0 +1,6 @@
+research world resume tests passed
+{"incompleteSearchAttempts":2,"aiGenerationIsolation":"passed","v2Versions":9,"v2CompleteGames":9,"searchCompleteGames":0,"templateQueries":3,"registrationRejects":2}
+{"compactReport":"passed","steps":253,"rounds":4,"richParity":true,"sourceSaveUnchanged":true}
+SUMMARY unit passed=3 failed=0 total=3 time=10.75s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER training/reporting tests=3

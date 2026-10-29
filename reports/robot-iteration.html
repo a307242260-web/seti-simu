@@ -82,13 +82,13 @@ footer{color:var(--muted);font-size:11.5px;margin-top:30px;border-top:1px solid 
 "use strict";
 const ALL_REGISTRY = {
   "schemaVersion": "seti-robot-iteration-registry-build-v1",
-  "builtAt": "2026-10-29T07:39:51.319Z",
+  "builtAt": "2026-10-29T08:06:05.111Z",
   "board": {
     "seed": "seti-free-analyze-v1",
     "name": "免电分析盘面",
     "note": "深空探测=分析免电；4 人局 weak_start。所有分数以完整终局总分为准（2026-08-20 用户规定）；有存档的终局运行由 build 工具从存档 finalScores 读取（标注 save-final）。"
   },
-  "headCommit": "95a14093",
+  "headCommit": "f0615b17",
   "defaultGeneration": "v2",
   "generations": {
     "v1": {
@@ -319,8 +319,8 @@ const ALL_REGISTRY = {
           }
         ]
       },
-      "versionCount": 10,
-      "recordCount": 10
+      "versionCount": 11,
+      "recordCount": 11
     }
   },
   "currentBaseline": "ai-foundation-dev-07-20261022",
@@ -439,6 +439,225 @@ const ALL_REGISTRY = {
     ]
   },
   "versions": [
+    {
+      "id": "ai-search-v38-budget1024-20261029",
+      "aiGeneration": "v2",
+      "name": "搜索v38 1024次／2秒试跑（未完成）",
+      "date": "2026-10-29",
+      "baseline": null,
+      "head": "f0615b17",
+      "commits": [
+        {
+          "hash": "f0615b17",
+          "date": "2026-10-29",
+          "subject": "将搜索单局试跑额度调整为1024次和2秒"
+        }
+      ],
+      "summary": "1024次模拟、2秒搜索限时，九点验收通过；单局完成152步约15.46秒、98步计划复用，第2轮第9回合白席在595次输入时触发2秒时限，余21个未闭合节点。未终局，无正式分数，不能作为完整baseline。",
+      "diffStat": "26 files changed, 2247 insertions(+), 3 deletions(-)",
+      "diffFiles": [
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-baseline-r1-t8-blue-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-001-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-003-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-008-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-009-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-011-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-062-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-105-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-152-20261029-v1.raw.json.gz",
+          "insertions": null,
+          "deletions": null
+        },
+        {
+          "file": "adhoc/audit-budget1024-corpus-20261029-v1.js",
+          "insertions": 43,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/budget1024-snapshot-20261029.json",
+          "insertions": 37,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/deliver-budget1024-20261029-v1.py",
+          "insertions": 110,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/finalize-budget1024-baseline-20261029-v1.js",
+          "insertions": 44,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/finalize-budget1024-validation-20261029-v1.py",
+          "insertions": 27,
+          "deletions": 0
+        },
+        {
+          "file": "adhoc/observe-budget1024-baseline-20261029-v1.cjs",
+          "insertions": 39,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-development-workflow.md",
+          "insertions": 2,
+          "deletions": 0
+        },
+        {
+          "file": "docs/ai-search-agent-contract-20261023.md",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "docs/ai-search-budget1024-20261029.md",
+          "insertions": 7,
+          "deletions": 0
+        },
+        {
+          "file": "randomizer/game/ai/search-agent.js",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "randomizer/index.html",
+          "insertions": 1,
+          "deletions": 1
+        },
+        {
+          "file": "reports/ai-foundation-20261023/budget1024-browser-20261029-v1.log",
+          "insertions": 4,
+          "deletions": 0
+        },
+        {
+          "file": "reports/ai-foundation-20261023/budget1024-corpus-20261029-v1.json",
+          "insertions": 1720,
+          "deletions": 0
+        },
+        {
+          "file": "reports/ai-foundation-20261023/budget1024-node-20261029-v1.log",
+          "insertions": 9,
+          "deletions": 0
+        },
+        {
+          "file": "reports/ai-foundation-20261023/budget1024-snapshot-check-20261029-v1.json",
+          "insertions": 10,
+          "deletions": 0
+        },
+        {
+          "file": "reports/ai-foundation-20261023/budget1024-validation-20261029-v1.json",
+          "insertions": 189,
+          "deletions": 0
+        },
+        {
+          "file": "tools/browser-smoke-inventory.js",
+          "insertions": 3,
+          "deletions": 0
+        }
+      ],
+      "results": [
+        {
+          "recordFile": "559718b4.f0615b17.full.json",
+          "recordPath": "reports/research/559718b4.f0615b17.full.json",
+          "mode": "full",
+          "steps": 152,
+          "stepsLimit": null,
+          "terminal": false,
+          "wallMs": 15459.510959,
+          "flags": {
+            "compactReplay": true
+          },
+          "policyVersion": "seti-search-agent-v2/seti-complete-decision-search-v38/seti-linear-state-value-v1",
+          "agentType": "search",
+          "aiGeneration": "v2",
+          "gitCommit": "f0615b17",
+          "createdAt": "2026-10-29T08:02:31.371Z",
+          "resumeStep": 0,
+          "seed": "seti-free-analyze-v1",
+          "world": {
+            "schemaVersion": "seti-initial-world-identity-v1",
+            "seed": "seti-free-analyze-v1",
+            "worldVersion": "human-405-world-v1",
+            "activePlayerCount": 4,
+            "fingerprint": "2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c",
+            "components": {
+              "aliens": "46dbcc69e2fca49b3b1fd3d6e93cbdf73ec6695f58026c25eae294c6af482de2",
+              "cards": "e5427e2ac14ea93859f820681a6957c5cdf3bb5f0c61a504927a7b3442a04d4a",
+              "data": "93de9d01f6181e06fe75921991c985c4ab114e4d6afbc0d588cf050eebd1f1cd",
+              "finalScoring": "e8a14ecc0f4b523158eefbae19cee10874f65083ef2cb060aa6badf9540da7f4",
+              "match": "649e18d32a5c75917283b0a5d0dbcbb0c322d2f3fb7be33b908e999b4e275e9d",
+              "pieces": "48fc4f95399f73f776acfb0e66ca0b2cb26ecf492f0da3ef22c8b991dc1a7cfb",
+              "planets": "0bb3f521d71557e6644959aa1486bc3f33f4421e4a036b585c6aa2e90cfba61a",
+              "players": "81760effc03c474b420cd154875a98942f428d4e82643d3f4c1d65b8a4358482",
+              "solarSystem": "4af3d4ee325a2d2af150edfeaf424470765c60fb58083d26bb48f9552713d0ed",
+              "tech": "b19ca115b34330eafd6438167cf641aca1a00a8dc88a3c128122cdf217828d0c",
+              "turn": "a914d3e31db1534529daec3bef5d379aed98c07fe7fc67cc320b65c8987de2b2",
+              "initialOffers": "76eacd007efd30ddff4d1a2e72ee375e3b45ea420b83a9fcc31ff87ae7e90879",
+              "initialRandom": "748c814e83ed7ffbc0d68c14175649c97eef71a94eeeff4605b52f779e729399"
+            }
+          },
+          "note": null,
+          "scores": {
+            "player-blue": null,
+            "player-green": null,
+            "player-brown": null,
+            "player-white": null
+          },
+          "avgScore": null,
+          "scoreSource": "record-summary",
+          "savePath": "seti-saves/seti-save-research-ai-search-v38-budget1024-20261029-f0615b17-full-failed-v70.json",
+          "reportPath": "reports/iteration/ai-search-v38-budget1024-20261029/559718b4.f0615b17.full.action-log.html",
+          "reportExists": true
+        }
+      ],
+      "roadmap": null,
+      "baselineEligible": false,
+      "isHead": false,
+      "completeness": {
+        "record": true,
+        "save": true,
+        "report": true,
+        "reportLinks": [
+          {
+            "runKey": "559718b4.f0615b17.full",
+            "path": "reports/iteration/ai-search-v38-budget1024-20261029/559718b4.f0615b17.full.action-log.html",
+            "mode": "full"
+          }
+        ]
+      }
+    },
     {
       "id": "ai-search-v38-baseline-20261029",
       "aiGeneration": "v2",

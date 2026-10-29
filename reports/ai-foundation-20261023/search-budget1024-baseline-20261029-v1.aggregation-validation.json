@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "existingRecordUnchanged": true,
+  "recordSha256": "c8bcf429f013f8956667d8621d7f8cf78f27818cac43174f94eeaab9680efd6a",
+  "failedTimingIncludedInMax": true,
+  "all152CompletedInputsUseRequestedBudget": true,
+  "failedDecisionUsesRequestedBudget": true,
+  "terminal": false,
+  "formalScoresNull": true
+}

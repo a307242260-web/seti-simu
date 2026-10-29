@@ -3,8 +3,8 @@ const fs=require('node:fs'),path=require('node:path');
 const root=path.resolve(__dirname,'..'),prefix='reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1';
 const manifest=JSON.parse(fs.readFileSync(path.join(root,prefix+'.manifest.json'),'utf8'));
 const identity=manifest.identity,recordFile=`${manifest.fingerprint.slice(0,8)}.${identity.gitCommit.slice(0,8)}.full.json`,recordPath='reports/research/'+recordFile;
-if(fs.existsSync(path.join(root,prefix+'.failure.json'))){
- if(fs.existsSync(path.join(root,recordPath)))throw Error('Existing standard record; refuse overwrite');
+// Existing standard records are reused; aggregation never overwrites them or reruns a game.
+if(fs.existsSync(path.join(root,prefix+'.failure.json'))&&!fs.existsSync(path.join(root,recordPath))){
  const failure=JSON.parse(fs.readFileSync(path.join(root,prefix+'.failure.json'),'utf8'));
  const tracePath=recordPath+'.decisions.jsonl',traces=fs.existsSync(path.join(root,tracePath))?fs.readFileSync(path.join(root,tracePath),'utf8').trim().split('\n').filter(Boolean).map(JSON.parse):[];
  const checkpoint=JSON.parse(fs.readFileSync(path.join(root,failure.checkpointPath),'utf8'));
@@ -31,8 +31,10 @@ const record=JSON.parse(fs.readFileSync(path.join(root,recordPath),'utf8'));
 const telemetry=fs.readFileSync(path.join(root,prefix+'.telemetry.jsonl'),'utf8').trim().split('\n').filter(Boolean).map(JSON.parse);
 const sum=(rows,fn)=>rows.reduce((n,row)=>n+(fn(row)||0),0),milliseconds={};
 for(const key of ['restore','execute','observation','checkpoint','resourceOrder','valueBound','postMainPlan','preMainDataPlan'])milliseconds[key]=sum(telemetry,r=>r.analysis?.milliseconds?.[key]);
-const maxRootAndSearchMs=Math.max(0,...telemetry.map(r=>r.rootAndSearchMs||0)),maxDecisionMs=Math.max(0,...telemetry.map(r=>r.decisionMs||0));
-const result={schemaVersion:'seti-ai-baseline-summary-v1',...manifest,recordPath,terminal:record.terminal,eligibleAsCompleteBaseline:record.terminal===true,maxRootAndSearchMs,maxDecisionMs,allSearchDecisionsWithin2s:maxRootAndSearchMs<=2000,
+const failedEvidence=fs.existsSync(path.join(root,prefix+'.failure.json'))?JSON.parse(fs.readFileSync(path.join(root,prefix+'.failure.json'),'utf8')):null;
+const maxCompletedRootAndSearchMs=Math.max(0,...telemetry.map(r=>r.rootAndSearchMs||0)),maxCompletedDecisionMs=Math.max(0,...telemetry.map(r=>r.decisionMs||0));
+const maxRootAndSearchMs=Math.max(maxCompletedRootAndSearchMs,failedEvidence?.lastTrace?.search?.rootAndSearchMilliseconds||0),maxDecisionMs=Math.max(maxCompletedDecisionMs,failedEvidence?.failedDecisionMs||0);
+const result={schemaVersion:'seti-ai-baseline-summary-v1',...manifest,recordPath,terminal:record.terminal,eligibleAsCompleteBaseline:record.terminal===true,maxRootAndSearchMs,maxDecisionMs,maxCompletedRootAndSearchMs,maxCompletedDecisionMs,allSearchDecisionsWithin2s:maxRootAndSearchMs<=2000,
  accepted180Seconds:record.terminal===true&&record.wallMs<=180000,acceptedBaseline:record.terminal===true&&record.wallMs<=180000&&maxRootAndSearchMs<=2000,wallMs:record.wallMs,steps:record.steps,
  formalFinalScores:record.terminal===true?record.summary.scores:null,
  failure:record.failure||null,decisions:telemetry.length,

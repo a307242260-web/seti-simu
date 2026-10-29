@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "seti-ai-baseline-delivery-validation-v1",
+  "status": "passed",
+  "experimentOutcome": "failed-before-terminal",
+  "runtimeCodeCommit": "f0615b17e618ad3e6fec9de9b815ba7323d94be9",
+  "runtimeBytesMatchCommittedVersion": true,
+  "onlyOneFullAttempt": true,
+  "budget": {
+    "transitions": 1024,
+    "nodes": 1025,
+    "frontier": 1024,
+    "milliseconds": 2000
+  },
+  "failedInputNotCommitted": true,
+  "saveAndReplayRecovery": "passed",
+  "baselineExcluded": true,
+  "formalScoresEmpty": true,
+  "generation": "v2",
+  "recordPath": "reports/research/559718b4.f0615b17.full.json",
+  "savePath": "seti-saves/seti-save-research-ai-search-v38-budget1024-20261029-f0615b17-full-failed-v70.json",
+  "reportPath": "reports/iteration/ai-search-v38-budget1024-20261029/559718b4.f0615b17.full.action-log.html",
+  "reportTestsPassed": 3,
+  "sourceHashes": {
+    "adhoc/finalize-budget1024-baseline-20261029-v1.js": "92275f3b49586fb2583465c0ea2400191d698809d6ee300ecab6d14b3a92a3b1",
+    "adhoc/preserve-budget1024-center-worktree-20261029-v1.js": "702fe2b5f726aafc4fa5b6f727acb93bad5ab944165590d6ca3fd869e08e49a3"
+  },
+  "logs": {
+    "reportTests": {
+      "path": "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.reportTests.log",
+      "sha256": "23ef97c9e1fcc10a45c67bf77ea820f726d25811482d3063ceaa57d0137617b1"
+    },
+    "centerBuild": {
+      "path": "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.centerBuild.log",
+      "sha256": "34e41e933dd5a87bacdee00b3016168628a68c1cc4ef68e5c17728aee1a9c917"
+    },
+    "registration": {
+      "path": "reports/ai-foundation-20261023/search-budget1024-baseline-20261029-v1.registration.log",
+      "sha256": "d3220fb23cb48bb508c7ab507a865372533627bed6fa6c79d785d3aa72b56046"
+    }
+  }
+}
