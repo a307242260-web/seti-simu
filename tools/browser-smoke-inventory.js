@@ -803,6 +803,9 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     };
     await waitFor(completed, "搜索玩家真实提交");
     const first = window.SetiRandomizer.inspect().machinePlayer;
+    for (const [key,value] of Object.entries(window.SetiSearchAgent.BUDGET)) {
+      if (first.lastResult.searches[0].diagnostics.limits[key] !== value) throw new Error("搜索宿主未使用共享预算: " + key);
+    }
     if (first.lastResult.agentTrace.search.selectionContinuation !== undefined
       || first.lastResult.agentTrace.search.planContinuation !== undefined
       || !first.lastResult.searches?.length) throw new Error("搜索证据丢失或泄漏临时token");

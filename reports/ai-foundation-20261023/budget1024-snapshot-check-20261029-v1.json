@@ -1,0 +1,10 @@
+{
+  "baseCommit": "ac63f37f4d3d4705e8210530819ee252001e07dc",
+  "testedSnapshot": "/private/tmp/seti-budget1024-20261029-3oqamvjx",
+  "unchangedBaseFilesVerified": 4242,
+  "changedBaseFilesVerified": 5,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "explicitFiles": 25,
+  "runtimeImportsBoundToFinalSource": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot."
+}

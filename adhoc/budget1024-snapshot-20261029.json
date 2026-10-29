@@ -1,0 +1,37 @@
+{
+  "baseCommit": "ac63f37f4d3d4705e8210530819ee252001e07dc",
+  "snapshot": "/private/tmp/seti-budget1024-20261029-3oqamvjx",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "files": {
+    "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-baseline-r1-t8-blue-20261029-v1.raw.json.gz": "8ead55a650d643f3d220906f05763bece720a96a80399f35f1c1388409c9514e",
+    "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-001-20261029-v1.raw.json.gz": "4aa9853ed7de1687621a745378a25d5670d34a63149565aa8853e5f3f90028b3",
+    "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-003-20261029-v1.raw.json.gz": "789d42a4a011c5c66c2a12be224dc5ab1a188a83b33606d0801dd871312102b9",
+    "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-008-20261029-v1.raw.json.gz": "c4a9d9c412e1cdf37da70966b7ac9312f5c2c9161d625ec1c6c8350e7f80d31d",
+    "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-009-20261029-v1.raw.json.gz": "ef125f88532a9d1d9522fd8ee0a2aa7f98fe186885521fb22fd7ad53c7ce2d6e",
+    "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-011-20261029-v1.raw.json.gz": "f672daddf53cee06e20ac8045814232234f5f4e650dd5b3ae32e6e1b10eeba49",
+    "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-062-20261029-v1.raw.json.gz": "e2863f0d9c8c70b48c025e1be9d62bd057ca1972b430ddd63b44fc532c109a5a",
+    "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-105-20261029-v1.raw.json.gz": "fa99d0d73214bf95eb880f3a23c67f4afa70a1bbf757ece43013a45139beb898",
+    "adhoc/ai-decision-corpus-20261029-budget1024-v1/audit-case-152-20261029-v1.raw.json.gz": "9b2767cdaee578336e0513678edb55b54158b57ca72b54772e28a3bea30a0018",
+    "adhoc/audit-budget1024-corpus-20261029-v1.js": "3505e65205eb95e312328469b48b552759edfff225c18386d35f6e98c8265dc2",
+    "adhoc/deliver-budget1024-20261029-v1.py": "9d05bdff580e88e3f84de6deb676d3d69649e7a0c6d4634a68509c7f4e2bb31a",
+    "adhoc/finalize-budget1024-baseline-20261029-v1.js": "36db34f3fd1305e38b4a4be6ba1e5ea6146ba7fcc6f31927b0f508406c3b3e51",
+    "adhoc/finalize-budget1024-validation-20261029-v1.py": "d06c473aacbe0698416bcf9447a2863fdcb5f0b3134211cd943d704c86327cb8",
+    "adhoc/observe-budget1024-baseline-20261029-v1.cjs": "e7a52af5e5f54170c388b6437fd9417aa0254ab88b0c657b8c664bfad48a0446",
+    "docs/ai-development-workflow.md": "ddc4bdfd1dd6e2a8c2399729b8c999366d3f1f5cdc4ef579dcd76345b99bcad7",
+    "docs/ai-search-agent-contract-20261023.md": "39a9116b872986db8365db47bd162763b6669d731c76aa016462c7be9313fdc1",
+    "docs/ai-search-budget1024-20261029.md": "18518849e6851638689e57959dec370193a9439cdaffa542abad2cd34ffe3629",
+    "randomizer/game/ai/search-agent.js": "3b79b572218c95ad7a3aab85cba8823ea929f279ba7e880b567965751047334a",
+    "randomizer/index.html": "9b113596b62167df2154b2194d708b7f65575ae9589d131bb870ad8ab69a037b",
+    "reports/ai-foundation-20261023/budget1024-browser-20261029-v1.log": "7c3ebe3387364098ba0ceb8941b3890cbb36f40823be5e05449ec0290bb130c8",
+    "reports/ai-foundation-20261023/budget1024-corpus-20261029-v1.json": "3cb1aed2618f3c9c7762a187a7e14e41c6f6d36529e5d9e933cdf805d01785fc",
+    "reports/ai-foundation-20261023/budget1024-node-20261029-v1.log": "11d4322ccd2eb4031a448fa402b2d34953d04d015637b329565981fd7610f899",
+    "reports/ai-foundation-20261023/budget1024-validation-20261029-v1.json": "347bb1d77f72090c41227d7e1b85e90fd3f3053533817e9f262d8a0a5f8c23d0",
+    "tools/browser-smoke-inventory.js": "acde37e8b2e155705ea5f4f5084ec19b7a525f3891949a1f12b7deea85907c97"
+  },
+  "sourceBoundReports": [
+    "reports/ai-foundation-20261023/budget1024-corpus-20261029-v1.json",
+    "reports/ai-foundation-20261023/budget1024-validation-20261029-v1.json"
+  ],
+  "scope": "Only authorize 1024/1025/1024/2000ms search budget, keep v38 strategy unchanged, validate nine cold checkpoints before one full attempt."
+}

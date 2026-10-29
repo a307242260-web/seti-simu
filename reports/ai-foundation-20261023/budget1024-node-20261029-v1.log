@@ -1,0 +1,9 @@
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"planPrefixReuse":"passed","hits":9,"actions":10,"inputs":[248,0,0,0,0,0,0,0,0,0]}
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+{"sharedSearchAgent":"passed","fixture":"case-003","transitions":26,"postMainTransitions":9,"incompleteFixture":"case-062","reuseHits":3,"wholeGames":0}
+SUMMARY unit passed=3 failed=0 total=3 time=6.89s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=2
