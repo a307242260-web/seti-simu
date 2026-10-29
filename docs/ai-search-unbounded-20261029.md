@@ -17,3 +17,29 @@ v39只增加显式无限额预算契约；当前search agent的状态等价与�
 同时修复固定资源计划把已花掉角标的弃牌id串到后续“两张牌换能量”付款的错误。弃牌集合现于每个新稳定态行动开始时失效；付款内继续保留既定集合，不可贪心时仍在同一目标内搜索。真实反例先复现RESOURCE_PAYMENT_ACTION_MISSING，再验证付款回退保持原目标、原生状态与RNG不变。
 
 内存处理只调整计算缓存：已评分且闭合的叶可释放完整观察缓存，必要时由原生envelope重新生成全部字段；完整原生状态仍保留。规范化状态的计算缓存最多64项，不改变状态等价或删减搜索分支。曾试验的结构共享方案未采用，正式实现不跨快照合并可恢复状态切片。
+
+## 完整终局结果
+
+运行代码冻结于`ff4b36c1757d184e6a8089882b57978c2d2209f7`，实验`ai-search-v39-unbounded-20261029`，固定种子`seti-free-analyze-v1`、世界`human-405-world-v1`。通过标准入口只执行一盘四席自对弈，350个正式输入后自然终局，耗时30.412秒，满足180秒整局目标。
+
+| 玩家 | 正式终局分数 |
+|---|---:|
+| 蓝 | 31 |
+| 绿 | 54 |
+| 棕 | 84 |
+| 白 | 62 |
+| 均分 | 57.75 |
+
+242步复用已有计划，108次重新搜索；累计9062次原生模拟，所有决策complete、无未处理节点、无额度停止。最大单次搜索1095次输入、698个计费节点；含开根搜索1.879秒，完整宿主决策1.910秒。本次没有强制2秒上限，这些是观测结果。1095次也说明此前1024次额度仍会截断该盘的个别决策。
+
+最终存档已完成终局结算，正式分数取自`match.finalScores`。纯回放350个原生输入后，各席资源与最终存档一致；checkpoint恢复后的状态、RNG、会话和回放记录一致，终局合法动作列表为空。原存档未被核验改写。实验中心将此版本登记为v2当前baseline，自动选择比较版本时跳过明确标记`baselineEligible=false`的失败候选。
+
+- [逐步复盘](../reports/iteration/ai-search-v39-unbounded-20261029/a760f3dd.ff4b36c1.full.action-log.html)
+- [标准完整记录](../reports/research/a760f3dd.ff4b36c1.full.json)
+- [汇总与代码绑定](../reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.summary.json)
+- [终局与回放核验](../reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.verification.json)
+- [运行前验证](../reports/ai-foundation-20261023/unbounded-validation-20261029-v1.json)
+
+运行前完整Node回归为145个unit与1个fullFlow通过，相关Chrome smoke三项通过；登记完成后报告/隔离/恢复相关5项通过。旧的V输入全量审计仍因`Cannot add property aomomo, object is not extensible`失败，不能将该审计声称为通过，详情保留在运行前验证记录。
+
+这是首个搜索AI的完整、可追溯运行基线，覆盖当前策略与单turn/信息边界内的必要分支；一盘固定世界自对弈不证明其他种子均能在180秒内完成，也不证明相对棋力。后续可基于同盘成绩比较估值与策略改动，无需重复运行本次同代码实验。

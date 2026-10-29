@@ -1,0 +1,76 @@
+{
+  "baseCommit": "ff4b36c1757d184e6a8089882b57978c2d2209f7",
+  "snapshot": "/private/tmp/seti-unbounded-20261029-jhcgek_9",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "094ffd80d38abf7f4f9d599cd9b43054c868b2ef8767abff3a26d638ef1b0855",
+      "path": "/private/tmp/seti-unbounded-center-working-overlay-20261029/versions.json",
+      "sha256": "4c66649e8aa7fbfdab4479e13e238f2a349e479fcab80b62f1e8edfed799c372"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "5419c2f64128e458f65c5fe2ec50a87981304efa46550f587ba27c94cdb7d9f3",
+      "path": "/private/tmp/seti-unbounded-center-working-overlay-20261029/registry.json",
+      "sha256": "c89f4f6a36faea10520de8c9d51bf2557b09d244a4dd033a70fe85982bfa2765"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "bbdd6dd484504ba67ed7860f4a708a5e11479e0617061b14eabb76cd81f064b5",
+      "path": "/private/tmp/seti-unbounded-center-working-overlay-20261029/robot-iteration.html",
+      "sha256": "f50b2f6fd0f9c2c0e3d500a5dc1e508366204d32ce6e3b49d15ac70832d1f670"
+    }
+  },
+  "sourceBoundReports": [
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.manifest.json"
+  ],
+  "files": {
+    "tools/robot_iterate.js": "bd005b284e548a984781631b6c412d99dd06b22a2c1d8f890c2b3367a78c3eb6",
+    "tools/robot-ai-generation.test.js": "43b8f4511f768c8c6c95456920eb332306fe083bd365d09f0dd9dd38e68a9f99",
+    "docs/robot-iteration-registry.md": "fd7234ac8d2129fde6e316e585fc8a20e9b6ef0f198b5f9202b634bb4499d9eb",
+    "docs/ai-search-unbounded-20261029.md": "d3989cc1caed8b91e5a9ab70dcda8f816c8f76bf9cae90a4644a6367e598a1c7",
+    "docs/ai-development-workflow.md": "dcfd55b4f6f3e649adc1294358da949a9cadd269ceb00bec4d7c9d3d973afd77",
+    "reports/iteration/versions.json": "cba106bf57142562e8e212927148cd6bfd6557dd32b26e209d61f87b9838a4d3",
+    "reports/iteration/registry.json": "952b79aa852a37a7d63f0ea8ab39355db824cb782745ad1614b192a07db50540",
+    "reports/robot-iteration.html": "091034fe96234fdc98c8caa835570347ea30c69182a449de420af4844c60e3d5",
+    "adhoc/verify-unbounded-baseline-20261029-v1.js": "2f2fea0af13e95b746de667db54ec1fb2df202e43a9ad2e03e2c79548eb3cd2f",
+    "adhoc/preserve-unbounded-center-worktree-20261029-v1.js": "ce81f044e28de88e0f3c7bcd1840b1682bda750793334ad366397c5990f448a9",
+    "adhoc/deliver-unbounded-results-20261029-v1.py": "0bb90aa327afccab5d6c9329ca12e06a83ad5c4daa35fceaf17e799211a99600",
+    "reports/research/a760f3dd.ff4b36c1.full.json": "51c1c31a02cefcd55e77cec36486455d882aa56b5896a551f689a0c2af79f127",
+    "reports/research/a760f3dd.ff4b36c1.full.json.decisions.jsonl": "1c2d3d3a3643f7f042b089fd1f475388910a05aa6981a9f05ea67d2b2908d981",
+    "seti-saves/seti-save-research-ai-search-v39-unbounded-20261029-ff4b36c1-full-v178.json": "09d359b5317fe6f7a6f4420f06f293cccf7d23f466381a3e2548f1176316bfd0",
+    "reports/iteration/ai-search-v39-unbounded-20261029/a760f3dd.ff4b36c1.full.action-log.html": "c5aa8d1236ce7c0a2bdbcfbe9034d5c35351656c58c3cf6317ebca047c27f86b",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-0.json": "ed752fb04e11cd3cb508b4d53f623f0976713b8dc424a962402a7deaa1c2f14e",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-220.json": "df8c1db01017bef404c67125dbf64696f15e072be9e3c5e599c014a680a1854a",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.run.log": "50faa575930b2324e10749ba1b605c8813a8dd7edb45583d356cdf02a8c60f03",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-200.json": "056640b34d6f739cbc4ed5efce8310bf3ec5c5652afe8a1137db7143e9442883",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-240.json": "2351cba956e104da334621a00fc4954d81b1271c86775d9a5e8ed663a500fd8a",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-260.json": "7afec2830e852441f4a213f8e0a0fcd768997a83d4eb7876cc9cc0bfcd28d6eb",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.observer-summary.json": "095026fd5142f80f6d0c30a36bf6e087bb60347e4dddfe274abd8f7cfe27f015",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-80.json": "b10385a75939260f0f3b2463143ddbf5040c9b8e342ef95ebdc9de3fe0b2c34e",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.center-build.log": "3146446d8d529a759647b6ba743d2838fbaa2a9a4ecde51a700c12bbc5324195",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-180.json": "795f9356e3e38d6c6aeea76cd90b2223124979907d2da980f451ae2410ea98af",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.report-tests.log": "237175e065019becde34b0c2f68aa6d791d5f5e54f37119a4c9e04ef583e0895",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-300.json": "45acda0c006e1075c6ed40b0d99e89f5c2dcca802dec09ff0c00c871d92a2f5c",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-140.json": "95be667194d6b2f64733800a4b45259c44e362051c8fec7673d03acff76a4eb7",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.verification.json": "88800292d801b7aa90e81cc6c50b847bd85371b529aa0eafe3a60cfcce77732c",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-160.json": "9e30b6877de8ebbc655a0d10f79167ec1197e90733e85847630e5c7f45e558f3",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.progress.json": "e1533d8a8cac04ef2ea6ea6ba39f7d99ae4d170d1e7aa5f12b70b6cc97931923",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-20.json": "51560c16acc9aa9a495d09641eeacac321604905a1ff54271d9e14c18a1b2bb1",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.manifest.json": "244a283d354be7bbec4977ca9ffd5b65795c3887ce2f4b9d4e78a8a4a5c4e03f",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-320.json": "18eac00a4c8f8a66807283c63c6ad05209c683201521f754689abc128bd9e1af",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-120.json": "48cfd218bd45933a9f0f8e4c30889ab0f1222243ce95d2a53d6e643caf8c82e4",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-60.json": "5e6f87a3caaa4f00b5214de66cc3c673a030a827a9c3e2238c3c0a2e7b4f2d65",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-40.json": "860bbf7d415d0baa770fbb7265970727d8e847fd6b52678179f4d904ca3c2255",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-100.json": "b900caaa245bb264fd239c0eced5e214accdf793b267156602a19ac34df292fc",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-340.json": "e4e19d8e4a283e73bf44885c60ce9161955a884fe347b53a4d015d195a9c1b70",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.summary.json": "c9313d3879186f275cec1a99a69fa41ca2cf166cdaf150116b8f0e3cf9432423",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.checkpoint-step-280.json": "e662b4f8025abe88985e6fa81121c6acd2a0d19c3d81a00afe5dd566088635d5",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.telemetry.jsonl": "f0ba46f106590c55c07bada4c4117cb6f516a52f6192147e9bc48c5f96bcb9ae"
+  },
+  "validation": {
+    "runtime": "reports/ai-foundation-20261023/unbounded-validation-20261029-v1.json",
+    "final": "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.verification.json",
+    "reportTests": "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.report-tests.log",
+    "aiRuntimeChangedAfterGame": false
+  }
+}

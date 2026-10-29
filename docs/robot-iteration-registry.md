@@ -420,7 +420,7 @@ node tools/robot_iterate.js report --save <存档> [--title "名称"] [--out <�
 
 总览页迭表展示**全部版本完整行**（2026-08-21 用户口径修正：历史版本与当前 baseline
 一样完整展示，只是页面不额外展开提交/diff 细节；此前误实现为只显示 baseline 一行）。
-`versions[].baselineEligible=false` 显式排除尚未具备基线资格的尝试；保留版本、存档和复盘展示，重新register时保留该标记。失败或未终局的baseline候选须设置此标记，不报告正式终局分数。
+`versions[].baselineEligible=false` 显式排除尚未具备基线资格的尝试；保留版本、存档和复盘展示，重新register时保留该标记，自动选择对照baseline也跳过这些版本。失败或未终局的baseline候选须设置此标记，不报告正式终局分数。
 
 `registry.currentBaseline` 在其余候选中判定：head 精确匹配
 git HEAD，否则取 head 为 HEAD 最近祖先的版本——策略提交后又提交工具/文档时 HEAD 会

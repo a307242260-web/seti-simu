@@ -19,6 +19,11 @@ assert.throws(()=>computeBestOf([{id:"old",aiGeneration:"v1"},{id:"new",aiGenera
 // An explicitly incomplete attempt stays visible, but cannot become current baseline.
 assert.equal(lib.selectCurrentBaseline([{id:"failed",head:"same",baselineEligible:false}],"same"),null);
 assert.equal(lib.selectCurrentBaseline([{id:"failed",head:"same",baselineEligible:false},{id:"accepted",head:"same"}],"same").id,"accepted");
+// Automatic parent selection must also skip incomplete versions, not only the current-baseline badge.
+const cliSource=fs.readFileSync(path.join(__dirname,'robot_iterate.js'),'utf8');
+const autoBody=cliSource.match(/function autoBaseline\([\s\S]*?\n}/)[0];
+const selectParent=vm.runInNewContext('('+autoBody+')',{versionAIGeneration,gitIsAncestor:()=>true});
+assert.equal(selectParent([{id:'failed-parent',head:'a',agentType:'search',baselineEligible:false},{id:'valid-parent',head:'b',agentType:'search'}],'next','v2',{}),'valid-parent');
 // Same-world score and speed champions remain inside the chosen generation.
 const run=(score)=>({mode:"full",terminal:true,avgScore:score,scores:{"player-white":score},wallMs:score,steps:1,recordFile:`${score}.json`,world:{fingerprint:"same",worldVersion:"test"}});
 const versions=[{id:"old",aiGeneration:"v1"},{id:"new",aiGeneration:"v2"}],resolved={old:[run(999)],new:[run(10)]};

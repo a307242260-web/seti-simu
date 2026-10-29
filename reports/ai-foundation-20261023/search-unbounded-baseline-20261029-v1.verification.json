@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "seti-unbounded-baseline-verification-v1",
+  "experiment": "ai-search-v39-unbounded-20261029",
+  "runtimeCommit": "ff4b36c1757d184e6a8089882b57978c2d2209f7",
+  "terminal": true,
+  "finalScoringSettled": true,
+  "steps": 350,
+  "replayRows": 350,
+  "finalScores": {
+    "player-blue": 31,
+    "player-green": 54,
+    "player-brown": 84,
+    "player-white": 62
+  },
+  "wallMs": 30412,
+  "allDecisionsComplete": true,
+  "allLimitsNull": true,
+  "budgetHits": 0,
+  "searchDecisions": 108,
+  "reusedPlanInputs": 242,
+  "nativeSearchInputs": 9062,
+  "maxNativeSearchInputs": 1095,
+  "maxRootAndSearchMs": 1878.668834,
+  "checkpointRestore": "native state, RNG, session and replay steps identical; terminal legal actions empty",
+  "replay": "350 confirmed actions replayed without AI search; final resources match native save",
+  "saveUnchanged": true,
+  "standardFullWorldRuns": 1,
+  "baselineRegistered": true,
+  "scope": "One fixed-world four-seat self-play game; completeness is within the agreed policies and turn/information boundaries.",
+  "hashes": {
+    "reports/research/a760f3dd.ff4b36c1.full.json": "51c1c31a02cefcd55e77cec36486455d882aa56b5896a551f689a0c2af79f127",
+    "reports/research/a760f3dd.ff4b36c1.full.json.decisions.jsonl": "1c2d3d3a3643f7f042b089fd1f475388910a05aa6981a9f05ea67d2b2908d981",
+    "seti-saves/seti-save-research-ai-search-v39-unbounded-20261029-ff4b36c1-full-v178.json": "09d359b5317fe6f7a6f4420f06f293cccf7d23f466381a3e2548f1176316bfd0",
+    "reports/iteration/ai-search-v39-unbounded-20261029/a760f3dd.ff4b36c1.full.action-log.html": "c5aa8d1236ce7c0a2bdbcfbe9034d5c35351656c58c3cf6317ebca047c27f86b",
+    "reports/ai-foundation-20261023/search-unbounded-baseline-20261029-v1.summary.json": "c9313d3879186f275cec1a99a69fa41ca2cf166cdaf150116b8f0e3cf9432423"
+  }
+}

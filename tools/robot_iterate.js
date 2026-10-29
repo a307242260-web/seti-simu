@@ -131,7 +131,7 @@ function today() {
 function autoBaseline(versions, head, generation, records) {
   // 最近登记（数组靠前=最新）且 head 为当前 HEAD 祖先的版本作为基线
   for (const v of versions) {
-    if (!v.head || versionAIGeneration(v,records) !== generation) continue;
+    if (v.baselineEligible === false || !v.head || versionAIGeneration(v,records) !== generation) continue;
     if (gitIsAncestor(v.head, head)) return v.id;
   }
   return null;
