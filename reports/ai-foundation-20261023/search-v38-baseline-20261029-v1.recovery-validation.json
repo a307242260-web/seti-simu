@@ -1,0 +1,25 @@
+{
+  "status": "passed",
+  "legalEnvelopesMatch": true,
+  "checkpointAndRngExact": true,
+  "confirmedReplayInputs": 76,
+  "failedDecisionCommitted": false,
+  "terminal": false,
+  "nativeInputFamilies": {
+    "launch": 8,
+    "play_card": 17,
+    "pass": 20,
+    "scan": 11,
+    "choose_target": 77,
+    "choose_card": 44,
+    "end_turn": 27,
+    "accept_optional_effect": 10,
+    "move": 14,
+    "choose_payment": 14,
+    "land": 3,
+    "place_data": 6,
+    "research_tech": 4,
+    "orbit": 1
+  },
+  "fixtureSha256": "c324b4b6c059533a357522c8696714cecd0dcf90b08ba2781852002b784cd6fe"
+}

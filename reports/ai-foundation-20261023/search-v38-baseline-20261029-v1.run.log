@@ -1,0 +1,2207 @@
+> node tools/run_research_validation.js --name ai-search-v38-baseline-20261029 --full --seed seti-free-analyze-v1 --config agentType=search,activePlayerCount=4,compactReplay=true
+[world] human-405-world-v1 2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c
+[full进度] 第 1 轮 · 第 1 回合 · 决策#1/4000 · 席位=player-white · 动作=choose_card:04955932 · 蓝色玩家=0 绿色玩家=0 棕色玩家=0 白色玩家=0 · 用时=0.056s · 17.9步/s
+[full进度] 第 1 轮 · 第 1 回合 · 决策#10/4000 · 席位=player-blue · 动作=choose_card:032691f3 · 蓝色玩家=0 绿色玩家=0 棕色玩家=0 白色玩家=0 · 用时=1.23s · 8.1步/s
+[full进度] 第 1 轮 · 第 1 回合 · 决策#18/4000 · 席位=player-white · 动作=choose_payment:1b209b35 · 蓝色玩家=10 绿色玩家=6 棕色玩家=8 白色玩家=3 · 用时=2.263s · 8.0步/s
+[full进度] 第 1 轮 · 第 2 回合 · 决策#37/4000 · 席位=player-green · 动作=place_data:dbe01b29 · 蓝色玩家=10 绿色玩家=6 棕色玩家=8 白色玩家=3 · 用时=3.409s · 10.9步/s
+[full进度] 第 1 轮 · 第 4 回合 · 决策#55/4000 · 席位=player-brown · 动作=place_data:50a9ac16 · 蓝色玩家=15 绿色玩家=11 棕色玩家=8 白色玩家=3 · 用时=4.648s · 11.8步/s
+[full进度] 第 1 轮 · 第 8 回合 · 决策#76/4000 · 席位=player-brown · 动作=choose_card:326a31d7 · 蓝色玩家=17 绿色玩家=11 棕色玩家=13 白色玩家=3 · 用时=5.653s · 13.4步/s
+/private/tmp/seti-search-buffer-20261029-xjyrfvsf/adhoc/observe-search-baseline-20261029-v1.cjs:33
+        throw error;
+        ^
+
+Error: MACHINE_PLAYER_DECISION_FAILED: 座位 player-blue 决策函数抛错: SEARCH_INCOMPLETE: transition-budget
+    at Object.runDecision (/private/tmp/seti-search-buffer-20261029-xjyrfvsf/randomizer/game/ai/machine-player-coordinator.js:173:15)
+    at Object.runAgentDecision (/private/tmp/seti-search-buffer-20261029-xjyrfvsf/randomizer/app/simulation-env.js:645:34)
+    ... 5 lines matching cause stack trace ...
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12) {
+  [cause]: Error: SEARCH_INCOMPLETE: transition-budget
+      at Object.decide (/private/tmp/seti-search-buffer-20261029-xjyrfvsf/randomizer/game/ai/search-agent.js:48:25)
+      at run (/private/tmp/seti-search-buffer-20261029-xjyrfvsf/randomizer/game/ai/agent-runtime.js:62:27)
+      at Object.runDecision (/private/tmp/seti-search-buffer-20261029-xjyrfvsf/randomizer/game/ai/machine-player-coordinator.js:171:20)
+      at Object.runAgentDecision (/private/tmp/seti-search-buffer-20261029-xjyrfvsf/randomizer/app/simulation-env.js:645:34)
+      at env.runAgentDecision (/private/tmp/seti-search-buffer-20261029-xjyrfvsf/adhoc/observe-search-baseline-20261029-v1.cjs:18:22)
+      at runValidation (/private/tmp/seti-search-buffer-20261029-xjyrfvsf/tools/run_research_validation.js:446:26)
+      at main (/private/tmp/seti-search-buffer-20261029-xjyrfvsf/tools/run_research_validation.js:654:3)
+      at Object.<anonymous> (/private/tmp/seti-search-buffer-20261029-xjyrfvsf/tools/run_research_validation.js:657:30)
+      at Module._compile (node:internal/modules/cjs/loader:1706:14)
+      at Module._extensions..js (node:internal/modules/cjs/loader:1839:10) {
+    code: 'SEARCH_INCOMPLETE',
+    search: {
+      schemaVersion: 'seti-complete-decision-search-v38',
+      complete: false,
+      actionId: null,
+      selectionPlan: null,
+      planEvidence: null,
+      value: null,
+      stopReason: 'transition-budget',
+      scope: 'own-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy',
+      roots: [
+        {
+          actionId: 'launch:a4087d46',
+          target: 1,
+          value: null,
+          completion: 'pending'
+        },
+        {
+          actionId: 'scan:96a13338',
+          target: 6,
+          value: 49,
+          kind: 'resource-goal-plan',
+          goal: {
+            id: 'scan:sector:sector-1-a',
+            kind: 'scan-flow',
+            nebulaId: 'sector-1-a',
+            required: [Object],
+            purpose: 'advance-or-complete-known-sector; collect its data and native reward'
+          },
+          resourceGoalCount: 4,
+          completion: 'pending'
+        },
+        {
+          actionId: 'play_card:3b8ed751',
+          target: 2,
+          value: null,
+          completion: 'pending'
+        },
+        {
+          actionId: 'play_card:6c72acbd',
+          target: 3,
+          value: null,
+          completion: 'pending'
+        },
+        {
+          actionId: 'play_card:3b2215e2',
+          target: 4,
+          value: null,
+          completion: 'pending'
+        },
+        {
+          actionId: 'pass:c858282e',
+          target: 5,
+          value: 51,
+          completion: 'pending'
+        },
+        {
+          actionId: 'quick_trade:e49b3d11',
+          target: null,
+          value: null,
+          valueType: 'not-executed',
+          completion: 'excluded-by-resource-policy',
+          policy: 'seti-goal-resource-preparation-v1',
+          isEquivalence: false
+        },
+        {
+          actionId: 'quick_trade:0989fdbb',
+          target: null,
+          value: null,
+          valueType: 'not-executed',
+          completion: 'excluded-by-card-pick-policy',
+          policy: 'seti-purpose-card-pick-policy-v1',
+          goal: null,
+          isEquivalence: false
+        },
+        {
+          actionId: 'quick_trade:cd9ee5f5',
+          target: null,
+          value: null,
+          valueType: 'not-executed',
+          completion: 'excluded-by-resource-policy',
+          policy: 'seti-goal-resource-preparation-v1',
+          isEquivalence: false
+        },
+        {
+          actionId: 'quick_trade:c6858538',
+          target: null,
+          value: null,
+          valueType: 'not-executed',
+          completion: 'excluded-by-resource-policy',
+          policy: 'seti-goal-resource-preparation-v1',
+          isEquivalence: false
+        },
+        {
+          actionId: 'quick_trade:e58a3c02',
+          target: null,
+          value: null,
+          valueType: 'not-executed',
+          completion: 'excluded-by-card-pick-policy',
+          policy: 'seti-purpose-card-pick-policy-v1',
+          goal: null,
+          isEquivalence: false
+        },
+        {
+          actionId: 'quick_trade:8dc6d95d',
+          target: null,
+          value: null,
+          valueType: 'not-executed',
+          completion: 'excluded-by-card-pick-policy',
+          policy: 'seti-purpose-card-pick-policy-v1',
+          goal: null,
+          isEquivalence: false
+        },
+        {
+          actionId: 'quick_trade:7c6bb482',
+          target: null,
+          value: null,
+          valueType: 'not-executed',
+          completion: 'excluded-by-resource-policy',
+          policy: 'seti-goal-resource-preparation-v1',
+          isEquivalence: false
+        },
+        {
+          actionId: 'industry:f3c9eca0',
+          target: null,
+          value: null,
+          valueType: 'not-executed',
+          completion: 'excluded-by-resource-policy',
+          policy: 'seti-goal-resource-preparation-v1',
+          isEquivalence: false
+        },
+        {
+          actionId: 'card_corner:b1d66006',
+          target: null,
+          value: null,
+          valueType: 'not-executed',
+          completion: 'excluded-by-resource-policy',
+          policy: 'seti-goal-resource-preparation-v1',
+          isEquivalence: false
+        },
+        {
+          actionId: 'card_corner:b56fd212',
+          target: null,
+          value: null,
+          valueType: 'not-executed',
+          completion: 'excluded-by-resource-policy',
+          policy: 'seti-goal-resource-preparation-v1',
+          isEquivalence: false
+        },
+        {
+          actionId: 'card_corner:64a2fb1c',
+          target: null,
+          value: null,
+          valueType: 'not-executed',
+          completion: 'excluded-by-resource-policy',
+          policy: 'seti-goal-resource-preparation-v1',
+          isEquivalence: false
+        }
+      ],
+      lines: [
+        {
+          node: 0,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 9,
+          edges: [
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object]
+          ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [Array],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 1,
+          status: 'stable',
+          boundary: null,
+          expanded: false,
+          alternatives: 1,
+          edges: [],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'execute-selected-advance-timing',
+            chosenGoal: [Object],
+            plan: [Object],
+            intent: [Object],
+            selectedActionId: 'move:17103972',
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 2,
+            routingNodes: 32,
+            objectiveCount: 11,
+            forceExecution: true,
+            suppressedResourceGoals: []
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 2,
+          status: 'stable',
+          boundary: null,
+          expanded: false,
+          alternatives: 1,
+          edges: [],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 3,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 4,
+          status: 'decision',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: []
+          }
+        },
+        {
+          node: 5,
+          status: 'information-barrier',
+          boundary: 'hidden_pass_reserve_offer',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 51,
+          completion: 'reachable'
+        },
+        {
+          node: 6,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 49,
+          completion: 'reachable'
+        },
+        {
+          node: 7,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 49,
+          completion: 'reachable'
+        },
+        {
+          node: 8,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 49,
+          completion: 'reachable'
+        },
+        {
+          node: 9,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 49,
+          completion: 'reachable'
+        },
+        {
+          node: 10,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 11,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 8,
+          edges: [
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object]
+          ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [Array],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 12,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'execute-selected-advance-timing',
+            chosenGoal: [Object],
+            plan: [Object],
+            intent: [Object],
+            selectedActionId: 'move:17103972',
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 2,
+            routingNodes: 32,
+            objectiveCount: 11,
+            forceExecution: true,
+            suppressedResourceGoals: []
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 13,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 14,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 15,
+          status: 'information-barrier',
+          boundary: 'hidden_pass_reserve_offer',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 49.5,
+          completion: 'reachable'
+        },
+        {
+          node: 16,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 47.5,
+          completion: 'reachable'
+        },
+        {
+          node: 17,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 47.5,
+          completion: 'reachable'
+        },
+        {
+          node: 18,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 47.5,
+          completion: 'reachable'
+        },
+        {
+          node: 19,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 47.5,
+          completion: 'reachable'
+        },
+        {
+          node: 20,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 7,
+          edges: [
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object]
+          ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [Array],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 21,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'execute-selected-advance-timing',
+            chosenGoal: [Object],
+            plan: [Object],
+            intent: [Object],
+            selectedActionId: 'move:17103972',
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 2,
+            routingNodes: 32,
+            objectiveCount: 11,
+            forceExecution: true,
+            suppressedResourceGoals: []
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 22,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 23,
+          status: 'information-barrier',
+          boundary: 'hidden_pass_reserve_offer',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 48.5,
+          completion: 'reachable'
+        },
+        {
+          node: 24,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 46.5,
+          completion: 'reachable'
+        },
+        {
+          node: 25,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 46.5,
+          completion: 'reachable'
+        },
+        {
+          node: 26,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 46.5,
+          completion: 'reachable'
+        },
+        {
+          node: 27,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 46.5,
+          completion: 'reachable'
+        },
+        {
+          node: 28,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 6,
+          edges: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [Array],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 29,
+          status: 'decision',
+          boundary: null,
+          expanded: true,
+          alternatives: 2,
+          edges: [ [Object], [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: []
+          }
+        },
+        {
+          node: 30,
+          status: 'information-barrier',
+          boundary: 'hidden_pass_reserve_offer',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 47,
+          completion: 'reachable'
+        },
+        {
+          node: 31,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 45,
+          completion: 'reachable'
+        },
+        {
+          node: 32,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 45,
+          completion: 'reachable'
+        },
+        {
+          node: 33,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 45,
+          completion: 'reachable'
+        },
+        {
+          node: 34,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 45,
+          completion: 'reachable'
+        },
+        {
+          node: 35,
+          status: 'information-barrier',
+          boundary: 'hidden_card_draw',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 46,
+          completion: 'reachable'
+        },
+        {
+          node: 36,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'execute-selected-advance-timing',
+            chosenGoal: [Object],
+            plan: [Object],
+            intent: [Object],
+            selectedActionId: 'move:17103972',
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 2,
+            routingNodes: 32,
+            objectiveCount: 11,
+            forceExecution: true,
+            suppressedResourceGoals: []
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 37,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'objective-reached',
+            chosenGoal: [Object],
+            plan: [Object],
+            intent: [Object],
+            selectedActionId: null,
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 4,
+            routingNodes: 0,
+            objectiveCount: 0
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 38,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'no-affordable-objective',
+            chosenGoal: null,
+            plan: null,
+            intent: null,
+            selectedActionId: null,
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 4,
+            routingNodes: 32,
+            objectiveCount: 0
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 39,
+          status: 'information-barrier',
+          boundary: 'hidden_pass_reserve_offer',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 44,
+          completion: 'reachable'
+        },
+        {
+          node: 40,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'objective-reached',
+            chosenGoal: [Object],
+            plan: [Object],
+            intent: [Object],
+            selectedActionId: null,
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 4,
+            routingNodes: 0,
+            objectiveCount: 0
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 41,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 7,
+          edges: [
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object]
+          ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'selected-objective',
+            chosenGoal: [Object],
+            plan: [Object],
+            intent: [Object],
+            selectedActionId: 'move:17103972',
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 3,
+            routingNodes: 32,
+            objectiveCount: 5
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [Array],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 42,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'defer-movement',
+            chosenGoal: null,
+            plan: null,
+            intent: null,
+            selectedActionId: null,
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 4,
+            routingNodes: 0,
+            objectiveCount: 11,
+            deferredGoal: [Object]
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 43,
+          status: 'information-barrier',
+          boundary: 'hidden_pass_reserve_offer',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 45.5,
+          completion: 'reachable'
+        },
+        {
+          node: 44,
+          status: 'decision',
+          boundary: null,
+          expanded: true,
+          alternatives: 2,
+          edges: [ [Object], [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: []
+          }
+        },
+        {
+          node: 45,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 43.5,
+          completion: 'reachable'
+        },
+        {
+          node: 46,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 43.5,
+          completion: 'reachable'
+        },
+        {
+          node: 47,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 43.5,
+          completion: 'reachable'
+        },
+        {
+          node: 48,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 43.5,
+          completion: 'reachable'
+        },
+        {
+          node: 49,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 50,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 51,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 12,
+          edges: [
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object]
+          ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [Array],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 52,
+          status: 'information-barrier',
+          boundary: 'hidden_pass_reserve_offer',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 57.5,
+          completion: 'reachable'
+        },
+        {
+          node: 53,
+          status: 'information-barrier',
+          boundary: 'tech_bonus_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 57.5,
+          completion: 'reachable'
+        },
+        {
+          node: 54,
+          status: 'information-barrier',
+          boundary: 'tech_bonus_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 58.5,
+          completion: 'reachable'
+        },
+        {
+          node: 55,
+          status: 'information-barrier',
+          boundary: 'tech_bonus_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 58.5,
+          completion: 'reachable'
+        },
+        {
+          node: 56,
+          status: 'information-barrier',
+          boundary: 'tech_bonus_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 58,
+          completion: 'reachable'
+        },
+        {
+          node: 57,
+          status: 'information-barrier',
+          boundary: 'tech_bonus_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 59,
+          completion: 'reachable'
+        },
+        {
+          node: 58,
+          status: 'information-barrier',
+          boundary: 'tech_bonus_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 56.5,
+          completion: 'reachable'
+        },
+        {
+          node: 59,
+          status: 'information-barrier',
+          boundary: 'tech_bonus_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 59,
+          completion: 'reachable'
+        },
+        {
+          node: 60,
+          status: 'information-barrier',
+          boundary: 'tech_bonus_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 59.5,
+          completion: 'reachable'
+        },
+        {
+          node: 61,
+          status: 'information-barrier',
+          boundary: 'tech_bonus_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 58.5,
+          completion: 'reachable'
+        },
+        {
+          node: 62,
+          status: 'information-barrier',
+          boundary: 'tech_bonus_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 58,
+          completion: 'reachable'
+        },
+        {
+          node: 63,
+          status: 'information-barrier',
+          boundary: 'tech_bonus_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 58.5,
+          completion: 'reachable'
+        },
+        {
+          node: 64,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 65,
+          status: 'information-barrier',
+          boundary: 'hidden_pass_reserve_offer',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 57,
+          completion: 'reachable'
+        },
+        {
+          node: 66,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 7,
+          edges: [
+            [Object], [Object],
+            [Object], [Object],
+            [Object], [Object],
+            [Object]
+          ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [Array],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 67,
+          status: 'decision',
+          boundary: null,
+          expanded: true,
+          alternatives: 2,
+          edges: [ [Object], [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: []
+          }
+        },
+        {
+          node: 68,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 69,
+          status: 'information-barrier',
+          boundary: 'hidden_pass_reserve_offer',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 48,
+          completion: 'reachable'
+        },
+        {
+          node: 70,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 46,
+          completion: 'reachable'
+        },
+        {
+          node: 71,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 46,
+          completion: 'reachable'
+        },
+        {
+          node: 72,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 46,
+          completion: 'reachable'
+        },
+        {
+          node: 73,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 46,
+          completion: 'reachable'
+        },
+        {
+          node: 74,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 6,
+          edges: [
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object],
+            [Object]
+          ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [Array],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 75,
+          status: 'decision',
+          boundary: null,
+          expanded: true,
+          alternatives: 2,
+          edges: [ [Object], [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: []
+          }
+        },
+        {
+          node: 76,
+          status: 'information-barrier',
+          boundary: 'hidden_pass_reserve_offer',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 47,
+          completion: 'reachable'
+        },
+        {
+          node: 77,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 45,
+          completion: 'reachable'
+        },
+        {
+          node: 78,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 45,
+          completion: 'reachable'
+        },
+        {
+          node: 79,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 45,
+          completion: 'reachable'
+        },
+        {
+          node: 80,
+          status: 'information-barrier',
+          boundary: 'hidden_card_reveal',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 45,
+          completion: 'reachable'
+        },
+        {
+          node: 81,
+          status: 'information-barrier',
+          boundary: 'hidden_card_draw',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 46,
+          completion: 'reachable'
+        },
+        {
+          node: 82,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'execute-selected-advance-timing',
+            chosenGoal: [Object],
+            plan: [Object],
+            intent: [Object],
+            selectedActionId: 'move:17103972',
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 2,
+            routingNodes: 0,
+            objectiveCount: 11,
+            forceExecution: true,
+            suppressedResourceGoals: []
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 83,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'objective-reached',
+            chosenGoal: [Object],
+            plan: [Object],
+            intent: [Object],
+            selectedActionId: null,
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 4,
+            routingNodes: 0,
+            objectiveCount: 0
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 84,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'no-affordable-objective',
+            chosenGoal: null,
+            plan: null,
+            intent: null,
+            selectedActionId: null,
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 4,
+            routingNodes: 0,
+            objectiveCount: 0
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 85,
+          status: 'information-barrier',
+          boundary: 'hidden_pass_reserve_offer',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 44,
+          completion: 'reachable'
+        },
+        {
+          node: 86,
+          status: 'information-barrier',
+          boundary: 'hidden_card_draw',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 47,
+          completion: 'reachable'
+        },
+        {
+          node: 87,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'execute-selected-advance-timing',
+            chosenGoal: [Object],
+            plan: [Object],
+            intent: [Object],
+            selectedActionId: 'move:17103972',
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 2,
+            routingNodes: 0,
+            objectiveCount: 11,
+            forceExecution: true,
+            suppressedResourceGoals: []
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 88,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'objective-reached',
+            chosenGoal: [Object],
+            plan: [Object],
+            intent: [Object],
+            selectedActionId: null,
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 4,
+            routingNodes: 0,
+            objectiveCount: 0
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 89,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 3,
+          edges: [ [Object], [Object], [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'selected-objective',
+            chosenGoal: [Object],
+            plan: [Object],
+            intent: [Object],
+            selectedActionId: 'move:17103972',
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 3,
+            routingNodes: 0,
+            objectiveCount: 2
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [Array],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 90,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          movementPolicy: {
+            policy: 'seti-goal-movement-policy-v1',
+            selectionBasis: 'explicit-objective-policy',
+            isEquivalence: false,
+            reason: 'defer-movement',
+            chosenGoal: null,
+            plan: null,
+            intent: null,
+            selectedActionId: null,
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            excludedDirectionCount: 4,
+            routingNodes: 0,
+            objectiveCount: 11,
+            deferredGoal: [Object]
+          },
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array]
+          }
+        },
+        {
+          node: 91,
+          status: 'information-barrier',
+          boundary: 'hidden_pass_reserve_offer',
+          expanded: true,
+          alternatives: 0,
+          edges: [],
+          distance: 0,
+          value: 45,
+          completion: 'reachable'
+        },
+        {
+          node: 92,
+          status: 'decision',
+          boundary: null,
+          expanded: true,
+          alternatives: 2,
+          edges: [ [Object], [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          resourcePolicy: {
+            policy: 'seti-goal-resource-preparation-v1',
+            isEquivalence: false,
+            plans: [],
+            retainedActionIds: [Array],
+            excludedActionIds: []
+          }
+        },
+        {
+          node: 93,
+          status: 'stable',
+          boundary: null,
+          expanded: true,
+          alternatives: 1,
+          edges: [ [Object] ],
+          distance: null,
+          value: null,
+          completion: 'pending',
+          cardPickPolicy: {
+            policy: 'seti-purpose-card-pick-policy-v1',
+            isEquivalence: false,
+            kind: 'card-acquisition-plan',
+            goal: null,
+            selectedActionId: null,
+            selection: null,
+            discardIds: [],
+            retainedActionIds: [Array],
+            excludedActionIds: [Array],
+            reason: 'no-pick-purpose'
+          },
+          resourc
+[失败] run_research_validation 退出码 1

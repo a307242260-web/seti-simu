@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "seti-ai-baseline-delivery-validation-v1",
+  "status": "passed",
+  "experimentOutcome": "failed-before-terminal",
+  "runtimeCodeCommit": "95a140935b752152e1eebfbdacb7931bcdbd5763",
+  "runtimeBytesMatchCommittedVersion": true,
+  "onlyOneFullAttempt": true,
+  "failedInputNotCommitted": true,
+  "saveAndReplayRecovery": "passed",
+  "baselineExcluded": true,
+  "formalScoresEmpty": true,
+  "generation": "v2",
+  "recordPath": "reports/research/6558b617.95a14093.full.json",
+  "savePath": "seti-saves/seti-save-research-ai-search-v38-baseline-20261029-95a14093-full-failed-v29.json",
+  "reportPath": "reports/iteration/ai-search-v38-baseline-20261029/6558b617.95a14093.full.action-log.html",
+  "reportTestsPassed": 5,
+  "eligibilityFinalTestsPassed": 1,
+  "sourceHashes": {
+    "tools/robot-iteration-lib.js": "8f91593b6a62752cdfd78c4a7c81dbd3b477d903434a9dcab712d3c438194f34",
+    "tools/robot_iterate.js": "b3677d02d0acda83fce64225c375c955a7d175670cc027de2968c2070c072b4f",
+    "tools/robot-ai-generation.test.js": "d50cb495ee9a0609dc869d96c50f48f5da030c004968699bc4c3c5edb16141f2"
+  },
+  "logs": {
+    "reportTests": {
+      "path": "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.reportTests.log",
+      "sha256": "b6e5c5ff02ad19a0fb5d66568d29ac75b182265c109d971b2520bb7f96a5d096"
+    },
+    "eligibilityFinal": {
+      "path": "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.eligibilityFinal.log",
+      "sha256": "04d899baf53387f1424baf1563393278fddd1ee7c712dba46d65dd5be6ee2658"
+    },
+    "centerBuild": {
+      "path": "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.centerBuild.log",
+      "sha256": "b92f4ee25e214ee3deceb594d7f9041e0e2cf4f48c10ef09ac14ad166587fdd2"
+    }
+  }
+}

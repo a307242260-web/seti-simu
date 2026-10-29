@@ -16,6 +16,9 @@ assert.throws(()=>versionAIGeneration({id:"wrong",aiGeneration:"v3"},records),/G
 assert.throws(()=>validateAIGenerations([{id:"old",records:{old:{}}},{id:"new",records:{new:{}},baseline:"old"}],records),/BASELINE_GENERATION_MISMATCH/);
 assert.equal(validateAIGenerations([{id:"base",records:{base:{}}},{id:"new",records:{new:{}},baseline:"base"}],records).get("new"),"v2");
 assert.throws(()=>computeBestOf([{id:"old",aiGeneration:"v1"},{id:"new",aiGeneration:"v2"}],{}),/BEST_OF_GENERATION_MIXED/);
+// An explicitly incomplete attempt stays visible, but cannot become current baseline.
+assert.equal(lib.selectCurrentBaseline([{id:"failed",head:"same",baselineEligible:false}],"same"),null);
+assert.equal(lib.selectCurrentBaseline([{id:"failed",head:"same",baselineEligible:false},{id:"accepted",head:"same"}],"same").id,"accepted");
 // Same-world score and speed champions remain inside the chosen generation.
 const run=(score)=>({mode:"full",terminal:true,avgScore:score,scores:{"player-white":score},wallMs:score,steps:1,recordFile:`${score}.json`,world:{fingerprint:"same",worldVersion:"test"}});
 const versions=[{id:"old",aiGeneration:"v1"},{id:"new",aiGeneration:"v2"}],resolved={old:[run(999)],new:[run(10)]};
@@ -52,4 +55,6 @@ for(const generation of ["v1","v2"]){const selected=render(built,`?ai=${generati
 const newVersions=built.versions.filter(v=>v.id.startsWith("ai-foundation"));assert(newVersions.every(v=>v.aiGeneration==="v2"));assert.equal(newVersions.length,9);
 for(const version of newVersions)for(const result of version.results){assert(!result.missingRecord);assert.equal(result.agentType,"completion");assert(result.terminal);assert.equal(result.scoreSource,"save-final");
  for(const p of [result.recordPath,result.savePath,result.reportPath])assert(fs.existsSync(path.resolve(lib.REPO_ROOT,p)),p);}
-console.log(JSON.stringify({aiGenerationIsolation:"passed",v2Versions:newVersions.length,v2CompleteGames:newVersions.reduce((n,v)=>n+v.results.length,0),searchGames:0,templateQueries:3,registrationRejects:2}));
+const incompleteSearch=built.versions.filter(v=>v.agentType==="search"||v.results.some(r=>r.agentType==="search")).flatMap(v=>v.results.filter(r=>!r.terminal).map(r=>({version:v,result:r})));
+for(const {version,result} of incompleteSearch){assert.equal(version.baselineEligible,false);assert.equal(version.isHead,false);assert.notEqual(built.generations.v2.currentBaseline,version.id);assert(Object.values(result.scores).every(score=>score==null));}
+console.log(JSON.stringify({incompleteSearchAttempts:incompleteSearch.length,aiGenerationIsolation:"passed",v2Versions:newVersions.length,v2CompleteGames:newVersions.reduce((n,v)=>n+v.results.length,0),searchCompleteGames:built.versions.flatMap(v=>v.results).filter(r=>r.agentType==="search"&&r.terminal).length,templateQueries:3,registrationRejects:2}));

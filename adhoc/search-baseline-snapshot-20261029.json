@@ -1,0 +1,60 @@
+{
+  "baseCommit": "95a140935b752152e1eebfbdacb7931bcdbd5763",
+  "snapshot": "/private/tmp/seti-search-buffer-20261029-xjyrfvsf",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "scope": "Register one incomplete fixed-world v38 full-game attempt, preserve exact failure/RNG/replay evidence, add the new cold checkpoint and explicitly exclude the attempt from current baseline; AI runtime unchanged.",
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "ae05d166e277a3b53c2589246bb3c1c82fbb11e4dfa85ce77f45884dbe00f134",
+      "path": "/private/tmp/seti-v38-center-working-overlay-20261029/versions.json",
+      "sha256": "894b1c57fa0880a1ccdbc5df2aae75200a4b7a657d25f7d4e761d810651f5e1f"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "43b78ca588520027848c1a7f8f817f73b2324372b5fad8cb30ebe023fdacb7ca",
+      "path": "/private/tmp/seti-v38-center-working-overlay-20261029/registry.json",
+      "sha256": "3039d918684778d9265ef604c0b5a2ef8927c7f9317b67987c4a294ffd263061"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "6ebadb145ea512dd890e10420477f7ba024cc51de400049b5bf4adfe861fed66",
+      "path": "/private/tmp/seti-v38-center-working-overlay-20261029/robot-iteration.html",
+      "sha256": "bc34407e1f5e519a1f6c731f1273160be1a6e072f300c4ca67defa943ecdebfc"
+    }
+  },
+  "files": {
+    "adhoc/ai-decision-corpus-20261029-v38/baseline-r1-t8-blue-20261029-v1.json": "c324b4b6c059533a357522c8696714cecd0dcf90b08ba2781852002b784cd6fe",
+    "adhoc/deliver-search-baseline-20261029-v1.py": "ed168831630fe486b885d2f66815b7f68a991854b17c38ac7377691eeadab221",
+    "adhoc/finalize-search-baseline-delivery-20261029-v1.py": "5eecd93959a3bf2d320f05f8dcd051ee9005715ed63dfa68637db877ff45e203",
+    "adhoc/preserve-existing-center-worktree-20261029-v1.js": "9f64f37c96d58a784d695b54a35c27f5e75958ce6d7b77fe938208429c7288fe",
+    "docs/ai-development-workflow.md": "cb0aedb402a424ed5f935cd5c0014d73fcd10abbe89e9cf1a166e2470c150135",
+    "docs/ai-search-buffer-20261029.md": "93d887a6b241134a731242bb60294f80fc6ac838b2a3eadee9259a92c7a12c7c",
+    "docs/ai-search-v38-baseline-20261029.md": "c868f414c7cd7ed28ee816f9f256a49f2ea6d2b5efed097d6f6c51889ece54ac",
+    "docs/robot-iteration-registry.md": "5227ca9adbefc251994def3bb80073d8098512f69a673e878fbb0a487b6407f1",
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.centerBuild.log": "b92f4ee25e214ee3deceb594d7f9041e0e2cf4f48c10ef09ac14ad166587fdd2",
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.delivery-validation.json": "30a85821c5361c131b30d35aeb6eba5fb28cb4a3e92745806612e7291d2b57dd",
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.eligibilityFinal.log": "04d899baf53387f1424baf1563393278fddd1ee7c712dba46d65dd5be6ee2658",
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.failed-checkpoint.json": "f2d4a3e308a469fc689db2554dc420ac0bd522569b381386db6c1e8142cba486",
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.failure.json": "55b6a41872922a7175109f1edb3b300722bc7bad3d12a0fd78656ffc87546b6e",
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.manifest.json": "8753eed89ad6fe6484f33a03109de7679b21c7b17b8dde87a03d30bf10b037a8",
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.observer-summary.json": "392898211eeeaff70a5ec130b864f6ae8eef74b422726a50080c555d23e05772",
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.recovery-validation.json": "810c31d6f223e44eaf5f48f391a681c22a4b2598cdd9d47c016e86aa4f7d2644",
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.reportTests.log": "b6e5c5ff02ad19a0fb5d66568d29ac75b182265c109d971b2520bb7f96a5d096",
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.run.log": "3143b8be011b03f7d81ac43c5d6b943d010342d4ba3374c835d3579a2161bc7b",
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.summary.json": "85674c17610e656dedb2a56240072c2f4b3aea8d19e0fe54a3616d310e119a40",
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.telemetry.jsonl": "44940a0e844c5cc7ddc67caed4dd1ed8bf4ffc93ba1c229208c8fc1aa8800e11",
+    "reports/iteration/ai-search-v38-baseline-20261029/6558b617.95a14093.full.action-log.html": "4e5afbf3f6b4dee2629a90bd14bdabe9c303fe34a53e5a5deae977965d963d85",
+    "reports/iteration/registry.json": "76187bf83637147563cb0aa5c8301b092df05c5db2ac7f1584dae0be9c8a6656",
+    "reports/iteration/versions.json": "dd779705b6c875eb05e4b6e83bf627decc6a6436547f836fd9114222fed99dad",
+    "reports/research/6558b617.95a14093.full.json": "fbe8c0b96d402355768478082180b88e0e90a529201126c99e011d5034c5b74d",
+    "reports/research/6558b617.95a14093.full.json.decisions.jsonl": "a439c18dc603e1ce9ef402782f07110a8fb32370e1e65de3a341df1c64496b14",
+    "reports/robot-iteration.html": "2fd5e3f39d50b99883ce33600a27e95c8103a10f02dbf433c9076c96e6ece840",
+    "seti-saves/seti-save-research-ai-search-v38-baseline-20261029-95a14093-full-failed-v29.json": "3db45e18d41944a667fe16e01ede0ebffab6407ddf229e8ef38c398b8db378c0",
+    "tools/robot-ai-generation.test.js": "d50cb495ee9a0609dc869d96c50f48f5da030c004968699bc4c3c5edb16141f2",
+    "tools/robot-iteration-lib.js": "8f91593b6a62752cdfd78c4a7c81dbd3b477d903434a9dcab712d3c438194f34",
+    "tools/robot_iterate.js": "b3677d02d0acda83fce64225c375c955a7d175670cc027de2968c2070c072b4f"
+  },
+  "sourceBoundReports": [
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.summary.json",
+    "reports/ai-foundation-20261023/search-v38-baseline-20261029-v1.delivery-validation.json"
+  ]
+}

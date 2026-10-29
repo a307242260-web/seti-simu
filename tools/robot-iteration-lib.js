@@ -1328,6 +1328,7 @@ function renderPage(registry) {
 function selectCurrentBaseline(versions, nowHead) {
   let currentBaseline = null;
   for (const v of versions) {
+    if (v.baselineEligible === false) continue;
     if (v.head === nowHead || (nowHead && v.head && (nowHead.startsWith(v.head) || v.head.startsWith(nowHead)))) {
       currentBaseline = v;
       break;
@@ -1337,7 +1338,7 @@ function selectCurrentBaseline(versions, nowHead) {
     let best = null;
     let bestDist = -1;
     for (const v of versions) {
-      if (!v.head || !gitIsAncestor(v.head, nowHead)) continue;
+      if (v.baselineEligible === false || !v.head || !gitIsAncestor(v.head, nowHead)) continue;
       const distText = git(["rev-list", "--count", `${v.head}..${nowHead}`], { silent: true });
       const dist = distText != null ? Number(distText) : -1;
       if (dist >= 0 && (best == null || dist < bestDist)) {
@@ -1430,6 +1431,7 @@ function computeRegistry({ generateReports = false, forceReports = false, refres
       diffFiles,
       results,
       roadmap: v.roadmap || null,
+      ...(v.baselineEligible === false ? { baselineEligible: false } : {}),
       isHead: v.id === generations[generationByVersion.get(v.id)].currentBaseline,
       completeness: { record: hasRecord, save: hasSave, report: hasReport, reportLinks },
     };

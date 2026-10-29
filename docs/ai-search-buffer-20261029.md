@@ -22,3 +22,5 @@
 最新八点检查点为`reports/ai-foundation-20261023/search-buffer-corpus-20261029-v3.json`：8/8，第三轮493.4ms，第四轮553.2ms，余量106.6/46.8ms。八点动作及V与昨晚一致。前两次结果和源码变体保留，不选择性丢弃接近600ms的结果；单次样本与JIT/宿主波动不能解释为稳定提速比例。
 
 最终完整Node回归前的Browser全组尝试在旧`production-browser-full-parity`项出现CDP `Runtime.evaluate`超时；其前五项已通过。随后按本轮范围执行并通过11项相关Chrome检查。历史估值装配`decisionObs`仍有aomomo冻结对象写入错误，不能宣称整份V审计通过，独立搜索估值输入检查单列。
+
+首次单局已按冻结的`95a14093`执行一次：第1轮第8回合耗尽256输入额度，未终局；76个真实输入约6.13秒，52步复用，无正式终局成绩。已登记未完成V2尝试并排除baseline资格，失败点纳入后续单决策验收，见[单局结果与输入分布](ai-search-v38-baseline-20261029.md)。

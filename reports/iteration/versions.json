@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "ai-search-v38-baseline-20261029",
+      "name": "搜索v38 单局尝试（未完成）",
+      "date": "2026-10-29",
+      "baseline": null,
+      "head": "95a14093",
+      "commits": [
+        "95a14093"
+      ],
+      "summary": "四项优化与八点验收通过；固定世界首次单局在第1轮第8回合蓝席耗尽256输入额度，尚有5个前沿。完成76步/约6.13秒，52步计划复用；未终局、无正式终局分数，暂不具备完整baseline资格。",
+      "records": {
+        "6558b617.95a14093.full.json": {}
+      },
+      "roadmap": null,
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "baselineEligible": false
+    },
+    {
       "id": "ai-foundation-dev-07-20261022",
       "name": "ai-foundation-dev-07-20261022",
       "date": "2026-10-22",

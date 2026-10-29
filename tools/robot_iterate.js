@@ -252,6 +252,7 @@ function cmdRegister(opts) {
     name: opts.name || (idx >= 0 ? versions[idx].name : opts.versionId),
     date: opts.date || (idx >= 0 ? versions[idx].date : today()),
     baseline: base ? base.id : (idx >= 0 ? versions[idx].baseline : null),
+    ...(idx >= 0 && versions[idx].baselineEligible != null ? { baselineEligible: versions[idx].baselineEligible } : {}),
     // 未显式给 commits/head 时保留已有版本定义（幂等重登记）；新版本默认取当前 HEAD
     head: opts.commits?.length ? opts.commits[opts.commits.length - 1] : (idx >= 0 ? versions[idx].head : head),
     commits: opts.commits?.length ? opts.commits : (idx >= 0 ? versions[idx].commits : [head]),
