@@ -1,0 +1,220 @@
+{
+  "schemaVersion": "seti-search-node-analysis-v1",
+  "sourceTrace": "reports/research/a760f3dd.ff4b36c1.full.json.decisions.jsonl",
+  "sourceTraceSha256": "1c2d3d3a3643f7f042b089fd1f475388910a05aa6981a9f05ea67d2b2908d981",
+  "step": 295,
+  "round": 4,
+  "turn": 6,
+  "seat": "player-white",
+  "selectedActionId": "quick_trade:df811f99",
+  "selectedValue": 72,
+  "nativeInputs": 1095,
+  "rootAndSearchMilliseconds": 1878.668834,
+  "countedStates": 698,
+  "searchGraphStates": 543,
+  "internalCertificateStates": 155,
+  "nativeGraphVertices": 1336,
+  "evaluatedLeaves": 276,
+  "statusCounts": {
+    "stable": 69,
+    "decision": 198,
+    "other-owner": 67,
+    "information-barrier": 209
+  },
+  "nativeActionFamilies": {
+    "launch": 2,
+    "play_card": 15,
+    "pass": 2,
+    "choose_card": 858,
+    "card_corner": 19,
+    "place_data": 26,
+    "choose_target": 81,
+    "quick_trade": 5,
+    "choose_payment": 13,
+    "research_tech": 2,
+    "scan": 2,
+    "end_turn": 65,
+    "analyze": 1,
+    "move": 4
+  },
+  "reorg": {
+    "cardId": "dlc_28.png",
+    "name": "重组",
+    "goalId": "effect:income:card:card-57-0",
+    "totalInputsIncludingCardPlay": 832,
+    "choiceInputs": 830,
+    "contexts": [
+      {
+        "startNode": 8,
+        "remainingCards": 7,
+        "decisionStates": 127,
+        "nativeChoiceInputs": 575,
+        "equivalentAfterExecution": 321,
+        "canonicalOrderChoiceInputs": 254,
+        "allSubsets": 128
+      },
+      {
+        "startNode": 333,
+        "remainingCards": 6,
+        "decisionStates": 63,
+        "nativeChoiceInputs": 255,
+        "equivalentAfterExecution": 129,
+        "canonicalOrderChoiceInputs": 126,
+        "allSubsets": 64
+      }
+    ],
+    "equivalentInputs": 450
+  },
+  "allEquivalentInputs": 450,
+  "resourceGoals": {
+    "data:analyze:6": {
+      "planEdges": 2,
+      "logicalInputs": 18,
+      "newNativeInputs": 18,
+      "reusedInputs": 0
+    },
+    "data:income:4": {
+      "planEdges": 1,
+      "logicalInputs": 9,
+      "newNativeInputs": 9,
+      "reusedInputs": 0
+    },
+    "effect:income:card:card-57-0": {
+      "planEdges": 832,
+      "logicalInputs": 832,
+      "newNativeInputs": 832,
+      "reusedInputs": 0
+    },
+    "effect:tech:card:card-67-0": {
+      "planEdges": 22,
+      "logicalInputs": 28,
+      "newNativeInputs": 28,
+      "reusedInputs": 0
+    },
+    "play:card-34-pass-3-5": {
+      "planEdges": 2,
+      "logicalInputs": 8,
+      "newNativeInputs": 2,
+      "reusedInputs": 6
+    },
+    "play:card-45-0": {
+      "planEdges": 1,
+      "logicalInputs": 2,
+      "newNativeInputs": 1,
+      "reusedInputs": 1
+    },
+    "play:card-73-0": {
+      "planEdges": 2,
+      "logicalInputs": 16,
+      "newNativeInputs": 10,
+      "reusedInputs": 6
+    },
+    "tech:blue1:2": {
+      "planEdges": 2,
+      "logicalInputs": 7,
+      "newNativeInputs": 7,
+      "reusedInputs": 0
+    },
+    "tech:blue2:2": {
+      "planEdges": 2,
+      "logicalInputs": 7,
+      "newNativeInputs": 2,
+      "reusedInputs": 5
+    },
+    "tech:blue4:2": {
+      "planEdges": 2,
+      "logicalInputs": 7,
+      "newNativeInputs": 2,
+      "reusedInputs": 5
+    },
+    "tech:orange1:": {
+      "planEdges": 2,
+      "logicalInputs": 7,
+      "newNativeInputs": 2,
+      "reusedInputs": 5
+    },
+    "tech:orange2:": {
+      "planEdges": 2,
+      "logicalInputs": 7,
+      "newNativeInputs": 2,
+      "reusedInputs": 5
+    },
+    "tech:orange3:": {
+      "planEdges": 2,
+      "logicalInputs": 7,
+      "newNativeInputs": 2,
+      "reusedInputs": 5
+    },
+    "tech:orange4:": {
+      "planEdges": 2,
+      "logicalInputs": 7,
+      "newNativeInputs": 2,
+      "reusedInputs": 5
+    },
+    "tech:purple2:": {
+      "planEdges": 2,
+      "logicalInputs": 7,
+      "newNativeInputs": 2,
+      "reusedInputs": 5
+    },
+    "tech:purple3:": {
+      "planEdges": 2,
+      "logicalInputs": 7,
+      "newNativeInputs": 2,
+      "reusedInputs": 5
+    },
+    "tech:purple4:": {
+      "planEdges": 2,
+      "logicalInputs": 7,
+      "newNativeInputs": 2,
+      "reusedInputs": 5
+    },
+    "scan:sector:sector-2-a": {
+      "planEdges": 2,
+      "logicalInputs": 6,
+      "newNativeInputs": 6,
+      "reusedInputs": 0
+    },
+    "scan:sector:sector-3-a": {
+      "planEdges": 2,
+      "logicalInputs": 6,
+      "newNativeInputs": 4,
+      "reusedInputs": 2
+    },
+    "scan:sector:sector-3-b": {
+      "planEdges": 4,
+      "logicalInputs": 8,
+      "newNativeInputs": 6,
+      "reusedInputs": 2
+    },
+    "scan:sector:sector-4-a": {
+      "planEdges": 2,
+      "logicalInputs": 6,
+      "newNativeInputs": 2,
+      "reusedInputs": 4
+    },
+    "data:blue:1": {
+      "planEdges": 16,
+      "logicalInputs": 61,
+      "newNativeInputs": 60,
+      "reusedInputs": 1
+    },
+    "scan:sector:sector-2-b": {
+      "planEdges": 2,
+      "logicalInputs": 2,
+      "newNativeInputs": 2,
+      "reusedInputs": 0
+    }
+  },
+  "alreadySharedInputs": 67,
+  "estimates": {
+    "canonicalOrderSavedInputs": 450,
+    "canonicalOrderRemainingTotalInputs": 645,
+    "canonicalOrderSavedPercent": 41.0958904109589,
+    "measuredAfterOptimization": false,
+    "scope": "Graph-derived projection; preserve every discard subset and downstream branch. Policy implementation, tie order, closure and timing still require verification."
+  },
+  "nativeCheck": "reports/ai-foundation-20261023/search-step295-analysis-20261029-v1.native-check.json",
+  "runtimeChanged": false,
+  "fullGameRerun": false
+}
