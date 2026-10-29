@@ -60,6 +60,17 @@
       } finally { analysisPort.close(); }
     }
     return Object.freeze({ decide,
+      createCheckpoint() {
+        const plan=analysisPort.exportPlan?.(planContinuation);
+        return plan ? {schemaVersion:"seti-search-agent-checkpoint-v1",seatId,modelChecksum:MODEL_CHECKSUM,plan} : null;
+      },
+      loadCheckpoint(saved) {
+        continuation=null; planContinuation=null;
+        if(saved==null)return;
+        if(saved.schemaVersion!=="seti-search-agent-checkpoint-v1"||saved.seatId!==seatId)throw new Error("SEARCH_AGENT_CHECKPOINT_INVALID");
+        // A save from another policy is valid game state, but provides no current proof.
+        if(saved.modelChecksum===MODEL_CHECKSUM)planContinuation=analysisPort.importPlan(saved.plan);
+      },
       getProvenance: () => Object.freeze({ type: "search", version: VERSION, modelChecksum: MODEL_CHECKSUM }) });
   }
   return Object.freeze({ VERSION, BUDGET, OPTIONS, MODEL_CHECKSUM, createSearchAgent });

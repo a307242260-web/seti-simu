@@ -346,6 +346,7 @@ function checkpointFromSave(save, resetConfig) {
     replayCursor: { seed: save.seed || resetConfig.seed, stepIndex: 0 },
     replaySteps: null,
     // 浏览器格式历史原样带进恢复后的 env：续跑后再存盘，replaySteps 完整不丢。
+    machineAI: save.machineAI || {},
     browserReplaySteps: Array.isArray(save.replaySteps) ? save.replaySteps : [],
   };
 }

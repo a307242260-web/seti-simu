@@ -1,0 +1,12 @@
+{
+  "randomizer/game/ai/analysis-port.js": {
+    "path": "adhoc/search-buffer-variants-20261029-v1/analysis-port.js.gz",
+    "sourceSha256": "3ca05a875484bd5932d98ad9d8a52292b74b0086580f36b9f027734b7119c3d7",
+    "archiveSha256": "6fd3ea90ff994b3267f257045acccae9561306b07305e004d9aac5daf9ec4379"
+  },
+  "randomizer/game/ai/resource-demand.js": {
+    "path": "adhoc/search-buffer-variants-20261029-v1/resource-demand.js.gz",
+    "sourceSha256": "be17c0389cd93652f6ede034c4cf90c3201811e903b6797805457adf1bcbd689",
+    "archiveSha256": "95dadc2662639371d239a54abdc67b8f8a3fddeca6c711d63e5732448b37c15b"
+  }
+}

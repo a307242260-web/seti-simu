@@ -93,6 +93,8 @@
     }
 
     return Object.freeze({ run, getProvenance: () => provenance,
+      createCheckpoint: () => agent.createCheckpoint?.() || null,
+      loadCheckpoint: saved => agent.loadCheckpoint?.(saved),
       dispose() { disposed = true; analysisPort?.close(); analysisPort = null; } });
   }
 

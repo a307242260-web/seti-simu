@@ -127,6 +127,7 @@ function createSimulationEnv(options = {}) {
   let machineCoordinator = null;
   let heuristicDecision = null;
   const agents = new Map();
+  let agentCheckpoints = {};
   let disposed = false;
 
   function recordDuration(key, startedAt) {
@@ -370,6 +371,7 @@ function createSimulationEnv(options = {}) {
       heuristicDecision = null;
       for (const agent of agents.values()) agent.dispose();
       agents.clear();
+      agentCheckpoints = {};
       if (!["heuristic", "completion", "search", "custom"].includes(config.agentType)
         || (config.agentType === "custom" && typeof options.agentFactory !== "function")) {
         throw environmentError("AGENT_FACTORY_MISSING", `没有可用的 AI factory: ${config.agentType}`);
@@ -620,7 +622,7 @@ function createSimulationEnv(options = {}) {
     runAgentDecision() {
       assertUsable();
       if (config.agentType === "heuristic") return this.runHeuristicPolicyDecision();
-      this.createCheckpoint();
+      saveEnvelope();
       cachedLegal = null;
       selectors = new Map();
       const coordinator = ensureCoordinator();
@@ -634,6 +636,8 @@ function createSimulationEnv(options = {}) {
           analysisPortFactory: () => analysisPort.createAnalysisPort({ composition, seatId }),
           onDecision: options.onAgentDecision,
         });
+        agent.loadCheckpoint(agentCheckpoints[seatId]);
+        delete agentCheckpoints[seatId];
         agents.set(seatId, agent);
       }
       coordinator.registerSeat(seatId, agents.get(seatId).run);
@@ -756,6 +760,15 @@ function createSimulationEnv(options = {}) {
     // 的 envelope（committedState + session），per-step after 摘要从每步 publicSummary
     // 构造（同构浏览器 browserStateSummary）。产出可直接被 tools/load_save_simulation.js
     // 读取继续打，或离线查中间过程。
+    saveMachineAI() {
+      const saved = {...agentCheckpoints};
+      for (const [seat,agent] of agents) {
+        const checkpoint=agent.createCheckpoint();
+        if(checkpoint)saved[seat]=checkpoint;else delete saved[seat];
+      }
+      return clone(saved);
+    },
+
     saveBrowserSave(options = {}) {
       assertUsable();
       const envelope = saveEnvelope();
@@ -815,6 +828,7 @@ function createSimulationEnv(options = {}) {
         session: envelope.session ?? null,
         readableState,
         replaySteps: browserReplaySteps,
+        machineAI: this.saveMachineAI(),
         name: options.name ?? String(meta.seed ?? seed ?? "simulation"),
       };
     },
@@ -841,6 +855,7 @@ function createSimulationEnv(options = {}) {
           compositionEnvelope: envelope,
         },
         config: clone(config || {}),
+        machineAI: this.saveMachineAI(),
         replayCursor: { seed, stepIndex: replaySteps.length },
         effectSessionJournals: replaySteps.map((step) => step.effectSessionJournal).filter(Boolean),
         replaySteps: clone(replaySteps),
@@ -894,6 +909,7 @@ function createSimulationEnv(options = {}) {
       const restore = composition.lifecycle.restore(envelope);
       if (!restore.ok) throw new Error(`checkpoint coreState 反序列化失败：${restore.code || restore.message}`);
       seededRandom.setState(rngState.state);
+      agentCheckpoints = clone(checkpoint.machineAI || {});
       replaySteps = clone(checkpoint.replaySteps || []);
       browserReplayHistory = clone(checkpoint.browserReplaySteps || []);
       environmentEvents = clone(checkpoint.environmentEvents || []);

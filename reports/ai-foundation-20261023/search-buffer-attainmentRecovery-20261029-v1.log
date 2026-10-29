@@ -1,0 +1,13 @@
+{"prefixStep":1,"continuation":"dependencies-changed","inputs":9}
+{"prefixStep":2,"continuation":"hit","inputs":0}
+{"prefixStep":3,"continuation":"hit","inputs":0}
+{"prefixStep":4,"continuation":"hit","inputs":0}
+{"prefixStep":5,"continuation":"hit","inputs":0}
+{"prefixStep":6,"continuation":"hit","inputs":0}
+{"prefixStep":7,"continuation":"hit","inputs":0}
+{"prefixStep":8,"continuation":"hit","inputs":0}
+{"prefixStep":9,"continuation":"hit","inputs":0}
+{"postMainAttainment":"passed","rows":[{"name":"end-now","raw":18,"attained":1,"value":32,"distance":1},{"name":"unprofitable-move","raw":163,"attained":1,"value":33,"distance":1},{"name":"cash-income","raw":1373,"attained":10,"value":35.5,"distance":10},{"name":"blind-income","raw":351,"attained":9,"value":35.5,"distance":9},{"name":"data-corner-cash","raw":2305,"attained":11,"value":44,"distance":11},{"name":"preserve-blind-data-card","raw":2368,"attained":10,"value":44,"distance":10},{"name":"must-retain-income-card","raw":324,"attained":1,"value":42,"distance":1},{"name":"late-income-tie","raw":1373,"attained":1,"value":27.5,"distance":1}],"realFactoryInputs":10,"reusedInteriorPrefixes":8}
+SUMMARY unit passed=1 failed=0 total=1 time=13.38s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1

@@ -1,0 +1,295 @@
+{
+  "status": "passed",
+  "comparisons": 48,
+  "rows": [
+    {
+      "id": "001",
+      "status": "stable",
+      "boundary": null,
+      "sha256": "2a1faac31f49b691495a1513a5f5d98ce68d943c3d7a5ce2e1fc1f1565b74aa2"
+    },
+    {
+      "id": "001",
+      "status": "stable",
+      "boundary": "hidden-draw",
+      "sha256": "8c44b8f7e8efbf06e6ad8ddd6e5e4ec92e01effacdf2d11ddcb79a7dbb581c5c"
+    },
+    {
+      "id": "001",
+      "status": "decision",
+      "boundary": null,
+      "sha256": "9990f6fd9358f5d46f1d6e8585881bbdf1f6cd37d6ba9d4b4b7f6e8a030260ed"
+    },
+    {
+      "id": "001",
+      "status": "decision",
+      "boundary": "hidden-draw",
+      "sha256": "f4a0573923701b0b6e70cc252995a5c593b71e9320ac4013df76b13644b4ac69"
+    },
+    {
+      "id": "001",
+      "status": "other-owner",
+      "boundary": null,
+      "sha256": "fbb36e8a6b44b315604925270eaa499147d1d3ec4ab8b52899db4d3329aeaee3"
+    },
+    {
+      "id": "001",
+      "status": "other-owner",
+      "boundary": "hidden-draw",
+      "sha256": "896bd40db3c7bdaf4a5cccb6f052184b4246be00074e2a71d7fcbcf293a156e2"
+    },
+    {
+      "id": "003",
+      "status": "stable",
+      "boundary": null,
+      "sha256": "2c5637a1939710cc2cdd1e9bdc767eba8c23ad45249b09becdbf26f0bb86bf84"
+    },
+    {
+      "id": "003",
+      "status": "stable",
+      "boundary": "hidden-draw",
+      "sha256": "18f755cc9b935356ddbdc22b8a5f084afda9101f9ebf6df453532f84a109cd43"
+    },
+    {
+      "id": "003",
+      "status": "decision",
+      "boundary": null,
+      "sha256": "7ed839ed3aa6e76fba83fa67f1cf74bf46683b22f33968445bdbfeb3683d9f84"
+    },
+    {
+      "id": "003",
+      "status": "decision",
+      "boundary": "hidden-draw",
+      "sha256": "3b84ea30db45d34b68550ce0428ae67bdded64b270752bc332ee11298e1f4d6c"
+    },
+    {
+      "id": "003",
+      "status": "other-owner",
+      "boundary": null,
+      "sha256": "86b0aa9b50de6128597d42fe7280570395e9fe516505ef9ba131afe33aab70a9"
+    },
+    {
+      "id": "003",
+      "status": "other-owner",
+      "boundary": "hidden-draw",
+      "sha256": "b221ed46cd26925e1d0ce92c23f1093c44a756fc154f5665b1362d9bf76d5ee7"
+    },
+    {
+      "id": "008",
+      "status": "stable",
+      "boundary": null,
+      "sha256": "34e7fd6c3f6b1f0bc8fcae79dd6d69a0e59bd93954d90d4612de3133051abcb0"
+    },
+    {
+      "id": "008",
+      "status": "stable",
+      "boundary": "hidden-draw",
+      "sha256": "5e5d9e22b90294c4608ea6b1201147774daaea4d2251f621ed8b56b86966ef7a"
+    },
+    {
+      "id": "008",
+      "status": "decision",
+      "boundary": null,
+      "sha256": "64f822814f728f3848f1c8a4e25b7c33cd293c3ad039048916dbf39e04d5f41d"
+    },
+    {
+      "id": "008",
+      "status": "decision",
+      "boundary": "hidden-draw",
+      "sha256": "af33736b2ba02abe8fefd891d893d8254daed788310426c4f41a2e4d008c4391"
+    },
+    {
+      "id": "008",
+      "status": "other-owner",
+      "boundary": null,
+      "sha256": "82baecfb01da3c2cdb7060db711cab40dbd6146038b4afda5c03bab5f271fe9d"
+    },
+    {
+      "id": "008",
+      "status": "other-owner",
+      "boundary": "hidden-draw",
+      "sha256": "45ce4ec51a42021ae8eb9fab132e36fcf5b619b7b42c0ab816c70f85cec3b1a2"
+    },
+    {
+      "id": "011",
+      "status": "stable",
+      "boundary": null,
+      "sha256": "375de8c29e82c1796f572c924f820dc8a9126e6cb266588cd30fd1b52884717a"
+    },
+    {
+      "id": "011",
+      "status": "stable",
+      "boundary": "hidden-draw",
+      "sha256": "20f677da890849373963037fdf3400f9628682a3166db7573fc692ac2da41d6d"
+    },
+    {
+      "id": "011",
+      "status": "decision",
+      "boundary": null,
+      "sha256": "f575e4563fae90257fddb63e1460086cf9c3a036ff5fbe7e2745fa5d0eca7719"
+    },
+    {
+      "id": "011",
+      "status": "decision",
+      "boundary": "hidden-draw",
+      "sha256": "f407796b250637e791d91ea2fca88edf1dba7f59549f3f95082cdc9b03bde74d"
+    },
+    {
+      "id": "011",
+      "status": "other-owner",
+      "boundary": null,
+      "sha256": "f36ec30b023990c341291dc33384606f70d4137140beb871dac250339f24456b"
+    },
+    {
+      "id": "011",
+      "status": "other-owner",
+      "boundary": "hidden-draw",
+      "sha256": "9c21ded8718da3cdfc3b5497e317df066945cb724bfd81d36937f1d1f3af4fac"
+    },
+    {
+      "id": "009",
+      "status": "stable",
+      "boundary": null,
+      "sha256": "a1e194f08e5524562911ded58c672f71973c353af154a02101fba04e7b858da6"
+    },
+    {
+      "id": "009",
+      "status": "stable",
+      "boundary": "hidden-draw",
+      "sha256": "4980ae54f0cb93be2aaf3e589d419664bd9ac16d992548b5523eb7fb14ff6d5b"
+    },
+    {
+      "id": "009",
+      "status": "decision",
+      "boundary": null,
+      "sha256": "153a4295f96af87734bf7d750c04937223086fda200bd2c5dd6f23a2c8fd9204"
+    },
+    {
+      "id": "009",
+      "status": "decision",
+      "boundary": "hidden-draw",
+      "sha256": "870fbdfb655525726e1e861a96f804303a371c1d4bd07df573fe90e268d45a00"
+    },
+    {
+      "id": "009",
+      "status": "other-owner",
+      "boundary": null,
+      "sha256": "5f0141b7712d5ae3a32fdd69323fb7a7291f2224bfa01adda50d5fbca842ca4c"
+    },
+    {
+      "id": "009",
+      "status": "other-owner",
+      "boundary": "hidden-draw",
+      "sha256": "609b6a9081623287e7f9a4947b238a661c34061046ba5c59fc84932a4f7126aa"
+    },
+    {
+      "id": "062",
+      "status": "stable",
+      "boundary": null,
+      "sha256": "a62e0b26d63c5e1db0b1bd846f4e3c24e261486e361f1978fca378aa66e21c79"
+    },
+    {
+      "id": "062",
+      "status": "stable",
+      "boundary": "hidden-draw",
+      "sha256": "8216b60c15ca5ee20bd7ffcacc3f2d4bc5d4b9d6f64d1d6e55878281b44328f8"
+    },
+    {
+      "id": "062",
+      "status": "decision",
+      "boundary": null,
+      "sha256": "68c12488f4bcfe8a68497bbbb62916260b44332654936bed561297e9746836cf"
+    },
+    {
+      "id": "062",
+      "status": "decision",
+      "boundary": "hidden-draw",
+      "sha256": "3b093f393d37b5ff7070bf10b665419d88323e2474b63dc5416ce2e57c64e8f8"
+    },
+    {
+      "id": "062",
+      "status": "other-owner",
+      "boundary": null,
+      "sha256": "568117a345e1377dd89010f34142f2d5dfb193728a49ed6294032bb3eb73de7b"
+    },
+    {
+      "id": "062",
+      "status": "other-owner",
+      "boundary": "hidden-draw",
+      "sha256": "20b393f4a4b18e073ca902321340cdfd9962bf5bed83506705fd9188aa80dc8c"
+    },
+    {
+      "id": "105",
+      "status": "stable",
+      "boundary": null,
+      "sha256": "aab61aafbfd8ed2708ccb6e7f457f65041d8b87fbe97bc512c82220d490599ae"
+    },
+    {
+      "id": "105",
+      "status": "stable",
+      "boundary": "hidden-draw",
+      "sha256": "d042dad79161d18d38e095247016122b8136dcf7e1db7fc367562d618efef1be"
+    },
+    {
+      "id": "105",
+      "status": "decision",
+      "boundary": null,
+      "sha256": "228fe972b6b765c4f18059974f61e83599b0c9c6bf3b4833f8bb69701d565300"
+    },
+    {
+      "id": "105",
+      "status": "decision",
+      "boundary": "hidden-draw",
+      "sha256": "51dac6c4a2cb5e25f83b031216ee7d4efa5ad57f40e7d0d37728d56505a9dd80"
+    },
+    {
+      "id": "105",
+      "status": "other-owner",
+      "boundary": null,
+      "sha256": "23b52661b03fbf2e4cfdd196606203cc7121f1d9eb923c5ea8a2141a05663ce7"
+    },
+    {
+      "id": "105",
+      "status": "other-owner",
+      "boundary": "hidden-draw",
+      "sha256": "1d82f77633759d8ed4d48b675b2ca927e5f54b3ecf48ee49bcc8e92e16a25a8f"
+    },
+    {
+      "id": "152",
+      "status": "stable",
+      "boundary": null,
+      "sha256": "e52b9a6dc506beb68ebb8bacfdc222ceacd9138906ae877220ab05623eba09bf"
+    },
+    {
+      "id": "152",
+      "status": "stable",
+      "boundary": "hidden-draw",
+      "sha256": "d19991953a98b040288e1b71eb764ae81b77543db971c6f067af4e788351929f"
+    },
+    {
+      "id": "152",
+      "status": "decision",
+      "boundary": null,
+      "sha256": "75285246d730928f12618e0ef89d0f9693f9c47b87e5223c05998259b5c48d76"
+    },
+    {
+      "id": "152",
+      "status": "decision",
+      "boundary": "hidden-draw",
+      "sha256": "c92c04093e0092e3a8df70de0e92a036aa42942767d593436e1f33ba23328b45"
+    },
+    {
+      "id": "152",
+      "status": "other-owner",
+      "boundary": null,
+      "sha256": "325c5ac159a170ed5c1984ecca6e35a4c9abe5a25d243d08797968503ca7243c"
+    },
+    {
+      "id": "152",
+      "status": "other-owner",
+      "boundary": "hidden-draw",
+      "sha256": "74ee610099a0d5f65fcb400ab62ec90381298c90d34950caeb1afea589a4154e"
+    }
+  ],
+  "sourceSha256": "3ce93a985e68fff25156e35354037803ed6ec496a17a9816b1d299b88e2febda"
+}

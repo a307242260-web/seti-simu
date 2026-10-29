@@ -96,3 +96,5 @@ node tools/migrate_537_full_chain.js
   id 同时进 reservedCards 与 industryLastPlayedCardThisRound，触发
   `STATE_ALIEN_ENTITY_SEQUENCE_DUPLICATE`）。
 - 2026-08-17：`tools/migrate_537_full_chain.js` 三档拼接迁移工具。
+
+搜索v38可选保存`machineAI`算法证据旁车：Browser存读档和Simulation checkpoint经同一runtime恢复已完成固定计划；不属于committed规则状态。模型或精确依赖变化时重搜，旧档无旁车仍可冷算，详见[恢复契约](ai-search-buffer-20261029.md)。

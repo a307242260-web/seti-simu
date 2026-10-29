@@ -44,7 +44,7 @@ for(const f of fixtures){
  assert.equal(port.knownCardMoneyOrder(root).group,port.knownCardMoneyOrder(poor).group);
  const pairBefore=comp.lifecycle.save().envelope;
  paired.push(compareSingleActions(port,root,poor,f.seatId));assert.deepEqual(comp.lifecycle.save().envelope,pairBefore);
- assert(port.getDiagnostics().decodedStateCacheEntries<=1);port.close();assert.equal(port.getDiagnostics().decodedStateCacheEntries,0);
+ const cacheStats=port.getDiagnostics();assert(cacheStats.decodedStateCacheEntries<=cacheStats.maxDecodedStateCacheEntries);assert(cacheStats.decodedStateCacheBytes<=cacheStats.maxDecodedStateCacheBytes);assert(cacheStats.committedDecodeHits>0);port.close();assert.equal(port.getDiagnostics().decodedStateCacheEntries,0);
  const s=JSON.parse(f.compositionEnvelope.committedState),owner=s.players.players.find(p=>p.id===f.seatId);
  s.cards.discardPile.push(...owner.hand.slice(1));owner.hand=owner.hand.slice(0,1);
  owner.mainActionCompleted=true;owner.resources={...owner.resources,credits:2,energy:1,publicity:0,availableData:0,handSize:1};

@@ -63,4 +63,21 @@ function native(s){s=structuredClone(s);const hand=own(s).hand,ids=new Set(hand.
 {
  const s=state(),p=own(s);p.mainActionCompleted=true;p.hand=p.hand.slice(0,1);p.resources.handSize=1;p.resources.availableData=0;p.resources.energy=8;const c=native(s),port=createAnalysisPort({composition:c,seatId});port.setResourcePlanning(true);const root=port.openRoot(),spec=port.resourceSpec(root);assert(!spec.plans.length);assert(root.legalActions.some(demand.isPreparation));assert(root.legalActions.filter(a=>spec.retainedActionIds.includes(a.actionId)).every(a=>!demand.isPreparation(a)));port.close();c.dispose();
 }
+// Funded income cards and non-publicity research sources retain explicit purposes.
+{
+ const tech=cards.CARD_CATALOG.find(c=>effects.buildPlayEffects(card(c.card_id,'inspect')).some(e=>e.type==='card_research_tech'));
+ const income=cards.CARD_CATALOG.find(c=>effects.buildPlayEffects(card(c.card_id,'inspect')).some(e=>e.type==='card_tuck_played_card_to_income'));
+ assert(tech&&income);const s=state(),p=own(s);p.hand=[card(tech.card_id,'free-tech'),card(income.card_id,'income')];p.resources.credits=10;p.resources.energy=10;p.resources.publicity=10;p.resources.handSize=2;
+ const c=native(s),port=createAnalysisPort({composition:c,seatId});port.setResourcePlanning(true);const root=port.openRoot(),policy=port.resourceSpec(root);
+ for(const id of ['card-free-tech','card-income']){
+  const plan=policy.plans.find(p=>p.goal.kind==='effect-purpose'&&p.goal.cardId===id);assert(plan,id);
+  assert(!policy.retainedActionIds.includes(plan.firstActionId),'source enters only its purpose plan');
+  const macro=port.expandResourcePlan(root,plan,()=>null);assert(macro.complete);assert(macro.prefixes.length>0);
+  if(macro.fallbackReason){const next=port.resourceSpec(macro.node);assert(next.bound);assert.equal(next.goal.id,plan.goal.id);
+   const tiles=macro.node.legalActions.filter(a=>a.target?.tileId&&'blueSlot' in a.target);
+   if(tiles.length){const expected=demand.greedyTechPlans({state:s,seatId,plans:tiles.map(action=>({...action.target,action}))}).map(p=>p.action.actionId).sort();assert.deepEqual(next.plans.map(p=>p.firstActionId).sort(),expected);}
+  }
+ }
+ port.close();c.dispose();
+}
 console.log(JSON.stringify({resourceDemand:'passed',noLoosePreparations:true,protectedCards:true,exactNeed:true,nativePaymentAndRestore:true,boundedFallback:true}));

@@ -1,0 +1,9 @@
+PASS production-start-button http://127.0.0.1:64264/randomizer/index.html
+PASS production-trajectory-recording http://127.0.0.1:64264/randomizer/index.html
+PASS production-fixed-board http://127.0.0.1:64264/randomizer/index.html
+PASS production-custom-seed http://127.0.0.1:64264/randomizer/index.html
+PASS production-fixed-board-free-analyze http://127.0.0.1:64264/randomizer/index.html
+Error: Runtime.evaluate 超时
+    at Timeout._onTimeout (/private/tmp/seti-search-buffer-20261029-xjyrfvsf/tools/run_browser_smokes.js:148:16)
+    at listOnTimeout (node:internal/timers:588:17)
+    at process.processTimers (node:internal/timers:523:7)

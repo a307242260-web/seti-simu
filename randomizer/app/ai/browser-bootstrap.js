@@ -70,6 +70,7 @@
     let coordinator = null;
     let decisionFunction = null;
     const agents = new Map();
+    let agentCheckpoints = {};
     let submittedCount = 0; // 成功提交计数（含方案/复用路径），供 inspect 与 smoke 断言
     let lastSubmittedKey = null; // 去重：seatId:stateVersion:decisionVersion:kind:decisionId
 
@@ -97,6 +98,8 @@
             analysisPortFactory: () => analysisPortModule.createAnalysisPort({ composition: ruleComposition, seatId }),
             onDecision: onAgentDecision,
           }));
+          agents.get(seatId).loadCheckpoint(agentCheckpoints[seatId]);
+          delete agentCheckpoints[seatId];
         }
         return agents.get(seatId);
       }
@@ -269,6 +272,7 @@
       decisionFunction = null;
       for (const agent of agents.values()) agent.dispose();
       agents.clear();
+      agentCheckpoints = {};
       lastResult = null;
       lastSubmittedKey = null;
       lastOutcomeSummary = null;
@@ -290,7 +294,13 @@
       });
     }
 
-    return Object.freeze({ runOnce, invalidate, inspect });
+    function createCheckpoint() {
+      const saved={...agentCheckpoints};
+      for(const [seat,agent] of agents){const checkpoint=agent.createCheckpoint();if(checkpoint)saved[seat]=checkpoint;else delete saved[seat];}
+      return structuredClone(saved);
+    }
+    function loadCheckpoint(saved) { invalidate("AI checkpoint restored"); agentCheckpoints=structuredClone(saved||{}); }
+    return Object.freeze({ runOnce, invalidate, inspect, createCheckpoint, loadCheckpoint });
   }
 
   function createBrowserAiBootstrap(context = {}) {

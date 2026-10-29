@@ -73,6 +73,7 @@ assert.deepEqual(comp.lifecycle.save().envelope, before, "分支不能改变真�
 const other = createAnalysisPort({ composition: comp, seatId: "wrong-owner" });
 assert.throws(() => other.openRoot(), /OWNER_MISMATCH/);
 port.close();
+assert.equal(port.getDiagnostics().decodedStateCacheBytes, 0);
 assert.equal(port.getDiagnostics().decodedStateCacheEntries, 0, "关闭必须释放已提交状态缓存");
 assert.throws(() => port.expand(root, rootActionId), /NODE_INVALID/);
 assert.equal(JSON.stringify(branch), branchBefore, "已物化观察关闭后仍是稳定的只读值");

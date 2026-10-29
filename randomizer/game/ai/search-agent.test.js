@@ -127,6 +127,9 @@ function controlledAgentFactory(context){
   const recoveredPost=simulation(postFixture);recoveredPost.loadCheckpoint(post.createCheckpoint());
   let prefixHits=0;
   for(let step=1;step<postResult.searches[0].lines[0].distance;step+=1) {
+    recoveredPost.loadCheckpoint(JSON.parse(JSON.stringify(post.createCheckpoint())));
+    const browserSave=browser.lifecycle.save().envelope,browserAI=port.createCheckpoint();
+    assert(browser.lifecycle.restore(browserSave).ok);port.loadCheckpoint(JSON.parse(JSON.stringify(browserAI)));
     const reusedPost=post.runAgentDecision(), coldPost=recoveredPost.runAgentDecision();
     assert.equal(reusedPost.actionId,coldPost.actionId);assert.equal(reusedPost.searches[0].value,coldPost.searches[0].value);
     assert.deepEqual(normalizeSessionHandles(post.createCheckpoint().coreState.compositionEnvelope),
@@ -136,9 +139,21 @@ function controlledAgentFactory(context){
     assert.deepEqual(normalizeSessionHandles(browser.lifecycle.save().envelope),
       normalizeSessionHandles(post.createCheckpoint().coreState.compositionEnvelope));
     assert.equal(Object.hasOwn(browserNext.agentTrace.search,"planContinuation"),false);
-    if(reusedPost.searches[0].diagnostics.planContinuation==="hit")prefixHits+=1;
+    if(reusedPost.searches[0].diagnostics.planContinuation==="hit"){
+      prefixHits+=1;assert.equal(coldPost.searches[0].diagnostics.transitions,0);
+      assert.equal(browserNext.searches[0].diagnostics.transitions,0);
+    }
   }
-  assert.equal(prefixHits,0,"资源准备中间步骤须从物理状态重算，不沿用没有持久目标的前缀证据");
+  assert(prefixHits>0,"资源固定计划须跨实际输入复用，恢复携带同一份完成证据");
+  const savedPost=post.createCheckpoint();
+  for(const altered of ['model','resources']){
+    const cp=JSON.parse(JSON.stringify(savedPost));
+    if(altered==='model'){for(const saved of Object.values(cp.machineAI))saved.modelChecksum='different-model';}
+    else{const state=JSON.parse(cp.coreState.committedState);state.players.players.find(p=>p.id===postFixture.seatId).resources.credits+=1;
+      cp.coreState.committedState=JSON.stringify(state);cp.coreState.compositionEnvelope.committedState=cp.coreState.committedState;}
+    const changed=createSimulationEnv();changed.loadCheckpoint(cp);const selected=changed.runAgentDecision();
+    assert.notEqual(selected.searches[0].diagnostics.planContinuation,'hit',altered+' must invalidate the old certificate');changed.dispose();
+  }
   recoveredPost.dispose();browser.dispose();
   post.dispose();
 
@@ -170,7 +185,7 @@ function controlledAgentFactory(context){
     const a = reused.runAgentDecision(), b = restored.runAgentDecision();
     assert.equal(a.actionId, b.actionId); assert.deepEqual(a.observation, b.observation);
     if (a.searches[0].diagnostics.planContinuation === "hit") reuseHits += 1;
-    if (step === 0) assert(b.searches[0].diagnostics.transitions > 0, "恢复不能携带旧临时token");
+    if (step === 0) assert.equal(b.searches[0].diagnostics.transitions,0,"恢复通过可序列化证据重建新token并校验依赖");
   }
   assert.equal(reuseHits, 3);
   assert.deepEqual(reused.createCheckpoint().coreState, restored.createCheckpoint().coreState);

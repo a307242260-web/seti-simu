@@ -1101,6 +1101,7 @@
       session: envelope.session || null,
       readableState,
       replaySteps: structuredClone(browserReplaySteps),
+      machineAI: browserAi.machinePlayerPort.createCheckpoint(),
     };
     const json = JSON.stringify(payload, null, 2);
     let storedLocally = false;
@@ -1352,6 +1353,7 @@
       window.alert(`读档失败：${result?.message || result?.code || "内核恢复失败"}`);
       return;
     }
+    browserAi.machinePlayerPort.loadCheckpoint(payload.machineAI);
     // 读档后把人类座位绑定到恢复状态的当前玩家（否则保持 spectator，看不到自己的科技/数据/手牌）
     const restoredProjection = ruleComposition.projectionSource.read({
       viewerId: "browser:seat-resync",

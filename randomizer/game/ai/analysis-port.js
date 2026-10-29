@@ -147,9 +147,10 @@
   // 重建执行意图并加入搜索控制身份；不把整份历史日志或撤销帧当成规则差异。
   // 除下述已证明例外，实体编号、数组顺序、资源、规则 RNG 与剩余队列保留。会改变合法信封的
   // authority 版本单独由 expand 校验，不能作为循环状态的差异。
-  function forwardIdentity(envelope, status, boundary, stateOverride = null) {
+  function forwardIdentity(envelope, status, boundary, stateOverride = null, stateCache = null) {
     const session = envelope.session?.session;
     const source = session?.workingState || stateOverride || JSON.parse(envelope.committedState);
+    function buildState() {
     const state = { ...source, meta: { ...source.meta }, ...(source.match ? { match: { ...source.match } } : {}) };
     // 固定牌堆不从弃牌洗回；Production 仅按唯一实体ID查找/移除或读取集合。
     // UI 展示和 journal 的历史顺序不属于向前规则身份；其他数组仍保留顺序。
@@ -191,6 +192,8 @@
     }
     delete state.meta.stateVersion;
     if (state.match) delete state.match.decisionVersion;
+      return state;
+    }
     const references = new Map();
     const prefix = /^effect-session-[0-9]+$/.test(session?.sessionId) ? session.sessionId : null;
     const referenceKeys = new Set(["effectId", "parentEffectId", "groupId", "quickGroupId", "decisionId", "choiceId"]);
@@ -224,7 +227,21 @@
       failure: session.failure,
       family: session.journal.actions[0]?.action?.family || null,
     } : null;
-    return JSON.stringify(normalize({ state, pending, status, boundary }));
+    // Preserve the original sorted traversal: boundary, pending, state, status.
+    // Pending references are numbered first; their exact mapping is part of the cache key.
+    const normalizedPending=normalize(pending);
+    const key=JSON.stringify([prefix,Array.from(references)]);
+    let variants=stateCache&&Object.isFrozen(source)?stateCache.get(source):null;
+    let normalizedState;
+    if(variants?.has(key))normalizedState=variants.get(key);
+    else{
+      normalizedState=normalize(buildState());
+      if(stateCache&&Object.isFrozen(source)){
+        if(!variants){variants=new Map();stateCache.set(source,variants);}
+        variants.set(key,normalizedState);
+      }
+    }
+    return JSON.stringify({boundary,pending:normalizedPending,state:normalizedState,status});
   }
 
   function createAnalysisPort({ composition, seatId, maxCacheEntries = 256 } = {}) {
@@ -238,7 +255,6 @@
     let resourcePlanning = false, finalMarkPlanning = false, scanPlanning = false;
     let localSpecs=new WeakMap();
     let resourceSpecs = new WeakMap();
-    let resourceRequirements = new WeakMap();
     const cardPickPlanner = cardPickPlanningApi.createCardPickPlanner();
     let cardPickRootStats = cardPickPlanner.getDiagnostics();
     let cardPickSpecs = new WeakMap();
@@ -249,6 +265,7 @@
     const movementRouteCache = new Map();
     const movementTimingCache = new Map();
     let nodes = new WeakMap();
+    let normalizedIdentityStates = new WeakMap();
     const identities = new Map();
     let resourceOrders = new WeakMap();
     let knownMoneyOrders = new WeakMap();
@@ -267,7 +284,11 @@
     const resourceGroups = new Map();
     let fork = null;
     let loadedEnvelope = null;
-    let decodedSerialized = null, decodedState = null;
+    const decodedStates = new Map();
+    const maxDecodedStateCacheEntries = 64, maxDecodedStateCacheBytes = 8 * 1024 * 1024;
+    let decodedStateCacheBytes = 0;
+    let envelopeObservations = new WeakMap(), stateRequirements = new WeakMap(), goalCatalogs = new WeakMap();
+    let observationCacheHits = 0, resourceQueryHits = 0, resourceQueryMisses = 0, goalCatalogHits = 0, goalCatalogMisses = 0;
     let committedDecodeCount = 0, committedDecodeHits = 0;
     let rootObservation = null;
     let publicSeed = null;
@@ -335,6 +356,8 @@
 
     function observeEnvelope(envelope, barrier) {
       if (!fork) throw new Error("ANALYSIS_NODE_INVALID");
+      let variants = envelopeObservations.get(envelope);
+      if (variants?.has(barrier)) { observationCacheHits++; return variants.get(barrier); }
       restoreEnvelope(envelope);
       const observationAt = now();
       const observation = project(fork.composition || fork);
@@ -346,6 +369,8 @@
       // Sanitization creates only new wrappers over that immutable snapshot.
       const result = freeze(visible);
       milliseconds.observation += now() - observationAt;
+      if (!variants) { variants = new Map(); envelopeObservations.set(envelope, variants); }
+      variants.set(barrier, result);
       return result;
     }
 
@@ -361,14 +386,14 @@
       });
       const boundary = barrier?.code || null;
       if (movementPlanning && !intent) intent = recoverMovementIntent(envelope);
-      const physicalKey = forwardIdentity(envelope, status, boundary, readIdentityState(envelope));
+      const physicalKey = forwardIdentity(envelope, status, boundary, readIdentityState(envelope), normalizedIdentityStates);
       const movementKey = intent ? JSON.stringify([physicalKey, intent]) : physicalKey;
       const pick = cardPickPlanning && status === "decision" && actions.length ? describeCardPick(envelope,actions,status) : null;
       const cardControl = pick?.fixed ? {goal:pick.goal,selection:pick.selection&&{cardId:pick.selection.cardId,blind:pick.selection.blind},discardIds:pick.discardIds} : null;
       const cardKey = cardControl ? JSON.stringify([movementKey,cardControl]) : movementKey;
       const key = resourceControl ? JSON.stringify([cardKey,resourceControl]) : cardKey;
       if (!identities.has(key)) identities.set(key, Object.freeze({}));
-      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, physicalKey, intent, cardControl, resourceControl });
+      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, policyKey: cardKey, physicalKey, intent, cardControl, resourceControl });
       nodeCount += 1;
       return node;
     }
@@ -384,16 +409,24 @@
     }
 
     function readCommittedState(envelope) {
-      // 不同pending信封可有相同committed bytes。只共享完整冻结的已提交根，
-      // store.beginWorkingCopy和Session恢复仍各自复制，不转移任何可写树。
-      if (decodedSerialized !== envelope.committedState) {
-        decodedState = freeze(JSON.parse(envelope.committedState));
-        decodedSerialized = envelope.committedState;
-        committedDecodeCount += 1;
-      } else {
-        committedDecodeHits += 1;
+      // Exact serialized bytes only; pending working copies remain separate and writable.
+      const key = envelope.committedState;
+      if (decodedStates.has(key)) {
+        const result = decodedStates.get(key);
+        decodedStates.delete(key); decodedStates.set(key, result);
+        committedDecodeHits++;
+        return result;
       }
-      return decodedState;
+      committedDecodeCount++;
+      const result = freeze(JSON.parse(key)), bytes = key.length * 2;
+      if (bytes <= maxDecodedStateCacheBytes) {
+        while (decodedStates.size && (decodedStates.size >= maxDecodedStateCacheEntries || decodedStateCacheBytes + bytes > maxDecodedStateCacheBytes)) {
+          const oldest = decodedStates.keys().next().value;
+          decodedStates.delete(oldest); decodedStateCacheBytes -= oldest.length * 2;
+        }
+        decodedStates.set(key, result); decodedStateCacheBytes += bytes;
+      }
+      return result;
     }
 
     function openRoot() {
@@ -406,6 +439,7 @@
       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
       observationCount = 0;
       committedDecodeCount = 0; committedDecodeHits = 0;
+      observationCacheHits = 0; resourceQueryHits = 0; resourceQueryMisses = 0; goalCatalogHits = 0; goalCatalogMisses = 0;
       for (const key of Object.keys(milliseconds)) milliseconds[key] = 0;
       rootObservation = project(composition);
       const actions = legalActions(composition);
@@ -457,7 +491,7 @@
         if (!stored.intent) {
           stored.intent = recoverMovementIntent(stored.envelope);
           if (stored.intent) {
-            stored.key = JSON.stringify([stored.physicalKey, stored.intent]);
+            stored.key = JSON.stringify([stored.physicalKey, stored.intent]); stored.policyKey = stored.key;
             if (!identities.has(stored.key)) identities.set(stored.key, Object.freeze({}));
             stored.identity = identities.get(stored.key);
           }
@@ -487,7 +521,7 @@
         const stored=nodes.get(openedRoot),pick=cardPickSpec(openedRoot);
         if(pick?.fixed&&!stored.cardControl){
           stored.cardControl={goal:pick.goal,selection:pick.selection&&{cardId:pick.selection.cardId,blind:pick.selection.blind},discardIds:pick.discardIds};
-          stored.key=JSON.stringify([stored.key,stored.cardControl]);
+          stored.key=JSON.stringify([stored.key,stored.cardControl]);stored.policyKey=stored.key;
           if(!identities.has(stored.key))identities.set(stored.key,Object.freeze({}));stored.identity=identities.get(stored.key);
         }
       }
@@ -527,12 +561,32 @@
     }
 
     function resourceQuery(state) {
-      return (productionKernel||globalThis.SetiProductionKernel).getResourceGoalRequirements(state,seatId);
+      if (stateRequirements.has(state)) { resourceQueryHits++; return stateRequirements.get(state); }
+      resourceQueryMisses++;
+      const result = freeze((productionKernel||globalThis.SetiProductionKernel).getResourceGoalRequirements(state,seatId));
+      stateRequirements.set(state,result); return result;
+    }
+
+    function resourceCatalog(state, actions) {
+      let variants = goalCatalogs.get(state);
+      const key = actionSetKey(actions);
+      if (variants?.has(key)) { goalCatalogHits++; return variants.get(key); }
+      goalCatalogMisses++;
+      const result = freeze(resourceDemand.catalog({state,seatId,requirements:resourceQuery(state),actions}));
+      if (!variants) { variants = new Map(); goalCatalogs.set(state,variants); }
+      variants.set(key,result); return result;
     }
 
     function resourceStep(node,goal,operation={}) {
       const stored=nodes.get(node),state=readIdentityState(stored.envelope),session=stored.envelope.session?.session;
       const local=localDecisionSpec(node);if(["fixed-final-mark","fixed-paid-repeat","fixed-positive-optional","fixed-pass-discard"].includes(local?.kind))return{kind:"fixed",actionId:local.selectedActionId,reason:local.kind};
+      if(goal.kind==="effect-purpose"&&operation.targetStarted){
+        if(node.status==="stable")return{kind:"complete",reason:"purpose-effect-completed"};
+        const fixed=local?.selectedActionId?{kind:"fixed",actionId:local.selectedActionId,reason:local.kind}:null;
+        if(fixed)return fixed;
+        const income=resourceDemand.incomeChoice({state,seatId,goal:{...goal,required:{}},actions:node.legalActions});if(income)return income;
+        return{kind:"fallback",reason:"purpose-effect-native-choice",actionIds:local?.retainedActionIds||node.legalActions.map(a=>a.actionId)};
+      }
       if(goal.kind==="scan-flow"){
         const dataStep=resourceDemand.fixedDataChoice({state,seatId,goal,actions:node.legalActions});
         if(node.status==="decision"&&dataStep)return dataStep;
@@ -566,12 +620,11 @@
         resourceSpecs.set(node,result);return result;
       }
       if(node.status==="stable"){
-        if(!resourceRequirements.has(node))resourceRequirements.set(node,resourceQuery(state));
-        goals=resourceDemand.catalog({state,seatId,requirements:resourceRequirements.get(node),actions:node.legalActions});
+        goals=resourceCatalog(state,node.legalActions);
       }else{
         source=session?.journal?.actions?.[0]?.action;
         if(session?.baseState&&(resourceDemand.isPreparation(source||{})||source?.family==="move")){
-          goals=resourceDemand.catalog({state:session.baseState,seatId,requirements:resourceQuery(session.baseState),actions:[source]})
+          goals=resourceCatalog(session.baseState,[source])
             .filter(goal=>{
               const first=resourceDemand.step({state:session.baseState,seatId,goal,actions:[source],status:"stable"});
               return first.actionId===source.actionId||first.kind==="fallback"&&first.actionIds.includes(source.actionId);
@@ -608,7 +661,7 @@
         }
       }
       const owner=state.players.players.find(p=>p.id===seatId);
-      const excluded=node.status==="stable"?node.legalActions.filter(a=>a.family==="industry"&&a.target?.abilityId==="turing_borrow_tech"||a.family==="play_card"&&plans.some(p=>p.goal.cardId===a.target.cardInstanceId&&p.goal.paidRewardPolicy)||resourceDemand.isPreparation(a)||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
+      const excluded=node.status==="stable"?node.legalActions.filter(a=>a.family==="industry"&&a.target?.abilityId==="turing_borrow_tech"||plans.some(p=>p.goal.kind==="effect-purpose"&&p.firstActionId===a.actionId)||a.family==="play_card"&&plans.some(p=>p.goal.cardId===a.target.cardInstanceId&&p.goal.paidRewardPolicy)||resourceDemand.isPreparation(a)||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
       const forceIncome=node.status==="stable"&&incomeTail?.selected&&plans.some(p=>p.goal.kind==="income");
       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans:forceIncome?plans.filter(p=>p.goal.kind==="income"):plans,
         ...(incomeTail?{incomeTail}:{}),
@@ -1061,7 +1114,7 @@
           || entry.node.legalActions.some(action => !entry.roots.some(row => row.actionId === action.actionId))) {
           throw new Error("ANALYSIS_PLAN_EVIDENCE_INVALID");
         }
-        return { key: stored.key, actions: actionSetKey(entry.node.legalActions), actionId: entry.actionId,
+        return { key: stored.policyKey, actions: actionSetKey(entry.node.legalActions), actionId: entry.actionId,
           value: entry.value, distance: entry.distance, sourceNode: entry.sourceNode, roots: freeze(structuredClone(entry.roots)) };
       });
       const token = Object.freeze({}), evidenceId = `plan-evidence-${++nextCertificate}`;
@@ -1075,11 +1128,31 @@
       const saved = token && planCertificate?.token === token ? planCertificate : null;
       if (!saved) return { hit: false, reason: "unknown-evidence" };
       if (saved.modelKey !== modelKey) return { hit: false, reason: "model-changed" };
-      const row = saved.rows.find(entry => entry.key === stored.key && entry.actions === actionSetKey(node.legalActions));
+      const row = saved.rows.find(entry => entry.key === stored.policyKey && entry.actions === actionSetKey(node.legalActions));
       if (!row) return { hit: false, reason: "dependencies-changed" };
       return freeze({ hit: true, actionId: row.actionId, value: row.value, distance: row.distance, roots: row.roots,
         proof: "seti-complete-window-best-prefix-reuse-v1", evidenceId: saved.evidenceId,
         sourceNode: row.sourceNode, source: saved.source });
+    }
+
+    // Optional AI sidecar, never rule state or public decision evidence. Revalidate exact
+    // physical/queue/RNG identity, legal envelopes and complete model/options on every hit.
+    function exportPlan(token) {
+      if (!token || planCertificate?.token !== token) return null;
+      const { token: ignored, ...saved } = planCertificate;
+      return structuredClone({schemaVersion:"seti-search-plan-checkpoint-v1",...saved});
+    }
+    function importPlan(saved) {
+      if (saved == null) return null;
+      if (saved.schemaVersion !== "seti-search-plan-checkpoint-v1" || typeof saved.modelKey !== "string"
+        || !Array.isArray(saved.rows) || !saved.rows.length || saved.rows.length > 32
+        || !Number.isSafeInteger(saved.source?.nodeCount) || saved.source.nodeCount < 1
+        || saved.rows.some(row=>typeof row.key!=="string" || typeof row.actions!=="string" || typeof row.actionId!=="string"
+          || !Number.isFinite(row.value) || !Number.isSafeInteger(row.distance) || row.distance < 1 || !Array.isArray(row.roots))) {
+        throw new Error("ANALYSIS_PLAN_CHECKPOINT_INVALID");
+      }
+      const token=Object.freeze({});
+      planCertificate={...freeze(structuredClone(saved)),token}; return token;
     }
 
     function cardTradeBound(node) {
@@ -2180,8 +2253,10 @@
       (fork?.composition || fork)?.dispose?.();
       fork = null;
       loadedEnvelope = null;
-      decodedSerialized = null; decodedState = null;
+      decodedStates.clear(); decodedStateCacheBytes = 0;
+      envelopeObservations = new WeakMap(); stateRequirements = new WeakMap(); goalCatalogs = new WeakMap();
       nodes = new WeakMap();
+      normalizedIdentityStates = new WeakMap();
       movementPolicies = new WeakMap();
       movementRouteCache.clear();
       movementTimingCache.clear();
@@ -2189,7 +2264,6 @@
       cardPickPlanning = false;
       resourcePlanning = false;finalMarkPlanning=false;scanPlanning=false;localSpecs=new WeakMap();
       resourceSpecs = new WeakMap();
-      resourceRequirements = new WeakMap();
       cardPickSpecs = new WeakMap();
       envelopeCardSpecs = new WeakMap();
       openedRoot = null;
@@ -2220,7 +2294,8 @@
       return freeze({ cardPick:{...picks,rankingCacheHitsThisRoot:picks.rankingCacheHits-cardPickRootStats.rankingCacheHits,
         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, stableRestoreSkips, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
         observationCount, identityCount: identities.size, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
-        decodedStateCacheEntries: decodedSerialized ? 1 : 0, maxDecodedStateCacheEntries: 1,
+        decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
+        observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,
         committedDecodeCount, committedDecodeHits,
         selectionEvidenceEntries: selectionCertificate ? 1 : 0, maxSelectionEvidenceEntries: 1,
         planEvidenceEntries: planCertificate ? 1 : 0, planPrefixEntries: planCertificate?.rows.length || 0, maxPlanPrefixEntries: 32,
@@ -2234,7 +2309,7 @@
     }
 
     return Object.freeze({ openRoot, expand, identity, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
-      rememberSelection, reuseSelection, rememberPlan, reusePlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
+      rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }
 

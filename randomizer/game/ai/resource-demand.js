@@ -75,6 +75,18 @@
       if(placed(p)<6||Object.entries(requirements.analyzeCost).some(([k,v])=>p.resources[k]<v))
         add({id:'data:analyze:6',kind:'analyze',targetComputerSlot:6,required:requirements.analyzeCost});
     }
+    // Income and free/card-sourced research enter as purpose plans too. The native
+    // effect queue still determines costs and every distinct research tile choice.
+    if(!p.mainActionCompleted)for(const card of p.hand){
+      const types=effects.buildPlayEffects(card).map(e=>e.type);
+      const purpose=types.includes('card_research_tech')?'tech':types.some(t=>['card_income','card_tuck_played_card_to_income','card_discard_any_for_income'].includes(t))?'income':null;
+      if(purpose)add({id:`effect:${purpose}:card:${card.id}`,kind:'effect-purpose',purpose,cardId:card.id,sourceFamily:'play_card',required:effects.getCardPlayCost(card)});
+    }
+    for(const action of actions){
+      if(action.family==='industry'&&['helios_remove_tech_income','mission_publicity_pick_income'].includes(action.target?.abilityId)){
+        add({id:`effect:income:industry:${action.target.abilityId}`,kind:'effect-purpose',purpose:'income',abilityId:action.target.abilityId,sourceFamily:'industry',required:{}});
+      }
+    }
     if(placed(p)<4&&p.hand.some(c=>cards.getIncomeGainForCard(c))){
       const incomeCard=p.hand.filter(c=>cards.getIncomeGainForCard(c)).sort((a,b)=>{
         const value=c=>Object.entries(cards.getIncomeGainForCard(c)||{}).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0);
@@ -89,7 +101,7 @@
       -(g.endpointCost.credits||0)-(g.endpointCost.energy||0)-g.movementPoints})).filter(x=>x.net>0)
       .sort((a,b)=>b.net-a.net||a.goal.movementPoints-b.goal.movementPoints||a.goal.path.length-b.goal.path.length||(a.goal.id<b.goal.id?-1:1));
     const chosen=routes[0]?.goal;
-    return goals.filter(g=>g.kind!=='route'||g===chosen).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
+    return goals.filter(g=>(g.kind!=='route'||g===chosen)&&!(g.kind==='play_card'&&!g.paidRewardPolicy&&goals.some(p=>p.kind==='effect-purpose'&&p.cardId===g.cardId))).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
   }
   const localWeights={score:1,credits:1,energy:1,publicity:.5,availableData:.5,additionalPublicScan:.5};
   const resourceValue=p=>Object.entries(localWeights).reduce((n,[k,w])=>n+(p.resources[k]||0)*w,0)+p.hand.length;
@@ -242,6 +254,10 @@
   }
   function step({state,seatId,goal,actions,status,session,operation={}}){
     goal=currentGoal(state,goal);
+    if(goal.kind==='effect-purpose'&&operation.targetStarted){
+      return status==='stable'?{kind:'complete',reason:'purpose-effect-completed'}
+        :{kind:'fallback',reason:'purpose-effect-native-choice',actionIds:actions.map(a=>a.actionId)};
+    }
     const p=owner(state,seatId),d=needs(state,seatId,goal);
     if(goal.kind==='blue-data'&&data.listBlueBonusPlacedTokens(p).some(t=>t.blueSlot===goal.blueSlot))return{kind:'complete',reason:'blue-data-target-reached'};
     if(status==='decision'){
@@ -290,6 +306,10 @@
       const a=next?actions.find(a=>a.family==='move'&&a.target?.rocketId===goal.rocketId&&a.target.deltaX===next.deltaX&&a.target.deltaY===next.deltaY)
         :actions.find(a=>a.family===goal.family&&(a.target.rocketId==null||a.target.rocketId===goal.rocketId)&&(a.target.planetId==null||a.target.planetId===goal.planetId));
       return a?{kind:next?'fixed':'start-target',actionId:a.actionId,reason:next?'fixed-goal-route-step':'funded-route-endpoint'}:{kind:'infeasible',reason:'goal-route-action-unavailable'};
+    }
+    if(goal.kind==='effect-purpose'){
+      const a=actions.find(a=>a.family===goal.sourceFamily&&(goal.cardId?a.target?.cardInstanceId===goal.cardId:a.target?.abilityId===goal.abilityId));
+      return a?{kind:'start-target',actionId:a.actionId,reason:'start-bound-'+goal.purpose}:{kind:'infeasible',reason:'purpose-source-unavailable'};
     }
     const a=actions.find(a=>a.family===goal.kind&&(goal.kind!=='play_card'||a.target.cardInstanceId===goal.cardId));
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
