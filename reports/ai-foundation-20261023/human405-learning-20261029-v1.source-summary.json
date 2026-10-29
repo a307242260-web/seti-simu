@@ -1,0 +1,445 @@
+{
+  "schemaVersion": "seti-human405-learning-source-v1",
+  "sourceSave": "seti-saves/seti-save-537-merged.json",
+  "sourceSaveSha256": "bdff1283bc052ec3e833d958f369f0c0ef286ebca1c7a48034efe5a612f029b7",
+  "archive": "adhoc/human-405-history-evidence-20260913.json.gz",
+  "archiveSha256": "f31e79b16d41af7c9e698b8fd4e65d3238b869354f69de9c99ffe41555c62468",
+  "historicalCommit": "4fe33887",
+  "historicalOnly": true,
+  "steps": 516,
+  "playerScores": {
+    "player-blue": 7,
+    "player-green": 7,
+    "player-brown": 8,
+    "player-white": 249
+  },
+  "whiteFinal": {
+    "baseScore": 249,
+    "cardScore": 38,
+    "cards": [
+      {
+        "cardId": "dlc_31.png",
+        "rule": {
+          "count": 2,
+          "kind": "planetLandingPairs",
+          "scorePer": 6
+        },
+        "score": 6
+      },
+      {
+        "cardId": "amiba_7.webp",
+        "rule": {
+          "kind": "amibaTraceCount",
+          "scorePer": 2,
+          "traceType": "blue"
+        },
+        "score": 8
+      },
+      {
+        "cardId": "chong_2.webp",
+        "rule": {
+          "kind": "chongTraceCount",
+          "scorePer": 1
+        },
+        "score": 10
+      },
+      {
+        "cardId": "amiba_5.webp",
+        "rule": {
+          "kind": "amibaTraceCount",
+          "scorePer": 2,
+          "traceType": "pink"
+        },
+        "score": 6
+      },
+      {
+        "cardId": "amiba_6.webp",
+        "rule": {
+          "kind": "amibaTraceCount",
+          "scorePer": 2,
+          "traceType": "yellow"
+        },
+        "score": 8
+      }
+    ],
+    "jiuzheCardScore": 0,
+    "jiuzheCards": [],
+    "jiuzhePenaltyApplied": false,
+    "jiuzhePenaltyScore": 0,
+    "jiuzheThreat": 0,
+    "playerId": "player-white",
+    "prePenaltyTotalScore": 405,
+    "runezuSymbolScore": 0,
+    "tileScore": 118,
+    "tileScoresById": {
+      "a": 0,
+      "b": 48,
+      "c": 28,
+      "d": 42
+    },
+    "tiles": [
+      {
+        "baseValue": 6,
+        "formulaId": "b1",
+        "multiplier": 8,
+        "score": 48,
+        "slotIndex": 1,
+        "tileId": "b",
+        "variant": 1
+      },
+      {
+        "baseValue": 7,
+        "formulaId": "c1",
+        "multiplier": 4,
+        "score": 28,
+        "slotIndex": 1,
+        "tileId": "c",
+        "variant": 1
+      },
+      {
+        "baseValue": 6,
+        "formulaId": "d2",
+        "multiplier": 7,
+        "score": 42,
+        "slotIndex": 1,
+        "tileId": "d",
+        "variant": 2
+      }
+    ],
+    "totalScore": 405
+  },
+  "whiteScoreSources": {
+    "alienCardQuickScore": 0,
+    "alienEffectScore": 38,
+    "alienTraceBlueScore": 15,
+    "alienTracePinkScore": 22,
+    "alienTraceYellowScore": 15,
+    "blueTechScore": 40,
+    "cardEffectScore": 0,
+    "cardQuickScore": 3,
+    "industryEffectScore": 0,
+    "initialScore": 6,
+    "landScore": 41,
+    "orbitScore": 3,
+    "scanScore": 21,
+    "taskCardScore": 15,
+    "techBonusScore": 30
+  },
+  "rounds": {
+    "1": {
+      "lastHistoricalStep": 60,
+      "baseScore": 15,
+      "income": {
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "ownedTech": [
+        "blue2",
+        "purple4"
+      ],
+      "resources": {
+        "credits": 0,
+        "energy": 1,
+        "publicity": 3,
+        "availableData": 0,
+        "aomomoFossils": 0,
+        "additionalPublicScan": 0,
+        "handSize": 0,
+        "score": 15
+      },
+      "reservedCards": 2,
+      "actions": {
+        "choose_card": 12,
+        "choose_payment": 2,
+        "play_card": 2,
+        "quick_trade": 1,
+        "choose_target": 9,
+        "end_turn": 4,
+        "research_tech": 1,
+        "orbit": 1,
+        "industry": 1,
+        "place_data": 5,
+        "pass": 1
+      }
+    },
+    "2": {
+      "lastHistoricalStep": 104,
+      "baseScore": 32,
+      "income": {
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "ownedTech": [
+        "blue1",
+        "blue2",
+        "purple4"
+      ],
+      "resources": {
+        "credits": 4,
+        "energy": 1,
+        "publicity": 1,
+        "availableData": 0,
+        "aomomoFossils": 0,
+        "additionalPublicScan": 0,
+        "handSize": 0,
+        "score": 32
+      },
+      "reservedCards": 2,
+      "actions": {
+        "scan": 1,
+        "choose_target": 14,
+        "choose_card": 3,
+        "end_turn": 6,
+        "play_card": 3,
+        "place_data": 5,
+        "research_tech": 1,
+        "analyze": 1,
+        "pass": 1
+      }
+    },
+    "3": {
+      "lastHistoricalStep": 244,
+      "baseScore": 105,
+      "income": {
+        "credits": 7,
+        "energy": 4,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "ownedTech": [
+        "blue1",
+        "blue2",
+        "orange2",
+        "orange4",
+        "purple2",
+        "purple4"
+      ],
+      "resources": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 5,
+        "availableData": 3,
+        "aomomoFossils": 0,
+        "additionalPublicScan": 0,
+        "handSize": 3,
+        "score": 105
+      },
+      "reservedCards": 6,
+      "actions": {
+        "play_card": 7,
+        "choose_target": 55,
+        "end_turn": 15,
+        "card_corner": 1,
+        "place_data": 20,
+        "research_tech": 2,
+        "accept_optional_effect": 5,
+        "scan": 4,
+        "choose_card": 18,
+        "industry": 1,
+        "analyze": 2,
+        "pass": 1
+      }
+    },
+    "4": {
+      "lastHistoricalStep": 515,
+      "baseScore": 249,
+      "income": {
+        "credits": 8,
+        "energy": 7,
+        "handSize": 1,
+        "publicity": 0,
+        "availableData": 0,
+        "additionalPublicScan": 1
+      },
+      "ownedTech": [
+        "blue1",
+        "blue2",
+        "blue3",
+        "blue4",
+        "orange1",
+        "orange2",
+        "orange3",
+        "orange4",
+        "purple1",
+        "purple2",
+        "purple3",
+        "purple4"
+      ],
+      "resources": {
+        "credits": 0,
+        "energy": 0,
+        "publicity": 2,
+        "availableData": 0,
+        "aomomoFossils": 0,
+        "additionalPublicScan": 0,
+        "handSize": 0,
+        "score": 249
+      },
+      "reservedCards": 6,
+      "actions": {
+        "launch": 1,
+        "end_turn": 26,
+        "place_data": 38,
+        "choose_target": 114,
+        "analyze": 5,
+        "choose_card": 29,
+        "scan": 8,
+        "play_card": 7,
+        "accept_optional_effect": 4,
+        "card_corner": 7,
+        "research_tech": 4,
+        "quick_trade": 5,
+        "complete_task": 2,
+        "industry": 1,
+        "land": 1,
+        "choose_payment": 11,
+        "pass": 1
+      }
+    }
+  },
+  "techEvents": [
+    {
+      "step": 35,
+      "round": 1,
+      "turn": 5,
+      "added": [
+        "blue2"
+      ]
+    },
+    {
+      "step": 58,
+      "round": 1,
+      "turn": 7,
+      "added": [
+        "purple4"
+      ]
+    },
+    {
+      "step": 92,
+      "round": 2,
+      "turn": 8,
+      "added": [
+        "blue1"
+      ]
+    },
+    {
+      "step": 127,
+      "round": 3,
+      "turn": 6,
+      "added": [
+        "purple2"
+      ]
+    },
+    {
+      "step": 136,
+      "round": 3,
+      "turn": 8,
+      "added": [
+        "orange2"
+      ]
+    },
+    {
+      "step": 220,
+      "round": 3,
+      "turn": 16,
+      "added": [
+        "orange4"
+      ]
+    },
+    {
+      "step": 319,
+      "round": 4,
+      "turn": 11,
+      "added": [
+        "orange1"
+      ]
+    },
+    {
+      "step": 360,
+      "round": 4,
+      "turn": 15,
+      "added": [
+        "blue4"
+      ]
+    },
+    {
+      "step": 380,
+      "round": 4,
+      "turn": 17,
+      "added": [
+        "purple1"
+      ]
+    },
+    {
+      "step": 391,
+      "round": 4,
+      "turn": 19,
+      "added": [
+        "blue3"
+      ]
+    },
+    {
+      "step": 464,
+      "round": 4,
+      "turn": 24,
+      "added": [
+        "orange3"
+      ]
+    },
+    {
+      "step": 492,
+      "round": 4,
+      "turn": 27,
+      "added": [
+        "purple3"
+      ]
+    }
+  ],
+  "learningHypotheses": [
+    {
+      "id": "engine-before-payout",
+      "observation": "2/3/6/12 technologies at round ends; base score 15/32/105/249",
+      "hypothesis": "current one-turn model lacks explicit retained technology/efficiency value; test a capacity feature before changing weights"
+    },
+    {
+      "id": "data-analysis-loop",
+      "observation": "white analyze counts 0/1/2/5 and place-data 5/5/20/38",
+      "hypothesis": "compare full resource-to-scan-to-data-to-analysis chains, with known species boundaries preserved"
+    },
+    {
+      "id": "terminal-goal-growth",
+      "observation": "118 tile points, including technology, traces and completed tasks",
+      "hypothesis": "current-mark greedy forecast may prefer immediate income over growth boards; validate early marking choices separately"
+    },
+    {
+      "id": "resource-liquidation",
+      "observation": "human ends with zero credits, energy, hand and availableData",
+      "hypothesis": "test finite-horizon resource holding value using the same public information; no hidden future card identity"
+    }
+  ],
+  "limits": [
+    "Other three players mostly PASS, final base 7/7/8: white405 is a teaching trajectory, not a matched four-AI score target.",
+    "Historical kernel is 4fe33887, current world metadata differs; do not restore old states into current kernel by relabeling them.",
+    "One demonstration does not establish generalized strategy or fitted-value validity."
+  ],
+  "nonOverlappingScoreGroups": {
+    "alien_engine": 170,
+    "technology_engine": 112,
+    "tasks": 43,
+    "planets": 50,
+    "scan": 21,
+    "ordinary_card_quick": 3,
+    "initial": 6
+  },
+  "engineShare": 0.6962962962962963
+}

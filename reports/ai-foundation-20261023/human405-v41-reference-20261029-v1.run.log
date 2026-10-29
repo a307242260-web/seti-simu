@@ -1,0 +1,55 @@
+[world] human-405-world-v1 2d9f8f5344864fcd683204661f0ab70c07dbd086b2ff8e2c00ea2ff283213d8c
+[full进度] 第 1 轮 · 第 1 回合 · 决策#1 · 席位=player-white · 动作=choose_card:04955932 · 蓝色玩家=0 绿色玩家=0 棕色玩家=0 白色玩家=0 · 用时=0.062s · 16.1步/s
+[full进度] 第 1 轮 · 第 1 回合 · 决策#10 · 席位=player-blue · 动作=choose_card:032691f3 · 蓝色玩家=0 绿色玩家=0 棕色玩家=0 白色玩家=0 · 用时=1.302s · 7.7步/s
+[full进度] 第 1 轮 · 第 1 回合 · 决策#18 · 席位=player-white · 动作=choose_payment:1b209b35 · 蓝色玩家=10 绿色玩家=6 棕色玩家=8 白色玩家=3 · 用时=2.357s · 7.6步/s
+[full进度] 第 1 轮 · 第 2 回合 · 决策#37 · 席位=player-green · 动作=place_data:dbe01b29 · 蓝色玩家=10 绿色玩家=6 棕色玩家=8 白色玩家=3 · 用时=3.494s · 10.6步/s
+[full进度] 第 1 轮 · 第 4 回合 · 决策#55 · 席位=player-brown · 动作=place_data:50a9ac16 · 蓝色玩家=15 绿色玩家=11 棕色玩家=8 白色玩家=3 · 用时=4.715s · 11.7步/s
+[full进度] 第 2 轮 · 第 1 回合 · 决策#76 · 席位=player-green · 动作=quick_trade:ee5652be · 蓝色玩家=17 绿色玩家=11 棕色玩家=13 白色玩家=3 · 用时=6.021s · 12.6步/s
+[full进度] 第 2 轮 · 第 1 回合 · 决策#82 · 席位=player-green · 动作=choose_target:b849344b · 蓝色玩家=17 绿色玩家=11 棕色玩家=13 白色玩家=3 · 用时=7.039s · 11.6步/s
+[full进度] 第 2 轮 · 第 5 回合 · 决策#100 · 席位=player-white · 动作=end_turn:b2f9b29d · 蓝色玩家=17 绿色玩家=24 棕色玩家=15 白色玩家=8 · 用时=8.049s · 12.4步/s
+[full进度] 第 2 轮 · 第 9 回合 · 决策#120 · 席位=player-green · 动作=play_card:55fde2f7 · 蓝色玩家=17 绿色玩家=27 棕色玩家=18 白色玩家=10 · 用时=9.216s · 13.0步/s
+[full进度] 第 3 轮 · 第 1 回合 · 决策#136 · 席位=player-blue · 动作=card_corner:5cedfc59 · 蓝色玩家=17 绿色玩家=30 棕色玩家=18 白色玩家=10 · 用时=10.31s · 13.2步/s
+[full进度] 第 3 轮 · 第 4 回合 · 决策#155 · 席位=player-green · 动作=quick_trade:ee5652be · 蓝色玩家=19 绿色玩家=30 棕色玩家=20 白色玩家=10 · 用时=11.506s · 13.5步/s
+[full进度] 第 3 轮 · 第 4 回合 · 决策#163 · 席位=player-green · 动作=move:cc916f6c · 蓝色玩家=19 绿色玩家=30 棕色玩家=20 白色玩家=10 · 用时=12.544s · 13.0步/s
+[full进度] 第 3 轮 · 第 6 回合 · 决策#180 · 席位=player-white · 动作=play_card:cc286ace · 蓝色玩家=19 绿色玩家=47 棕色玩家=20 白色玩家=10 · 用时=13.728s · 13.1步/s
+[full进度] 第 3 轮 · 第 8 回合 · 决策#193 · 席位=player-white · 动作=move:75e0e1ed · 蓝色玩家=19 绿色玩家=49 棕色玩家=20 白色玩家=10 · 用时=14.748s · 13.1步/s
+[full进度] 第 3 轮 · 第 10 回合 · 决策#208 · 席位=player-white · 动作=quick_trade:f385e2ac · 蓝色玩家=19 绿色玩家=52 棕色玩家=20 白色玩家=10 · 用时=15.818s · 13.1步/s
+[full进度] 第 3 轮 · 第 13 回合 · 决策#219 · 席位=player-white · 动作=quick_trade:f385e2ac · 蓝色玩家=19 绿色玩家=52 棕色玩家=20 白色玩家=24 · 用时=16.863s · 13.0步/s
+[full进度] 第 3 轮 · 第 15 回合 · 决策#242 · 席位=player-white · 动作=pass:a1f33c73 · 蓝色玩家=19 绿色玩家=52 棕色玩家=20 白色玩家=29 · 用时=17.887s · 13.5步/s
+[full进度] 第 4 轮 · 第 2 回合 · 决策#254 · 席位=player-white · 动作=choose_reward:7d165d38 · 蓝色玩家=19 绿色玩家=52 棕色玩家=20 白色玩家=43 · 用时=18.934s · 13.4步/s
+[full进度] 第 4 轮 · 第 6 回合 · 决策#262 · 席位=player-white · 动作=quick_trade:df811f99 · 蓝色玩家=19 绿色玩家=52 棕色玩家=20 白色玩家=43 · 用时=20.148s · 13.0步/s
+[full进度] 第 4 轮 · 第 8 回合 · 决策#281 · 席位=player-blue · 动作=play_card:cc7c8ad5 · 蓝色玩家=19 绿色玩家=52 棕色玩家=20 白色玩家=43 · 用时=21.282s · 13.2步/s
+[full进度] 第 4 轮 · 第 10 回合 · 决策#296 · 席位=player-green · 动作=card_corner:333e7c3b · 蓝色玩家=21 绿色玩家=52 棕色玩家=20 白色玩家=50 · 用时=22.299s · 13.3步/s
+[full进度] 第 4 轮 · 第 12 回合 · 决策#311 · 席位=player-white · 动作=choose_target:29b5215c · 蓝色玩家=25 绿色玩家=54 棕色玩家=20 白色玩家=50 · 用时=23.335s · 13.3步/s
+[full进度] 第 4 轮 · 第 15 回合 · 决策#320 · 席位=player-blue · 动作=end_turn:320f2608 · 蓝色玩家=25 绿色玩家=54 棕色玩家=20 白色玩家=55 · 用时=24.344s · 13.1步/s
+/private/tmp/seti-human405-learning-20261029-46ft9uvm/adhoc/observe-human405-learning-20261029-v1.cjs:39
+        throw error;
+        ^
+
+Error: MACHINE_PLAYER_DECISION_FAILED: 座位 player-blue 决策函数抛错: Cannot read properties of null (reading 'scanCost')
+    at Object.runDecision (/private/tmp/seti-human405-learning-20261029-46ft9uvm/randomizer/game/ai/machine-player-coordinator.js:173:15)
+    at Object.runAgentDecision (/private/tmp/seti-human405-learning-20261029-46ft9uvm/randomizer/app/simulation-env.js:645:34)
+    at env.runAgentDecision (/private/tmp/seti-human405-learning-20261029-46ft9uvm/adhoc/observe-human405-learning-20261029-v1.cjs:24:22)
+    at runValidation (/private/tmp/seti-human405-learning-20261029-46ft9uvm/tools/run_research_validation.js:447:26)
+    at main (/private/tmp/seti-human405-learning-20261029-46ft9uvm/tools/run_research_validation.js:655:3)
+    at Object.<anonymous> (/private/tmp/seti-human405-learning-20261029-46ft9uvm/tools/run_research_validation.js:658:30)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12) {
+  [cause]: TypeError: Cannot read properties of null (reading 'scanCost')
+      at Object.catalog (/private/tmp/seti-human405-learning-20261029-46ft9uvm/randomizer/game/ai/resource-demand.js:64:38)
+      at resourceCatalog (/private/tmp/seti-human405-learning-20261029-46ft9uvm/randomizer/game/ai/analysis-port.js:581:44)
+      at Object.resourceSpec (/private/tmp/seti-human405-learning-20261029-46ft9uvm/randomizer/game/ai/analysis-port.js:629:15)
+      at add (/private/tmp/seti-human405-learning-20261029-46ft9uvm/randomizer/game/ai/decision-search.js:178:61)
+      at Object.searchDecision (/private/tmp/seti-human405-learning-20261029-46ft9uvm/randomizer/game/ai/decision-search.js:510:43)
+      at Object.decide (/private/tmp/seti-human405-learning-20261029-46ft9uvm/randomizer/game/ai/search-agent.js:42:31)
+      at run (/private/tmp/seti-human405-learning-20261029-46ft9uvm/randomizer/game/ai/agent-runtime.js:62:27)
+      at Object.runDecision (/private/tmp/seti-human405-learning-20261029-46ft9uvm/randomizer/game/ai/machine-player-coordinator.js:171:20)
+      at Object.runAgentDecision (/private/tmp/seti-human405-learning-20261029-46ft9uvm/randomizer/app/simulation-env.js:645:34)
+      at env.runAgentDecision (/private/tmp/seti-human405-learning-20261029-46ft9uvm/adhoc/observe-human405-learning-20261029-v1.cjs:24:22)
+}
+
+Node.js v22.22.0
+
+[失败] run_research_validation 退出码 1

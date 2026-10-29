@@ -908,14 +908,18 @@
       const actions = newBarrier ? [] : legalActions(comp, inspection);
       const envelope = snapshot(comp);
       loadedEnvelope = envelope;
-      const observation = !newBarrier && !actions.length ? observeEnvelope(envelope) : null;
+      const childState = readIdentityState(envelope);
+      // Native terminal state closes the window even if the host still lists
+      // residual controls. A pending required Decision must still be completed.
+      const terminal = childState.turn.gameEnded === true && inspection.phase !== "awaiting_input";
+      const observation = !newBarrier && (!actions.length || terminal) ? observeEnvelope(envelope) : null;
       if (observation && observation.terminal !== true) {
         throw new Error("ANALYSIS_EMPTY_NONTERMINAL");
       }
-      const childState = readIdentityState(envelope);
       const turnChanged = JSON.stringify([childState.turn.roundNumber,childState.turn.turnNumber,childState.turn.actionCycleNumber]) !== rootTurnKey;
       const status = newBarrier ? "information-barrier"
-        : actions.some(action => action.actorId !== seatId) ? "other-owner"
+        : terminal ? "terminal"
+          : actions.some(action => action.actorId !== seatId) ? "other-owner"
           : !actions.length ? "terminal"
             : turnChanged ? "turn-boundary"
               : inspection.phase === "awaiting_input" ? "decision" : "stable";

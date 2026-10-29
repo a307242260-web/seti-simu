@@ -378,3 +378,13 @@ console.log("trusted analysis fork isolation and exact reuse passed");
  assert.equal(next.observation.publicState.turnNumber,state.turn.turnNumber+1);assert.equal(next.observation.publicState.currentPlayerId,f.seatId);
  assert.throws(()=>p.expand(next,end.actionId),/BOUNDARY_CLOSED/);assert.deepEqual(c.lifecycle.save().envelope,before);p.close();c.dispose();
 }
+
+// Captured v41 full-game failure: a last PASS can finish the native game while
+// the composition still enumerates residual controls. They are not future moves.
+{
+ const fs=require('node:fs'),path=require('node:path'),f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261029-learning-v1/v41-step322-terminal-blue-20261029-v1.json')));
+ const k=createSimulationRuleComposition({seed:f.source.seed,random:createSeededRandom(f.source.seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,f.source.seed,v?.playerId)});k.newGame({seed:f.source.seed});const c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);
+ const original=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});p.setMovementPlanning(true);p.setCardPickPlanning(true);p.setResourcePlanning(true);p.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});const root=p.openRoot(),pass=root.legalActions.find(a=>a.family==='pass');assert(pass);
+ const ended=p.expandWithCardPick(root,pass.actionId,()=>null);assert(ended.complete);assert.equal(ended.node.status,'terminal');assert.deepEqual(ended.node.legalActions,[]);assert.equal(ended.node.observation.terminal,true);assert.throws(()=>p.expand(ended.node,pass.actionId),/BOUNDARY_CLOSED/);
+ const agent=require('./search-agent'),{createStateValueEvaluator}=require('./state-value'),r=searchDecision({port:p,root,evaluate:createStateValueEvaluator(f.seatId),...agent.OPTIONS,budget:agent.BUDGET});assert(r.complete,r.stopReason);assert.deepEqual(r.unresolved,[]);assert(r.lines.some(n=>n.status==='terminal'));assert.deepEqual(c.lifecycle.save().envelope,original,'terminal probing preserves canonical root and RNG');p.close();c.dispose();
+}

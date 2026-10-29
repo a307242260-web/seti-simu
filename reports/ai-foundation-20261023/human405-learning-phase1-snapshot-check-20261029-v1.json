@@ -1,0 +1,10 @@
+{
+  "baseCommit": "f24600c7622703230b93702cf84e8e02b9b7094b",
+  "testedSnapshot": "/private/tmp/seti-human405-learning-20261029-46ft9uvm",
+  "unchangedBaseFilesVerified": 4438,
+  "changedBaseFilesVerified": 9,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "explicitFiles": 74,
+  "runtimeImportsBoundToFinalSource": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; all imported runtime hashes match the tested snapshot."
+}

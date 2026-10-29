@@ -7,6 +7,24 @@
   },
   "versions": [
     {
+      "id": "ai-search-v41-human405-reference-20261029",
+      "name": "v41学习参照（终局边界失败）",
+      "date": "2026-10-29",
+      "baseline": "ai-search-v41-baseline-20261029",
+      "head": "f24600c7",
+      "commits": [
+        "f24600c7"
+      ],
+      "summary": "冻结v41运行时首次完整局尝试：321个已确认输入、24.484秒，第322步蓝席搜索终局后继时资源目录读取scanCost空值失败；未终局，无正式成绩。保存原现场，v42单独修复，不覆盖本记录。",
+      "records": {
+        "c69f0990.f24600c7.full.json": {}
+      },
+      "roadmap": null,
+      "baselineEligible": false,
+      "aiGeneration": "v2",
+      "agentType": "search"
+    },
+    {
       "id": "ai-search-v41-baseline-20261029",
       "aiGeneration": "v2",
       "agentType": "search",
