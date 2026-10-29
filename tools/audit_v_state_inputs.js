@@ -522,6 +522,15 @@ try {
       }
       console.log('[PASS] independent-six-greedy-plans: allNativePrefixesAndPolicyRoots');
     }
+    {
+      const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,"../adhoc/six-greedy-plan-fixtures-20261028-v1.json"))).cases.advance,comp=auditKernel.composition;
+      if(!comp.lifecycle.restore(f.compositionEnvelope).ok)throw new Error("几何缓存审计恢复失败");const before=JSON.stringify(comp.lifecycle.save().envelope),p=createAnalysisPort({composition:comp,seatId:f.seatId});
+      try{p.setResourcePlanning(true);p.setMovementPlanning(true);const root=p.openRoot(),r=p.expandGoalMovementPlan(root,()=>true),evaluate=independentValue.createStateValueEvaluator(f.seatId);
+        if(!r.complete)throw new Error("几何复用路径未完成");
+        for(const n of [...r.prefixes.map(s=>s.node),r.node])if(evaluate(n.observation)!==evaluate(outcomeModel.createDecisionObservation(n.observation,{seatId:f.seatId})))throw new Error("观察复用原始/标准估值不一致");
+        if(JSON.stringify(comp.lifecycle.save().envelope)!==before)throw new Error("观察复用污染权威根");console.log('[PASS] independent-movement-preview-copy: frozenObservationsAndNativePrefixes');
+      }finally{p.close();}
+    }
     const cornerFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
       "../adhoc/ai-decision-corpus-20261023-v1/post-main-corner-pair-20261023-v1.json")));
     const cornerComp = auditKernel.composition;

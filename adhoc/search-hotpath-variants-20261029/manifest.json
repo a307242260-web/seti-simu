@@ -1,0 +1,20 @@
+{
+  "baseCommit": "7daf602d06b23a47fb83b3a1243bb3b5a5303a4b",
+  "scope": "Reconstruct intermediate measured runtime by overlaying these exact source bytes on the base; v1 uses copy-only kernel, v2 uses final kernel plus geometry-cache analysis port; all other runtime files must match base/sourceHashes. Decompress each gzip file onto runtimePath.",
+  "variants": {
+    "adhoc/search-hotpath-variants-20261029/copy-only/production-kernel.js.gz": {
+      "runtimePath": "randomizer/game/production-kernel.js",
+      "sha256": "6130393aab2cc99bf0dc13e513aeb03d6014182a1cbf193b9f0a151f1a218b21",
+      "reportVersion": 1,
+      "encoding": "gzip",
+      "compressedSha256": "1c40f9b5f2e8430237dbb8d78780b40b3891bacdf31283affed282db2aa979ca"
+    },
+    "adhoc/search-hotpath-variants-20261029/geometry-cache/analysis-port.js.gz": {
+      "runtimePath": "randomizer/game/ai/analysis-port.js",
+      "sha256": "6245fb686572791aa04a543aab00c8c0f24ca2251d7e90f7cb0339abefc535f9",
+      "reportVersion": 2,
+      "encoding": "gzip",
+      "compressedSha256": "2a1787f0a967ce1e7e3bb99b31f4a05eca48ee1cc7c65b63d60d266c37aac020"
+    }
+  }
+}

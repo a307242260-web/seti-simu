@@ -900,6 +900,22 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "真实页面保留已知可达扫描目的，每个目的按固定牌/扇区执行，稳定边界省恢复且权威根不变",
   counterexample: "扫描仍牌序组合展开、丢失所有目的、跨冻结Session跳过必要恢复或污染真实根",
 }), Object.freeze({
+  id: "production-search-hotpath",
+  file: "randomizer/index.html",
+  readyExpression: "Boolean(window.SetiProductionKernel?.plannedMovementTimingKey && window.SetiAnalysisPort)",
+  actionExpression: `(async () => {
+    const f=await fetch('/adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw new Error('热路径恢复失败');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+    try{const root=p.openRoot(),obs=JSON.stringify(root.observation),r=window.SetiDecisionSearch.searchDecision({port:p,root,evaluate:window.SetiStateValue.createStateValueEvaluator(f.seatId),...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:257,frontier:256,milliseconds:1500}});
+      if(!r.complete||r.unresolved.length||p.getDiagnostics().movementTimingCacheHits<1)throw new Error('热路径未完整复用');
+      if(!Object.isFrozen(root.observation.publicState)||JSON.stringify(root.observation)!==obs||JSON.stringify(c.lifecycle.save().envelope)!==before)throw new Error('观察复用污染根或只读事实');
+      window.__searchHotpathSmoke={ok:true,inputs:r.diagnostics.nativeExecutions,timingHits:p.getDiagnostics().movementTimingCacheHits};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression: "window.__searchHotpathSmoke?.ok === true",
+  obligation: "真实页面完整闭合第3轮决策并复用移动几何时机，全部观察和权威状态保持只读",
+  counterexample: "依赖键未装配、资源变化导致重复几何推演、冻结观察复用后根/RNG被污染",
+}), Object.freeze({
   id: "production-six-greedy-plans",
   file: "randomizer/index.html",
   readyExpression: "Boolean(window.SetiLocalDecisionPlans?.pureOptional && window.SetiResidualDomainSession?.queryCardSettlement)",

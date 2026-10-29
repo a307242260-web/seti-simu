@@ -1,0 +1,13 @@
+# Exact movement-preview copy cost (2026-10-29)
+
+Baseline v37 has 6/8 complete decisions. CPU profiles at the unchanged 256/257/256/600ms budget show structuredClone at about 26%/31% of sampled time. The largest caller is movement timing's full-state copy per chosen route prefix, followed by projected one-step timing copies. This change first replaces only those full-state copies with copies of their actual mutable slices.
+
+Mutation contract: native rotation writes solarSystem.rotation, pieces.rockets and the moved player's resources through arrival publicity. Native prefix geometry only writes pieces. Clone solarSystem and pieces; copy players container/player records/resources; share other validated native slices read-only. Keep the native rotation, collision resolution, arrival gains, route-cost and endpoint-requirement functions unchanged. Default formal execution/events remain unchanged.
+
+Equivalence/dedup: exact native states, Session/RNG identities and existing goal-control keys are unchanged. No merging by labels/resources, no pruning or greedy-policy changes, no omission of valuation/observation fields. Existing route/structure caches retain the same keys. For every sampled native fixture, all compared timing alternatives and complete observation hashes must match baseline, and deeply frozen original roots must be unchanged.
+
+Reachability and bounds: same native legal goals, capacity/resource bounds and goal paths. Global 256 transitions/257 states/256 frontier/600ms are preserved, including cache/time checks and fixed inputs. This is copy-cost optimization, not a new search cutoff. If single-decision gates remain incomplete, do not run whole games.
+
+Acceptance: before/after source-bound read-only timing controls, relevant movement/rotation/search tests, cold recovery and root immutability, independent V input checks, browser integration and the existing eight-case decision corpus. No whole-game score/180-second claim from a decision benchmark.
+
+Profile-directed follow-up: the first copy-only corpus remained6/8. Native timing keys now exclude only resources/income/hand/reservedCards/dataState from geometry-player records, retaining full board/turn/tech/industry facts, goal/path/free allowance. This cache does not merge game nodes. Non-cheap native projection is already detached/deep-frozen; analysis freezes its own wrapper/masked fields and reuses native immutable fields. No observation field is omitted. The second corpus closed all searches but root-inclusive case152 was601.7ms (7/8); the third code revision passed8/8 after removing the second observation clone.

@@ -273,7 +273,7 @@
     let publicSeed = null;
     let nodeCount = 0;
     let submissionCount = 0;
-    let cacheHits = 0, stableRestoreSkips = 0;
+    let cacheHits = 0, stableRestoreSkips = 0, movementTimingCacheHits = 0, movementTimingCacheMisses = 0;
     let observationCount = 0;
     const cache = new Map();
     // Search-local native execution DAG. Keys use the exact immutable source node and input.
@@ -342,13 +342,15 @@
         ? ruleComposition.sanitizeHiddenInformationObservation(rootObservation, observation, barrier)
         : observation;
       observationCount += 1;
-      const result = freeze(structuredClone(visible));
+      // Native non-cheap projection already owns and freezes its complete state.
+      // Sanitization creates only new wrappers over that immutable snapshot.
+      const result = freeze(visible);
       milliseconds.observation += now() - observationAt;
       return result;
     }
 
     function createNode(envelope, observation, actions, status, barrier = null, intent = null, resourceControl = null) {
-      let visible = observation && freeze(structuredClone(observation));
+      let visible = observation && freeze(observation);
       // 搜索内部节点只用合法集与身份；首次估值/记录时才投影。getter 不暴露快照。
       const node = Object.freeze({
         get observation() {
@@ -401,7 +403,7 @@
       cardPickRootStats = cardPickPlanner.getDiagnostics();
       nodeCount = 0;
       submissionCount = 0;
-      cacheHits = 0;stableRestoreSkips=0;
+      cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
       observationCount = 0;
       committedDecodeCount = 0; committedDecodeHits = 0;
       for (const key of Object.keys(milliseconds)) milliseconds[key] = 0;
@@ -668,10 +670,11 @@
     }
 
     function movementTiming(state, id, path, freePoints) {
-      const owner = state.players.players.find(p => p.id === seatId);
-      const key = JSON.stringify([state.solarSystem,state.pieces,state.planets,state.aliens,owner,state.turn,id,path,freePoints]);
-      if (movementTimingCache.has(key)) return movementTimingCache.get(key);
-      const result = (productionKernel || globalThis.SetiProductionKernel).comparePlannedMovementTiming(state,seatId,id,path,freePoints);
+      const native = productionKernel || globalThis.SetiProductionKernel;
+      const key = native.plannedMovementTimingKey(state,seatId,id,path,freePoints);
+      if (movementTimingCache.has(key)) { movementTimingCacheHits++; return movementTimingCache.get(key); }
+      movementTimingCacheMisses++;
+      const result = native.comparePlannedMovementTiming(state,seatId,id,path,freePoints);
       if (movementTimingCache.size >= 64) movementTimingCache.delete(movementTimingCache.keys().next().value);
       movementTimingCache.set(key,result);
       return result;
@@ -2215,7 +2218,7 @@
     function getDiagnostics() {
       const picks=cardPickPlanner.getDiagnostics();
       return freeze({ cardPick:{...picks,rankingCacheHitsThisRoot:picks.rankingCacheHits-cardPickRootStats.rankingCacheHits,
-        rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, stableRestoreSkips, cacheEntries: cache.size,
+        rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, stableRestoreSkips, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
         observationCount, identityCount: identities.size, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedSerialized ? 1 : 0, maxDecodedStateCacheEntries: 1,
         committedDecodeCount, committedDecodeHits,

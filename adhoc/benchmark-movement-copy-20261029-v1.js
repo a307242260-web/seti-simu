@@ -1,0 +1,9 @@
+'use strict';
+const fs=require('node:fs'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+const native=require('../randomizer/game/production-kernel');const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const output='reports/ai-foundation-20261023/movement-copy-control-before-20261029-v1.json';if(fs.existsSync(output))throw Error('Reuse control checkpoint');
+const captured=require('./six-greedy-plan-fixtures-20261028-v1.json');const fixtures=[...['062','105','152'].map(id=>[id,require(`./ai-decision-corpus-20261023-v1/case-${id}-20261023-v1.json`)]),['advance',captured.cases.advance]],rows=[];
+for(const [name,f]of fixtures){const state=f.compositionEnvelope.session?.session?.workingState||JSON.parse(f.compositionEnvelope.committedState),before=JSON.stringify(state);let root=state;function freeze(x){if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;}freeze(root);const at=performance.now(),requirements=native.getProbeRouteRequirements(root,f.seatId),cases=[];
+ for(const c of requirements.candidates.filter(c=>c.rocketId!=null&&c.path.length).slice(0,3)){const path=c.path.map(s=>({...s,rocketId:c.rocketId})),value=native.comparePlannedMovementTiming(root,f.seatId,c.requirementId,path,0);cases.push({requirementId:c.requirementId,path,value});}
+ assert.equal(JSON.stringify(root),before);rows.push({name,fixtureSha256:sha(JSON.stringify(f)),cases,milliseconds:performance.now()-at,rootUnchanged:true});}
+const sourceHashes=Object.fromEntries(Object.keys(require.cache).filter(p=>p.includes('/randomizer/')).map(p=>[p.slice(process.cwd().length+1),sha(fs.readFileSync(p))]));fs.writeFileSync(output,JSON.stringify({schemaVersion:'seti-movement-copy-control-v1',scope:'read-only geometry control, not a full decision',rows,sourceHashes},null,2)+'\n');console.log(JSON.stringify(rows.map(r=>({name:r.name,cases:r.cases.length,ms:r.milliseconds}))));

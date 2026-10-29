@@ -643,6 +643,16 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null, ses
   })) };
 }
 
+// Movement previews mutate only rotation, rocket positions and arrival resources.
+// Preserve every other validated native slice as a read-only reference.
+function cloneMovementPreview(state) {
+  return { ...state, solarSystem: clone(state.solarSystem), pieces: clone(state.pieces),
+    players: { ...state.players, players: state.players.players.map(player => ({
+      ...player, resources: { ...player.resources },
+    })) },
+  };
+}
+
 function buildProbeMoveTiming(state, player, context, requirements) {
   const steps = new Map();
   for (const candidate of requirements.candidates) {
@@ -665,14 +675,14 @@ function buildProbeMoveTiming(state, player, context, requirements) {
     return new Map(buildProbeRouteRequirements(snapshot, player.id, null, false).candidates
       .map(candidate => [candidate.requirementId, candidate]));
   }
-  const delayed = rotatedRoutes(clone(state));
+  const delayed = rotatedRoutes(cloneMovementPreview(state));
   for (const step of steps.values()) {
     const rocket = state.pieces.rockets.find(item => item.id === step.rocketId);
     const points = rocketAbility.getRequiredMovePointsFromCoordinate(
       context, player, rockets.getRocketSectorCoordinate(rocket),
     );
     if (!Number.isFinite(points) || points <= 0) throw new Error("PROBE_TIMING_MOVE_COST_INVALID");
-    const earlyState = clone(state);
+    const earlyState = cloneMovementPreview(state);
     const moved = rockets.moveRocket(earlyState.pieces, step.rocketId, step.deltaX, step.deltaY);
     if (!moved.ok) throw new Error(`PROBE_TIMING_MOVE_FAILED: ${moved.message}`);
     const early = rotatedRoutes(earlyState);
@@ -1766,6 +1776,14 @@ function createBrowserProductionKernel(options = {}) {
   return createProductionHostComposition({ ...options, hostKind: "browser" });
 }
 
+// The returned timing describes geometry/target reachability, not affordability or reward value.
+// Economic/card facts are re-read by the goal policy; they cannot change this calculation.
+function plannedMovementTimingKey(state, seatId, requirementId, path, freePoints = 0) {
+  const geometryPlayers = state.players.players.map(({ resources, income, hand, reservedCards, dataState, ...geometry }) => geometry);
+  return JSON.stringify([state.meta?.gameId, seatId, state.solarSystem, state.pieces, state.planets,
+    state.aliens, geometryPlayers, state.turn, requirementId, path, freePoints]);
+}
+
 // Compare prefixes of one already selected route; this is deterministic geometry, not direction-tree search.
 function comparePlannedMovementTiming(state, seatId, requirementId, path, freePoints = 0) {
   const owner = state.players.players.find(p => p.id === seatId);
@@ -1779,10 +1797,10 @@ function comparePlannedMovementTiming(state, seatId, requirementId, path, freePo
     if (!rotation.ok) throw new Error(`PROBE_PLAN_ROTATION_FAILED: ${rotation.message}`);
     return buildProbeRouteRequirements(snapshot, seatId, null, false).candidates.find(c => c.requirementId === requirementId);
   };
-  const delayed = afterRotation(clone(state));
+  const delayed = afterRotation(cloneMovementPreview(state));
   if (!delayed) return { comparable: false, reason: "target-unreachable-after-rotation", rotationCount: 1 };
   const waitPoints = delayed.required.paidMovementPoints;
-  let prefixPoints = 0, best = { prefixLength: 0, totalPaidPoints: waitPoints }, current = clone(state);
+  let prefixPoints = 0, best = { prefixLength: 0, totalPaidPoints: waitPoints }, current = cloneMovementPreview(state);
   const alternatives = [{ ...best, remainingPaidPoints: waitPoints }];
   for (let index = 0; index < path.length; index += 1) {
     const step = path[index], owner = current.players.players.find(p => p.id === seatId);
@@ -1792,7 +1810,7 @@ function comparePlannedMovementTiming(state, seatId, requirementId, path, freePo
     const moved = rockets.moveRocket(current.pieces, step.rocketId, step.deltaX, step.deltaY);
     if (!moved.ok) throw new Error(`PROBE_PLAN_PREFIX_INVALID: ${moved.message}`);
     prefixPoints += points;
-    const future = afterRotation(clone(current));
+    const future = afterRotation(cloneMovementPreview(current));
     if (!future) continue;
     const totalPaidPoints = Math.max(0, prefixPoints-freePoints)+future.required.paidMovementPoints;
     alternatives.push({ prefixLength: index+1, prefixMovementPoints: prefixPoints,
@@ -1820,6 +1838,7 @@ function getResourceGoalRequirements(state, seatId) {
 const productionKernelApi = Object.freeze({
   getResourceGoalRequirements,
   comparePlannedMovementTiming,
+  plannedMovementTimingKey,
   getProbeRouteRequirements(state, seatId, currentEffect = null) {
     return buildProbeRouteRequirements(state, seatId, currentEffect ? { currentEffect } : null, false);
   },
