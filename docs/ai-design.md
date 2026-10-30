@@ -5,7 +5,7 @@
 新开发主线通过`createAgentDecisionFunction`注册completion与实验search factory，
 两端仍使用本文的同一协调器和正式输入端口。search使用独立analysis-port/decision-search/state-value，
 不调用下文旧heuristic的目标选择、估值或计划缓存；具体入口、完成证据与失败语义见
-[共享搜索玩家](ai-search-agent-contract-20261023.md)。search v119 / V5 已通过[45个冷启动单点及原生对照](human405-round1-v119-admission-20261031.md)，整局速度与棋力仍待验收。资源兑换与角标采用[先需求、再贪心、最后目标内搜索](ai-resource-demand-20261027.md)，不再是独立探索动作。重组的任意弃牌按[正边际收益固定执行](ai-reorg-greedy-20261029.md)，不枚举手牌子集。生产搜索另[禁用移除科技换收入](ai-no-helios-20261029.md)，与借科技入口限制一致。
+[共享搜索玩家](ai-search-agent-contract-20261023.md)。search v119 / V5 已通过[45个冷启动单点及原生对照](human405-round1-v119-admission-20261031.md)，[首轮试跑](human405-round1-v119-trial-20261031.md)已复现计划恢复差异，策略一致性、整局速度与棋力仍待验收。资源兑换与角标采用[先需求、再贪心、最后目标内搜索](ai-resource-demand-20261027.md)，不再是独立探索动作。重组的任意弃牌按[正边际收益固定执行](ai-reorg-greedy-20261029.md)，不枚举手牌子集。生产搜索另[禁用移除科技换收入](ai-no-helios-20261029.md)，与借科技入口限制一致。
 
 ## 1. 决策流程
 

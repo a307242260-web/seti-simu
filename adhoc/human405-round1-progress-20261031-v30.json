@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "seti-human405-round1-goal-checkpoint-v2",
+  "date": "2026-10-31",
+  "goalStatus": "active",
+  "phase": "v119-one-autonomous-r1-completed-recovery-defect-reproduced",
+  "runtimeCommit": "2fb2b0912620ff4c655db65c27ba000dd5b5ca8d",
+  "runtimeSearch": "v119",
+  "runtimeValue": "v5",
+  "singlePointGate": {
+    "roots": 45,
+    "overruns": [],
+    "unit": 153,
+    "fullFlow": 1,
+    "chrome": 7
+  },
+  "trial": {
+    "record": "reports/research/12231ee9.2fb2b091.quick-200.json",
+    "score": 11,
+    "priorScore": 13,
+    "teacherScore": 15,
+    "currentModelValue": 46.5,
+    "priorCurrentModelValue": 53.5,
+    "teacherCurrentModelValue": 56,
+    "steps": 52,
+    "wallMs": 1139,
+    "maxNativeInputs": 80,
+    "maxRootAndSearchMilliseconds": 162.54262500000002,
+    "firstRoundSettled": true,
+    "baselineEligible": false,
+    "runs": 1
+  },
+  "nativeVerification": "reports/ai-foundation-20261023/human405-v119-standard-r1-verification-20261031-v1.json",
+  "recoveryCounterexample": "reports/ai-foundation-20261023/human405-v119-movement-recovery-counterexample-20261031-v1.json",
+  "recoveryFixture": "adhoc/ai-decision-corpus-20261031-v119-recovery-v1/autonomous-after-input026-20261031-v1.json",
+  "recoveryWitness": {
+    "sameFullNativeObservation": true,
+    "afterActualInput": 26,
+    "warmIncomeNativeInputs": 9,
+    "warmValue": 60,
+    "coldValue": 48,
+    "warmGoal": "rocket:3:land:mars:planet:",
+    "coldGoal": "rocket:3:orbit:venus:planet:",
+    "rootAndRngUnchanged": true,
+    "fixed": false
+  },
+  "teacherFirstInputMatches": 25,
+  "teacherNodes": 32,
+  "remainingStrategicSteps": [
+    24,
+    38,
+    39,
+    43,
+    62
+  ],
+  "nativeOrderSteps": [
+    25,
+    56
+  ],
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "documentation": "docs/human405-round1-v119-trial-20261031.md",
+  "nextSafeAction": "Add a failing regression for same native state after actual input26: warm completed Mars advance admits native income60, fresh root forces Venus and returns48. Investigate materializing only the winning typed fixed tail into native steps for the existing certificate. Count all materialization against shared input/node/frontier/time budgets; no fabricated observation, no uncontrolled persistent intent. Verify single-point recovery parity first, then existing45/new successors and Chrome before another standard R1. Do not rerun the v119 trial.",
+  "knownAuditFailure": "Only previously recorded legacy frozen-aomomo decisionObs; independent current V input paths pass."
+}
