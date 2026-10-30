@@ -1,0 +1,5 @@
+PASS production-search-agent-entry http://127.0.0.1:54812/randomizer/index.html?agent=search
+PASS production-fixed-card-pick-plan http://127.0.0.1:54812/randomizer/index.html
+PASS production-search-hotpath http://127.0.0.1:54812/randomizer/index.html
+PASS production-six-greedy-plans http://127.0.0.1:54812/randomizer/index.html
+SUMMARY browserSmoke passed=4 failed=0 total=4

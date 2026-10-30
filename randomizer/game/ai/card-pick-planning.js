@@ -2,11 +2,12 @@
   'use strict';
   const common=typeof module==='object'&&module.exports;
   const api=factory(common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
-    common?require('../data'):root.SetiData,common?require('../tech/resolver'):root.SetiTechResolver);
+    common?require('../data'):root.SetiData,common?require('../tech/resolver'):root.SetiTechResolver,
+    common?require('./resource-demand'):root.SetiResourceDemand);
   if(common)module.exports=api;else root.SetiCardPickPlanning=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,tech){
+})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,tech,demand){
   'use strict';
-  const VERSION='seti-purpose-card-pick-policy-v3';
+  const VERSION='seti-purpose-card-pick-policy-v4';
   const TRADE_IDS=new Set(['credits-for-card','energy-for-card','publicity-for-card','cards-for-pick-card']);
   const isTrade=a=>a.family==='quick_trade'&&TRADE_IDS.has(a.target?.tradeId);
   const isOffer=a=>a.family==='choose_card'&&!a.target?.nebulaId&&(a.target?.source==='public'||a.target?.source==='blind'
@@ -43,6 +44,17 @@
       if(placed<4&&pool>=4-placed&&p.hand.length-(protectedMain?1:0)===0)
         out.push({kind:'income',id:'income:computer:4',amount:1,priority:5,protectedCardId:protectedMain});
       if(!p.mainActionCompleted){
+        for(const card of p.hand){
+          const types=effects.buildPlayEffects(card).map(e=>e.type);
+          if(!types.some(t=>['card_research_tech','card_income','card_tuck_played_card_to_income','card_discard_any_for_income'].includes(t)))continue;
+          const target={kind:'play_card',cardId:card.id,required:effects.getCardPlayCost(card)};
+          if(demand.capacity(state,seatId,target)||demand.incomeFunding(state,seatId,target))continue;
+          for(const offer of state.cards.publicCards.filter(Boolean)){
+            const withOffer={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?{...p,hand:[...p.hand,offer]}:v)}};
+            const funding=demand.incomeFunding(withOffer,seatId,target);
+            if(funding?.incomeCardId===offer.id)out.push({kind:'income',id:`income:fund-card:${card.id}:${offer.id}`,cardId:offer.id,protectedCardId:card.id,fundsCardId:card.id,required:target.required,priority:6});
+          }
+        }
         const stock=pool+hand.reduce((n,c)=>n+c.data,0);
         if(placed+stock===5&&p.resources.energy>=data.ANALYZE_ENERGY_COST)out.push({kind:'data',id:'data:analyze:6',amount:1,priority:4});
         const movement=p.resources.energy+hand.reduce((n,c)=>n+c.move,0);
@@ -74,6 +86,11 @@
           if(Object.values(wallet).some(v=>v<0))continue;
           const price=(cost.credits||0)+(cost.energy||0)+(cost.publicity||0)*.5+handCost;
           if(goal.kind==='income'&&remaining.length-(goal.protectedCardId?1:0)!==0)continue;
+          if(goal.fundsCardId){
+            const gain=cards.getIncomeGainForCard(offers.find(c=>c.id===selection.cardId))||{};
+            if(Object.entries(goal.required).some(([k,v])=>wallet[k]+(gain[k]||0)<v)
+              ||data.listComputerPlacedTokens(p).length+wallet.availableData+remaining.filter(c=>c.id!==goal.fundsCardId).reduce((n,c)=>n+c.data,0)<4)continue;
+          }
           if(goal.kind==='move'&&(wallet.credits<goal.required.credits||wallet.energy+remaining.reduce((n,c)=>n+c.move,0)+picked.move<goal.required.energy))continue;
           if(goal.kind==='data'&&(placedStock(p,remaining)+picked.data<6||wallet.energy<data.ANALYZE_ENERGY_COST))continue;
           if(goal.kind==='exceptional-card'&&(picked.net<=goal.bestHand+price
@@ -116,7 +133,9 @@
       if(!tradePending&&!companySwap&&!actions.every(isOffer))return null;
       let committed;
       if(tradePending&&source&&session.baseState)committed=paid(session.baseState,seatId,[source],()=>endpoints(session.baseState));
-      const availableGoals=!tradePending?goals(state,seatId,endpoints):[];
+      const outgoing=companySwap&&head.payload.handCardInstanceId;
+      const purposeState=outgoing?{...state,players:{...state.players,players:state.players.players.map(p=>p.id===seatId?{...p,resources:{...p.resources,handSize:p.hand.length-1},hand:p.hand.filter(c=>c.id!==outgoing)}:p)}}:state;
+      const availableGoals=!tradePending?goals(purposeState,seatId,()=>endpoints(purposeState)):[];
       const inferred=availableGoals.find(g=>g.kind==='income'||g.kind==='move'&&state.cards.publicCards.some(c=>c&&facts(c).move>=g.amount)||g.kind==='data'&&state.cards.publicCards.some(c=>c&&facts(c).data>=g.amount)||g.kind==='exceptional-card');
       const goal=committed?.goal||inferred||{kind:tradePending?'committed-pick':'free-reward',id:tradePending?`committed:${pending.tradeId}`:'free-card-reward'};
       if(pending?.kind==='discard'){

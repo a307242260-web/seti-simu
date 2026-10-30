@@ -105,3 +105,11 @@ function plan(s,actions=trades.concat(stop),planner=api.createCardPickPlanner(),
  const r=searchDecision({port,root,evaluate:createStateValueEvaluator('p1'),cardPickPlanning:true,cardChoiceEquivalence:true});assert(r.complete);assert.equal(r.actionId,'z-fixed');
 }
 console.log(JSON.stringify({purposeCardPick:'passed',noUnmotivatedTrades:true,incomeMoveDataAndUnusedPublicity:true,fixedCardAndSemanticCache:true}));
+// A committed swap can acquire the precise income needed to fund the preserved main card.
+{
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-046-20261030-v1.json'))),session=f.compositionEnvelope.session.session,s=session.workingState,before=structuredClone(s),planner=api.createCardPickPlanner(),actions=s.cards.publicCards.map((c,i)=>({actionId:'public:'+c.id,family:'choose_card',target:{choiceId:`public:${i}:${c.id}`,slotIndex:i,cardInstanceId:c.id}}));
+ const r=planner.plan({state:s,seatId:f.seatId,actions,status:'decision',session});assert.equal(r.goal.fundsCardId,'card-15-0');assert.equal(r.selection.cardId,'card-41-0','credit income funds DLC9; drawing another card does not');assert.equal(r.retainedActionIds.length,1);assert.deepEqual(s,before);
+ const funded=structuredClone(s),p=funded.players.players.find(p=>p.id===f.seatId);p.resources.credits=3;const after=planner.plan({state:funded,seatId:f.seatId,actions,status:'decision',session});assert.equal(after.goal.kind,'income');assert.equal(after.goal.protectedCardId,'card-15-0','the outgoing B48 no longer counts as an available income card');
+ const paid=planner.plan({state:s,seatId:f.seatId,actions:trades.concat(stop),status:'stable'});assert(!paid.goal?.fundsCardId,'acquisition cost must leave the intended main card fundable');
+ const hidden=structuredClone(s);hidden.cards.drawPileCardIds.reverse();assert.equal(planner.plan({state:hidden,seatId:f.seatId,actions,status:'decision',session}).selectedActionId,r.selectedActionId);
+}

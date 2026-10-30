@@ -6,7 +6,7 @@
   if(common)module.exports=api;else root.SetiResourceDemand=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v2';
+  const VERSION='seti-goal-resource-preparation-v3';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -39,18 +39,34 @@
     const dataMax=p.resources.availableData+spare.reduce((n,c)=>n+cornerData(c)*multiplier,0);
     const publicityMax=p.resources.publicity+spare.reduce((n,c)=>n+(cards.getDiscardActionRewardForCard(c)?.gain?.publicity||0)*multiplier,0)
       +(placed(p)<2&&placed(p)+dataMax>=2?1:0);
-    const required=goal.required||{};
-    return (!d.credits||p.resources.credits+Math.floor(p.resources.energy/2)+Math.floor(spare.length/2)>=(required.credits||0))
-      &&(!d.energy||p.resources.energy+Math.floor(p.resources.credits/2)+Math.floor(spare.length/2)+(goal.kind==='route'?spare.reduce((n,c)=>n+movePoints(c),0):0)>=(goal.kind==='route'?(goal.endpointCost.energy||0)+goal.movementPoints:required.energy||0))
-      &&(!d.publicity||publicityMax>=required.publicity)
+    const required=goal.required||{},funding=goal.incomeFunding&&placed(p)<4&&p.hand.find(c=>c.id===goal.incomeCardId);
+    const income=funding?cards.getIncomeGainForCard(funding)||{}:{};
+    return (!d.credits||p.resources.credits+(income.credits||0)+Math.floor(p.resources.energy/2)+Math.floor(spare.length/2)>=(required.credits||0))
+      &&(!d.energy||p.resources.energy+(income.energy||0)+Math.floor(p.resources.credits/2)+Math.floor(spare.length/2)+(goal.kind==='route'?spare.reduce((n,c)=>n+movePoints(c),0):0)>=(goal.kind==='route'?(goal.endpointCost.energy||0)+goal.movementPoints:required.energy||0))
+      &&(!d.publicity||publicityMax+(income.publicity||0)>=required.publicity)
       &&(!targetSlot(p,goal)||placed(p)+dataMax>=targetSlot(p,goal))
       &&(goal.kind!=='blue-data'||dataMax>=1);
+  }
+  // One concrete, known income source may fund a protected card. Its own
+  // reward cannot fund the data needed to reach it; no hand subset is searched.
+  function incomeFunding(state,seatId,goal){
+    const p=owner(state,seatId);
+    if(!['play_card','effect-purpose'].includes(goal.kind)||!goal.cardId||goal.incomeCardId||placed(p)>=4)return null;
+    const multiplier=industry.shouldDoubleDiscardCornerRewards?.(p)?2:1;
+    const choices=p.hand.filter(c=>c.id!==goal.cardId).map(card=>({card,gain:cards.getIncomeGainForCard(card)})).filter(({card,gain})=>gain
+      &&Object.entries(goal.required||{}).every(([key,n])=>p.resources[key]+(gain[key]||0)>=n)
+      &&p.resources.availableData+p.hand.filter(c=>c.id!==goal.cardId&&c.id!==card.id).reduce((n,c)=>n+cornerData(c)*multiplier,0)>=4-placed(p));
+    const value=gain=>Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0);
+    choices.sort((a,b)=>value(b.gain)-value(a.gain)||(a.card.id<b.card.id?-1:1));
+    const card=choices[0]?.card;
+    return card?{...goal,targetComputerSlot:4,incomeCardId:card.id,incomeFunding:true}:null;
   }
   function catalog({state,seatId,requirements,actions=[]}){
     const p=owner(state,seatId),goals=[],add=g=>{
       const directPub=p.resources.publicity+p.hand.filter(c=>c.id!==g.cardId).reduce((n,c)=>n+(cards.getDiscardActionRewardForCard(c)?.gain?.publicity||0)*(industry.shouldDoubleDiscardCornerRewards?.(p)?2:1),0);
       if(g.required?.publicity>directPub&&g.required.publicity<=directPub+1&&placed(p)<2)g={...g,publicityData:true,targetComputerSlot:2};
       if(capacity(state,seatId,g))goals.push(g);
+      else{const funded=incomeFunding(state,seatId,g);if(funded&&capacity(state,seatId,funded))goals.push(funded);}
     };
     if(!p||state.match.initialSetup||p.passCompletionPending)return goals;
     if(!p.mainActionCompleted){
@@ -207,7 +223,8 @@
     if(choices.length!==actions.length)return null;
     const scored=choices.filter(a=>a.target.cardInstanceId!==goal.cardId&&(!goal.incomeCardId||a.target.cardInstanceId===goal.incomeCardId)).map(a=>{
       const card=p.hand.find(c=>c.id===a.target.cardInstanceId),gain=cards.getIncomeGainForCard(card);
-      const next={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?{...p,hand:p.hand.filter(c=>c!==card)}:v)}};
+      const next={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?{...p,resources:{...p.resources},hand:p.hand.filter(c=>c!==card)}:v)}};
+      if(goal.incomeFunding&&card.id===goal.incomeCardId)players.gainResources(owner(next,seatId),gain);
       return{action:a,value:Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0)*(5-state.turn.roundNumber),feasible:capacity(next,seatId,goal)};
     }).filter(x=>x.feasible).sort((a,b)=>b.value-a.value||(a.action.actionId<b.action.actionId?-1:1));
     return scored[0]?{kind:'fixed',actionId:scored[0].action.actionId,reason:'greedy-income-for-goal'}:{kind:'infeasible',reason:'income-would-consume-goal-card'};
@@ -284,6 +301,10 @@
       return{kind:'fallback',reason:'non-equivalent-resource-effect-choice',actionIds:actions.map(a=>a.actionId)};
     }
     if(!capacity(state,seatId,goal))return{kind:'infeasible',reason:'resource-capacity-lower-bound'};
+    if(goal.incomeFunding&&placed(p)<4&&p.hand.some(c=>c.id===goal.incomeCardId)&&!d.data){
+      const a=actions.find(a=>a.family==='place_data');
+      if(a)return{kind:'fixed',actionId:a.actionId,placing:true,reason:'fund-protected-card-via-income',demand:d};
+    }
     if(deficit(d)>0){
       const candidates=preparations({state,seatId,goal,actions});
       if(candidates.length){
@@ -316,5 +337,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice});
 });
