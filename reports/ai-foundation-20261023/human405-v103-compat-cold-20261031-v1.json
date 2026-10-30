@@ -1,0 +1,144 @@
+{
+  "searchVersion": "seti-complete-decision-search-v103",
+  "candidateAdmitted": false,
+  "status": "complete",
+  "rows": [
+    {
+      "label": "case-001",
+      "complete": true,
+      "nativeInputs": 144,
+      "milliseconds": 160.184667,
+      "value": 28.5,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-case-001-20261031-v1.json"
+    },
+    {
+      "label": "case-003",
+      "complete": true,
+      "nativeInputs": 26,
+      "milliseconds": 149.177459,
+      "value": 41,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-case-003-20261031-v1.json"
+    },
+    {
+      "label": "case-008",
+      "complete": true,
+      "nativeInputs": 107,
+      "milliseconds": 187.97249999999997,
+      "value": 45,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-case-008-20261031-v1.json"
+    },
+    {
+      "label": "case-011",
+      "complete": true,
+      "nativeInputs": 9,
+      "milliseconds": 33.597916,
+      "value": 41.5,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-case-011-20261031-v1.json"
+    },
+    {
+      "label": "case-009",
+      "complete": true,
+      "nativeInputs": 41,
+      "milliseconds": 83.963833,
+      "value": 41.5,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-case-009-20261031-v1.json"
+    },
+    {
+      "label": "case-062",
+      "complete": true,
+      "nativeInputs": 191,
+      "milliseconds": 405.59058300000004,
+      "value": 67,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-case-062-20261031-v1.json"
+    },
+    {
+      "label": "case-105",
+      "complete": true,
+      "nativeInputs": 283,
+      "milliseconds": 737.790167,
+      "value": 60.5,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-case-105-20261031-v1.json"
+    },
+    {
+      "label": "case-152",
+      "complete": true,
+      "nativeInputs": 240,
+      "milliseconds": 609.905542,
+      "value": 48,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-case-152-20261031-v1.json"
+    },
+    {
+      "label": "baseline-r1-t8-blue",
+      "complete": true,
+      "nativeInputs": 13,
+      "milliseconds": 65.23575000000001,
+      "value": 58.5,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-baseline-r1-t8-blue-20261031-v1.json"
+    },
+    {
+      "label": "baseline-r2-t9-white",
+      "complete": true,
+      "nativeInputs": 86,
+      "milliseconds": 206.109375,
+      "value": 48,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-baseline-r2-t9-white-20261031-v1.json"
+    },
+    {
+      "label": "step317",
+      "complete": true,
+      "nativeInputs": 206,
+      "milliseconds": 420.560875,
+      "value": 84.5,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-step317-20261031-v1.json"
+    },
+    {
+      "label": "terminal",
+      "complete": true,
+      "nativeInputs": 86,
+      "milliseconds": 222.69512500000002,
+      "value": 84,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-terminal-20261031-v1.json"
+    },
+    {
+      "label": "autonomous-pass",
+      "complete": true,
+      "nativeInputs": 97,
+      "milliseconds": 193.06820800000003,
+      "value": 57,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-autonomous-pass-20261031-v1.json"
+    }
+  ],
+  "overruns": [
+    {
+      "label": "case-105",
+      "complete": true,
+      "nativeInputs": 283,
+      "milliseconds": 737.790167,
+      "value": 60.5,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-case-105-20261031-v1.json"
+    },
+    {
+      "label": "case-152",
+      "complete": true,
+      "nativeInputs": 240,
+      "milliseconds": 609.905542,
+      "value": 48,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-case-152-20261031-v1.json"
+    }
+  ]
+}

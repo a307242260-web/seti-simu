@@ -1,0 +1,6 @@
+PASS production-goal-movement-plan http://127.0.0.1:51704/randomizer/index.html
+PASS production-fixed-card-pick-plan http://127.0.0.1:51704/randomizer/index.html
+Error: production-search-hotpath 操作异常：Error: 热路径未完整复用
+    at <anonymous>:10:95
+    at runInteractiveSmoke (/private/tmp/seti-human405-v65-20261030-onpkqe05/tools/run_browser_smokes.js:232:11)
+    at async main (/private/tmp/seti-human405-v65-20261030-onpkqe05/tools/run_browser_smokes.js:294:11)

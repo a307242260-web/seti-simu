@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "seti-human405-round1-goal-checkpoint-v2",
+  "date": "2026-10-31",
+  "goalStatus": "active",
+  "phase": "shared-mission-capital-implemented-unadmitted-performance-overruns",
+  "productionCommit": "1cd44bde189c9ce26f976bc4c9dd08391ecbde86",
+  "productionSearch": "v99",
+  "productionValue": "v4",
+  "candidateVersion": "v103",
+  "candidateValue": "v5",
+  "candidateAdmitted": false,
+  "candidateReport": "reports/ai-foundation-20261023/human405-v103-mission-preflight-20261031-v1.json",
+  "candidateCodeArchive": "adhoc/human405-v103-unadmitted-code-20261031-v1.json.gz",
+  "candidateCodeArchiveSha256": "7055b38e18be1a11d8cc467584c6809f83c6deb166fd48dd4ce56e9941ee98b8",
+  "snapshot": "/private/tmp/seti-human405-v65-20261030-onpkqe05",
+  "teacherFirstInputMatches": 25,
+  "teacherNodes": 32,
+  "remainingStrategicSteps": [
+    24,
+    38,
+    39,
+    43,
+    62
+  ],
+  "nativeOrderSteps": [
+    25,
+    56
+  ],
+  "coldGate": {
+    "roots": 45,
+    "allComplete": true,
+    "passed": false,
+    "overruns": [
+      {
+        "label": "teacher-39",
+        "nativeInputs": 338,
+        "milliseconds": 551.026709,
+        "evidencePath": "reports/ai-foundation-20261023/human405-round1-v103-step039-20261030-v1.json",
+        "complete": true
+      },
+      {
+        "label": "case-105",
+        "complete": true,
+        "nativeInputs": 283,
+        "milliseconds": 737.790167,
+        "value": 60.5,
+        "rootAndRngUnchanged": true,
+        "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-case-105-20261031-v1.json"
+      },
+      {
+        "label": "case-152",
+        "complete": true,
+        "nativeInputs": 240,
+        "milliseconds": 609.905542,
+        "value": 48,
+        "rootAndRngUnchanged": true,
+        "evidencePath": "reports/ai-foundation-20261023/human405-v103-cold-case-152-20261031-v1.json"
+      }
+    ]
+  },
+  "fullNodeUnitPassed": 152,
+  "fullFlowPassed": 1,
+  "chromeFunctionalPassed": 6,
+  "chromeHotpathPassed": false,
+  "newAutonomousRun": false,
+  "lastActualAutonomousSource": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f",
+  "lastActualAutonomousScore": 13,
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "nativeContinuity": {
+    "orbitBeforeWithForecast": 57.5,
+    "orbitAfterConsumedProbe": 57.5,
+    "orbitNativeInputs": 4,
+    "landingBeforeWithForecast": 62,
+    "landingAfterConsumedProbe": 62,
+    "landingNativeInputs": 3,
+    "separateBlueFollowup": 62.5
+  },
+  "coldRecovery": {
+    "oldIncomeOnlyValue": 59,
+    "oldRecoveredValue": 60.5,
+    "correctedRootValue": 60.5,
+    "correctedRecoveredValue": 60.5,
+    "currentSourceRegression": "randomizer/game/ai/income-plan-value.test.js in codeArchive"
+  },
+  "documentation": "docs/human405-round1-v103-mission-preflight-20261031.md",
+  "nextSafeAction": "Validate an end-turn-only reservation contract against all42 native end-turn inputs at legacy105, keeping history-event/rotation/reveal/task checks; do not confuse visit-capable plan with an end-only plan. Then profile teacher39 preparation purposes, and check final-round blue/income priority at152. No new autonomous run until all gates pass.",
+  "knownAuditFailure": "Sole pre-existing frozen-aomomo legacy evaluator; all current independent V paths pass."
+}
