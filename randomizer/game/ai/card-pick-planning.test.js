@@ -105,6 +105,35 @@ function plan(s,actions=trades.concat(stop),planner=api.createCardPickPlanner(),
  const r=searchDecision({port,root,evaluate:createStateValueEvaluator('p1'),cardPickPlanning:true,cardChoiceEquivalence:true});assert(r.complete);assert.equal(r.actionId,'z-fixed');
 }
 console.log(JSON.stringify({purposeCardPick:'passed',noUnmotivatedTrades:true,incomeMoveDataAndUnusedPublicity:true,fixedCardAndSemanticCache:true}));
+// A free pick before an already committed own income reward has an income
+// purpose, even when the player already holds cards and completed the main action.
+{
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-040-20261030-v1.json'))),session=f.compositionEnvelope.session.session,s=session.workingState,before=structuredClone(s),planner=api.createCardPickPlanner(),actions=offers(s);
+ const choose=(state=s,pending=session)=>planner.plan({state,seatId:f.seatId,actions,status:'decision',session:pending});
+ const r=choose();assert.equal(r.goal.kind,'queued-income');assert.equal(r.goal.fundsCardId,'card-15-0');assert.equal(r.selection.cardId,'card-40-0','equal income value:1credit reduces the known DLC9 funding gap;1unknown card does not');assert.equal(r.retainedActionIds.length,1);assert.equal(r.isEquivalence,false);
+ const hidden=structuredClone(s);hidden.cards.drawPileCardIds.reverse();assert.equal(choose(hidden).selection.cardId,r.selection.cardId);assert.equal(choose(hidden).selection.cache,'hit');
+ const without={...session,queue:session.queue.slice(0,2)},fallback=choose(s,without);assert.equal(fallback.goal.kind,'free-reward');assert.equal(fallback.selection.cardId,'card-17-0','ordinary free pick remains a distinct purpose');
+ const otherOwner={...session,queue:session.queue.map((e,i)=>i===2?{...e,ownerId:'player-blue'}:e)};assert.equal(choose(s,otherOwner).goal.kind,'free-reward');
+ const conditional={...session,queue:[session.queue[0],{type:'unresolved-conditional',ownerId:f.seatId},...session.queue.slice(1)]};assert.equal(choose(s,conditional).goal.kind,'free-reward','unknown queue effects are not assumed to grant income');
+ const funded=structuredClone(s);funded.players.players.find(p=>p.id===f.seatId).resources.credits=3;const cash=choose(funded);assert.equal(cash.selection.cardId,'card-17-0');assert.equal(cash.selection.cache,'miss','a changed funding need invalidates income selection');
+ assert.deepEqual(s,before);
+}
+// The actual queued orbit reward keeps one fixed acquisition and executes the
+// native scan/income tail, including recovery when no old plan is supplied.
+{
+ const {createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),{createAnalysisPort}=require('./analysis-port'),{searchDecision}=require('./decision-search'),{createStateValueEvaluator}=require('./state-value'),agent=require('./search-agent');
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-040-20261030-v1.json'))),seed=f.source.seed,k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const before=c.lifecycle.save().envelope;
+ try{
+  for(const limit of [256,1]){
+   const port=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});try{
+    const root=port.openRoot(),r=searchDecision({port,root,evaluate:createStateValueEvaluator(f.seatId),...agent.OPTIONS,budget:{transitions:limit,nodes:512,frontier:256,milliseconds:15000}});
+    assert.deepEqual(c.lifecycle.save().envelope,before);
+    if(limit===1){assert(!r.complete);assert.equal(r.actionId,null);assert.equal(r.planContinuation,null);assert.equal(r.stopReason,'transition-budget');}
+    else{assert(r.complete);assert.equal(root.legalActions.find(a=>a.actionId===r.actionId).target.cardInstanceId,'card-40-0');assert.equal(r.candidates.length,1);assert.equal(r.value,59);assert(r.diagnostics.transitions<256);}
+   }finally{port.close();}
+  }
+ }finally{c.dispose();}
+}
 // A committed swap can acquire the precise income needed to fund the preserved main card.
 {
  const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-046-20261030-v1.json'))),session=f.compositionEnvelope.session.session,s=session.workingState,before=structuredClone(s),planner=api.createCardPickPlanner(),actions=s.cards.publicCards.map((c,i)=>({actionId:'public:'+c.id,family:'choose_card',target:{choiceId:`public:${i}:${c.id}`,slotIndex:i,cardInstanceId:c.id}}));

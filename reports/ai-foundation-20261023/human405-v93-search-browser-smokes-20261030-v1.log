@@ -1,0 +1,7 @@
+PASS production-search-agent-entry http://127.0.0.1:59859/randomizer/index.html?agent=search
+PASS production-search-hotpath http://127.0.0.1:59859/randomizer/index.html
+PASS production-six-greedy-plans http://127.0.0.1:59859/randomizer/index.html
+PASS production-shared-resource-prefix http://127.0.0.1:59859/randomizer/index.html
+PASS production-quiet-data-tail http://127.0.0.1:59859/randomizer/index.html
+PASS production-search-agent-parity http://127.0.0.1:59859/randomizer/index.html?agent=search
+SUMMARY browserSmoke passed=6 failed=0 total=6

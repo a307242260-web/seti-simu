@@ -100,6 +100,10 @@
     const before=stateValue.handCapital(p.hand,p.techState,state.tech,state.turn.roundNumber);
     return before-stateValue.handCapital(p.hand.filter(c=>c.id!==card.id),p.techState,state.tech,state.turn.roundNumber);
   }
+  function incomeCardValue(state,seatId,card){
+    const p=owner(state,seatId),gain=cards.getIncomeGainForCard(card);
+    return Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0)*(5-state.turn.roundNumber)-incomeOpportunityCost(state,p,card);
+  }
   function dataCornerCards({state,seatId,goal}){
     const p=owner(state,seatId);
     return p.hand.filter(c=>!protectedCard(c,goal)&&cornerData(c)===1&&!Object.keys(cards.getDiscardActionRewardForCard(c).gain||{}).length)
@@ -289,7 +293,7 @@
       const card=p.hand.find(c=>c.id===a.target.cardInstanceId),gain=cards.getIncomeGainForCard(card);
       const next={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?{...p,resources:{...p.resources},hand:p.hand.filter(c=>c!==card)}:v)}};
       if(goal.incomeFunding&&card.id===goal.incomeCardId)players.gainResources(owner(next,seatId),gain);
-      return{action:a,value:Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0)*(5-state.turn.roundNumber)-incomeOpportunityCost(state,p,card),feasible:capacity(next,seatId,goal)};
+      return{action:a,value:incomeCardValue(state,seatId,card),feasible:capacity(next,seatId,goal)};
     }).filter(x=>x.feasible).sort((a,b)=>b.value-a.value||(a.action.actionId<b.action.actionId?-1:1));
     return scored[0]?{kind:'fixed',actionId:scored[0].action.actionId,reason:'greedy-income-for-goal'}:{kind:'infeasible',reason:'income-would-consume-goal-card'};
   }
@@ -417,5 +421,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,dataCornerCards});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,dataCornerCards});
 });

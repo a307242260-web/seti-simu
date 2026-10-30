@@ -1,0 +1,10 @@
+known blue prerequisites, native income, seven-data plan with six-slot pool, recovery and budgets passed
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+{"planPrefixReuse":"passed","hits":10,"refreshes":1,"actions":12,"inputs":[91,0,10,0,0,0,0,0,0,0,0,0]}
+purpose capital, typed turn-tail proofs, default-model guard, budgets and cold blue funding passed
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+{"sharedResourcePrefixes":"passed","goals":8,"preparationPrefix":7,"guaranteedRewardInputs":1,"uniqueInputs":16,"states":17,"sharedInputs":49,"nativeRootAndRecovery":true}
+SUMMARY unit passed=7 failed=0 total=7 time=3.84s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=7
