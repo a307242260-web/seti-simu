@@ -140,8 +140,8 @@ assert(pruned.diagnostics.transitions < raw.diagnostics.transitions);
 const bounded = run(true, true);
 assert.equal(bounded.value, raw.value);
 assert.equal(bounded.actionId, raw.actionId);
-assert(bounded.diagnostics.cardTradePrunes > 0);
-assert(bounded.diagnostics.transitions < pruned.diagnostics.transitions,
+assert.equal(bounded.diagnostics.cardTradePrunes,0,"Round1 hand-capital model declines the old quantity bound");
+assert.equal(bounded.diagnostics.transitions,pruned.diagnostics.transitions,
   "已完成真实竞争线严格胜过上界时才省略取牌子树，完整窗口最优不变");
 for (const line of bounded.lines.filter(line => line.prunedByBound)) {
   const witness = bounded.lines[line.prunedByBound.node];

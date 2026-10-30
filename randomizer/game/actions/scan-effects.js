@@ -23,6 +23,7 @@
   const SCAN_COST = Object.freeze({ credits: 1, energy: 2 });
   const SCAN_ACTION_2_MERCURY_COST = Object.freeze({ publicity: 1 });
   const SCAN_ACTION_4_LAUNCH_ENERGY = 1;
+  const SCAN_ACTION_4_MOVE_POINTS = 1;
 
   const EFFECT_ICONS = Object.freeze({
     scan_cost: "../assets/symbol/effect/cost.webp",
@@ -164,6 +165,7 @@
     SCAN_COST,
     SCAN_ACTION_2_MERCURY_COST,
     SCAN_ACTION_4_LAUNCH_ENERGY,
+    SCAN_ACTION_4_MOVE_POINTS,
     EFFECT_ICONS,
     EFFECT_TYPES,
     playerOwnsPurpleTech,

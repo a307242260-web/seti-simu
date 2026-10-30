@@ -45,7 +45,7 @@ function check(f,label){
    const out=searchDecision({port,root:port.openRoot(),evaluate:evaluators[0],budget,resourceDominance:true,cardTradePruning:enabled,cardChoiceEquivalence:enabled});assert(out.complete,out.stopReason);return out;
   }finally{port.close();}}
   const raw=run(false),pruned=run(true),cached=run(true,256);
-  for(const x of [pruned,cached]){assert.equal(x.actionId,raw.actionId);assert.equal(x.value,raw.value);assert.equal(x.lines[0].distance,raw.lines[0].distance);assert(x.diagnostics.cardTradePrunes>0);}
+  for(const x of [pruned,cached]){assert.equal(x.actionId,raw.actionId);assert.equal(x.value,raw.value);assert.equal(x.lines[0].distance,raw.lines[0].distance);if(s.turn.roundNumber===4)assert(x.diagnostics.cardTradePrunes>0);else assert.equal(x.diagnostics.cardTradePrunes,0,"held-card value invalidates the old quantity-only bound");}
   assert.deepEqual(comp.lifecycle.save().envelope,smallBefore);completeWindows.push({label,raw:raw.diagnostics.transitions,pruned:pruned.diagnostics.transitions,value:raw.value,prunes:pruned.diagnostics.cardTradePrunes});
  }
  comp.dispose();

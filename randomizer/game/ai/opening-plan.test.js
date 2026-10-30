@@ -57,6 +57,7 @@ for (const cardId of [null, "dlc_27.png", "b_44.webp", "b_23.webp", "dlc_22.png"
     assert.equal(actual.actionId, baseline.actionId, cardId);
     assert.equal(actual.value, baseline.value, cardId);
     assert.equal(actual.lines[0].distance, baseline.lines[0].distance, cardId);
+    if(source.turn.roundNumber===4){
     assert(actual.diagnostics.openingExcludedActions > 0);
     assert(actual.diagnostics.transitions < baseline.diagnostics.transitions);
     const omitted = actual.roots.filter(row => row.prunedByPlan);
@@ -67,6 +68,7 @@ for (const cardId of [null, "dlc_27.png", "b_44.webp", "b_23.webp", "dlc_22.png"
       assert(["information-barrier", "other-owner", "terminal"].includes(actual.lines[witness.node].status));
       assert.equal(actual.lines[witness.node].value, witness.value);
     }
+    }else{assert.equal(actual.diagnostics.openingProofNodes,0);assert.equal(actual.diagnostics.transitions,baseline.diagnostics.transitions);assert(!actual.roots.some(row=>row.prunedByPlan));}
   }
   results.push({ cardId, value: baseline.value, baseline: baseline.diagnostics.transitions,
     pruned: pruned.diagnostics.transitions });
@@ -157,15 +159,17 @@ for (const [key, value] of [["credits", 1], ["energy", 1], ["publicity", 5]]) {
 const selectionSource = subset(["dlc_27.png", "b_44.webp", "b_23.webp"]);
 const selection = open(selectionSource);
 const paying = selection.port.expand(selection.root, selection.root.legalActions.find(action => action.target?.tradeId === "cards-for-credit").actionId);
-const selectionRaw = searchDecision({ port: selection.port, root: paying, evaluate, ...combined, budget });
-const selectionPruned = searchDecision({ port: selection.port, root: paying, evaluate, ...combined, openingPruning: true,
+const production=require('./search-agent').OPTIONS;
+const fullyNative={...selection.port,postMainValueBound:()=>null,turnTailSummary:()=>null,incomePlanSummary:()=>null};
+const selectionRaw = searchDecision({ port: fullyNative, root: paying, evaluate, ...production, budget });
+const selectionPruned = searchDecision({ port: selection.port, root: paying, evaluate, ...production, openingPruning: true,
   modelKey: evaluate.modelKey, budget });
 assert(selectionRaw.complete && selectionPruned.complete);
 assert.equal(selectionPruned.value, selectionRaw.value);
 assert.equal(selectionPruned.actionId, selectionRaw.actionId);
-assert.equal(selectionPruned.lines[0].orderedExitCount, 3);
-assert(selectionPruned.selectionContinuation);
-assert(selectionPruned.diagnostics.openingProofNodes > 0);
+assert.equal(selectionPruned.diagnostics.selectionMacros,0,"an already committed payment follows its greedy production plan");
+assert(selectionPruned.planContinuation);
+assert.equal(selectionPruned.diagnostics.openingProofNodes,0,"selection root still needs model-compatible native evidence");
 assert.deepEqual(comp.lifecycle.save().envelope, selection.before);
 selection.port.close();
 // 首数据放置不追补将来取得的蓝列奖励；最大公共扫描也不能使保留池数据溢出。
@@ -214,21 +218,21 @@ const noPassMacros = { ...full.port, openingPlanSpec: node => {
     retainedActionIds: [...spec.retainedActionIds, ...dataIds.filter(id => spec.excludedActionIds.includes(id))],
     excludedActionIds: spec.excludedActionIds.filter(id => !dataIds.includes(id)) };
 } };
-const expanded = searchDecision({ port: noPassMacros, root: full.root, evaluate, ...combined, openingPruning: true, budget });
-const normalized = searchDecision({ port: full.port, root: full.root, evaluate, ...combined, openingPruning: true, budget });
+const expanded = searchDecision({ port:{...noPassMacros,postMainValueBound:()=>null,turnTailSummary:()=>null,incomePlanSummary:()=>null}, root:full.root,evaluate,...production,budget });
+const normalized = searchDecision({ port:full.port,root:full.root,evaluate,...production,budget });
 assert(expanded.complete && normalized.complete);
 assert.equal(normalized.actionId, expanded.actionId);
 assert.equal(normalized.value, expanded.value);
 assert.equal(normalized.lines[0].distance, expanded.lines[0].distance);
-assert(normalized.diagnostics.openingPassMacros > 0);
-assert(normalized.diagnostics.transitions < expanded.diagnostics.transitions);
+assert.equal(normalized.diagnostics.openingPassMacros,0,"production preparations follow explicit goals instead of the old linear PASS normal form");
+assert(normalized.diagnostics.transitions <= expanded.diagnostics.transitions);
 for (const row of normalized.roots.filter(row => row.normalForm)) {
   assert.equal(row.valueType, "attained-lower-bound", "不能把只保留PASS后的角标分支值当成原分支精确最优");
   assert.equal(row.completion, "covered-by-opening-normal-form");
 }
 assert.deepEqual(comp.lifecycle.save().envelope, full.before);
 full.port.close();
-const cachedFull = run(state, true, 256);
+const cachedSource=open(state,256);const cachedFull=searchDecision({port:cachedSource.port,root:cachedSource.root,evaluate,...production,budget});assert(cachedFull.complete,cachedFull.stopReason);assert.deepEqual(comp.lifecycle.save().envelope,cachedSource.before);cachedSource.port.close();
 assert.equal(cachedFull.actionId, normalized.actionId);
 assert.equal(cachedFull.value, normalized.value);
 assert.equal(cachedFull.lines[0].distance, normalized.lines[0].distance);

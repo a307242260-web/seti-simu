@@ -2,7 +2,13 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const {createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),{createAnalysisPort}=require('./analysis-port'),{searchDecision}=require('./decision-search'),values=require('./state-value'),agent=require('./search-agent'),local=require('./local-decision-plans');
 const read=p=>JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../..',p)));
-const f=read('adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-043-20261030-v1.json'),seed=f.source.seed,k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition,evaluate=values.createStateValueEvaluator(f.seatId),budget={transitions:256,nodes:1024,frontier:256,milliseconds:5000};
+const f=read('adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-037-20261030-v1.json'),seed=f.source.seed,k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition,evaluate=values.createStateValueEvaluator(f.seatId),budget={transitions:256,nodes:1024,frontier:256,milliseconds:5000};
+// Keep the valuable research card and fund income with the actual newly picked
+// low-opportunity card. The first choice is submitted through the real kernel.
+assert(c.lifecycle.restore(f.compositionEnvelope).ok);
+const pickDecision=c.inspect().session.decision,pick=pickDecision.choices.find(a=>a.summary==='b_2.webp');assert(pick);
+assert(c.inputPort.submitDecision({decisionId:pickDecision.decisionId,decisionVersion:pickDecision.decisionVersion,ownerId:pickDecision.ownerId,choice:pick}).ok);
+f.compositionEnvelope=c.lifecycle.save().envelope;
 function open(envelope=f.compositionEnvelope){assert(c.lifecycle.restore(envelope).ok);const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0}),root=p.openRoot();return{before,p,root};}
 try{
  const {before,p,root}=open();try{
@@ -27,7 +33,7 @@ try{
  const positive=structuredClone(state),owner=positive.players.players.find(p=>p.id===t.seatId),removed=owner.reservedCards.find(c=>c.cardId==='dlc_8.png');owner.reservedCards=owner.reservedCards.filter(c=>c!==removed);positive.cards.discardPile.push(removed);assert(local.blueCompletion({state:positive,seatId:t.seatId,goal:{blueSlot:2}}).selected);
  const belowCap=structuredClone(state);belowCap.players.players.find(p=>p.id===t.seatId).resources.publicity=8;assert.equal(local.blueCompletion({state:belowCap,seatId:t.seatId,goal:{blueSlot:1}}).netGain,-.5);
  for(const done of [false,true]){
-  const controlled=structuredClone(t.compositionEnvelope),source=JSON.parse(controlled.committedState);source.players.players.find(p=>p.id===t.seatId).mainActionCompleted=done;controlled.committedState=JSON.stringify(source);assert(c.lifecycle.restore(controlled).ok);const port=createAnalysisPort({composition:c,seatId:t.seatId});try{port.setResourcePlanning(true);port.setCardPickPlanning(true);const n=port.openRoot(),spec=port.resourceSpec(n);assert.equal(spec.plans.some(p=>p.goal.kind==='blue-data'),!done,'pre-main resource opportunities remain candidates; only idle post-main tails are filtered');if(done)assert(spec.blueTails.some(t=>t.available&&!t.selected));}finally{port.close();}
+  const controlled=structuredClone(t.compositionEnvelope),source=JSON.parse(controlled.committedState);source.players.players.find(p=>p.id===t.seatId).mainActionCompleted=done;controlled.committedState=JSON.stringify(source);assert(c.lifecycle.restore(controlled).ok);const port=createAnalysisPort({composition:c,seatId:t.seatId});try{port.setResourcePlanning(true);port.setCardPickPlanning(true);const n=port.openRoot(),spec=port.resourceSpec(n);if(done)assert(spec.blueTails.some(t=>t.available&&!t.selected));else assert(!spec.blueTails?.length,'the negative idle-tail filter does not act before the main action; blue funding is bound to concrete resource demand');}finally{port.close();}
  }
  assert.equal(player.resources.availableData,6);
 }finally{c.dispose();}

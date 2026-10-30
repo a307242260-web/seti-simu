@@ -68,14 +68,14 @@ for (const result of [pruned, cached]) {
   assert.equal(result.actionId, raw.actionId);
   assert.equal(result.value, raw.value);
   assert.equal(result.lines[0].distance, raw.lines[0].distance);
-  assert(result.diagnostics.transitions < raw.diagnostics.transitions);
+  assert(result.diagnostics.transitions <= raw.diagnostics.transitions);assert.equal(result.diagnostics.postMainProofNodes,0,"capital model requires a compatible bound before omitting native movement");
   assert.deepEqual(result.unresolved, []);
 }
 const noDataRaw = run(plain, false), noDataPruned = run(plain, true);
 assert.equal(noDataPruned.actionId, noDataRaw.actionId);
 assert.equal(noDataPruned.value, noDataRaw.value);
 assert.equal(noDataPruned.lines[0].distance, 1);
-assert(noDataPruned.roots.some(row => row.prunedByPlan && row.actionId.startsWith("move:")));
+assert(!noDataPruned.roots.some(row=>row.prunedByPlan),"old linear normal form is not a Round1 capital-model witness");
 const beforeMain = structuredClone(plain);
 beforeMain.players.players.find(player => player.id === seatId).mainActionCompleted = false;
 const originalWindow = open(beforeMain);

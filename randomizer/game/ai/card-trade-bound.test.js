@@ -7,7 +7,7 @@ const { createSeededRandom } = require("../random");
 const { buildRuleObservation } = require("../../app/rule-observation");
 const { createAnalysisPort } = require("./analysis-port");
 const { searchDecision } = require("./decision-search");
-const { createStateValueEvaluator, evaluateHandCountDelta } = require("./state-value");
+const { createStateValueEvaluator, evaluateHandCountDelta, supportsLegacyValueProof } = require("./state-value");
 
 const initial = JSON.parse(fs.readFileSync(path.resolve(__dirname,
   "../../../reports/ai-foundation-20261022/analysis-root-input-v2.json"))).coreState.compositionEnvelope;
@@ -54,6 +54,7 @@ for (const tradeId of ["credits-for-card", "energy-for-card", "publicity-for-car
     for (const [index, evaluate] of evaluators.entries()) {
       const reduced = searchDecision({ port, root: selection, evaluate, cardChoiceEquivalence: true });
       assert.equal(reduced.complete, true);
+      if(supportsLegacyValueProof(selection.observation)){
       assert.equal(reduced.diagnostics.transitions, 1, "同值、同一步长的取牌出口只执行一个真实见证");
       assert.equal(reduced.actionId, selection.legalActions.map(action => action.actionId).sort()[0]);
       assert.equal(reduced.value, values[index]);
@@ -65,6 +66,12 @@ for (const tradeId of ["credits-for-card", "energy-for-card", "publicity-for-car
         assert.equal(row.target, null);
         assert.equal(row.completion, "proof-pruned");
         assert.equal(reduced.lines[row.prunedByPlan.witness.node].status, "information-barrier");
+      }
+      }else{
+        const native=searchDecision({port,root:selection,evaluate});assert(native.complete);
+        assert.equal(reduced.value,native.value);assert.equal(reduced.actionId,native.actionId);assert.equal(reduced.lines[0].distance,native.lines[0].distance);
+        assert.equal(reduced.diagnostics.transitions,selection.legalActions.length);assert.equal(reduced.diagnostics.cardChoiceProofNodes,0);
+        assert(reduced.roots.every(row=>row.target!=null),'model-incompatible quantity equivalence must execute every real choice');
       }
     }
   }
@@ -127,8 +134,8 @@ assert.deepEqual(reusedPayment.envelope, originalPayment.envelope);
 assert.deepEqual(originalReusedPayment.envelope, originalPayment.envelope);
 assert.deepEqual(originalPayment.records, [70, 72, 74, 4]);
 assert.deepEqual(originalReusedPayment.records, [70, 0, 0, 4]);
-assert.deepEqual(equivalentPayment.records, [40, 42, 44, 1]);
-assert.deepEqual(reusedPayment.records, [40, 0, 0, 1]);
+assert.deepEqual(equivalentPayment.records, originalPayment.records,"incompatible cardinality proof must retain all native payment/card choices");
+assert.deepEqual(reusedPayment.records, originalReusedPayment.records);
 
 // 取牌事件奖励确实会越过简单手牌上界，必须拒绝该证明。
 const bonus = structuredClone(state);

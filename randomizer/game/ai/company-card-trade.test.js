@@ -6,7 +6,7 @@ const { buildRuleObservation } = require("../../app/rule-observation");
 const industry = require("../industry"), effects = require("../cards/effects");
 const { createAnalysisPort } = require("./analysis-port");
 const { searchDecision } = require("./decision-search");
-const { createStateValueEvaluator, evaluateHandCountDelta } = require("./state-value");
+const { createStateValueEvaluator, evaluateHandCountDelta, supportsLegacyValueProof } = require("./state-value");
 const fixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
   "../../../adhoc/ai-decision-corpus-20261023-v1/case-008-20261023-v1.json")));
 const seed = fixture.source.seed, seatId = fixture.seatId, source = JSON.parse(fixture.compositionEnvelope.committedState);
@@ -25,7 +25,7 @@ function envelopeFor(label, original = source) {
   owner.resources = { ...owner.resources, credits: 4, energy: 3, publicity: 3 };
   return { ...fixture.compositionEnvelope, committedState: JSON.stringify(state) };
 }
-let leaves = 0;
+let leaves = 0,nonlinearExits = 0;
 const rows = [];
 function check(envelope, label) {
   let count = 0;
@@ -47,13 +47,17 @@ function check(envelope, label) {
         assert.equal(port.cardTradeBound(exit)?.handDelta, 1);
         for (const choice of exit.legalActions) {
           const leaf = port.expand(exit, choice.actionId); assert.equal(leaf.status, "information-barrier");
-          evaluators.forEach((evaluate, index) => assert.equal(evaluate(leaf.observation), values[index], `${label}/${tradeId}`));
+          evaluators.forEach((evaluate,index)=>{
+            const value=evaluate(leaf.observation);assert.equal(value,evaluate(port.valueObservation(leaf)),`${label}/${tradeId} exact native value projection`);
+            if(supportsLegacyValueProof(pending.observation))assert.equal(value,values[index],`${label}/${tradeId}`);
+            else if(value!==values[index])nonlinearExits++;
+          });
           count += 1;
         }
         for (const evaluate of evaluators) {
           const raw = searchDecision({ port, root: exit, evaluate, budget });
           const reduced = searchDecision({ port, root: exit, evaluate, budget, cardChoiceEquivalence: true });
-          assert(raw.complete && reduced.complete); assert.equal(reduced.diagnostics.transitions, 1);
+          assert(raw.complete && reduced.complete); assert.equal(reduced.diagnostics.transitions,supportsLegacyValueProof(exit.observation)?1:exit.legalActions.length);if(!supportsLegacyValueProof(exit.observation))assert.equal(reduced.diagnostics.cardChoiceProofNodes,0);
           assert.equal(reduced.actionId, raw.actionId); assert.equal(reduced.value, raw.value);
           assert.equal(reduced.lines[0].distance, raw.lines[0].distance);
         }
@@ -130,5 +134,6 @@ for (const result of [equivalent, reused, cached]) {
 assert.equal(reused.hits, 2); assert.deepEqual(cached.counts, reused.counts);
 assert(reused.counts.reduce((a, b) => a + b) < rawPayment.counts.reduce((a, b) => a + b));
 comp.dispose();
+assert(nonlinearExits>0,"current held-card value must expose a real counterexample to the old quantity bound");
 console.log(JSON.stringify({ companyCardTrade: "passed", rows, physicalLeaves: leaves,
   paymentInputs: { raw: rawPayment.counts, equivalence: equivalent.counts, reused: reused.counts }, reuseHits: reused.hits }));

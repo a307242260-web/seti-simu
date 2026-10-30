@@ -41,7 +41,7 @@ reject(s=>{reserveFromDraw(s,'b_44.webp');s.turn.type1TriggerEvents=[{type:'visi
 }
 // A synthetic complete graph isolates strict cutoffs, pending obligations, ties and the frozen default model.
 function synthetic(leafValue=10,directScan=false){
- const observation=(value,terminal=false)=>({terminal,selfState:{playerId:'p1',hand:[]},publicState:{roundNumber:1,players:[{playerId:'p1',score:terminal?value:0,finalScore:terminal?value:0,credits:terminal?0:value,energy:0,publicity:0,availableData:0,additionalPublicScan:0,handSize:0,income:{credits:0,energy:0,publicity:0,availableData:0,additionalPublicScan:0,handSize:0}}]}});
+ const observation=(value,terminal=false)=>({terminal,selfState:{playerId:'p1',hand:[]},publicState:{roundNumber:4,players:[{playerId:'p1',score:terminal?value:0,finalScore:terminal?value:0,credits:terminal?0:value,energy:0,publicity:0,availableData:0,additionalPublicScan:0,handSize:0,income:{credits:0,energy:0,publicity:0,availableData:0,additionalPublicScan:0,handSize:0}}]}});
  const end={status:'terminal',observation:observation(leafValue,true),legalActions:[]},scanEnd={status:'terminal',observation:observation(8,true),legalActions:[]};
  const pending={status:'decision',observation:observation(5),legalActions:[{actionId:'finish',actorId:'p1',family:'choose_target'}]};
  const root={status:'stable',observation:observation(5),legalActions:[{actionId:'z-fast',actorId:'p1',family:'end_turn'},{actionId:'a-scan',actorId:'p1',family:'scan',target:{kind:'standard-scan'}}]};
@@ -54,6 +54,9 @@ function synthetic(leafValue=10,directScan=false){
  const g=synthetic(),r=searchDecision({...g,cardChoiceEquivalence:true});assert(r.complete);assert.equal(g.count(),1);assert.equal(r.diagnostics.scanActionPrunes,1);
  const cut=r.roots.find(x=>x.actionId==='a-scan');assert.equal(cut.value,null);assert.equal(cut.valueType,'not-executed');assert.equal(cut.prunedByActionBound.upperBound,8);assert.equal(r.actionId,'z-fast');
 }
+// Earlier rounds carry capability/hand value: the old unversioned scalar
+// theorem must fall back to every native continuation even on this simple graph.
+{const g=synthetic();g.root.observation.publicState.roundNumber=1;const r=searchDecision({...g,cardChoiceEquivalence:true});assert(r.complete);assert.equal(r.value,10);assert.equal(g.count(),3);assert.equal(r.diagnostics.scanActionPrunes,0);}
 for(const direct of [false,true]){const g=synthetic(8,direct),r=searchDecision({...g,cardChoiceEquivalence:true});assert(r.complete);assert.equal(r.diagnostics.scanActionPrunes,0);assert.equal(r.actionId,direct?'a-scan':'z-fast');}
 {
  const g=synthetic();let time=0;g.port.standardScanValueBound=()=>{time=2;return{proof:'bound',valueDelta:3};};const r=searchDecision({...g,cardChoiceEquivalence:true,now:()=>time,budget:{milliseconds:1}});

@@ -33,8 +33,9 @@ function run(state, enabled, cache = 0) {
     for (const action of root.legalActions.filter(a => a.family === "card_corner")) {
       assert.equal(proof.retainedActionIds.includes(action.actionId), action.payload.kind !== "move");
     }
-    const result = searchDecision({ port, root, evaluate, openingPruning: enabled, postMainPruning: true,
-      resourceDominance: true, budget: semanticBudget });
+    const native=enabled?port:{...port,postMainValueBound:()=>null,turnTailSummary:()=>null,incomePlanSummary:()=>null};
+    const result = searchDecision({ port:native, root, evaluate, ...require('./search-agent').OPTIONS, planReuse:false,
+      budget: semanticBudget });
     assert(result.complete, result.stopReason);
     assert.deepEqual(comp.lifecycle.save().envelope, before);
     return result;
@@ -53,7 +54,7 @@ for (const cardId of [null, "dlc_9.png", "b_86.webp", "b_114.webp"]) {
   const raw = run(state, false), reduced = run(state, true);
   assert.equal(reduced.actionId, raw.actionId); assert.equal(reduced.value, raw.value);
   assert.equal(reduced.lines[0].distance, raw.lines[0].distance);
-  assert(reduced.diagnostics.transitions < raw.diagnostics.transitions);
+  assert(reduced.diagnostics.transitions <= raw.diagnostics.transitions);
   small.push({ cardId, rawInputs: raw.diagnostics.transitions, prunedInputs: reduced.diagnostics.transitions, value: reduced.value });
 }
 function declined(mutate) {

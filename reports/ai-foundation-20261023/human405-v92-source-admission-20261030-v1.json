@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "seti-human405-source-admission-v1",
+  "searchVersion": "v92",
+  "admitted": true,
+  "baseCommit": "7422f7550414bd648d0edef58e53aaf2ee141ea1",
+  "pointGates": {
+    "teacherRoots": 32,
+    "legacyRoots": 12,
+    "over256Inputs": 0,
+    "over600ms": 0,
+    "slowestLegacy": {
+      "case": "152",
+      "inputs": 228,
+      "milliseconds": 586.2065830000001
+    }
+  },
+  "nativeControls": {
+    "version": "v92",
+    "prunedBoundSources": 151,
+    "typedPlanSources": 28,
+    "freshNativeRootComparisons": 4,
+    "sameBestActionAndValue": true,
+    "rootAndRngUnchanged": true
+  },
+  "validation": {
+    "frozenNode": {
+      "unitPassed": 150,
+      "unitFailed": 0,
+      "fullFlowPassed": 1,
+      "fullFlowFailed": 0,
+      "log": "reports/ai-foundation-20261023/human405-v92-node-regression-20261030-v1.log"
+    },
+    "searchBrowser": {
+      "passed": 6,
+      "failed": 0,
+      "log": "reports/ai-foundation-20261023/human405-v92-search-browser-smokes-20261030-v1.log"
+    },
+    "legacyDefaultHeuristicBrowser": {
+      "candidateTimeout": true,
+      "sameFailureOnCleanV67": true,
+      "baselineReport": "reports/ai-foundation-20261023/human405-v67-clean-browser-parity-20261030-v1.json",
+      "scope": "Confirmed pre-existing default heuristic timeout; search entry and full parity explicitly pass."
+    },
+    "valueInputAudit": {
+      "allIndependentInputsPass": true,
+      "legacyFailure": "pre-existing expected-score evaluator writes frozen aliens.aomomo",
+      "log": "reports/ai-foundation-20261023/human405-v92-v-input-audit-20261030-v1.log"
+    }
+  },
+  "teacherCategories": {
+    "covered-as-internal-input": 2,
+    "excluded-by-movement-policy": 1,
+    "same-first-input": 22,
+    "searched-but-lower-value": 2,
+    "excluded-by-card-pick-policy": 2,
+    "excluded-by-resource-policy": 2,
+    "same-value-different-first-input": 1
+  },
+  "autonomousR1Run": false,
+  "baselineEligible": false,
+  "acceptedBaseline": "ai-search-v41-baseline-20261029",
+  "forecastUsageHypotheses": {
+    "computerCyclesPerLaterRound": 1,
+    "usefulScansPerLaterRound": 2,
+    "landingsPerLaterRound": 1
+  },
+  "sourceHashes": {
+    "randomizer/game/actions/scan-effects.js": "38576775462e805201cc2b34572976de44732ba91780c8b768f33c726aba08d5",
+    "randomizer/game/ai/alien-opening-plan.test.js": "993f21d9425768f6669033f8bc69bd0a35bb3de038de15505825a46d7c402130",
+    "randomizer/game/ai/analysis-port.js": "d7eb5dfb22767741d4c2cdfb02409a0fee2bbde46091ad6c5ee2e53bd109a4f8",
+    "randomizer/game/ai/blue-column-purpose.test.js": "b1b9e9f3f4a109c7674d758e89db525b23a4b8f6888d7a54d2064fb2f02bdfad",
+    "randomizer/game/ai/card-trade-bound.test.js": "87df672bc2cce4b11490c8e2fda560eda247d6ebff61aab486768fab733f3921",
+    "randomizer/game/ai/company-card-trade.test.js": "61e8a13f277beb6773b27d3a415227bed453927f1e69cd35c0aa085dd0d260ca",
+    "randomizer/game/ai/decision-search.js": "e9be9b5887dab77d4ba3942f544517e8a1f92370ecea963e833bc82e8a608ccd",
+    "randomizer/game/ai/fixed-data-plan.test.js": "33892c1d73cbc4a76a3c5877fb05941d9c81c022ba4599bd2161f88dc3c23e17",
+    "randomizer/game/ai/income-plan-value.test.js": "6000650f4ed62de34228a641539b7ba392c027b4de1039486fb0dab992b557f6",
+    "randomizer/game/ai/inert-reservation.test.js": "c495375b07910ebc0e6ae07d93cc8388a20d41cd66018f05dca0791a66fa4515",
+    "randomizer/game/ai/local-decision-plans.js": "5cadee19a0c51a818a866124a818429b9d64298043c7753d26e804ea8947fd35",
+    "randomizer/game/ai/opening-plan.test.js": "9e85f45f54b5499faa21d219be6eb335b6dfeaa6d4579b991ca9e3f6100d8907",
+    "randomizer/game/ai/opening-resource.test.js": "4dc232d91297f2fdbe096e84292de08aa95bc02175e237cc72d09c9029b177f2",
+    "randomizer/game/ai/pass-reserve-choice.test.js": "734d767c1616d6ea353fe950cd68b162af2e439bd7ea236bfd653427812e6089",
+    "randomizer/game/ai/plan-prefix-reuse.test.js": "33b4f386d32fdb4760482d045212277fab1c1ba66cb27da4171983d9755832c6",
+    "randomizer/game/ai/post-main-attainment.test.js": "668f11338191340c50f4b7054bf3dd071a79f0424c1d8ab2e08d0a4b9fcad135",
+    "randomizer/game/ai/post-main-borrow.test.js": "bd45527e4eb9dc95a001130ac8edf985d4145f400d87b0bfb7a0acfb977cdbda",
+    "randomizer/game/ai/post-main-corner-choice.test.js": "8ed8d014352a8cee9e8aa897fae0cd76c27833a32b06b252dbaca98c22f197ce",
+    "randomizer/game/ai/post-main-movement.test.js": "48b2afd2131ce4a95bf79238a72fd9461ba2d654c643737cf22b50065d0e7db4",
+    "randomizer/game/ai/post-main-plan.test.js": "e78f761b0e7211a38ecbcdf010eedb0ead2c0744c3b621f0609ec4f5b8dfbf18",
+    "randomizer/game/ai/pre-main-data-plan.test.js": "3e0f30fbcc971d5bd05655ea89a7dab946c3c35a0f553c63f4ce71001664c5ad",
+    "randomizer/game/ai/purpose-capital-value.test.js": "132cee308c1a70da3c35ec7c60751ef9b8d61b5e61e61669d0554a554607d683",
+    "randomizer/game/ai/quiet-bound-composition.test.js": "c3b4bc136a17428dea2156819943bb2ee13a3b6b32d99228d219830a496eab52",
+    "randomizer/game/ai/quiet-data-tail.test.js": "77b7e5e2069aa443e02596026826548a47be67e60be7b2c475685d5415c8017d",
+    "randomizer/game/ai/resource-demand.js": "98f7f3e866f809dae83d2bd6980be51155542d6f9cadb1975d45765dfb6be365",
+    "randomizer/game/ai/resource-demand.test.js": "a8c5a1b7ebfe8247db4cabe74e77337435b56329790600425fb74b57344cf0e4",
+    "randomizer/game/ai/shared-resource-prefix.test.js": "957e57df5ed8b22ca759c1f710f791c4a6a017ab63fc774a54eb3830710ac4e8",
+    "randomizer/game/ai/six-greedy-plans.test.js": "c05b6a2a541ca27e9062a97e8b7c0f694cafeab9da7e90d475834103e5b821f8",
+    "randomizer/game/ai/standard-scan-bound.test.js": "7e5e53f60008839c60c096b616da151c4db28dadf10b2bbbfbb9ce011b7f1872",
+    "randomizer/game/ai/state-value.js": "f5b9767dcedef54e93f81945a88fc5de730e27f5ab89e1a1db5b7c7633caf13e",
+    "randomizer/game/ai/trade-reservation-bound.test.js": "8b463a8de82995d649301935bec62a85632d7344061d235662f8bdd18b2c64da",
+    "randomizer/game/data/index.js": "593b159683ca184bf610c0d1097fc8a4c99306c3a664a9fc06d8d24ea1d6c903",
+    "randomizer/game/data/state.js": "e1fa0c53f628c0d1651b6460b8e47f4126307904bbdd8d8445e6136da5686645",
+    "randomizer/game/effects/residual-domain-session.js": "50ada0fbf8fbeff5abbf583c40e09faeec01a3a44adfc0b60956639fd9b6ec35",
+    "randomizer/game/effects/science-session.js": "c22870d31fd6a115b1aba72d592892c7cc1c58871bdcf8a9ebdb70e7af79224c",
+    "randomizer/game/production-kernel.js": "d4292b836d485df05084678b382a3ccfcfea1b0f2d6706f329912d567ee47521",
+    "randomizer/index.html": "e03383f49299628ea9a63550eb7d630c9a005672870910b5f5eca8292b7ad2e7",
+    "tools/audit_v_state_inputs.js": "cdea7b5d225bae2d9e59e5733f771f03a1a80e32c555e08795cacd4373b6eca8",
+    "tools/browser-smoke-inventory.js": "4ccdf5d45d7c97430f522c2633ebe6c17cc1ea38a51ccee1be83de5e3cd23533",
+    "tools/node-test-inventory.js": "716c2358ed06e3c58e7f8cb6b1aeb49cd0d1f5a85189c0a6001779775587e33b"
+  },
+  "scope": "Source admission only. Canonical first-round autonomous trial, remaining teacher differences and full-game acceptance are not complete."
+}

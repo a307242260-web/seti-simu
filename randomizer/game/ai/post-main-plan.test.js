@@ -76,8 +76,8 @@ assert.equal(pruned.lines[0].distance, 5, "保留计算机首位、蓝色附加�
 assert.equal(cached.actionId, pruned.actionId);
 assert.equal(cached.value, pruned.value);
 assert.equal(cached.diagnostics.transitions, pruned.diagnostics.transitions);
-assert(pruned.diagnostics.postMainExcludedActions > 0);
-assert(pruned.diagnostics.transitions < raw.diagnostics.transitions);
+assert.equal(pruned.diagnostics.postMainProofNodes,0,"Round1 capital model declines this linear normal form");
+assert(pruned.diagnostics.transitions <= raw.diagnostics.transitions);
 assert.deepEqual(pruned.unresolved, []);
 for (const line of pruned.lines) for (const exclusion of line.excludedActions || []) {
   assert(exclusion.retainedActionIds.length);
@@ -85,8 +85,7 @@ for (const line of pruned.lines) for (const exclusion of line.excludedActions ||
   assert(["terminal", "information-barrier", "other-owner"].includes(witness.status));
   assert.equal(witness.value, exclusion.witness.value);
 }
-assert(pruned.roots.some(root => root.prunedByPlan && root.value === null && root.completion === "proof-pruned"),
-  "被省略的根不冒充已经执行得到一个值");
+assert(!pruned.roots.some(root=>root.prunedByPlan),"model-incompatible local theorem cannot omit native roots");
 
 const cases = [fixture(2, 0, false), fixture(0, 1, true, 2)];
 for (const tileId of ["blue1", "blue3", "blue4"]) {
@@ -105,7 +104,7 @@ for (const state of cases) {
   assert.equal(reduced.actionId, reference.actionId);
   assert.equal(reduced.value, reference.value);
   assert.equal(reduced.lines[0].distance, reference.lines[0].distance);
-  assert(reduced.diagnostics.transitions < reference.diagnostics.transitions);
+  assert(reduced.diagnostics.transitions <= reference.diagnostics.transitions);
 }
 const selectionState = fixture(0, 2, true, 2);
 function runSelection(enabled) {
@@ -127,7 +126,7 @@ assert.equal(selectionPruned.actionId, selectionRaw.actionId);
 assert.equal(selectionPruned.value, selectionRaw.value);
 assert.equal(selectionPruned.lines[0].distance, selectionRaw.lines[0].distance);
 assert.deepEqual(selectionPruned.roots.map(row => row.value), selectionRaw.roots.map(row => row.value));
-assert(selectionPruned.diagnostics.postMainProofNodes > 0, "局部精确剪枝可以保留完整选择出口证据");
+assert.equal(selectionPruned.diagnostics.postMainProofNodes,0,"capital-model selection exits retain full native evidence");
 
 function declined(state) {
   const { port, root } = open(state);

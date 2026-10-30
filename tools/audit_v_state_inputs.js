@@ -135,8 +135,10 @@ try {
     const standardized = outcomeModel.createDecisionObservation(pending.observation, { seatId: actor.actorId });
     const standardBound = independentValue.evaluateHandCountDelta(evaluator, standardized, 1);
     const result = searchDecision({ port, root: pending, evaluate: evaluator, cardChoiceEquivalence: true });
-    if (!result.complete || result.diagnostics.transitions !== 1 || result.value !== rawBound || rawBound !== standardBound) {
-      throw new Error("取牌等价路径的观察、数值界与真实见证不一致");
+    const nativeChoiceValues=pending.legalActions.map(action=>evaluator(port.expand(pending,action.actionId).observation));
+    if (!result.complete || result.value !== Math.max(...nativeChoiceValues) || rawBound !== standardBound
+      || !independentValue.supportsLegacyValueProof(pending.observation)&&result.diagnostics.cardChoiceProofNodes!==0) {
+      throw new Error("已知牌价值路径的原始/标准输入、原生最佳后继或模型证明门禁不一致");
     }
     const compact = port.valueObservation(pending);
     const full = pending.observation;
@@ -148,7 +150,7 @@ try {
     if(weighted(compact)!==weighted(full))throw new Error("自定义线性权重的投影输入不一致");
     console.log(`[PASS] independent-value-projection: total=${evaluator(compact)} fullFactsEqual=true weightedEqual=true`);
     port.close();
-    console.log(`[PASS] independent-card-choice-equivalence: total=${result.value} inputs=1`);
+    console.log(`[PASS] independent-card-choice-model-guard: total=${result.value} nativeChoices=${nativeChoiceValues.length} inputs=${result.diagnostics.transitions}`);
     const publicPort = createAnalysisPort({ composition: comp, seatId: actor.actorId });
     const publicRoot = publicPort.openRoot();
     const grantId = publicRoot.observation.selfState.hand.find(card => card.cardId === "b_48.webp").id;
@@ -331,12 +333,12 @@ try {
         const evaluate = independentValue.createStateValueEvaluator(sectorFixture.seatId);
         const result = searchDecision({ port: passPort, root, evaluate, cardChoiceEquivalence: true });
         const leaf = passPort.expand(root, result.actionId);
-        if (!proof || !result.complete || result.diagnostics.transitions !== 1 || leaf.status !== "other-owner"
+        if (!proof || !result.complete || result.diagnostics.transitions !== (independentValue.supportsLegacyValueProof(root.observation)?1:root.legalActions.length) || leaf.status !== "other-owner"
           || result.value !== evaluate(leaf.observation) || result.value !== independentValue.evaluateHandCountDelta(evaluate, root.observation, 1)
           || result.value !== evaluate(outcomeModel.createDecisionObservation(leaf.observation, { seatId: sectorFixture.seatId }))) {
           throw new Error("PASS预留的数量界、边界或标准估值不一致");
         }
-        console.log(`[PASS] independent-pass-reserve-choice: total=${result.value} inputs=1`);
+        console.log(`[PASS] independent-pass-reserve-choice: total=${result.value} inputs=${result.diagnostics.transitions}`);
       } finally { passPort.close(); }
     } finally { sectorKernel.composition.dispose(); }
     const searchFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
@@ -708,8 +710,8 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
  let kernel,port;
  try{
   const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port'),{searchDecision}=require('../randomizer/game/ai/decision-search'),agent=require('../randomizer/game/ai/search-agent');
-  const f=JSON.parse(fs.readFileSync(require('node:path').resolve(__dirname,'../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-043-20261030-v1.json'))),seed=f.source.seed;
-  kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(state,viewer)=>buildRuleObservation(state,seed,viewer?.playerId)});kernel.newGame({seed});const comp=kernel.composition;assert(comp.lifecycle.restore(f.compositionEnvelope).ok);const before=comp.lifecycle.save().envelope;port=createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:0});const root=port.openRoot(),evaluate=independentValue.createStateValueEvaluator(f.seatId),r=searchDecision({port,root,evaluate,...agent.OPTIONS,budget:{transitions:256,nodes:1024,frontier:256,milliseconds:5000}});assert(r.complete);assert.equal(r.diagnostics.nativeExecutions,0);assert.equal(r.diagnostics.incomePlanProofs,1);
+  const f=JSON.parse(fs.readFileSync(require('node:path').resolve(__dirname,'../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-037-20261030-v1.json'))),seed=f.source.seed;
+  kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(state,viewer)=>buildRuleObservation(state,seed,viewer?.playerId)});kernel.newGame({seed});const comp=kernel.composition;assert(comp.lifecycle.restore(f.compositionEnvelope).ok);const decision=comp.inspect().session.decision,pick=decision.choices.find(a=>a.summary==='b_2.webp');assert(pick);assert(comp.inputPort.submitDecision({decisionId:decision.decisionId,decisionVersion:decision.decisionVersion,ownerId:decision.ownerId,choice:pick}).ok);const before=comp.lifecycle.save().envelope;port=createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:0});const root=port.openRoot(),evaluate=independentValue.createStateValueEvaluator(f.seatId),r=searchDecision({port,root,evaluate,...agent.OPTIONS,budget:{transitions:256,nodes:1024,frontier:256,milliseconds:5000}});assert(r.complete);assert.equal(r.diagnostics.nativeExecutions,0);assert.equal(r.diagnostics.incomePlanProofs,1);
   const summary=port.incomePlanSummary(root),native=port.expandResourcePlan(root,port.resourceSpec(root).plans[0],()=>null);assert(native.complete);assert.equal(native.submissions,summary.requiredNativeInputs);assert.equal(evaluate(native.node.observation),r.value);assert.deepEqual(comp.lifecycle.save().envelope,before);
   console.log(`[PASS] independent-income-plan-proof: value=${r.value} nativeControlInputs=${native.submissions} inventedSuccessor=false`);
  }catch(error){console.log(`[FAIL] independent-income-plan-proof: ${error.message}`);allPass=false;}

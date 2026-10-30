@@ -6,7 +6,7 @@ const { buildRuleObservation } = require("../../app/rule-observation");
 const industry = require("../industry");
 const { createAnalysisPort } = require("./analysis-port");
 const { searchDecision } = require("./decision-search");
-const { createStateValueEvaluator, evaluateHandCountDelta } = require("./state-value");
+const { createStateValueEvaluator, evaluateHandCountDelta, supportsLegacyValueProof } = require("./state-value");
 const f = JSON.parse(fs.readFileSync(path.resolve(__dirname,
   "../../../adhoc/ai-decision-corpus-20261023-v1/case-008-20261023-v1.json")));
 const seed = f.source.seed, seatId = f.seatId, source = JSON.parse(f.compositionEnvelope.committedState);
@@ -39,11 +39,12 @@ function check(label, mutate) {
     const raw = searchDecision({ port, root, evaluate });
     const reduced = searchDecision({ port, root, evaluate, cardChoiceEquivalence: true });
     assert(raw.complete && reduced.complete); assert.equal(reduced.actionId, raw.actionId); assert.equal(reduced.value, raw.value);
-    assert.equal(reduced.lines[0].distance, raw.lines[0].distance); assert.equal(reduced.diagnostics.transitions, 1);
-    assert.equal(reduced.lines[0].localPlan.expectedStatus, "other-owner");
-    for (const row of reduced.roots.filter(row => row.actionId !== reduced.actionId)) {
-      assert.equal(row.value, null); assert.equal(row.target, null);
-      assert.equal(reduced.lines[row.prunedByPlan.witness.node].status, "other-owner");
+    assert.equal(reduced.lines[0].distance, raw.lines[0].distance);
+    if(supportsLegacyValueProof(root.observation)){
+      assert.equal(reduced.diagnostics.transitions,1);assert.equal(reduced.lines[0].localPlan.expectedStatus,"other-owner");
+      for(const row of reduced.roots.filter(row=>row.actionId!==reduced.actionId)){assert.equal(row.value,null);assert.equal(row.target,null);assert.equal(reduced.lines[row.prunedByPlan.witness.node].status,"other-owner");}
+    }else{
+      assert.equal(reduced.diagnostics.transitions,root.legalActions.length);assert.equal(reduced.diagnostics.cardChoiceProofNodes,0);assert(reduced.roots.every(row=>row.target!=null));
     }
   }
   assert.deepEqual(comp.lifecycle.save().envelope, before); port.close();

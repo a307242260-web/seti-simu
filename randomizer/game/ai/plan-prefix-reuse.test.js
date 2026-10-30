@@ -33,18 +33,18 @@ function submit(comp, id) {
   assert(out.ok, out.message); return out;
 }
 const evaluate = createStateValueEvaluator(f.seatId);
-const options = { evaluate, modelKey: evaluate.modelKey, resourceDominance:true,moneyCapacityDominance:true,
+const options = { ...require("./search-agent").OPTIONS, evaluate, modelKey: evaluate.modelKey, resourceDominance:true,moneyCapacityDominance:true,
   cardTradePruning:true,postMainPruning:true,openingPruning:true,cardChoiceEquivalence:true,
   budget:{transitions:4096,nodes:4097,frontier:4096,milliseconds:15000} };
 const k = kernel(), comp = k.composition, port = createAnalysisPort({ composition: comp, seatId:f.seatId,maxCacheEntries:0 });
 let root=port.openRoot(), result=searchDecision({ ...options,port,root,planReuse:true });
 assert(result.complete);assert(result.planContinuation,"已闭合复杂窗口须产生一般最优前缀证书");
 assert.deepEqual(Object.keys(result.planContinuation),[]);
-const token = result.planContinuation, first = result.actionId;
+let token = result.planContinuation;const first = result.actionId, initialCertificate=port.exportPlan(token);
 assert.equal(port.getDiagnostics().planEvidenceEntries,1);
 assert(port.getDiagnostics().planPrefixEntries<=port.getDiagnostics().maxPlanPrefixEntries);
 const inputs=[result.diagnostics.transitions], actions=[], before=comp.lifecycle.save().envelope;
-let hits=0;
+let hits=0,refreshes=0;
 let expectedAfter=null;
 for(let i=0;i<32;i++) {
   const expectedChild=port.expand(root,result.actionId), boundary=["information-barrier","other-owner","terminal"].includes(expectedChild.status);
@@ -58,9 +58,16 @@ for(let i=0;i<32;i++) {
   const reference=createAnalysisPort({composition:recovered.composition,seatId:f.seatId,maxCacheEntries:0});
   const cold=searchDecision({ ...options,port:reference,root:reference.openRoot() });
   assert(cold.complete);assert.equal(result.actionId,cold.actionId);assert.equal(result.value,cold.value);
-  assert.equal(result.reusedCoverage?.distance,cold.lines[0].distance);
-  assert.equal(result.diagnostics.planContinuation,"hit");assert.equal(result.diagnostics.transitions,0);hits+=1;
-  assert.equal(result.diagnostics.resourceDominance,"reused-complete-window");
+  if(result.diagnostics.planContinuation==="hit"){
+    assert.equal(result.reusedCoverage.distance,cold.lines[0].distance);assert.equal(result.diagnostics.transitions,0);hits+=1;
+    assert.equal(result.diagnostics.resourceDominance,"reused-complete-window");
+  }else{
+    // Taking a technology really reveals new bonus facts. A certificate tied to
+    // the earlier information set must be recomputed; equality is checked with
+    // a fresh native planner, rather than requiring an invalid cache hit.
+    assert.equal(result.diagnostics.planContinuation,"dependencies-changed");assert(result.diagnostics.transitions>0);assert(result.planContinuation);token=result.planContinuation;refreshes++;
+    assert.equal(result.lines[0].distance,cold.lines[0].distance);
+  }
   assert.deepEqual(comp.lifecycle.save().envelope,actualBefore);
   submit(recovered.composition,cold.actionId);expectedAfter=recovered.composition.lifecycle.save().envelope;
   reference.close();recovered.composition.dispose();
@@ -69,7 +76,7 @@ for(let i=0;i<32;i++) {
 assert(hits>1);assert(actions.length>2);port.close();
 // A restored runtime has no token and must recompute the same next action.
 assert(comp.lifecycle.restore(before).ok);submit(comp,first);
-root=port.openRoot();
+root=port.openRoot();token=port.importPlan(initialCertificate);assert(token);
 assert.equal(port.reusePlan(root,token,"changed-model").reason,"model-changed");
 const changedOptions=searchDecision({...options,port,root,planReuse:true,planContinuation:token,cardChoiceEquivalence:false,
   budget:{...options.budget,transitions:1}});
@@ -99,4 +106,4 @@ assert.equal(afterInformation.diagnostics.planContinuation,"dependencies-changed
 assert(afterInformation.complete);assert.notEqual(afterInformation.planContinuation,token);
 assert.equal(port.reusePlan(root,token,"changed-model").reason,"unknown-evidence");
 port.close();comp.dispose();
-console.log(JSON.stringify({planPrefixReuse:"passed",hits,actions:actions.length,inputs}));
+console.log(JSON.stringify({planPrefixReuse:"passed",hits,refreshes,actions:actions.length,inputs}));

@@ -879,6 +879,24 @@
     return choices;
   }
 
+  function listIncomeChoices(root, actorId) {
+    const actor = getActor(root, actorId);
+    return (actor?.hand || []).map((card) => {
+      const entry = cards.getCatalogEntryForCard(card);
+      return {
+        ...makeChoice(
+          "choose_card",
+          `income:${card.id}`,
+          { cardInstanceId: card.id },
+          {},
+          `收入 ${cards.getCardLabel(card)}`,
+        ),
+        // 收入选择携带手牌卡面，决策弹窗显示牌面而非编号
+        presentation: cards.getCardPickPresentation(card),
+      };
+    });
+  }
+
   function createScienceDomain(options = {}) {
     const runtime = options.runtime;
     const commitWorkingState = options.commitWorkingState;
@@ -1017,7 +1035,7 @@
         ));
       }
       for (const move of abilities.rocket.listPlayerMoveChoices(context, actor, {
-        maxPoints: 1,
+        maxPoints: scanEffects.SCAN_ACTION_4_MOVE_POINTS,
         ignoreAsteroidRestriction: false,
       })) {
         choices.push(makeChoice(
@@ -1034,24 +1052,6 @@
         ));
       }
       return choices;
-    }
-
-    function listIncomeChoices(root, actorId) {
-      const actor = getActor(root, actorId);
-      return (actor?.hand || []).map((card) => {
-        const entry = cards.getCatalogEntryForCard(card);
-        return {
-          ...makeChoice(
-            "choose_card",
-            `income:${card.id}`,
-            { cardInstanceId: card.id },
-            {},
-            `收入 ${cards.getCardLabel(card)}`,
-          ),
-          // 收入选择携带手牌卡面，决策弹窗显示牌面而非编号
-          presentation: cards.getCardPickPresentation(card),
-        };
-      });
     }
 
     function listPickCardChoices(root) {
@@ -1415,7 +1415,7 @@
           ...legal.target,
           choice: legal.target.mode,
           skipCost: legal.target.mode === "move",
-          movementPoints: legal.target.mode === "move" ? 1 : undefined,
+          movementPoints: legal.target.mode === "move" ? scanEffects.SCAN_ACTION_4_MOVE_POINTS : undefined,
         });
         if (!result.ok) return result;
         const actor = getActor(root, effect.ownerId);
@@ -1950,6 +1950,7 @@
     executeNebulaScan,
     settleAfterScan,
     scanFinalizeEffect,
+    listIncomeChoices,
     listResearchChoices,
     executeResearchChoice,
     formalizeChoices,

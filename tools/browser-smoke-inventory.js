@@ -928,7 +928,8 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     const funding=await fetch('/adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-047-20261030-v1.json').then(r=>r.json());
     const fundingPick=await fetch('/adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-046-20261030-v1.json').then(r=>r.json());
     const knownRewards=await fetch('/adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-040-20261030-v1.json').then(r=>r.json());
-    for(const [name,f] of [...Object.entries(fixtures.cases),['paid',rootFixture],['income-funding',funding],['income-funding-pick',fundingPick],['known-rewards',knownRewards]]){
+    const blindProof=await fetch('/adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-037-20261030-v1.json').then(r=>r.json());
+    for(const [name,f] of [...Object.entries(fixtures.cases),['paid',rootFixture],['income-funding',funding],['income-funding-pick',fundingPick],['known-rewards',knownRewards],['blind-income-proof',blindProof]]){
       const seed=f.source.seed,k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw new Error('固定计划恢复失败');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
       try{p.setResourcePlanning(true);p.setCardPickPlanning(true);p.setMovementPlanning(true);p.setDecisionPlanning({scanPlanning:true,finalMarkPlanning:true});const n=p.openRoot();
         if(name==='advance'){const r=window.SetiDecisionSearch.searchDecision({port:p,root:n,evaluate:window.SetiStateValue.createStateValueEvaluator(f.seatId),...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:257,frontier:256,milliseconds:1500}});if(!r.complete||!r.lines[0].movementPolicy?.forceExecution||r.lines[0].alternatives!==1)throw new Error('移动时机重新分叉');}
@@ -936,7 +937,25 @@ module.exports = Object.freeze([...smokes, Object.freeze({
         else if(name==='paid'){const plans=p.resourceSpec(n).plans.filter(g=>g.goal.paidRewardPolicy);if(plans.length!==1)throw new Error('付款额度仍枚举');const r=p.expandResourcePlan(n,plans[0],()=>null);if(!r.complete||r.prefixes.filter(p=>p.action.target?.pay).length!==4)throw new Error('付款计划未固定');}
         else if(name==='income-funding'){const plan=p.resourceSpec(n).plans.find(p=>p.goal.cardId==='card-15-0'&&p.goal.incomeFunding);if(!plan)throw new Error('收入资助主牌候选缺失');const r=p.expandResourcePlan(n,plan,()=>null);if(!r.complete||r.submissions!==10||r.prefixes[8].action.target.cardInstanceId!=='card-41-0'||r.prefixes[9].action.target.cardInstanceId!=='card-15-0')throw new Error('收入资助链丢失受益牌');}
         else if(name==='income-funding-pick'){const s=p.cardPickSpec(n);if(s?.goal.fundsCardId!=='card-15-0'||s.selection.cardId!=='card-41-0')throw new Error('浏览器收入选牌未绑定资金目的');const r=p.expandWithCardPick(n,s.selectedActionId,()=>null);if(!r.complete)throw new Error('浏览器收入选牌执行失败');}
-        else if(name==='known-rewards'){const picked=p.expand(n,f.source.teacherActionId);if(picked.status!=='decision')throw new Error('公共补牌截断已知奖励');const scan=picked.legalActions.find(a=>a.target.nebulaId==='sector-4-b'),scanned=scan&&p.expand(picked,scan.actionId),income=scanned?.legalActions.find(a=>a.target.cardInstanceId==='card-40-0');if(!income)throw new Error('已知扫描后收入丢失');const done=p.expand(scanned,income.actionId);if(done.status!=='stable'||window.SetiStateValue.evaluateStateValue(done.observation,f.seatId).total!==43.5||!done.observation.publicState.board.publicCards.some(c=>c?.hidden))throw new Error('已知奖励结算或遮蔽错误');const valueView=p.valueObservation(done);if(JSON.stringify(valueView.publicState)!==JSON.stringify(done.observation.publicState)||JSON.stringify(valueView.selfState)!==JSON.stringify(done.observation.selfState))throw new Error('估值投影改变正式事实');const tail=window.SetiDecisionSearch.searchDecision({port:p,root:done,evaluate:window.SetiStateValue.createStateValueEvaluator(f.seatId),...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:1024,frontier:256,milliseconds:1500}});if(!tail.complete||tail.value!==47||tail.diagnostics.transitions!==0||tail.diagnostics.provedIncomeInputs!==9||!tail.lines.some(l=>l.status==='income-plan-value'&&l.planSummary?.successorEnvelopeAvailable===false))throw new Error('已知尾部证明错误或仍重复模拟');}
+        else if(name==='known-rewards'){
+          const picked=p.expand(n,f.source.teacherActionId);if(picked.status!=='decision')throw new Error('公共补牌截断已知奖励');
+          const scan=picked.legalActions.find(a=>a.target.nebulaId==='sector-4-b'),scanned=scan&&p.expand(picked,scan.actionId),income=scanned?.legalActions.find(a=>a.target.cardInstanceId==='card-40-0');if(!income)throw new Error('已知扫描后收入丢失');
+          const done=p.expand(scanned,income.actionId),evaluate=window.SetiStateValue.createStateValueEvaluator(f.seatId);if(done.status!=='stable'||!done.observation.publicState.board.publicCards.some(c=>c?.hidden))throw new Error('已知奖励结算或遮蔽错误');
+          const valueView=p.valueObservation(done);if(JSON.stringify(valueView.publicState)!==JSON.stringify(done.observation.publicState)||JSON.stringify(valueView.selfState)!==JSON.stringify(done.observation.selfState))throw new Error('估值投影改变正式事实');
+          const budget={transitions:256,nodes:1024,frontier:256,milliseconds:1500},tail=window.SetiDecisionSearch.searchDecision({port:p,root:done,evaluate,...window.SetiSearchAgent.OPTIONS,budget});
+          const q=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});try{
+            q.setResourcePlanning(true);q.setCardPickPlanning(true);let control=q.openRoot();for(const id of [f.source.teacherActionId,scan.actionId,income.actionId])control=q.expand(control,id);
+            if(evaluate(q.valueObservation(control))!==evaluate(valueView))throw new Error('已知奖励当前V与独立原生控制不一致');
+            const reference=window.SetiDecisionSearch.searchDecision({port:{...q,incomePlanSummary:()=>null,turnTailSummary:()=>null,postMainValueBound:()=>null},root:control,evaluate,...window.SetiSearchAgent.OPTIONS,budget});
+            if(!tail.complete||!reference.complete||tail.actionId!==reference.actionId||tail.value!==reference.value)throw new Error('已知尾部与完整原生策略不一致');
+          }finally{q.close();}
+        }
+        else if(name==='blind-income-proof'){
+          const pick=n.legalActions.find(a=>a.summary==='b_2.webp');if(!pick)throw new Error('缺少真实低机会成本收入牌');const root=p.expand(n,pick.actionId),evaluate=window.SetiStateValue.createStateValueEvaluator(f.seatId);
+          const r=window.SetiDecisionSearch.searchDecision({port:p,root,evaluate,...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:1024,frontier:256,milliseconds:1500}});
+          if(!r.complete||r.diagnostics.transitions!==0||r.diagnostics.provedIncomeInputs!==9||!r.lines.some(l=>l.status==='income-plan-value'&&l.planSummary.successorEnvelopeAvailable===false))throw new Error('固定盲抽收入证明未装配或伪造后继');
+          const actual=p.expandResourcePlan(root,p.resourceSpec(root).plans[0],()=>null);if(!actual.complete||actual.submissions!==9||evaluate(p.valueObservation(actual.node))!==r.value)throw new Error('收入证明与原生执行不一致');
+        }
         else{const s=p.localDecisionSpec(n),want=name==='blue'?10:1;if(!s||s.retainedActionIds.length!==want)throw new Error(name+'仍产生多余候选');if(name!=='blue'){const r=p.expandWithCardPick(n,s.selectedActionId,()=>null);if(!r.complete)throw new Error(name+'固定执行失败');}}
         if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw new Error(name+'污染真实根');
       }finally{p.close();c.dispose();}
@@ -989,6 +1008,30 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   successExpression: "window.__resourceGoalSmoke?.ok === true",
   obligation: "真实页面按收入数据需求固定准备流程，原生输入逐笔计数且权威状态不变",
   counterexample: "模块装配丢失、兑换或角标独立展开、缺少需求仍准备、宏漏记输入或修改权威根",
+}), Object.freeze({
+  id:'production-quiet-data-tail',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiLocalDecisionPlans?.dataTailCompletion && window.SetiResidualDomainSession?.listFinalMarkChoices && window.SetiScienceSession?.listIncomeChoices)',
+  actionExpression: `(async()=>{
+    const f=await fetch('/adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json').then(r=>r.json()),state=JSON.parse(f.compositionEnvelope.committedState),owner=state.players.players.find(p=>p.id===f.seatId);owner.mainActionCompleted=true;owner.resources.score=23;
+    const seed=f.source.seed,k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+    if(!c.lifecycle.restore({...f.compositionEnvelope,committedState:JSON.stringify(state)}).ok)throw Error('安静数据尾部恢复失败');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+    try{p.setResourcePlanning(true);p.setCardPickPlanning(true);p.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});const root=p.openRoot(),spec=p.turnTailSummary(root,'blue-end-turn'),evaluate=window.SetiStateValue.createStateValueEvaluator(f.seatId);if(!spec?.dataPlans.length||spec.markedTiles.length!==1)throw Error('固定收入/蓝槽/标记计划丢失');
+      const proof=p.turnTailBoundary(root,spec);let rejected=false;try{p.valueObservation(proof);}catch{rejected=true;}if(!rejected)throw Error('值证明暴露虚构观察');let n=root,inputs=0;
+      for(const item of spec.dataPlans){const plan=p.resourceSpec(n).plans.find(x=>x.goal.id===item.goal.id),r=p.expandResourcePlan(n,plan,()=>null);if(!r.complete||r.submissions!==item.requiredNativeInputs)throw Error('数据计划原生输入数不一致');n=r.node;inputs+=r.submissions;}
+      n=p.expand(n,n.legalActions.find(a=>a.family==='end_turn').actionId);inputs++;
+      for(const tile of spec.markedTiles){const policy=p.localDecisionSpec(n),a=n.legalActions.find(a=>a.actionId===policy.selectedActionId);if(a.target.tileId!==tile)throw Error('贪心标记与原生选项不一致');n=p.expand(n,a.actionId);inputs++;}
+      if(inputs!==spec.requiredNativeInputs||evaluate(p.valueObservation(n))!==evaluate(root.observation)+spec.netGain)throw Error('数据尾部与原生值不一致');
+      const limited=window.SetiDecisionSearch.searchDecision({port:p,root,evaluate,...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:1,frontier:256,milliseconds:1500}});if(limited.complete||limited.actionId)throw Error('固定证明绕过全局节点预算');if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('尾部证明污染真实根');window.__quietDataTailSmoke={ok:true,inputs,marks:spec.markedTiles};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression:'window.__quietDataTailSmoke?.ok === true',
+  obligation:'真实页面连续数据、货币收入、蓝槽和终局标记计划值等于原生执行，证明无虚构观察且受全局预算约束',
+  counterexample:'Node 能运行但浏览器缺少共享原生选项构造、漏结算标记或伪造后继且绕过预算',
+}), Object.freeze({
+  ...smokes.find(smoke=>smoke.id==='production-browser-full-parity'),
+  id:'production-search-agent-parity',file:'randomizer/index.html',query:'agent=search',
+  obligation:'新search AI在真实页面经共享factory完成初始选择、正式提交和保存恢复',
+  counterexample:'仅覆盖初始机器选择，主行动后机器席位未通过共享search factory提交或恢复失效',
 }), Object.freeze({
   ...smokes.find(smoke => smoke.id === "production-browser-full-parity"),
   id: "production-completion-agent-parity",

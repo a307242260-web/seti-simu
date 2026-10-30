@@ -21,7 +21,9 @@ for(const comp of [c,open(pending)]){
 assert.equal(choices[0],choices[1]);
 // Known computer/blue choices are fixed, and a beneficiary-specific blue destination is preserved.
 const state=JSON.parse(fixture.compositionEnvelope.committedState),actions=[{actionId:'computer',family:'choose_target',target:{target:'computer'}},{actionId:'blue2',family:'choose_target',target:{target:'blueBonus',blueSlot:2}}];
-assert.equal(demand.fixedDataChoice({state,seatId,actions}).actionId,'computer');assert.equal(demand.fixedDataChoice({state,seatId,actions,goal:{kind:'blue-data',blueSlot:2}}).actionId,'blue2');
+assert.equal(demand.fixedDataChoice({state,seatId,actions}).actionId,'computer');assert.equal(demand.fixedDataChoice({state,seatId,actions,goal:{kind:'blue-data',blueSlot:2}}).actionId,'computer','fill the actual computer prerequisite before the goal blue slot');
+const ready=structuredClone(state),data=require('../data'),owner=ready.players.players.find(p=>p.id===seatId);while(!data.listComputerPlacedTokens(owner).some(t=>t.placementSlot===data.getRequiredComputerSlotForBlueBonus(2))){if(!owner.resources.availableData)assert(data.gainData(owner,{root:ready}).ok);assert(data.placeDataToComputer(owner).ok);}
+assert.equal(demand.fixedDataChoice({state:ready,seatId,actions,goal:{kind:'blue-data',blueSlot:2}}).actionId,'blue2');
 // Disable initiating borrowing at every visited production node, while keeping native legal facts intact.
 const borrow=open(),borrowBefore=borrow.lifecycle.save().envelope,port=createAnalysisPort({composition:borrow,seatId,maxCacheEntries:0}),r=searchDecision({port,root:port.openRoot(),evaluate:createStateValueEvaluator(seatId),...agent.OPTIONS,budget:{transitions:256,nodes:257,frontier:256,milliseconds:600}});
 assert.equal(r.diagnostics.postMainBorrowMacros,0);assert(r.diagnostics.disabledBorrowStarts>0);

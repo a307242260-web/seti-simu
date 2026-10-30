@@ -15,7 +15,7 @@ function run(s,enabled,cache=0){const {port,root,before}=open(s,cache);try{
  }finally{port.close();}}
 const rows=[];
 for(const [name,s] of [['no-hand',control(0,0)],['unused-blind-card-and-task',control(1,4)],['two-data-cards-and-task',control(2,3)],['late-income',control(2,4,3)]]){
- const raw=run(s,false),fast=run(s,true),cached=run(s,true,256);for(const r of [fast,cached]){assert.equal(r.actionId,raw.actionId);assert.equal(r.value,raw.value);assert.equal(r.lines[0].distance,raw.lines[0].distance);}assert(fast.diagnostics.transitions<raw.diagnostics.transitions);rows.push({name,raw:raw.diagnostics.transitions,composed:fast.diagnostics.transitions,value:fast.value,distance:fast.lines[0].distance});
+ const raw=run(s,false),fast=run(s,true),cached=run(s,true,256);for(const r of [fast,cached]){assert.equal(r.actionId,raw.actionId);assert.equal(r.value,raw.value);assert.equal(r.lines[0].distance,raw.lines[0].distance);}assert(fast.diagnostics.transitions<=raw.diagnostics.transitions);if(s.turn.roundNumber!==4)assert.equal(fast.diagnostics.postMainProofNodes,0,"only the capital-aware bound can prune this model");rows.push({name,raw:raw.diagnostics.transitions,composed:fast.diagnostics.transitions,value:fast.value,distance:fast.lines[0].distance});
 }
 function rejected(s){const {port,root}=open(s);assert.equal(port.postMainValueBound(root),null);port.close();}
 const ready=control(1,4);ready.data.sectorSettlements.winsByPlayerId[seatId]=[{nebulaId:'sector-2-a',sectorId:'sector-2-a'},{nebulaId:'sector-1-a',sectorId:'sector-1-a'}];

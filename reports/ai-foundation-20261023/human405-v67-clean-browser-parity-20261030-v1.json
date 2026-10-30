@@ -1,0 +1,23 @@
+{
+  "baseCommit": "7422f7550414bd648d0edef58e53aaf2ee141ea1",
+  "runtimeVersion": "v67",
+  "scope": "Clean private runtime overlay restored from HEAD; source baseline, not the shared working tree with two missing files.",
+  "sourceHashes": {
+    "randomizer/game/actions/scan-effects.js": "ea334dbde70c8002952569a15f15fd0e3f136efde7ae9092614753b9c48999eb",
+    "randomizer/game/ai/analysis-port.js": "a2af3e5b3e39949f619699c24d04d4ae8758f2fef7c934d8cd09c36c2d543c62",
+    "randomizer/game/ai/decision-search.js": "9ba127ce40a22e7ac705aba95ae978f6cb1c40f07c5689c6ac39c3b26e040acc",
+    "randomizer/game/ai/local-decision-plans.js": "2c3c1d5c05f85d8f70f00a828f4a46a96e1c7b8ae89d60255921e499b4fc3686",
+    "randomizer/game/ai/resource-demand.js": "132613b023c0b4d11619110f26e8dbb102b35807d57ea70d30a5bf2d08e7d472",
+    "randomizer/game/ai/state-value.js": "31f0718b2723190ec318262ae28241249ca0c2f3eafd36d0c22d9862c396d4cd",
+    "randomizer/game/data/index.js": "68f79323130653fa1f2a292f19b6d01143785ed09b6b4b829cf6fe412c40d928",
+    "randomizer/game/data/state.js": "b6b9061cce1679e09342e208213fcff6959f381424787a5f01f5aebfd361e96c",
+    "randomizer/game/effects/residual-domain-session.js": "5988cc2a7e9a0f60f42ffaf92c49b906ff016ed9da3897184c0c9aa5bf7e460c",
+    "randomizer/game/effects/science-session.js": "4ef65aa6e5fd285f5ddd30e9bc624e77beff0503a898974d4c7e94bbe02464f6",
+    "randomizer/game/production-kernel.js": "a7220801e913c0d3e09d7d0a97e53c42720a7774181c0fed61df9ee8b1e75abd",
+    "randomizer/index.html": "2f8c2fd42db8df11d697499fcc6841e9a6a5c86df90986f663c35da68e9f9a12",
+    "tools/browser-smoke-inventory.js": "374b8e4c6325399e739fb3eb5bfdb6991222ad0435e7e5b23cf0cbdeb9b4c4d8",
+    "tools/run_browser_smokes.js": "6ac622610348fea37447978c45d48dacd9c09f79a28ea90d13c7ddeacb4a79bb"
+  },
+  "exitCode": 1,
+  "log": "reports/ai-foundation-20261023/human405-v67-clean-browser-parity-20261030-v1.log"
+}

@@ -11,7 +11,7 @@ function recordedNode(id,target){
  for(const line of raw.lines)for(const e of line.edges)if(paths.has(line.node)&&!paths.has(e.target))paths.set(e.target,[...paths.get(line.node),...(e.steps||[e.actionId])]);
  const x=open(id);assert(paths.has(target));for(const action of paths.get(target))submit(x.c,action);const saved=x.c.lifecycle.save().envelope;close(x);return open(id,saved);
 }
-// An urgent movement prefix and a profitable income tail must not filter each other into a dead end.
+// An urgent movement prefix survives while the income plan preserves a valuable known technology card.
 // Reproduce the first human405 card through native execution, without editing rule state.
 {
  const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261029-teacher-v1/teacher-step-024-20261029-v1.json'))),seed=f.source.seed;
@@ -19,7 +19,7 @@ function recordedNode(id,target){
  const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
  try{
   const root=p.openRoot(),r=searchDecision({port:p,root,evaluate:createStateValueEvaluator(f.seatId),...agent.OPTIONS,budget:{transitions:256,nodes:512,frontier:256,milliseconds:15000}}),line=r.lines[0],move=line.movementPolicy;
-  assert(move.forceExecution);assert(line.resourcePolicy.incomeTail.selected);assert(line.resourcePolicy.excludedActionIds.includes(move.selectedActionId),'the resource policy alone prefers finishing the income tail');
+  assert(move.forceExecution);assert.equal(line.resourcePolicy.incomeTail.selected,false);assert.equal(line.resourcePolicy.incomeTail.netGain,-2.5);assert(line.resourcePolicy.retainedActionIds.includes(move.selectedActionId),'preserving the known technology card must retain urgent movement');
   assert(r.complete,r.stopReason);assert(r.actionId,'the selected urgent native move must survive the combined candidate filters');assert.equal(r.actionId,move.selectedActionId);assert.equal(line.alternatives,1);assert.equal(line.edges.length,1);assert(Number.isFinite(r.value));assert.deepEqual(c.lifecycle.save().envelope,before);
  }finally{p.close();c.dispose();}
 }

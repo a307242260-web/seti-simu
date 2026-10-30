@@ -6,8 +6,8 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v67";
-  const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value"]);
+  const VERSION = "seti-complete-decision-search-v92";
+  const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
 
@@ -31,10 +31,12 @@
       valueEvaluations++; const value = evaluate(observation); valueCache.set(observation,value); return value;
     }
     const observationForValue=node=>stateValue?.isStateValueEvaluator?.(evaluate)&&port.valueObservation?port.valueObservation(node):node.observation;
+    const legacyProof = node => !stateValue?.isStateValueEvaluator?.(evaluate)
+      || stateValue.supportsLegacyValueProof(observationForValue(node));
     const valueForNode=node=>{
-      if(node.status!=="income-plan-value")return valueOf(observationForValue(node));
+      if(!["income-plan-value","turn-tail-value"].includes(node.status))return valueOf(observationForValue(node));
       if(!stateValue?.isDefaultStateValueEvaluator?.(evaluate)||evaluate.seatId!==root.legalActions?.[0]?.actorId)throw new TypeError("SEARCH_INCOME_PROOF_MODEL_INVALID");
-      const total=valueOf(observationForValue(port.incomePlanBase(node)))+node.planSummary.netGain;
+      const total=valueOf(observationForValue((node.status==="income-plan-value"?port.incomePlanBase(node):port.turnTailBase(node))))+node.planSummary.netGain;
       if(!Number.isSafeInteger(total*2))throw new Error("SEARCH_INCOME_PROOF_VALUE_INVALID");
       return total;
     };
@@ -85,7 +87,7 @@
       stopReason: null, scope,
       roots: hit.roots, lines: [], unresolved: [],
       diagnostics: { valueEvaluations,valueCacheHits, finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes: 0, movementDirectionsExcluded: 0, routeGeometryNodes: 0,
-        incomePlanProofs:0,provedIncomeInputs:0,nativeExecutions:0,logicalResourceInputs:0,sharedResourceInputHits:0,sharedResourceInternalStates:0,
+        incomePlanProofs:0,provedIncomeInputs:0,turnTailProofs:0,provedTurnTailInputs:0,nativeExecutions:0,logicalResourceInputs:0,sharedResourceInputHits:0,sharedResourceInternalStates:0,
         fixedDataChoiceStates:0,fixedDataChoicesExcluded:0,branchingStates:0,singleAlternativeStates:0,disabledBorrowStarts:0,disabledRemoveTechIncomeStarts:0,
         transitions: 0, nodes: 1, equivalents: 0, selectionMacros: 0, peakFrontier: 0, graphNodes: 1, certificateNodes: 0,
         postMainOptimalPlans: 0, postMainOptimalPlanSteps: 0,
@@ -123,7 +125,7 @@
       const fresh=new Set();for(const node of states){const id=port.identity(node);if(!known.has(id)&&!sharedInternalStates.has(id))fresh.add(id);}return fresh;
     }
     let equivalents = 0;
-    let incomePlanProofs=0,provedIncomeInputs=0;
+    let incomePlanProofs=0,provedIncomeInputs=0,turnTailProofs=0,provedTurnTailInputs=0;
     let selectionMacros = 0;
     let peakFrontier = 0;
     let pendingFrontier = 0;
@@ -176,9 +178,10 @@
         if(sharedInternalStates.delete(identity))certificateNodes--;
         known.set(identity,index);
       }
-      // New known post-main continuations may already be dominated by a closed
-      // witness. Delay route planning until their native-state bound is checked.
-      if(!initializeDeferred&&resourcePlanning&&node.status==="stable"&&node.boundary){
+      // A stable native state may already be dominated by a closed witness.
+      // Delay policy/route construction until after its bound check, including
+      // ordinary states without a carried hidden-information barrier.
+      if(!initializeDeferred&&resourcePlanning&&node.status==="stable"){
         nodes.push({node,edges:[],alternatives:[],alternativeCount:0,queuePriority,deferredPolicy:true,
           queued:true,expanded:false,value:null,distance:Infinity,best:null});
         const ahead=queue.findIndex(i=>nodes[i].queuePriority>queuePriority);
@@ -192,20 +195,23 @@
       if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
       // A closed leaf retains its exact native envelope and scalar V; its full
       // observation can be regenerated, rather than pinning a second large tree.
-      if (BOUNDARIES.has(node.status)&&node.status!=="income-plan-value") port.releaseBoundaryObservation?.(node);
+      if (BOUNDARIES.has(node.status)&&!["income-plan-value","turn-tail-value"].includes(node.status)) port.releaseBoundaryObservation?.(node);
       if (BOUNDARIES.has(node.status) && (!incumbent || value > incumbent.value)) incumbent = { node: index, value };
       const pickPolicy = !boundary && cardPickPlanning ? port.cardPickSpec(node) : null;
-      const decisionPolicy=!boundary&&(finalMarkPlanning||resourcePlanning)?port.localDecisionSpec?.(node):null;
+      let decisionPolicy=!boundary&&(finalMarkPlanning||resourcePlanning)?port.localDecisionSpec?.(node):null;
       const resourcePolicy=!boundary&&resourcePlanning?port.resourceSpec(node):null;
+      // A concrete resource purpose owns its data slot. The unbound generic
+      // computer-first advisory must not delete its fixed blue funding choice.
+      if(resourcePolicy?.plans.length&&decisionPolicy?.kind==="fixed-data-choice")decisionPolicy=null;
       const selection = boundary || decisionPolicy || pickPolicy?.fixed || resourcePolicy?.bound || resourcePolicy?.plans.length ? null : port.selectionSpec?.(node) || null;
-      const postMainPlan = !boundary && !selection && !resourcePlanning && postMainPruning && node.status === "stable"
+      const postMainPlan = !boundary && !selection && !resourcePlanning && postMainPruning && node.status === "stable" && legacyProof(node)
         ? port.postMainPlanSpec(node) : null;
       let localPlan = postMainPlan ? { ...postMainPlan, kind: "post-main" } : null;
-      if (!boundary && !selection && !localPlan && !resourcePlanning && openingPruning && node.status === "stable") {
+      if (!boundary && !selection && !localPlan && !resourcePlanning && openingPruning && node.status === "stable" && legacyProof(node)) {
         const opening = port.openingPlanSpec(node);
         if (opening) localPlan = { ...opening, kind: "opening" };
       }
-      if (!boundary && !selection && !resourcePlanning && openingPruning && node.status === "stable") {
+      if (!boundary && !selection && !resourcePlanning && openingPruning && node.status === "stable" && legacyProof(node)) {
         const data = port.preMainDataPlanSpec?.(node);
         const fresh = data?.excludedActionIds.filter(id => !localPlan?.excludedActionIds.includes(id));
         if (fresh?.length) {
@@ -220,7 +226,7 @@
       }
       if (!boundary && !selection && !localPlan && !resourcePlanning && cardChoiceEquivalence && node.status === "stable") {
         const corners = port.postMainCornerChoiceSpec?.(node);
-        if (corners) localPlan = { ...corners, kind: "card-corner-choice" };
+        if (corners && legacyProof(node)) localPlan = { ...corners, kind: "card-corner-choice" };
       }
       if (localPlan) {
         const kept = new Set(localPlan.retainedActionIds), removed = new Set(localPlan.excludedActionIds);
@@ -261,7 +267,7 @@
       if (localPlan?.kind === "card-corner-choice") {
         cardCornerProofNodes += 1; cardCornerExcludedActions += localPlan.excludedActionIds.length;
       }
-      let borrowPlan = !resourcePlanning && !boundary && !selection && !resourcePolicy?.bound && postMainPruning && limits.transitions <= 4096
+      let borrowPlan = !resourcePlanning && !boundary && !selection && !resourcePolicy?.bound && postMainPruning && limits.transitions <= 4096 && legacyProof(node)
         ? port.postMainBorrowSpec?.(node) : null;
       if (borrowPlan) {
         const value = valueForNode(node);
@@ -354,7 +360,7 @@
       if (usePostMainValueBound && incumbent && entry.node.status === "stable") {
         if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
         const bound = port.postMainValueBound?.(entry.node);
-        if (bound) {
+        if (bound && (bound.capitalValueModel===stateValue.MODEL_VERSION||legacyProof(entry.node))) {
           const currentValue = valueForNode(entry.node);
           const player = observationForValue(entry.node).publicState.players.find(player => player.playerId === evaluate.seatId);
           const increase = bound.maximumValueIncrease;
@@ -375,7 +381,7 @@
       if (useScanBound && incumbent && entry.node.status === "decision") {
         if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break;}
         const bound=port.standardScanValueBound?.(entry.node);
-        if(bound){const currentValue=valueForNode(entry.node),player=entry.node.observation.publicState.players.find(p=>p.playerId===evaluate.seatId);
+        if(bound&&legacyProof(entry.node)){const currentValue=valueForNode(entry.node),player=entry.node.observation.publicState.players.find(p=>p.playerId===evaluate.seatId);
           const upperBound=currentValue+bound.valueDelta;
           if(!Number.isSafeInteger(bound.valueDelta*2))throw new TypeError("SEARCH_SCAN_BOUND_INVALID");
           if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break;}
@@ -399,7 +405,7 @@
         if(entry.queued){entry.queued=false;pendingFrontier--;}
         continue;
       }
-      const optimal = usePostMainValueBound && !entry.resourcePolicy?.bound && entry.node.status === "stable" ? port.postMainOptimalPlanSpec?.(entry.node) : null;
+      const optimal = usePostMainValueBound && !entry.resourcePolicy?.bound && entry.node.status === "stable" && legacyProof(entry.node) ? port.postMainOptimalPlanSpec?.(entry.node) : null;
       if (optimal && transitions+optimal.submissions <= limits.transitions
         && nodes.length+certificateNodes+optimal.submissions <= limits.nodes
         && pendingFrontier+optimal.submissions-1 <= limits.frontier) {
@@ -436,7 +442,7 @@
         }
       }
       let bound = null, upperBound = null, boundChecked = false;
-      if (useCardTradePruning && incumbent && entry.node.status === "decision") {
+      if (useCardTradePruning && incumbent && entry.node.status === "decision" && legacyProof(entry.node)) {
         if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
         bound = port.cardTradeBound(entry.node); boundChecked = true;
         upperBound = bound
@@ -451,7 +457,7 @@
         }
       }
       if (cardChoiceEquivalence && !entry.resourcePolicy && !entry.selection && !entry.pickPolicy?.fixed && entry.node.status === "decision" && entry.node.legalActions.length > 1
-        && entry.node.legalActions.every(action => action.family === "choose_card")) {
+        && entry.node.legalActions.every(action => action.family === "choose_card") && legacyProof(entry.node)) {
         if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
         const tradeChoice = entry.node.legalActions.every(action => action.target?.kind === "trade-card-selection");
         if (!boundChecked && tradeChoice) bound = port.cardTradeBound(entry.node);
@@ -472,10 +478,22 @@
       }
       for (const alternative of entry.alternatives) {
         if (entry.prunedBy) break;
+        const tailKind=alternative.resourcePlan?.goal.kind==="blue-data"?"blue-end-turn"
+          :alternative.resourcePlan?.goal.kind==="income"?"data-end-turn"
+          :entry.node.legalActions.some(a=>a.actionId===alternative.firstActionId&&a.family==="end_turn")?"end-turn":null;
+        const tail=tailKind&&resourcePlanning&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.turnTailSummary?.(entry.node,tailKind):null;
+        if(tail&&tail.firstActionId===alternative.firstActionId){
+          if(nodes.length+certificateNodes>=limits.nodes){stopReason="node-budget";break outer;}
+          if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
+          const added=add(port.turnTailBoundary(entry.node,tail));turnTailProofs++;provedTurnTailInputs+=tail.requiredNativeInputs;
+          entry.edges.push({actionId:tail.firstActionId,target:added.index,cost:tail.requiredNativeInputs,equivalent:added.equivalent,
+            turnTailPlanValue:tail,actualNativeInputs:0,provedNativeInputs:tail.requiredNativeInputs});
+          continue;
+        }
         if(useScanBound && incumbent && entry.node.status==="stable" && entry.node.legalActions.some(action=>action.actionId===alternative.firstActionId && action.family==="scan" && action.target?.kind==="standard-scan")){
           if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
           const bound=port.standardScanValueBound?.(entry.node);
-          if(bound){const currentValue=valueForNode(entry.node),player=entry.node.observation.publicState.players.find(p=>p.playerId===evaluate.seatId),upperBound=currentValue+bound.valueDelta;
+          if(bound&&legacyProof(entry.node)){const currentValue=valueForNode(entry.node),player=entry.node.observation.publicState.players.find(p=>p.playerId===evaluate.seatId),upperBound=currentValue+bound.valueDelta;
             if(!Number.isSafeInteger(bound.valueDelta*2))throw new TypeError("SEARCH_SCAN_BOUND_INVALID");
             if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
             if(player.finalScore===player.score && [currentValue,upperBound].every(v=>Number.isSafeInteger(v*2)&&v>=0&&v<Number.MAX_SAFE_INTEGER/64) && incumbent.value>upperBound){
@@ -696,10 +714,11 @@
       return {
         actionId: action.actionId, target: edge?.target ?? null,
         value: edge ? nodes[edge.target].value : null,
+        ...(edge?.turnTailPlanValue?{valueType:"proved-plan-value",turnTailPlanValue:edge.turnTailPlanValue}:{}),
         ...(edge?.knownIncomePlan?{valueType:"proved-plan-value",knownIncomePlan:edge.knownIncomePlan}:{}),
         ...(edge?.resourcePlan?{kind:"resource-goal-plan",goal:edge.resourcePlan.goal,resourceGoalCount:nodes[0].edges.filter(e=>e.actionId===action.actionId&&e.resourcePlan).length}:{}),
         ...(edge?.goalPlan ? {kind:"goal-plan",plan:edge.goalPlan} : {}),
-        completion: stopReason || !edge ? "pending" : edge.knownIncomePlan?"proved-plan-value":edge.openingPass ? "covered-by-opening-normal-form" : cardTradePrunes ? "covered-by-global-pruning"
+        completion: stopReason || !edge ? "pending" : edge.knownIncomePlan||edge.turnTailPlanValue?"proved-plan-value":edge.openingPass ? "covered-by-opening-normal-form" : cardTradePrunes ? "covered-by-global-pruning"
           : scanValuePrunes || scanActionPrunes ? "covered-by-global-scan-bound" : postMainValuePrunes ? "covered-by-global-value-bound" : postMainBorrowProofNodes ? "covered-by-global-borrow-simulation" : dominancePrunes ? "covered-by-global-dominance"
           : nodes[edge.target].value == null ? "unreachable" : "complete",
         ...(dominancePrunes || cardTradePrunes || postMainBorrowProofNodes || postMainValuePrunes || scanValuePrunes || scanActionPrunes || edge?.openingPass ? { valueType: "attained-lower-bound" } : {}),
@@ -731,7 +750,7 @@
             ...(entry.selection ? { proof: entry.selection.proof, equivalentExitSet: !action.target?.confirm } : {}) };
         });
         entries.push({ node: entry.node, actionId: best.actionId, value: entry.value, distance: entry.distance, sourceNode: current, roots });
-        if(best.knownIncomePlan){current=best.target;continue;}
+        if(best.knownIncomePlan||best.turnTailPlanValue){current=best.target;continue;}
         if(best.resourcePlan){
           const macro=resourceExecutions.get(best);
           for(let i=1;i<macro.prefixes.length&&entries.length<32;i++){
@@ -805,7 +824,7 @@
       candidates: Array.from(nodes[0].alternatives, a => a.resourcePlan?{kind:"resource-goal-plan",plan:a.resourcePlan,firstActionId:a.firstActionId}:a.goalPlan ? {kind:"goal-plan",plan:a.goalPlan,firstActionId:a.firstActionId}
         : a.cardPickPlan?{kind:a.cardPickPlan.kind,plan:a.cardPickPlan,firstActionId:a.firstActionId}:{kind:"action",actionId:a.firstActionId}),
       diagnostics: { valueEvaluations,valueCacheHits, finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes, movementDirectionsExcluded, routeGeometryNodes,
-        incomePlanProofs,provedIncomeInputs,
+        incomePlanProofs,provedIncomeInputs,turnTailProofs,provedTurnTailInputs,
         nativeExecutions:port.getDiagnostics?.().submissionCount??null,logicalResourceInputs,sharedResourceInputHits,sharedResourceInternalStates:sharedInternalStates.size,
         localFinalMarkStates:nodes.filter(e=>e.decisionPolicy?.kind==="fixed-final-mark").length,
         localFinalMarkExcluded:nodes.reduce((n,e)=>n+(e.decisionPolicy?.kind==="fixed-final-mark"?e.decisionPolicy.excludedActionIds.length:0),0),

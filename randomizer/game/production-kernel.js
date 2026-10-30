@@ -572,7 +572,7 @@ function probeRouteTopology(workingState, player, context, sources) {
   return topology;
 }
 
-function buildProbeRouteRequirements(workingState, requestedPlayerId = null, session = null, includeMoveTiming = true) {
+function buildProbeRouteRequirements(workingState, requestedPlayerId = null, session = null, includeMoveTiming = true, requestedRequirementId = null) {
   const playerId = requestedPlayerId ?? workingState.turn.currentPlayerId;
   const player = workingState.players.players.find((candidate) => candidate.id === playerId);
   if (!player || workingState.turn.gameEnded) return null;
@@ -617,14 +617,16 @@ function buildProbeRouteRequirements(workingState, requestedPlayerId = null, ses
     });
   }
 
-  const structureKey = probeStructureKey(workingState, player, context, sources);
-  let structure = PROBE_STRUCTURE_CACHE.get(structureKey);
+  const fullKey = probeStructureKey(workingState, player, context, sources);
+  const structureKey = requestedRequirementId==null?fullKey:JSON.stringify([fullKey,requestedRequirementId]);
+  const fullStructure=requestedRequirementId==null?null:PROBE_STRUCTURE_CACHE.get(fullKey);
+  let structure = fullStructure?fullStructure.filter(c=>c.requirementId===requestedRequirementId):PROBE_STRUCTURE_CACHE.get(structureKey);
   if (!structure) {
     const topology = probeRouteTopology(workingState, player, context, sources);
     structure = cachePut(
       PROBE_STRUCTURE_CACHE,
       structureKey,
-      Object.freeze(buildProbeCandidateStructures(workingState, player, context, topology, sources)),
+      Object.freeze(buildProbeCandidateStructures(workingState, player, context, topology, sources, requestedRequirementId)),
     );
   }
   const requirements = finalizeProbeRequirements(player, structure, context.probeMovement);
@@ -724,7 +726,7 @@ function probeStructureKey(workingState, player, context, sources) {
     return `${topologyKey}|P${JSON.stringify(workingState.planets)}|T${JSON.stringify(player.techState)}|L${landDiscount},${satelliteAccess}|A${JSON.stringify(workingState.aliens)}`;
 }
 
-function buildProbeCandidateStructures(workingState, player, context, topology, sources) {
+function buildProbeCandidateStructures(workingState, player, context, topology, sources, requestedRequirementId = null) {
   const candidates = [];
   for (const source of topology.sources) {
     if (!source.coordinate) continue;
@@ -741,6 +743,7 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
         ...planetAbility.listLandRequirementsAt(context, placement),
       ];
       for (const choice of endpointChoices) {
+        if(requestedRequirementId!=null&&routeRequirementKey(source.sourceId,choice)!==requestedRequirementId)continue;
         const effects = choice.actionType === "orbit"
           ? planetRewards.buildOrbitRewardEffects(choice.planetId, choice.markerSequence)
           : choice.target?.type === "satellite"
@@ -1799,7 +1802,7 @@ function comparePlannedMovementTiming(state, seatId, requirementId, path, freePo
   const afterRotation = snapshot => {
     const rotation = turnFlowApi.rotateSolarSystem(snapshot, 1, seatId, {captureSnapshots:false});
     if (!rotation.ok) throw new Error(`PROBE_PLAN_ROTATION_FAILED: ${rotation.message}`);
-    return buildProbeRouteRequirements(snapshot, seatId, null, false).candidates.find(c => c.requirementId === requirementId);
+    return buildProbeRouteRequirements(snapshot, seatId, null, false, requirementId).candidates.find(c => c.requirementId === requirementId);
   };
   const delayed = afterRotation(cloneMovementPreview(state));
   if (!delayed) return { comparable: false, reason: "target-unreachable-after-rotation", rotationCount: 1 };
@@ -1832,8 +1835,9 @@ function getResourceGoalRequirements(state, seatId) {
   const context={...state,state},earth=solar.collectPlanetLocations(state.solarSystem).find(p=>p.planetId==='earth');
   const launchPossible=!!earth&&rocketAbility.getActiveRocketCountForPlayer(state.pieces,seatId)<rocketAbility.getRocketLimitForPlayer(owner,context)
     &&rockets.findAvailableSlotIndex(state.pieces,earth.x,earth.y)!==null;
-  // Native structural placement query on an owner copy; it must not normalize a frozen source in place.
-  const bluePlacements=data.listPlaceDataChoices(structuredClone(owner)).filter(choice=>choice.target===data.PLACEMENT_KIND_BLUE_BONUS);
+  // Purpose requirements include owned, unfilled blue columns before their
+  // computer prerequisite. These are plans, not the current native legal menu.
+  const bluePlacements=data.listBluePlacementRequirements(owner);
   return{techPlans:owner.mainActionCompleted?[]:buildTechGainRequirements(state,seatId)?.plans||[],probeCandidates:owner.mainActionCompleted?[]:buildProbeRouteRequirements(state,seatId,null,false)?.candidates||[],
     scanCost:scanEffects.getStandardScanCost(owner),launchCost:rocketAbility.getLaunchCost(context,owner),launchPossible,bluePlacements,
     analyzeCost:industryPassives.canAnalyzeWithoutEnergy(owner)?{}:{energy:data.ANALYZE_ENERGY_COST}};

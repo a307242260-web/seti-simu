@@ -51,6 +51,7 @@
     isAnalyzeReady: state.isAnalyzeReady,
     canPlaceAnyData: state.canPlaceAnyData,
     listPlaceDataChoices: state.listPlaceDataChoices,
+    listBluePlacementRequirements: state.listBluePlacementRequirements,
     canAnalyzeData: state.canAnalyzeData,
     analyzeData: state.analyzeData,
     analyzeDataWithoutEnergy: state.analyzeDataWithoutEnergy,

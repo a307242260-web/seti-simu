@@ -2,9 +2,9 @@
   'use strict';const common=typeof module==='object'&&module.exports;
   const api=factory(common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
     common?require('../data'):root.SetiData,common?require('../players'):root.SetiPlayers,
-    common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('../rockets'):root.SetiRocketActions,common?require('../industry'):root.SetiIndustry);
+    common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('../rockets'):root.SetiRocketActions,common?require('../industry'):root.SetiIndustry,common?require('./state-value'):root.SetiStateValue);
   if(common)module.exports=api;else root.SetiResourceDemand=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry){
+})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue){
   'use strict';
   const VERSION='seti-goal-resource-preparation-v3';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
@@ -21,19 +21,23 @@
     const index=goal.path.findIndex(s=>s.from.x===at.x&&s.from.y===at.y);
     if(index<0)return goal;const path=goal.path.slice(index);return{...goal,path,movementPoints:path.reduce((n,s)=>n+s.requiredMovePoints,0)};
   }
+  function bluePrerequisites(p,slot){
+    const required=data.getRequiredComputerSlotForBlueBonus(slot),occupied=new Set(data.listComputerPlacedTokens(p).map(t=>t.placementSlot));
+    return occupied.has(required)?0:Object.keys(data.COMPUTER_DATA_SLOTS).map(Number).filter(n=>n<=required&&!occupied.has(n)).length;
+  }
   function needs(state,seatId,goal){
     goal=currentGoal(state,goal);
     const p=owner(state,seatId),required={...(goal.required||{})};
     if(goal.kind==='route')required.energy=(goal.endpointCost.energy||0)+Math.max(0,goal.movementPoints-p.hand.reduce((n,c)=>n+movePoints(c),0));
     const target=targetSlot(p,goal);
     const d={credits:Math.max(0,(required.credits||0)-p.resources.credits),energy:Math.max(0,(required.energy||0)-p.resources.energy),
-      publicity:Math.max(0,(required.publicity||0)-p.resources.publicity),data:Math.max(0,(goal.kind==='blue-data'?1:Math.max(0,target-placed(p)))-p.resources.availableData)};
+      publicity:Math.max(0,(required.publicity||0)-p.resources.publicity),data:Math.max(0,(goal.kind==='blue-data'?bluePrerequisites(p,goal.blueSlot)+1:Math.max(0,target-placed(p)))-p.resources.availableData)};
     return d;
   }
   const protectedCard=(c,g)=>c.id===g.cardId||c.id===g.incomeCardId;
   const targetSlot=(p,g)=>g.publicityData&&p.resources.publicity>=(g.required.publicity||0)?0:g.targetComputerSlot||0;
   const deficit=d=>Object.values(d).reduce((n,v)=>n+v,0);
-  function capacity(state,seatId,goal){
+  function capacity(state,seatId,goal,allowBlue=true){
     const p=owner(state,seatId),spare=p.hand.filter(c=>!protectedCard(c,goal)),d=needs(state,seatId,goal);
     const multiplier=industry.shouldDoubleDiscardCornerRewards?.(p)?2:1;
     const dataMax=p.resources.availableData+spare.reduce((n,c)=>n+cornerData(c)*multiplier,0);
@@ -41,11 +45,42 @@
       +(placed(p)<2&&placed(p)+dataMax>=2?1:0);
     const required=goal.required||{},funding=goal.incomeFunding&&placed(p)<4&&p.hand.find(c=>c.id===goal.incomeCardId);
     const income=funding?cards.getIncomeGainForCard(funding)||{}:{};
-    return (!d.credits||p.resources.credits+(income.credits||0)+Math.floor(p.resources.energy/2)+Math.floor(spare.length/2)>=(required.credits||0))
+    const direct=(!d.credits||p.resources.credits+(income.credits||0)+Math.floor(p.resources.energy/2)+Math.floor(spare.length/2)>=(required.credits||0))
       &&(!d.energy||p.resources.energy+(income.energy||0)+Math.floor(p.resources.credits/2)+Math.floor(spare.length/2)+(goal.kind==='route'?spare.reduce((n,c)=>n+movePoints(c),0):0)>=(goal.kind==='route'?(goal.endpointCost.energy||0)+goal.movementPoints:required.energy||0))
       &&(!d.publicity||publicityMax+(income.publicity||0)>=required.publicity)
-      &&(!targetSlot(p,goal)||placed(p)+dataMax>=targetSlot(p,goal))
-      &&(goal.kind!=='blue-data'||dataMax>=1);
+      &&(goal.kind==='blue-data'||!targetSlot(p,goal)||placed(p)+dataMax>=targetSlot(p,goal))
+      &&(goal.kind!=='blue-data'||dataMax>=bluePrerequisites(p,goal.blueSlot)+1);
+    return direct||allowBlue&&Boolean(blueFunding(state,seatId,goal));
+  }
+  function blueFunding(state,seatId,goal){
+    if(goal.kind==='blue-data')return null;
+    const p=owner(state,seatId),d=needs(state,seatId,goal);
+    if(!d.credits&&!d.energy&&!d.publicity||p.reservedCards.some(c=>effects.getCardModel(c)?.endGameScoring))return null;
+    const choices=[];
+    for(const slot of Object.keys(data.BLUE_BONUS_DATA_SLOTS).map(Number)){
+      if(!data.hasBlueTechInBoardSlot(p,slot)||data.listBlueBonusPlacedTokens(p).some(t=>t.blueSlot===slot))continue;
+      const reward=data.getBlueBonusPlacementReward(p,slot),required=data.getRequiredComputerSlotForBlueBonus(slot);
+      if(!reward||!['credits','energy','publicity'].includes(reward.type)||!(d[reward.type]>0))continue;
+      const remaining=bluePrerequisites(p,slot);
+      // Crossing slot4 would require an additional native income-card choice;
+      // leave that case to its existing explicit goal instead of guessing it.
+      if(placed(p)<4&&required>=4||p.resources.availableData<remaining+1)continue;
+      const copy=structuredClone(p);let valid=true;
+      for(let i=0;i<remaining;i++){
+        const r=data.placeDataToComputer(copy);if(!r.ok){valid=false;break;}
+        for(const b of r.slotBonuses||[]){if(!['score','publicity'].includes(b.type)){valid=false;break;}players.gainResources(copy,{[b.type]:b[b.type]});}
+      }
+      if(!valid)continue;
+      const placedBlue=data.placeDataToComputer(copy,{target:data.PLACEMENT_KIND_BLUE_BONUS,blueSlot:slot});
+      if(!placedBlue.ok)continue;
+      for(const b of placedBlue.slotBonuses||[])players.gainResources(copy,{[b.type]:b[b.type]});
+      const next={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?copy:v)}};
+      if(!capacity(next,seatId,goal,false))continue;
+      const reduction=deficit(d)-deficit(needs(next,seatId,goal));
+      if(reduction>0)choices.push({blueSlot:slot,remainingComputerPlacements:remaining,reduction});
+    }
+    choices.sort((a,b)=>b.reduction-a.reduction||a.remainingComputerPlacements-b.remainingComputerPlacements||a.blueSlot-b.blueSlot);
+    return choices[0]||null;
   }
   // One concrete, known income source may fund a protected card. Its own
   // reward cannot fund the data needed to reach it; no hand subset is searched.
@@ -61,8 +96,19 @@
     const card=choices[0]?.card;
     return card?{...goal,targetComputerSlot:4,incomeCardId:card.id,incomeFunding:true}:null;
   }
+  function incomeOpportunityCost(state,p,card){
+    const before=stateValue.handCapital(p.hand,p.techState,state.tech,state.turn.roundNumber);
+    return before-stateValue.handCapital(p.hand.filter(c=>c.id!==card.id),p.techState,state.tech,state.turn.roundNumber);
+  }
+  function dataCornerCards({state,seatId,goal}){
+    const p=owner(state,seatId);
+    return p.hand.filter(c=>!protectedCard(c,goal)&&cornerData(c)===1&&!Object.keys(cards.getDiscardActionRewardForCard(c).gain||{}).length)
+      .map(card=>({card,loss:incomeOpportunityCost(state,p,card)}))
+      .sort((a,b)=>a.loss-b.loss||(a.card.id<b.card.id?-1:a.card.id>b.card.id?1:0));
+  }
   function catalog({state,seatId,requirements,actions=[]}){
-    const p=owner(state,seatId),goals=[],add=g=>{
+    const p=owner(state,seatId),goals=[],requested=[],add=g=>{
+      requested.push(g);
       const directPub=p.resources.publicity+p.hand.filter(c=>c.id!==g.cardId).reduce((n,c)=>n+(cards.getDiscardActionRewardForCard(c)?.gain?.publicity||0)*(industry.shouldDoubleDiscardCornerRewards?.(p)?2:1),0);
       if(g.required?.publicity>directPub&&g.required.publicity<=directPub+1&&placed(p)<2)g={...g,publicityData:true,targetComputerSlot:2};
       if(capacity(state,seatId,g))goals.push(g);
@@ -106,12 +152,21 @@
     if(placed(p)<4&&p.hand.some(c=>cards.getIncomeGainForCard(c))){
       const incomeCard=p.hand.filter(c=>cards.getIncomeGainForCard(c)).sort((a,b)=>{
         const value=c=>Object.entries(cards.getIncomeGainForCard(c)||{}).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0);
-        return value(b)-value(a)||(a.id<b.id?-1:1);
+        return (value(b)*(5-state.turn.roundNumber)-incomeOpportunityCost(state,p,b))
+          -(value(a)*(5-state.turn.roundNumber)-incomeOpportunityCost(state,p,a))||(a.id<b.id?-1:1);
       }).find(c=>capacity(state,seatId,{kind:'income',targetComputerSlot:4,incomeCardId:c.id,required:{}}));
       if(incomeCard)add({id:'data:income:4',kind:'income',targetComputerSlot:4,incomeCardId:incomeCard.id,incomeBefore:Object.values(p.income).reduce((a,b)=>a+b,0),required:{}});
     }
     const blue=[...requirements.bluePlacements].sort((a,b)=>blueValue(p,b.blueSlot)-blueValue(p,a.blueSlot)||a.blueSlot-b.blueSlot)[0];
-    if(blue)add({id:`data:blue:${blue.blueSlot}`,kind:'blue-data',blueSlot:blue.blueSlot,required:{}});
+    if(blue){
+      const reward=data.getBlueBonusPlacementReward(p,blue.blueSlot);
+      const needed=requested.some(g=>Object.entries(reward||{}).some(([key,n])=>n>0&&needs(state,seatId,g)[key]>0));
+      // Pure blue resource payoffs are fixed tails, not independent pre-main
+      // ordering branches. Keep a pre-main source only for an actual requested
+      // purpose deficit; card picks retain their separate known-card purpose.
+      if(p.mainActionCompleted||needed&&!requested.some(g=>blueFunding(state,seatId,g)?.blueSlot===blue.blueSlot)||reward?.type==='choose_card')
+        add({id:`data:blue:${blue.blueSlot}`,kind:'blue-data',blueSlot:blue.blueSlot,targetComputerSlot:blue.requiredComputerSlot,required:{}});
+    }
     // Future travel has one fixed destination. At-location orbit/landing are
     // distinct main purposes and must survive even when another endpoint wins that estimate.
     const routes=goals.filter(g=>g.kind==='route').map(g=>({goal:g,net:g.benefit.score+g.benefit.dataCount*.5+g.benefit.incomeCount*(4-state.turn.roundNumber)
@@ -180,7 +235,9 @@
     }else{
       p.hand=p.hand.filter(c=>c.id!==action.target.cardInstanceId);const card=owner(state,seatId).hand.find(c=>c.id===action.target.cardInstanceId);
       const reward=cards.getDiscardActionRewardForCard(card);if(!reward)return null;const multiplier=action.payload.multiplier||1;
-      players.gainResources(p,Object.fromEntries(Object.entries(reward.gain).map(([k,v])=>[k,v*multiplier])));p.resources.availableData+=reward.dataCount*multiplier;
+      players.gainResources(p,Object.fromEntries(Object.entries(reward.gain).map(([k,v])=>[k,v*multiplier])));
+      const previewRoot={meta:structuredClone(state.meta)};
+      for(let i=0;i<reward.dataCount*multiplier;i++)data.gainData(p,{root:previewRoot});
     }
     p.resources.handSize=p.hand.length;
     return{...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?p:v)}};
@@ -193,11 +250,18 @@
       if(!discarded)continue;const after=project(state,seatId,action,discarded);if(!after)continue;const d=needs(after,seatId,goal);
       if(Object.keys(before).some(k=>d[k]>before[k])||deficit(d)>=deficit(before))continue;
       const greedyFailed=!capacity(after,seatId,goal);if(greedyFailed&&!(action.payload.cost?.handSize>0))continue;
-      const loss=action.family==='quick_trade'?Object.entries(action.payload.cost).reduce((n,[k,v])=>n+v*(weight[k]||0),0)-Object.entries(action.payload.gain).reduce((n,[k,v])=>n+v*(weight[k]||0),0):2;
+      const loss=action.family==='quick_trade'?Object.entries(action.payload.cost).reduce((n,[k,v])=>n+v*(weight[k]||0),0)-Object.entries(action.payload.gain).reduce((n,[k,v])=>n+v*(weight[k]||0),0):2+2*incomeOpportunityCost(state,owner(state,seatId),owner(state,seatId).hand.find(c=>c.id===action.target.cardInstanceId));
       out.push({actionId:action.actionId,discardIds:greedyFailed?null:discarded,reduction:deficit(before)-deficit(d),loss,inputs:action.family==='quick_trade'&&discarded.length?discarded.length+2:1,
         greedyFailed,observer:greedyFailed|| (action.family==='card_corner'?observes(state,seatId,'cardCorner'):observes(state,seatId,'quick_trade_payment')||observes(state,seatId,'quick_trade_discard_selection'))});
     }
-    out.sort((a,b)=>a.loss*b.reduction-b.loss*a.reduction||a.inputs-b.inputs||(a.actionId<b.actionId?-1:a.actionId>b.actionId?1:0));
+    let dataOrder=null;
+    const rank=c=>{
+      const action=actions.find(a=>a.actionId===c.actionId);if(action?.family!=='card_corner')return null;
+      if(!dataOrder)dataOrder=new Map(dataCornerCards({state,seatId,goal}).map((x,i)=>[x.card.id,i]));
+      return dataOrder.get(action.target?.cardInstanceId);
+    };
+    out.sort((a,b)=>a.loss*b.reduction-b.loss*a.reduction||a.inputs-b.inputs
+      ||(rank(a)!=null&&rank(b)!=null?rank(a)-rank(b):0)||(a.actionId<b.actionId?-1:a.actionId>b.actionId?1:0));
     return out;
   }
   function fixedPayment({state,seatId,goal,actions,session,discardIds}){
@@ -225,7 +289,7 @@
       const card=p.hand.find(c=>c.id===a.target.cardInstanceId),gain=cards.getIncomeGainForCard(card);
       const next={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?{...p,resources:{...p.resources},hand:p.hand.filter(c=>c!==card)}:v)}};
       if(goal.incomeFunding&&card.id===goal.incomeCardId)players.gainResources(owner(next,seatId),gain);
-      return{action:a,value:Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0)*(5-state.turn.roundNumber),feasible:capacity(next,seatId,goal)};
+      return{action:a,value:Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0)*(5-state.turn.roundNumber)-incomeOpportunityCost(state,p,card),feasible:capacity(next,seatId,goal)};
     }).filter(x=>x.feasible).sort((a,b)=>b.value-a.value||(a.action.actionId<b.action.actionId?-1:1));
     return scored[0]?{kind:'fixed',actionId:scored[0].action.actionId,reason:'greedy-income-for-goal'}:{kind:'infeasible',reason:'income-would-consume-goal-card'};
   }
@@ -267,7 +331,7 @@
       const score=a=>a.target.target==='computer'?100:blueValue(p,a.target.blueSlot);
       return score(b)-score(a)||(a.actionId<b.actionId?-1:1);
     });
-    const chosen=goal.kind==='blue-data'?ranked.find(a=>a.target.blueSlot===goal.blueSlot):ranked[0];
+    const chosen=goal.kind==='blue-data'?ranked.find(a=>bluePrerequisites(p,goal.blueSlot)===0?a.target.blueSlot===goal.blueSlot:a.target.target==='computer'):ranked[0];
     return chosen?{kind:'fixed',actionId:chosen.actionId,reason:'greedy-data-placement'}:null;
   }
   function step({state,seatId,goal,actions,status,session,operation={}}){
@@ -291,8 +355,17 @@
 
       const pay=fixedPayment({state,seatId,goal,actions,session,discardIds:operation.discardIds});if(pay)return pay;
       const income=incomeChoice({state,seatId,goal,actions});if(income)return income;
-      if(operation.placing){const a=actions.find(a=>a.family==='choose_target'&&a.target?.target===(goal.kind==='blue-data'&&operation.finalPlacement?'blueBonus':'computer')
-        &&(!operation.finalPlacement||goal.kind!=='blue-data'||a.target.blueSlot===goal.blueSlot));if(a)return{kind:goal.kind==='blue-data'&&operation.finalPlacement?'target':'fixed',actionId:a.actionId,reason:'fixed-goal-data-slot',placing:false};}
+      if(operation.placing&&operation.resourceBlueSlot){
+        const a=actions.find(a=>a.family==='choose_target'&&a.target?.target===(operation.finalResourceBlue?'blueBonus':'computer')
+          &&(!operation.finalResourceBlue||a.target.blueSlot===operation.resourceBlueSlot));
+        if(!a)return{kind:'infeasible',reason:'bound-blue-resource-choice-unavailable'};
+        return{kind:'fixed',actionId:a.actionId,placing:false,resourceBlueSlot:null,reason:'fixed-blue-resource-preparation'};
+      }
+      if(operation.placing){const finishBlue=goal.kind==='blue-data'&&bluePrerequisites(p,goal.blueSlot)===0;
+        const a=actions.find(a=>a.family==='choose_target'&&a.target?.target===(finishBlue?'blueBonus':'computer')
+          &&(!finishBlue||a.target.blueSlot===goal.blueSlot));
+        if(a)return{kind:finishBlue?'target':'fixed',actionId:a.actionId,reason:'fixed-goal-data-slot',placing:false};
+      }
       if(operation.targetStarted){
         const a=actions.find(a=>goal.kind==='research_tech'?a.target?.tileId===goal.tileId&&(a.target.blueSlot??null)===goal.blueSlot:goal.kind==='route'?a.target?.rocketId===goal.rocketId&&a.target?.planetId===goal.planetId&&(goal.family!=='land'||a.target.landTarget?.type===goal.endpointTarget.type&&a.target.landTarget?.satelliteId===goal.endpointTarget.satelliteId):false);
         if(a)return{kind:'target',actionId:a.actionId,reason:'fixed-goal-target'};
@@ -305,7 +378,14 @@
       const a=actions.find(a=>a.family==='place_data');
       if(a)return{kind:'fixed',actionId:a.actionId,placing:true,reason:'fund-protected-card-via-income',demand:d};
     }
+    if(goal.kind==='blue-data'&&d.data>0&&p.resources.availableData===players.RESOURCE_LIMITS.availableData&&bluePrerequisites(p,goal.blueSlot)>0){
+      const a=actions.find(a=>a.family==='place_data');
+      if(a)return{kind:'fixed',actionId:a.actionId,placing:true,reason:'make-room-for-goal-data',demand:d};
+    }
     if(deficit(d)>0){
+      const blue=blueFunding(state,seatId,goal),place=actions.find(a=>a.family==='place_data');
+      if(blue&&place)return{kind:'fixed',actionId:place.actionId,placing:true,resourceBlueSlot:blue.blueSlot,
+        finalResourceBlue:blue.remainingComputerPlacements===0,reason:'blue-resource-for-purpose',demand:d};
       const candidates=preparations({state,seatId,goal,actions});
       if(candidates.length){
         const safe=candidates.find(c=>!c.observer);
@@ -319,7 +399,7 @@
       return{kind:'infeasible',reason:'no-deficit-reducing-source',demand:d};
     }
     if(targetSlot(p,goal)&&placed(p)<targetSlot(p,goal)||goal.kind==='blue-data'){
-      const a=actions.find(a=>a.family==='place_data');if(a)return{kind:'fixed',actionId:a.actionId,placing:true,finalPlacement:goal.kind==='blue-data',reason:'data-placement-for-goal'};
+      const a=actions.find(a=>a.family==='place_data');if(a)return{kind:'fixed',actionId:a.actionId,placing:true,finalPlacement:goal.kind==='blue-data'&&bluePrerequisites(p,goal.blueSlot)===0,reason:'data-placement-for-goal'};
       return{kind:'infeasible',reason:'goal-data-slot-unavailable'};
     }
     if(goal.kind==='income')return Object.values(p.income).reduce((a,b)=>a+b,0)>goal.incomeBefore?{kind:'complete',reason:'income-target-reached'}:{kind:'infeasible',reason:'income-not-collected'};
@@ -337,5 +417,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,dataCornerCards});
 });

@@ -59,7 +59,7 @@ for (const result of [pruned, cached]) {
   assert.equal(result.actionId, raw.actionId);
   assert.equal(result.value, raw.value);
   assert.equal(result.lines[0].distance, raw.lines[0].distance);
-  assert(result.diagnostics.transitions < raw.diagnostics.transitions);
+  assert(result.diagnostics.transitions <= raw.diagnostics.transitions);assert.equal(result.diagnostics.postMainProofNodes,0,"Round1 capital model must not apply a linear-only continuation theorem");
 }
 
 function step(port, node, predicate) {
@@ -112,7 +112,7 @@ for (const state of [postState, active]) {
       const reduced = searchDecision({ port, root: choice, evaluate, cardChoiceEquivalence: true });
       assert.equal(reduced.complete, true);
       assert.equal(reduced.value, expected);
-      assert.equal(reduced.diagnostics.transitions, 1);
+      assert.equal(reduced.diagnostics.transitions,choice.observation.publicState.roundNumber===4?1:choice.legalActions.length);
     }
   }
   assert.deepEqual(comp.lifecycle.save().envelope, before);

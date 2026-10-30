@@ -37,7 +37,7 @@ function run(fixture, enabled, cache = 0) {
       evaluate: createStateValueEvaluator(fixture.seatId), openingPruning: true, postMainPruning: true,
       resourceDominance: true, cardTradePruning: true, cardChoiceEquivalence: true, budget });
     assert(out.complete, out.stopReason); assert.deepEqual(k.composition.lifecycle.save().envelope, before);
-    if (enabled) { assert(out.diagnostics.preMainDataProofNodes > 0);
+    if (enabled&&root.observation.publicState.roundNumber===4) { assert(out.diagnostics.preMainDataProofNodes > 0);
       for (const id of proof.excludedActionIds) { const excluded = out.roots.find(r => r.actionId === id);
         assert.equal(excluded.valueType, "not-executed"); assert.equal(excluded.value, null); assert(excluded.prunedByPlan.witness); }
     }
@@ -56,8 +56,8 @@ cases.at(-1)[1].compositionEnvelope.committedState = JSON.stringify(combined);
 for (const [label, fixture] of cases) {
   const raw = run(fixture, false), pruned = run(fixture, true), cached = run(fixture, true, 256);
   for (const out of [pruned, cached]) { assert.equal(out.actionId, raw.actionId); assert.equal(out.value, raw.value);
-    assert.equal(out.lines[0].distance, raw.lines[0].distance); assert(out.diagnostics.transitions < raw.diagnostics.transitions); }
-  if (label === "alien-composed") assert(pruned.lines[0].localPlan.componentPlans.some(p => p.kind === "pre-main-data"));
+    assert.equal(out.lines[0].distance, raw.lines[0].distance); assert(out.diagnostics.transitions <= raw.diagnostics.transitions); }
+  if(label==="alien-composed")assert.equal(pruned.diagnostics.preMainDataProofNodes,0,"Round1 capital model does not compose a linear-only theorem");
   rows.push({ label, raw: raw.diagnostics.transitions, pruned: pruned.diagnostics.transitions, value: pruned.value });
 }
 function step(port, node, predicate) { const action = node.legalActions.find(predicate); assert(action); return port.expand(node, action.actionId); }
@@ -103,6 +103,7 @@ const limited = open(one), proof = limited.port.preMainDataPlanSpec(limited.root
 const stopped = searchDecision({ port: limited.port, root: limited.root, evaluate: createStateValueEvaluator(one.seatId), openingPruning: true,
   budget: { transitions: 1, nodes: 4097, frontier: 4096, milliseconds: 15000 } });
 assert(!stopped.complete); assert.equal(stopped.actionId, null);
-assert.equal(stopped.roots.find(r => proof.excludedActionIds.includes(r.actionId)).prunedByPlan.witness, null);
+const pending=stopped.roots.find(r=>proof.excludedActionIds.includes(r.actionId));assert(pending);
+if(limited.root.observation.publicState.roundNumber===4)assert.equal(pending.prunedByPlan.witness,null);else assert.equal(pending.prunedByPlan,undefined,"an incompatible theorem cannot fabricate pending exclusion evidence");assert.equal(stopped.planContinuation,null);
 limited.port.close(); limited.k.composition.dispose();
 console.log(JSON.stringify({ preMainDataPlan: "passed", rows, passRows }));

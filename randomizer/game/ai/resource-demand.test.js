@@ -47,7 +47,7 @@ function native(s){s=structuredClone(s);const hand=own(s).hand,ids=new Set(hand.
  const {searchDecision}=require('./decision-search'),{createStateValueEvaluator}=require('./state-value');
  const filtered={...p,resourceSpec(n){const q=p.resourceSpec(n);return n===root?{...q,retainedActionIds:[],plans:[plan]}:{...q,plans:[],retainedActionIds:n.legalActions.filter(a=>a.family==='end_turn').map(a=>a.actionId)};}};
  const evaluate=createStateValueEvaluator(seatId),run=budget=>searchDecision({port:filtered,root,evaluate,resourcePlanning:true,cardPickPlanning:true,budget:{transitions:20,nodes:21,frontier:20,milliseconds:10000,...budget}});
- const searched=run({});assert(searched.complete);assert.equal(searched.diagnostics.transitions,6);assert.equal(searched.diagnostics.nodes,7);assert.equal(searched.candidates[0].kind,'resource-goal-plan');
+ const searched=run({});assert(searched.complete);assert.equal(searched.diagnostics.transitions,5);assert.equal(searched.diagnostics.provedTurnTailInputs,1);assert.equal(searched.diagnostics.nodes,7);assert.equal(searched.candidates[0].kind,'resource-goal-plan');
  for(const [reason,budget] of [['transition-budget',{transitions:2}],['node-budget',{nodes:3}],['frontier-budget',{frontier:1}]]){const r=run(budget);assert(!r.complete);assert.equal(r.stopReason,reason);assert.equal(r.actionId,null);assert.equal(r.planContinuation,null);assert(r.diagnostics.transitions<6);}
 
  for(const stop of ['transition-budget','node-budget','frontier-budget','watchdog']){const r=p.expandResourcePlan(root,plan,n=>n>=1?stop:null);assert(!r.complete);assert.equal(r.submissions,1);assert.equal(r.stopReason,stop);assert.deepEqual(c.lifecycle.save().envelope,before);}
