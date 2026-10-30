@@ -5,13 +5,14 @@
     common ? require("../data/placement") : root.SetiDataPlacement,
     common ? require("../tech/catalog") : root.SetiTechCatalog,
     common ? require("../abilities/planet") : root.SetiAbilityPlanet,
-    common ? require("../actions/scan-effects") : root.SetiScanEffects);
+    common ? require("../actions/scan-effects") : root.SetiScanEffects,
+    common ? require("./probe-capital") : root.SetiProbeCapital);
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.SetiStateValue = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v4";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v5";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = Object.freeze({
     credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1,
@@ -117,6 +118,15 @@
       .map(t => t.capability + t.first + t.bonusValue - researchCost * weights.publicity));
   }
 
+  function probePotential(observation, seatId, weights = DEFAULT_WEIGHTS) {
+    const pub = observation.publicState, player = pub.players.find(p => p.playerId === seatId);
+    const round = pub.roundNumber + Number(pub.passingPlayerIds.includes(seatId));
+    return probeCapital.fromObservation(observation, seatId, weights, (hand, publicity) =>
+      handCapital(hand, player.techState, pub.board.techSupply, round, weights)
+        + researchCapital({ hand, techState: player.techState, supply: pub.board.techSupply,
+          round, publicity, researchCost: player.researchPublicityCost }, weights)).value;
+  }
+
   function evaluateStateValue(observation, seatId, options = {}) {
     const player = observation?.publicState?.players?.find(player => player.playerId === seatId);
     if (!player) throw new TypeError(`VALUE_PLAYER_MISSING: ${seatId}`);
@@ -128,7 +138,7 @@
     const currentTotal = number(player.finalScore, "player.finalScore");
     if (terminal) return Object.freeze({ modelVersion: MODEL_VERSION, total: currentTotal,
       components: Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
-        resources: 0, hand: 0, income: 0, technologyPotential: 0, handPotential: 0, researchPotential: 0 }), terminal: true });
+        resources: 0, hand: 0, income: 0, technologyPotential: 0, handPotential: 0, researchPotential: 0, probePotential: 0 }), terminal: true });
 
     const weights = valueWeights(options);
     const round = number(observation.publicState.roundNumber, "roundNumber");
@@ -149,7 +159,8 @@
       handPotential: handCapital(observation.selfState.hand, player.techState, observation.publicState.board?.techSupply, round + Number(passing), weights),
       researchPotential: researchCapital({ hand: observation.selfState.hand, techState: player.techState,
         supply: observation.publicState.board?.techSupply, round, publicity: player.publicity,
-        researchCost: player.researchPublicityCost, passed: passing }, weights) });
+        researchCost: player.researchPublicityCost, passed: passing }, weights),
+      probePotential: probePotential(observation, seatId, weights) });
     const total = Object.values(components).reduce((sum, value) => sum + value, 0);
     number(total, "total");
     return Object.freeze({ modelVersion: MODEL_VERSION, total, components, terminal: false });
@@ -182,7 +193,7 @@
     return evaluate({ ...observation, selfState: { ...observation.selfState, hand } });
   }
 
-  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, technologyCapital, knownCardCapital, handCapital, researchCapital, researchCapitalCeiling,
+  return Object.freeze({ MODEL_VERSION, DEFAULT_WEIGHTS, FORECAST, technologyCapital, knownCardCapital, handCapital, researchCapital, researchCapitalCeiling, probePotential,
     supportsLegacyValueProof: observation => observation.publicState.roundNumber === 4, evaluateStateValue, createStateValueEvaluator,
     evaluateHandCountDelta, isStateValueEvaluator: evaluate => evaluatorWeights.has(evaluate),
     isDefaultStateValueEvaluator: evaluate => {

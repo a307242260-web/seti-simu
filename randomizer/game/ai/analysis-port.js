@@ -236,7 +236,7 @@
     let normalizedState;
     if(variants?.has(key))normalizedState=variants.get(key);
     else{
-      normalizedState=normalize(buildState());
+      normalizedState=JSON.stringify(normalize(buildState()));
       if(stateCache&&Object.isFrozen(source)){
         if(!variants){
           if(stateCache.size>=64)stateCache.delete(stateCache.keys().next().value);
@@ -245,7 +245,7 @@
         variants.set(key,normalizedState);
       }
     }
-    return JSON.stringify({boundary,pending:normalizedPending,state:normalizedState,status});
+    return `{"boundary":${JSON.stringify(boundary)},"pending":${JSON.stringify(normalizedPending)},"state":${normalizedState},"status":${JSON.stringify(status)}}`;
   }
 
   function createAnalysisPort({ composition, seatId, maxCacheEntries = 256 } = {}) {
@@ -296,7 +296,7 @@
     let decodedStateCacheBytes = 0;
     let envelopeObservations = new WeakMap(), valueObservations = new WeakMap(), stateRequirements = new WeakMap(), goalCatalogs = new WeakMap();
     let observationCacheHits = 0, resourceQueryHits = 0, resourceQueryMisses = 0, goalCatalogHits = 0, goalCatalogMisses = 0;
-    let committedDecodeCount = 0, committedDecodeHits = 0;
+    let committedDecodeCount = 0, committedDecodeHits = 0, committedReferenceCount = 0;
     let rootObservation = null, knownRootCardIds = new Set(), knownRootNebulaIds = new Set(), knownRootTechIndices = new Map(), knownRootAlienIds = new Set();
     let planningStates = new WeakMap();
     let publicSeed = null, rootTurnKey = null;
@@ -345,6 +345,10 @@
       const saved = comp.lifecycle.save({ trustedFork: true });
       milliseconds.checkpoint += now() - startedAt;
       if (!saved.ok) throw new Error(`ANALYSIS_SAVE_FAILED: ${saved.code || saved.message}`);
+      if (saved.trustedState && !decodedStates.has(saved.envelope.committedState)) {
+        cacheCommittedState(saved.envelope.committedState, saved.trustedState);
+        committedReferenceCount++;
+      }
       return saved.envelope;
     }
 
@@ -391,7 +395,7 @@
           if (!visible) visible = observeEnvelope(envelope, barrier);
           return visible;
         },
-        legalActions: freeze(structuredClone(actions)), status, boundary: barrier?.code || null,
+        legalActions: Object.isFrozen(actions) ? actions : freeze(structuredClone(actions)), status, boundary: barrier?.code || null,
       });
       const boundary = barrier?.code || null;
       if (movementPlanning && !intent) intent = recoverMovementIntent(envelope,barrier);
@@ -428,7 +432,13 @@
         return result;
       }
       committedDecodeCount++;
-      const result = freeze(JSON.parse(key)), bytes = key.length * 2;
+      const result = freeze(JSON.parse(key));
+      cacheCommittedState(key, result);
+      return result;
+    }
+
+    function cacheCommittedState(key, result) {
+      const bytes = key.length * 2;
       if (bytes <= maxDecodedStateCacheBytes) {
         while (decodedStates.size && (decodedStates.size >= maxDecodedStateCacheEntries || decodedStateCacheBytes + bytes > maxDecodedStateCacheBytes)) {
           const oldest = decodedStates.keys().next().value;
@@ -436,7 +446,6 @@
         }
         decodedStates.set(key, result); decodedStateCacheBytes += bytes;
       }
-      return result;
     }
 
     function openRoot() {
@@ -448,7 +457,7 @@
       submissionCount = 0;
       cacheHits = 0;stableRestoreSkips=0;movementTimingCacheHits=0;movementTimingCacheMisses=0;
       observationCount = 0; observationReleases = 0;
-      committedDecodeCount = 0; committedDecodeHits = 0;
+      committedDecodeCount = 0; committedDecodeHits = 0; committedReferenceCount = 0;
       observationCacheHits = 0; resourceQueryHits = 0; resourceQueryMisses = 0; goalCatalogHits = 0; goalCatalogMisses = 0;
       for (const key of Object.keys(milliseconds)) milliseconds[key] = 0;
       rootObservation = project(composition);
@@ -497,7 +506,7 @@
         return rememberPrefix(key,node,actionId,cache.get(key));
       }
       restoreEnvelope(stored.envelope, true);
-      const { before, result } = executeCurrent(actionId);
+      const { before, result } = executeCurrent(requested);
       return rememberPrefix(key,node,actionId,remember(key, finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null, stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null, stored.informationBarrier)));
     }
 
@@ -721,14 +730,20 @@
       }
       const owner=state.players.players.find(p=>p.id===seatId);
       const excluded=node.status==="stable"?node.legalActions.filter(a=>a.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(a.target?.abilityId)||plans.some(p=>p.goal.kind==="effect-purpose"&&p.firstActionId===a.actionId)||a.family==="play_card"&&plans.some(p=>p.goal.cardId===a.target.cardInstanceId&&p.goal.paidRewardPolicy)||resourceDemand.isPreparation(a)||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
-      const forceIncome=node.status==="stable"&&incomeTail?.selected&&plans.some(p=>p.goal.kind==="income");
+      const incomeCandidate=node.status==="stable"&&incomeTail?.selected&&plans.some(p=>p.goal.kind==="income");
       const company=industryCatalog.getPlayerIndustryDefinition(owner),bluePlan=plans.find(p=>p.goal.kind==="blue-data");
-      const blueTail=node.status==="stable"&&owner.mainActionCompleted&&!forceIncome&&bluePlan
+      const blueTail=node.status==="stable"&&owner.mainActionCompleted&&bluePlan
         &&["deepspace_swap_cards","turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId)
         &&!owner.industryBorrowedTechTileId&&!state.turn.cardTurnEventBonuses?.length
         &&!node.legalActions.some(a=>a.family==="complete_task"||a.family==="industry"&&a.target?.abilityId==="deepspace_swap_cards")
-        &&hasPostMainInertReservations(state,true)?localPlans.blueCompletion({state,seatId,goal:bluePlan.goal}):null;
-      const forceBlue=blueTail?.available&&blueTail.selected;
+        &&hasPostMainInertReservations(state,hasOwnVisitSource(state))?localPlans.blueCompletion({state,seatId,goal:bluePlan.goal}):null;
+      // Fixed preparation order follows the shared purpose value. Income
+      // cannot take unconditional precedence when a blue reward funds a more
+      // valuable mission; a cold pending slot must see the same opportunity.
+      const competingBlue=blueTail||blueTails.find(t=>t.goalId===bluePlan?.goal.id);
+      const forceBlue=competingBlue?.available&&competingBlue.selected
+        &&(incomeCandidate?hasUnprovedProbeCapital(state)&&competingBlue.netGain>incomeTail.netGain:Boolean(blueTail));
+      const forceIncome=incomeCandidate&&!forceBlue;
       const forcedKind=forceIncome?"income":forceBlue?"blue-data":null;
       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans:forcedKind?plans.filter(p=>p.goal.kind===forcedKind):plans,
         ...(incomeTail?{incomeTail}:{}),...(blueTail?{fixedBlueTail:blueTail}:{}),...(blueTails.length?{blueTails}:{}),
@@ -941,10 +956,12 @@
       return { complete: true, node: current, submissions: prefixes.length, prefixes, goal, goalStatus };
     }
 
-    function executeCurrent(actionId) {
+    function executeCurrent(current) {
       const comp = fork.composition || fork;
-      const before = comp.inspect();
-      const current = legalActions(comp, before).find(action => action.actionId === actionId);
+      // The immutable node/menu already supplied this descriptor. The native
+      // submit port still validates it against the restored authority and
+      // decision version; do not enumerate the same full menu a second time.
+      const before = comp.inspect(true);
       if (!current || current.actorId !== seatId) throw new Error("ANALYSIS_ACTION_STALE");
       loadedEnvelope = null;
       const executeAt = now();
@@ -1158,7 +1175,7 @@
           ? action.target?.confirm : action.target?.cardInstanceId === id);
         if (!current) throw new Error("ANALYSIS_SELECTION_PATH_INVALID");
         actions.push(structuredClone(current));
-        outcome = executeCurrent(current.actionId);
+        outcome = executeCurrent(current);
       }
       return remember(key, freeze({ node: finishChild(outcome.before, outcome.result), actions,
         proof: spec.proof, submissions: actions.length }));
@@ -1736,12 +1753,28 @@
         firstChoiceCount:firstChoices.length,publicChoiceCount:publicChoices.length});
     }
 
+    function hasOwnVisitSource(state){
+      const owner=state.players.players.find(p=>p.id===seatId);
+      return state.pieces.rockets.some(r=>[r.playerId,r.playerColor,r.color].some(id=>id===owner.id||id===owner.color));
+    }
+
+    function hasUnprovedProbeCapital(state) {
+      const owner=state.players.players.find(p=>p.id===seatId);
+      return state.turn.roundNumber<4&&(state.pieces.rockets||[]).some(r=>r.playerId===owner.id
+        &&r.surface==="solar-board"&&(r.kind||"standard")==="standard"&&r.fossilId==null);
+    }
+
+    // The quiet contract below changes no probe/planet/scan/tech/known-card
+    // facts on native end-turn and forbids round advancement. Income/blue
+    // previews include the shared mission delta before this unchanged tail.
     function turnTailSummary(node,kind="end-turn") {
       const stored=nodes.get(node);if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(!resourcePlanning||!cardPickPlanning||node.status!=="stable"||stored.envelope.session)return null;
       if(!["end-turn","blue-end-turn","data-end-turn"].includes(kind))throw new Error("ANALYSIS_TURN_TAIL_KIND_INVALID");
       let variants=turnTailSpecs.get(node);if(variants?.has(kind))return variants.get(kind);
       const state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId),company=industryCatalog.getPlayerIndustryDefinition(owner);
+      if(kind!=="end-turn"&&hasUnprovedProbeCapital(state))return null;
+      if(kind!=="end-turn"&&state.turn.roundNumber<4&&node.legalActions.some(a=>a.family==="industry"&&a.target?.abilityId==="deepspace_swap_cards"))return null;
       const end=node.legalActions.find(a=>a.family==="end_turn"),minimum=Math.min(...state.finalScoring.thresholds);
       const passives={deepspace_swap_cards:"deepspace_free_analyze",turing_borrow_tech:"turing_blue_tech_publicity",helios_remove_tech_income:"helios_passive_reward_slots"};
       const quietCompany=company&&passives[company.activeAbilityId]&&company.passiveIds.length===1&&company.passiveIds[0]===passives[company.activeAbilityId];
@@ -1752,7 +1785,10 @@
         &&!state.match.initialSetup&&!state.turn.gameEnded&&!state.turn.passedPlayerIds.includes(seatId)
         &&Number.isSafeInteger(minimum)&&minimum>0&&state.players.players.every(p=>Number.isSafeInteger(p.resources.score)&&(p.id===seatId||p.resources.score<minimum))
         &&Object.values(state.aliens.aliens).every(slot=>!slot.revealed&&!alienState.isAlienReadyToReveal(slot))
-        &&hasPostMainInertReservations(state,true)&&!node.legalActions.some(a=>a.family==="complete_task")){
+        // A plain end cannot move a probe; the helper still checks historical
+        // matching triggers, tasks and scoring. Compound plans keep their
+        // visit-capable guard until their complete event set is proved.
+        &&hasPostMainInertReservations(state,kind!=="end-turn"&&hasOwnVisitSource(state))&&!node.legalActions.some(a=>a.family==="complete_task")){
         const transition=previewTurn(state);
         if(transition.turnAdvanced&&!transition.roundAdvanced&&!transition.gameEnded){
           if(kind==="end-turn"){
@@ -1767,7 +1803,7 @@
               if(compound.available&&compound.plans[0]?.goal.id===plan.goal.id
                 &&node.legalActions.some(a=>a.actionId===plan.firstActionId&&["place_data","card_corner"].includes(a.family)))
                 spec={firstActionId:plan.firstActionId,netGain:compound.netGain,requiredNativeInputs:compound.requiredNativeInputs,dataPlans:compound.plans,markedTiles:compound.markedTiles};
-              else if(tail&&!tail.dataCornerId&&activeBlue.length===1&&owner.resources.score+tail.immediateScoreGain<minimum
+              else if(plan.goal.kind==="blue-data"&&tail&&!tail.dataCornerId&&activeBlue.length===1&&owner.resources.score+tail.immediateScoreGain<minimum
                 &&node.legalActions.some(a=>a.actionId===plan.firstActionId&&a.family==="place_data"))
                 spec={firstActionId:plan.firstActionId,netGain:tail.netGain,requiredNativeInputs:tail.requiredNativeInputs+1,
                   blueSlot:plan.goal.blueSlot,computerPlacements:tail.computerPlacements,incomeCardId:tail.incomeCardId};
@@ -1792,6 +1828,14 @@
       const stored=nodes.get(node);if(!fork||!stored?.turnTailBase)throw new Error("ANALYSIS_TURN_TAIL_PROOF_INVALID");return stored.turnTailBase;
     }
 
+    // This strict plan only fills computer slots, consumes one known supplier
+    // and draws one unknown card. Its local preview now includes mission
+    // capital with that exact resource/known-hand change; no refill identity
+    // or invented successor is needed to quote its scalar boundary value.
+    // The shared preview includes the exact mission change from computer data,
+    // publicity, the consumed known supplier and one unknown hand count. The
+    // root policy must still have exactly this one fixed income plan; competing
+    // blue plans retain their separate native policy and are never hidden here.
     function incomePlanSummary(node) {
       const stored=nodes.get(node);
       if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
@@ -1846,6 +1890,7 @@
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
       if (postMainValueBounds.has(node)) return postMainValueBounds.get(node);
+      if(hasUnprovedProbeCapital(readPlanningState(stored))){postMainValueBounds.set(node,null);return null;}
       // Prefer the already-audited quiet-window bound; avoid rebuilding its
       // rejected unfiltered company catalog first for every known continuation.
       const policyNode=resourcePlanning?{status:node.status,legalActions:node.legalActions.filter(action=>!(action.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(action.target?.abilityId)))}:null;
@@ -2133,11 +2178,11 @@
       if (cache.has(key)) { cacheHits += 1; return cache.get(key); }
       restoreEnvelope(stored.envelope, true);
       const comp = fork.composition || fork, start = node.legalActions.find(action => action.actionId === spec.industryActionId);
-      executeCurrent(start.actionId);
+      executeCurrent(start);
       const choices = legalActions(comp);
       if (choices.length !== spec.availableTileIds.length || choices.some(action => action.family !== "choose_target"
         || !spec.availableTileIds.includes(action.target?.tileId))) throw new Error("ANALYSIS_POST_MAIN_BORROW_CHOICES_CHANGED");
-      const choice = choices.find(action => action.target.tileId === tileId), outcome = executeCurrent(choice.actionId);
+      const choice = choices.find(action => action.target.tileId === tileId), outcome = executeCurrent(choice);
       const child = finishChild(outcome.before, outcome.result);
       if (child.status !== "stable") throw new Error("ANALYSIS_POST_MAIN_BORROW_BOUNDARY_CHANGED");
       return remember(key, freeze({ node: child, submissions: 2, actions: [start, choice], proof: spec.proof }));
@@ -2636,7 +2681,7 @@
         observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,
-        committedDecodeCount, committedDecodeHits,
+        committedDecodeCount, committedDecodeHits, committedReferenceCount,
         selectionEvidenceEntries: selectionCertificate ? 1 : 0, maxSelectionEvidenceEntries: 1,
         planEvidenceEntries: planCertificate ? 1 : 0, planPrefixEntries: planCertificate?.rows.length || 0, maxPlanPrefixEntries: 32,
         milliseconds: { ...milliseconds } });

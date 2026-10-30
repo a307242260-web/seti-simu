@@ -659,7 +659,7 @@
     function advanceSession(result, autoDrain = true, responseOptions = {}) {
       if (!result?.ok) return finishIfTerminal() || deepFreeze(clone(result));
       if (activeSession && autoDrain && !TERMINAL_PHASES.has(activeSession.phase)) {
-        const drained = runtime.drain(activeSession);
+        const drained = runtime.drain(activeSession, { skipInspection: options.allowTrustedForkLifecycle === true });
         if (!drained?.ok) return finishIfTerminal() || deepFreeze(clone(drained));
       }
       return finishIfTerminal() || deepFreeze({
@@ -830,6 +830,7 @@
       if (session?.ok === false) return deepFreeze(clone(session));
       return deepFreeze({
         ok: true,
+        ...(trustedCheckpoint ? { trustedState: readStoreSnapshot() } : {}),
         envelope: {
           schemaVersion: SAVE_SCHEMA_VERSION,
           committedState: serialized.serialized,

@@ -197,3 +197,28 @@ const rotatedMercury = rotated.planetLocations.find((planet) => planet.planetId 
 assert.deepEqual([rotatedMercury.x, rotatedMercury.y], [6, 1]);
 
 console.log("solar-system-core tests passed");
+
+// Scalar wheel queries accept the documented legacy array/map/wrapper shapes
+// and preserve their coercion without forcing a full board normalization.
+for(const [input,expected] of [
+  [[0,'-2',3,0,4],[-2,3,0,4]],
+  [{1:-3,2:2},[-3,2,0,0]],
+  [{rotation:{wheel1Steps:'-2',wheel2Steps:0,3:4,rotationCount:7},wheel4Steps:99},[-2,0,4,0]],
+  [{wheel1Steps:0,1:3,wheel2Steps:NaN,2:4},[3,4,0,0]],
+]){
+ for(let wheel=1;wheel<=4;wheel++){
+  assert.equal(solar.getWheelStep(input,wheel),expected[wheel-1]);
+  assert.equal(solar.getWheelStep(input,String(wheel)),expected[wheel-1]);
+  assert.equal(solar.toDisplayX(7,wheel,input),solar.mod8(7+expected[wheel-1]));
+ }
+}
+for(const id of [0,5,'01',' 1'])assert.equal(solar.getWheelStep({wheel0Steps:9,wheel5Steps:9},id),0);
+let specialCells=0;
+for(let wheel=1;wheel<=4;wheel++)for(let x=0;x<8;x++)for(let y=1;y<=4;y++){
+ const active=solar.getBaseWheelCell(wheel,x,y,{aomomoActive:true});
+ if(active.requiresAomomoActive){
+  assert.equal(solar.getBaseWheelCell(wheel,x,y,{aomomoActive:false}).inactive,true);
+  assert.equal(solar.getBaseWheelCell(wheel,x,y,{aomomoActive:'yes'}).kind,active.kind);specialCells++;
+ }
+}
+assert(specialCells>0);

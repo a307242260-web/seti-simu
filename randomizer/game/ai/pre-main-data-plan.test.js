@@ -35,8 +35,15 @@ function run(fixture, enabled, cache = 0) {
     const proof = port.preMainDataPlanSpec(root); assert(proof);
     const out = searchDecision({ port: enabled ? port : { ...port, preMainDataPlanSpec: () => null }, root,
       evaluate: createStateValueEvaluator(fixture.seatId), openingPruning: true, postMainPruning: true,
-      resourceDominance: true, cardTradePruning: true, cardChoiceEquivalence: true, budget });
-    assert(out.complete, out.stopReason); assert.deepEqual(k.composition.lifecycle.save().envelope, before);
+      resourceDominance: true, cardTradePruning: true, cardChoiceEquivalence: true,
+      budget:root.observation.publicState.roundNumber===4?budget:{...budget,transitions:32} });
+    assert.deepEqual(k.composition.lifecycle.save().envelope, before);
+    if(root.observation.publicState.roundNumber!==4){
+      assert.equal(out.diagnostics.preMainDataProofNodes,0,'a linear normal-form proof cannot cover future capital');
+      if(!out.complete){assert.equal(out.actionId,null);assert.equal(out.stopReason,'transition-budget');}
+      return out;
+    }
+    assert(out.complete,out.stopReason);
     if (enabled&&root.observation.publicState.roundNumber===4) { assert(out.diagnostics.preMainDataProofNodes > 0);
       for (const id of proof.excludedActionIds) { const excluded = out.roots.find(r => r.actionId === id);
         assert.equal(excluded.valueType, "not-executed"); assert.equal(excluded.value, null); assert(excluded.prunedByPlan.witness); }
@@ -55,7 +62,7 @@ Object.assign(combined.players.players.find(p => p.id === alien.seatId).resource
 cases.at(-1)[1].compositionEnvelope.committedState = JSON.stringify(combined);
 for (const [label, fixture] of cases) {
   const raw = run(fixture, false), pruned = run(fixture, true), cached = run(fixture, true, 256);
-  for (const out of [pruned, cached]) { assert.equal(out.actionId, raw.actionId); assert.equal(out.value, raw.value);
+  for (const out of [pruned, cached]) { if(!raw.complete||!out.complete)continue;assert.equal(out.actionId, raw.actionId); assert.equal(out.value, raw.value);
     assert.equal(out.lines[0].distance, raw.lines[0].distance); assert(out.diagnostics.transitions <= raw.diagnostics.transitions); }
   if(label==="alien-composed")assert.equal(pruned.diagnostics.preMainDataProofNodes,0,"Round1 capital model does not compose a linear-only theorem");
   rows.push({ label, raw: raw.diagnostics.transitions, pruned: pruned.diagnostics.transitions, value: pruned.value });

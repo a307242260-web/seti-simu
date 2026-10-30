@@ -720,7 +720,8 @@
         if (!result.ok) return result;
         steps += 1;
       }
-      return { ok: true, session, steps, inspection: inspect(session) };
+      return { ok: true, session, steps,
+        ...(trustedIsolatedOwnership && options.skipInspection === true ? {} : { inspection: inspect(session) }) };
     }
 
     function resolveDecision(session, submission) {

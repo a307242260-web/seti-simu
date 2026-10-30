@@ -173,3 +173,14 @@ console.log(JSON.stringify({purposeCardPick:'passed',noUnmotivatedTrades:true,in
  const paid=planner.plan({state:s,seatId:f.seatId,actions:trades.concat(stop),status:'stable'});assert(!paid.goal?.fundsCardId,'acquisition cost must leave the intended main card fundable');
  const hidden=structuredClone(s);hidden.cards.drawPileCardIds.reverse();assert.equal(planner.plan({state:hidden,seatId:f.seatId,actions,status:'decision',session}).selectedActionId,r.selectedActionId);
 }
+// Starting a company exchange follows a concrete acquisition purpose too.
+// The same one-credit research deficit matters before the main action, not
+// after it; an already committed swap remains separately recoverable above.
+{
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-039-20261030-v1.json'))),s=JSON.parse(f.compositionEnvelope.committedState);
+ const skill={actionId:'purpose-swap',family:'industry',target:{abilityId:'deepspace_swap_cards'},payload:{}};
+ const planner=api.createCardPickPlanner(),run=state=>planner.plan({state,seatId:f.seatId,actions:[skill,stop],status:'stable'});
+ const before=run(s);assert(before,'company starts require a purpose policy even without a paid trade');assert(before.retainedActionIds.includes(skill.actionId));assert.equal(before.companySwap.goal.kind,'income');assert(before.companySwap.goal.fundsCardId);
+ const after=structuredClone(s);after.players.players.find(p=>p.id===f.seatId).mainActionCompleted=true;
+ const idle=run(after);assert(idle);assert(!idle.retainedActionIds.includes(skill.actionId),'no current use and no known portfolio gain means no company exchange');
+}

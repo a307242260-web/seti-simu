@@ -171,8 +171,13 @@
   }
 
   function getWheelStep(rotation, wheelId) {
-    const normalized = normalizeRotationState(rotation);
-    return Number(normalized[`wheel${wheelId}Steps`] || 0);
+    // Preserve the public normalization/coercion contract while reading only
+    // the requested wheel. Geometry calls this several times for each cell.
+    const key = `wheel${wheelId}Steps`;
+    const id = key === "wheel1Steps" ? 1 : key === "wheel2Steps" ? 2
+      : key === "wheel3Steps" ? 3 : key === "wheel4Steps" ? 4 : null;
+    const source = rotation && rotation.rotation ? rotation.rotation : rotation;
+    return id == null ? 0 : Number(readWheelStep(source, id) || 0);
   }
 
   function getNormalizedWheelStep(rotation, wheelId) {
@@ -503,8 +508,9 @@
       label: "未标注区域，按镂空处理",
       inferred: true,
     };
-    const solar = input ? normalizeSolarInput(input) : null;
-    if (cell.requiresAomomoActive && !solar?.aomomoActive) return asInactiveCell(cell);
+    // Cell activation depends only on this flag. Re-normalizing all wheel and
+    // sector fields for each candidate cell creates unrelated geometry work.
+    if (cell.requiresAomomoActive && !input?.aomomoActive) return asInactiveCell(cell);
     return cell;
   }
 
@@ -561,7 +567,10 @@
 
   function resolveVisibleContent(displayX, y, input) {
     const solar = normalizeSolarInput(input);
+    return resolveNormalizedVisibleContent(displayX, y, solar);
+  }
 
+  function resolveNormalizedVisibleContent(displayX, y, solar) {
     if (y === 0) {
       return {
         x: 0,
@@ -616,11 +625,12 @@
   }
 
   function collectVisibleCoordinateContents(input) {
-    const result = [resolveVisibleContent(0, 0, input)];
+    const solar = normalizeSolarInput(input);
+    const result = [resolveNormalizedVisibleContent(0, 0, solar)];
 
     for (const y of BOARD_RING_IDS) {
       for (let x = 0; x < 8; x += 1) {
-        result.push(resolveVisibleContent(x, y, input));
+        result.push(resolveNormalizedVisibleContent(x, y, solar));
       }
     }
 

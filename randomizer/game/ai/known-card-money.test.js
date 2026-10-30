@@ -5,7 +5,7 @@ const {createSeededRandom}=require("../random");
 const {buildRuleObservation}=require("../../app/rule-observation");
 const {createAnalysisPort}=require("./analysis-port");
 const {searchDecision}=require("./decision-search");
-const {createStateValueEvaluator}=require("./state-value");
+const {createStateValueEvaluator,probePotential}=require("./state-value");
 const cards=require("../cards/deck");
 const industry=require("../industry");
 const fixtures=["062","105","152"].map(id=>JSON.parse(fs.readFileSync(path.resolve(__dirname,`../../../adhoc/ai-decision-corpus-20261023-v1/case-${id}-20261023-v1.json`))));
@@ -26,7 +26,9 @@ function compareSingleActions(port,rich,poor,seatId){
   assert.equal(a.status,b.status);assert.equal(a.boundary,b.boundary);
   const av=a.observation,bv=b.observation,ap=structuredClone(av.publicState.players),bp=structuredClone(bv.publicState.players);
   const ax=ap.find(p=>p.playerId===seatId),bx=bp.find(p=>p.playerId===seatId);
-  assert.equal(ax.credits-bx.credits,1);assert.equal(ax.energy-bx.energy,1);assert.equal(evaluate(av)-evaluate(bv),2);
+  assert.equal(ax.credits-bx.credits,1);assert.equal(ax.energy-bx.energy,1);const missionDelta=probePotential(av,seatId)-probePotential(bv,seatId);
+  assert(missionDelta>=0,'more money cannot decrease the funded mission forecast');
+  assert.equal(evaluate(av)-evaluate(bv),2+missionDelta);
   ax.credits=bx.credits=0;ax.energy=bx.energy=0;assert.deepEqual(ap,bp);assert.deepEqual(av.selfState,bv.selfState);assert.deepEqual(av.publicState.board,bv.publicState.board);
   if(b.status!=="decision"){leaves+=1;continue;}
   const key=port.identity(b);if(seen.has(key))continue;seen.add(key);

@@ -914,10 +914,13 @@ module.exports = Object.freeze([...smokes, Object.freeze({
         const quotes=Object.fromEntries(c.projection({role:'player',playerId:seat}).state.probeRouteRequirements.candidates.filter(g=>g.endpointFamily==='land'&&g.endpointTarget.type==='planet').map(g=>[g.planetId,g.endpointFacts.cost.energy]));
         if(Object.keys(expected).some(id=>quotes[id]!==expected[id]))throw Error('登陆费用未按请求席位计算或跨viewer缓存串用');
       }
-      const root=p.openRoot(),obs=JSON.stringify(root.observation),r=window.SetiDecisionSearch.searchDecision({port:p,root,evaluate:window.SetiStateValue.createStateValueEvaluator(f.seatId),...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:257,frontier:256,milliseconds:1500}});
-      if(!r.complete||r.unresolved.length||p.getDiagnostics().movementTimingCacheHits<1)throw new Error('热路径未完整复用');
+      // Typed value boundaries consume graph nodes without executing inputs.
+      // Keep the 256 native-input gate; graph capacity is a separate guard.
+      const root=p.openRoot(),obs=JSON.stringify(root.observation),r=window.SetiDecisionSearch.searchDecision({port:p,root,evaluate:window.SetiStateValue.createStateValueEvaluator(f.seatId),...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:1024,frontier:256,milliseconds:1500}});
+      if(!r.complete||r.unresolved.length||p.getDiagnostics().movementTimingCacheHits<1)throw new Error('热路径未完整复用 '+JSON.stringify({stopReason:r.stopReason,diagnostics:r.diagnostics,timingHits:p.getDiagnostics().movementTimingCacheHits}));
       if(!Object.isFrozen(root.observation.publicState)||JSON.stringify(root.observation)!==obs||JSON.stringify(c.lifecycle.save().envelope)!==before)throw new Error('观察复用污染根或只读事实');
-      window.__searchHotpathSmoke={ok:true,inputs:r.diagnostics.nativeExecutions,timingHits:p.getDiagnostics().movementTimingCacheHits};
+      if(r.diagnostics.nativeExecutions>256)throw new Error('超过256次原生输入');
+      window.__searchHotpathSmoke={ok:true,inputs:r.diagnostics.nativeExecutions,nodes:r.diagnostics.nodes,timingHits:p.getDiagnostics().movementTimingCacheHits};
     }finally{p.close();c.dispose();}
   })()`,
   successExpression: "window.__searchHotpathSmoke?.ok === true",
@@ -960,8 +963,9 @@ module.exports = Object.freeze([...smokes, Object.freeze({
           const ready=p.cardPickSpec(n);if(ready?.goal.kind!=='ready-income'||ready.goal.fundsCardId!=='card-15-0'||ready.selection.cardId!=='card-18-0'||ready.retainedActionIds.length!==1)throw new Error('已有数据收入未保留已知后续主牌的资金目的');
           const pick=n.legalActions.find(a=>a.summary==='b_2.webp');if(!pick)throw new Error('缺少真实低机会成本收入牌');const root=p.expand(n,pick.actionId),evaluate=window.SetiStateValue.createStateValueEvaluator(f.seatId);
           const r=window.SetiDecisionSearch.searchDecision({port:p,root,evaluate,...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:1024,frontier:256,milliseconds:1500}});
-          if(!r.complete||r.diagnostics.transitions!==0||r.diagnostics.provedIncomeInputs!==9||!r.lines.some(l=>l.status==='income-plan-value'&&l.planSummary.successorEnvelopeAvailable===false))throw new Error('固定盲抽收入证明未装配或伪造后继');
-          const actual=p.expandResourcePlan(root,p.resourceSpec(root).plans[0],()=>null);if(!actual.complete||actual.submissions!==9||evaluate(p.valueObservation(actual.node))!==r.value)throw new Error('收入证明与原生执行不一致');
+          if(!r.complete||r.diagnostics.transitions===0||r.diagnostics.incomePlanProofs!==0||p.incomePlanSummary(root)!==null)throw new Error('探测任务仍使用未证明的收入捷径');
+          if(p.resourceSpec(root).plans.some(plan=>plan.goal.kind!=='blue-data'))throw Error('能量蓝槽优于收入时未先完成蓝槽目的');
+          const actual=p.expandResourcePlan(root,p.resourceSpec(root).plans[0],()=>null);if(!actual.complete||evaluate(p.valueObservation(actual.node))!==r.value)throw new Error('固定蓝槽任务与原生执行不一致');
         }
         else{const s=p.localDecisionSpec(n),want=name==='blue'?10:1;if(!s||s.retainedActionIds.length!==want)throw new Error(name+'仍产生多余候选');if(name!=='blue'){const r=p.expandWithCardPick(n,s.selectedActionId,()=>null);if(!r.complete)throw new Error(name+'固定执行失败');}}
         if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw new Error(name+'污染真实根');
@@ -1023,11 +1027,17 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('科技用途恢复失败');
     const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
     try{const root=p.openRoot(),value=window.SetiStateValue.evaluateStateValue(root.observation,f.seatId),player=root.observation.publicState.players.find(p=>p.playerId===f.seatId);
-      if(player.researchPublicityCost!==6||value.components.researchPotential!==9.5||value.total!==52)throw Error('公开费用或科技用途估值缺失');
+      if(player.researchPublicityCost!==6||value.components.researchPotential!==9.5||value.components.probePotential!==5.5||value.total!==57.5)throw Error('公开费用或科技用途估值缺失');
       if(JSON.stringify(window.SetiStateValue.evaluateStateValue(p.valueObservation(root),f.seatId))!==JSON.stringify(value))throw Error('完整与紧凑用途估值不同');
       const start=p.expand(root,root.legalActions.find(a=>a.family==='research_tech').actionId),choice=start.legalActions.find(a=>a.target.tileId==='blue1'&&a.target.blueSlot===1),end=p.expand(start,choice.actionId),actual=window.SetiStateValue.evaluateStateValue(end.observation,f.seatId);
       if(actual.total!==value.total||actual.components.researchPotential!==0)throw Error('原生取得科技与用途重复计价');
       if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('科技用途验证污染根或RNG');
+      p.setResourcePlanning(true);p.setCardPickPlanning(true);p.setDecisionPlanning({scanPlanning:true,finalMarkPlanning:true});
+      const witness=await fetch('/reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step35-20261031-v1.json').then(r=>r.json());
+      let mission=root;for(const step of witness.rows.find(r=>r.name==='student-best').steps){const a=mission.legalActions.find(a=>a.actionId===step.actionId);if(!a)throw Error('任务原生输入不可达');mission=p.expand(mission,a.actionId);}
+      const completed=window.SetiStateValue.evaluateStateValue(mission.observation,f.seatId);
+      if(completed.total!==value.total||completed.components.probePotential!==0)throw Error('探测任务完整奖励链不连续或消耗探测器后仍重复估值');
+      if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('探测任务污染原根或RNG');
     }finally{p.close();c.dispose();}
     for(const [name,expected] of [['autonomous',54.5],['teacher58',57.5]]){
       const fixture=await fetch('/adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/'+name+'-before-pass-20261031-v1.json').then(r=>r.json());

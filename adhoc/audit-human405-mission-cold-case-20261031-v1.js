@@ -11,7 +11,7 @@ try{
  assert(r.complete,r.stopReason);assert.deepEqual(r.unresolved,[]);assert.deepEqual(c.lifecycle.save().envelope,before);
  const rawPath=output.replace('.json','.raw.json.gz');fs.writeFileSync(rawPath,zlib.gzipSync(JSON.stringify(r)+'\n'));
  const report={schemaVersion:'seti-human405-mission-cold-root-v1',baseCommit:'1cd44bde189c9ce26f976bc4c9dd08391ecbde86',candidateAdmitted:false,label,fixture,fixtureSha256:sha(fixture),searchVersion:search.VERSION,valueModel:values.MODEL_VERSION,
-  complete:r.complete,actionId:r.actionId,value:r.value,nativeInputs:r.diagnostics.nativeExecutions,milliseconds,diagnostics:r.diagnostics,rootAndRngUnchanged:true,rawPath,rawSha256:sha(rawPath),
+  timingScope:label.startsWith('profile-')?'instrumented-not-cold-admission':'fresh-process-root-and-search',portDiagnostics:p.getDiagnostics(),complete:r.complete,actionId:r.actionId,value:r.value,nativeInputs:r.diagnostics.nativeExecutions,milliseconds,diagnostics:r.diagnostics,rootAndRngUnchanged:true,rawPath,rawSha256:sha(rawPath),
   sourceHashes:Object.fromEntries(Object.keys(require.cache).filter(p=>p.startsWith(process.cwd()+'/randomizer/')).sort().map(p=>[p.slice(process.cwd().length+1),sha(p)]))};
  fs.writeFileSync(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify({label,inputs:report.nativeInputs,ms:milliseconds,complete:r.complete,value:r.value}));
 }finally{p.close();c.dispose();}

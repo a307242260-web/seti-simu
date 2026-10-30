@@ -11,7 +11,7 @@ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),ac
   projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const comp=k.composition,evaluate=createStateValueEvaluator(seatId);
 const own=s=>s.players.players.find(p=>p.id===seatId);
 function controlled(energy,hand=0,pool=0){
- const s=structuredClone(initial),p=own(s);p.mainActionCompleted=true;s.cards.discardPile.push(...p.hand.slice(hand));p.hand=p.hand.slice(0,hand);
+ const s=structuredClone(initial),p=own(s);s.turn.roundNumber=4;p.mainActionCompleted=true;s.cards.discardPile.push(...p.hand.slice(hand));p.hand=p.hand.slice(0,hand);
  Object.assign(p.resources,{credits:0,energy,publicity:0,availableData:0,handSize:hand});p.dataState=data.createDefaultDataState();
  for(let i=0;i<pool;i+=1)assert(data.gainData(p,{root:s}).ok);return s;
 }
@@ -34,6 +34,9 @@ function run(s,enabled,cache=0){
  }finally{port.close();}
 }
 const rows=[];
+// Earlier-round probe capital is outside the old numeric continuation bound.
+const early=controlled(1);early.turn.roundNumber=2;
+const declined=open(early);assert.equal(declined.port.postMainValueBound(declined.root),null);declined.port.close();
 for(const [name,s] of [["no-energy",controlled(0)],["one-energy",controlled(1)],["two-energy",controlled(2)],["cash-income",controlled(0,1,4)]]){
  const raw=run(s,false),bounded=run(s,true),cached=run(s,true,256);
  for(const actual of [bounded,cached]){assert.equal(actual.out.value,raw.out.value,name);assert.equal(actual.out.actionId,raw.out.actionId,name);assert.equal(actual.out.lines[0].distance,raw.out.lines[0].distance,name);}

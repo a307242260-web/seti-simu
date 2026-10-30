@@ -17,8 +17,9 @@ try{
  assert(query.bluePlacements.some(p=>p.blueSlot===1&&p.requiredComputerSlot===1),'owned blue column must be a planned purpose before its computer prerequisite is filled');
  const p=port();let macro;
  try{const root=p.openRoot(),plan=plannedBlue(p,root);assert(plan);assert.equal(plan.goal.targetComputerSlot,1);
-  macro=p.expandResourcePlan(root,plan,()=>null);assert(macro.complete);assert.equal(macro.goalStatus,'completed');assert.equal(macro.submissions,4);assert.equal(evaluate(macro.node.observation)-evaluate(root.observation),2);
-  const preview=local.blueCompletion({state,seatId:f.seatId,goal:plan.goal});assert(preview.available&&preview.selected);assert.equal(preview.netGain,2);assert.equal(preview.computerPlacements,1);
+  macro=p.expandResourcePlan(root,plan,()=>null);assert(macro.complete);assert.equal(macro.goalStatus,'completed');assert.equal(macro.submissions,4);assert.equal(evaluate(macro.node.observation)-evaluate(root.observation),5);
+  const preview=local.blueCompletion({state,seatId:f.seatId,goal:plan.goal});assert(preview.available&&preview.selected);assert.equal(preview.netGain,5);
+  assert.equal(values.evaluateStateValue(macro.node.observation,f.seatId).components.probePotential-values.evaluateStateValue(root.observation,f.seatId).components.probePotential,3,'native blue energy income funds the better landing mission');assert.equal(preview.computerPlacements,1);
   assert.deepEqual(macro.prefixes.map(x=>x.action.family),['place_data','choose_target','place_data','choose_target']);assert.equal(macro.prefixes[1].action.target.target,'computer');assert.equal(macro.prefixes[3].action.target.target,'blueBonus');
   assert.deepEqual(c.lifecycle.save().envelope,before);
   for(const reason of ['transition-budget','node-budget','frontier-budget','watchdog']){const stopped=p.expandResourcePlan(root,plan,n=>n>=1?reason:null);assert(!stopped.complete);assert.equal(stopped.submissions,1);assert.deepEqual(c.lifecycle.save().envelope,before);}

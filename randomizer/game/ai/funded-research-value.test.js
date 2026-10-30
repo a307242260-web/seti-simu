@@ -28,7 +28,8 @@ try {
   assert.equal(player.publicity, 7);
   const before = values.evaluateStateValue(observation, seatId);
   assert.equal(before.components.researchPotential, 9.5);
-  assert.equal(before.total, 52);
+  assert.equal(before.total, 57.5);
+  assert.equal(before.components.probePotential, 5.5);
   assert.deepEqual(values.evaluateStateValue(port.valueObservation(root), seatId), before);
   const started = port.expand(root, root.legalActions.find(a => a.family === 'research_tech').actionId);
   const choice = started.legalActions.find(a => a.target.tileId === 'blue1' && a.target.blueSlot === 1);
@@ -225,7 +226,7 @@ for (const kind of ['income', 'blue-data']) {
     const start = values.evaluateStateValue(root.observation, seatId), end = values.evaluateStateValue(actual.node.observation, seatId);
     assert.equal(start.components.researchPotential, 0); assert(end.components.researchPotential > 0);
     assert.equal(end.total - start.total, preview.netGain);
-    if (kind === 'income') { const proof = p.incomePlanSummary(root); assert(proof); assert.equal(proof.netGain, preview.netGain); }
+    if(kind==='income'){const policy=p.resourceSpec(root),proof=p.incomePlanSummary(root);if(policy.plans.length===1&&policy.plans[0].goal.kind==='income'){assert(proof);assert.equal(proof.netGain,preview.netGain);}else assert.equal(proof,null,'a competing blue plan cannot be hidden by an income-only proof');}
     assert.deepEqual(composition.lifecycle.save().envelope, before);
   } finally { p.close(); composition.dispose(); }
 }

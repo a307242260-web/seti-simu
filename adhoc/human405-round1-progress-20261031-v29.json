@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "seti-human405-round1-goal-checkpoint-v2",
+  "date": "2026-10-31",
+  "goalStatus": "active",
+  "phase": "v119-admitted-awaiting-once-standard-white-r1-trial",
+  "candidateVersion": "v119",
+  "candidateValue": "v5",
+  "singlePointAdmitted": true,
+  "fullGameAdmitted": false,
+  "coldRoots": 45,
+  "coldOverruns": [],
+  "teacherFirstInputMatches": 25,
+  "teacherNodes": 32,
+  "remainingStrategicSteps": [
+    24,
+    38,
+    39,
+    43,
+    62
+  ],
+  "nativeOrderSteps": [
+    25,
+    56
+  ],
+  "newAutonomousRun": false,
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "documentation": "docs/human405-round1-v119-admission-20261031.md",
+  "nextSafeAction": "Run robot_iterate once on the exact admitted commit with scenario=human405-white-round1-v1, then set baselineEligible:false before final registry build; compare native white R1 endpoint and outstanding teacher differences. No claim of alignment or score improvement before that run.",
+  "validation": {
+    "unit": 153,
+    "fullFlow": 1,
+    "chrome": 7,
+    "nativeBoundControlRoots": 3,
+    "geometryDifferential": 9100,
+    "identityDifferential": 1440
+  },
+  "knownAuditFailure": "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+}

@@ -19,3 +19,25 @@ try{
  }
 }finally{c.dispose();}
 console.log('quiet data prerequisites, native currency income and final marks match typed plan value; budgets/root isolation passed');
+// Early-round controlled board: the probe is already consumed and the company
+// swap is used. Currency income and blue rewards are a closed fixed tail;
+// future income and held/paid investment must remain in the scalar quote.
+{
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-047-20261030-v1.json'))),seed=f.source.seed;
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+ const envelope=structuredClone(f.compositionEnvelope),state=JSON.parse(envelope.committedState),own=state.players.players.find(p=>p.id===f.seatId);own.mainActionCompleted=true;envelope.committedState=JSON.stringify(state);assert(c.lifecycle.restore(envelope).ok);
+ const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0}),evaluate=values.createStateValueEvaluator(f.seatId);
+ try{
+  p.setResourcePlanning(true);p.setCardPickPlanning(true);p.setDecisionPlanning({finalMarkPlanning:true,scanPlanning:true});const root=p.openRoot();
+  assert(!state.pieces.rockets.some(r=>r.playerId===f.seatId));assert(!root.legalActions.some(a=>a.family==='industry'));
+  const spec=p.turnTailSummary(root,'data-end-turn');assert(spec);assert(spec.dataPlans?.length,'an income first action cannot be quoted as an unrelated blue-only tail');
+  let current=root,inputs=0;
+  while(p.resourceSpec(current)?.plans.length){
+   const policy=p.resourceSpec(current);assert.equal(policy.plans.length,1);assert(['income','blue-data'].includes(policy.plans[0].goal.kind));
+   const actual=p.expandResourcePlan(current,policy.plans[0],()=>null);assert(actual.complete);assert(actual.submissions>0);inputs+=actual.submissions;current=actual.node;
+  }
+  const end=current.legalActions.find(a=>a.family==='end_turn');assert(end);current=p.expand(current,end.actionId);inputs++;
+  assert.equal(inputs,spec.requiredNativeInputs);assert.equal(evaluate(current.observation),evaluate(root.observation)+spec.netGain);
+  assert.deepEqual(c.lifecycle.save().envelope,before);
+ }finally{p.close();c.dispose();}
+}

@@ -438,6 +438,12 @@ try {
         }
         console.log(`[PASS] independent-post-main-borrow: root=${evaluate(root.observation)} inputs=2 excluded=${proof.excludedTileIds.length}`);
         const bound = port.postMainValueBound(root), optimal = port.postMainOptimalPlanSpec(root);
+        if (!independentValue.supportsLegacyValueProof(root.observation)) {
+          if (bound!==null||optimal!==null) throw new Error("早轮探测任务仍套用未证明的钱包上界");
+          const end=port.expand(root,root.legalActions.find(a=>a.family==='end_turn').actionId);
+          if(evaluate(end.observation)!==evaluate(outcomeModel.createDecisionObservation(end.observation,{seatId:fixture.seatId})))throw new Error("实际收尾原始/标准V不一致");
+          console.log('[PASS] independent-post-main-continuation: earlyProbeDeclined=true actualNativeEnd=true');
+        } else {
         if (!bound || !optimal || optimal.submissions !== 10) throw new Error("主行动后最优计划审计缺少上界或完整最短计划");
         const attained = port.expandPostMainOptimalPlan(root);
         for (const node of [...attained.prefixes.map(prefix => prefix.node), attained.node]) {
@@ -450,6 +456,7 @@ try {
         if (!attained.complete || attained.submissions !== 10 || leafValue > upper
           || legacy && leafValue !== upper) throw new Error("主行动后原生继续路径与适用模型的上界契约不一致");
         console.log(`[PASS] independent-post-main-continuation: root=${evaluate(root.observation)} leaf=${leafValue} upper=${upper} legacyAttainment=${legacy} prefixes=${attained.prefixes.length}`);
+        }
       } finally { port.close(); }
     }
     {
@@ -718,10 +725,10 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
  try{
   const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port'),{searchDecision}=require('../randomizer/game/ai/decision-search'),agent=require('../randomizer/game/ai/search-agent');
   const f=JSON.parse(fs.readFileSync(require('node:path').resolve(__dirname,'../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-037-20261030-v1.json'))),seed=f.source.seed;
-  kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(state,viewer)=>buildRuleObservation(state,seed,viewer?.playerId)});kernel.newGame({seed});const comp=kernel.composition;assert(comp.lifecycle.restore(f.compositionEnvelope).ok);const decision=comp.inspect().session.decision,pick=decision.choices.find(a=>a.summary==='b_2.webp');assert(pick);assert(comp.inputPort.submitDecision({decisionId:decision.decisionId,decisionVersion:decision.decisionVersion,ownerId:decision.ownerId,choice:pick}).ok);const before=comp.lifecycle.save().envelope;port=createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:0});const root=port.openRoot(),evaluate=independentValue.createStateValueEvaluator(f.seatId),r=searchDecision({port,root,evaluate,...agent.OPTIONS,budget:{transitions:256,nodes:1024,frontier:256,milliseconds:5000}});assert(r.complete);assert.equal(r.diagnostics.nativeExecutions,0);assert.equal(r.diagnostics.incomePlanProofs,1);
-  const summary=port.incomePlanSummary(root),native=port.expandResourcePlan(root,port.resourceSpec(root).plans[0],()=>null);assert(native.complete);assert.equal(native.submissions,summary.requiredNativeInputs);assert.equal(evaluate(native.node.observation),r.value);assert.deepEqual(comp.lifecycle.save().envelope,before);
-  console.log(`[PASS] independent-income-plan-proof: value=${r.value} nativeControlInputs=${native.submissions} inventedSuccessor=false`);
- }catch(error){console.log(`[FAIL] independent-income-plan-proof: ${error.message}`);allPass=false;}
+  kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(state,viewer)=>buildRuleObservation(state,seed,viewer?.playerId)});kernel.newGame({seed});const comp=kernel.composition;assert(comp.lifecycle.restore(f.compositionEnvelope).ok);const decision=comp.inspect().session.decision,pick=decision.choices.find(a=>a.summary==='b_2.webp');assert(pick);assert(comp.inputPort.submitDecision({decisionId:decision.decisionId,decisionVersion:decision.decisionVersion,ownerId:decision.ownerId,choice:pick}).ok);const before=comp.lifecycle.save().envelope;port=createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:0});const root=port.openRoot(),evaluate=independentValue.createStateValueEvaluator(f.seatId),r=searchDecision({port,root,evaluate,...agent.OPTIONS,budget:{transitions:256,nodes:1024,frontier:256,milliseconds:5000}});assert(r.complete);assert(r.diagnostics.nativeExecutions>0);assert.equal(r.diagnostics.incomePlanProofs,0);
+  const summary=port.incomePlanSummary(root),plan=port.resourceSpec(root).plans[0];assert.equal(summary,null);assert.equal(plan.goal.kind,'blue-data');const native=port.expandResourcePlan(root,plan,()=>null);assert(native.complete);assert.equal(evaluate(native.node.observation),r.value);assert.deepEqual(comp.lifecycle.save().envelope,before);
+  console.log(`[PASS] independent-probe-plan-native-fallback: value=${r.value} nativeControlInputs=${native.submissions} inventedSuccessor=false`);
+ }catch(error){console.log(`[FAIL] independent-probe-plan-native-fallback: ${error.message}`);allPass=false;}
  finally{port?.close();kernel?.composition.dispose();}
 }
 

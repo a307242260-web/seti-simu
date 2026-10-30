@@ -8,7 +8,7 @@
   if(common)module.exports=api;else root.SetiCardPickPlanning=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,tech,demand,players,trades){
   'use strict';
-  const VERSION='seti-purpose-card-pick-policy-v6';
+  const VERSION='seti-purpose-card-pick-policy-v7';
   const TRADE_IDS=new Set(['credits-for-card','energy-for-card','publicity-for-card','cards-for-pick-card']);
   const isTrade=a=>a.family==='quick_trade'&&TRADE_IDS.has(a.target?.tradeId);
   const isOffer=a=>a.family==='choose_card'&&!a.target?.nebulaId&&(a.target?.source==='public'||a.target?.source==='blind'
@@ -149,27 +149,69 @@
       }
       return null;
     }
+    const swapStart=a=>a.family==='industry'&&a.target?.abilityId==='deepspace_swap_cards';
+    function swapHandRanks(state,seatId){
+      const p=state.players.players.find(p=>p.id===seatId);
+      return p.hand.map(card=>{
+        const f=facts(card),income=Object.entries(cards.getIncomeGainForCard(card)||{}).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0);
+        return{card,value:(effects.getCardPrice(card)||0)+income*Math.max(0,4-state.turn.roundNumber)+(f.data+f.move)*.5};
+      }).sort((a,b)=>a.value-b.value||(a.card.id<b.card.id?-1:1));
+    }
+    function conversionLoss(resources,required){
+      if(Object.keys(required||{}).some(k=>!['credits','energy'].includes(k)))return Infinity;
+      const c=Math.max(0,(required.credits||0)-resources.credits),e=Math.max(0,(required.energy||0)-resources.energy);
+      if(c&&e)return Infinity;
+      if(c)return resources.energy-(required.energy||0)>=c*creditTrade.cost.energy?c*(creditTrade.cost.energy-creditTrade.gain.credits):Infinity;
+      if(e)return resources.credits-(required.credits||0)>=e*energyTrade.cost.credits?e*(energyTrade.cost.credits-energyTrade.gain.energy):Infinity;
+      return 0;
+    }
+    function swapIntent(state,seatId,endpoints,outgoingId=null){
+      const p=state.players.players.find(p=>p.id===seatId),outgoing=outgoingId?p.hand.find(c=>c.id===outgoingId):swapHandRanks(state,seatId)[0]?.card;
+      if(!outgoing)return null;
+      const hand=p.hand.filter(c=>c.id!==outgoing.id),purposeState={...state,players:{...state.players,players:state.players.players.map(v=>v===p?{...p,hand,resources:{...p.resources,handSize:p.resources.handSize-1}}:v)}};
+      const offered=state.cards.publicCards.filter(c=>c&&!c.hidden&&c.cardId),outFacts=facts(outgoing);
+      for(const goal of goals(purposeState,seatId,()=>endpoints(purposeState))){
+        if(!['income','move','data','exceptional-card'].includes(goal.kind))continue;
+        const selection=select(purposeState,seatId,goal,offered,false),incoming=offered.find(c=>c.id===selection.cardId);if(!incoming)continue;
+        const incomingFacts=facts(incoming);let useful=false;
+        if(goal.kind==='data')useful=incomingFacts.data>outFacts.data;
+        else if(goal.kind==='move')useful=incomingFacts.move>outFacts.move;
+        else if(goal.kind==='exceptional-card')useful=incomingFacts.net>Math.max(0,...p.hand.map(c=>facts(c).net));
+        else if(goal.fundsCardId){
+          const afterIncome=card=>{const copy={...p,resources:{...p.resources},income:{...p.income}};players.gainIncome(copy,cards.getIncomeGainForCard(card),{blindDraw:()=>{}});return copy.resources;};
+          useful=conversionLoss(afterIncome(incoming),goal.required)<conversionLoss(afterIncome(outgoing),goal.required);
+        }
+        if(useful)return{goal,selection,discardIds:[outgoing.id],reason:'current-purpose-company-swap'};
+      }
+      // A known improvement in the same held/paid/mission portfolio is an
+      // exceptional card purpose. Quote each public offer greedily; execute
+      // only the selected swap, with the native public row exchanged too.
+      const before=demand.planningCapital(state,p),ranked=offered.map(incoming=>{
+        const next={...p,hand:p.hand.map(c=>c.id===outgoing.id?incoming:c)},preview={...state,
+          players:{...state.players,players:state.players.players.map(v=>v===p?next:v)},
+          cards:{...state.cards,publicCards:state.cards.publicCards.map(c=>c?.id===incoming.id?outgoing:c)}};
+        return{card:incoming,gain:demand.planningCapital(preview,next)-before};
+      }).filter(r=>r.gain>0).sort((a,b)=>b.gain-a.gain||(a.card.id<b.card.id?-1:1));
+      return ranked[0]?{goal:{kind:'known-portfolio-swap',id:'portfolio:swap:'+ranked[0].card.id,cardId:ranked[0].card.id,netGain:ranked[0].gain},
+        selection:{cardId:ranked[0].card.id,blind:false,cache:'fixed-known-portfolio'},discardIds:[outgoing.id],reason:'positive-known-portfolio-company-swap'}:null;
+    }
     function plan({state,seatId,actions,status,session,endpoints=()=>[]}){
       const source=session?.journal?.actions?.[0]?.action,head=session?.queue?.[0],pending=head?.payload?.decisionContext;
       const tradePending=pending?.type==='trade'&&TRADE_IDS.has(pending.tradeId)&&['discard','card_selection'].includes(pending.kind);
       if(status==='decision'&&head?.payload?.step==='swap_hand'&&actions.length>0&&actions.every(a=>a.family==='choose_card'&&a.target?.choiceId?.startsWith('hand:')&&state.players.players.find(p=>p.id===seatId).hand.some(c=>c.id===a.target.cardInstanceId))){
-        const hand=state.players.players.find(p=>p.id===seatId).hand;
-        const utility=card=>{
-          const f=facts(card),income=Object.entries(cards.getIncomeGainForCard(card)||{}).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0);
-          return (effects.getCardPrice(card)||0)+income*Math.max(0,4-state.turn.roundNumber)+(f.data+f.move)*.5;
-        };
-        const ranked=actions.map(action=>({action,value:utility(hand.find(c=>c.id===action.target.cardInstanceId))}))
-          .sort((a,b)=>a.value-b.value||(a.action.target.cardInstanceId<b.action.target.cardInstanceId?-1:1));
-        return {...fixed(ranked[0].action,{kind:'company-swap',id:'committed-company-swap'},null,[ranked[0].action.target.cardInstanceId],actions,'fixed-swap-outgoing'),
-          knownCardValues:ranked.map(r=>({cardId:r.action.target.cardInstanceId,value:r.value})),assumption:'greedy known price, remaining income and corner utility; does not prove interchangeable card identities'};
+        const ranked=swapHandRanks(state,seatId).filter(r=>actions.some(a=>a.target.cardInstanceId===r.card.id));
+        const action=actions.find(a=>a.target.cardInstanceId===ranked[0].card.id);
+        return {...fixed(action,{kind:'company-swap',id:'committed-company-swap'},null,[ranked[0].card.id],actions,'fixed-swap-outgoing'),
+          knownCardValues:ranked.map(r=>({cardId:r.card.id,value:r.value})),assumption:'greedy known price, remaining income and corner utility; does not prove interchangeable card identities'};
       }
       if(status==='stable'){
-        const trades=actions.filter(isTrade);if(!trades.length)return null;
-        const chosen=paid(state,seatId,actions,endpoints),selected=chosen?.action;
-        return{policy:VERSION,isEquivalence:false,kind:'card-acquisition-plan',goal:chosen?.goal||null,
-          selectedActionId:selected?.actionId||null,selection:chosen?.selection||null,discardIds:chosen?.discardIds||[],
-          retainedActionIds:actions.filter(a=>!isTrade(a)||a===selected).map(a=>a.actionId),excludedActionIds:trades.filter(a=>a!==selected).map(a=>a.actionId),
-          reason:chosen?'explicit-pick-purpose':'no-pick-purpose'};
+        const trades=actions.filter(isTrade),company=actions.find(swapStart);if(!trades.length&&!company)return null;
+        const chosen=paid(state,seatId,actions,endpoints),selected=chosen?.action,companySwap=company&&swapIntent(state,seatId,endpoints);
+        const retained=a=>isTrade(a)?a===selected:swapStart(a)?Boolean(companySwap):true;
+        return{policy:VERSION,isEquivalence:false,kind:'card-acquisition-plan',goal:chosen?.goal||companySwap?.goal||null,
+          selectedActionId:selected?.actionId||(companySwap?company.actionId:null),selection:chosen?.selection||companySwap?.selection||null,discardIds:chosen?.discardIds||companySwap?.discardIds||[],
+          companySwap:companySwap||null,retainedActionIds:actions.filter(retained).map(a=>a.actionId),excludedActionIds:actions.filter(a=>!retained(a)).map(a=>a.actionId),
+          reason:chosen||companySwap?'explicit-pick-purpose':'no-pick-purpose'};
       }
       // DeepSpace's committed swap offers public cards without source/pick fields.
       // Match its exact native menu; income/corner company rewards need their own purpose.
@@ -182,8 +224,9 @@
       const outgoing=companySwap&&head.payload.handCardInstanceId;
       const purposeState=outgoing?{...state,players:{...state.players,players:state.players.players.map(p=>p.id===seatId?{...p,resources:{...p.resources,handSize:p.hand.length-1},hand:p.hand.filter(c=>c.id!==outgoing)}:p)}}:state;
       const availableGoals=!tradePending?goals(purposeState,seatId,()=>endpoints(purposeState)):[];
+      const companyIntent=companySwap?swapIntent(state,seatId,endpoints,outgoing):null;
       const inferred=availableGoals.find(g=>g.kind==='income'||g.kind==='move'&&state.cards.publicCards.some(c=>c&&facts(c).move>=g.amount)||g.kind==='data'&&state.cards.publicCards.some(c=>c&&facts(c).data>=g.amount)||g.kind==='exceptional-card');
-      const goal=committed?.goal||(!tradePending&&!companySwap&&(queuedIncomeGoal(session,seatId,state)||readyIncomeGoal(state,seatId)))||inferred||{kind:tradePending?'committed-pick':'free-reward',id:tradePending?`committed:${pending.tradeId}`:'free-card-reward'};
+      const goal=committed?.goal||companyIntent?.goal||(!tradePending&&!companySwap&&(queuedIncomeGoal(session,seatId,state)||readyIncomeGoal(state,seatId)))||inferred||{kind:tradePending?'committed-pick':'free-reward',id:tradePending?`committed:${pending.tradeId}`:'free-card-reward'};
       if(pending?.kind==='discard'){
         const ids=committed?.discardIds||state.players.players.find(p=>p.id===seatId).hand.map(facts)
           .sort((a,b)=>a.net-b.net||(a.id<b.id?-1:1)).slice(0,pending.count).map(c=>c.id);
@@ -194,7 +237,7 @@
       }
       const available=state.cards.publicCards.filter(card=>card&&actions.some(a=>(a.target?.cardInstanceId||a.payload?.cardInstanceId)===card.id
         ||(a.target?.slotIndex??a.target?.publicSlotIndex)===state.cards.publicCards.indexOf(card)));
-      const selection=committed?.selection||select(state,seatId,goal,available,actions.some(a=>a.target?.source==='blind'));
+      const selection=committed?.selection||companyIntent?.selection||select(companySwap?purposeState:state,seatId,goal,available,actions.some(a=>a.target?.source==='blind'));
       const action=actions.find(a=>selection.blind?a.target?.source==='blind':(a.target?.cardInstanceId||a.payload?.cardInstanceId)===selection.cardId
         ||state.cards.publicCards[a.target?.slotIndex??a.target?.publicSlotIndex]?.id===selection.cardId);
       if(!action)throw new Error('CARD_PICK_FIXED_CARD_UNAVAILABLE');

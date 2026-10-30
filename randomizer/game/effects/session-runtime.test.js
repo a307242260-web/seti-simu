@@ -110,6 +110,30 @@ function actionGroup(effects) {
   return () => ({ groupId: "main", effects });
 }
 
+(function trustedDrainOmitsOnlyUnusedInspection() {
+  for (const trustedIsolatedOwnership of [false, true]) {
+    let enumerations = 0;
+    const runtime = createRuntime({ trustedIsolatedOwnership });
+    runtime.registerExecutor("choose", {
+      getLegalChoices: () => { enumerations += 1; return [{ value: 1 }]; },
+      resolveDecision: () => ({ ok: true }),
+    });
+    const dispatched = runtime.dispatchAction({ version: 1 }, { family: "test" },
+      actionGroup([{ type: "choose", kind: "decision", ownerId: "p1" }]));
+    const drained = runtime.drain(dispatched.session, { skipInspection: true });
+    assert(drained.ok);
+    assert.equal(dispatched.session.phase, "awaiting_input");
+    assert.equal(enumerations, trustedIsolatedOwnership ? 1 : 2,
+      "trusted drain still validates the native decision once; only its unused return inspection is omitted");
+    assert.equal(Object.hasOwn(drained, "inspection"), !trustedIsolatedOwnership);
+    const decision = runtime.inspect(dispatched.session).decision;
+    const invalid = runtime.resolveDecision(dispatched.session, { decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice: { value: 2 } });
+    assert.equal(invalid.code, "EFFECT_DECISION_NOT_LEGAL");
+    assert.equal(dispatched.session.phase, "awaiting_input");
+  }
+})();
+
 (function testEmptyEffectGroupFailsClosed() {
   const { runtime } = createHarness();
   const committed = { version: 1, value: 0, legalTechs: [] };

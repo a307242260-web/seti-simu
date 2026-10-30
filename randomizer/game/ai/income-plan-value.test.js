@@ -10,6 +10,31 @@ const pickDecision=c.inspect().session.decision,pick=pickDecision.choices.find(a
 assert(c.inputPort.submitDecision({decisionId:pickDecision.decisionId,decisionVersion:pickDecision.decisionVersion,ownerId:pickDecision.ownerId,choice:pick}).ok);
 f.compositionEnvelope=c.lifecycle.save().envelope;
 function open(envelope=f.compositionEnvelope){assert(c.lifecycle.restore(envelope).ok);const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0}),root=p.openRoot();return{before,p,root};}
+
+// Real deployed-probe control: the shared value now prefers the energy blue
+// plan (5) over blind income (3.5). Native cold recovery must see that same
+// opportunity; the old probe-sensitive income-only shortcut is declined.
+{
+ const {before,p,root}=open();try{
+  const r=searchDecision({port:p,root,evaluate,...agent.OPTIONS,modelKey:evaluate.modelKey,budget});assert(r.complete);
+  const policy=p.resourceSpec(root);assert(policy.plans.every(plan=>plan.goal.kind==='blue-data'));
+  assert.equal(policy.incomeTail.netGain,3.5);assert.equal(policy.blueTails[0].netGain,5);
+  assert.equal(p.incomePlanSummary(root),null);assert.equal(r.value,60.5);assert(r.diagnostics.nativeExecutions>0);
+  assert.deepEqual(c.lifecycle.save().envelope,before);
+  const first=root.legalActions.find(a=>a.actionId===r.actionId);assert(c.inputPort.submitQuickAction(first).ok);
+  const changed=c.lifecycle.save().envelope;p.close();const n=p.openRoot();
+  const recovered=searchDecision({port:p,root:n,evaluate,...agent.OPTIONS,budget});assert(recovered.complete);assert.equal(recovered.value,r.value);
+  assert.deepEqual(c.lifecycle.save().envelope,changed);
+ }finally{p.close();}
+}
+// The typed income proof remains applicable without a future probe mission.
+// Keep its native nine-input witness and cold recovery tests in that scope.
+{
+ const controlled=structuredClone(f.compositionEnvelope),s=JSON.parse(controlled.committedState);
+ s.pieces.rockets=s.pieces.rockets.filter(r=>r.playerId!==f.seatId);
+ s.pieces.activeRocketId=null;
+ controlled.committedState=JSON.stringify(s);f.compositionEnvelope=controlled;
+}
 try{
  const {before,p,root}=open();try{
   const r=searchDecision({port:p,root,evaluate,...agent.OPTIONS,modelKey:evaluate.modelKey,budget});assert(r.complete,r.stopReason);assert.equal(r.diagnostics.nativeExecutions,0);assert.equal(r.diagnostics.transitions,0);assert.equal(r.diagnostics.incomePlanProofs,1);assert.equal(r.diagnostics.provedIncomeInputs,9);

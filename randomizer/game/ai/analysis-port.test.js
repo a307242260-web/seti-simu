@@ -8,6 +8,65 @@ const { createSimulationEnv } = require("../../app/simulation-env");
 const { evaluateStateValue } = require("./state-value");
 const { searchDecision, VERSION: SEARCH_VERSION } = require("./decision-search");
 
+// Trusted fork references must replay the exact same native state as a decoded
+// persisted envelope. The public root never exposes the private reference.
+{
+  const fs = require("node:fs"), path = require("node:path");
+  const fixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+    "../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-035-20261030-v1.json")));
+  const fixtureSeed = fixture.source.seed;
+  const kernel = createSimulationRuleComposition({ seed: fixtureSeed, random: createSeededRandom(fixtureSeed),
+    activePlayerCount: 4, trustedProjectionReader: true,
+    projectCounterfactualState: (state, viewer) => buildRuleObservation(state, fixtureSeed, viewer?.playerId) });
+  kernel.newGame({ seed: fixtureSeed });
+  const original = kernel.composition;
+  assert(original.lifecycle.restore(fixture.compositionEnvelope).ok);
+  const before = original.lifecycle.save().envelope;
+  assert.equal(Object.hasOwn(original.lifecycle.save({ trustedFork: true }), "trustedState"), false);
+  const forks = [0, 1].map(() => original.counterfactualPort.createFork(before,
+    { branchKey: "trusted-state-parity", restoreRandomState: true }));
+  const [referenced, decoded] = forks.map(fork => fork.composition || fork);
+  const assertFrozen = value => {
+    if (!value || typeof value !== "object") return;
+    assert(Object.isFrozen(value));
+    for (const child of Object.values(value)) assertFrozen(child);
+  };
+  try {
+    for (const family of ["place_data", "choose_card"]) {
+      const saved = referenced.lifecycle.save({ trustedFork: true });
+      assert(saved.trustedState);
+      assertFrozen(saved.trustedState);
+      assert.deepEqual(saved.trustedState, JSON.parse(saved.envelope.committedState));
+      for (const [index, fork] of [referenced, decoded].entries()) {
+        assert(fork.lifecycle.restore(saved.envelope, { trustedFork: true, silent: true, inPlace: true,
+          skipProjection: true, ...(index === 0 ? { trustedState: saved.trustedState } : {}) }).ok);
+      }
+      const readActions = fork => fork.inspect().session?.decision?.choices || fork.inputPort.enumerateActions({});
+      const actions = readActions(referenced);
+      assert.deepEqual(actions, readActions(decoded));
+      const action = actions.find(candidate => family === "place_data"
+        ? candidate.family === family : candidate.target?.target === "computer");
+      assert(action, JSON.stringify({family, actions: actions.map(a => ({family:a.family,target:a.target}))}));
+      for (const fork of [referenced, decoded]) {
+        const decision = fork.inspect().session?.decision;
+        assert((decision ? fork.inputPort.submitDecision({ decisionId: decision.decisionId,
+          decisionVersion: decision.decisionVersion, ownerId: decision.ownerId, choice: action }, { skipProjection: true })
+          : fork.inputPort.submitAction(action, { skipProjection: true })).ok);
+      }
+      assert.deepEqual(referenced.lifecycle.save().envelope, decoded.lifecycle.save().envelope);
+      const viewer = { playerId: fixture.seatId, role: "player" };
+      assert.deepEqual(referenced.projection(viewer).state, decoded.projection(viewer).state);
+      assert.deepEqual(original.lifecycle.save().envelope, before);
+    }
+    const saved = referenced.lifecycle.save({ trustedFork: true });
+    assertFrozen(saved.trustedState);
+    assert.deepEqual(saved.trustedState, JSON.parse(saved.envelope.committedState));
+  } finally {
+    for (const fork of [referenced, decoded]) fork.dispose();
+    original.dispose();
+  }
+}
+
 const seed = "analysis-port-isolation-v1";
 const random = createSeededRandom(seed);
 let counterfactualProjections = 0;

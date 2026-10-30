@@ -729,6 +729,9 @@ function probeStructureKey(workingState, player, context, sources) {
 
 function buildProbeCandidateStructures(workingState, player, context, topology, sources, requestedRequirementId = null) {
   const candidates = [];
+  // Within this directory only, alternative routes share the same immutable
+  // native endpoint rewards; costs and state-dependent values remain separate.
+  const rewardEffects = new Map();
   for (const source of topology.sources) {
     if (!source.coordinate) continue;
     const reachablePlanets = topology.reachableBySource.get(source.sourceId) || [];
@@ -745,14 +748,27 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
       ];
       for (const choice of endpointChoices) {
         if(requestedRequirementId!=null&&routeRequirementKey(source.sourceId,choice)!==requestedRequirementId)continue;
-        const effects = choice.actionType === "orbit"
-          ? planetRewards.buildOrbitRewardEffects(choice.planetId, choice.markerSequence)
-          : choice.target?.type === "satellite"
-            ? planetRewards.buildSatelliteLandRewardEffects(choice.target.satelliteId)
-            : planetRewards.buildPlanetLandRewardEffects(
-              choice.planetId,
-              choice.rewardMarkerSequence ?? choice.markerSequence,
-            );
+        const rewardKey = JSON.stringify([choice.actionType, choice.planetId, choice.target?.type,
+          choice.target?.satelliteId, choice.rewardMarkerSequence ?? choice.markerSequence]);
+        let effects = rewardEffects.get(rewardKey);
+        if (!effects) {
+          effects = choice.actionType === "orbit"
+            ? planetRewards.buildOrbitRewardEffects(choice.planetId, choice.markerSequence)
+            : choice.target?.type === "satellite"
+              ? planetRewards.buildSatelliteLandRewardEffects(choice.target.satelliteId)
+              : planetRewards.buildPlanetLandRewardEffects(
+                choice.planetId,
+                choice.rewardMarkerSequence ?? choice.markerSequence,
+              );
+          effects = structuredClone(effects);
+          const pending = [effects];
+          while (pending.length) {
+            const value = pending.pop();
+            if (!value || typeof value !== "object" || Object.isFrozen(value)) continue;
+            pending.push(...Object.values(value)); Object.freeze(value);
+          }
+          rewardEffects.set(rewardKey, effects);
+        }
         const scoreGain = rewardScore(effects);
         if (scoreGain <= 0) continue;
         const dataCount = rewardDataCount(effects);
@@ -793,7 +809,7 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
           endpointFamily: choice.actionType,
           endpointTarget: choice.target || { type: "planet" },
           endpointFacts: {
-            rewards: structuredClone(effects),
+            rewards: effects,
             cost: { ...endpointCost },
             ownMarkers: probeEndpointOwnMarkers(workingState, player, choice.planetId),
           },

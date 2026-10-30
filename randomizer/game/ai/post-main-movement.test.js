@@ -9,7 +9,7 @@ const cards = require("../cards/deck");
 const data = require("../data");
 const { createAnalysisPort } = require("./analysis-port");
 const { searchDecision } = require("./decision-search");
-const { createStateValueEvaluator } = require("./state-value");
+const { createStateValueEvaluator, probePotential } = require("./state-value");
 
 const initial = JSON.parse(fs.readFileSync(path.resolve(__dirname,
   "../../../reports/ai-foundation-20261022/analysis-root-input-v2.json"))).coreState.compositionEnvelope;
@@ -107,7 +107,9 @@ function ordinary(node) {
       assert.equal(paid, choice.payload.requiredMovePoints);
       assert(paid >= 1);
       assert(after.publicity - before.publicity >= 0 && after.publicity - before.publicity <= 1);
-      assert(evaluate(next.observation) <= evaluate(node.observation) - 0.5);
+      assert(evaluate(next.observation)-probePotential(next.observation,seatId)
+        <= evaluate(node.observation)-probePotential(node.observation,seatId)-0.5,
+        'ordinary movement has a resource cost even when it improves the future mission');
       payments += 1;
       if (after.publicity > before.publicity) arrivals += 1;
       if (paid === 2) twoPointPayments += 1;

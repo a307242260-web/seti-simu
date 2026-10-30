@@ -2,9 +2,9 @@
   'use strict';const common=typeof module==='object'&&module.exports;
   const api=factory(common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
     common?require('../data'):root.SetiData,common?require('../players'):root.SetiPlayers,
-    common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('../rockets'):root.SetiRocketActions,common?require('../industry'):root.SetiIndustry,common?require('./state-value'):root.SetiStateValue,common?require('../tech/resolver'):root.SetiTechResolver);
+    common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('../rockets'):root.SetiRocketActions,common?require('../industry'):root.SetiIndustry,common?require('./state-value'):root.SetiStateValue,common?require('../tech/resolver'):root.SetiTechResolver,common?require('./probe-capital'):root.SetiProbeCapital);
   if(common)module.exports=api;else root.SetiResourceDemand=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver){
+})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital){
   'use strict';
   const VERSION='seti-goal-resource-preparation-v3';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
@@ -102,8 +102,13 @@
       +stateValue.researchCapital({hand:p.hand,techState:p.techState,supply:state.tech,round:state.turn.roundNumber,
         publicity:p.resources.publicity,researchCost:techResolver.getResearchPublicityCost(p),passed:passing});
   }
+  function planningCapital(state,p){
+    const investment=(hand,publicity)=>heldAndResearchCapital(state,{...p,hand,resources:{...p.resources,publicity}});
+    return heldAndResearchCapital(state,p)+probeCapital.fromState(state,p,stateValue.DEFAULT_WEIGHTS,investment).value;
+  }
   function incomeOpportunityCost(state,p,card){
-    return heldAndResearchCapital(state,p)-heldAndResearchCapital(state,{...p,hand:p.hand.filter(c=>c.id!==card.id)});
+    const hand=p.hand.filter(c=>c.id!==card.id);
+    return planningCapital(state,p)-planningCapital(state,{...p,hand,resources:{...p.resources,handSize:Math.max(0,p.resources.handSize-1)}});
   }
   function incomeCardValue(state,seatId,card){
     const p=owner(state,seatId),gain=cards.getIncomeGainForCard(card);
@@ -323,6 +328,7 @@
     }
     p.hand=p.hand.filter(c=>c.id!==card.id);const gain=cards.getIncomeGainForCard(card);let blindHandValue=0;
     players.gainIncome(p,gain,{blindDraw:()=>{blindHandValue++;},gainData:target=>data.gainData(target)});
+    p.resources.handSize=p.hand.length+blindHandValue;
     const future=Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,publicity:.5,availableData:.5,additionalPublicScan:.5,handSize:1}[k]||0),0)*(4-state.turn.roundNumber);
     return{available:true,player:p,netGain:resourceValue(p)-resourceValue(original)+blindHandValue+future,
       immediateScoreGain:p.resources.score-original.resources.score,placements:remaining,assumption:'known income reward and remaining official income rounds; unknown drawn identities excluded'};
@@ -427,5 +433,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,cardOpportunityCost,heldAndResearchCapital,dataCornerCards});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,dataCornerCards});
 });
