@@ -1,0 +1,59 @@
+{
+  "baseCommit": "cad56459d9c3e2a04ff433cfc077c28347052564",
+  "snapshot": "/private/tmp/seti-human405-v65-20261030-onpkqe05",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "files": {
+    "adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/autonomous-after-pass-20261031-v1.json": "c7fb7908a8c8fd198ebdf52a0f9c3625374613694374a7ec54cca968489a7ef5",
+    "adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/autonomous-before-pass-20261031-v1.json": "a489eca6d685ec285d9c9481958de751920e5ba4542a659cc6232204e5168bc2",
+    "adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/teacher58-after-pass-20261031-v1.json": "0c0a5f6aa0c3bf125d2ebfd76e9d242f7bb355913743d50b821be586d06dbbf9",
+    "adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/teacher58-before-pass-20261031-v1.json": "3b51f29983e5a220aa3ddb0142378e0f4d2d41699d3f908dccbde6f66f48d8fa",
+    "adhoc/archive-human405-v98-trial-20261031-v1.py": "b21d3ef88e6644b4766686ed5b22232b1f03f0f3db3bec839e6b483cf8ef5e96",
+    "adhoc/deliver-human405-round1-v98-trial-20261031-v1.py": "402cd19b4268b19de4035eaed11218f4cb0473c0c3a486690b53ff0632583426",
+    "adhoc/human405-round1-progress-20261031-v22.json": "cadd75e5f697f0de579b0610260126c8f4db8bcfbadd20bc07412ad87ccc064f",
+    "adhoc/prepare-human405-v98-trial-root-overlays-20261031-v1.js": "b70dcd3704196ce8702d4358ef779fd84f171f05ace732d61ca715cfc5a308e9",
+    "adhoc/verify-human405-v98-trial-20261031-v1.js": "4b0410ca5a997c9e7b80459374d153414e21a7dda9a21ce97441273433e6cf6d",
+    "docs/ai-design.md": "0036f94a8881940370132a3a1b747d744118b345629afc9a44f5a1d393ca0bab",
+    "reports/ai-foundation-20261023/human405-v98-register-stage-20261031-v1.log": "fcc2626e87cf20544585d5cc6f876dffc7eccb9070b154c262402329e72d3aef",
+    "reports/ai-foundation-20261023/human405-v98-standard-r1-verification-20261031-v2.json": "053e4cc70dc8554554c9ef234fa3717dd477e47b2e2f9636f7db2d6f08d6ab88",
+    "reports/ai-foundation-20261023/human405-v98-trial-runtime-source-check-20261031-v1.json": "9d61dad135788a0ea6d8127868a032839da7e004acd971ce22224b516af37abd",
+    "reports/iteration/ai-search-v98-white-r1-20261031/203cd183.cad56459.quick-200.action-log.html": "70805aa95caf59ad160bcc21bbf63631f02415fed7ba378c910380e7931d2600",
+    "reports/iteration/registry.json": "b3527a892b7eac9018f1fb71621ad2d54cac1d132c24668db70b94df7e629d36",
+    "reports/iteration/versions.json": "53f4b14a8cc539e9bf7c7e6ca66cdca52f9b58589bd24eca5192dfcd38ce86b5",
+    "reports/research/203cd183.cad56459.quick-200.json": "27fb5ff5c1dadc7e26a98ba7479e124d027731e3b54423b7e99fb20a8922e77f",
+    "reports/research/203cd183.cad56459.quick-200.json.decisions.jsonl": "8b31baaea2e89619af40a8444459ea18ba958c7bfc11eb4a98e2e55a1919a6de",
+    "reports/robot-iteration.html": "f7e9c30a509fcdec9d5fd877a0c7599ef948a222b44c391aa4a5e7f6c0bbd1e5",
+    "seti-saves/seti-save-research-ai-search-v98-white-r1-20261031-cad56459-quick-200-v12.json": "17f9679096366881b72a0cac559ac777403c93b9727cd4912079ea3690f1d507"
+  },
+  "sourceBoundReports": [
+    "reports/ai-foundation-20261023/human405-v98-trial-runtime-source-check-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v98-standard-r1-verification-20261031-v2.json"
+  ],
+  "sourceBindings": {},
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "e70bcd9df216fd8697b72b5ebc0a1c83671fd6b56aacc0c664725e00f89489e8",
+      "path": "/private/tmp/seti-human405-r1-v98-trial-root-overlays-20261031/versions.json",
+      "sha256": "056f468374e9f8464c1fb213882d2a4fb2f749947f52a9a0105fb60389fb0180"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "f5af53f14ef38da462a0b246044f37115d2fff84d2139b4e1baac2e6bcd25003",
+      "path": "/private/tmp/seti-human405-r1-v98-trial-root-overlays-20261031/registry.json",
+      "sha256": "b7bc19217ccb7ec2a0c453db891a2dd7369f4bc001c8e9cede5810412e67a41e"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "c38e73bb9096e07bfbd8fefd8edb8f5fe42409e376b0ad5b1ceeb4bd05a22d6e",
+      "path": "/private/tmp/seti-human405-r1-v98-trial-root-overlays-20261031/robot-iteration.html",
+      "sha256": "c1874e08e577385fdb55e9a66a2ecb4f002349c019a5e520364ce393a82e5a17"
+    }
+  },
+  "validation": {
+    "strictNativeTrialReplay": true,
+    "runtimeFilesChecked": 370,
+    "original23Opening": true,
+    "passiveOpponentsOnly": true,
+    "nativePassWindowCounterexamples": 2,
+    "baselineEligible": false,
+    "goalStatus": "active"
+  }
+}

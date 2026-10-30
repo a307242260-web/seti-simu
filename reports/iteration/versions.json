@@ -7,6 +7,50 @@
   },
   "versions": [
     {
+      "id": "ai-search-v98-white-r1-20261031",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "v98 白席首轮筹资科技用途",
+      "date": "2026-10-30",
+      "baseline": "ai-search-v41-baseline-20261029",
+      "baselineEligible": false,
+      "head": "cad56459",
+      "commits": [
+        "f24600c7",
+        "5d1cae64",
+        "8c715275",
+        "0a4a2d08",
+        "e8327698",
+        "b90f9ae4",
+        "852263bb",
+        "f99faaa6",
+        "692bdf03",
+        "6ffd2746",
+        "fc8296f0",
+        "e48a17cc",
+        "7e3fc757",
+        "5855b219",
+        "5322ac7e",
+        "7422f755",
+        "9d707d66",
+        "306ab81c",
+        "f2cde3d2",
+        "b671ee7d",
+        "a11ea9dc",
+        "109c898f",
+        "225966dd",
+        "004c39e1",
+        "cad56459"
+      ],
+      "summary": "首轮阶段8分、仅紫4；手牌收入增加，但提前PASS的时机估值有缺口，未对齐，非基线。",
+      "records": {
+        "203cd183.cad56459.quick-200.json": {
+          "note": "原始23步开局，白席自主44输入/913ms，最慢79模拟/158.393ms；首轮8分，仅紫4，保留6宣传却未研究。新用途在PASS必要结算阶段仍按本轮投资计价，须修正；不宣称整局退步或改进，非基线。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v94-b117-prefix-r1-20261031",
       "aiGeneration": "v2",
       "agentType": "search",
