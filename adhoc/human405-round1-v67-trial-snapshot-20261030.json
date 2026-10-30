@@ -1,0 +1,55 @@
+{
+  "baseCommit": "7e3fc7573af1e2594116e3714ad176a9a1f992b2",
+  "snapshot": "/private/tmp/seti-human405-v65-20261030-onpkqe05",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "files": {
+    "adhoc/archive-human405-v67-trial-20261030-v1.py": "0dce22f9b33778947ddf33f50a373a6fe9173c0b6b7dae8f57c6668667f5cf47",
+    "adhoc/attribute-human405-opening-choice-20261030-v1.js": "0fcdb10b611b264c72c26269d5ecaca3f95324319496141142a7d483a47fbe54",
+    "adhoc/deliver-human405-round1-v67-trial-20261030-v1.py": "8aea90fe20a2ab31ee01f2bdf304357907d09ffae45437cfb967d3c68d532de1",
+    "adhoc/prepare-human405-v67-trial-root-overlays-20261030-v1.js": "c215d63f702666163941239cf0b033c0678a919729ab9c9b2d05dc9665d41081",
+    "adhoc/human405-round1-progress-20261030-v9.json": "ee338e9096f7556d0d0b38e5e675a0f1000ab930951a5e22ab474b66dec796c9",
+    "docs/ai-human405-learning-20261029.md": "f79f5fea849428f24872e5c511c45d6d8db892f354a999c223dd17b5d9af90ef",
+    "reports/ai-foundation-20261023/human405-white-r1-7e3fc757-verification-20261030-v1.json": "4171278e03b463d705268012fe422bbfaac16f738d0ad53f8773fd1a1532ad2e",
+    "reports/ai-foundation-20261023/human405-white-r1-v53-v67-comparison-20261030-v1.json": "b706814305f7af4ad45b10de9f4511ba501f4c34d2d3d1c465f864f86c99bada",
+    "reports/ai-foundation-20261023/human405-v67-opening-value-attribution-20261030-v1.json": "93959a96b02185aae80ed7e8d548b084b627e98257465d1f720ce6ae3445be52",
+    "reports/ai-foundation-20261023/human405-v67-trial-runtime-source-check-20261030-v1.json": "c79840f2a76e609e2b76e3e82a79e7a4e48318905887b7d44037635a89a4375f",
+    "reports/iteration/versions.json": "28af77b2fb0be6abb54f15917f2e5fc21d8cebbcd6c8125a4f98cefe1db165ad",
+    "reports/iteration/registry.json": "e8e79c8cfd81d7060527380cc356ec3b031f1139a18cfba16d965bf6fd804bdc",
+    "reports/robot-iteration.html": "6f75eb0262ae10e58f9d081790cdad3d7e49643a9aaa3f21d672d9804316c174",
+    "reports/research/448ff0e0.7e3fc757.quick-200.json": "efd6015a201dacd368c8a6214c96885f60030cef9ef99944cf4b1d6d40fd212d",
+    "reports/research/448ff0e0.7e3fc757.quick-200.json.decisions.jsonl": "0568e83b415629f1d8302ed730536828a31bd9ba33b0ef25c3b6553cddc0ea07",
+    "seti-saves/seti-save-research-ai-search-v67-white-r1-20261030-7e3fc757-quick-200-v14.json": "36ffadb14fb798808915e679b2881ac29352177c42c5d5c64b31a42c0c67e6e1",
+    "reports/iteration/ai-search-v67-white-r1-20261030/448ff0e0.7e3fc757.quick-200.action-log.html": "64e063be40d2d222a5bb32b58d5b21b7e61256a8faa3f50f9ae252a5d75786ef"
+  },
+  "sourceBoundReports": [
+    "reports/ai-foundation-20261023/human405-v67-opening-value-attribution-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-v67-trial-runtime-source-check-20261030-v1.json"
+  ],
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "2559b2703c54f4c04e28df15b6f423ed0df7fa368e3ca7b51712a1547fa0ee40",
+      "path": "/private/tmp/seti-human405-r1-v67-trial-root-overlays-20261030/versions.json",
+      "sha256": "cbb75d484dc93f3f58f187eaab8590acdd893f7869a42d9790da5417d94a6552"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "8ce7fe49be1f2cbef59837d02c904a51fb7cbed6cc59a68dfcb12880e50007a3",
+      "path": "/private/tmp/seti-human405-r1-v67-trial-root-overlays-20261030/registry.json",
+      "sha256": "948a0d6d2380080a71adaf66831848aacb3ac111c9fbf6cae82141a5a6e903f4"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "5fe9b9219a4db028885a25ced6acb3b1523d1ec4016a31a87ebb989738ba9f44",
+      "path": "/private/tmp/seti-human405-r1-v67-trial-root-overlays-20261030/robot-iteration.html",
+      "sha256": "0c229959390b7aec62c00a06e58162a4989ff41ce84ed434f78ffe1fffcd6a3e"
+    }
+  },
+  "validation": {
+    "codeAlreadyValidated": "7e3fc757:147unit+1fullFlow+4Chrome;legacyFrozenAomomoAuditFailureRetained",
+    "newProductionSourceChanges": false,
+    "singleStandardAutonomousR1": true,
+    "strictNativeReplay": true,
+    "actualSourceMatchesCommit": true,
+    "baselineEligible": false,
+    "goalStatus": "active"
+  }
+}

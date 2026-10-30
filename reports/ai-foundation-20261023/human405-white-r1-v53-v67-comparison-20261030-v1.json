@@ -1,0 +1,357 @@
+{
+  "schemaVersion": "seti-human405-round-comparison-v1",
+  "sameConfirmedOpening": true,
+  "openingSha256": "ab9a0dbbb3c35c453604addd668bd2625a4580c0577924d87c6cb8eff9c01b9c",
+  "passiveOpponentsOnly": true,
+  "strictNativeReplays": true,
+  "scoreScope": "provisional after first-round settlement; no full-game result",
+  "rows": [
+    {
+      "version": "v53",
+      "verification": "reports/ai-foundation-20261023/human405-white-r1-692bdf03-verification-20261030-v1.json",
+      "verificationSha256": "ac272af6304af0955aa8899ad966c81cbce4f5796e858b13d8403420e594e268",
+      "record": "reports/research/5cfabf5d.692bdf03.quick-200.json",
+      "sourceCommit": "692bdf03",
+      "whiteScore": 16,
+      "technology": [
+        "blue1"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "whiteInputs": 23,
+      "wallMs": 1320,
+      "maxNativeInputs": 121,
+      "maxMilliseconds": 242.234583,
+      "planReuseHits": 17,
+      "nativePath": [
+        {
+          "step": 24,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 25,
+          "action": "第一排放置位 1",
+          "family": "choose_target"
+        },
+        {
+          "step": 26,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 27,
+          "action": "第一排放置位 2",
+          "family": "choose_target"
+        },
+        {
+          "step": 28,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 29,
+          "action": "第一排放置位 3",
+          "family": "choose_target"
+        },
+        {
+          "step": 30,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 31,
+          "action": "第一排放置位 4",
+          "family": "choose_target"
+        },
+        {
+          "step": 32,
+          "action": "收入 b_117.webp",
+          "family": "choose_card"
+        },
+        {
+          "step": 33,
+          "action": "dlc_40.png：弃牌角标",
+          "family": "card_corner"
+        },
+        {
+          "step": 34,
+          "action": "dlc_9.png：弃牌角标",
+          "family": "card_corner"
+        },
+        {
+          "step": 35,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 36,
+          "action": "第一排放置位 5",
+          "family": "choose_target"
+        },
+        {
+          "step": 37,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 38,
+          "action": "第一排放置位 6",
+          "family": "choose_target"
+        },
+        {
+          "step": 39,
+          "action": "分析",
+          "family": "analyze"
+        },
+        {
+          "step": 40,
+          "action": "外星人 1 蓝色痕迹",
+          "family": "choose_target"
+        },
+        {
+          "step": 41,
+          "action": "结束回合",
+          "family": "end_turn"
+        },
+        {
+          "step": 49,
+          "action": "研究科技",
+          "family": "research_tech"
+        },
+        {
+          "step": 50,
+          "action": "研究 blue1（蓝槽 1）",
+          "family": "choose_target"
+        },
+        {
+          "step": 51,
+          "action": "结束回合",
+          "family": "end_turn"
+        },
+        {
+          "step": 52,
+          "action": "PASS",
+          "family": "pass"
+        },
+        {
+          "step": 53,
+          "action": "dlc_4.png",
+          "family": "choose_card"
+        }
+      ]
+    },
+    {
+      "version": "v67",
+      "verification": "reports/ai-foundation-20261023/human405-white-r1-7e3fc757-verification-20261030-v1.json",
+      "verificationSha256": "4171278e03b463d705268012fe422bbfaac16f738d0ad53f8773fd1a1532ad2e",
+      "record": "reports/research/448ff0e0.7e3fc757.quick-200.json",
+      "sourceCommit": "7e3fc757",
+      "whiteScore": 11,
+      "technology": [
+        "orange3"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "whiteInputs": 18,
+      "wallMs": 1013,
+      "maxNativeInputs": 89,
+      "maxMilliseconds": 223.847584,
+      "planReuseHits": 12,
+      "nativePath": [
+        {
+          "step": 24,
+          "action": "深空探测 1x 行动",
+          "family": "industry"
+        },
+        {
+          "step": 25,
+          "action": "b_117.webp",
+          "family": "choose_card"
+        },
+        {
+          "step": 26,
+          "action": "b_2.webp",
+          "family": "choose_card"
+        },
+        {
+          "step": 27,
+          "action": "b_2.webp：弃牌角标",
+          "family": "card_corner"
+        },
+        {
+          "step": 28,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 29,
+          "action": "第一排放置位 1",
+          "family": "choose_target"
+        },
+        {
+          "step": 30,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 31,
+          "action": "第一排放置位 2",
+          "family": "choose_target"
+        },
+        {
+          "step": 32,
+          "action": "研究科技",
+          "family": "research_tech"
+        },
+        {
+          "step": 33,
+          "action": "研究 orange3",
+          "family": "choose_target"
+        },
+        {
+          "step": 34,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 35,
+          "action": "第一排放置位 3",
+          "family": "choose_target"
+        },
+        {
+          "step": 36,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 37,
+          "action": "第一排放置位 4",
+          "family": "choose_target"
+        },
+        {
+          "step": 38,
+          "action": "收入 dlc_9.png",
+          "family": "choose_card"
+        },
+        {
+          "step": 39,
+          "action": "结束回合",
+          "family": "end_turn"
+        },
+        {
+          "step": 47,
+          "action": "PASS",
+          "family": "pass"
+        },
+        {
+          "step": 48,
+          "action": "dlc_4.png",
+          "family": "choose_card"
+        }
+      ]
+    }
+  ],
+  "teacher": {
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 3,
+      "handSize": 2,
+      "publicity": 3,
+      "score": 15
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue2": true,
+        "purple4": true
+      }
+    },
+    "hand": [
+      "dlc_5.png",
+      "dlc_37.png"
+    ],
+    "reserved": [
+      "b_117.webp",
+      "dlc_9.png"
+    ],
+    "computer": {
+      "discardedCount": 0,
+      "placedTokens": [
+        {
+          "id": "data-token-1",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-2",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-3",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-4",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-11",
+          "index": 5,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "poolTokens": []
+    },
+    "rocket": [],
+    "round": 2
+  },
+  "strategyAligned": false,
+  "formalTerminal": false,
+  "baselineEligible": false,
+  "acceptedBaseline": "ai-search-v41-baseline-20261029",
+  "findings": [
+    "v67 changes the admitted comparison window; different actions and stage scores do not establish strategic improvement.",
+    "v67 swaps B117 out, corners B2, researches orange3 and puts DLC9 into income; teacher retains B117/DLC9 and acquires blue2 plus purple4.",
+    "All actual decisions complete inside 256 native simulations / 600ms; this first-round trial is not full-game acceptance.",
+    "Root24 existing witness attribution identifies missing deployed-probe capability input in current value; do not tune a bonus merely to imitate the teacher."
+  ],
+  "runtimeSourceCheck": "reports/ai-foundation-20261023/human405-v67-trial-runtime-source-check-20261030-v1.json",
+  "reportPath": "reports/iteration/ai-search-v67-white-r1-20261030/448ff0e0.7e3fc757.quick-200.action-log.html",
+  "reportSha256": "64e063be40d2d222a5bb32b58d5b21b7e61256a8faa3f50f9ae252a5d75786ef",
+  "recordSaveReportRegistryConsistent": true
+}
