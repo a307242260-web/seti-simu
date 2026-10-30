@@ -62,8 +62,8 @@
     return Object.keys(cost || {}).length > 0;
   }
 
-  function getLandEnergyCost(context, planetId) {
-    const currentPlayer = players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
+  function getLandEnergyCost(context, planetId, requestedPlayer = null) {
+    const currentPlayer = requestedPlayer || players.getCurrentPlayer(context.players, context.turn?.currentPlayerId);
     const aomomoApi = getAomomo();
     const hasOrbit = isAomomoPlanetId(planetId)
       ? (aomomoApi?.countOrbitMarkers?.(context.aliens) || 0) > 0
@@ -268,7 +268,7 @@
   function buildLandChoicesForPlacement(context, placement, options = {}) {
     const planetId = placement.planet.planetId;
     const choices = [];
-    const energyCost = getLandEnergyCost(context, planetId);
+    const energyCost = getLandEnergyCost(context, planetId, placement.currentPlayer);
     const cost = resolveCost(options, { energy: energyCost });
     const costLabel = getActionCostLabel(cost);
     const rocketPart = formatRocketChoicePart(placement);

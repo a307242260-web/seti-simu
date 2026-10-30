@@ -1,0 +1,2 @@
+PASS production-search-hotpath http://127.0.0.1:62567/randomizer/index.html
+SUMMARY browserSmoke passed=1 failed=0 total=1

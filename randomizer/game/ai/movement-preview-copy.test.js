@@ -17,6 +17,20 @@ for(const row of before.rows){
 }
 // Reusing geometry across economic changes is independent of full game-state identity.
 {
+ const proof=read('reports/ai-foundation-20261023/requested-owner-native-land-cost-counterexample-20261031-v1.json'),f=read(proof.fixture);
+ assert.equal(sha(fs.readFileSync(path.resolve(__dirname,'../../..',proof.fixture))),proof.fixtureSha256);
+ const seed=f.source.seed,k=native.createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);
+ try{
+  const saved=c.lifecycle.save().envelope,fees=(playerId=proof.requestedOwner)=>Object.fromEntries(c.projection({role:'player',playerId}).state.probeRouteRequirements.candidates.filter(g=>g.endpointFamily==='land'&&g.endpointTarget.type==='planet').map(g=>[g.planetId,g.endpointFacts.cost.energy]));
+  assert.equal(JSON.parse(saved.committedState).turn.currentPlayerId,'player-blue');
+  assert.deepEqual(fees(),proof.after,'requested green owner keeps its native orange3 discount before its turn');
+  assert.deepEqual(fees('player-blue'),proof.before,'blue must not inherit green orange3');
+  assert.deepEqual(fees(),proof.after,'another viewer must not contaminate cached requested-owner costs');
+  assert.deepEqual(c.lifecycle.save().envelope,saved);
+  console.log(JSON.stringify({requestedOwnerLandCost:'passed',differentCurrentActor:true,viewerCacheIsolation:true,nativePassControlInputs:proof.nativeInputs,rootAndRngUnchanged:true}));
+ }finally{c.dispose();}
+}
+{
  const f=read('adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json'),state=JSON.parse(f.compositionEnvelope.committedState),c=before.rows.find(r=>r.name==='152').cases[0],key=s=>native.plannedMovementTimingKey(s,f.seatId,c.requirementId,c.path,0),original=key(state),economic=structuredClone(state),p=economic.players.players.find(p=>p.id===f.seatId);
  p.resources.credits+=7;p.resources.energy+=2;p.resources.score+=3;p.resources.publicity+=1;p.income.energy+=1;p.hand.pop();p.reservedCards=[];p.dataState.poolTokens=[];
  assert.equal(key(economic),original);assert.deepEqual(native.comparePlannedMovementTiming(economic,f.seatId,c.requirementId,c.path,0),c.value);

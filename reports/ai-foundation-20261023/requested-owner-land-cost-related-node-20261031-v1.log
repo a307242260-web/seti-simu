@@ -1,0 +1,11 @@
+{"goalMovement":"passed","goal":{"id":"rocket:5:land:neptune:satellite:triton","kind":"land","label":"land neptune","coordinate":{"x":1,"y":4},"timing":"advance-before-rotation","planetId":"neptune","endpointTarget":{"type":"satellite","satelliteId":"triton","rocketId":5},"endpointCost":{"energy":2},"targetCoordinate":{"x":1,"y":4},"movementTiming":{"comparable":true,"assumption":"one-known-solar-rotation-before-the-future-goal","rotationCount":1,"waitPaidPoints":4,"bestPrefixLength":3,"bestTotalPaidPoints":0,"classification":"advance-before-rotation","alternatives":[{"prefixLength":0,"totalPaidPoints":4,"remainingPaidPoints":4},{"prefixLength":1,"prefixMovementPoints":1,"totalPaidPoints":2,"remainingPaidPoints":2},{"prefixLength":2,"prefixMovementPoints":2,"totalPaidPoints":1,"remainingPaidPoints":1},{"prefixLength":3,"prefixMovementPoints":3,"totalPaidPoints":0,"remainingPaidPoints":0}],"availablePrefixPoints":5}},"routeSteps":3,"searchInputs":14,"policyExclusions":8,"cacheAndRestore":true}
+{"requestedOwnerLandCost":"passed","differentCurrentActor":true,"viewerCacheIsolation":true,"nativePassControlInputs":9,"rootAndRngUnchanged":true}
+{"movementPreviewCopy":"passed","nativeTimingCases":12,"nativeProjectionControls":4,"frozenRootsUnchanged":true,"geometryCacheInvalidation":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+probe-turn-session tests passed
+simulation production Standard Action composition tests passed
+SUMMARY unit passed=5 failed=0 total=5 time=3.38s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/effect-session tests=1
+OWNER architecture/standard-action tests=1
+OWNER policy/decision-search tests=3

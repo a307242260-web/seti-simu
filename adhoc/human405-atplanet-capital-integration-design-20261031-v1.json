@@ -1,0 +1,47 @@
+{
+  "status": "native-prototype-validated-not-production-admitted",
+  "goalStatus": "active",
+  "productionSource": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f",
+  "nativeEvidence": [
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step24-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-atplanet-full-reward-prototype-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-blue2-native-future-landing-20261031-v1.json"
+  ],
+  "requiredChange": "Value one currently funded ordinary mission for an owned probe already at a non-Earth planet, including its known full reward chain and shared held/paid investment opportunity cost. Select max rather than sum across probes and targets. Do not fit B117 or teacher score with a fixed bonus.",
+  "hypotheses": "One later ordinary mission, ignoring opponent interference as authorized. Public scan-slot/data rewards, known cards and native first/extra trace rewards are counted. Unknown identities, sector-completion/species/discovery bonuses and later launches remain excluded. Do not claim exact native state equivalence from scalar continuity.",
+  "publicNativeQuery": "Prefer pure native requirements from the existing viewer-safe public slices (owned player tech/resources, rockets, planets, solarSystem, public data, traces), without route BFS. A read-only Ability context selects the requested owner explicitly; it is not an invented canonical state, observation or executed action. Full/compact must contain the same required public slices. Verify any landing-cost query against the requested owner's native discount, including a different current actor.",
+  "sharedValue": "One shared module, called by state-value V5 and native fixed-plan opportunity costs. It receives typed public planning facts and a held/paid investment callback, avoiding circular dependencies and fake successor observations. Canonical state adapters must preserve the same root knowledge masking; no future public-card refill or blind-card identity may enter.",
+  "funding": "Use exact native 2-to1 currency exchange coefficients and reserve endpoint costs. At most two credit-funding cases and one linear energy-funding interval endpoint; no currency-combination search. Income consumes an actual known supplier once, cards and scan slots cannot be reused, data/publicity caps apply. Mandatory unresolved unknown income declines the quote.",
+  "timing": "Use the existing passingPlayerIds native PASS-chain window for all future investment. Exclude the new forecast at planningRound>=4 so the admitted round4 legacy model remains unchanged. Borrowed one-turn technology does not become later owned capability. Already acquired technology is still valued under its existing usage assumptions.",
+  "stateEquivalenceAndReuse": "Retain complete native physical state, queue, control and information-set identity. No new equivalence or dominance. Invalidate old value certificates through V5/search-version identity. Retain exact native execution/prefix DAG and root/RNG isolation.",
+  "globalBudget": {
+    "transitions": null,
+    "nodes": null,
+    "frontier": null,
+    "milliseconds": null
+  },
+  "globalBudgetScope": "Preserve user-authorized fully open production search. Diagnostics use explicit finite budgets; cold acceptance requires complete search<=256 actual native inputs and<=600ms. No leaf cutoff or beam is introduced.",
+  "proofPolicy": "Initially decline early-round numeric/typed shortcuts whenever an ordinary owned probe can change the new term, unless their exact before/after capital delta and rotation dependency are proved. Correctness precedes recovering pruning. If a new bound is needed, derive a separate conservative future-portfolio ceiling, including actual income/hand/publicity prerequisites and potential probe creation; the forecast itself is not an admissible bound.",
+  "validation": [
+    "Native Mars orbit continuity52+5.5=57.5 and consumed-probe forecast0. Native blue2 future landing53.5+8.5=62; subsequent blue-data fill62.5 is separate.",
+    "Requested-owner cost correctness, ordinary orbit/land/satellite marker saturation, native first/extra trace rewards, capped data, repeated scan slots, known income consumption, hidden identities and custom nonnegative-weight funding monotonicity.",
+    "Full/compact/Browser/Simulation parity and strict missing-input errors when a supported probe requires facts; no hidden-world dependency.",
+    "Every used fixed-plan and numeric source natively continued under the new value; fresh no-shortcut root best action/value and root/RNG isolation.",
+    "All45 cold roots before any new autonomous run. Profile failures; do not trade missing branches or arbitrary truncation for speed.",
+    "Related/full Node, Chrome, evaluation input audit. After exact admitted source delivery, one standard original23-opening white-only R1; compare against teacher and prior native endpoints, not just raw points."
+  ],
+  "notClaimed": [
+    "new search root winner",
+    "production candidate admitted",
+    "new autonomous score",
+    "full-game strength",
+    "180second acceptance",
+    "baseline promotion"
+  ],
+  "requestedOwnerCostFix": {
+    "status": "implemented-related-tests-passed",
+    "evidence": "reports/ai-foundation-20261023/requested-owner-native-land-cost-fixed-20261031-v1.json",
+    "relatedNodePassed": 5,
+    "chromeHotpathPassed": 1
+  }
+}

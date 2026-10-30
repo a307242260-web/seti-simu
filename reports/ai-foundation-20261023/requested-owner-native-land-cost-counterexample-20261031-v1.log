@@ -1,0 +1,1 @@
+{"output":"reports/ai-foundation-20261023/requested-owner-native-land-cost-counterexample-20261031-v1.json","inputs":9,"before":{"neptune":3,"jupiter":3,"mercury":3,"mars":3,"uranus":3,"saturn":2,"venus":3},"after":{"venus":2,"jupiter":2,"mercury":2,"neptune":2,"mars":2,"uranus":2,"saturn":1},"defect":true}

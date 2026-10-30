@@ -1,0 +1,142 @@
+{
+  "baseCommit": "67c36b92f0cf684dc8a6c4249205adbc8479c4ea",
+  "snapshot": "/private/tmp/seti-human405-v65-20261030-onpkqe05",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "files": {
+    "adhoc/archive-human405-v99-native-review-20261031-v1.py": "0fdecb13cba6789caa6c034cfe2e0d1f543e9e71cbc33425df99e18acc8dd451",
+    "adhoc/audit-human405-round1-20261030-v1.js": "c1814f14ef95b44e9a473b82a96c5f77256baca31bd493aa7473d99373cfb5e4",
+    "adhoc/audit-human405-round1-case-20261030-v1.js": "f62c2e203a873cd6218c85e6705f10e61c3e05112dc83f8f29edaa5823b3ff13",
+    "adhoc/compare-human405-v99-native-witnesses-20261031-v1.js": "882d723f02f6cefe3a3ba9ae7514ce355d8d20548dd088e039de954b4c32a763",
+    "adhoc/deliver-human405-round1-v99-native-review-20261031-v1.py": "b3dd3c3a15b086a51aab1bc7690f755952b53544ef7462e90cb96db1e7ac4a54",
+    "adhoc/human405-atplanet-capital-integration-design-20261031-v1.json": "56a7fdd07b0f97b3aa6d97d49b955835a23d2f6a047a45478439af152d0a4304",
+    "adhoc/human405-coverage-review-20261031-v1.js": "e933a6b14d86a34f08b3e2f1d1fbc98b786bb47b63d4df353bb9344153776133",
+    "adhoc/human405-round1-progress-20261031-v26.json": "538d29bb7f6797530a36822afc9daa718b07bb448614be9557e944b6eb2e7464",
+    "adhoc/human405-round1-progress-20261031-v27.json": "d4cfdfe24165529b2cb0f67018f7ec6a14c1f1f34d52f37f5ef1c6cc5a2da318",
+    "adhoc/prepare-human405-v99-native-review-delivery-20261031-v1.py": "7513648e13e330f60b8898b2b4501d5f23490ee10b2d332dbf15602141826814",
+    "adhoc/prototype-human405-atplanet-capital-20261031-v1.js": "e5de82cc4bdc84b3effecbc3ed3cd3cd35aafefd054070d43ce2f7b05a4e9371",
+    "adhoc/reproduce-requested-owner-land-cost-20261031-v1.js": "a49c8d15ab4ae4777e59495076e2d11335dac27099f7d477e80f33ad1b65ac8a",
+    "adhoc/verify-human405-atplanet-prototype-20261031-v1.js": "c14ab68d139f82c144ce2dc6b8b7415f7acbf9f630e525420b313d549f4af3f5",
+    "adhoc/verify-human405-blue2-future-landing-20261031-v1.js": "c7248ae5c2fd7fafb99a0e584f619bbebba3c3bdca5f0b1b1f0c9bba9aa1286e",
+    "adhoc/verify-human405-v99-paid-move-order-20261031-v1.js": "4345be511cae39805ddc9887cd12d7618f33082985ddc4423854baa6c587f5a1",
+    "adhoc/verify-requested-owner-land-cost-fix-20261031-v1.js": "3b0dd23f03a44a7a53bd238547d49ef213c9af74861fc0ed469cea60e474f877",
+    "docs/ai-design.md": "e9592cbf24465bc2bee231c116051da52939f6af480d455b2fdddf99b175cad2",
+    "docs/human405-round1-v99-native-review-20261031.md": "cc9c7cbce70299077d8753e4ccd446d3cee30aee461103b1e324967818b7ca72",
+    "randomizer/game/abilities/planet.js": "8cd0f6ee13c2e429e7a159c5020b1de2795b9239f124df9fd865ad96520fd13a",
+    "randomizer/game/ai/movement-preview-copy.test.js": "2f77a515d92d2b97bc6e59fbc1a1fbf2605f96de7e2ca77d8fd6a029f53c97c6",
+    "randomizer/index.html": "84321d8a34972b12983ff9830a0bfd1bc1c6a94e5b73d9a94c17661eb9b9e5e1",
+    "reports/ai-foundation-20261023/human405-atplanet-full-reward-prototype-20261031-v1.json": "cd64ffdd90f1bed16d0cbdfd2e894762e4936ae606394915b042ecdde21c8559",
+    "reports/ai-foundation-20261023/human405-atplanet-prototype-verification-20261031-v2.log": "deb40ebfa561958c3da220f56dbdcdaad4c9c4789ce709a57396d7c8d98b36df",
+    "reports/ai-foundation-20261023/human405-blue2-native-future-landing-20261031-v1.json": "1f9a4fa8125de457aa05b0dd1a5a310b62085fc826fe8bb1cebd5716b6fe9631",
+    "reports/ai-foundation-20261023/human405-blue2-native-future-landing-20261031-v2.log": "693e6f742cad01d720face34529d0e1f57bd928055c76e682311882de204d88c",
+    "reports/ai-foundation-20261023/human405-v99-corrected-coverage-review-20261031-v1.json": "56a1319b00a2bb017249bbaeed2a58cbc96d9db59409e998fa366e0b405a22fa",
+    "reports/ai-foundation-20261023/human405-v99-native-review-source-check-20261031-v1.json": "37b9751c707a700eccd2f78f1710f9f3729d69431b197dd636906c61925a550a",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step24-20261031-v1.json": "f6022b4d332ad42f796f79c77468fb74c914705bbb17cea63b16a870bbfb28ef",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step24-20261031-v1.raw.json.gz": "ea74d274e8b007f678976d2fd4862b9281bb92eec704b457c803f492ee9c5eb9",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step35-20261031-v1.json": "948e80cfbe0f4025e9b45dbaaa29fc45e055b27f15d951a1da6c7209fe546605",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step35-20261031-v1.raw.json.gz": "59df1b61cf7144d3f9425e07da8709b94cf7cc8f98b391a99f950395d6586921",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step36-20261031-v1.json": "00fb3ccb52162114b55ef58498c83849f602694ff847999ff64ab6647249119c",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step36-20261031-v1.raw.json.gz": "838895f3ea4ed3dfbdd77d3424eac3af287c5ed2aeff278608c6703a428a0798",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step38-20261031-v1.json": "438869beeb776bf134e453aa2b10505ead44dc5a50d2e4f9115043f62aecff97",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step38-20261031-v1.raw.json.gz": "0a75d3d07ca92914de2399306520c6b9adbaca24405355e18f540d33dfb87657",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step39-20261031-v1.json": "dd837f5878c7d1a3b3ea7a53e8d606ab7900f5ad1cb55b455c81842ebfda3de7",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step39-20261031-v1.raw.json.gz": "2703ff1d93b815de7320cf575890dd1f41fdd88917bd5656ea11f3201b23e839",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step43-20261031-v1.json": "91fd40ced6272fe16f90f08e551beff9fb2f76c6f61f29eb4d6b406acc0a702d",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step43-20261031-v1.raw.json.gz": "036ba362fc43bf6904fd2ff0b667c0c728126ac9c687b88916027ac6fc66874e",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step56-fixed-prefix-20261031-v1.json": "678edcdb3b7371445a4a378a0f7ec127eec54ab481cc3cc920fc0141c8991fd0",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step56-fixed-prefix-20261031-v1.raw.json.gz": "882f797546a60817d5ee1223587bcc07089096537688d3289a57d4564089fc63",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step62-20261031-v1.json": "ef70e28ea36a317b23f62a04a8e075491807e8300af08a5fe762dc3b25c37220",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step62-20261031-v1.raw.json.gz": "57c094eb3659eb030626df0f74526129c2c74edea1a7ec1e29566f2e644a527e",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-step24-20261031-v1.log": "d7004d9b9c3eae29a3ce7129fc49cd979215dd1a32bb3c7d3019948e9bdde17d",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-step56-fixed-20261031-v1.log": "d012b2deb6c7bbf1a628afa7e180c26bd50ede716e1471d0088da904287702a1",
+    "reports/ai-foundation-20261023/human405-v99-native-witnesses-remaining-20261031-v1.log": "d5c54bd9245e52156df0649c191da46481efb8806c7696382d77702e39ab6545",
+    "reports/ai-foundation-20261023/human405-v99-paid-move-order-20261030-v1.json": "6d085962dbd248097b8315675e7df2f88a6a2f695abcc947c3c0eb471d9533fa",
+    "reports/ai-foundation-20261023/requested-owner-land-cost-after-fix-20261031-v1.log": "94fe20f074738230f6a4ec55da07951fa07d81e2ff6d8516fbebf233bc88f0ec",
+    "reports/ai-foundation-20261023/requested-owner-land-cost-before-fix-20261031-v1.log": "2ba5a5e0d8970a19c0ab58cd92c5bfcf68304783026febb64ba09ba4443ee555",
+    "reports/ai-foundation-20261023/requested-owner-land-cost-browser-20261031-v1.log": "3fd8f65578b7695725f70f17104057c11abef22cf37b364407b515b5e070c7ed",
+    "reports/ai-foundation-20261023/requested-owner-land-cost-fix-validation-20261031-v1.json": "e0535f0de5ac71b056b14eced21224dde2cf090b845fe267b4c59a19e1614455",
+    "reports/ai-foundation-20261023/requested-owner-land-cost-related-node-20261031-v1.log": "1aa203728720844643a2f1542df986aa2beb2280c30cf2f38d365fac85f79e8f",
+    "reports/ai-foundation-20261023/requested-owner-native-land-cost-counterexample-20261031-v1.json": "0068f37ba17408e39f204b6cd5ee8826252d2344790bf9d14a39563c120abee3",
+    "reports/ai-foundation-20261023/requested-owner-native-land-cost-counterexample-20261031-v1.log": "e39dbb5c92d6e69ae5bc7f87ef362173418b92e75d414e1f5d678d433dda4082",
+    "reports/ai-foundation-20261023/requested-owner-native-land-cost-fixed-20261031-v1.json": "ca52f0bec5fb9bff3ebc588a24117186a914c22e06c8617cf9d047a022cafc3f",
+    "reports/ai-foundation-20261023/requested-owner-native-land-cost-fixed-20261031-v1.log": "d1901eacc6ad1b2143d61b2ac22c7ef854a29dccb490a51dedbf7ca851da823b",
+    "tools/browser-smoke-inventory.js": "f0376a04601b1827bc8a34834050158803ac484aa60154072f8c271a6d4203b7"
+  },
+  "sourceBoundReports": [
+    "reports/ai-foundation-20261023/human405-atplanet-full-reward-prototype-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-blue2-native-future-landing-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-corrected-coverage-review-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-native-review-source-check-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step24-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step35-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step36-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step38-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step39-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step43-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step56-fixed-prefix-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step62-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-paid-move-order-20261030-v1.json",
+    "reports/ai-foundation-20261023/requested-owner-land-cost-fix-validation-20261031-v1.json",
+    "reports/ai-foundation-20261023/requested-owner-native-land-cost-counterexample-20261031-v1.json",
+    "reports/ai-foundation-20261023/requested-owner-native-land-cost-fixed-20261031-v1.json"
+  ],
+  "sourceBindings": {
+    "reports/ai-foundation-20261023/human405-atplanet-full-reward-prototype-20261031-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    },
+    "reports/ai-foundation-20261023/human405-blue2-native-future-landing-20261031-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    },
+    "reports/ai-foundation-20261023/human405-v99-corrected-coverage-review-20261031-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    },
+    "reports/ai-foundation-20261023/human405-v99-native-review-source-check-20261031-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    },
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step24-20261031-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    },
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step35-20261031-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    },
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step36-20261031-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    },
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step38-20261031-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    },
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step39-20261031-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    },
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step43-20261031-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    },
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step56-fixed-prefix-20261031-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    },
+    "reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step62-20261031-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    },
+    "reports/ai-foundation-20261023/human405-v99-paid-move-order-20261030-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    },
+    "reports/ai-foundation-20261023/requested-owner-native-land-cost-counterexample-20261031-v1.json": {
+      "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f"
+    }
+  },
+  "validation": {
+    "nativeCurrentSourceComparisons": 9,
+    "coverageAuditRoots": 32,
+    "prototypeOrbitGain": 5.5,
+    "nativePrototypeLandingGain": 8.5,
+    "prototypeAdmitted": false,
+    "feeFix": "reports/ai-foundation-20261023/requested-owner-land-cost-fix-validation-20261031-v1.json",
+    "relatedNodePassed": 5,
+    "chromePassed": 1,
+    "nativeFeeFixInputs": 9,
+    "fullNodeRepeated": false,
+    "newAutonomousRun": false,
+    "valueModelUnchanged": "V4",
+    "goalStatus": "active"
+  }
+}
