@@ -106,7 +106,7 @@ assert.equal(incomplete.selectionPlan, null);
 assert.equal(incomplete.unresolved[0].selectionPlansRemaining, 1, "不能把未枚举出口算进等价覆盖");
 
 function wallet(credits, energy, score = 0) {
-  return { terminal: false, publicState: { roundNumber: 4, players: [{ playerId: "p1", score, finalScore: score,
+  return { terminal: false, publicState: { roundNumber: 4, passingPlayerIds: [], players: [{ playerId: "p1", score, finalScore: score,
     credits, energy, publicity: 0, availableData: 0, additionalPublicScan: 0,
     income: { credits: 0, energy: 0, publicity: 0, availableData: 0, handSize: 0, additionalPublicScan: 0 } }] },
     selfState: { playerId: "p1", hand: [] } };

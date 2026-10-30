@@ -97,9 +97,10 @@
     return card?{...goal,targetComputerSlot:4,incomeCardId:card.id,incomeFunding:true}:null;
   }
   function heldAndResearchCapital(state,p){
-    return stateValue.handCapital(p.hand,p.techState,state.tech,state.turn.roundNumber)
+    const passing=(state.passingPlayerIds||state.turn.passedPlayerIds).includes(p.id)||p.passCompletionPending===true;
+    return stateValue.handCapital(p.hand,p.techState,state.tech,state.turn.roundNumber+Number(passing))
       +stateValue.researchCapital({hand:p.hand,techState:p.techState,supply:state.tech,round:state.turn.roundNumber,
-        publicity:p.resources.publicity,researchCost:techResolver.getResearchPublicityCost(p),passed:state.turn.passedPlayerIds.includes(p.id)});
+        publicity:p.resources.publicity,researchCost:techResolver.getResearchPublicityCost(p),passed:passing});
   }
   function incomeOpportunityCost(state,p,card){
     return heldAndResearchCapital(state,p)-heldAndResearchCapital(state,{...p,hand:p.hand.filter(c=>c.id!==card.id)});

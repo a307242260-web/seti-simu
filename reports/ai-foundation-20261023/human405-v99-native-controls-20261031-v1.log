@@ -1,0 +1,9 @@
+{"kind":"teacher","id":"24","controls":27,"proofControls":7,"actualSearchInputs":79,"fullNativeInputs":319,"sameBestActionAndValue":true}
+{"kind":"teacher","id":"35","controls":3,"proofControls":31,"actualSearchInputs":162,"fullNativeInputs":300,"sameBestActionAndValue":true}
+{"kind":"teacher","id":"36","controls":0,"proofControls":29,"actualSearchInputs":106,"fullNativeInputs":199,"sameBestActionAndValue":true}
+{"kind":"teacher","id":"39","controls":37,"proofControls":23,"actualSearchInputs":235,"fullNativeInputs":447,"sameBestActionAndValue":true}
+{"kind":"teacher","id":"44","controls":28,"proofControls":12,"actualSearchInputs":183,"fullNativeInputs":292,"sameBestActionAndValue":true}
+{"kind":"teacher","id":"58","controls":8,"proofControls":1,"actualSearchInputs":17,"fullNativeInputs":26,"sameBestActionAndValue":true}
+{"kind":"legacy","id":"105","controls":23,"proofControls":0,"actualSearchInputs":189,"fullNativeInputs":283,"sameBestActionAndValue":true}
+{"kind":"legacy","id":"152","controls":55,"proofControls":9,"actualSearchInputs":228,"fullNativeInputs":1074,"sameBestActionAndValue":true}
+{"kind":"autonomous","id":"43","controls":20,"proofControls":22,"actualSearchInputs":94,"fullNativeInputs":158,"sameBestActionAndValue":true}

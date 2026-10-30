@@ -1,0 +1,9 @@
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+complete decision graph coverage, cycles, preparation chains and budget failures passed
+{"fundedResearch":"passed","nativePassWindowFixtures":3,"nativeAcquisitionContinuity":true,"fullCompactEqual":true,"publicNativeFees":true,"sharedFreeCardTarget":true,"hiddenBonusIgnored":true,"sourceAndRngUnchanged":true,"nativeIncomeAndBlueThresholds":true}
+{"standardScanBound":"passed","rows":[{"name":"original","leaves":6,"dataGain":2,"maximumScore":0,"maximum":40},{"name":"one-space","leaves":6,"dataGain":1,"maximumScore":0,"maximum":40.5},{"name":"full-pool","leaves":6,"dataGain":0,"maximumScore":0,"maximum":40.5},{"name":"different-slot-points","leaves":6,"dataGain":2,"maximumScore":2,"maximum":42}],"strictAndTieAndWatchdog":true}
+independent state value accounting and strict inputs passed
+SUMMARY unit passed=5 failed=0 total=5 time=1.35s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=2

@@ -1,0 +1,37 @@
+{
+  "version": "v99-candidate",
+  "date": "2026-10-31",
+  "sourceBase": "88af65dbc83aa69092ebd8500218bba0371f12d5",
+  "goal": "Correct the native PASS-chain investment window without changing game rules or search scope.",
+  "nativeEvidence": "reports/ai-foundation-20261023/human405-v98-standard-r1-verification-20261031-v2.json",
+  "inputContract": "Production derives passingPlayerIds from native passedPlayerIds, native passCompletionPending and queued PASS_COMMIT. PASS reserve/discard and company rewards before COMMIT are included. This is a derived projection/planning fact, not a saved rule flag. Full and compact observations carry the same list. Formal passed IDs and completion flags are unchanged.",
+  "valueContract": "Held and paid research use round+1 once the seat is passing. Already-owned technology and income retain their existing later-round windows. Paid/free target overlap is computed in one common planning round. Terminal native final score and round4 zero investment terms remain unchanged. Model V4 invalidates old value certificates.",
+  "canonicalPlans": "Canonical opportunity-cost previews use the same passing list derived from their native envelope/session; a raw stable state uses its formal passed set and completion flag. No guessed successor state is constructed.",
+  "stateEquivalenceAndDeduplication": "Unchanged: existing physical state/control/information-set identity already includes the complete native effect queue. A derived passing list must not merge distinct queues or change native authority identity. Existing exact prefix cache and per-decision global budgets remain.",
+  "reachabilityAndLowerBounds": "No new purpose or search branch. Existing native resource reachability, protected-card funding and causal preparation lower bounds stay in force. Do not claim a deferred investment has guaranteed future funding.",
+  "bounds": "Numeric research ceilings remain conservative current-round upper estimates. Recheck every used numeric/typed source under V4; no equality shortcut is restored outside its admitted model.",
+  "globalBudget": "Retain existing global native-input/node/frontier/time limits and no new per-root leaf cap or beam cutoff. Production cold gate <=256 actual native inputs and <=600ms with complete search. No autonomous round until gate and related correctness proofs pass.",
+  "validation": [
+    "Native before/after PASS fixtures fail before implementation; full/compact and canonical opportunity costs agree after correction.",
+    "Both native completion flags remain false before reserve choice, while native queue proves PASS. New-round settlement reopens the window without double shift.",
+    "Cover actual native PASS discard/mandatory rewards before COMMIT and held/paid compatible-target timing.",
+    "All44 teacher/legacy cold roots, native numeric/typed controls, full Node, related Chrome, evaluation input audit. Record sole pre-existing audit failure explicitly.",
+    "After admitted source commit/push, exactly one standard original-opening white-only R1 and native replay. Baselinev41 remains until separately accepted."
+  ],
+  "admitted": true,
+  "goalStatus": "active",
+  "productionBudget": {
+    "transitions": null,
+    "nodes": null,
+    "frontier": null,
+    "milliseconds": null
+  },
+  "coldAdmissionGate": {
+    "actualNativeInputs": 256,
+    "milliseconds": 600,
+    "requiresCompleteSearch": true
+  },
+  "productionBudgetScope": "Preserves the user-authorized fully open search configuration. The cold gate is an acceptance requirement, not a truncation policy.",
+  "admission": "reports/ai-foundation-20261023/human405-v99-admission-20261031-v1.json",
+  "autonomouslyRun": false
+}

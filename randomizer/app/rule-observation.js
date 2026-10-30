@@ -144,6 +144,7 @@ function buildRuleObservation(state, seed, viewerPlayerId, legalActions = [], op
       actionCycleNumber: turn.actionCycleNumber,
       currentPlayerId: turn.currentPlayerId,
       passedPlayerIds: [...(turn.passedPlayerIds || [])],
+      passingPlayerIds: [...(state.passingPlayerIds || turn.passedPlayerIds || [])],
       completedTurnPlayerIds: [...(turn.completedTurnPlayerIds || [])],
       activePlayerIds: [...(turn.activePlayerIds || [])],
       players: (playersState.players || []).map((player) => {

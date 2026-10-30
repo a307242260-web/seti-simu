@@ -527,13 +527,18 @@
       freeze(result);planningStates.set(state,result); return result;
     }
 
+    function passPlanningState(state,session) {
+      return session?.queue?.some(effect=>effect.type===probeTurnSession.EFFECT_TYPES.PASS_COMMIT)
+        ? {...state,passingPlayerIds:probeTurnSession.getPassingPlayerIds(state,session)} : state;
+    }
+
     function readPlanningState(stored) {
-      return planningState(readIdentityState(stored.envelope),stored.informationBarrier);
+      return passPlanningState(planningState(readIdentityState(stored.envelope),stored.informationBarrier),stored.envelope.session?.session);
     }
 
     function describeCardPick(envelope,actions,status,barrier=null) {
       if (envelopeCardSpecs.has(envelope)) return envelopeCardSpecs.get(envelope);
-      const state=planningState(readIdentityState(envelope),barrier);
+      const state=readPlanningState({envelope,informationBarrier:barrier});
       const session=envelope.session?.session;
       const policySession=barrier&&session?{...session,baseState:planningState(session.baseState,barrier),workingState:state}:session;
       const result=cardPickPlanner.plan({state,seatId,actions,status,session:policySession,
@@ -669,7 +674,7 @@
       }
       if(state.players.players.find(p=>p.id===seatId).mainActionCompleted){
         const goal=goals.find(g=>g.kind==="income");
-        if(goal){incomeTail=localPlans.incomeCompletion({state:node.status==="decision"&&session?.baseState?planningState(session.baseState,stored.informationBarrier):state,seatId,goal});
+        if(goal){incomeTail=localPlans.incomeCompletion({state:node.status==="decision"&&session?.baseState?passPlanningState(planningState(session.baseState,stored.informationBarrier),session):state,seatId,goal});
           goals=goals.filter(g=>g.kind!=="income"||incomeTail.selected);
         }
       }

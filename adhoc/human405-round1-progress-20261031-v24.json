@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "seti-human405-round1-goal-checkpoint-v2",
+  "date": "2026-10-31",
+  "goalStatus": "active",
+  "productionSource": "cad56459d9c3e2a04ff433cfc077c28347052564",
+  "artifactCommit": "88af65dbc83aa69092ebd8500218bba0371f12d5",
+  "searchVersion": "v99-private-candidate",
+  "valueModel": "seti-purpose-capital-state-value-v4",
+  "candidateAdmitted": true,
+  "autonomousCurrentCandidateRun": false,
+  "phase": "v99-source-admitted-before-single-standard-autonomous-R1",
+  "design": "adhoc/human405-pass-investment-window-design-20261031-v1.json",
+  "coldGate": {
+    "points": 45,
+    "allComplete": true,
+    "maxNativeInputs": 235,
+    "maxMilliseconds": 489.4720830000001
+  },
+  "nativeControls": {
+    "roots": 9,
+    "numeric": 201,
+    "typed": 134,
+    "allBestActionsValuesEqual": true
+  },
+  "chromePassed": 7,
+  "valueInputAudit": "All independent current-model paths plus native PASS window pass; sole pre-existing frozen-aomomo failure retained.",
+  "fullNodeInitial": {
+    "unitPassed": 148,
+    "unitFailed": 3,
+    "fullFlowPassed": 1,
+    "reason": "Synthetic observations missing new mandatory passingPlayerIds; fixed test inputs, strict contract kept."
+  },
+  "relatedRerun": {
+    "passed": 5,
+    "failed": 0
+  },
+  "remaining": [
+    "Deliver exact admitted source through a private index and pushdev.",
+    "Exactly one standard original23opening autonomous white R1, then strict native replay and common model endpoint comparison; retain v41 baseline.",
+    "Continue remaining teacher differences and known funded probe/planet purposes; no fixed B117 or imitation reward."
+  ],
+  "admission": "reports/ai-foundation-20261023/human405-v99-admission-20261031-v1.json",
+  "finalFullNode": {
+    "unitPassed": 151,
+    "unitFailed": 0,
+    "fullFlowPassed": 1,
+    "log": "reports/ai-foundation-20261023/human405-v99-full-node-20261031-v2.log"
+  }
+}

@@ -453,7 +453,8 @@
             options.allowTrustedForkLifecycle === true ? state : clone(state),
             clone(viewer),
             clone(inspection),
-            { stateVersion: state?.meta?.stateVersion ?? readStoreSnapshot().meta.stateVersion },
+            { stateVersion: state?.meta?.stateVersion ?? readStoreSnapshot().meta.stateVersion,
+              pendingEffects: (activeSession?.queue || []).map(({ type, ownerId }) => ({ type, ownerId })) },
           )
         ),
       });

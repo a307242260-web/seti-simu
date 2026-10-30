@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "seti-human405-round1-goal-checkpoint-v2",
+  "date": "2026-10-31",
+  "goalStatus": "active",
+  "productionSource": "cad56459d9c3e2a04ff433cfc077c28347052564",
+  "artifactCommit": "88af65dbc83aa69092ebd8500218bba0371f12d5",
+  "searchVersion": "v99-private-candidate",
+  "valueModel": "seti-purpose-capital-state-value-v4",
+  "candidateAdmitted": false,
+  "autonomousCurrentCandidateRun": false,
+  "phase": "PASS-window-correction-gates-native-controls-and-Chrome-passed-final-full-Node-running",
+  "design": "adhoc/human405-pass-investment-window-design-20261031-v1.json",
+  "coldGate": {
+    "points": 45,
+    "allComplete": true,
+    "maxNativeInputs": 235,
+    "maxMilliseconds": 489.4720830000001
+  },
+  "nativeControls": {
+    "roots": 9,
+    "numeric": 201,
+    "typed": 134,
+    "allBestActionsValuesEqual": true
+  },
+  "chromePassed": 7,
+  "valueInputAudit": "All independent current-model paths plus native PASS window pass; sole pre-existing frozen-aomomo failure retained.",
+  "fullNodeInitial": {
+    "unitPassed": 148,
+    "unitFailed": 3,
+    "fullFlowPassed": 1,
+    "reason": "Synthetic observations missing new mandatory passingPlayerIds; fixed test inputs, strict contract kept."
+  },
+  "relatedRerun": {
+    "passed": 5,
+    "failed": 0
+  },
+  "liveFullNodeSession": 36301,
+  "liveFullNodeLog": "reports/ai-foundation-20261023/human405-v99-full-node-20261031-v2.log",
+  "remaining": [
+    "Poll exact final full Node36301; do not duplicate a running suite.",
+    "Aggregate admission, review exact diff, syntax, docs/source manifest, private-index Chinese commit and push.",
+    "Exactly one standard original-opening autonomous white R1 after admitted source delivery; preservev41baseline and classify remaining teacher strategy differences."
+  ]
+}

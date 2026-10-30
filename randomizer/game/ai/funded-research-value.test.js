@@ -58,6 +58,8 @@ try {
   assert.equal(values.researchCapital({ ...params, round: 4 }), 0);
   assert.equal(values.researchCapital({ ...params, round: 3, passed: true }), 0);
   assert.equal(values.researchCapital({ ...params, hand: [], passed: true }), values.researchCapital({ ...params, hand: [], round: 2 }));
+  assert.equal(values.researchCapital({ ...params, passed: true }), values.researchCapital({ ...params, round: 2 }),
+    'compatible held and paid targets must share the same deferred planning window');
   const onlyPurple = { stacks: { purple4: params.supply.stacks.purple4 } };
   const shared = { ...params, supply: onlyPurple };
   const held = values.handCapital(params.hand, params.techState, onlyPurple, 1);
@@ -108,6 +110,93 @@ try {
     demand.heldAndResearchCapital(passedState, green), 'passed-seat forecast must use the canonical passed-player set');
 
 } finally { port.close(); c.dispose(); }
+// Native PASS choices begin before both completion flags change. A future
+// investment must lose the current-round window while its rewards settle.
+for (const [name, expected] of [['autonomous', 54.5], ['teacher58', 57.5]]) {
+  const fixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+    `../../../adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/${name}-before-pass-20261031-v1.json`)));
+  const kernel = createSimulationRuleComposition({ seed, random: createSeededRandom(seed), activePlayerCount: 4,
+    trustedProjectionReader: true, projectCounterfactualState: (s, viewer) => buildRuleObservation(s, seed, viewer?.playerId) });
+  kernel.newGame({ seed }); const composition = kernel.composition;
+  assert(composition.lifecycle.restore(fixture.compositionEnvelope).ok);
+  const unchanged = composition.lifecycle.save().envelope;
+  const analysis = createAnalysisPort({ composition, seatId, maxCacheEntries: 0 });
+  try {
+    const root = analysis.openRoot();
+    assert(!root.observation.publicState.passingPlayerIds.includes(seatId));
+    const pass = root.legalActions.find(a => a.family === 'pass');
+    const child = analysis.expand(root, pass.actionId);
+    assert(child.observation.publicState.passingPlayerIds.includes(seatId));
+    assert(!child.observation.publicState.passedPlayerIds.includes(seatId));
+    assert.equal(values.evaluateStateValue(child.observation, seatId).total, expected);
+    assert.deepEqual(values.evaluateStateValue(analysis.valueObservation(child), seatId),
+      values.evaluateStateValue(child.observation, seatId));
+    assert.deepEqual(composition.lifecycle.save().envelope, unchanged);
+    assert(composition.inputPort.submitAction(pass).ok);
+    const saved = composition.lifecycle.save().envelope, session = saved.session.session;
+    const player = session.workingState.players.players.find(p => p.id === seatId);
+    assert.equal(player.passCompletionPending, false);
+    assert(session.queue.some(e => e.type === 'probe_turn_pass_commit' && e.ownerId === seatId));
+    const projected = composition.projection({ role: 'player', playerId: seatId }).state;
+    assert(projected.publicState.passingPlayerIds.includes(seatId));
+    assert.equal(values.evaluateStateValue(projected, seatId).total, expected);
+    const nativePlanning = { ...session.workingState, passingPlayerIds: projected.publicState.passingPlayerIds };
+    const v = values.evaluateStateValue(projected, seatId);
+    assert.equal(demand.heldAndResearchCapital(nativePlanning, player),
+      v.components.handPotential + v.components.researchPotential);
+    const d = composition.inspect().session.decision;
+    assert(d.choices.every(a => a.target.kind === 'pass-reserve-card'));
+    assert(composition.inputPort.submitDecision({ decisionId: d.decisionId, decisionVersion: d.decisionVersion,
+      ownerId: d.ownerId, choice: d.choices[0] }).ok);
+    const next = composition.projection({ role: 'player', playerId: seatId }).state;
+    assert.equal(next.publicState.roundNumber, 2);
+    assert(!next.publicState.passingPlayerIds.includes(seatId), 'new round must reopen without a second window shift');
+    const owner = next.publicState.players.find(p => p.playerId === seatId), nextValue = values.evaluateStateValue(next, seatId);
+    assert.equal(nextValue.components.handPotential,
+      values.handCapital(next.selfState.hand, owner.techState, next.publicState.board.techSupply, 2));
+    assert.equal(nextValue.components.researchPotential,
+      values.researchCapital({ hand: next.selfState.hand, techState: owner.techState, supply: next.publicState.board.techSupply,
+        round: 2, publicity: owner.publicity, researchCost: owner.researchPublicityCost }));
+  } finally { analysis.close(); composition.dispose(); }
+}
+// The first mandatory PASS decision can be hand-limit discard, before reserve
+// selection and before either completion flag is set.
+{
+  const fixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
+    '../../../adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/green-before-pass-discard-20261031-v1.json')));
+  const seat = fixture.seatId, kernel = createSimulationRuleComposition({ seed, random: createSeededRandom(seed),
+    activePlayerCount: 4, trustedProjectionReader: true,
+    projectCounterfactualState: (s, viewer) => buildRuleObservation(s, seed, viewer?.playerId) });
+  kernel.newGame({ seed }); const composition = kernel.composition;
+  try {
+    assert(composition.lifecycle.restore(fixture.compositionEnvelope).ok);
+    const pass = composition.inputPort.enumerateActions({}).find(a => a.actionId === fixture.source.originalActionId);
+    assert(pass && pass.family === 'pass'); assert(composition.inputPort.submitAction(pass).ok);
+    for (const kind of ['pass-hand-limit', 'pass-reserve-card']) {
+      const native = composition.lifecycle.save().envelope.session.session;
+      assert.notEqual(native.workingState.players.players.find(p => p.id === seat).passCompletionPending, true);
+      assert(!native.workingState.turn.passedPlayerIds.includes(seat));
+      const observed = composition.projection({ role: 'player', playerId: seat }).state;
+      assert(observed.publicState.passingPlayerIds.includes(seat));
+      const analysis = createAnalysisPort({ composition, seatId: seat, maxCacheEntries: 0 });
+      try {
+        const root = analysis.openRoot();
+        assert.deepEqual(values.evaluateStateValue(analysis.valueObservation(root), seat), values.evaluateStateValue(root.observation, seat));
+      } finally { analysis.close(); }
+      const decision = composition.inspect().session.decision;
+      assert(decision.choices.every(a => a.target.kind === kind));
+      assert(composition.inputPort.submitDecision({ decisionId: decision.decisionId, decisionVersion: decision.decisionVersion,
+        ownerId: decision.ownerId, choice: decision.choices[0] }).ok);
+    }
+    const settled = composition.projection({ role: 'player', playerId: seat }).state;
+    assert.equal(settled.publicState.roundNumber, 1);
+    assert(settled.publicState.passedPlayerIds.includes(seat));
+    assert(settled.publicState.passingPlayerIds.includes(seat));
+    const owner = settled.publicState.players.find(p => p.playerId === seat);
+    assert.equal(values.evaluateStateValue(settled, seat).components.handPotential,
+      values.handCapital(settled.selfState.hand, owner.techState, settled.publicState.board.techSupply, 2));
+  } finally { composition.dispose(); }
+}
 // Native publicity threshold controls for both typed income and blue plans.
 // These are valid checkpoint variants; the plans themselves use real inputs.
 for (const kind of ['income', 'blue-data']) {
@@ -140,6 +229,6 @@ for (const kind of ['income', 'blue-data']) {
     assert.deepEqual(composition.lifecycle.save().envelope, before);
   } finally { p.close(); composition.dispose(); }
 }
-console.log(JSON.stringify({ fundedResearch: 'passed', nativeAcquisitionContinuity: true,
+console.log(JSON.stringify({ fundedResearch: 'passed', nativePassWindowFixtures: 3, nativeAcquisitionContinuity: true,
   fullCompactEqual: true, publicNativeFees: true, sharedFreeCardTarget: true, hiddenBonusIgnored: true,
   sourceAndRngUnchanged: true, nativeIncomeAndBlueThresholds: true }));

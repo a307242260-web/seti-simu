@@ -725,6 +725,40 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
  finally{port?.close();kernel?.composition.dispose();}
 }
 
+{
+ let kernel, port;
+ try {
+  const fs = require('node:fs'), assert = require('node:assert/strict');
+  const { createSimulationRuleComposition } = require('../randomizer/training/simulation-rule-composition');
+  const { createSeededRandom } = require('../randomizer/game/random');
+  const { buildRuleObservation } = require('../randomizer/app/rule-observation');
+  const { createAnalysisPort } = require('../randomizer/game/ai/analysis-port');
+  const values = require('../randomizer/game/ai/state-value'), demand = require('../randomizer/game/ai/resource-demand');
+  const nativePass = require('../randomizer/game/effects/probe-turn-session');
+  for (const [name, expected] of [['autonomous', 54.5], ['teacher58', 57.5]]) {
+   const f = JSON.parse(fs.readFileSync('adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/'+name+'-after-pass-20261031-v1.json'));
+   const seed = f.source.seed;
+   kernel = createSimulationRuleComposition({ seed, random: createSeededRandom(seed), activePlayerCount: 4,
+    trustedProjectionReader: true, projectCounterfactualState: (s, viewer) => buildRuleObservation(s, seed, viewer?.playerId) });
+   kernel.newGame({ seed }); const c = kernel.composition; assert(c.lifecycle.restore(f.compositionEnvelope).ok);
+   const original = c.lifecycle.save().envelope, session = original.session.session;
+   assert(session.queue.some(e => e.type === nativePass.EFFECT_TYPES.PASS_COMMIT));
+   assert(!session.workingState.turn.passedPlayerIds.includes(f.seatId));
+   port = createAnalysisPort({ composition: c, seatId: f.seatId, maxCacheEntries: 0 });
+   const root = port.openRoot(), full = values.evaluateStateValue(root.observation, f.seatId);
+   assert(root.observation.publicState.passingPlayerIds.includes(f.seatId));
+   assert.equal(full.total, expected); assert.deepEqual(values.evaluateStateValue(port.valueObservation(root), f.seatId), full);
+   const state = { ...session.workingState, passingPlayerIds: nativePass.getPassingPlayerIds(session.workingState, session) };
+   const owner = state.players.players.find(p => p.id === f.seatId);
+   assert.equal(demand.heldAndResearchCapital(state, owner), full.components.handPotential + full.components.researchPotential);
+   assert.deepEqual(c.lifecycle.save().envelope, original);
+   port.close(); port = null; c.dispose(); kernel = null;
+  }
+  console.log('[PASS] independent-pass-investment-window: native PASS queue, formal IDs unchanged, held/paid terms and full/compact/canonical agree');
+ } catch(error) { console.log(`[FAIL] independent-pass-investment-window: ${error.message}`); allPass=false; }
+ finally { port?.close(); kernel?.composition.dispose(); }
+}
+
 env.dispose();
 console.log(allPass ? "\nV 输入审计全部通过" : "\nV 输入审计有 FAIL（见上，检查对应调用点装配）");
 process.exit(allPass ? 0 : 1);

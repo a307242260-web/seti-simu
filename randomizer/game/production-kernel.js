@@ -17,6 +17,7 @@ const planetStats = loadProductionDependency("./planet-stats", "SetiPlanetStats"
 const planetRewards = loadProductionDependency("./actions/planet-rewards", "SetiPlanetRewards");
 const scanEffects = loadProductionDependency("./actions/scan-effects", "SetiScanEffects");
 const scienceSession = loadProductionDependency("./effects/science-session", "SetiScienceSession");
+const probeTurnSession = loadProductionDependency("./effects/probe-turn-session", "SetiProbeTurnSession");
 const researchTechAction = loadProductionDependency("./actions/research-tech", "SetiActionResearchTech");
 const data = loadProductionDependency("./data", "SetiData");
 const cards = loadProductionDependency("./cards/deck", "SetiCards");
@@ -1637,6 +1638,7 @@ function createProductionHostComposition(options = {}) {
       const projectionState = options.trustedProjectionReader === true ? state : clone(state);
       const projectedState = {
         ...projectionState,
+        passingPlayerIds: probeTurnSession.getPassingPlayerIds(state, { queue: projectionContext.pendingEffects }),
         ...(options.trustedProjectionReader === true ? requirements : clone(requirements)),
       };
       if (hostKind === "browser") {

@@ -41,7 +41,7 @@ reject(s=>{reserveFromDraw(s,'b_44.webp');s.turn.type1TriggerEvents=[{type:'visi
 }
 // A synthetic complete graph isolates strict cutoffs, pending obligations, ties and the frozen default model.
 function synthetic(leafValue=10,directScan=false){
- const observation=(value,terminal=false)=>({terminal,selfState:{playerId:'p1',hand:[]},publicState:{roundNumber:4,players:[{playerId:'p1',score:terminal?value:0,finalScore:terminal?value:0,credits:terminal?0:value,energy:0,publicity:0,availableData:0,additionalPublicScan:0,handSize:0,income:{credits:0,energy:0,publicity:0,availableData:0,additionalPublicScan:0,handSize:0}}]}});
+ const observation=(value,terminal=false)=>({terminal,selfState:{playerId:'p1',hand:[]},publicState:{roundNumber:4,passingPlayerIds:[],players:[{playerId:'p1',score:terminal?value:0,finalScore:terminal?value:0,credits:terminal?0:value,energy:0,publicity:0,availableData:0,additionalPublicScan:0,handSize:0,income:{credits:0,energy:0,publicity:0,availableData:0,additionalPublicScan:0,handSize:0}}]}});
  const end={status:'terminal',observation:observation(leafValue,true),legalActions:[]},scanEnd={status:'terminal',observation:observation(8,true),legalActions:[]};
  const pending={status:'decision',observation:observation(5),legalActions:[{actionId:'finish',actorId:'p1',family:'choose_target'}]};
  const root={status:'stable',observation:observation(5),legalActions:[{actionId:'z-fast',actorId:'p1',family:'end_turn'},{actionId:'a-scan',actorId:'p1',family:'scan',target:{kind:'standard-scan'}}]};

@@ -97,7 +97,7 @@ function plan(s,actions=trades.concat(stop),planner=api.createCardPickPlanner(),
 // Legacy equal-V pick reductions cannot override the card identity fixed by the purpose.
 {
  const {searchDecision}=require('./decision-search'),{createStateValueEvaluator}=require('./state-value');
- const obs={terminal:false,selfState:{playerId:'p1',hand:[]},publicState:{roundNumber:2,players:[{playerId:'p1',score:0,finalScore:0,credits:1,energy:0,publicity:0,availableData:0,additionalPublicScan:0,income:{credits:0,energy:0,publicity:0,availableData:0,additionalPublicScan:0,handSize:0}}]}};
+ const obs={terminal:false,selfState:{playerId:'p1',hand:[]},publicState:{roundNumber:2,passingPlayerIds:[],players:[{playerId:'p1',score:0,finalScore:0,credits:1,energy:0,publicity:0,availableData:0,additionalPublicScan:0,income:{credits:0,energy:0,publicity:0,availableData:0,additionalPublicScan:0,handSize:0}}]}};
  const actions=['a-wrong','z-fixed'].map(actionId=>({actionId,actorId:'p1',family:'choose_card',target:{kind:'trade-card-selection'}})),root={status:'decision',observation:obs,legalActions:actions},leaf={status:'information-barrier',observation:{...obs,selfState:{playerId:'p1',hand:[{id:'known-fixed-card'}]}},legalActions:[]};
  const spec={fixed:true,kind:'fixed-card-plan',policy:api.VERSION,goal:{kind:'data',id:'critical-data'},selectedActionId:'z-fixed',retainedActionIds:['z-fixed'],excludedActionIds:['a-wrong'],isEquivalence:false};
  const port={identity:n=>n===root?'root':'leaf',expand:()=>assert.fail('fixed plan must use its native macro'),cardPickSpec:n=>n===root?spec:null,cardTradeBound:()=>({handDelta:1,proof:'old-numeric-equivalence'}),

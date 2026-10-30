@@ -1022,12 +1022,25 @@ module.exports = Object.freeze([...smokes, Object.freeze({
       if(JSON.stringify(window.SetiStateValue.evaluateStateValue(p.valueObservation(root),f.seatId))!==JSON.stringify(value))throw Error('完整与紧凑用途估值不同');
       const start=p.expand(root,root.legalActions.find(a=>a.family==='research_tech').actionId),choice=start.legalActions.find(a=>a.target.tileId==='blue1'&&a.target.blueSlot===1),end=p.expand(start,choice.actionId),actual=window.SetiStateValue.evaluateStateValue(end.observation,f.seatId);
       if(actual.total!==value.total||actual.components.researchPotential!==0)throw Error('原生取得科技与用途重复计价');
-      if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('科技用途验证污染根或RNG');window.__fundedResearchSmoke={ok:true,value:value.total};
+      if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('科技用途验证污染根或RNG');
     }finally{p.close();c.dispose();}
+    for(const [name,expected] of [['autonomous',54.5],['teacher58',57.5]]){
+      const fixture=await fetch('/adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/'+name+'-before-pass-20261031-v1.json').then(r=>r.json());
+      const kernel=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const composition=kernel.composition;
+      if(!composition.lifecycle.restore(fixture.compositionEnvelope).ok)throw Error('PASS反例恢复失败');
+      const original=JSON.stringify(composition.lifecycle.save().envelope),port=window.SetiAnalysisPort.createAnalysisPort({composition,seatId:fixture.seatId,maxCacheEntries:0});
+      try{const root=port.openRoot(),pass=root.legalActions.find(a=>a.family==='pass'),child=port.expand(root,pass.actionId),view=child.observation;
+        if(!view.publicState.passingPlayerIds.includes(fixture.seatId)||view.publicState.passedPlayerIds.includes(fixture.seatId))throw Error('PASS奖励期间规划窗口与正式名单混淆');
+        const value=window.SetiStateValue.evaluateStateValue(view,fixture.seatId);
+        if(value.total!==expected||JSON.stringify(window.SetiStateValue.evaluateStateValue(port.valueObservation(child),fixture.seatId))!==JSON.stringify(value))throw Error('PASS投资窗口未统一或持牌重复计价');
+        if(JSON.stringify(composition.lifecycle.save().envelope)!==original)throw Error('PASS反例污染正式根');
+      }finally{port.close();composition.dispose();}
+    }
+    window.__fundedResearchSmoke={ok:true,passInvestmentWindows:2};
   })()`,
   successExpression:'window.__fundedResearchSmoke?.ok === true',
-  obligation:'真实页面公开原生研究费用，保留宣传的科技用途与原生取得一致，紧凑观察与根隔离保持',
-  counterexample:'Node单独可用而页面未装配费用来源、同一科技重复计价或估值读取隐藏奖励',
+  obligation:'真实页面公开原生研究费用，宣传与持牌科技在PASS奖励期间转入下一轮，紧凑观察与根隔离保持',
+  counterexample:'Node单独可用而页面未装配费用来源、PASS完成前仍计本轮投资、同一科技重复计价或估值读取隐藏奖励',
 }), Object.freeze({
   id:'production-quiet-data-tail',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiLocalDecisionPlans?.dataTailCompletion && window.SetiResidualDomainSession?.listFinalMarkChoices && window.SetiScienceSession?.listIncomeChoices)',

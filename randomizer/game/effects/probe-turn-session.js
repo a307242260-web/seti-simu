@@ -51,6 +51,18 @@
     LAND_CHOICE: "probe_land_choice",
   });
   const DOMAIN_HANDOFF_EFFECT_TYPE = "game_domain_handoff";
+  // PASS rewards/discards precede PASS_COMMIT. Completion flags alone do not
+  // describe the already chosen PASS action while those decisions are pending.
+  function getPassingPlayerIds(state, session = null) {
+    const ids = new Set(state.turn?.passedPlayerIds || []);
+    for (const player of state.players?.players || []) {
+      if (player.passCompletionPending) ids.add(player.id);
+    }
+    for (const effect of session?.queue || []) {
+      if (effect.type === EFFECT_TYPES.PASS_COMMIT) ids.add(effect.ownerId);
+    }
+    return [...ids];
+  }
   const DOMAIN_HANDOFF_SCHEMA_VERSION = "seti-game-domain-handoff-v1";
   const clone = (value) => value == null ? value : structuredClone(value);
   const fail = (code, message, details = {}) => ({ ok: false, code, message, ...details });
@@ -977,6 +989,6 @@
   return Object.freeze({
     DOMAIN_ID, EXECUTOR_ID, ACTION_FAMILIES, EFFECT_TYPES, PASS_HAND_LIMIT,
     DOMAIN_HANDOFF_EFFECT_TYPE, DOMAIN_HANDOFF_SCHEMA_VERSION,
-    createActionDefinitions, createProbeTurnDomain, actionContext,
+    createActionDefinitions, createProbeTurnDomain, actionContext, getPassingPlayerIds,
   });
 });

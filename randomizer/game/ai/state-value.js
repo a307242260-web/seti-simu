@@ -11,7 +11,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v3";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v4";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = Object.freeze({
     credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1,
@@ -106,7 +106,7 @@
     if (!Number.isSafeInteger(researchCost) || researchCost < 0) throw new TypeError("VALUE_RESEARCH_COST_INVALID");
     if (publicity < researchCost) return 0;
     const targets = researchTargets(techState, supply, planningRound, weights);
-    const held = handOptions(hand, researchTargets(techState, supply, round, weights), round, weights);
+    const held = handOptions(hand, targets, planningRound, weights);
     const currentHand = Math.max(0, ...held.map(o => o.value));
     return Math.max(0, ...targets.map(t => t.capability + t.first + t.bonusValue - researchCost * weights.publicity
       + Math.max(0, ...held.filter(o => o.id !== t.id).map(o => o.value)) - currentHand));
@@ -133,6 +133,8 @@
     const weights = valueWeights(options);
     const round = number(observation.publicState.roundNumber, "roundNumber");
     if (!Number.isInteger(round) || round < 1 || round > 4) throw new TypeError("VALUE_ROUND_INVALID");
+    if (!Array.isArray(observation.publicState.passingPlayerIds)) throw new TypeError("VALUE_PASSING_PLAYERS_MISSING");
+    const passing = observation.publicState.passingPlayerIds.includes(seatId);
     if (!player.income || typeof player.income !== "object") throw new TypeError("VALUE_INCOME_MISSING");
     let resources = 0;
     let income = 0;
@@ -144,10 +146,10 @@
     const hand = observation.selfState.hand.length * weights.handSize;
     const components = Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
       resources, hand, income, technologyPotential: technologyCapital(player.techState, round, weights),
-      handPotential: handCapital(observation.selfState.hand, player.techState, observation.publicState.board?.techSupply, round, weights),
+      handPotential: handCapital(observation.selfState.hand, player.techState, observation.publicState.board?.techSupply, round + Number(passing), weights),
       researchPotential: researchCapital({ hand: observation.selfState.hand, techState: player.techState,
         supply: observation.publicState.board?.techSupply, round, publicity: player.publicity,
-        researchCost: player.researchPublicityCost, passed: (observation.publicState.passedPlayerIds || []).includes(seatId) }, weights) });
+        researchCost: player.researchPublicityCost, passed: passing }, weights) });
     const total = Object.values(components).reduce((sum, value) => sum + value, 0);
     number(total, "total");
     return Object.freeze({ modelVersion: MODEL_VERSION, total, components, terminal: false });
