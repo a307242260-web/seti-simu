@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "seti-round1-fix-validation-v1",
+  "candidate": "v45",
+  "nativeRegression": "six-greedy-plans real teacher24 card execution; previously null action; urgent move now survives composition with selected income tail",
+  "unit": {
+    "passed": 145,
+    "failed": 0
+  },
+  "fullFlow": {
+    "passed": 1,
+    "failed": 0
+  },
+  "chrome": {
+    "passed": 4,
+    "failed": 0
+  },
+  "compatibilityColdRoots": {
+    "passed": 12,
+    "maximumNativeInputs": 200,
+    "maximumObservedMilliseconds": 535
+  },
+  "round1TeacherRoots": {
+    "total": 32,
+    "actionableBefore": 29,
+    "actionableAfter": 32,
+    "allWithin256NativeInputsAnd600ms": true,
+    "nativeReplayedThroughInput": 62,
+    "authoritativeRootAndRngUnchanged": true
+  },
+  "autonomousRoundRun": false,
+  "baselinePromoted": false
+}

@@ -1,0 +1,49 @@
+{
+  "goal": "First-round per-node teacher comparison and incremental AI fixes; all4 seats, whiteDeepSpace, other3 PASS plus required native rewards",
+  "baseCommit": "0a4a2d085b42bb56f89e3d1e61b6536eae25d9b6",
+  "snapshot": "/private/tmp/seti-human405-round1-20261030-mr1fz7op",
+  "productionCandidate": "seti-complete-decision-search-v45",
+  "rootWorktreeUpdated": false,
+  "committed": false,
+  "teacherCorpus": "reports/ai-foundation-20261023/human405-round1-teacher-corpus-20261030-v1.json",
+  "baselineAudit": "reports/ai-foundation-20261023/human405-round1-v44-audit-20261030-v1.json",
+  "candidateAudit": "reports/ai-foundation-20261023/human405-round1-v45-audit-20261030-v1.json",
+  "firstFix": {
+    "cause": "forceExecution urgent movement suppressed greedy income resource plans, but resource retainedActionIds still removed selected move; empty intersection yielded unreachable branch and3 non-actionable roots",
+    "files": [
+      "randomizer/game/ai/decision-search.js",
+      "randomizer/game/ai/six-greedy-plans.test.js",
+      "randomizer/index.html"
+    ],
+    "regressionBefore": "real native execution of teacher step24 then search: r.actionId null; newassert failed before patch",
+    "regressionAfter": "six-greedy-plans.test anddecision-search.test passed; all32 teacher roots actionable and <=256native inputs/600ms",
+    "step24After": {
+      "teacherValue": 39.5,
+      "studentValue": 43.5,
+      "nativeInputs": 116,
+      "milliseconds": 222.338
+    }
+  },
+  "next": [
+    "v45 verified and ready for isolated delivery; then continue earliest unresolved node differences.",
+    "Examine next differences independently: free card purposes/ranking for queued income(step40) and committed swap to fourth data slot(step46); same-value step37/62 card identity is not proof of strategy equivalence.",
+    "Fix guaranteed pending technology pick valuation/settlement separately; previous diagnostic already proved missing1 hand value.",
+    "Inspect movement target/direction and boundary-order differences, not just values.",
+    "Implement standard registered white-only round1 validation, preserving source opening and passive opponent required choices; no bare full-game script.",
+    "Native first-round autonomous run and final32node comparison; do not mark goalcomplete before scope fulfilled."
+  ],
+  "notes": [
+    "Graph closed flag is distinct from an actionable decision. Baseline25/26/38 had complete graph but null action.",
+    "All current work remains in isolated stage; rootHEAD remains0a4a2d08 and acceptedbaseline marker remainsv41.",
+    "SharedGit index SHA256 fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49 must remain unchanged.",
+    "No subagents authorized.",
+    "New goal was successfully created active after user deleted oldgoal; objective available via get_goal."
+  ],
+  "verificationInFlight": null,
+  "verificationComplete": {
+    "unitPassed": 145,
+    "fullFlowPassed": 1,
+    "browserPassed": 4,
+    "originalColdRootsPassed": 12
+  }
+}

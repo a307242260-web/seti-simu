@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v44";
+  const VERSION = "seti-complete-decision-search-v45";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -269,9 +269,11 @@
       const retainedActions = node.legalActions.filter(action => (!localPlan || localPlan.retainedActionIds.includes(action.actionId))
         && (!movementPolicy || movementPolicy.retainedActionIds.includes(action.actionId))
         && (!pickPolicy || pickPolicy.retainedActionIds.includes(action.actionId))
-        && (!resourcePolicy || resourcePolicy.retainedActionIds.includes(action.actionId))
+        // A selected urgent movement prefix supersedes the greedy resource tail.
+        // Suppressing its plans must also stop its filter from deleting this move.
+        && (!resourcePolicy || movementPolicy?.forceExecution || resourcePolicy.retainedActionIds.includes(action.actionId))
         && (!decisionPolicy||decisionPolicy.retainedActionIds.includes(action.actionId)));
-      if (!boundary && !retainedActions.length && !resourcePolicy?.plans.length && !resourcePolicy?.bound) throw new Error("SEARCH_MOVEMENT_POLICY_CONFLICT");
+      if (!boundary && !retainedActions.length && (!resourcePolicy?.plans.length || movementPolicy?.forceExecution) && !resourcePolicy?.bound) throw new Error("SEARCH_MOVEMENT_POLICY_CONFLICT");
       const alternatives = selection ? port.selectionPlans(node)
         : retainedActions.flatMap(action => {
           if (movementPolicy?.plan && movementPolicy.selectedActionId === action.actionId
