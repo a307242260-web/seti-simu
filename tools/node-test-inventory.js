@@ -55,6 +55,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/quiet-data-tail.test.js", "policy/decision-search", "固定计算机前置、货币收入、蓝槽及终局标记的计划估值与完整原生执行一致，证明无伪造后继且受全局预算约束", "跨里程碑漏算固定标记、重复使用手牌或数据、伪造中间状态，或固定计划绕过节点/时间预算"),
     entry("randomizer/game/ai/purpose-capital-value.test.js", "policy/decision-search", "未来科技使用假设与已知牌机会成本分开记账；静默收尾计划值有原生对照、模型/预算限制及冷恢复", "静态奖励冒充保底、未知牌身份进入估值、收尾证明伪造状态或通用数据选槽删除蓝槽资助目的"),
     entry("randomizer/game/ai/income-plan-value.test.js", "policy/decision-search", "固定盲抽收入计划以原生对照证明可达叶值，证明叶不伪造后继；节点/时间额度、模型限制与真实首步恢复有效，蓝槽收益包含正式终局数据成本", "把未执行计划伪装成原生状态、漏计证明节点或复用虚构中间态、非默认V仍套摘要，或忽略DLC8数据终局成本"),
+    entry("randomizer/game/ai/winning-income-plan.test.js", "policy/decision-search", "获胜收入计划按原生前缀保存，在同盘面重新开根及保存恢复后保持目标；完整依赖变化失效且物化受共享预算约束", "必走移动前缀完成后重新选另一目的、丢失已证实收入计划、伪造后继或额外见证绕过全局额度"),
     entry("randomizer/game/ai/analysis-port.test.js", "architecture/policy-host", "可信分支精确提交、结果缓存和权威根隔离", "策略取得权威envelope、同family代替动作或fork改变真实根/RNG"),
     entry("randomizer/game/ai/agent-runtime.test.js", "architecture/policy-host", "新AI接入只读席位输入、合法选择、多选完成与恢复复现", "私有session进入策略、异步或非法返回被提交、多选反复切换或恢复后选择漂移"),
     entry("randomizer/game/ai/search-agent.test.js", "architecture/policy-host", "同一搜索玩家经Browser与Simulation共享接入，每次只提交一步、记录完整覆盖、续用及恢复一致，超预算无提交", "宿主调用不同算法、丢弃搜索诊断、恢复后未经完整模型及原生依赖校验便复用证据，或不完整搜索被当成合法行动提交"),

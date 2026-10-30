@@ -1,0 +1,125 @@
+{
+  "searchVersion": "seti-complete-decision-search-v121",
+  "candidateAdmitted": false,
+  "status": "complete",
+  "rows": [
+    {
+      "label": "case-001",
+      "complete": true,
+      "nativeInputs": 144,
+      "milliseconds": 153.893917,
+      "value": 28.5,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v121-cold-case-001-20261031-v1.json"
+    },
+    {
+      "label": "case-003",
+      "complete": true,
+      "nativeInputs": 26,
+      "milliseconds": 147.7745,
+      "value": 41,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v121-cold-case-003-20261031-v1.json"
+    },
+    {
+      "label": "case-008",
+      "complete": true,
+      "nativeInputs": 107,
+      "milliseconds": 168.93591699999996,
+      "value": 45,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v121-cold-case-008-20261031-v1.json"
+    },
+    {
+      "label": "case-011",
+      "complete": true,
+      "nativeInputs": 9,
+      "milliseconds": 30.239583999999994,
+      "value": 41.5,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v121-cold-case-011-20261031-v1.json"
+    },
+    {
+      "label": "case-009",
+      "complete": true,
+      "nativeInputs": 41,
+      "milliseconds": 73.932083,
+      "value": 41.5,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v121-cold-case-009-20261031-v1.json"
+    },
+    {
+      "label": "case-062",
+      "complete": true,
+      "nativeInputs": 171,
+      "milliseconds": 337.358333,
+      "value": 67,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v121-cold-case-062-20261031-v1.json"
+    },
+    {
+      "label": "case-105",
+      "complete": true,
+      "nativeInputs": 241,
+      "milliseconds": 598.746084,
+      "value": 60.5,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v121-cold-case-105-20261031-v1.json"
+    },
+    {
+      "label": "case-152",
+      "complete": true,
+      "nativeInputs": 228,
+      "milliseconds": 509.558625,
+      "value": 48,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v121-cold-case-152-20261031-v1.json"
+    },
+    {
+      "label": "baseline-r1-t8-blue",
+      "complete": true,
+      "nativeInputs": 12,
+      "milliseconds": 58.57475000000001,
+      "value": 58.5,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v121-cold-baseline-r1-t8-blue-20261031-v1.json"
+    },
+    {
+      "label": "baseline-r2-t9-white",
+      "complete": true,
+      "nativeInputs": 86,
+      "milliseconds": 183.247875,
+      "value": 48,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v121-cold-baseline-r2-t9-white-20261031-v1.json"
+    },
+    {
+      "label": "step317",
+      "complete": true,
+      "nativeInputs": 195,
+      "milliseconds": 367.925167,
+      "value": 84.5,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v121-cold-step317-20261031-v1.json"
+    },
+    {
+      "label": "terminal",
+      "complete": true,
+      "nativeInputs": 86,
+      "milliseconds": 201.8465,
+      "value": 84,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v121-cold-terminal-20261031-v1.json"
+    },
+    {
+      "label": "autonomous-pass",
+      "complete": true,
+      "nativeInputs": 32,
+      "milliseconds": 93.485958,
+      "value": 57,
+      "rootAndRngUnchanged": true,
+      "evidencePath": "reports/ai-foundation-20261023/human405-v121-cold-autonomous-pass-20261031-v1.json"
+    }
+  ],
+  "overruns": []
+}

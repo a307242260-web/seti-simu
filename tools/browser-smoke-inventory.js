@@ -1020,6 +1020,31 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "真实页面按收入数据需求固定准备流程，原生输入逐笔计数且权威状态不变",
   counterexample: "模块装配丢失、兑换或角标独立展开、缺少需求仍准备、宏漏记输入或修改权威根",
 }), Object.freeze({
+  id:'production-winning-income-recovery',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiSearchAgent?.createSearchAgent && window.SetiAnalysisPort)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-024-20261030-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('获胜收入开局恢复失败');
+    let checkpoint=null,inputs=0;
+    try{for(let i=0;i<12;i++){
+      const saved=JSON.parse(JSON.stringify(c.lifecycle.save().envelope));if(!c.lifecycle.restore(saved).ok)throw Error('逐输入原生保存恢复失败');
+      const d=c.inspect().session?.decision,actions=d?.choices||c.inputPort.enumerateActions({}),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0}),ai=window.SetiSearchAgent.createSearchAgent({seatId:f.seatId,analysisPort:p});
+      ai.loadCheckpoint(checkpoint);const before=JSON.stringify(c.lifecycle.save().envelope),r=ai.decide({seatId:f.seatId,legalActions:actions}),a=actions.find(a=>a.actionId===r.actionId);
+      if(!a||r.search.value!==60||JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('计划值改变或搜索污染原根');
+      if(i===0){inputs=r.search.diagnostics.nativeExecutions;if(inputs!==89||r.search.diagnostics.winningIncomePlans!==1)throw Error('获胜尾部没有按原生输入完整计费');}
+      else if(r.search.diagnostics.planContinuation!=='hit'||r.search.diagnostics.nativeExecutions!==0)throw Error('保存恢复后丢失既定目的');
+      if(i===3&&a.family!=='place_data')throw Error('完成火星必要前移后又改去金星');
+      checkpoint=JSON.parse(JSON.stringify(ai.createCheckpoint()));
+      const out=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);if(!out.ok)throw Error('既定输入未通过原生验证');
+    }
+    if(window.SetiStateValue.evaluateStateValue(c.projection({role:'player',playerId:f.seatId}).state,f.seatId).total!==60)throw Error('收入实际兑现与获胜值不一致');
+    window.__winningIncomeRecovery={ok:true,inputs,restoredNativeSteps:12};
+    }finally{c.dispose();}
+  })()`,
+  successExpression:'window.__winningIncomeRecovery?.ok === true',
+  obligation:'真实页面的获胜收入计划逐输入保存原生状态与AI证书，恢复后维持已选目的和值且额外见证计入预算',
+  counterexample:'火星必要前缀完成后冷恢复改去金星、证书复用虚构后继、固定见证不计费或真实兑现值不同',
+}), Object.freeze({
   id:'production-funded-research-value',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiStateValue?.researchCapital && window.SetiTechResolver)',
   actionExpression: `(async()=>{

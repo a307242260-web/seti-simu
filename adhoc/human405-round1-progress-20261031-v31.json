@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "seti-human405-round1-goal-checkpoint-v2",
+  "date": "2026-10-31",
+  "goalStatus": "active",
+  "phase": "v121-recovery-fix-admitted-awaiting-once-standard-r1",
+  "baseCommit": "9fa77f5cac52b8e73ea8dc704b9ce20246a1bcd2",
+  "candidateVersion": "v121",
+  "candidateValue": "v5",
+  "singlePointAdmitted": true,
+  "fullGameAdmitted": false,
+  "coldRoots": 45,
+  "coldOverruns": [],
+  "unit": 154,
+  "fullFlow": 1,
+  "chrome": 8,
+  "teacherFirstInputMatches": 25,
+  "teacherNodes": 32,
+  "lastAutonomousRecord": "reports/research/12231ee9.2fb2b091.quick-200.json",
+  "lastAutonomousScore": 11,
+  "newAutonomousRun": false,
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "recoveryFix": {
+    "openingInputs": 89,
+    "nativeMaterializedIncomeInputs": 9,
+    "nativePathInputs": 12,
+    "value": 60,
+    "perInputNativeAndAICheckpointRestorePassed": true,
+    "invalidatedByChangedMoneyOrHand": true,
+    "globalInputNodeTimeBudgetsPassed": true
+  },
+  "remainingStrategicSteps": [
+    24,
+    38,
+    39,
+    43,
+    62
+  ],
+  "nativeOrderSteps": [
+    25,
+    56
+  ],
+  "documentation": "docs/ai-winning-income-recovery-20261031.md",
+  "nextSafeAction": "Run exactly one robot_iterate white-only R1 at the exact admitted commit. Preserve source/RNG and all256/600 gates; compare endpoint via native replay and current V5 against previous11/46.5, v99 13/53.5 and teacher15/56. Mark experiment baselineEligible:false and keep v41 baseline; no v119 rerun.",
+  "knownAuditFailure": "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+}

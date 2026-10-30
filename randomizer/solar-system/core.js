@@ -78,6 +78,9 @@
   ]);
 
   const wheelCellIndexes = buildWheelCellIndexes(layout.WHEELS);
+  const planetCells = Object.freeze(WHEEL_IDS.flatMap(wheelId => layout.WHEELS[wheelId].cells
+    .filter(cell => cell.kind === layout.CONTENT_KIND.PLANET)
+    .map(cell => Object.freeze({ wheelId, cell }))));
 
   function mod8(n) {
     return ((Number(n) % 8) + 8) % 8;
@@ -641,11 +644,8 @@
     const solar = normalizeSolarInput(input);
     const planets = [];
 
-    for (const wheelId of WHEEL_IDS) {
-      const wheel = layout.WHEELS[wheelId];
-      for (const cell of wheel.cells) {
+    for (const { wheelId, cell } of planetCells) {
         if (cell.requiresAomomoActive && !solar.aomomoActive) continue;
-        if (cell.kind !== layout.CONTENT_KIND.PLANET) continue;
         const planet = layout.PLANETS[cell.planetId] || {};
         planets.push({
           planetId: cell.planetId,
@@ -657,7 +657,6 @@
           y: cell.y,
           fixedAfterSetup: Boolean(planet.fixedAfterSetup),
         });
-      }
     }
 
     return planets.sort((a, b) => a.y - b.y || a.x - b.x || a.planetId.localeCompare(b.planetId));

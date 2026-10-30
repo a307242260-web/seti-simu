@@ -1,0 +1,24 @@
+{
+  "scope": "Only task-generated copies; every removed file matches committed/archive bytes, except one incomplete archive prefix. Current working snapshot and originals preserved.",
+  "results": [
+    {
+      "directory": "/private/tmp/seti-human405-v121-staged-20261031-dpemknb0",
+      "filesVerified": 7089,
+      "bytesRemoved": 1885549731,
+      "fileListSha256": "7248be5f4a06627839f95c400df151b725fd71527f00c1cfae3891554a3dd5dc",
+      "partialArchiveWrites": [
+        "reports/iteration/white-ranking-184-20260907.capture.jsonl.gz"
+      ],
+      "uniqueUntrackedFilesRemoved": 0
+    },
+    {
+      "directory": "/private/tmp/seti-human405-v103-restored-ly2j6pry",
+      "filesVerified": 7144,
+      "bytesRemoved": 2339883427,
+      "fileListSha256": "f04d121d2a6d52de2f8d8864dfd734f646f0bc43764734827e92779d158ce10b",
+      "partialArchiveWrites": [],
+      "uniqueUntrackedFilesRemoved": 0
+    }
+  ],
+  "sharedIndexUnchanged": true
+}

@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "sourceHashes": {
+    "randomizer/game/ai/analysis-port.js": "38f6597fce3b6c6cd77f5b92431eb34f05ad4f339ec05b56d3efc4e996bec909",
+    "randomizer/game/ai/decision-search.js": "2325cca94b4b9ae8173a348f6a1cd2ef25f405d43ab00c790e5517f3617cfb7e",
+    "randomizer/solar-system/core.js": "a45eddd4fd8222123b6c3e91ebfec071559c0e564a12ff4002f4a03ef8c66a3d",
+    "randomizer/index.html": "c31154b9502b10ca8715ea4e829a17cb2ecdb09809ea9b3cb2d449651c44fde1",
+    "tools/browser-smoke-inventory.js": "0573965e3bb7cbd87d8cab64ac84eba6adb42131f20445a7e48a79295c9e16ab",
+    "tools/node-test-inventory.js": "c793bd97981993dca6328c7c73cda9cfcc43c6a2af6e964c8e0b92a1eb0b8697",
+    "randomizer/game/ai/winning-income-plan.test.js": "93eeab629f51a291d12037f962e438422d502a604f27b5655cc718ef6b5943d7"
+  }
+}

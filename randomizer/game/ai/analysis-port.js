@@ -1259,7 +1259,9 @@
           || entry.node.legalActions.some(action => !entry.roots.some(row => row.actionId === action.actionId))) {
           throw new Error("ANALYSIS_PLAN_EVIDENCE_INVALID");
         }
-        return { key: stored.policyKey, actions: actionSetKey(entry.node.legalActions), actionId: entry.actionId,
+        if(entry.committedGoal!==undefined&&(typeof entry.committedGoal!=="string"||!entry.committedGoal))throw new Error("ANALYSIS_PLAN_EVIDENCE_INVALID");
+        return { key: entry.committedGoal ? stored.physicalKey : stored.policyKey,
+          ...(entry.committedGoal?{committedGoal:entry.committedGoal}:{}), actions: actionSetKey(entry.node.legalActions), actionId: entry.actionId,
           value: entry.value, distance: entry.distance, sourceNode: entry.sourceNode, roots: freeze(structuredClone(entry.roots)) };
       });
       const token = Object.freeze({}), evidenceId = `plan-evidence-${++nextCertificate}`;
@@ -1273,11 +1275,11 @@
       const saved = token && planCertificate?.token === token ? planCertificate : null;
       if (!saved) return { hit: false, reason: "unknown-evidence" };
       if (saved.modelKey !== modelKey) return { hit: false, reason: "model-changed" };
-      const row = saved.rows.find(entry => entry.key === stored.policyKey && entry.actions === actionSetKey(node.legalActions));
+      const row = saved.rows.find(entry => entry.key === (entry.committedGoal?stored.physicalKey:stored.policyKey) && entry.actions === actionSetKey(node.legalActions));
       if (!row) return { hit: false, reason: "dependencies-changed" };
       return freeze({ hit: true, actionId: row.actionId, value: row.value, distance: row.distance, roots: row.roots,
         proof: "seti-complete-window-best-prefix-reuse-v1", evidenceId: saved.evidenceId,
-        sourceNode: row.sourceNode, source: saved.source });
+        sourceNode: row.sourceNode, source: saved.source, ...(row.committedGoal?{committedGoal:row.committedGoal}:{}) });
     }
 
     // Optional AI sidecar, never rule state or public decision evidence. Revalidate exact
@@ -1293,7 +1295,8 @@
         || !Array.isArray(saved.rows) || !saved.rows.length || saved.rows.length > 32
         || !Number.isSafeInteger(saved.source?.nodeCount) || saved.source.nodeCount < 1
         || saved.rows.some(row=>typeof row.key!=="string" || typeof row.actions!=="string" || typeof row.actionId!=="string"
-          || !Number.isFinite(row.value) || !Number.isSafeInteger(row.distance) || row.distance < 1 || !Array.isArray(row.roots))) {
+          || !Number.isFinite(row.value) || !Number.isSafeInteger(row.distance) || row.distance < 1 || !Array.isArray(row.roots)
+          || row.committedGoal!==undefined&&(typeof row.committedGoal!=="string"||!row.committedGoal))) {
         throw new Error("ANALYSIS_PLAN_CHECKPOINT_INVALID");
       }
       const token=Object.freeze({});
@@ -2693,7 +2696,13 @@
       return stored.identity;
     }
 
-    return Object.freeze({ openRoot, expand, identity, releaseBoundaryObservation, valueObservation, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    function hasMovementIntent(node) {
+      const stored=nodes.get(node);
+      if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
+      return Boolean(stored.intent);
+    }
+
+    return Object.freeze({ openRoot, expand, identity, hasMovementIntent, releaseBoundaryObservation, valueObservation, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound, incomePlanSummary, incomePlanBoundary, incomePlanBase, turnTailSummary, turnTailBoundary, turnTailBase, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

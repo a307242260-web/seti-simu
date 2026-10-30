@@ -86,6 +86,8 @@ Browser高频inspect不复制原始actionOutcomes，查看lastOutcomeSummary；�
 
 ## 结果和失败
 
+搜索v121对[依赖移动上下文的获胜收入尾部](ai-winning-income-recovery-20261031.md)补执行一次固定原生见证，生成可保存的实际前缀。仅这些证书行可在同一完整物理状态上携带已选收入目的，搜索控制身份仍分别保留。额外输入和状态受原全局预算约束，失败不提交；没有为其他值证明制造后继观察。
+
 成功的agentTrace.coverage为complete，search保存scope、根去向、完整图、等价/证明归属、
 未完成集合、预算与耗时，selectionContinuation与planContinuation均不导出。
 searches返回本次搜索证据；选择或最优前缀续用记录0次新模拟及原证据引用，不把旧计算重复记账。

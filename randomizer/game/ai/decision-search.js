@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v119";
+  const VERSION = "seti-complete-decision-search-v121";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -126,6 +126,7 @@
     }
     let equivalents = 0;
     let incomePlanProofs=0,provedIncomeInputs=0,turnTailProofs=0,provedTurnTailInputs=0;
+    let winningIncomePlans=0,winningIncomeInputs=0;
     let selectionMacros = 0;
     let peakFrontier = 0;
     let pendingFrontier = 0;
@@ -750,6 +751,42 @@
             ...(entry.selection ? { proof: entry.selection.proof, equivalentExitSet: !action.target?.confirm } : {}) };
         });
         entries.push({ node: entry.node, actionId: best.actionId, value: entry.value, distance: entry.distance, sourceNode: current, roots });
+        if(best.knownIncomePlan&&port.hasMovementIntent?.(entry.node)){
+          const plan=entry.resourcePolicy.plans.find(p=>p.goal.id===best.knownIncomePlan.goal.id);
+          if(!plan)throw new Error("SEARCH_WINNING_INCOME_PLAN_MISSING");
+          const fixed=port.expandResourcePlan(entry.node,plan,(count,contexts,input,work)=>{
+            if(now()-startedAt>=limits.milliseconds)return "watchdog";
+            const inputs=work?work.newSubmissions+(input?work.nextNewInput:0):count+(input?1:0);
+            const fresh=work?resourceStateAdditions([...work.sharedStates,...(work.nextNode?[work.nextNode]:[])]).size+(work.additionalStates||0):count+contexts+(input?1:0);
+            if(transitions+inputs>limits.transitions)return "transition-budget";
+            if(nodes.length+certificateNodes+fresh>limits.nodes)return "node-budget";
+            if(pendingFrontier+Math.max(0,fresh-1)>limits.frontier)return "frontier-budget";
+            return null;
+          });
+          const newInputs=fixed.newSubmissions??fixed.submissions,fresh=resourceStateAdditions(fixed.sharedStates);
+          transitions+=newInputs;winningIncomeInputs+=newInputs;logicalResourceInputs+=fixed.submissions;sharedResourceInputHits+=fixed.submissions-newInputs;
+          for(const id of fresh)sharedInternalStates.add(id);certificateNodes+=fresh.size;
+          peakFrontier=Math.max(peakFrontier,pendingFrontier+Math.max(0,fresh.size-1));
+          if(!fixed.complete){
+            stopReason=fixed.stopReason;accepted=false;
+            const attempt={goal:plan.goal,submissions:fixed.submissions,preparations:fixed.preparations,stopReason};
+            unresolved.push({node:current,actionIds:[best.actionId],winningPlanAttempt:attempt});lines[current].winningPlanAttempt=attempt;
+            break;
+          }
+          if(fixed.submissions!==best.knownIncomePlan.requiredNativeInputs||!BOUNDARIES.has(fixed.node.status)
+            ||valueForNode(fixed.node)!==entry.value)throw new Error("SEARCH_WINNING_INCOME_WITNESS_MISMATCH");
+          winningIncomePlans++;
+          best.actualNativeInputs=newInputs;best.materializedWinningPlan={goalId:plan.goal.id,steps:fixed.prefixes.map(p=>p.action.actionId),value:entry.value,status:fixed.node.status};
+          entries.at(-1).committedGoal=plan.goal.id;
+          for(let i=1;i<fixed.prefixes.length&&entries.length<32;i++){
+            const prefix=fixed.prefixes[i];
+            entries.push({node:prefix.node,actionId:prefix.action.actionId,value:entry.value,distance:entry.distance-i,
+              sourceNode:`winning-income:${current}:${i}`,committedGoal:plan.goal.id,roots:prefix.node.legalActions.map(action=>({actionId:action.actionId,
+                value:action.actionId===prefix.action.actionId?entry.value:null,valueType:action.actionId===prefix.action.actionId?"attained-lower-bound":"not-executed",
+                completion:"committed-goal-plan-execution",policy:"seti-goal-resource-preparation-v3",goalId:plan.goal.id,isEquivalence:false}))});
+          }
+          current=best.target;continue;
+        }
         if(best.knownIncomePlan||best.turnTailPlanValue){current=best.target;continue;}
         if(best.resourcePlan){
           const macro=resourceExecutions.get(best);
@@ -799,8 +836,8 @@
         if (best.cost !== 1) break;
         current = best.target;
       }
-      planCertificate = port.rememberPlan(entries, planKey, { searchVersion: VERSION, rootNode: 0,
-        nodeCount: nodes.length+certificateNodes, graphNodeCount: nodes.length, certificateNodeCount: certificateNodes, boundaryWitness: retainedWitness(0), rootValue: nodes[0].value });
+      planCertificate = accepted ? port.rememberPlan(entries, planKey, { searchVersion: VERSION, rootNode: 0,
+        nodeCount: nodes.length+certificateNodes, graphNodeCount: nodes.length, certificateNodeCount: certificateNodes, boundaryWitness: retainedWitness(0), rootValue: nodes[0].value }) : null;
     }
     const elapsed = now() - startedAt;
     accepted = accepted && elapsed < limits.milliseconds;
@@ -825,6 +862,7 @@
         : a.cardPickPlan?{kind:a.cardPickPlan.kind,plan:a.cardPickPlan,firstActionId:a.firstActionId}:{kind:"action",actionId:a.firstActionId}),
       diagnostics: { valueEvaluations,valueCacheHits, finalMarkPlanning:finalMarkPlanning,scanPlanning:scanPlanning, resourcePlanning:resourcePlanning?"goal-bound-greedy-preparation":"off", cardPickPlanning:cardPickPlanning?"purpose-bound-fixed-plan":"off", movementPlanning: movementPlanning ? "goal-directed-policy" : "off", movementPolicyNodes, movementDirectionsExcluded, routeGeometryNodes,
         incomePlanProofs,provedIncomeInputs,turnTailProofs,provedTurnTailInputs,
+        winningIncomePlans,winningIncomeInputs,
         nativeExecutions:port.getDiagnostics?.().submissionCount??null,logicalResourceInputs,sharedResourceInputHits,sharedResourceInternalStates:sharedInternalStates.size,
         localFinalMarkStates:nodes.filter(e=>e.decisionPolicy?.kind==="fixed-final-mark").length,
         localFinalMarkExcluded:nodes.reduce((n,e)=>n+(e.decisionPolicy?.kind==="fixed-final-mark"?e.decisionPolicy.excludedActionIds.length:0),0),
