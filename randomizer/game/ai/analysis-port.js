@@ -294,7 +294,7 @@
     let envelopeObservations = new WeakMap(), stateRequirements = new WeakMap(), goalCatalogs = new WeakMap();
     let observationCacheHits = 0, resourceQueryHits = 0, resourceQueryMisses = 0, goalCatalogHits = 0, goalCatalogMisses = 0;
     let committedDecodeCount = 0, committedDecodeHits = 0;
-    let rootObservation = null;
+    let rootObservation = null, knownRootCardIds = new Set(), knownRootNebulaIds = new Set();
     let publicSeed = null, rootTurnKey = null;
     let nodeCount = 0;
     let submissionCount = 0;
@@ -378,7 +378,7 @@
       return result;
     }
 
-    function createNode(envelope, observation, actions, status, barrier = null, intent = null, resourceControl = null, closeAfterInput = null) {
+    function createNode(envelope, observation, actions, status, barrier = null, intent = null, resourceControl = null) {
       let visible = observation && freeze(observation);
       // 搜索内部节点只用合法集与身份；首次估值/记录时才投影。getter 不暴露快照。
       const node = Object.freeze({
@@ -392,13 +392,13 @@
       if (movementPlanning && !intent) intent = recoverMovementIntent(envelope);
       const physicalKey = forwardIdentity(envelope, status, boundary, readIdentityState(envelope), normalizedIdentityStates);
       const movementKey = intent ? JSON.stringify([physicalKey, intent]) : physicalKey;
-      const pick = cardPickPlanning && status === "decision" && actions.length ? describeCardPick(envelope,actions,status) : null;
+      const pick = cardPickPlanning && status === "decision" && actions.length ? describeCardPick(envelope,actions,status,barrier) : null;
       const cardControl = pick?.fixed ? {goal:pick.goal,selection:pick.selection&&{cardId:pick.selection.cardId,blind:pick.selection.blind},discardIds:pick.discardIds} : null;
       const cardKey = cardControl ? JSON.stringify([movementKey,cardControl]) : movementKey;
       const key = resourceControl ? JSON.stringify([cardKey,resourceControl]) : cardKey;
       if (!identities.has(key)) identities.set(key, Object.freeze({}));
       observationReleasers.set(node, () => { visible = null; envelopeObservations.delete(envelope); observationReleases++; });
-      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, policyKey: cardKey, physicalKey, intent, cardControl, resourceControl, closeAfterInput });
+      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, policyKey: cardKey, physicalKey, intent, cardControl, resourceControl, informationBarrier: ruleComposition.isHiddenInformationBarrier(barrier) ? barrier : null });
       nodeCount += 1;
       return node;
     }
@@ -451,10 +451,14 @@
       if (!actions.length || actions.some(action => action.actorId !== seatId)) {
         throw new Error("ANALYSIS_ROOT_OWNER_MISMATCH");
       }
+      knownRootCardIds = new Set([...(rootObservation.publicState.board.publicCards || []),
+        ...(rootObservation.selfState.hand || []), ...(rootObservation.selfState.reservedCards || []),
+        ...(rootObservation.selfState.privateAlienCards || [])].filter(Boolean).map(c => c.id));
       // 同一回合的已知输入不重抽未知世界；恢复仅依赖正式公开配置和回合身份。
       // 完整节点身份仍包括假设/RNG，不能因种子稳定而忽略实际依赖变化。
       const authoritative = snapshot(composition);
       const state = authoritative.session?.session?.workingState || JSON.parse(authoritative.committedState);
+      knownRootNebulaIds = new Set(Object.keys(state.data.nebulae).filter(id => id.startsWith("sector-")));
       rootTurnKey = JSON.stringify([state.turn.roundNumber,state.turn.turnNumber,state.turn.actionCycleNumber]);
       publicSeed = JSON.stringify(["seti-turn-hypothesis-v1", state.meta.seed, state.meta.gameId, seatId,
         state.turn.roundNumber, state.turn.turnNumber, state.turn.actionCycleNumber, state.turn.activePlayerIds]);
@@ -487,7 +491,7 @@
       }
       restoreEnvelope(stored.envelope, true);
       const { before, result } = executeCurrent(actionId);
-      return rememberPrefix(key,node,actionId,remember(key, finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null, stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null, stored.closeAfterInput)));
+      return rememberPrefix(key,node,actionId,remember(key, finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null, stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null, stored.informationBarrier)));
     }
 
     function setMovementPlanning(enabled) {
@@ -505,9 +509,10 @@
       }
     }
 
-    function describeCardPick(envelope,actions,status) {
+    function describeCardPick(envelope,actions,status,barrier=null) {
       if (envelopeCardSpecs.has(envelope)) return envelopeCardSpecs.get(envelope);
-      const state=readIdentityState(envelope);
+      const actual=readIdentityState(envelope);
+      const state=barrier?{...actual,cards:{...actual.cards,publicCards:actual.cards.publicCards.map(c=>c&&knownRootCardIds.has(c.id)?c:null)}}:actual;
       const result=cardPickPlanner.plan({state,seatId,actions,status,session:envelope.session?.session,
         endpoints:(candidateState=state)=>(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(candidateState,seatId)?.candidates||[]});
       const frozen=result&&freeze(result);envelopeCardSpecs.set(envelope,frozen);return frozen;
@@ -518,7 +523,7 @@
       if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(!cardPickPlanning||!["stable","decision"].includes(node.status)||!node.legalActions.length)return null;
       if(cardPickSpecs.has(node))return cardPickSpecs.get(node);
-      const result=describeCardPick(stored.envelope,node.legalActions,node.status);cardPickSpecs.set(node,result);return result;
+      const result=describeCardPick(stored.envelope,node.legalActions,node.status,stored.informationBarrier);cardPickSpecs.set(node,result);return result;
     }
 
     function setCardPickPlanning(enabled) {
@@ -614,7 +619,7 @@
       if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(!resourcePlanning||!["stable","decision"].includes(node.status)||!node.legalActions.length)return null;
       if(resourceSpecs.has(node))return resourceSpecs.get(node);
-      if(cardPickSpec(node)?.fixed){resourceSpecs.set(node,null);return null;}
+      if(cardPickSpec(node)?.fixed || stored.informationBarrier){resourceSpecs.set(node,null);return null;}
       const envelope=stored.envelope,state=readIdentityState(envelope),session=envelope.session?.session;
       let goals=[],source=null,operation={},incomeTail=null;
       if(stored.resourceControl){
@@ -677,7 +682,7 @@
 
     function resourceView(node,control) {
       const stored=nodes.get(node);
-      return createNode(stored.envelope,null,node.legalActions,node.status,null,stored.intent,control);
+      return createNode(stored.envelope,null,node.legalActions,node.status,stored.informationBarrier,stored.intent,control);
     }
 
     function expandResourcePlan(node,plan,hasCapacity) {
@@ -693,7 +698,7 @@
       }
       function invalid(reason){
         const stored=nodes.get(current),blocked=hasCapacity(prefixes.length,contexts+1,false,work({additionalStates:1}));if(blocked)return stop(blocked);
-        current=createNode(stored.envelope,null,[],"plan-infeasible",null,stored.intent);sharedStates.push(current);contexts++;
+        current=createNode(stored.envelope,null,[],"plan-infeasible",stored.informationBarrier,stored.intent);sharedStates.push(current);contexts++;
         return finish({goalStatus:"infeasible",reason});
       }
       while(true){
@@ -816,7 +821,7 @@
       }
       function infeasible(reason) {
         const stored = nodes.get(current);
-        current = createNode(stored.envelope, null, [], "plan-infeasible", null, stored.intent);
+        current = createNode(stored.envelope, null, [], "plan-infeasible", stored.informationBarrier, stored.intent);
         goalStatus = reason;
       }
       while (prefixes.length < maxInputs) {
@@ -904,26 +909,38 @@
       return { before, result };
     }
 
-    function finishChild(before, result, intent = null, resourceControl = null, closeAfterInput = null) {
+    function knownRewardChoices(envelope,actions) {
+      const session=envelope.session?.session,head=session?.queue?.[0],state=readIdentityState(envelope);
+      const owner=state.players.players.find(p=>p.id===seatId);
+      if(head?.ownerId!==seatId || [...owner.hand,...owner.reservedCards].some(c=>!knownRootCardIds.has(c.id)))return [];
+      if(head.type===scienceSession.EFFECT_TYPES.PICK_CARD)return actions.filter(a=>a.actorId===seatId&&cardPickPlanningApi.isOffer(a)
+        &&a.target?.source!=="blind"&&knownRootCardIds.has(a.target.cardInstanceId||a.payload?.cardInstanceId||state.cards.publicCards[a.target.publicSlotIndex]?.id));
+      if(head.type===scienceSession.EFFECT_TYPES.INCOME)return actions.filter(a=>a.actorId===seatId&&a.family==="choose_card"
+        &&a.target?.choiceId?.startsWith("income:")&&knownRootCardIds.has(a.target.cardInstanceId));
+      if(head.type===scienceSession.EFFECT_TYPES.SCAN_STEP&&head.payload?.options?.mode==="specified")return actions.filter(a=>a.actorId===seatId&&a.family==="choose_target"
+        &&!a.target?.cardInstanceId&&(knownRootNebulaIds.has(a.target?.nebulaId)||a.target?.skip||a.target?.done));
+      return [];
+    }
+
+    function finishChild(before, result, intent = null, resourceControl = null, carriedBarrier = null) {
       const comp = fork.composition || fork;
       const inspection = comp.inspect();
-      const barrier = closeAfterInput || result.irreversibleBarrier || inspection.session?.irreversibleBarrier;
-      const newBarrier = Boolean(closeAfterInput) || ruleComposition.isHiddenInformationBarrier(barrier)
-        && JSON.stringify(barrier) !== JSON.stringify(before.session?.irreversibleBarrier);
+      const nativeBarrier = result.irreversibleBarrier || inspection.session?.irreversibleBarrier;
+      const revealed = ruleComposition.isHiddenInformationBarrier(nativeBarrier)
+        && JSON.stringify(nativeBarrier) !== JSON.stringify(before.session?.irreversibleBarrier);
+      const barrier = revealed ? nativeBarrier : carriedBarrier || nativeBarrier;
+      const newBarrier = Boolean(carriedBarrier) || revealed;
       const envelope = snapshot(comp);
       loadedEnvelope = envelope;
       const childState = readIdentityState(envelope);
-      // A technology's already-visible PICK_CARD bonus is owed even though
-      // taking the tile reveals the next bonus. Only root-known public offers
-      // may be selected; close immediately after that one native input.
+      // Preserve the information mask while settling the same native effect
+      // queue. Only known public picks, specified sector scans and known income
+      // cards are admitted; stable actions and new owned-card identities close it.
       let knownRewardActions = [];
-      if (!closeAfterInput && newBarrier && cardPickPlanning && barrier.code === "tech_bonus_reveal"
+      if (newBarrier && cardPickPlanning && ["tech_bonus_reveal","hidden_card_reveal","hidden_card_draw"].includes(barrier.code)
         && inspection.phase === "awaiting_input"
-        && envelope.session?.session?.queue?.[0]?.type === "science_domain_pick_card") {
-        const known = new Set((rootObservation.publicState.board.publicCards || []).filter(Boolean).map(c => c.id));
-        knownRewardActions = legalActions(comp, inspection).filter(a => a.actorId === seatId && cardPickPlanningApi.isOffer(a)
-          && a.target?.source !== "blind" && known.has(a.target.cardInstanceId || a.payload?.cardInstanceId
-            || childState.cards.publicCards[a.target.publicSlotIndex]?.id));
+        && JSON.stringify([childState.turn.roundNumber,childState.turn.turnNumber,childState.turn.actionCycleNumber])===rootTurnKey) {
+        knownRewardActions = knownRewardChoices(envelope,legalActions(comp,inspection));
       }
       const settleKnownReward = knownRewardActions.length > 0;
       const actions = settleKnownReward ? knownRewardActions : newBarrier ? [] : legalActions(comp, inspection);
@@ -951,8 +968,7 @@
       }
       const child = createNode(envelope, observation,
         ["other-owner", "terminal", "turn-boundary"].includes(status) ? [] : actions, status,
-        newBarrier ? barrier : status === "turn-boundary" ? {code:"own-turn-complete"} : null, intent, ["other-owner","terminal","information-barrier","turn-boundary"].includes(status)?null:resourceControl,
-        settleKnownReward ? barrier : null);
+        newBarrier ? barrier : status === "turn-boundary" ? {code:"own-turn-complete"} : null, intent, ["other-owner","terminal","information-barrier","turn-boundary"].includes(status)?null:resourceControl);
       return child;
     }
 
@@ -2319,7 +2335,7 @@
       resourceGroups.clear();
       cache.clear();
       clearPrefixGraph();
-      rootObservation = null;
+      rootObservation = null;knownRootCardIds=new Set();knownRootNebulaIds=new Set();
       publicSeed = null;rootTurnKey=null;
     }
 

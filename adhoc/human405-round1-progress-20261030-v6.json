@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "seti-human405-round1-goal-checkpoint-v1",
+  "date": "2026-10-30",
+  "goalStatus": "active",
+  "searchVersion": "v54",
+  "completed": [
+    "All32 white native teacher roots through input62 audited; source-bound raw search evidence retained.",
+    "Fixed movement/resource retained-action conflict, future movement cost, no-rotation timing and prepaid objective recovery.",
+    "Settled root-known guaranteed technology pick before closing its reveal boundary.",
+    "Preserved separate at-location orbit/land main purposes.",
+    "Three standard white-only through v53 autonomous first-round runs completed and exactly replayed; source opening/RNG and passive opponents verified.",
+    "146 unit +1 full-flow and4 browser smokes pass; legacy input audit failure reproduced in v49 and recorded.",
+    "Protected-card fourth-slot income funding is an explicit fixed native preparation, with causal resource lower bounds, cold recovery and global budget failure tests.",
+    "Company swap purpose inference excludes the outgoing card; a known credit income offer explicitly funds the preserved card. Teacher46 now matches.",
+    "Normal public-card/technology reveals now carry their mask through root-known public picks, specified-sector scans and known income in the same native effect queue.",
+    "Teacher40 pick/scan/income is exactly equal to a complete actual native control after masking replacement information; V40 becomes43.5. Hidden replacement identities genuinely differ in the adversarial test while masked outcomes match.",
+    "Repeated picks and resource-goal bindings preserve root knowledge and global budgets; new public-card facts are removed before fixed pick purpose inference.",
+    "Four funded purple-technology native controls end idle. bonus_1m is publicity, not movement; mandatory technology queues are complete in this example."
+  ],
+  "latestTrial": {
+    "record": "reports/research/5cfabf5d.692bdf03.quick-200.json",
+    "wallMs": 1320,
+    "steps": 53,
+    "searches": 23,
+    "maxInputs": 121,
+    "maxMs": 242.234583,
+    "planReuseHits": 17,
+    "whiteScore": 16,
+    "whiteTech": [
+      "blue1"
+    ],
+    "teacherScore": 15,
+    "teacherTech": [
+      "blue2",
+      "purple4"
+    ],
+    "strategyAligned": false,
+    "sameConfirmedPathAsV51": false,
+    "searchVersion": "v53",
+    "sourceCommit": "692bdf03e2e7280f9ecdf669fcb1a8b16ebbfa0a"
+  },
+  "remainingInOrder": [
+    "Make comparison horizons consistent for optional root-known post-main actions after an irrelevant reveal. Current queued-reward completion43.5 and later optional-action value47 are different scopes.",
+    "Inspect safe optional continuation or existing native-validated post-main attainment/bounds before enabling them for the current resource policy. Preserve unknown-owned-card guards, hidden-public filtering, exact identities and native input/time gates.",
+    "Give a queued income purpose to known card acquisition even when the current main action is complete; verify income-card choice preserves the intended later card across cold roots.",
+    "Only after known consequences and horizons are comparable, assess B117 probe investment and DLC9/technology future capability against the income/analyze path; do not force imitation with arbitrary bonuses.",
+    "Run the next autonomous white-only round1 trial after the remaining known horizon discrepancy is corrected; latest verified autonomous trial is v53."
+  ],
+  "acceptedFourAIBaseline": "ai-search-v41-baseline-20261029",
+  "completionNote": "Goal remains active. Stage scores do not demonstrate strategy alignment or a full-game score/time acceptance.",
+  "candidateSource": {
+    "baseCommit": "6ffd27466d6c6ef7c3408d7da98b57d47cb763f0",
+    "snapshotManifest": "adhoc/human405-round1-v54-snapshot-20261030.json"
+  },
+  "currentRevisionAutonomouslyRun": false,
+  "validation": {
+    "teacherRoots": 32,
+    "maxTeacherNativeInputs": 121,
+    "maxTeacherMilliseconds": 291.668833,
+    "maxCompatibilityNativeInputs": 208,
+    "maxCompatibilityMilliseconds": 533.268208,
+    "nodeUnitPassed": 146,
+    "fullFlowPassed": 1,
+    "browserSmokePassed": 4,
+    "legacyVInputFailureRetained": true
+  }
+}

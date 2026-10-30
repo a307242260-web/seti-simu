@@ -927,7 +927,8 @@ module.exports = Object.freeze([...smokes, Object.freeze({
     const rootFixture=await fetch('/adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json').then(r=>r.json());
     const funding=await fetch('/adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-047-20261030-v1.json').then(r=>r.json());
     const fundingPick=await fetch('/adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-046-20261030-v1.json').then(r=>r.json());
-    for(const [name,f] of [...Object.entries(fixtures.cases),['paid',rootFixture],['income-funding',funding],['income-funding-pick',fundingPick]]){
+    const knownRewards=await fetch('/adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-040-20261030-v1.json').then(r=>r.json());
+    for(const [name,f] of [...Object.entries(fixtures.cases),['paid',rootFixture],['income-funding',funding],['income-funding-pick',fundingPick],['known-rewards',knownRewards]]){
       const seed=f.source.seed,k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw new Error('固定计划恢复失败');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
       try{p.setResourcePlanning(true);p.setCardPickPlanning(true);p.setMovementPlanning(true);p.setDecisionPlanning({scanPlanning:true,finalMarkPlanning:true});const n=p.openRoot();
         if(name==='advance'){const r=window.SetiDecisionSearch.searchDecision({port:p,root:n,evaluate:window.SetiStateValue.createStateValueEvaluator(f.seatId),...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:257,frontier:256,milliseconds:1500}});if(!r.complete||!r.lines[0].movementPolicy?.forceExecution||r.lines[0].alternatives!==1)throw new Error('移动时机重新分叉');}
@@ -935,11 +936,12 @@ module.exports = Object.freeze([...smokes, Object.freeze({
         else if(name==='paid'){const plans=p.resourceSpec(n).plans.filter(g=>g.goal.paidRewardPolicy);if(plans.length!==1)throw new Error('付款额度仍枚举');const r=p.expandResourcePlan(n,plans[0],()=>null);if(!r.complete||r.prefixes.filter(p=>p.action.target?.pay).length!==4)throw new Error('付款计划未固定');}
         else if(name==='income-funding'){const plan=p.resourceSpec(n).plans.find(p=>p.goal.cardId==='card-15-0'&&p.goal.incomeFunding);if(!plan)throw new Error('收入资助主牌候选缺失');const r=p.expandResourcePlan(n,plan,()=>null);if(!r.complete||r.submissions!==10||r.prefixes[8].action.target.cardInstanceId!=='card-41-0'||r.prefixes[9].action.target.cardInstanceId!=='card-15-0')throw new Error('收入资助链丢失受益牌');}
         else if(name==='income-funding-pick'){const s=p.cardPickSpec(n);if(s?.goal.fundsCardId!=='card-15-0'||s.selection.cardId!=='card-41-0')throw new Error('浏览器收入选牌未绑定资金目的');const r=p.expandWithCardPick(n,s.selectedActionId,()=>null);if(!r.complete)throw new Error('浏览器收入选牌执行失败');}
+        else if(name==='known-rewards'){const picked=p.expand(n,f.source.teacherActionId);if(picked.status!=='decision')throw new Error('公共补牌截断已知奖励');const scan=picked.legalActions.find(a=>a.target.nebulaId==='sector-4-b'),scanned=scan&&p.expand(picked,scan.actionId),income=scanned?.legalActions.find(a=>a.target.cardInstanceId==='card-40-0');if(!income)throw new Error('已知扫描后收入丢失');const done=p.expand(scanned,income.actionId);if(done.status!=='information-barrier'||window.SetiStateValue.evaluateStateValue(done.observation,f.seatId).total!==43.5||!done.observation.publicState.board.publicCards.some(c=>c?.hidden))throw new Error('已知奖励结算或遮蔽错误');}
         else{const s=p.localDecisionSpec(n),want=name==='blue'?10:1;if(!s||s.retainedActionIds.length!==want)throw new Error(name+'仍产生多余候选');if(name!=='blue'){const r=p.expandWithCardPick(n,s.selectedActionId,()=>null);if(!r.complete)throw new Error(name+'固定执行失败');}}
         if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw new Error(name+'污染真实根');
       }finally{p.close();c.dispose();}
     }
-    window.__sixGreedyPlansSmoke={ok:true,stages:6,incomeFunding:true};
+    window.__sixGreedyPlansSmoke={ok:true,stages:6,incomeFunding:true,knownRewards:true};
   })()`,
   successExpression: "window.__sixGreedyPlansSmoke?.ok === true",
   obligation: "真实页面六类贪心计划均收束候选且通过原生执行，保存与真实根隔离",
