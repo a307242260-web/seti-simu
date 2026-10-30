@@ -45,6 +45,7 @@ const completionAgent = require("../randomizer/game/ai/completion-agent");
 const searchAgent = require("../randomizer/game/ai/search-agent");
 const { createStepProgressReporter } = require("./progress");
 const { buildWorldIdentity } = require("./fixed-world-identity");
+const whiteRound1 = require("./research-human405-round1");
 
 const RECORD_SCHEMA_VERSION = "seti-research-validation-record-v1";
 const DEFAULT_SEED = "seti-free-analyze-v1";
@@ -60,6 +61,7 @@ const FLAG_KEYS = [
   "vStateValueEnabled",
   "traceCounterfactualGoalClusters",
   "compactReplay",
+  "scenario",
 ];
 const IDENTITY_KEYS = ["seed", "activePlayerCount", "aiDifficulty", "policyVersion"];
 
@@ -126,6 +128,10 @@ function buildIdentity(options) {
     if (config[key] !== undefined) identity.flags[key] = config[key];
   }
   if (agentType !== "heuristic") identity.agentType = agentType;
+  if (config.scenario != null) {
+    identity.scenario = whiteRound1.describe(identity, options);
+    identity.policyVersion += `/${identity.scenario.id}/${identity.scenario.opponentPolicyVersion}`;
+  }
   identity.world = buildWorldIdentity(identity);
   return identity;
 }
@@ -139,6 +145,7 @@ function fingerprintOf(identity) {
   // 覆盖旧记录或拒绝重跑，无法追溯每条记录对应的精确代码版本）。
   payload.gitCommit = identity.gitCommit || "dirty";
   if (identity.agentType) payload.agentType = identity.agentType;
+  if (identity.scenario) payload.scenario = identity.scenario;
   payload.world = identity.world;
   return sha256(stableSerialize(payload));
 }
@@ -406,7 +413,15 @@ function runValidation(options) {
 
   // ---- 运行 ----
   console.log(`[world] ${identity.world.worldVersion} ${identity.world.fingerprint}`);
-  const env = createSimulationEnv();
+  const failedAttemptsPath = `${recordPath}.attempts.jsonl`;
+  let failedTrace = null;
+  const env = identity.scenario ? whiteRound1.createEnvironment({ onAgentDecision(trace) {
+    if (trace.actionId == null) {
+      failedTrace = trace;
+      fs.mkdirSync(RECORDS_DIR, { recursive: true });
+      fs.appendFileSync(failedAttemptsPath, `${JSON.stringify(trace)}\n`, "utf8");
+    }
+  } }) : createSimulationEnv();
   const resetConfig = {
     seed: identity.seed,
     activePlayerCount: identity.activePlayerCount,
@@ -422,8 +437,14 @@ function runValidation(options) {
   let steps = 0;
   let terminal = false;
   let savePath = null;
+  let initialized = false;
+  let decisionStartSteps = null;
   const agentTracePath = identity.agentType ? `${recordPath}.decisions.jsonl` : null;
   if (agentTracePath) fs.mkdirSync(RECORDS_DIR, { recursive: true });
+  if (identity.scenario && agentTracePath) {
+    if (!options.force && fs.existsSync(agentTracePath)) throw new Error("SCENARIO_PARTIAL_TRACE_EXISTS: retain the earlier attempt instead of rerunning");
+    fs.writeFileSync(agentTracePath, "", "utf8");
+  }
 
   try {
     if (resumedFrom) {
@@ -432,9 +453,17 @@ function runValidation(options) {
       steps = resumeStep;
       seedCollectorFrom(collector, quickRecord.metrics);
       console.log(`[resume] 存档加载完成，当前：R${env.observe()?.publicState?.roundNumber ?? "?"} 步 ${steps}`);
+    } else if (identity.scenario) {
+      const opening = whiteRound1.initialize(env, resetConfig, identity.scenario);
+      steps = opening.length;
+      opening.forEach((entry, i) => collectStep(collector, i + 1, {
+        policyDecision: { seatId: entry.actorPlayerId, actionId: entry.action.actionId },
+      }));
+      console.log(`[scenario] ${identity.scenario.id} opening=${steps} learner=${identity.scenario.learnerSeat} opponents=PASS`);
     } else {
       env.reset(resetConfig);
     }
+    initialized = true;
 
     const unboundedSearch = identity.agentType === "search" && Object.values(searchAgent.BUDGET).every(value => value === null);
     const limit = options.full ? (unboundedSearch ? null : MAX_DECISIONS) : options.steps;
@@ -443,7 +472,9 @@ function runValidation(options) {
     const progress = createStepProgressReporter({ label: mode, minIntervalMs: 1000 });
     while (!env.isTerminal() && (limit === null || steps < limit)) {
       const obsBefore = env.observe();
+      if (identity.scenario && whiteRound1.settled(obsBefore)) break;
       const seat = obsBefore?.decision?.actorPlayerId || null;
+      decisionStartSteps = steps;
       const result = env.runAgentDecision();
       if (agentTracePath) fs.appendFileSync(agentTracePath, `${JSON.stringify(result.agentTrace)}\n`, "utf8");
       steps += 1;
@@ -471,6 +502,7 @@ function runValidation(options) {
           `[progress] mode=${mode} step=${steps} round=${sum.round} avg=${sum.avgScore}\n`,
         );
       }
+      decisionStartSteps = null;
     }
     terminal = env.isTerminal();
     const finalObs = env.observe();
@@ -500,6 +532,10 @@ function runValidation(options) {
         agentTracePath: path.relative(path.join(__dirname, ".."), agentTracePath),
         searchCoverage: "not-evaluated" } : {}),
       flags: identity.flags,
+      ...(identity.scenario ? { scenario: identity.scenario,
+        scenarioResult: { firstRoundSettled: whiteRound1.settled(finalObs), openingInputs: identity.scenario.openingInputs },
+        stopReason: whiteRound1.settled(finalObs) ? "first-round-settled" : "step-limit",
+        scoreSemantics: identity.scenario.scoreSemantics } : {}),
       createdAt: new Date().toISOString(),
       gitCommit: gitCommit(),
       steps,
@@ -527,6 +563,44 @@ function runValidation(options) {
     console.log(`\n记录: ${path.relative(path.join(__dirname, ".."), recordPath)}`);
     if (savePath) console.log(`存档: ${savePath}`);
     return record;
+  } catch (error) {
+    if (identity.scenario && initialized) {
+      // A failed gate is a reproducible attempt, not permission to rerun the
+      // same fingerprint or to substitute a PASS. Preserve its unchanged root.
+      const checkpointPath = `${recordPath}.failed-checkpoint.json`;
+      const checkpoint = env.createCheckpoint();
+      const failedDecisionCommitted = decisionStartSteps == null ? null : checkpoint.replayCursor.stepIndex > decisionStartSteps;
+      fs.writeFileSync(checkpointPath, `${JSON.stringify(checkpoint)}\n`, "utf8");
+      if (!options.noSave) {
+        const payload = env.saveBrowserSave({ name: `${options.name}-failed` });
+        savePath = path.relative(path.join(__dirname, ".."), buildSavePath(options, options.name, `${mode}-failed`, payload.stateVersion));
+        fs.mkdirSync(SAVES_DIR, { recursive: true });
+        fs.writeFileSync(path.join(__dirname, "..", savePath), `${JSON.stringify(payload, null, 2)}\n`, "utf8");
+      }
+      if (error.search) {
+        collectBudgetHits(collector, steps + 1, { policyDecision: { seatId: failedTrace?.context?.seatId || "player-white", actionId: null }, searches: [error.search] });
+        collector.searches.at(-1).committed = false;
+      }
+      const record = { schemaVersion: RECORD_SCHEMA_VERSION, name: options.name || null, fingerprint, mode,
+        seed: identity.seed, activePlayerCount: identity.activePlayerCount, world: identity.world,
+        aiDifficulty: identity.aiDifficulty, policyVersion: identity.policyVersion, agentType: identity.agentType,
+        agentTracePath: path.relative(path.join(__dirname, ".."), agentTracePath), searchCoverage: error.search?.complete ? "complete" : "incomplete",
+        flags: identity.flags, scenario: identity.scenario, scenarioResult: { firstRoundSettled: false, openingInputs: 23 },
+        createdAt: new Date().toISOString(), gitCommit: identity.gitCommit, steps: checkpoint.replayCursor.stepIndex, stepsLimit: options.steps,
+        terminal: false, status: "failed", wallMs: Date.now() - startedAt, resumedFrom, resumeStep, savePath,
+        summary: { round: env.observe().publicState.roundNumber, terminal: false, scores: {}, avgScore: null },
+        metrics: { famsBySeat: collector.famsBySeat, whiteQuickTrade: collector.whiteQuickTrade,
+          whiteResearchSteps: collector.whiteResearchSteps, traceEvents: collector.traceEvents,
+          revealEvents: collector.revealEvents, budgetHits: collector.budgetHits, searches: collector.searches },
+        failure: { code: error.code || "SCENARIO_FAILED", message: error.message,
+          checkpointPath: path.relative(path.join(__dirname, ".."), checkpointPath),
+          attemptTracePath: fs.existsSync(failedAttemptsPath) ? path.relative(path.join(__dirname, ".."), failedAttemptsPath) : null,
+          searchGraphClosed: error.search?.complete === true,
+          decisionAdmitted: failedDecisionCommitted,
+          failedDecisionCommitted } };
+      fs.writeFileSync(recordPath, `${JSON.stringify(record, null, 2)}\n`, "utf8");
+    }
+    throw error;
   } finally {
     env.dispose();
   }

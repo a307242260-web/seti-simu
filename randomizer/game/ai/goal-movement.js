@@ -8,7 +8,7 @@
   if(common)module.exports=api;else root.SetiGoalMovement=api;
 })(typeof globalThis!=="undefined"?globalThis:window,function(ability,rockets,solar,cards,effects,cardPlay,players){
   "use strict";
-  const VERSION='seti-goal-movement-policy-v1';
+  const VERSION='seti-goal-movement-policy-v4';
   const direction=action=>Number.isInteger(action.target?.rocketId)&&Number.isInteger(action.target.deltaX)
     &&Number.isInteger(action.target.deltaY)&&Math.abs(action.target.deltaX)+Math.abs(action.target.deltaY)===1;
   const startsMovement=action=>action.target?.tradeId==='energy-for-move'||action.family==='card_corner'&&action.payload?.kind==='move';
@@ -51,6 +51,11 @@
         excludedDirectionCount:0,routingNodes:0,objectiveCount:0};
     }
     if(!moving.length&&!objectiveOnly)return null;
+    const active=state.turn.activePlayerIds,passed=state.turn.passedPlayerIds;
+    const onlySeatRemaining=Array.isArray(active)&&active.includes(seatId)&&Array.isArray(passed)
+      &&active.every(id=>id===seatId||passed.includes(id));
+    const hasExpiringMovement=Boolean(owner.industryBorrowedTechTileId||(state.turn.cardTurnEventBonuses||[])
+      .some(b=>(b.ownerId||b.playerId)===seatId&&b.movementModifiers));
     const free=status==='decision',head=session?.queue?.[0];
     const allowance=free?(cardPlay.getMovementAllowance(head,state)??moving.find(a=>Number.isInteger(a.payload?.remaining))?.payload.remaining??head?.payload?.remaining??1):
       owner.resources.energy+owner.hand.reduce((n,c)=>n+(cards.getDiscardActionMoveRewardForCard(c)?.movementPoints||0),0);
@@ -75,7 +80,10 @@
     const arrivalValue=content=>owner.resources.publicity>=players.RESOURCE_LIMITS.publicity?0:
       content.kind==='comet'||content.kind==='planet'&&content.planetId!=='earth'||content.kind==='asteroid'&&players.playerOwnsTech(owner,'orange2',{turn:state.turn})? 0.5 : 0;
     function add(goal,ship,route,gain,endpointCost=0){if(!route||mandatoryPrefix&&!route.path.length||!mandatoryPrefix&&goal.timing!=='next-turn'&&route.cost>allowance)return;const first=route.path[0],selected=first&&moving.find(a=>matches(a,ship.id,first));if(!objectiveOnly&&route.path.length&&!selected)return;
-      const net=gain-endpointCost-(free?0:route.cost);if(!(net>0))return;
+      // Only the current native allowance is free; a preparation prefix must
+      // still account for the remaining route rather than pricing all steps at0.
+      const paidMovement=free?Math.max(0,route.cost-allowance):route.cost;
+      const net=gain-endpointCost-paidMovement;if(!(net>0))return;
       goals.push({goal,rocketId:ship.id,path:route.path,cost:route.cost,net,selected,startedTurn:state.turn.turnNumber,startedRound:state.turn.roundNumber,free,prefixOnly:mandatoryPrefix});
     }
     for(const ship of ships)for(const route of pathByShip.get(ship.id).values()){
@@ -106,6 +114,11 @@
         deferredGoal ||= {...candidate.goal,timing:'defer'};continue;
       }
       let executable=candidate;
+      // With all other seats passed, ending this turn returns to this seat
+      // without a rotation. Defer only if no temporary movement ability can expire.
+      if(owner.mainActionCompleted&&!mandatoryPrefix&&!free&&onlySeatRemaining&&!hasExpiringMovement&&['orbit','land'].includes(candidate.goal.kind)){
+        deferredGoal ||= {...candidate.goal,timing:'defer',reason:'no-intervening-rotation-before-next-own-turn'};continue;
+      }
       if(owner.mainActionCompleted&&!mandatoryPrefix&&['orbit','land'].includes(candidate.goal.kind)&&compareTiming){
         let timing=compareTiming(candidate.goal.id,candidate.path.map(step=>({...step,rocketId:candidate.rocketId})),free?allowance:0);
         if(timing.comparable){

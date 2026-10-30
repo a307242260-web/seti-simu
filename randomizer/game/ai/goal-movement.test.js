@@ -6,6 +6,41 @@ function kernel(){const k=createSimulationRuleComposition({seed,random:createSee
 const k=kernel(),comp=k.composition;assert(comp.lifecycle.restore(f.compositionEnvelope).ok);
 const play=comp.inputPort.enumerateActions({}).find(a=>a.family==='play_card'&&a.target.cardInstanceId==='card-40-0');assert(comp.inputPort.submitAction(play).ok);const pending=comp.lifecycle.save().envelope,evaluate=createStateValueEvaluator(seatId);
 function open(envelope,cache=0){assert(comp.lifecycle.restore(envelope).ok);const port=createAnalysisPort({composition:comp,seatId,maxCacheEntries:cache});port.setMovementPlanning(true);return{port,root:port.openRoot(),before:comp.lifecycle.save().envelope};}
+// A mandatory free step covers only its one point, not the entire future route.
+{
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-026-20261030-v1.json'))),session=f.compositionEnvelope.session.session,state=session.workingState,before=structuredClone(state);
+ const endpoints=require('../production-kernel').getProbeRouteRequirements(state,f.seatId).candidates.filter(c=>c.requirementId==='rocket:3:land:mercury:planet:'||c.requirementId==='rocket:3:orbit:venus:planet:');
+ assert.equal(endpoints.length,2);assert.equal(endpoints.find(c=>c.planetId==='mercury').required.movementPoints,4);assert.equal(endpoints.find(c=>c.planetId==='venus').required.movementPoints,2);
+ const policy=movement.plan({state,seatId:f.seatId,actions:session.queue[0].payload.choices,status:'decision',session,endpoints:()=>endpoints});
+ assert.equal(policy.chosenGoal.id,'rocket:3:orbit:venus:planet:','after the one free point, Venus has1 paid point versus Mercury3; future route costs still affect the objective');
+ assert.equal(policy.intent.path.reduce((n,p)=>n+p.requiredMovePoints,0),2);assert.equal(policy.intent.prefixOnly,true);assert.deepEqual(state,before);
+}
+// With every other seat passed, the next own turn has no intervening rotation.
+{
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-038-20261030-v1.json'))),seed=f.source.seed;
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const before=c.lifecycle.save().envelope,state=JSON.parse(before.committedState);
+ assert(state.turn.activePlayerIds.filter(id=>!state.turn.passedPlayerIds.includes(id)).every(id=>id===f.seatId));const end=c.inputPort.enumerateActions({}).find(a=>a.family==='end_turn');assert(end);assert(c.inputPort.submitAction(end).ok);const after=JSON.parse(c.lifecycle.save().envelope.committedState);assert.equal(after.turn.currentPlayerId,f.seatId);assert.deepEqual(after.solarSystem.rotation,state.solarSystem.rotation);assert.deepEqual(after.pieces,state.pieces);
+ assert(c.lifecycle.restore(before).ok);const p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});p.setMovementPlanning(true);
+ try{const root=p.openRoot(),policy=p.goalMovementSpec(root);assert.equal(policy.selectedActionId,null,'do not force paid preparation for a rotation that cannot intervene before the next own turn');assert.equal(policy.reason,'defer-movement');assert(policy.retainedActionIds.includes(end.actionId));assert.deepEqual(c.lifecycle.save().envelope,before);}finally{p.close();c.dispose();}
+}
+// No rotation does not remove deadlines from a real expiring movement modifier.
+{
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-038-20261030-v1.json'))),state=JSON.parse(f.compositionEnvelope.committedState),seat=f.seatId;
+ state.turn.cardTurnEventBonuses.push({playerId:seat,duration:'turn',eventType:'move',movementModifiers:{ignoreAsteroidRestriction:true}});
+ const next=structuredClone(state);require('../turn-flow').advanceTurnAfterPlayerAction(next,seat);const owner=state.players.players.find(p=>p.id===seat),future=next.players.players.find(p=>p.id===seat);assert(ability.ignoresAsteroidRestriction(state,owner));assert(!ability.ignoresAsteroidRestriction(next,future));
+ const native=require('../production-kernel'),now=native.getProbeRouteRequirements(state,seat).candidates,later=native.getProbeRouteRequirements(next,seat).candidates;
+ assert(now.some(a=>later.some(b=>b.requirementId===a.requirementId&&b.required.movementPoints>a.required.movementPoints)),'formal movement costs increase when the current-turn ability expires');
+ const k=createSimulationRuleComposition({seed:f.source.seed,random:createSeededRandom(f.source.seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,f.source.seed,v?.playerId)});k.newGame({seed:f.source.seed});const c=k.composition;assert(c.lifecycle.restore({...f.compositionEnvelope,committedState:JSON.stringify(state)}).ok);const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});p.setMovementPlanning(true);
+ try{const policy=p.goalMovementSpec(p.openRoot());assert.notEqual(policy.deferredGoal?.reason,'no-intervening-rotation-before-next-own-turn');assert.equal(policy.deferredGoal?.movementTiming?.reason,'temporary-or-company-movement-context','retain the native timing query limitation instead of treating no rotation as a cost-equivalence proof');assert.deepEqual(c.lifecycle.save().envelope,before);}finally{p.close();c.dispose();}
+}
+// Prepaying one movement point does not replace the objective chosen before payment.
+{
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-025-20261030-v1.json'))),seed=f.source.seed;
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});p.setMovementPlanning(true);
+ const root=p.openRoot(),before=c.lifecycle.save().envelope,prior=p.goalMovementSpec(root);assert(prior.selectedActionId);const first=prior.intent.path[0];
+ const paid=p.expand(root,f.source.teacherActionId),bound=p.goalMovementSpec(paid);assert.equal(bound.chosenGoal.id,prior.chosenGoal.id,'recover the purpose from the native trade base state, not from a newly free whole-route estimate');const selected=paid.legalActions.find(a=>a.actionId===bound.selectedActionId);assert.equal(selected.target.deltaX,first.deltaX);assert.equal(selected.target.deltaY,first.deltaY);assert.deepEqual(c.lifecycle.save().envelope,before);p.close();
+ const actual=c.inputPort.enumerateActions({}).find(a=>a.actionId===f.source.teacherActionId);assert(c.inputPort.submitQuickAction(actual).ok);const pending=c.lifecycle.save().envelope,cold=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});cold.setMovementPlanning(true);try{const recovered=cold.goalMovementSpec(cold.openRoot());assert.equal(recovered.chosenGoal.id,prior.chosenGoal.id);assert.equal(recovered.selectedActionId,bound.selectedActionId);assert.deepEqual(c.lifecycle.save().envelope,pending);}finally{cold.close();c.dispose();}
+}
 // DLC40 follows one complete, explicit objective; it stops at that target with free allowance left.
 let routeSteps=0,goal;
 {
@@ -46,9 +81,9 @@ let routeSteps=0,goal;
  const last=macro.prefixes.at(-1).action;assert.equal(last.target.landTarget?.satelliteId,spec.chosenGoal.endpointTarget.satelliteId);
  assert(macro.submissions<=spec.intent.path.length*2+3);assert.deepEqual(comp.lifecycle.save().envelope,before);port.close();
 }
-// A prepaid one-step quick movement has no skip: it makes one directed preparation step, not an impossible optional stop.
+// A prepaid step keeps its funded purpose, but its fixed prefix executes only the prepaid point.
 {
- const {port,root,before}=open(f.compositionEnvelope);const action=root.legalActions.find(a=>a.target?.tradeId==='energy-for-move');assert(action);const quick=port.expand(root,action.actionId),spec=port.goalMovementSpec(quick);assert(spec.chosenGoal);assert.equal(spec.chosenGoal.timing,'preparation');assert.equal(spec.retainedActionIds.length,1);assert.equal(spec.intent.prefixOnly,true);const next=port.expand(quick,spec.selectedActionId);assert.equal(next.status,'stable');assert.deepEqual(comp.lifecycle.save().envelope,before);port.close();
+ const {port,root,before}=open(f.compositionEnvelope),prior=port.goalMovementSpec(root);const action=root.legalActions.find(a=>a.target?.tradeId==='energy-for-move');assert(action);const quick=port.expand(root,action.actionId),spec=port.goalMovementSpec(quick);assert(spec.chosenGoal);assert.equal(spec.chosenGoal.id,prior.chosenGoal.id);assert.equal(spec.chosenGoal.timing,prior.chosenGoal.timing);assert.equal(spec.retainedActionIds.length,1);assert.equal(spec.intent.prefixOnly,true);const macro=port.expandGoalMovementPlan(quick);assert(macro.complete);assert.equal(macro.goalStatus,'preparation-step-completed');assert.equal(macro.submissions,1);assert(movement.isDirection(macro.prefixes[0].action));assert.equal(macro.node.status,'stable');assert.deepEqual(comp.lifecycle.save().envelope,before);port.close();
 }
 // Rotation cost comparison distinguishes a necessary prefix from movement that should wait.
 {

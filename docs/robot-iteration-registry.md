@@ -31,6 +31,14 @@ V2 没有成绩时显示空结果，不借用 V1 的历史成绩。
 构建产物中的 `generations.v1` / `generations.v2` 分别保存排行榜和基线；
 `versions[].aiGeneration` 标记列表归属。顶层 `bestOf` / `currentBaseline` 对应默认 V2。
 
+## 仅白席第一轮教师对照（2026-10-30）
+
+`robot_iterate run --config agentType=search,scenario=human405-white-round1-v1,compactReplay=true --steps 200`使用已归档且验证SHA的23输入开局：白席走共享Production搜索，其他三席只PASS并完成强制弃牌/保留牌。保留牌优先沿用教师公开牌，缺失则稳定排序；未知强制选择直接报错。该对照不使用四AI对局成绩口径。
+
+场景拒绝full模式，在第一轮PASS必要结算完成并推进R2时停止，不执行R2策略；记录保留场景、各席角色、开局SHA及`firstRoundSettled`。分数是阶段分，不是完整终局；登记时设置`baselineEligible:false`，保持已接受的v41四AI基线。
+
+白席每次共享搜索返回后核查原生输入≤256、根与搜索耗时≤600ms；超限不提交该步，不替代PASS。失败仍保存记录、已确认输入、失败尝试及原生检查点，重复指纹拒绝重跑。新场景不改变普通四AI实验配置或指纹。
+
 ## 1. 数据流与文件
 
 ```text

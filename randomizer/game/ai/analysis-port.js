@@ -743,13 +743,18 @@
     function recoverMovementIntent(envelope) {
       const session = envelope.session?.session, head = session?.queue?.[0], effect = head?.payload?.cardEffect;
       const source = session?.journal?.actions?.[0]?.action;
-      if (source?.family === "move" && session.baseState) {
+      const prepaid = source?.family === "quick_trade" && source.target?.tradeId === "energy-for-move"
+        && head?.payload?.decisionContext?.kind === "move" && head.payload.decisionContext.tradeId === "energy-for-move";
+      if ((source?.family === "move" || prepaid) && session.baseState) {
         const state = session.baseState;
         const selected = goalMovement.plan({state,seatId,actions:[],status:"stable",objectiveOnly:true,routeCache:movementRouteCache,
           compareTiming:(id,path,free)=>movementTiming(state,id,path,free),
           endpoints:()=> (productionKernel || globalThis.SetiProductionKernel).getProbeRouteRequirements(state,seatId)?.candidates || []});
         goalMovementGeometryNodes += selected?.routingNodes || 0;
         const intent = selected?.intent, first = intent?.path[0];
+        // A prepaid step is the execution of the original movement purpose.
+        // Preserve it through the native trade session, including cold restore.
+        if (first && prepaid) return { ...intent, free: true, prefixOnly: true };
         if (first && source.target.rocketId === intent.rocketId && source.target.deltaX === first.deltaX && source.target.deltaY === first.deltaY) return intent;
       }
       if (!effect || !session.undoFrames?.length || !(goalMovement.movementAllowance(head, session.workingState) > 0)) return null;
