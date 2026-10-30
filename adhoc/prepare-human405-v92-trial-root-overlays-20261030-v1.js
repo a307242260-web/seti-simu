@@ -1,0 +1,11 @@
+'use strict';
+// Preserve the shared worktree's unrelated V1 experiment while delivering a
+// clean committed registry with only this task's V2 addition.
+const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),assert=require('node:assert/strict'),lib=require('../tools/robot-iteration-lib');
+const root='/Users/bilibili/code/seti-simu',out='/private/tmp/seti-human405-r1-v92-trial-root-overlays-20261030',paths=['reports/iteration/versions.json','reports/iteration/registry.json','reports/robot-iteration.html'];fs.mkdirSync(out,{recursive:true});
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex'),ownId='ai-search-v92-white-r1-20261030',localVersions=JSON.parse(fs.readFileSync(paths[0])),localRegistry=JSON.parse(fs.readFileSync(paths[1])),original=Object.fromEntries(paths.map(p=>[p,fs.readFileSync(path.join(root,p))])),workVersions=JSON.parse(original[paths[0]]),workRegistry=JSON.parse(original[paths[1]]);
+assert(!workVersions.versions.some(v=>v.id===ownId));assert.equal(localRegistry.currentBaseline,'ai-search-v41-baseline-20261029');const version=localVersions.versions.find(v=>v.id===ownId),result=localRegistry.versions.find(v=>v.id===ownId);assert.equal(version.baselineEligible,false);assert.equal(result.isHead,false);workVersions.versions.unshift(version);workRegistry.versions.unshift(result);
+workRegistry.generations.v2=localRegistry.generations.v2;for(const k of ['currentBaseline','bestOf','headCommit','builtAt','worktreeDirty'])workRegistry[k]=localRegistry[k];
+const values=[JSON.stringify(workVersions,null,2)+'\n',JSON.stringify(workRegistry,null,2)+'\n',fs.readFileSync(lib.TEMPLATE_PATH,'utf8').replace('/*__REGISTRY_JSON__*/',JSON.stringify(workRegistry,null,2).replace(/</g,'\\u003c'))],overlays={};
+paths.forEach((p,i)=>{const file=path.join(out,path.basename(p));fs.writeFileSync(file,values[i]);overlays[p]={beforeSha256:sha(original[p]),path:file,sha256:sha(fs.readFileSync(file))};});
+fs.writeFileSync(path.join(out,'overlays.json'),JSON.stringify(overlays,null,2)+'\n');console.log(JSON.stringify({preservedV1:workVersions.versions.filter(v=>!localVersions.versions.some(x=>x.id===v.id)).map(v=>v.id),overlays:path.join(out,'overlays.json')}));
