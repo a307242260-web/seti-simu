@@ -1,0 +1,41 @@
+{
+  "status": "design-only-not-implemented-or-admitted",
+  "goalStatus": "active",
+  "productionSource": "a11ea9dc3dd5f88fc5cee6edd857caed6b05ccf7",
+  "observedProblem": "The deployed B117 probe is ignored by V. Native witness data give an unfunded Uranus option8 versus an already funded Mars option2; neither an arbitrary bonus nor unfinanced future rewards may become a bound.",
+  "intendedForecast": "One next ordinary mission, max rather than sum, using native endpoint gain and card-count facts minus remaining native movement/endpoint cost. Income, scan, traces, unknown identities and route publicity remain outside this first supported forecast. This is a hypothesis, not guaranteed future score.",
+  "fundingContract": [
+    "Use only current credits/energy and native currency exchanges, preserving endpoint costs. Public data/income preparations remain actual native search plans; after a preparation the forecast is recomputed from actual resources.",
+    "Include the native exchange loss in remaining cost: needing3energy with2credits/2energy costs2credits+2energy, not3units.",
+    "Share the native money-funding arithmetic between the two real callers, card-pick funding and probe value. Keep card-pick behavior unchanged when extracting its existing gap function.",
+    "Ordinary probe endpoints require0or1credit. For credit conversion x in0..requiredCredits, energy conversion y has a closed feasible interval. Choose the interval endpoint minimizing weighted native spend. At most2credit cases; no input simulation or currency-combination search.",
+    "Feasible allocations satisfy creditSpend=c-x+2y<=walletCredits and energySpend=e-y+2x<=walletEnergy. Derive2-to1coefficients from native quick-trades. Minimum cost over feasible allocations makes the forecast money-monotone even under custom nonnegative weights."
+  ],
+  "integrationScope": [
+    "Reuse existing probeRouteRequirements in full and compact V projections. Compact native projection should query routes without move-timing only when an ordinary owned probe exists. No second game state or host-specific evaluator.",
+    "Reject missing probe facts explicitly when an active supported probe needs them. Only ordinary known planets/standard probes; exclude alien/fossil endpoints. Existing unknown-card source filtering must also apply to value inputs.",
+    "Resource-only native previews keep geometry fixed. Pass a source-bound probe-value callback to income/blue completion and add exact before/after forecast differences; no invented successor observation or envelope.",
+    "Turn-tail scalar proofs with active probes must decline until native rotation effects on the new term are proved. Income proof may remain only after exact resource-preview delta is checked.",
+    "Post-main numeric bound must add an explicit gross ordinary-mission ceiling minus current probe capital. Verify no admitted post-main action can add a new probe or increase the endpoint gross beyond this ceiling; otherwise decline the bound.",
+    "Review every legacy linear proof guard for the new model, including states with no probe now but an admitted launch later. Do not restore old proof counts to satisfy obsolete tests.",
+    "Terminal value remains native final score; no impossible future purpose for a round4 player that already passed."
+  ],
+  "searchAndBudgetContract": {
+    "stateIdentity": "Existing full native physical state, pending control and information-set identity; deterministic forecast facts do not define a new equivalence.",
+    "deduplication": "Existing native execution DAG and bound resource/goal prefix reuse.",
+    "reachability": "Native route topology and exact reserved-cost money financing; resource preparations keep existing native greedy execution and resource lower-bound rejection.",
+    "productionBudgets": "Retain the previously user-authorized production configuration. Diagnostic full-policy controls have explicit finite input/node/frontier/time budgets.",
+    "admissionGate": "All32teacher+12historical cold roots complete within256actual native inputs/600ms before any new autonomous R1 or full game. All loops and proof nodes remain under global node/time checks."
+  },
+  "requiredEvidence": [
+    "Native affordable/unaffordable ordinary missions, endpoint saturation and two-probe shared-first-reward counterexamples.",
+    "Exact native exchange-cost controls, including reserving endpoint fees and custom-weight money monotonicity.",
+    "Full/compact V equality and alternate hidden-world noninterference, with missing-input errors explicit.",
+    "Income/blue before-after deltas against actual native input execution and active-probe end-turn fallback.",
+    "Every used numeric/typed source in representative affected roots continued natively; fresh no-shortcut roots retain best action/value.",
+    "Related checks, V input audit and browser parity; broader regression justified because this is a valuation/input change.",
+    "Only after admission, one distinct standard white-only R1; exact source/opening/native replay/PASS opponents verified, and no strength claim without an observed result."
+  ],
+  "remainingOtherDifferences": [36, 38, 39, 43, 62],
+  "baseline": "ai-search-v41-baseline-20261029"
+}

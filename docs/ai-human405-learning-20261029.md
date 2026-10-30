@@ -541,3 +541,13 @@ v94通过44冷根、7相关Node、6Chrome、185数值剪枝和55计划的原生�
 - [第56步完整准备顺序对照](../reports/ai-foundation-20261023/human405-v93-native-witness-comparison-step56-fixed-prefix-20261031-v1.json)
 - [探测器用途只读原型](../reports/ai-foundation-20261023/human405-probe-purpose-prototype-20261031-v1.json)
 - [v94准入和全部节点门槛](../reports/ai-foundation-20261023/human405-v94-admission-20261031-v1.json)
+
+v94自主首轮复查（a11ea9dc）已完成：48正式输入、18白席决策、1027ms，最慢79模拟/
+189.814ms，11次计划复用。每个原生输入重放一致，23输入开局和仅PASS对手验证通过，
+369个运行时/工具文件逐字节匹配提交。与v93的标准输入序列、最终committedState及Session
+完全相同，仍为白13分、蓝1+紫4；教师15分、蓝2+紫4。第37步的局部修复没有改善该次自主
+开局，不能宣称棋力提高。记录、存档和复盘登记为独立V2阶段版，baselineEligible=false，
+v41保持不变。Goal继续进行；后续探测器估值须先完成可达性、兑换实际成本及值证明检查。
+
+- [v93/v94精确输入和状态比较](../reports/ai-foundation-20261023/human405-white-r1-v93-v94-comparison-20261031-v1.json)
+- [v94首轮复盘](../reports/iteration/ai-search-v94-white-r1-20261031/83388120.a11ea9dc.quick-200.action-log.html)

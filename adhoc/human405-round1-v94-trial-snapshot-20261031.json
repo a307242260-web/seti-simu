@@ -1,0 +1,55 @@
+{
+  "baseCommit": "a11ea9dc3dd5f88fc5cee6edd857caed6b05ccf7",
+  "snapshot": "/private/tmp/seti-human405-v65-20261030-onpkqe05",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "files": {
+    "adhoc/verify-human405-white-r1-20261031-v1.js": "34030ca18df336fcba7a1dfc911d2a4c852b3928601ef142dfe368a7cb139706",
+    "adhoc/archive-human405-v94-trial-20261031-v1.py": "ca4052605a08963e867a4f856684e3ef64eccd11db41903d95a96ee28e826bd1",
+    "adhoc/prepare-human405-v94-trial-root-overlays-20261031-v1.js": "0b27485b0a28c41615c517fb50c1684f4e7fe4ba21a046e6e359647015bb4182",
+    "adhoc/deliver-human405-round1-v94-trial-20261031-v1.py": "23ee0c4f24ae154887180b6820d31c1ad2e2e37ae5580b71517df2576a1d653c",
+    "adhoc/human405-round1-progress-20261031-v17.json": "fb4eda231fc12f479bcc102538090cb4b95223a24c417cfd48f265b07117d72e",
+    "adhoc/human405-probe-purpose-design-20261031-v1.json": "52266a7a509321ea3e94a211ba129a634f16fa0869bdb5f8cd2025eebad2c8f2",
+    "docs/ai-human405-learning-20261029.md": "15868860321cfb1c976079a2d319b1a5fc02ca6599806b9963630227458b9a07",
+    "reports/iteration/versions.json": "186bec3f50369df240bd4970548519965a3f55bc019530ff57cc1897cc8cb045",
+    "reports/iteration/registry.json": "8494489e863d070a7d8b3c97735bb74fcbec5a57c57ec820963aff19bf95dbdb",
+    "reports/robot-iteration.html": "23b82e59df0727814e4147d15d3024bdd045fbdbfd7d7b573bcba0ffa7bbcad2",
+    "reports/research/83388120.a11ea9dc.quick-200.json": "6b9f01f29f9ea1dfb22a3f09f10d9a8c18aeb14c56db4c0818b89a59ee071d6f",
+    "reports/research/83388120.a11ea9dc.quick-200.json.decisions.jsonl": "ac8cdeeddd51cf943ca45fca433c28c394ccac279d88859e84d650151c23e685",
+    "seti-saves/seti-save-research-ai-search-v94-white-r1-20261031-a11ea9dc-quick-200-v15.json": "301b302ebe9e1a256f445cfebf62484030738206ec116e00ea1feaf30771fb4c",
+    "reports/iteration/ai-search-v94-white-r1-20261031/83388120.a11ea9dc.quick-200.action-log.html": "242d65ff6ae459505be288345d60835d0b887c2f3e0e3ba9f4669947b1b63a9d",
+    "reports/ai-foundation-20261023/human405-white-r1-a11ea9dc-verification-20261031-v1.json": "e65999e53bdefa028f9defdced57435800049dfbfb2aa5129d9b3ac85b320db3",
+    "reports/ai-foundation-20261023/human405-white-r1-v93-v94-comparison-20261031-v1.json": "a1b21612615e3d266eafec27e5292337a29254a98b570d7787d3151414744f19",
+    "reports/ai-foundation-20261023/human405-v94-trial-runtime-source-check-20261031-v1.json": "1b9ab67295bc0085545fb30e68ad290069e0b0ed3066187263e9390779405227"
+  },
+  "sourceBoundReports": [
+    "reports/ai-foundation-20261023/human405-v94-trial-runtime-source-check-20261031-v1.json"
+  ],
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "70a9e16d12136354bf5e1c8b9f2b50690af19dcb8fb6590e18b5de902fdb3dfc",
+      "path": "/private/tmp/seti-human405-r1-v94-trial-root-overlays-20261031/versions.json",
+      "sha256": "11277b352a480b19ffe0be8f60c8beafb435463e630f3f30ac9d0011b3758508"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "47fab794748d779fc30df4f2d4de2437103e08e351a9f3d881cae67ee9c18695",
+      "path": "/private/tmp/seti-human405-r1-v94-trial-root-overlays-20261031/registry.json",
+      "sha256": "0d4837b5092dccf68cdb87e8504fc78c5b5a862c8dacc42f6a835c6caa73a04b"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "98e1133bd4e91fa1d61c7c457994834bee19bfe2a697f02e44262d925fea8874",
+      "path": "/private/tmp/seti-human405-r1-v94-trial-root-overlays-20261031/robot-iteration.html",
+      "sha256": "5799381d6dcc08649e5c8d0964cf24b8da84cd05bfb25eb5e89021d568d8f657"
+    }
+  },
+  "validation": {
+    "newProductionSourceChanges": false,
+    "singleStandardAutonomousR1": true,
+    "strictNativeReplay": true,
+    "exactSameV93NativeSequenceAndFinalState": true,
+    "all369RuntimeAndToolFilesMatchCommit": true,
+    "probePurposeDesignAdmitted": false,
+    "baselineEligible": false,
+    "goalStatus": "active"
+  }
+}

@@ -7,6 +7,46 @@
   },
   "versions": [
     {
+      "id": "ai-search-v94-white-r1-20261031",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "v94 白席首轮收入资助选牌",
+      "date": "2026-10-31",
+      "baseline": "ai-search-v41-baseline-20261029",
+      "baselineEligible": false,
+      "head": "a11ea9dc",
+      "commits": [
+        "f24600c7",
+        "5d1cae64",
+        "8c715275",
+        "0a4a2d08",
+        "e8327698",
+        "b90f9ae4",
+        "852263bb",
+        "f99faaa6",
+        "692bdf03",
+        "6ffd2746",
+        "fc8296f0",
+        "e48a17cc",
+        "7e3fc757",
+        "5855b219",
+        "5322ac7e",
+        "7422f755",
+        "9d707d66",
+        "306ab81c",
+        "f2cde3d2",
+        "b671ee7d",
+        "a11ea9dc"
+      ],
+      "summary": "白席首轮13分、蓝1+紫4，教师15分、蓝2+紫4；第37步收入资助选牌已对齐，开局策略差异仍在。仅阶段学习对照，基线仍v41。",
+      "records": {
+        "83388120.a11ea9dc.quick-200.json": {
+          "note": "仅白席首轮阶段13分/蓝1+紫4，手操15分/蓝2+紫4；48输入/1027ms，最慢79次/189.814ms。严格原生重放通过；第37步教师选牌修复不代表自主开局已改善，非整局终局或基线晋升。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v93-white-r1-20261030",
       "aiGeneration": "v2",
       "agentType": "search",
