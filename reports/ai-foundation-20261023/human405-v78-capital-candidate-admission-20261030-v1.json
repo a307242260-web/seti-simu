@@ -1,0 +1,245 @@
+{
+  "schemaVersion": "seti-purpose-capital-candidate-admission-v1",
+  "baseCommit": "5855b2196c233f38246faa30959e8d7a81be8817",
+  "productionVersion": "v67",
+  "candidateVersion": "v78",
+  "candidateSource": "adhoc/human405-v78-capital-candidate-source-20261030-v1.json.gz",
+  "candidateSourceSha256": "8e6cc0915ecb7be64e705bd42f671154d9e8c77221a73584e5b56555d6fcecfa",
+  "admitted": false,
+  "baselineEligible": false,
+  "goalStatus": "active",
+  "strategyAligned": false,
+  "candidateAutonomousRun": false,
+  "scoreReported": false,
+  "forecastAssumptions": {
+    "computerCyclesPerLaterRound": 1,
+    "usefulScansPerLaterRound": 2,
+    "landingsPerLaterRound": 1,
+    "scope": "Explicit value hypotheses, not native guarantees or pruning bounds. No hidden future identities and no legacy grossEquivalentValue units are used."
+  },
+  "nativeFacts": [
+    "Blue column score and attached resource reward reopen after actual computer analysis, not automatically on round changes.",
+    "Purple4 can supply one native movement point during a scan. The estimate values useful movement; saved launch tempo has no invented score.",
+    "Free-research hand opportunity uses public remaining supply and each stack first-take status, subtracts native card cost and consumed hand value; duplicate options are not added independently."
+  ],
+  "teacherAudit": {
+    "report": "reports/ai-foundation-20261023/human405-round1-v78-audit-20261030-v1.json",
+    "roots": 32,
+    "rootAndRngUnchanged": true,
+    "baselineSameFirstInputs": 10,
+    "candidateSameFirstInputs": 23,
+    "unactionableRoots": [],
+    "categories": {
+      "searched-but-lower-value": 3,
+      "excluded-by-movement-policy": 1,
+      "same-first-input": 23,
+      "excluded-by-card-pick-policy": 2,
+      "excluded-by-resource-policy": 2,
+      "same-value-different-first-input": 1
+    },
+    "gateFailures": [
+      {
+        "step": 39,
+        "teacher": "环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R3，1信用点 + 1能量）",
+        "student": "放置数据",
+        "category": "searched-but-lower-value",
+        "teacherValue": 55,
+        "studentValue": 62,
+        "evidenceNativeInputs": 311,
+        "newNativeInputs": 311,
+        "milliseconds": 479.61933300000004,
+        "graphClosed": true,
+        "actionable": true,
+        "rootAndRngUnchanged": true,
+        "zeroAlternativeNodes": 0,
+        "evidencePath": "reports/ai-foundation-20261023/human405-round1-v78-step039-20261030-v1.json"
+      }
+    ]
+  },
+  "legacyAudit": {
+    "rows": [
+      {
+        "case": "case-001",
+        "report": "reports/ai-foundation-20261023/round1-v78-compat-corpus-20261029-v1.json",
+        "actualNativeInputs": 144,
+        "milliseconds": 177.847083,
+        "rawPath": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v78-compat-case-001-20261029-v1.raw.json.gz",
+        "rawSha256": "285677cc0a4d6e564121b57334b4151af7cccae1829e65f1882ca68cb841118b"
+      },
+      {
+        "case": "case-003",
+        "report": "reports/ai-foundation-20261023/round1-v78-compat-corpus-20261029-v1.json",
+        "actualNativeInputs": 26,
+        "milliseconds": 154.854125,
+        "rawPath": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v78-compat-case-003-20261029-v1.raw.json.gz",
+        "rawSha256": "21c73c395d6b05c12c07997882e7b153915024d08491a60d66fc822e4ca1a4e2"
+      },
+      {
+        "case": "case-008",
+        "report": "reports/ai-foundation-20261023/round1-v78-compat-corpus-20261029-v1.json",
+        "actualNativeInputs": 107,
+        "milliseconds": 187.47120800000005,
+        "rawPath": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v78-compat-case-008-20261029-v1.raw.json.gz",
+        "rawSha256": "68950050246bf62890c79b79aa7e3d2a29b8bf98ba16ef2269f20e6ec132f320"
+      },
+      {
+        "case": "case-011",
+        "report": "reports/ai-foundation-20261023/round1-v78-compat-corpus-20261029-v1.json",
+        "actualNativeInputs": 9,
+        "milliseconds": 14.754332999999974,
+        "rawPath": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v78-compat-case-011-20261029-v1.raw.json.gz",
+        "rawSha256": "bc660d7577b58e37d4ee3213c4de674f9cef9f3347129b8032f829e8a8af1f30"
+      },
+      {
+        "case": "case-009",
+        "report": "reports/ai-foundation-20261023/round1-v78-compat-corpus-20261029-v1.json",
+        "actualNativeInputs": 41,
+        "milliseconds": 53.554666999999995,
+        "rawPath": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v78-compat-case-009-20261029-v1.raw.json.gz",
+        "rawSha256": "015e087daa4c00c7ac4d4b67c17bd200588680982b1b164fd47a97c8dd51cc62"
+      },
+      {
+        "case": "case-062",
+        "report": "reports/ai-foundation-20261023/round1-v78-compat-corpus-20261029-v1.json",
+        "actualNativeInputs": 191,
+        "milliseconds": 359.833583,
+        "rawPath": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v78-compat-case-062-20261029-v1.raw.json.gz",
+        "rawSha256": "ab02c99702bec54ca3b1557e62b8a7723e725a14f76bb606dc1925ed5f32072c"
+      },
+      {
+        "case": "case-105",
+        "report": "reports/ai-foundation-20261023/round1-v78-compat-corpus-20261029-v1.json",
+        "actualNativeInputs": 275,
+        "milliseconds": 670.708292,
+        "rawPath": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v78-compat-case-105-20261029-v1.raw.json.gz",
+        "rawSha256": "94a9e686ec02d081a57d4b065b358a2d799acb3814452cd634548aec100b8413"
+      },
+      {
+        "case": "case-152",
+        "report": "reports/ai-foundation-20261023/round1-v78-compat-corpus-20261029-v1.json",
+        "actualNativeInputs": 217,
+        "milliseconds": 581.9412079999997,
+        "rawPath": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v78-compat-case-152-20261029-v1.raw.json.gz",
+        "rawSha256": "5df4494dee4d2dd14f64c8251fde6f649ba4dbe480b0dd55e375551119cfd872"
+      },
+      {
+        "case": "baseline-r1-t8-blue",
+        "report": "reports/ai-foundation-20261023/round1-v78-compat-corpus-20261029-v1.json",
+        "actualNativeInputs": 20,
+        "milliseconds": 37.93249999999989,
+        "rawPath": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v78-compat-baseline-r1-t8-blue-20261029-v1.raw.json.gz",
+        "rawSha256": "6a99ef58a48d8ff2e9229df4a0c25b0cbe7cc1b86b8352e2c0f570cbd9f27cde"
+      },
+      {
+        "case": "baseline-r2-t9-white",
+        "report": "reports/ai-foundation-20261023/round1-v78-compat-corpus-20261029-v1.json",
+        "actualNativeInputs": 108,
+        "milliseconds": 163.37820899999997,
+        "rawPath": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v78-compat-baseline-r2-t9-white-20261029-v1.raw.json.gz",
+        "rawSha256": "d619c3821f2d8759ea74617b0564778dbe553fc88239984d88c1af5e7cd54b5e"
+      },
+      {
+        "case": "step317",
+        "report": "reports/ai-foundation-20261023/round1-v78-compat-step317-20261029-v1.json",
+        "actualNativeInputs": 130,
+        "milliseconds": 313.623458,
+        "rawPath": "reports/ai-foundation-20261023/round1-v78-compat-step317-20261029-v1.raw.json.gz",
+        "rawSha256": "99081b3080e3125709b045f4d4066c66db3f81383effec19d4302d3e7d10b40d"
+      },
+      {
+        "case": "terminal-root",
+        "report": "reports/ai-foundation-20261023/round1-v78-compat-terminal-root-20261029-v1.json",
+        "actualNativeInputs": 86,
+        "milliseconds": 254.26475,
+        "rawPath": "reports/ai-foundation-20261023/round1-v78-compat-terminal-root-20261029-v1.raw.json.gz",
+        "rawSha256": "24b6881a6d44177c2acb4bf5bfaf3817a482ec914c7e6545f5257efb24bfe5db"
+      }
+    ],
+    "gateFailures": [
+      {
+        "case": "case-105",
+        "report": "reports/ai-foundation-20261023/round1-v78-compat-corpus-20261029-v1.json",
+        "actualNativeInputs": 275,
+        "milliseconds": 670.708292,
+        "rawPath": "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v78-compat-case-105-20261029-v1.raw.json.gz",
+        "rawSha256": "94a9e686ec02d081a57d4b065b358a2d799acb3814452cd634548aec100b8413"
+      }
+    ]
+  },
+  "proofControls": [
+    {
+      "step": 24,
+      "report": "reports/ai-foundation-20261023/human405-v78-capital-native-controls-24-20261030-v1.json",
+      "proofSources": 34,
+      "kinds": {
+        "income": 26,
+        "end-turn": 6,
+        "blue-end-turn": 2
+      },
+      "withProofNativeInputs": 93,
+      "freshFullyExecutedNativeInputs": 319,
+      "sameBestActionAndValue": true
+    },
+    {
+      "step": 39,
+      "report": "reports/ai-foundation-20261023/human405-v78-capital-native-controls-39-20261030-v1.json",
+      "proofSources": 65,
+      "kinds": {
+        "income": 3,
+        "end-turn": 49,
+        "blue-end-turn": 13
+      },
+      "withProofNativeInputs": 311,
+      "freshFullyExecutedNativeInputs": 421,
+      "sameBestActionAndValue": true
+    },
+    {
+      "step": 44,
+      "report": "reports/ai-foundation-20261023/human405-v78-capital-native-controls-44-20261030-v1.json",
+      "proofSources": 46,
+      "kinds": {
+        "income": 2,
+        "end-turn": 36,
+        "blue-end-turn": 8
+      },
+      "withProofNativeInputs": 212,
+      "freshFullyExecutedNativeInputs": 288,
+      "sameBestActionAndValue": true
+    }
+  ],
+  "nativeProofSourcesVerified": 145,
+  "blueRecoveryRegression": {
+    "beforeReport": "reports/ai-foundation-20261023/human405-round1-v76-step057-20261030-v1.json",
+    "afterReport": "reports/ai-foundation-20261023/human405-round1-v78-step057-20261030-v1.json",
+    "beforeActionable": false,
+    "afterNativeTeacherChoice": true,
+    "cause": "The scan resource adapter and generic computer-first advisory overrode the concrete blue funding operation; cold recovery also lost its slot binding."
+  },
+  "requiredPurposeGap": "reports/ai-foundation-20261023/human405-blue-column-purpose-gap-20261030-v1.json",
+  "validation": {
+    "targetedTestsPassed": [
+      "income-plan-value.test.js",
+      "state-value.test.js",
+      "resource-demand.test.js",
+      "purpose-capital-value.test.js",
+      "science-scan-flow.test.js"
+    ],
+    "fullNodeRegressionRun": false,
+    "browserSmokesRun": false,
+    "reason": "Candidate has point-gate failures and a missing necessary purpose; it is not ready for production/full regression/autonomous round trial.",
+    "inputAuditLog": "reports/ai-foundation-20261023/human405-v78-state-input-audit-20261030-v1.log",
+    "inputAuditPassed": false,
+    "inputAuditFailures": [
+      "preexisting frozen aomomo legacy decisionObs failure",
+      "old one-input card-equivalence assertion no longer applies to new future-value model",
+      "old teacher43 income-proof fixture now has different optimal fixed tail"
+    ],
+    "inputAuditCoverageNote": "The card-equivalence assertion stops later checks in its large try block. No claim that all candidate V input paths passed."
+  },
+  "remainingInOrder": [
+    "Add the missing known computer-column-plus-blue purpose with correct prerequisites; do not delete this required line for performance.",
+    "Reduce teacher39 and legacy case105 actual input/time cost without dropping necessary purposes; recheck closure and proof controls.",
+    "Update model-specific input audits and run full Node/Browser verification only after point gates pass.",
+    "Then commit an admitted implementation and run one new standard white-only first round; retain B117/probe value and fixed-pick differences as unresolved until evidenced."
+  ]
+}

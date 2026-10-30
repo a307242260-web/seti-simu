@@ -1,0 +1,473 @@
+{
+  "schemaVersion": "seti-human405-round1-node-audit-v1",
+  "step": 55,
+  "round": 1,
+  "turn": 7,
+  "teacherSummary": "收入 dlc_39.png",
+  "teacherActionId": "choose_card:66acc520",
+  "fixturePath": "adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-055-20261030-v1.json",
+  "fixtureSha256": "ae4fccc82d89d53fcd4fa605a53cec1837c5c24b007615fb3afe2615aff6bd62",
+  "searchVersion": "seti-complete-decision-search-v78",
+  "category": "same-first-input",
+  "classificationScope": "First-input coverage is diagnostic only; equal scalar V is not proof of strategic equivalence and internal use is not proof of interchangeable order.",
+  "nativeTeacherLegal": true,
+  "teacherAction": {
+    "schemaVersion": "seti-standard-action-v1",
+    "family": "choose_card",
+    "phase": "conditional",
+    "actionId": "choose_card:66acc520",
+    "actorId": "player-white",
+    "stateVersion": 16,
+    "decisionVersion": 1,
+    "target": {
+      "choiceId": "income:card-41-0",
+      "cardInstanceId": "card-41-0"
+    },
+    "payload": {},
+    "decision": null,
+    "summary": "收入 dlc_39.png",
+    "presentation": {
+      "cardKind": "pick",
+      "cardId": "card-41-0",
+      "imageSrc": "../assets/cards/space-agency/split/dlc_39.png",
+      "imageAlt": "dlc_39.png"
+    }
+  },
+  "teacherSearchResult": {
+    "actionId": "choose_card:66acc520",
+    "target": 1,
+    "value": 59.5,
+    "kind": "resource-goal-plan",
+    "goal": {
+      "id": "data:income:4",
+      "kind": "income",
+      "targetComputerSlot": 4,
+      "incomeCardId": "card-41-0",
+      "incomeBefore": 9,
+      "required": {}
+    },
+    "resourceGoalCount": 6,
+    "completion": "complete"
+  },
+  "studentActionId": "choose_card:66acc520",
+  "studentSummary": "收入 dlc_39.png",
+  "studentValue": 59.5,
+  "rootValue": {
+    "modelVersion": "seti-purpose-capital-state-value-v2",
+    "total": 55.5,
+    "components": {
+      "realizedScore": 13,
+      "currentEndGameBonus": 0,
+      "resources": 3.5,
+      "hand": 2,
+      "income": 25.5,
+      "technologyPotential": 7.5,
+      "handPotential": 4
+    },
+    "terminal": false
+  },
+  "rootPolicies": {
+    "resourcePolicy": {
+      "policy": "seti-goal-resource-preparation-v3",
+      "isEquivalence": false,
+      "plans": [
+        {
+          "id": "data:income:4",
+          "goal": {
+            "id": "data:income:4",
+            "kind": "income",
+            "targetComputerSlot": 4,
+            "incomeCardId": "card-41-0",
+            "incomeBefore": 9,
+            "required": {}
+          },
+          "operation": {
+            "placing": true,
+            "finalPlacement": false
+          },
+          "firstActionId": "choose_card:66acc520",
+          "mode": "greedy",
+          "reason": "greedy-income-for-goal"
+        },
+        {
+          "id": "effect:tech:card:card-15-0",
+          "goal": {
+            "id": "effect:tech:card:card-15-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-15-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            },
+            "targetComputerSlot": 4,
+            "incomeCardId": "card-41-0",
+            "incomeFunding": true
+          },
+          "operation": {
+            "placing": true,
+            "finalPlacement": false
+          },
+          "firstActionId": "choose_card:66acc520",
+          "mode": "greedy",
+          "reason": "greedy-income-for-goal"
+        },
+        {
+          "id": "scan:sector:sector-1-a",
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "operation": {
+            "placing": true,
+            "finalPlacement": false,
+            "resourceBlueSlot": 1,
+            "finalResourceBlue": true
+          },
+          "firstActionId": "choose_card:66acc520",
+          "mode": "greedy",
+          "reason": "greedy-income-for-goal"
+        },
+        {
+          "id": "scan:sector:sector-2-a",
+          "goal": {
+            "id": "scan:sector:sector-2-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-2-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "operation": {
+            "placing": true,
+            "finalPlacement": false,
+            "resourceBlueSlot": 1,
+            "finalResourceBlue": true
+          },
+          "firstActionId": "choose_card:66acc520",
+          "mode": "greedy",
+          "reason": "greedy-income-for-goal"
+        },
+        {
+          "id": "scan:sector:sector-3-a",
+          "goal": {
+            "id": "scan:sector:sector-3-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-3-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "operation": {
+            "placing": true,
+            "finalPlacement": false,
+            "resourceBlueSlot": 1,
+            "finalResourceBlue": true
+          },
+          "firstActionId": "choose_card:66acc520",
+          "mode": "greedy",
+          "reason": "greedy-income-for-goal"
+        },
+        {
+          "id": "scan:sector:sector-4-a",
+          "goal": {
+            "id": "scan:sector:sector-4-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-4-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "operation": {
+            "placing": true,
+            "finalPlacement": false,
+            "resourceBlueSlot": 1,
+            "finalResourceBlue": true
+          },
+          "firstActionId": "choose_card:66acc520",
+          "mode": "greedy",
+          "reason": "greedy-income-for-goal"
+        }
+      ],
+      "retainedActionIds": [],
+      "excludedActionIds": [
+        "choose_card:b04e9500",
+        "choose_card:66acc520"
+      ]
+    }
+  },
+  "teacherInternalUses": [
+    {
+      "node": 0,
+      "target": 1,
+      "firstActionId": "choose_card:66acc520",
+      "steps": [
+        "choose_card:66acc520"
+      ],
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-41-0",
+        "incomeBefore": 9,
+        "required": {}
+      }
+    },
+    {
+      "node": 0,
+      "target": 2,
+      "firstActionId": "choose_card:66acc520",
+      "steps": [
+        "choose_card:66acc520",
+        "play_card:8faf8ead"
+      ],
+      "goal": {
+        "id": "effect:tech:card:card-15-0",
+        "kind": "effect-purpose",
+        "purpose": "tech",
+        "cardId": "card-15-0",
+        "sourceFamily": "play_card",
+        "required": {
+          "credits": 3
+        },
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-41-0",
+        "incomeFunding": true
+      }
+    },
+    {
+      "node": 0,
+      "target": 3,
+      "firstActionId": "choose_card:66acc520",
+      "steps": [
+        "choose_card:66acc520",
+        "place_data:8fd12fd3",
+        "choose_target:44b74627",
+        "quick_trade:f385e2ac",
+        "scan:2d21a323",
+        "choose_target:2ad5607b",
+        "choose_card:b19e1efc"
+      ],
+      "goal": {
+        "id": "scan:sector:sector-1-a",
+        "kind": "scan-flow",
+        "nebulaId": "sector-1-a",
+        "required": {
+          "credits": 1,
+          "energy": 2
+        },
+        "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+      }
+    },
+    {
+      "node": 0,
+      "target": 4,
+      "firstActionId": "choose_card:66acc520",
+      "steps": [
+        "choose_card:66acc520",
+        "place_data:8fd12fd3",
+        "choose_target:44b74627",
+        "quick_trade:f385e2ac",
+        "scan:2d21a323",
+        "choose_target:2ad5607b",
+        "choose_card:00a51ff4"
+      ],
+      "goal": {
+        "id": "scan:sector:sector-2-a",
+        "kind": "scan-flow",
+        "nebulaId": "sector-2-a",
+        "required": {
+          "credits": 1,
+          "energy": 2
+        },
+        "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+      }
+    },
+    {
+      "node": 0,
+      "target": 5,
+      "firstActionId": "choose_card:66acc520",
+      "steps": [
+        "choose_card:66acc520",
+        "place_data:8fd12fd3",
+        "choose_target:44b74627",
+        "quick_trade:f385e2ac",
+        "scan:2d21a323",
+        "choose_target:2ad5607b",
+        "choose_card:836ae617"
+      ],
+      "goal": {
+        "id": "scan:sector:sector-3-a",
+        "kind": "scan-flow",
+        "nebulaId": "sector-3-a",
+        "required": {
+          "credits": 1,
+          "energy": 2
+        },
+        "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+      }
+    },
+    {
+      "node": 0,
+      "target": 6,
+      "firstActionId": "choose_card:66acc520",
+      "steps": [
+        "choose_card:66acc520",
+        "place_data:8fd12fd3",
+        "choose_target:44b74627",
+        "quick_trade:f385e2ac",
+        "scan:2d21a323",
+        "choose_target:2ad5607b",
+        "choose_card:2b54f21f"
+      ],
+      "goal": {
+        "id": "scan:sector:sector-4-a",
+        "kind": "scan-flow",
+        "nebulaId": "sector-4-a",
+        "required": {
+          "credits": 1,
+          "energy": 2
+        },
+        "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+      }
+    }
+  ],
+  "zeroAlternativeNonBoundaryNodes": [],
+  "teacherOneInput": {
+    "status": "stable",
+    "boundary": null,
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v2",
+      "total": 58.5,
+      "components": {
+        "realizedScore": 13,
+        "currentEndGameBonus": 0,
+        "resources": 4.5,
+        "hand": 1,
+        "income": 28.5,
+        "technologyPotential": 7.5,
+        "handPotential": 4
+      },
+      "terminal": false
+    },
+    "scope": "Native single-input attribution only, not teacher continuation value."
+  },
+  "newProbeNativeInputs": 0,
+  "reusedSearchEvidence": null,
+  "newSearchNativeInputs": 31,
+  "evidenceSearchNativeInputs": 31,
+  "milliseconds": 91.305625,
+  "timingContext": "fresh process; root open, attribution snapshot and search included",
+  "complete": true,
+  "rootAndRngUnchanged": true,
+  "boundaries": {
+    "hidden_card_reveal": 5,
+    "hidden_pass_reserve_offer": 1,
+    "quiet-turn-tail-value": 11,
+    "tech_bonus_reveal": 3
+  },
+  "rawPath": "reports/ai-foundation-20261023/human405-round1-v78-step055-20261030-v1.raw.json.gz",
+  "rawSha256": "0fe3f63638edd44d70f64a5b8ee40be59b046d32301db58459cf98bd5e49381d",
+  "sourceHashes": {
+    "randomizer/app/rule-observation.js": "d1dc58cc707eb5f57db761c39ebf327abfadc0c45eb8f191f35fc7c7ef62c295",
+    "randomizer/app/simulation-contract.js": "3531d126a450c812ea0894834be9f85709ac28e1ebfb5a9dec657708b03f290a",
+    "randomizer/game/abilities/data.js": "1bf1cdb886f3a691938a0661695ae67b4ba2af4309c1f31697c0ee718008eef4",
+    "randomizer/game/abilities/index.js": "58f01c1059e0f3cf3dbffdb03252943252f1097e279fb06b51bb7439496220dc",
+    "randomizer/game/abilities/planet.js": "f95f41290c99457fa28265bd87a1ce7deee73190b38c0f5d9edef2bddd0ae9c8",
+    "randomizer/game/abilities/rocket.js": "51a6794b70e42b075bb82252b34ad33e5e420c612ce9924535a0f4ed8ff0d78f",
+    "randomizer/game/abilities/scan.js": "01709beb1dfc27af91b89ecf4bc9871dd919a1dddcaf4b40c2e340a4b8f955b2",
+    "randomizer/game/abilities/tech.js": "567c269a3788fe67143828e992eff0619b8baedc4847780d7ecee291109c08c8",
+    "randomizer/game/actions/planet-rewards.js": "498db93607e3d13fb6bb5c359a3f60b537de7bc38bb2a9cc7b4d7e108fe8c705",
+    "randomizer/game/actions/quick-trades.js": "508e5ba1b3e46f48525513ec1bc7628779aa89ec7ea4bae1d745c58a1fd20722",
+    "randomizer/game/actions/research-tech.js": "1ae3e6b3dce07e8a92ad28c4c282e79d1381b6fff48fa150f2ae6e4db82cc534",
+    "randomizer/game/actions/scan-effects.js": "38576775462e805201cc2b34572976de44732ba91780c8b768f33c726aba08d5",
+    "randomizer/game/actions/shared.js": "2f35f3317c7d4d509f4c8ad8847c27176a25031909e5ebb72cd667f5f5ad5966",
+    "randomizer/game/actions/standard-action.js": "9bfd8d8a1bd6120807dfeb7f3a4364ae7c39bba9443b243821a6d3789ca93b7d",
+    "randomizer/game/ai/analysis-port.js": "a3173a2b9d90872567ae39965dd8cb143ddb3686afb5fe42de28406ce52ef6ee",
+    "randomizer/game/ai/card-pick-planning.js": "ad9a3d6d26fa7270f02092567c2b99a6b0cdc8e28d87a6e0522c544ef9f7177d",
+    "randomizer/game/ai/decision-search.js": "3532a7a2f36aaf0410ec41e0634322ef21df49b983b71652afcf6be8e6c801b5",
+    "randomizer/game/ai/goal-movement.js": "38f997ea31e1426c3e40670676974c0924f01b3229869e2e4c44671b4c732cce",
+    "randomizer/game/ai/local-decision-plans.js": "3bb8b0a864de1e044cf89ba4eb07d5a7604f4b448d234da1147520c29d689de4",
+    "randomizer/game/ai/resource-demand.js": "baf6debf22d8b10b5f51e31b424fdd22b643251d1a6b1be02ed3efa57e217346",
+    "randomizer/game/ai/search-agent.js": "e84c1997766d3dac00024878bc0edafb1a18effad0fd48f27923edc41bdc804e",
+    "randomizer/game/ai/state-value.js": "f5b9767dcedef54e93f81945a88fc5de730e27f5ab89e1a1db5b7c7633caf13e",
+    "randomizer/game/aliens/amiba.js": "81eefb293c298fd194d2570854c980b17606ff79fa765db5d0cfbfb9761b0648",
+    "randomizer/game/aliens/aomomo.js": "986413d7da56665ac423b507f92832dce83519a6f94aa79280caa6d4377e4a3d",
+    "randomizer/game/aliens/banrenma.js": "38fd7776fb8bd7c343c9a59f37da237d48d52588e5f1ef28e4ae4504a343defe",
+    "randomizer/game/aliens/catalog.js": "9f8d8998fdc6650890ce9e9abf722854bbfc316ac6fc42235d9002e67e3894c7",
+    "randomizer/game/aliens/chong.js": "de65614f5aae989b2d79902fe51724a6ed85c2292a2d7677decbfff85f120838",
+    "randomizer/game/aliens/fangzhou-card1-queue.js": "8dbdaa750ec55fd2caae46b02946a7108ee1b0dcaa15d90fa91a1a12a997faf7",
+    "randomizer/game/aliens/fangzhou.js": "9d80fac9fbd84ce947adcc86ad98cd3ec5a1c56bb98ce6ea96399294c619a47b",
+    "randomizer/game/aliens/index.js": "adcd3fa19f71d904eb0a1af063fa71b4d5d82203d82d39c717164dc8b51ccb04",
+    "randomizer/game/aliens/jiuzhe.js": "82d776ae6879b88ea3ba0c654994d89772a6b7d1545c532947c5e59e714bf2f7",
+    "randomizer/game/aliens/placement.js": "3ec5839029fd04ab29ee9796ac05de49c42d12967880098b60cdaed160341596",
+    "randomizer/game/aliens/randomizer.js": "2ab1d5e42925e563dbf36da8306be17b4f2e730274711014d7197dc10411f73a",
+    "randomizer/game/aliens/reveal-card-grants.js": "e944721eef70a7df1ac0abc8004c26f9ee584dd768533940c5d66ac048e5cadb",
+    "randomizer/game/aliens/runezu.js": "338983840374234912cd3db00ce5994d1cb0b1a031dfbc51e58d103054d04768",
+    "randomizer/game/aliens/state.js": "34c637fe28acebda33f5018e0ac53373968785268c6328d500c947826a118829",
+    "randomizer/game/aliens/yichangdian.js": "ba72c77d4605f78cd545daabc7fa5591139a8acce103f90bac3c28001afeebcf",
+    "randomizer/game/cards/deck.js": "9ce529094559c5e14016962ab57157780fb210ca4ac868364981bba1d8f94121",
+    "randomizer/game/cards/effects.js": "2fcbf8dcdadd16fb00ff7f0fc423780226cc123f5eb30ef53cdbb5932ec59bb9",
+    "randomizer/game/cards/play-domain.js": "964c5735c9d61fe6c87fcb711f94acf52416a5e0385b5608319985b9ad53a689",
+    "randomizer/game/cards/task-state.js": "b7bdd2c0b559f731523f4ce37b485d6b40d53dd881e6ebce37d311a788d0cd90",
+    "randomizer/game/data/index.js": "68f79323130653fa1f2a292f19b6d01143785ed09b6b4b829cf6fe412c40d928",
+    "randomizer/game/data/nebula-placement.js": "f1e099066d87d3ece7d24ac142cc4eee0f7ad5acd2d41753911b6f1d01ecc227",
+    "randomizer/game/data/nebula-state.js": "d7ac07b41e1317cf15ba019482165558a6e39060b1a76abd4d402be792995a88",
+    "randomizer/game/data/placement.js": "c22364549c3a3bc5ce019b3a11de8951d829023f99a387a7f7d87cf8a65389e8",
+    "randomizer/game/data/state.js": "b6b9061cce1679e09342e208213fcff6959f381424787a5f01f5aebfd361e96c",
+    "randomizer/game/effects/probe-turn-session.js": "71d5f8a4890bc8b214d23997e50ded3693e5c235108760d1e12fe1f895e088f3",
+    "randomizer/game/effects/residual-domain-session.js": "5988cc2a7e9a0f60f42ffaf92c49b906ff016ed9da3897184c0c9aa5bf7e460c",
+    "randomizer/game/effects/science-session.js": "5b370c40e69bfcb591d8d42e3a9a509c4f264904be66544247a28bb91441cd41",
+    "randomizer/game/effects/session-runtime.js": "a176d46c5ede9f21a40952f5cc93e6ae3bc2cf6713ad5c2027022628169ecb56",
+    "randomizer/game/effects/standard-action-session.js": "5b6c60ebdee4b05963ab861be8465e15c26039b5b1343059e7651d6d87433d81",
+    "randomizer/game/end-game-scoring.js": "13c2989df4f601cc5677544f925e0dccc46e8775b64516e5027cd8e50ab8458f",
+    "randomizer/game/final-scoring.js": "4770b83ca0153b7ba0490fd10dc821334b9a36b3e559b1671b9b7b1328f943f3",
+    "randomizer/game/industry/abilities.js": "3330f3e64519ddeed4b7c4f9c08b5a047b4525b48ce358cf58e1eb0ad6d6a5e9",
+    "randomizer/game/industry/catalog.js": "d94dbc9aae18cb1a5515e5686e88aa00dad61c922688baaa88e121037133901c",
+    "randomizer/game/industry/helios-passive.js": "8860a1c368226b1257c772cd8c671f19a55089af137f76c9de5b0b1cc3d9bd33",
+    "randomizer/game/industry/index.js": "f24fc4ad4b3351b21248d04c569a48ab480ff8356a3115872e1e2679f23a2a31",
+    "randomizer/game/industry/passives.js": "d3d3215cc33467f7ceed675bcf4f6064436aa66e8c4dbeac4e6748aa96e3c111",
+    "randomizer/game/industry/placement.js": "b3b3a127439b167e703bfc231135dda359604bc39ef344674681ada732e2b972",
+    "randomizer/game/industry/state.js": "07ae0e61fd21f349202c30260997302c54e6d6cb3e5735bdc340c130ad99c231",
+    "randomizer/game/industry/strategy-passive.js": "8bae3cdb34075fe7df8c1963c2e6d9cb2ba8c64a5e773e775ff4bf969b22e77b",
+    "randomizer/game/initial-cards.js": "b0a0fa47c241d5e68a4a2e3c55adca8f687bf94c751346bde42cee682637b235",
+    "randomizer/game/initial-setup.js": "e30d48741330426c2801f3b70766c720bd8440a539df3a92295c8c7de5b08b46",
+    "randomizer/game/planet-reference-layout.js": "c8ccd4452e92630708d23dfab1ee7d528ed0fe55977c8706935600f0bc17af1f",
+    "randomizer/game/planet-stats.js": "ef82551c1ea8b6f43262816cb80a7cc3cd11652c64b5175cff8cd8fcafc7f3c2",
+    "randomizer/game/players.js": "f98ff1eced6fbdefa139cfb34f32f46e7afab1d66bd85458cab0ea240cb0bbbe",
+    "randomizer/game/production-composition.js": "4347d4cf0b1bd3898527aea6b790777185b5791f71a0caf80901d9dc7be2ef0c",
+    "randomizer/game/production-kernel.js": "a7220801e913c0d3e09d7d0a97e53c42720a7774181c0fed61df9ee8b1e75abd",
+    "randomizer/game/random.js": "92f4d5c9257f8c36f0766c431ccedd3aef6dce87c089836951c9ebae9678686a",
+    "randomizer/game/rockets.js": "a3924ee4ee1392a20671699b51b1e25b40fd08d0536c38acff4f882bba76ca74",
+    "randomizer/game/rule-composition.js": "f58d88ed21194a8e6571b5a9636c46038420fe0dd554a343c1f5526723c76027",
+    "randomizer/game/state/fixed-world-config.js": "f507dfdfe4c2a0b857a01fea361b86a866e22e622e9ffd1dd060d355c2fd5459",
+    "randomizer/game/state/high-coupling-slices.js": "86e4a9ccc20e8804e008c25b3354cfd964fe091248d1755fad7a59495d57fd2b",
+    "randomizer/game/state/initial-game-state.js": "5bdd4c17e0d737415b324205b9a66b0bff5c8675170001688f0edd72aba66d98",
+    "randomizer/game/state/low-coupling-slices.js": "5104bca6ef4cea25856ca88c5ecc07b2d363aa732f8d70fc89cb34d4f6ca08b7",
+    "randomizer/game/state/sequences.js": "a55ca5951946dfd5429741672ff36e2094dc198c466afc5ec240fadb2084ec9f",
+    "randomizer/game/state/state-store.js": "25f452041322fb493c750ace6407ee15018dc0c767ca48db0f4a3290eeb35ed5",
+    "randomizer/game/tech/board-state.js": "a0694120d45db58574a527694836bc3688337d787e90baae0dac3972d15211c2",
+    "randomizer/game/tech/bonuses.js": "6541ccf6de5b865f67faa478ff42c42d5fce3c8a11299ac6f6a8201c387f58a3",
+    "randomizer/game/tech/catalog.js": "fa2f805c29052eab58f26855174dd5d76da9f70c50865b4ace781d89ccdb5bda",
+    "randomizer/game/tech/index.js": "1a9f59b462a90d40bab2a4567f4ee90288f9c076df2034f0f52f862f559d8c99",
+    "randomizer/game/tech/placement.js": "ea524c964e954fbf98d8b7b56122f4e252c53e2f15b0ecb521c5a99d52263473",
+    "randomizer/game/tech/player-tech.js": "bb44ec09fb871e0c92053218823694ac48df57f3635dc0acfa517ef04168dbf2",
+    "randomizer/game/tech/resolver.js": "e52c3dc535c85ecef2c288e6fcf821f18611c2c2bae1ee30970c82574efbac03",
+    "randomizer/game/turn-flow.js": "c30db5accee34e36ed5b2d20a153803bd2a28bc18e23f87a8bc132b3418d5ea7",
+    "randomizer/solar-system/core.js": "3acb2281591e7b22322ed9bc1624f5ceb2831e209477270e3b49e90798309164",
+    "randomizer/solar-system/layout.js": "fb757393f99426784b23b8e42effb09055ec17951082923c85e2e9794609d477",
+    "randomizer/training/simulation-rule-composition.js": "24d04512bcd67fd226dfc272a2369bfd769dfc2c04b40e01a75a40bdfbbbe0a3"
+  }
+}
