@@ -1,0 +1,57 @@
+{
+  "baseCommit": "f2cde3d2f7005df3944e66b15ee73bcda6ec22dc",
+  "snapshot": "/private/tmp/seti-human405-v65-20261030-onpkqe05",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "files": {
+    "adhoc/archive-human405-v93-trial-20261030-v1.py": "0a06ab5e922942a200f1c4f92da03650561d262956f57a84963a2696a7414502",
+    "adhoc/verify-human405-paid-move-order-20261030-v1.js": "870b278b08fcf276d24520b233aa3586bda98f533285f02c2f2849b595e67191",
+    "adhoc/prepare-human405-v93-trial-root-overlays-20261030-v1.js": "bd01980e96f12ce47e2cf6956fd0b0690888804f0525f7112ebd523c12cd6f4c",
+    "adhoc/deliver-human405-round1-v93-trial-20261030-v1.py": "d6d3543e774803de52e6c5546b825273acca2ac729d4a71d161c8ac9acd0c539",
+    "adhoc/human405-round1-progress-20261030-v15.json": "5765837fc18c12353cea3f1f1338926f39efb397e94d463232d72c493d5dfed6",
+    "docs/ai-human405-learning-20261029.md": "9a991fcaef4dd36ac1da14be7be56dff0fbb60a674a69bc1bb0e104172ab1aae",
+    "reports/iteration/versions.json": "71a346223ea007a8a722de9e75c6e2e9621000f179efaeb4bdf5875185b21547",
+    "reports/iteration/registry.json": "3a09eb426348ae032beb307b7a4681cd1b5c50d19a36c66d5d4e61b6570de136",
+    "reports/robot-iteration.html": "781ff02a19dccfb3d3c32868bfc947e7c43175ed792b3b2fd6d9b762866bffb0",
+    "reports/research/5f529430.f2cde3d2.quick-200.json": "7afcd06b295ac9fdb818c75a29d7ef7c78915fed5f30c85e110302333cac425c",
+    "reports/research/5f529430.f2cde3d2.quick-200.json.decisions.jsonl": "09c555a8df3ab06ffd27d0eb4b01f0201b8c5229346ac861ec12501997d5faf9",
+    "seti-saves/seti-save-research-ai-search-v93-white-r1-20261030-f2cde3d2-quick-200-v15.json": "90216001e4e32998e88a625f1b61cd344925e0875878853e8c16f183e185ac42",
+    "reports/iteration/ai-search-v93-white-r1-20261030/5f529430.f2cde3d2.quick-200.action-log.html": "c72e81ab80507a24b552908b92db0da4830cb3039913f84e3504d9ac247b390e",
+    "reports/ai-foundation-20261023/human405-white-r1-f2cde3d2-verification-20261030-v1.json": "cbba03428313afe1fdbc315deb3e4987e056cee9595dbb814aca50d3c3446cdc",
+    "reports/ai-foundation-20261023/human405-white-r1-v92-v93-comparison-20261030-v1.json": "5adcab2c5fd3c622b960925815f2ff8dbbd7d88f90a1c0901469f1b8ea8cae03",
+    "reports/ai-foundation-20261023/human405-v93-paid-move-order-20261030-v1.json": "b3835025b712afd8d70be7c1f4b49417626e2c631d26c1488f22780212f2654a",
+    "reports/ai-foundation-20261023/human405-v93-trial-runtime-source-check-20261030-v1.json": "3e7bd1f277722ffbf55f45252f2220edbb0fc256307569bdda03ece753133271"
+  },
+  "sourceBoundReports": [
+    "reports/ai-foundation-20261023/human405-v93-paid-move-order-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-v93-trial-runtime-source-check-20261030-v1.json"
+  ],
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "12751dd3314b76f9762eda05ba08fb376a224f50826d04fd6f187355fdce8001",
+      "path": "/private/tmp/seti-human405-r1-v93-trial-root-overlays-20261030/versions.json",
+      "sha256": "70a9e16d12136354bf5e1c8b9f2b50690af19dcb8fb6590e18b5de902fdb3dfc"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "1e370f8bd7a80e82b14722987c409eeefd8bb83301e4cb4b1998c009dc8ff6de",
+      "path": "/private/tmp/seti-human405-r1-v93-trial-root-overlays-20261030/registry.json",
+      "sha256": "47fab794748d779fc30df4f2d4de2437103e08e351a9f3d881cae67ee9c18695"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "706552e14d4498bd206c1aadf9d6beef9bfbac67b158178a4463b21a606cb61e",
+      "path": "/private/tmp/seti-human405-r1-v93-trial-root-overlays-20261030/robot-iteration.html",
+      "sha256": "98e1133bd4e91fa1d61c7c457994834bee19bfe2a697f02e44262d925fea8874"
+    }
+  },
+  "validation": {
+    "newProductionSourceChanges": false,
+    "singleStandardAutonomousR1": true,
+    "strictNativeReplay": true,
+    "exactSameV92NativeSequenceAndFinalState": true,
+    "all369RuntimeAndToolFilesMatchCommit": true,
+    "onlyPaidMoveStateDifference": "match.decisionVersion",
+    "sameMoveFactsRngAndNormalizedActionSet": true,
+    "baselineEligible": false,
+    "goalStatus": "active"
+  }
+}

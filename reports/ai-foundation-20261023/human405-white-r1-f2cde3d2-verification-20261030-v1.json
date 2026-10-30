@@ -1,0 +1,298 @@
+{
+  "recordPath": "reports/research/5f529430.f2cde3d2.quick-200.json",
+  "recordSha256": "7afcd06b295ac9fdb818c75a29d7ef7c78915fed5f30c85e110302333cac425c",
+  "sourceCommit": "f2cde3d2",
+  "openingSha256": "ab9a0dbbb3c35c453604addd668bd2625a4580c0577924d87c6cb8eff9c01b9c",
+  "strictNativeReplay": true,
+  "exactFinalCommittedStateAndSession": true,
+  "nonwhite": [
+    {
+      "step": 37,
+      "seat": "player-green",
+      "family": "pass",
+      "kind": "pass"
+    },
+    {
+      "step": 38,
+      "seat": "player-green",
+      "family": "choose_card",
+      "kind": "pass-hand-limit"
+    },
+    {
+      "step": 39,
+      "seat": "player-green",
+      "family": "choose_card",
+      "kind": "pass-reserve-card"
+    },
+    {
+      "step": 40,
+      "seat": "player-blue",
+      "family": "pass",
+      "kind": "pass"
+    },
+    {
+      "step": 41,
+      "seat": "player-blue",
+      "family": "choose_card",
+      "kind": "pass-reserve-card"
+    },
+    {
+      "step": 42,
+      "seat": "player-brown",
+      "family": "pass",
+      "kind": "pass"
+    },
+    {
+      "step": 43,
+      "seat": "player-brown",
+      "family": "choose_card",
+      "kind": "pass-reserve-card"
+    }
+  ],
+  "firstRoundSettled": true,
+  "formalTerminal": false,
+  "scoreScope": "provisional after first-round settlement; no full-game result",
+  "white": {
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 1,
+      "credits": 7,
+      "energy": 4,
+      "handSize": 2,
+      "publicity": 1,
+      "score": 13
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true,
+        "purple4": true
+      }
+    },
+    "hand": [
+      "dlc_4.png",
+      "dlc_40.png"
+    ],
+    "reserved": [
+      "dlc_9.png"
+    ],
+    "computer": {
+      "discardedCount": 0,
+      "placedTokens": [
+        {
+          "id": "data-token-1",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-2",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-3",
+          "index": 3,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "poolTokens": [
+        {
+          "id": "data-token-4",
+          "index": 4,
+          "slotIndex": 4
+        }
+      ]
+    },
+    "rocket": [],
+    "round": 2
+  },
+  "teacher": {
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 3,
+      "handSize": 2,
+      "publicity": 3,
+      "score": 15
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue2": true,
+        "purple4": true
+      }
+    },
+    "hand": [
+      "dlc_5.png",
+      "dlc_37.png"
+    ],
+    "reserved": [
+      "b_117.webp",
+      "dlc_9.png"
+    ],
+    "computer": {
+      "discardedCount": 0,
+      "placedTokens": [
+        {
+          "id": "data-token-1",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-2",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-3",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-4",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-11",
+          "index": 5,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "poolTokens": []
+    },
+    "rocket": [],
+    "round": 2
+  },
+  "searches": 18,
+  "maxNativeInputs": 79,
+  "maxMilliseconds": 185.227917,
+  "allSearchesComplete": true,
+  "planReuseHits": 11,
+  "wallMs": 1005,
+  "whiteActions": [
+    {
+      "step": 24,
+      "action": "深空探测 1x 行动",
+      "family": "industry"
+    },
+    {
+      "step": 25,
+      "action": "b_117.webp",
+      "family": "choose_card"
+    },
+    {
+      "step": 26,
+      "action": "b_2.webp",
+      "family": "choose_card"
+    },
+    {
+      "step": 27,
+      "action": "b_2.webp：弃牌角标",
+      "family": "card_corner"
+    },
+    {
+      "step": 28,
+      "action": "放置数据",
+      "family": "place_data"
+    },
+    {
+      "step": 29,
+      "action": "第一排放置位 1",
+      "family": "choose_target"
+    },
+    {
+      "step": 30,
+      "action": "放置数据",
+      "family": "place_data"
+    },
+    {
+      "step": 31,
+      "action": "第一排放置位 2",
+      "family": "choose_target"
+    },
+    {
+      "step": 32,
+      "action": "研究科技",
+      "family": "research_tech"
+    },
+    {
+      "step": 33,
+      "action": "研究 blue1（蓝槽 1）",
+      "family": "choose_target"
+    },
+    {
+      "step": 34,
+      "action": "放置数据",
+      "family": "place_data"
+    },
+    {
+      "step": 35,
+      "action": "blue1 下方",
+      "family": "choose_target"
+    },
+    {
+      "step": 36,
+      "action": "结束回合",
+      "family": "end_turn"
+    },
+    {
+      "step": 44,
+      "action": "dlc_9.png",
+      "family": "play_card"
+    },
+    {
+      "step": 45,
+      "action": "研究 purple4",
+      "family": "choose_target"
+    },
+    {
+      "step": 46,
+      "action": "结束回合",
+      "family": "end_turn"
+    },
+    {
+      "step": 47,
+      "action": "PASS",
+      "family": "pass"
+    },
+    {
+      "step": 48,
+      "action": "dlc_4.png",
+      "family": "choose_card"
+    }
+  ]
+}

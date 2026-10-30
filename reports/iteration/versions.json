@@ -7,6 +7,44 @@
   },
   "versions": [
     {
+      "id": "ai-search-v93-white-r1-20261030",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "v93 白席首轮收入目的修复",
+      "date": "2026-10-30",
+      "baseline": "ai-search-v41-baseline-20261029",
+      "baselineEligible": false,
+      "head": "f2cde3d2",
+      "commits": [
+        "f24600c7",
+        "5d1cae64",
+        "8c715275",
+        "0a4a2d08",
+        "e8327698",
+        "b90f9ae4",
+        "852263bb",
+        "f99faaa6",
+        "692bdf03",
+        "6ffd2746",
+        "fc8296f0",
+        "e48a17cc",
+        "7e3fc757",
+        "5855b219",
+        "5322ac7e",
+        "7422f755",
+        "9d707d66",
+        "306ab81c",
+        "f2cde3d2"
+      ],
+      "summary": "白席首轮13分、蓝1+紫4，与v92正式输入和状态相同；教师第40步的收入选牌已对齐，自主开局B117差异仍在。仅阶段学习对照，不晋升整局基线。",
+      "records": {
+        "5f529430.f2cde3d2.quick-200.json": {
+          "note": "仅白席首轮阶段，13分/蓝1+紫4；与v92自主输入及正式状态相同。1005ms，最慢79次/185.228ms；第40步教师路径贪心修复未改变自主开局选择。严格原生重放通过，非整局终局，不晋升基线。"
+        }
+      },
+      "roadmap": null
+    },
+    {
       "id": "ai-search-v92-white-r1-20261030",
       "aiGeneration": "v2",
       "agentType": "search",

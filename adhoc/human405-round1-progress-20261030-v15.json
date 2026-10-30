@@ -1,0 +1,507 @@
+{
+  "schemaVersion": "seti-human405-round1-goal-checkpoint-v1",
+  "date": "2026-10-30",
+  "goalStatus": "active",
+  "searchVersion": "v93",
+  "completed": [
+    "All32 white native teacher roots through input62 audited; source-bound raw search evidence retained.",
+    "Fixed movement/resource retained-action conflict, future movement cost, no-rotation timing and prepaid objective recovery.",
+    "Settled root-known guaranteed technology pick before closing its reveal boundary.",
+    "Preserved separate at-location orbit/land main purposes.",
+    "Three standard white-only through v53 autonomous first-round runs completed and exactly replayed; source opening/RNG and passive opponents verified.",
+    "146 unit +1 full-flow and4 browser smokes pass; legacy input audit failure reproduced in v49 and recorded.",
+    "Protected-card fourth-slot income funding is an explicit fixed native preparation, with causal resource lower bounds, cold recovery and global budget failure tests.",
+    "Company swap purpose inference excludes the outgoing card; a known credit income offer explicitly funds the preserved card. Teacher46 now matches.",
+    "Normal public-card/technology reveals now carry their mask through root-known public picks, specified-sector scans and known income in the same native effect queue.",
+    "Teacher40 pick/scan/income is exactly equal to a complete actual native control after masking replacement information; V40 becomes43.5. Hidden replacement identities genuinely differ in the adversarial test while masked outcomes match.",
+    "Repeated picks and resource-goal bindings preserve root knowledge and global budgets; new public-card facts are removed before fixed pick purpose inference.",
+    "Four funded purple-technology native controls end idle. bonus_1m is publicity, not movement; mandatory technology queues are complete in this example.",
+    "v54 known-queue settlement committed and pushed as fc8296f0.",
+    "v63 candidate proves complete known optional tail43.5→47 against12 actual inputs and an adversarial hidden world;56 proof-pruned states independently completed, but candidate is not admitted.",
+    "v64 only removes unused native advisory requirements from registered-linear-value projections and unused geometry-preview journal snapshots.32 teacher and12 legacy roots retain exact chosen actions, values and native input counts.",
+    "Known post-main optional window admitted after explicit fixed blind-income value proofs, all59 native plan controls and40 native negative-blue continuation controls.",
+    "All44 teacher/legacy roots choose the same best input/value as complete v63 candidate; every cold gate passes.",
+    "147unit +1fullFlow +4Chrome pass; native prefix reuse audited against fresh planning without saved AI evidence.",
+    "One committed-v67 standard white-only first-round trial completed; all native inputs replay exactly, same23-input opening and PASS-only opponents verified.",
+    "Both recorded root24 winning/teacher witnesses independently replayed; deployed-probe projection sensitivity is zero under current V.",
+    "An unpromoted capability/held-card value candidate improves teacher first-input matches from10 to23 across32 roots; all32 remain actionable after fixing cold blue funding recovery.",
+    "145 used income/quiet-tail plan proof sources executed natively; fresh searches with both proof shortcuts disabled choose the same actions and values.",
+    "Native teacher38 control identifies an omitted four-input known computer-column-plus-blue purpose with2V gain; queued as a required fix, not pruned for speed.",
+    "Owned unfilled blue columns are concrete goals before their computer prerequisites; actual four-input +2V and13-input currency-income bridge have native controls, cold recovery and budget checks.",
+    "Capital-aware post-main bound assigns each data token once across a finite six-computer/four-blue allocation table. Native data, original corners and acquired public cards have conservative distinct costs.",
+    "Quiet audited-company Round4 fixed data chains include greedy currency income, consecutive blue rewards, native end-turn and native greedy final marks; typed scalar proofs expose no invented successor.",
+    "v90 closes all32 teacher and12 legacy roots below256 native inputs and600ms; cold case152 falls from v84 331/774.58ms to228/579.69ms.",
+    "Every151 pruned numeric source and28 used typed plan sources in four representative roots is checked by native execution; fresh native searches with bounds and both shortcuts disabled retain best action/value.",
+    "CPU profile identifies redundant complete endpoint enumeration in movement timing and premature policy construction; target-only native endpoint query and delayed stable-state policy construction preserve12 timing controls/four projection hashes.",
+    "Input audit now tests native successor maxima and model guards instead of assuming one-input card equivalence under purpose capital; all independent input paths execute, with only the known legacy frozen-aomomo failure remaining.",
+    "v92 fixes a real seven-data blue goal / six-slot pool dead end: native corner preview creates physical data tokens and full pools first place a prerequisite. Native16-input route and scalar value match; full-pool discard is not admitted as funding.",
+    "All21 exploratory regression failures audited: a real early proof-read bug fixed; obsolete linear-proof counts now enforce model guards and native fallback; forbidden borrow tests rewritten around the actual production prohibition and committed-choice recovery.",
+    "Production prefix reuse executes12 real inputs with10 hits and1 information refresh, comparing best action/value and formal state with cold replay at every prefix.",
+    "All150unit +1fullFlow pass on fixed v92 source; six search-specific Chrome smokes pass, including complete page submission/recovery and new native currency/blue/final-mark value proof.",
+    "Clean v67 private runtime reproduces default heuristic page timeout. Candidate search parity passes; missing shared-tree resource/plan files are not used as baseline evidence.",
+    "Source v92 committed and pushed as9d707d66483d8ec6c5f754be52ac485638442fea.",
+    "Exactly one standard v92 white-only R1 completed:48inputs/1006ms,18white searches,13points,blue1+purple4; strict native replay, identical opening and passive opponents verified.",
+    "Root24 all26 numeric-bound sources and8 typed-plan sources natively continued; fresh no-shortcut full root319inputs retains the best action and value.",
+    "Native teacher40 offered-card control confirms missing committed future-income purpose: B2 current-policy continuation55, teacher DLC40 continuation59; every witness input natively replayed, original/RNG unchanged. Different boundary horizons are explicit; this is not a guarantee of4final points.",
+    "Teacher40 committed own income propagated into one fixed public-card selection. Real fixture first failed then passes; hidden deck, absent/foreign/conditional income and changed funding cache checked. Browser same fixture checks the new purpose.",
+    "v93 source committed/pushed asf2cde3d2f7005df3944e66b15ee73bcda6ec22dc.",
+    "Exactly one standard v93 white-only R1 completed:48inputs/1005ms,18white searches,13points/blue1+purple4; strict replay and369committed runtime/tool blobs verified.",
+    "v92/v93 autonomous standardized input sequences and final committed state/session are exactly identical; no score improvement claimed.",
+    "Teacher25 native two-input alternatives differ only at match.decisionVersion; complete rule facts/RNG, public observation and legal action descriptors excluding that authority version match."
+  ],
+  "latestTrial": {
+    "record": "reports/research/5f529430.f2cde3d2.quick-200.json",
+    "verification": "reports/ai-foundation-20261023/human405-white-r1-f2cde3d2-verification-20261030-v1.json",
+    "comparison": "reports/ai-foundation-20261023/human405-white-r1-v92-v93-comparison-20261030-v1.json",
+    "sourceCommit": "f2cde3d2f7005df3944e66b15ee73bcda6ec22dc",
+    "wallMs": 1005,
+    "steps": 48,
+    "searches": 18,
+    "maxInputs": 79,
+    "maxMs": 185.227917,
+    "planReuseHits": 11,
+    "whiteScore": 13,
+    "whiteTech": [
+      "blue1",
+      "purple4"
+    ],
+    "teacherScore": 15,
+    "teacherTech": [
+      "blue2",
+      "purple4"
+    ],
+    "searchVersion": "v93",
+    "formalTerminal": false,
+    "baselineEligible": false,
+    "strategyAligned": false
+  },
+  "remainingInOrder": [
+    "Audit root24 probe and later-funded purpose value natively; do not add a teacher-imitation bonus. Numeric bounds and typed proofs must be revalidated if V changes.",
+    "Review teacher36 blue1/blue2 conditional resource demand and teacher37 free pick purpose from current native facts, not stage-score attribution.",
+    "Classify teacher38/39/43/56 order and resource-plan differences through native counterfactual continuations; scalar ties or internal use alone are insufficient.",
+    "Compare teacher62 DLC4/DLC5 future known purposes; current scalar tie is not strategic equivalence."
+  ],
+  "acceptedFourAIBaseline": "ai-search-v41-baseline-20261029",
+  "completionNote": "Goal remains active. Productionv93, autonomous13points and unchanged v92 path, teacher15; narrow greedy repair is verified without autonomous strength claim. Full-game baselinev41 unchanged.",
+  "candidateSource": "adhoc/human405-round1-v93-source-snapshot-20261030.json",
+  "currentRevisionAutonomouslyRun": true,
+  "validation": {
+    "schemaVersion": "seti-known-window-v63-v67-admission-v1",
+    "teacherRows": [
+      {
+        "step": 24,
+        "beforeNativeInputs": 347,
+        "afterNativeInputs": 89,
+        "afterMs": 238.09225000000004,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 25,
+        "beforeNativeInputs": 11,
+        "afterNativeInputs": 2,
+        "afterMs": 37.5475,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 26,
+        "beforeNativeInputs": 10,
+        "afterNativeInputs": 1,
+        "afterMs": 53.76675,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 27,
+        "beforeNativeInputs": 9,
+        "afterNativeInputs": 0,
+        "afterMs": 37.659625000000005,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 35,
+        "beforeNativeInputs": 296,
+        "afterNativeInputs": 71,
+        "afterMs": 260.93041700000003,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 36,
+        "beforeNativeInputs": 124,
+        "afterNativeInputs": 16,
+        "afterMs": 146.18,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 37,
+        "beforeNativeInputs": 10,
+        "afterNativeInputs": 1,
+        "afterMs": 29.598875000000007,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 38,
+        "beforeNativeInputs": 9,
+        "afterNativeInputs": 0,
+        "afterMs": 21.16987499999999,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 39,
+        "beforeNativeInputs": 164,
+        "afterNativeInputs": 119,
+        "afterMs": 273.05787499999997,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 40,
+        "beforeNativeInputs": 3,
+        "afterNativeInputs": 3,
+        "afterMs": 28.274417,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 41,
+        "beforeNativeInputs": 11,
+        "afterNativeInputs": 2,
+        "afterMs": 30.296625000000006,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 42,
+        "beforeNativeInputs": 10,
+        "afterNativeInputs": 1,
+        "afterMs": 29.684290999999988,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 43,
+        "beforeNativeInputs": 9,
+        "afterNativeInputs": 0,
+        "afterMs": 15.557874999999996,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 44,
+        "beforeNativeInputs": 154,
+        "afterNativeInputs": 100,
+        "afterMs": 186.24741699999998,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 45,
+        "beforeNativeInputs": 79,
+        "afterNativeInputs": 61,
+        "afterMs": 137.077042,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 46,
+        "beforeNativeInputs": 78,
+        "afterNativeInputs": 60,
+        "afterMs": 135.981084,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 47,
+        "beforeNativeInputs": 77,
+        "afterNativeInputs": 59,
+        "afterMs": 132.874166,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 48,
+        "beforeNativeInputs": 31,
+        "afterNativeInputs": 31,
+        "afterMs": 84.954125,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 49,
+        "beforeNativeInputs": 118,
+        "afterNativeInputs": 90,
+        "afterMs": 182.14304199999998,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 50,
+        "beforeNativeInputs": 78,
+        "afterNativeInputs": 64,
+        "afterMs": 148.858583,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 51,
+        "beforeNativeInputs": 104,
+        "afterNativeInputs": 84,
+        "afterMs": 176.97254199999998,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 52,
+        "beforeNativeInputs": 70,
+        "afterNativeInputs": 60,
+        "afterMs": 146.003375,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 53,
+        "beforeNativeInputs": 90,
+        "afterNativeInputs": 78,
+        "afterMs": 170.71275000000003,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 54,
+        "beforeNativeInputs": 62,
+        "afterNativeInputs": 56,
+        "afterMs": 139.375708,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 55,
+        "beforeNativeInputs": 48,
+        "afterNativeInputs": 48,
+        "afterMs": 128.760375,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 56,
+        "beforeNativeInputs": 61,
+        "afterNativeInputs": 61,
+        "afterMs": 147.812166,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 57,
+        "beforeNativeInputs": 27,
+        "afterNativeInputs": 27,
+        "afterMs": 98.91562499999999,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 58,
+        "beforeNativeInputs": 26,
+        "afterNativeInputs": 26,
+        "afterMs": 96.40695800000002,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 59,
+        "beforeNativeInputs": 9,
+        "afterNativeInputs": 9,
+        "afterMs": 49.26370800000001,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 60,
+        "beforeNativeInputs": 1,
+        "afterNativeInputs": 1,
+        "afterMs": 20.324332999999996,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 61,
+        "beforeNativeInputs": 1,
+        "afterNativeInputs": 1,
+        "afterMs": 19.196959000000007,
+        "sameBestActionAndValue": true
+      },
+      {
+        "step": 62,
+        "beforeNativeInputs": 2,
+        "afterNativeInputs": 2,
+        "afterMs": 26.106375,
+        "sameBestActionAndValue": true
+      }
+    ],
+    "legacyRows": [
+      {
+        "caseId": "case-001",
+        "beforeNativeInputs": 144,
+        "afterNativeInputs": 144,
+        "afterMs": 158.93983300000002,
+        "sameBestActionAndValue": true
+      },
+      {
+        "caseId": "case-003",
+        "beforeNativeInputs": 26,
+        "afterNativeInputs": 26,
+        "afterMs": 136.265583,
+        "sameBestActionAndValue": true
+      },
+      {
+        "caseId": "case-008",
+        "beforeNativeInputs": 64,
+        "afterNativeInputs": 64,
+        "afterMs": 135.70333300000004,
+        "sameBestActionAndValue": true
+      },
+      {
+        "caseId": "case-011",
+        "beforeNativeInputs": 9,
+        "afterNativeInputs": 9,
+        "afterMs": 14.810999999999922,
+        "sameBestActionAndValue": true
+      },
+      {
+        "caseId": "case-009",
+        "beforeNativeInputs": 41,
+        "afterNativeInputs": 41,
+        "afterMs": 55.79875000000004,
+        "sameBestActionAndValue": true
+      },
+      {
+        "caseId": "case-062",
+        "beforeNativeInputs": 73,
+        "afterNativeInputs": 73,
+        "afterMs": 205.79004199999997,
+        "sameBestActionAndValue": true
+      },
+      {
+        "caseId": "case-105",
+        "beforeNativeInputs": 189,
+        "afterNativeInputs": 189,
+        "afterMs": 536.9180410000001,
+        "sameBestActionAndValue": true
+      },
+      {
+        "caseId": "case-152",
+        "beforeNativeInputs": 220,
+        "afterNativeInputs": 220,
+        "afterMs": 585.3901249999999,
+        "sameBestActionAndValue": true
+      },
+      {
+        "caseId": "baseline-r1-t8-blue",
+        "beforeNativeInputs": 20,
+        "afterNativeInputs": 20,
+        "afterMs": 42.44699999999966,
+        "sameBestActionAndValue": true
+      },
+      {
+        "caseId": "baseline-r2-t9-white",
+        "beforeNativeInputs": 108,
+        "afterNativeInputs": 108,
+        "afterMs": 175.71391600000015,
+        "sameBestActionAndValue": true
+      },
+      {
+        "caseId": "step317",
+        "beforeNativeInputs": 134,
+        "afterNativeInputs": 134,
+        "afterMs": 311.870958,
+        "sameBestActionAndValue": true
+      },
+      {
+        "caseId": "terminal-root",
+        "beforeNativeInputs": 373,
+        "afterNativeInputs": 236,
+        "afterMs": 538.763375,
+        "sameBestActionAndValue": true
+      }
+    ],
+    "nativeIncomeControls": 59,
+    "nativeBlueControls": 40,
+    "allSameBestActionAndValueAsFullV63Candidate": true,
+    "actualNativeSimulationBudget": 256,
+    "millisecondsBudget": 600,
+    "maxTeacherNativeInputs": 119,
+    "maxTeacherMilliseconds": 273.05787499999997,
+    "maxLegacyNativeInputs": 236,
+    "maxLegacyMilliseconds": 585.3901249999999,
+    "timingScope": "One fresh cold sample per root; no statistical speed guarantee.",
+    "baselineEligible": false,
+    "goalStatus": "active",
+    "nodeUnitPassed": 147,
+    "fullFlowPassed": 1,
+    "browserSmokePassed": 4,
+    "newIncomeProofInputAuditPassed": true,
+    "legacyVInputFailureRetained": true
+  },
+  "priorCandidate": {
+    "version": "v63",
+    "sourceSnapshot": "adhoc/human405-v63-unpromoted-source-20261030-v1.json.gz",
+    "admissionSummary": "reports/ai-foundation-20261023/human405-known-postmain-v63-admission-20261030-v1.json",
+    "productionAccepted": false,
+    "failedCases": [
+      "teacher24:347inputs",
+      "teacher35:296inputs",
+      "terminal:373inputs/741.648ms"
+    ],
+    "resolvedBy": "v67: same best actions/values, fixed-income proofs and audited negative-blue policy, all point gates passed"
+  },
+  "sourceCheck": "reports/ai-foundation-20261023/human405-v93-trial-runtime-source-check-20261030-v1.json",
+  "root24Attribution": "reports/ai-foundation-20261023/human405-v67-opening-value-attribution-20261030-v1.json",
+  "unpromotedCandidate": {
+    "version": "v78",
+    "sourceSnapshot": "adhoc/human405-v78-capital-candidate-source-20261030-v1.json.gz",
+    "admissionReport": "reports/ai-foundation-20261023/human405-v78-capital-candidate-admission-20261030-v1.json",
+    "productionAccepted": false,
+    "pointGatesPassed": false,
+    "fullRegressionPassed": false,
+    "autonomouslyRun": false,
+    "teacherSameFirstInputs": 23,
+    "teacherRoots": 32,
+    "nativeProofSourcesVerified": 145,
+    "failures": [
+      "teacher39:311actual inputs /479.619ms",
+      "legacy case105:275actual inputs /670.708ms",
+      "missing known column-plus-blue purpose",
+      "candidate input audit not fully adapted/covered"
+    ]
+  },
+  "candidateVersion": "v93",
+  "candidateAdmitted": true,
+  "candidateSourceSha256": "7d65d23f707ebbff44c77dac64554066e943033cd01d74c9a25d1edc64116f2a",
+  "pointGateEvidenceVersion": "v92",
+  "pointGates": {
+    "sourceVersion": "v93",
+    "teacherRoots": 32,
+    "legacyRoots": 12,
+    "over256Inputs": 0,
+    "over600ms": 0,
+    "maxInputs": 228,
+    "maxMs": 596.1822920000002,
+    "timingScope": "single cold samples, little margin at legacy152"
+  },
+  "nativeControls": {
+    "version": "v93",
+    "prunedBoundSources": 178,
+    "typedPlanSources": 40,
+    "freshNativeRootComparisons": 5,
+    "sameBestActionAndValue": true,
+    "rootAndRngUnchanged": true
+  },
+  "currentValidation": {
+    "sourceVersion": "v93",
+    "relatedNodePassed": 7,
+    "searchBrowserPassed": 6,
+    "admissionReport": "reports/ai-foundation-20261023/human405-v93-admission-20261030-v1.json",
+    "lastFullNodeRegression": {
+      "sourceVersion": "v92",
+      "unitPassed": 150,
+      "fullFlowPassed": 1,
+      "scope": "Not repeated for narrow v93 selector change"
+    },
+    "valueInputAudit": "sole pre-existing frozen aomomo failure; all independent paths pass"
+  },
+  "remaining": [
+    "Audit root24 probe and later-funded purpose value natively; do not add a teacher-imitation bonus. Numeric bounds and typed proofs must be revalidated if V changes.",
+    "Review teacher36 blue1/blue2 conditional resource demand and teacher37 free pick purpose from current native facts, not stage-score attribution.",
+    "Classify teacher38/39/43/56 order and resource-plan differences through native counterfactual continuations; scalar ties or internal use alone are insufficient.",
+    "Compare teacher62 DLC4/DLC5 future known purposes; current scalar tie is not strategic equivalence."
+  ],
+  "phase": "v93-admitted-and-standard-R1-verified-8teacher-differences-unresolved",
+  "root24CurrentBoundControl": "reports/ai-foundation-20261023/human405-v92-native-bound-controls-teacher-24-20261030-v1.json",
+  "pendingIncomePickGap": "reports/ai-foundation-20261023/human405-v92-pending-income-pick-gap-20261030-v1.json",
+  "paidMovePrefixControl": "reports/ai-foundation-20261023/human405-v93-paid-move-order-20261030-v1.json",
+  "remainingTeacherDifferenceSteps": [
+    24,
+    36,
+    37,
+    38,
+    39,
+    43,
+    56,
+    62
+  ]
+}

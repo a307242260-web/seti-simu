@@ -1,0 +1,336 @@
+{
+  "schemaVersion": "seti-human405-round-comparison-v1",
+  "sameConfirmedOpening": true,
+  "openingSha256": "ab9a0dbbb3c35c453604addd668bd2625a4580c0577924d87c6cb8eff9c01b9c",
+  "passiveOpponentsOnly": true,
+  "strictNativeReplays": true,
+  "sameNativeActionSequence": true,
+  "sameFinalCommittedStateAndSession": true,
+  "rows": [
+    {
+      "version": "v92",
+      "verification": "reports/ai-foundation-20261023/human405-white-r1-9d707d66-verification-20261030-v1.json",
+      "verificationSha256": "d9fc6f0a55e90bce7242a5739f96b281717f7b78a88dcf8d22b47cef64095107",
+      "record": "reports/research/77dcb58d.9d707d66.quick-200.json",
+      "sourceCommit": "9d707d66",
+      "whiteScore": 13,
+      "technology": [
+        "blue1",
+        "purple4"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "whiteInputs": 18,
+      "wallMs": 1006,
+      "maxNativeInputs": 79,
+      "maxMilliseconds": 188.90633300000002,
+      "planReuseHits": 11,
+      "nativePath": [
+        {
+          "step": 24,
+          "action": "深空探测 1x 行动",
+          "family": "industry"
+        },
+        {
+          "step": 25,
+          "action": "b_117.webp",
+          "family": "choose_card"
+        },
+        {
+          "step": 26,
+          "action": "b_2.webp",
+          "family": "choose_card"
+        },
+        {
+          "step": 27,
+          "action": "b_2.webp：弃牌角标",
+          "family": "card_corner"
+        },
+        {
+          "step": 28,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 29,
+          "action": "第一排放置位 1",
+          "family": "choose_target"
+        },
+        {
+          "step": 30,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 31,
+          "action": "第一排放置位 2",
+          "family": "choose_target"
+        },
+        {
+          "step": 32,
+          "action": "研究科技",
+          "family": "research_tech"
+        },
+        {
+          "step": 33,
+          "action": "研究 blue1（蓝槽 1）",
+          "family": "choose_target"
+        },
+        {
+          "step": 34,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 35,
+          "action": "blue1 下方",
+          "family": "choose_target"
+        },
+        {
+          "step": 36,
+          "action": "结束回合",
+          "family": "end_turn"
+        },
+        {
+          "step": 44,
+          "action": "dlc_9.png",
+          "family": "play_card"
+        },
+        {
+          "step": 45,
+          "action": "研究 purple4",
+          "family": "choose_target"
+        },
+        {
+          "step": 46,
+          "action": "结束回合",
+          "family": "end_turn"
+        },
+        {
+          "step": 47,
+          "action": "PASS",
+          "family": "pass"
+        },
+        {
+          "step": 48,
+          "action": "dlc_4.png",
+          "family": "choose_card"
+        }
+      ]
+    },
+    {
+      "version": "v93",
+      "verification": "reports/ai-foundation-20261023/human405-white-r1-f2cde3d2-verification-20261030-v1.json",
+      "verificationSha256": "cbba03428313afe1fdbc315deb3e4987e056cee9595dbb814aca50d3c3446cdc",
+      "record": "reports/research/5f529430.f2cde3d2.quick-200.json",
+      "sourceCommit": "f2cde3d2",
+      "whiteScore": 13,
+      "technology": [
+        "blue1",
+        "purple4"
+      ],
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "whiteInputs": 18,
+      "wallMs": 1005,
+      "maxNativeInputs": 79,
+      "maxMilliseconds": 185.227917,
+      "planReuseHits": 11,
+      "nativePath": [
+        {
+          "step": 24,
+          "action": "深空探测 1x 行动",
+          "family": "industry"
+        },
+        {
+          "step": 25,
+          "action": "b_117.webp",
+          "family": "choose_card"
+        },
+        {
+          "step": 26,
+          "action": "b_2.webp",
+          "family": "choose_card"
+        },
+        {
+          "step": 27,
+          "action": "b_2.webp：弃牌角标",
+          "family": "card_corner"
+        },
+        {
+          "step": 28,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 29,
+          "action": "第一排放置位 1",
+          "family": "choose_target"
+        },
+        {
+          "step": 30,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 31,
+          "action": "第一排放置位 2",
+          "family": "choose_target"
+        },
+        {
+          "step": 32,
+          "action": "研究科技",
+          "family": "research_tech"
+        },
+        {
+          "step": 33,
+          "action": "研究 blue1（蓝槽 1）",
+          "family": "choose_target"
+        },
+        {
+          "step": 34,
+          "action": "放置数据",
+          "family": "place_data"
+        },
+        {
+          "step": 35,
+          "action": "blue1 下方",
+          "family": "choose_target"
+        },
+        {
+          "step": 36,
+          "action": "结束回合",
+          "family": "end_turn"
+        },
+        {
+          "step": 44,
+          "action": "dlc_9.png",
+          "family": "play_card"
+        },
+        {
+          "step": 45,
+          "action": "研究 purple4",
+          "family": "choose_target"
+        },
+        {
+          "step": 46,
+          "action": "结束回合",
+          "family": "end_turn"
+        },
+        {
+          "step": 47,
+          "action": "PASS",
+          "family": "pass"
+        },
+        {
+          "step": 48,
+          "action": "dlc_4.png",
+          "family": "choose_card"
+        }
+      ]
+    }
+  ],
+  "teacher": {
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 3,
+      "handSize": 2,
+      "publicity": 3,
+      "score": 15
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue2": true,
+        "purple4": true
+      }
+    },
+    "hand": [
+      "dlc_5.png",
+      "dlc_37.png"
+    ],
+    "reserved": [
+      "b_117.webp",
+      "dlc_9.png"
+    ],
+    "computer": {
+      "discardedCount": 0,
+      "placedTokens": [
+        {
+          "id": "data-token-1",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-2",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-3",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-4",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-11",
+          "index": 5,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "poolTokens": []
+    },
+    "rocket": [],
+    "round": 2
+  },
+  "scoreScope": "provisional after first-round settlement; no full-game result",
+  "formalTerminal": false,
+  "baselineEligible": false,
+  "strategyAligned": false,
+  "acceptedBaseline": "ai-search-v41-baseline-20261029",
+  "runtimeSourceCheck": "reports/ai-foundation-20261023/human405-v93-trial-runtime-source-check-20261030-v1.json",
+  "reportPath": "reports/iteration/ai-search-v93-white-r1-20261030/5f529430.f2cde3d2.quick-200.action-log.html",
+  "reportSha256": "c72e81ab80507a24b552908b92db0da4830cb3039913f84e3504d9ac247b390e",
+  "recordSaveReportRegistryConsistent": true,
+  "findings": [
+    "Teacher40 queued-income fixed pick is repaired, but the autonomous opening never enters that teacher orbit line; the exact v92/v93 native paths and final states remain identical.",
+    "White13points/blue1+purple4 versus teacher15/blue2+purple4 remains unresolved; no autonomous score improvement claim.",
+    "Teacher25 pay-then-move and move-then-pay native two-input prefixes differ only by input concurrency revision, not game facts or RNG; separate proof retains the difference explicitly.",
+    "All18 actual decisions complete under256native inputs/600ms. This is R1 stage evidence, not180s full-game acceptance."
+  ]
+}
