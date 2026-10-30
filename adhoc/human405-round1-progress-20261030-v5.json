@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "seti-human405-round1-goal-checkpoint-v1",
+  "date": "2026-10-30",
+  "goalStatus": "active",
+  "sourceCommit": "692bdf03e2e7280f9ecdf669fcb1a8b16ebbfa0a",
+  "searchVersion": "v53",
+  "completed": [
+    "All32 white native teacher roots through input62 audited; source-bound raw search evidence retained.",
+    "Fixed movement/resource retained-action conflict, future movement cost, no-rotation timing and prepaid objective recovery.",
+    "Settled root-known guaranteed technology pick before closing its reveal boundary.",
+    "Preserved separate at-location orbit/land main purposes.",
+    "Two standard white-only autonomous first-round runs completed and exactly replayed; source opening/RNG and passive opponents verified.",
+    "146 unit +1 full-flow and4 browser smokes pass; legacy input audit failure reproduced in v49 and recorded.",
+    "Protected-card fourth-slot income funding is an explicit fixed native preparation, with causal resource lower bounds, cold recovery and global budget failure tests.",
+    "Company swap purpose inference excludes the outgoing card; a known credit income offer explicitly funds the preserved card. Teacher46 now matches."
+  ],
+  "latestTrial": {
+    "record": "reports/research/5cfabf5d.692bdf03.quick-200.json",
+    "wallMs": 1320,
+    "steps": 53,
+    "searches": 23,
+    "maxInputs": 121,
+    "maxMs": 242.234583,
+    "planReuseHits": 17,
+    "whiteScore": 16,
+    "whiteTech": [
+      "blue1"
+    ],
+    "teacherScore": 15,
+    "teacherTech": [
+      "blue2",
+      "purple4"
+    ],
+    "strategyAligned": false,
+    "sameConfirmedPathAsV51": false
+  },
+  "remainingInOrder": [
+    "Settle root-known mandatory rewards after technology/public-card reveal before attributing value gaps to future capability. Preserve masks, native inputs, exact identities, global budgets and cold recovery.",
+    "Compare the complete funding path with the discard/analyze path; current tech boundary still truncates known consequences, so do not tune arbitrary imitation weights.",
+    "Address B117 and DLC9 sacrifice at the opening using reachable native purposes and technology/trigger capability value, while retaining true score/card-order differences.",
+    "Repeat single-root gates before another white-only round1 trial; keep the full first-round alignment objective active."
+  ],
+  "acceptedFourAIBaseline": "ai-search-v41-baseline-20261029",
+  "completionNote": "Goal remains active. Stage scores do not demonstrate strategy alignment or a full-game score/time acceptance."
+}

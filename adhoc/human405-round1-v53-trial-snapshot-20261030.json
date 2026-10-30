@@ -1,0 +1,40 @@
+{
+  "baseCommit": "692bdf03e2e7280f9ecdf669fcb1a8b16ebbfa0a",
+  "snapshot": "/private/tmp/seti-human405-v53-run-20261030-xx_0_tv5",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "files": {
+    "adhoc/deliver-human405-round1-v53-trial-20261030-v1.py": "bfae103d17d1383a95b677813d486dc355e7fbd72786f0bb3eddafbe30ad578d",
+    "adhoc/human405-round1-progress-20261030-v5.json": "2aad18079f73a0fbf7068001621b636d2d506bd8833e392718d562655cf41572",
+    "adhoc/prepare-human405-v53-trial-root-overlays-20261030-v1.js": "a4183c0582985a117021996fa83b55357c4d5c861582a7caa577f1a4349d5f0e",
+    "docs/ai-human405-learning-20261029.md": "f1cf8f90360e13fdda75422fa7207018195727c9f72a4435913fc20bc7c29e80",
+    "reports/ai-foundation-20261023/human405-round1-learning-findings-20261030-v1.json": "9202e5d42bdf79bedca2c2794694f71dc3988e761fbc5edf5f9fdc7297ac6c83",
+    "reports/ai-foundation-20261023/human405-white-r1-692bdf03-verification-20261030-v1.json": "ac272af6304af0955aa8899ad966c81cbce4f5796e858b13d8403420e594e268",
+    "reports/ai-foundation-20261023/human405-white-r1-v51-v53-comparison-20261030-v1.json": "bb5ab2022648f13251c8f9422ff110a500a286846a52a821b3a1a6ffcef091a7",
+    "reports/iteration/ai-search-v53-white-r1-20261030/5cfabf5d.692bdf03.quick-200.action-log.html": "4a39d8af4b71de334a596e5e6283c7406c25fa8fca86dd55ac5a3b6bf19dc3bc",
+    "reports/iteration/registry.json": "e50d17a6912d0e694fc9e36a4fb4d115f79a356ebc3b5f4c07ad86b8ed7d5ab6",
+    "reports/iteration/versions.json": "40b375a2f8c90f42838f0e8d4fce25e5d187e5276b32fa47887095a73ed4ee18",
+    "reports/research/5cfabf5d.692bdf03.quick-200.json": "0aec6558ac6c1f331d451a2f0a903768deca3756abcf8a7e7105412e2edff9b9",
+    "reports/research/5cfabf5d.692bdf03.quick-200.json.decisions.jsonl": "648a31831318f430b878f71c7adc1e3a92a736f96d2187cc1af4a8f79cef6a53",
+    "reports/robot-iteration.html": "816888ed2bd2946410b8eae6992c6549322d843915c7675e684cce08a4087482",
+    "seti-saves/seti-save-research-ai-search-v53-white-r1-20261030-692bdf03-quick-200-v18.json": "e896d283b831a06d88f993ed7c61f1fc4447c6d42e1b3d443ac6da9d0aee1b05"
+  },
+  "sourceBoundReports": [],
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "3a03bb7c87321ecba704b57d2140da14da96baf3b5e54b085c588eb030437c7a",
+      "path": "/private/tmp/seti-human405-r1-v53-trial-root-overlays-20261030/versions.json",
+      "sha256": "2559b2703c54f4c04e28df15b6f423ed0df7fa368e3ca7b51712a1547fa0ee40"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "5db469251d0e92517b2ed3dd25f594460ae6b724eb78b72a9716628230062372",
+      "path": "/private/tmp/seti-human405-r1-v53-trial-root-overlays-20261030/registry.json",
+      "sha256": "8ce7fe49be1f2cbef59837d02c904a51fb7cbed6cc59a68dfcb12880e50007a3"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "defed36ad8d44dde87f1388065178f66613b304fccd7f1595757acc667a96b9a",
+      "path": "/private/tmp/seti-human405-r1-v53-trial-root-overlays-20261030/robot-iteration.html",
+      "sha256": "5fe9b9219a4db028885a25ced6acb3b1523d1ec4016a31a87ebb989738ba9f44"
+    }
+  }
+}

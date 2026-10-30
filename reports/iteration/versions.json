@@ -7,6 +7,32 @@
   },
   "versions": [
     {
+      "id": "ai-search-v53-white-r1-20261030",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-v53-white-r1-20261030",
+      "date": "2026-10-30",
+      "baseline": "ai-search-v41-baseline-20261029",
+      "head": "692bdf03",
+      "commits": [
+        "f24600c7",
+        "5d1cae64",
+        "8c715275",
+        "0a4a2d08",
+        "e8327698",
+        "b90f9ae4",
+        "852263bb",
+        "f99faaa6",
+        "692bdf03"
+      ],
+      "summary": "仅白席第一轮：保护DLC9的收入资助计划、固定选牌补缺及换出牌用途修正。53输入、1.320秒，白16分/blue1；23次白席决策，最高121次/242.235ms，17次复用。开局改为B117收入，仍未对齐教师blue2+purple4；不晋升四AI基线。",
+      "records": {
+        "5cfabf5d.692bdf03.quick-200.json": {}
+      },
+      "roadmap": null,
+      "baselineEligible": false
+    },
+    {
       "id": "ai-search-v51-white-r1-20261030",
       "aiGeneration": "v2",
       "agentType": "search",

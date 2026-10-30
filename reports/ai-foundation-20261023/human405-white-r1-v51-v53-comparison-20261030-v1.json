@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "seti-human405-first-round-comparison-v2",
+  "baseline": "reports/research/600c9fb2.852263bb.quick-200.json",
+  "candidate": "reports/research/5cfabf5d.692bdf03.quick-200.json",
+  "sameConfirmedActions": false,
+  "exactFinalCanonicalStateEqual": false,
+  "beforeSteps": 55,
+  "afterSteps": 53,
+  "beforeScore": 16,
+  "afterScore": 16,
+  "candidateStartsWith": "place_data then B117 income; later discards DLC9",
+  "teacherSetup": [
+    "blue2",
+    "purple4"
+  ],
+  "candidateSetup": [
+    "blue1"
+  ],
+  "strategyAligned": false,
+  "scope": "Same frozen opening and passive opponents; first-round provisional scores only. Timing samples are not a strength improvement claim."
+}
