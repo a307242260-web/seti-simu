@@ -1,0 +1,441 @@
+{
+  "schemaVersion": "seti-human405-native-capital-ledger-v1",
+  "comparisonPath": "reports/ai-foundation-20261023/human405-b117-prefix-r1-comparison-20261031-v1.json",
+  "comparisonSha256": "0b5698bab4c6711969c28d6991a4ed81bc492885ec6f0de662bb0ecbfaace2be",
+  "modelVersion": "seti-purpose-capital-state-value-v2",
+  "researchChangesNativeGeometry": true,
+  "beforeResearch": {
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v2",
+      "total": 42,
+      "components": {
+        "realizedScore": 6,
+        "currentEndGameBonus": 0,
+        "resources": 8.5,
+        "hand": 1,
+        "income": 22.5,
+        "technologyPotential": 0,
+        "handPotential": 4
+      },
+      "terminal": false
+    },
+    "wallet": {
+      "credits": 2,
+      "energy": 1,
+      "publicity": 7,
+      "availableData": 4
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {},
+      "disabledTiles": {},
+      "ownedTiles": {}
+    },
+    "probes": [
+      {
+        "angleDegrees": 112.5,
+        "color": "green",
+        "id": 1,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 1,
+        "radius": 84.68,
+        "sectorX": 4,
+        "sectorY": 1,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      },
+      {
+        "angleDegrees": 99.9,
+        "color": "green",
+        "id": 2,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 2,
+        "radius": 69.42,
+        "sectorX": 4,
+        "sectorY": 1,
+        "slotIndex": 0,
+        "surface": "solar-board"
+      },
+      {
+        "id": 3,
+        "playerId": "player-white",
+        "color": "white",
+        "surface": "solar-board",
+        "sectorX": 5,
+        "sectorY": 2,
+        "slotIndex": 4,
+        "radius": 156.26,
+        "angleDegrees": 157.5,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerSequence": 1
+      }
+    ]
+  },
+  "afterResearch": {
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v2",
+      "total": 53.5,
+      "components": {
+        "realizedScore": 13,
+        "currentEndGameBonus": 0,
+        "resources": 5.5,
+        "hand": 1,
+        "income": 22.5,
+        "technologyPotential": 7.5,
+        "handPotential": 4
+      },
+      "terminal": false
+    },
+    "wallet": {
+      "credits": 3,
+      "energy": 1,
+      "publicity": 1,
+      "availableData": 2
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true
+      }
+    },
+    "probes": [
+      {
+        "angleDegrees": 67.5,
+        "color": "green",
+        "id": 1,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 1,
+        "radius": 84.68,
+        "sectorX": 3,
+        "sectorY": 1,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      },
+      {
+        "angleDegrees": 54.9,
+        "color": "green",
+        "id": 2,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 2,
+        "radius": 69.42,
+        "sectorX": 3,
+        "sectorY": 1,
+        "slotIndex": 0,
+        "surface": "solar-board"
+      },
+      {
+        "id": 3,
+        "playerId": "player-white",
+        "color": "white",
+        "surface": "solar-board",
+        "sectorX": 4,
+        "sectorY": 2,
+        "slotIndex": 4,
+        "radius": 156.26,
+        "angleDegrees": 112.5,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerSequence": 1
+      }
+    ]
+  },
+  "afterOrbit": {
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v2",
+      "total": 61,
+      "components": {
+        "realizedScore": 16,
+        "currentEndGameBonus": 0,
+        "resources": 4,
+        "hand": 1,
+        "income": 28.5,
+        "technologyPotential": 7.5,
+        "handPotential": 4
+      },
+      "terminal": false
+    },
+    "wallet": {
+      "credits": 3,
+      "energy": 0,
+      "publicity": 2,
+      "availableData": 0
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 5,
+      "energy": 2,
+      "handSize": 2,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true
+      }
+    },
+    "probes": [
+      {
+        "angleDegrees": 67.5,
+        "color": "green",
+        "id": 1,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 1,
+        "radius": 84.68,
+        "sectorX": 3,
+        "sectorY": 1,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      },
+      {
+        "angleDegrees": 54.9,
+        "color": "green",
+        "id": 2,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 2,
+        "radius": 69.42,
+        "sectorX": 3,
+        "sectorY": 1,
+        "slotIndex": 0,
+        "surface": "solar-board"
+      }
+    ]
+  },
+  "controlFirstTurnEnd": {
+    "value": {
+      "modelVersion": "seti-purpose-capital-state-value-v2",
+      "total": 54.5,
+      "components": {
+        "realizedScore": 11,
+        "currentEndGameBonus": 0,
+        "resources": 8.5,
+        "hand": 1,
+        "income": 22.5,
+        "technologyPotential": 7.5,
+        "handPotential": 4
+      },
+      "terminal": false
+    },
+    "wallet": {
+      "credits": 6,
+      "energy": 2,
+      "publicity": 0,
+      "availableData": 1
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true
+      }
+    },
+    "probes": [
+      {
+        "angleDegrees": 112.5,
+        "color": "green",
+        "id": 1,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 1,
+        "radius": 84.68,
+        "sectorX": 4,
+        "sectorY": 1,
+        "slotIndex": 4,
+        "surface": "solar-board"
+      },
+      {
+        "angleDegrees": 99.9,
+        "color": "green",
+        "id": 2,
+        "launchGrid": {
+          "x": 5,
+          "y": 1
+        },
+        "launchSectorCoordinate": {
+          "x": 5,
+          "y": 1
+        },
+        "playerId": "player-green",
+        "playerSequence": 2,
+        "radius": 69.42,
+        "sectorX": 4,
+        "sectorY": 1,
+        "slotIndex": 0,
+        "surface": "solar-board"
+      }
+    ]
+  },
+  "nativeResearchInputs": [
+    {
+      "input": 35,
+      "forced": false,
+      "summary": "研究科技",
+      "family": "research_tech"
+    },
+    {
+      "input": 36,
+      "forced": false,
+      "summary": "研究 blue1（蓝槽 1）",
+      "family": "choose_target"
+    },
+    {
+      "input": 37,
+      "forced": false,
+      "summary": "放置数据",
+      "family": "place_data"
+    },
+    {
+      "input": 38,
+      "forced": false,
+      "summary": "第一排放置位 1",
+      "family": "choose_target"
+    },
+    {
+      "input": 39,
+      "forced": false,
+      "summary": "放置数据",
+      "family": "place_data"
+    },
+    {
+      "input": 40,
+      "forced": false,
+      "summary": "blue1 下方",
+      "family": "choose_target"
+    }
+  ],
+  "researchDelta": {
+    "total": 11.5,
+    "components": {
+      "realizedScore": 7,
+      "currentEndGameBonus": 0,
+      "resources": -3,
+      "hand": 0,
+      "income": 0,
+      "technologyPotential": 7.5,
+      "handPotential": 0
+    }
+  },
+  "orbitTurnDelta": {
+    "total": 7.5,
+    "components": {
+      "realizedScore": 3,
+      "currentEndGameBonus": 0,
+      "resources": -1.5,
+      "hand": 0,
+      "income": 6,
+      "technologyPotential": 0,
+      "handPotential": 0
+    }
+  },
+  "sourceHashes": {
+    "randomizer/game/ai/state-value.js": "f5b9767dcedef54e93f81945a88fc5de730e27f5ab89e1a1db5b7c7633caf13e"
+  },
+  "findings": [
+    "The recorded B117 continuation buys blue1 from retained7publicity before orbit. This later research turn adds11.5V: score7, resources-3, technology potential7.5; research rotates the board/probe geometry, while the wallet remains3credits/1energy.",
+    "This demonstrates a second omission to investigate: current fixed publicity weights do not represent the funded later technology purpose, while already-owned blue1 immediately receives7.5technology potential.",
+    "The next orbit turn adds7.5V in this recorded world. It includes later public choices/replacements and cannot be credited blindly at the initial root.",
+    "These are saved native path ledgers, not a new evaluator, an admissible bound, a guarantee of future affordability or an instruction to imitate teacher actions. Shared budgets, research-induced rotation and known-information reward dependencies must be proved before combining research and probe forecasts."
+  ],
+  "productionChange": false,
+  "baselineEligible": false,
+  "goalStatus": "active"
+}
