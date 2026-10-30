@@ -367,11 +367,19 @@ try {
       checkpoint.coreState.compositionEnvelope = prefixFixture.compositionEnvelope;
       prefixEnv.loadCheckpoint(checkpoint);
       const first = prefixEnv.runAgentDecision(), raw = prefixEnv.observe(prefixFixture.seatId);
-      const next = prefixEnv.runAgentDecision(), evaluate = independentValue.createStateValueEvaluator(prefixFixture.seatId);
-      if (!first.searches[0].planEvidence || next.searches[0].diagnostics.planContinuation === "hit"
-        || next.searches[0].diagnostics.transitions <= 0 || first.searches[0].value !== next.searches[0].value
-        || evaluate(raw) !== evaluate(next.agentTrace.context.observation)) throw new Error("资源准备重算的完成证据或原始/标准输入不一致");
-      console.log(`[PASS] independent-resource-prefix-replan: root=${evaluate(raw)} leaf=${next.searches[0].value} inputs=${next.searches[0].diagnostics.transitions}`);
+      const savedPrefix=prefixEnv.createCheckpoint(),coldPrefix=createSimulationEnv();
+      try {
+        // Reuse is valid for a truly simulated prefix. Compare it to a fresh
+        // planner with the same native checkpoint and no saved AI evidence.
+        savedPrefix.machineAI={};coldPrefix.loadCheckpoint(savedPrefix);
+        const next = prefixEnv.runAgentDecision(), cold=coldPrefix.runAgentDecision(), evaluate = independentValue.createStateValueEvaluator(prefixFixture.seatId);
+        if (!first.searches[0].planEvidence || !next.searches[0].complete || !cold.searches[0].complete
+          || first.searches[0].value!==next.searches[0].value || next.actionId!==cold.actionId || next.searches[0].value!==cold.searches[0].value
+          || evaluate(raw)!==evaluate(next.agentTrace.context.observation))throw new Error("资源准备前缀证据、冷算或原始/标准输入不一致");
+        if(next.searches[0].diagnostics.planContinuation==="hit" &&(next.searches[0].diagnostics.transitions!==0
+          ||next.searches[0].reusedCoverage?.evidenceId!==first.searches[0].planEvidence.evidenceId))throw new Error("资源前缀复用没有绑定原完成证据");
+        console.log(`[PASS] independent-resource-prefix-evidence: root=${evaluate(raw)} leaf=${next.searches[0].value} mode=${next.searches[0].diagnostics.planContinuation} coldInputs=${cold.searches[0].diagnostics.transitions}`);
+      }finally{coldPrefix.dispose();}
     } finally { prefixEnv.dispose(); }
     for (const id of ["062", "105", "152"]) {
       const moneyFixture = JSON.parse(fs.readFileSync(path.resolve(__dirname,
@@ -692,6 +700,20 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
     }
   }
   browserComp.dispose?.();
+}
+
+// A plan-value boundary has no native successor observation. Audit its value
+// against a completed native plan, rather than passing a fictitious leaf to V.
+{
+ let kernel,port;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),{createAnalysisPort}=require('../randomizer/game/ai/analysis-port'),{searchDecision}=require('../randomizer/game/ai/decision-search'),agent=require('../randomizer/game/ai/search-agent');
+  const f=JSON.parse(fs.readFileSync(require('node:path').resolve(__dirname,'../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-043-20261030-v1.json'))),seed=f.source.seed;
+  kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(state,viewer)=>buildRuleObservation(state,seed,viewer?.playerId)});kernel.newGame({seed});const comp=kernel.composition;assert(comp.lifecycle.restore(f.compositionEnvelope).ok);const before=comp.lifecycle.save().envelope;port=createAnalysisPort({composition:comp,seatId:f.seatId,maxCacheEntries:0});const root=port.openRoot(),evaluate=independentValue.createStateValueEvaluator(f.seatId),r=searchDecision({port,root,evaluate,...agent.OPTIONS,budget:{transitions:256,nodes:1024,frontier:256,milliseconds:5000}});assert(r.complete);assert.equal(r.diagnostics.nativeExecutions,0);assert.equal(r.diagnostics.incomePlanProofs,1);
+  const summary=port.incomePlanSummary(root),native=port.expandResourcePlan(root,port.resourceSpec(root).plans[0],()=>null);assert(native.complete);assert.equal(native.submissions,summary.requiredNativeInputs);assert.equal(evaluate(native.node.observation),r.value);assert.deepEqual(comp.lifecycle.save().envelope,before);
+  console.log(`[PASS] independent-income-plan-proof: value=${r.value} nativeControlInputs=${native.submissions} inventedSuccessor=false`);
+ }catch(error){console.log(`[FAIL] independent-income-plan-proof: ${error.message}`);allPass=false;}
+ finally{port?.close();kernel?.composition.dispose();}
 }
 
 env.dispose();

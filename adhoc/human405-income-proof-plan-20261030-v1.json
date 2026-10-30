@@ -1,0 +1,12 @@
+{
+  "goalStatus": "active",
+  "baseCommit": "e48a17cc6c504baf33911f9ff13c894be2b23b6a",
+  "restoredCandidate": "v63",
+  "objective": "Integrate the known optional post-main window by removing repeated fixed blind-income tail simulation, preserving every strategic alternative.",
+  "proofScope": "Idle own turn after a main action; the existing greedy policy admits exactly one ready fourth-slot income plan, no overriding movement, and the selected known income is exactly one blind draw. No additional preparation, pending effects, alien or unaudited company behavior.",
+  "identity": "An income-plan-value boundary is a reachable value proof attached to the exact native source/control identity. It contains no successor envelope or observation, is never merged with an actual native state and cannot be expanded.",
+  "reachability": "All required data are already present; native structural placement and income primitives predict the fixed plan; card-pool availability is checked; first action stays a current native legal envelope.",
+  "budgets": "All actual native executions retain the global256-input gate. Proof leaves count toward the global node budget and time watchdog. Covered future plan inputs are reported separately and never described as simulated inputs. Native fallbacks retain current budgets; no depth/per-root truncation.",
+  "acceptance": "Independently execute each summarized source plan with summaries disabled; compare complete V components and root/RNG isolation. Compare all32 teacher and12 legacy cold graphs to the uncompressed candidate, then run relevant/full regressions before the autonomous first round.",
+  "remaining": "The full first-round alignment goal is unchanged; fixed queued card choices, B117/DLC9 preservation and longer-term capability differences remain to be audited after this integration."
+}

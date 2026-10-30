@@ -108,6 +108,18 @@
   const net=preview.netGain+delta-preview.immediateScoreGain;
   return{policy:'seti-greedy-income-tail-v1',selected:net>0,netGain:net,placements:preview.placements,assumption:preview.assumption};
  }
+ function blueCompletion({state,seatId,goal}){
+  const p=owner(state,seatId),copy=structuredClone(p),placed=data.placeDataToComputer(copy,{target:data.PLACEMENT_KIND_BLUE_BONUS,blueSlot:goal.blueSlot});
+  if(!placed.ok)return{available:false,reason:'blue-tail-needs-preparation'};
+  const bonuses=placed.slotBonuses||[];
+  if(bonuses.some(b=>!['credits','energy','publicity'].includes(b.type)||Object.keys(b).some(k=>k!=='type'&&k!==b.type)))return{available:false,reason:'blue-tail-needs-native-choice'};
+  for(const b of bonuses)players.gainResources(copy,{[b.type]:b[b.type]});
+  const context={...state,players:state.players.players.map(v=>v.id===seatId?copy:v),aliens:structuredClone(state.aliens),data:structuredClone(state.data),finalScoring:structuredClone(state.finalScoring),cardEffects:effects,getCardTypeCode:c=>effects.getRuntimeCardTypeCode(c,effects.getCardModel(c)?.cardType)};
+  const score=endScoring.computePlayerFinalScore(context,copy).totalScore-endScoring.computePlayerFinalScore({...context,players:state.players.players},p).totalScore;
+  const resource=Object.entries(stateValue.DEFAULT_WEIGHTS).reduce((n,[k,w])=>n+(k==='handSize'?0:((copy.resources[k]||0)-(p.resources[k]||0))*w),0);
+  const net=score+resource;if(!Number.isFinite(net))throw new Error('BLUE_TAIL_VALUE_INVALID');
+  return{policy:'seti-greedy-blue-resource-tail-v1',available:true,selected:net>0,netGain:net,blueSlot:goal.blueSlot,assumption:'known direct resource-only blue placement, current default V including native end-game data/resource scoring; no preparation or new card identity'};
+ }
  function scanDecision(actions){return actions.some(a=>a.target?.nebulaId)&&actions.every(a=>a.target?.nebulaId||a.target?.skip||a.target?.done);}
  function sources(state,seatId,actions,session){
   const found=[...actions.filter(a=>a.target?.nebulaId)],p=owner(state,seatId);
@@ -161,5 +173,5 @@
   if(!id)throw new Error('SCAN_PURPOSE_NO_LEGAL_STEP');
   return{kind:'fixed',actionId:id,reason:skip?.actionId===id?'scan-purpose-not-worth-extra-cost':'fixed-scan-card-and-sector',scores};
  }
- return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,reorganization,incomeCompletion,scanDecision,scanGoals,scanStep});
+ return Object.freeze({VERSION,finalMark,passDiscard,blueResearch,pureOptional,reorganization,incomeCompletion,blueCompletion,scanDecision,scanGoals,scanStep});
 });

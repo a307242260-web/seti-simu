@@ -283,6 +283,7 @@
     let postMainPlans = new WeakMap();
     let postMainBorrows = new WeakMap();
     let scanValueBounds = new WeakMap();
+    let incomeProofSpecs = new WeakMap(), incomeProofNodes = new WeakMap();
     let postMainValueBounds = new WeakMap();
     let postMainOptimalPlans = new WeakMap();
     const resourceGroups = new Map();
@@ -294,7 +295,8 @@
     let envelopeObservations = new WeakMap(), valueObservations = new WeakMap(), stateRequirements = new WeakMap(), goalCatalogs = new WeakMap();
     let observationCacheHits = 0, resourceQueryHits = 0, resourceQueryMisses = 0, goalCatalogHits = 0, goalCatalogMisses = 0;
     let committedDecodeCount = 0, committedDecodeHits = 0;
-    let rootObservation = null, knownRootCardIds = new Set(), knownRootNebulaIds = new Set();
+    let rootObservation = null, knownRootCardIds = new Set(), knownRootNebulaIds = new Set(), knownRootTechIndices = new Map(), knownRootAlienIds = new Set();
+    let planningStates = new WeakMap();
     let publicSeed = null, rootTurnKey = null;
     let nodeCount = 0;
     let submissionCount = 0;
@@ -390,7 +392,7 @@
         legalActions: freeze(structuredClone(actions)), status, boundary: barrier?.code || null,
       });
       const boundary = barrier?.code || null;
-      if (movementPlanning && !intent) intent = recoverMovementIntent(envelope);
+      if (movementPlanning && !intent) intent = recoverMovementIntent(envelope,barrier);
       const physicalKey = forwardIdentity(envelope, status, boundary, readIdentityState(envelope), normalizedIdentityStates);
       const movementKey = intent ? JSON.stringify([physicalKey, intent]) : physicalKey;
       const pick = cardPickPlanning && status === "decision" && actions.length ? describeCardPick(envelope,actions,status,barrier) : null;
@@ -460,6 +462,8 @@
       const authoritative = snapshot(composition);
       const state = authoritative.session?.session?.workingState || JSON.parse(authoritative.committedState);
       knownRootNebulaIds = new Set(Object.keys(state.data.nebulae).filter(id => id.startsWith("sector-")));
+      knownRootTechIndices = new Map(Object.values(state.tech.stacks).map(stack=>[stack.tileId,stack.bonusIndex]));
+      knownRootAlienIds = new Set((rootObservation.publicState.board.aliens.slots||[]).filter(a=>a.revealed).map(a=>a.alienId));
       rootTurnKey = JSON.stringify([state.turn.roundNumber,state.turn.turnNumber,state.turn.actionCycleNumber]);
       publicSeed = JSON.stringify(["seti-turn-hypothesis-v1", state.meta.seed, state.meta.gameId, seatId,
         state.turn.roundNumber, state.turn.turnNumber, state.turn.actionCycleNumber, state.turn.activePlayerIds]);
@@ -478,7 +482,7 @@
     function expand(node, actionId) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
-      if (["information-barrier", "other-owner", "terminal", "plan-infeasible","turn-boundary"].includes(node.status)) {
+      if (["information-barrier", "other-owner", "terminal", "plan-infeasible","turn-boundary","income-plan-value"].includes(node.status)) {
         throw new Error(`ANALYSIS_BOUNDARY_CLOSED: ${node.status}`);
       }
       const requested = node.legalActions.find(action => action.actionId === actionId);
@@ -510,11 +514,27 @@
       }
     }
 
+    function planningState(state, barrier) {
+      if (!barrier) return state;
+      if (planningStates.has(state)) return planningStates.get(state);
+      const result = { ...state,
+        cards: { ...state.cards, publicCards: state.cards.publicCards.map(card=>card&&knownRootCardIds.has(card.id)?card:null) },
+        tech: { ...state.tech, stacks: Object.fromEntries(Object.entries(state.tech.stacks).map(([id,stack])=>[id,
+          stack.bonusIndex===knownRootTechIndices.get(id)?stack:{...stack,depleted:true,remaining:0,bonusId:null}])) },
+      };
+      freeze(result);planningStates.set(state,result); return result;
+    }
+
+    function readPlanningState(stored) {
+      return planningState(readIdentityState(stored.envelope),stored.informationBarrier);
+    }
+
     function describeCardPick(envelope,actions,status,barrier=null) {
       if (envelopeCardSpecs.has(envelope)) return envelopeCardSpecs.get(envelope);
-      const actual=readIdentityState(envelope);
-      const state=barrier?{...actual,cards:{...actual.cards,publicCards:actual.cards.publicCards.map(c=>c&&knownRootCardIds.has(c.id)?c:null)}}:actual;
-      const result=cardPickPlanner.plan({state,seatId,actions,status,session:envelope.session?.session,
+      const state=planningState(readIdentityState(envelope),barrier);
+      const session=envelope.session?.session;
+      const policySession=barrier&&session?{...session,baseState:planningState(session.baseState,barrier),workingState:state}:session;
+      const result=cardPickPlanner.plan({state,seatId,actions,status,session:policySession,
         endpoints:(candidateState=state)=>(productionKernel||globalThis.SetiProductionKernel).getProbeRouteRequirements(candidateState,seatId)?.candidates||[]});
       const frozen=result&&freeze(result);envelopeCardSpecs.set(envelope,frozen);return frozen;
     }
@@ -560,7 +580,7 @@
     function localDecisionSpec(node){
       if((!finalMarkPlanning&&!resourcePlanning)||node.status!=="decision")return null;
       if(localSpecs.has(node))return localSpecs.get(node);
-      const stored=nodes.get(node),state=readIdentityState(stored.envelope);
+      const stored=nodes.get(node),state=readPlanningState(stored);
       let result=finalMarkPlanning?localPlans.finalMark({state,seatId,actions:node.legalActions}):null;
       if(!result&&resourcePlanning)result=localPlans.reorganization({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session})||localPlans.passDiscard({state,seatId,actions:node.legalActions,goal:stored.resourceControl?.goal})||localPlans.blueResearch({state,seatId,actions:node.legalActions})||localPlans.pureOptional({state,seatId,actions:node.legalActions,session:stored.envelope.session?.session});
       if(!result&&resourcePlanning){
@@ -590,7 +610,7 @@
     }
 
     function resourceStep(node,goal,operation={}) {
-      const stored=nodes.get(node),state=readIdentityState(stored.envelope),session=stored.envelope.session?.session;
+      const stored=nodes.get(node),state=readPlanningState(stored),session=stored.envelope.session?.session;
       const local=localDecisionSpec(node);if(["fixed-final-mark","fixed-paid-repeat","fixed-positive-optional","fixed-pass-discard","fixed-reorganization"].includes(local?.kind))return{kind:"fixed",actionId:local.selectedActionId,reason:local.kind};
       if(goal.kind==="effect-purpose"&&operation.targetStarted){
         if(node.status==="stable")return{kind:"complete",reason:"purpose-effect-completed"};
@@ -620,9 +640,9 @@
       if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
       if(!resourcePlanning||!["stable","decision"].includes(node.status)||!node.legalActions.length)return null;
       if(resourceSpecs.has(node))return resourceSpecs.get(node);
-      if(cardPickSpec(node)?.fixed || stored.informationBarrier){resourceSpecs.set(node,null);return null;}
-      const envelope=stored.envelope,state=readIdentityState(envelope),session=envelope.session?.session;
-      let goals=[],source=null,operation={},incomeTail=null;
+      if(cardPickSpec(node)?.fixed){resourceSpecs.set(node,null);return null;}
+      const envelope=stored.envelope,state=readPlanningState(stored),session=envelope.session?.session;
+      let goals=[],source=null,operation={},incomeTail=null,blueTails=[];
       if(stored.resourceControl){
         const control=stored.resourceControl,step=resourceStep(node,control.goal,control.operation);
         const ids=step.kind==="fallback"?step.actionIds:step.actionId?[step.actionId]:[];
@@ -636,9 +656,9 @@
       }else{
         source=session?.journal?.actions?.[0]?.action;
         if(session?.baseState&&(resourceDemand.isPreparation(source||{})||source?.family==="move")){
-          goals=resourceCatalog(session.baseState,[source])
+          goals=resourceCatalog(planningState(session.baseState,stored.informationBarrier),[source])
             .filter(goal=>{
-              const first=resourceDemand.step({state:session.baseState,seatId,goal,actions:[source],status:"stable"});
+              const first=resourceDemand.step({state:planningState(session.baseState,stored.informationBarrier),seatId,goal,actions:[source],status:"stable"});
               return first.actionId===source.actionId||first.kind==="fallback"&&first.actionIds.includes(source.actionId);
             });
           operation={placing:source.family==="place_data",finalPlacement:false};
@@ -646,12 +666,26 @@
       }
       if(state.players.players.find(p=>p.id===seatId).mainActionCompleted){
         const goal=goals.find(g=>g.kind==="income");
-        if(goal){incomeTail=localPlans.incomeCompletion({state:node.status==="decision"&&session?.baseState?session.baseState:state,seatId,goal});
+        if(goal){incomeTail=localPlans.incomeCompletion({state:node.status==="decision"&&session?.baseState?planningState(session.baseState,stored.informationBarrier):state,seatId,goal});
           goals=goals.filter(g=>g.kind!=="income"||incomeTail.selected);
         }
       }
+      if(node.status==="stable"&&state.players.players.find(p=>p.id===seatId).mainActionCompleted){
+        const player=state.players.players.find(p=>p.id===seatId),company=industryCatalog.getPlayerIndustryDefinition(player);
+        // With these active skills disabled there is no remaining company
+        // resource sink. Keep preparatory/main-action and movement opportunities.
+        const noMovement=!state.pieces.rockets.some(r=>(r.surface??"solar-board")==="solar-board"&&[r.playerId,r.playerColor,r.color].some(id=>id===seatId||id===player.color));
+        if(["turing_borrow_tech","helios_remove_tech_income"].includes(company?.activeAbilityId)&&!player.industryBorrowedTechTileId&&noMovement
+          &&!node.legalActions.some(a=>a.family==="complete_task")){
+          goals=goals.filter(goal=>{
+            if(goal.kind!=="blue-data")return true;
+            const tail=localPlans.blueCompletion({state,seatId,goal});blueTails.push({goalId:goal.id,...tail});
+            return !tail.available||tail.selected;
+          });
+        }
+      }
       if(scanPlanning){
-        const purposeState=node.status==="decision"&&resourceDemand.isPreparation(source||{})?session.baseState:state;
+        const purposeState=node.status==="decision"&&resourceDemand.isPreparation(source||{})?planningState(session.baseState,stored.informationBarrier):state;
         const build=required=>localPlans.scanGoals({state:purposeState,seatId,actions:node.legalActions,session:node.status==="decision"&&!resourceDemand.isPreparation(source||{})?session:null,required});
         const needed=goals.some(g=>g.kind==="scan");goals=goals.flatMap(g=>g.kind==="scan"?build(g.required):[g]);
         if(!needed&&(node.status==="stable"&&node.legalActions.some(a=>a.family==="scan")||node.status==="decision"&&localPlans.scanDecision(node.legalActions)))goals.push(...build(node.status==="stable"?scanEffects.getStandardScanCost(state.players.players.find(p=>p.id===seatId)):{}));
@@ -676,7 +710,7 @@
       const excluded=node.status==="stable"?node.legalActions.filter(a=>a.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(a.target?.abilityId)||plans.some(p=>p.goal.kind==="effect-purpose"&&p.firstActionId===a.actionId)||a.family==="play_card"&&plans.some(p=>p.goal.cardId===a.target.cardInstanceId&&p.goal.paidRewardPolicy)||resourceDemand.isPreparation(a)||scanPlanning&&plans.some(p=>p.goal.kind==="scan-flow")&&a.family==="scan"||!owner.mainActionCompleted&&["orbit","land","research_tech",...(plans.some(p=>p.goal.kind==="route")?["move"]:[])].includes(a.family)):plans.length?node.legalActions:[];
       const forceIncome=node.status==="stable"&&incomeTail?.selected&&plans.some(p=>p.goal.kind==="income");
       const result=freeze({policy:resourceDemand.VERSION,isEquivalence:false,plans:forceIncome?plans.filter(p=>p.goal.kind==="income"):plans,
-        ...(incomeTail?{incomeTail}:{}),
+        ...(incomeTail?{incomeTail}:{}),...(blueTails.length?{blueTails}:{}),
         retainedActionIds:forceIncome?[]:node.legalActions.filter(a=>!excluded.includes(a)).map(a=>a.actionId),excludedActionIds:forceIncome?node.legalActions.map(a=>a.actionId):excluded.map(a=>a.actionId)});
       resourceSpecs.set(node,result);return result;
     }
@@ -720,7 +754,7 @@
         const key=expansionKey(nodes.get(current),id),shared=resourcePlanning?prefixEdges.get(key):null;
         const next=shared?.node||cache.get(key)||null;
         const blocked=hasCapacity(prefixes.length,contexts,true,work({nextNode:next,nextNewInput:shared?0:1,additionalStates:next?0:1}));if(blocked)return stop(blocked);
-        preparations.push({input:prefixes.length,reason:step.reason,goalId:plan.goal.id,demand:resourceDemand.needs(readIdentityState(nodes.get(current).envelope),seatId,plan.goal),actionId:id});
+        preparations.push({input:prefixes.length,reason:step.reason,goalId:plan.goal.id,demand:resourceDemand.needs(readPlanningState(nodes.get(current)),seatId,plan.goal),actionId:id});
         // Discard identities belong to one native action, not the whole resource goal.
         operation={...operation,...(current.status==="stable"?{discardIds:null}:{}),...(chosen.discardIds?{discardIds:chosen.discardIds}:{}),...(chosen.placing!==undefined?{placing:chosen.placing}:{}),...(chosen.finalPlacement!==undefined?{finalPlacement:chosen.finalPlacement}:{}),...(step.kind==="start-target"?{targetStarted:true}:{})};
         prefixes.push({node:current,action});current=expand(current,id);forced=null;
@@ -741,18 +775,18 @@
       if (movementTimingCache.has(key)) { movementTimingCacheHits++; return movementTimingCache.get(key); }
       movementTimingCacheMisses++;
       const result = native.comparePlannedMovementTiming(state,seatId,id,path,freePoints);
-      if (movementTimingCache.size >= 64) movementTimingCache.delete(movementTimingCache.keys().next().value);
+      if (movementTimingCache.size >= 256) movementTimingCache.delete(movementTimingCache.keys().next().value);
       movementTimingCache.set(key,result);
       return result;
     }
 
-    function recoverMovementIntent(envelope) {
+    function recoverMovementIntent(envelope,barrier=null) {
       const session = envelope.session?.session, head = session?.queue?.[0], effect = head?.payload?.cardEffect;
       const source = session?.journal?.actions?.[0]?.action;
       const prepaid = source?.family === "quick_trade" && source.target?.tradeId === "energy-for-move"
         && head?.payload?.decisionContext?.kind === "move" && head.payload.decisionContext.tradeId === "energy-for-move";
       if ((source?.family === "move" || prepaid) && session.baseState) {
-        const state = session.baseState;
+        const state = planningState(session.baseState,barrier);
         const selected = goalMovement.plan({state,seatId,actions:[],status:"stable",objectiveOnly:true,routeCache:movementRouteCache,
           compareTiming:(id,path,free)=>movementTiming(state,id,path,free),
           endpoints:()=> (productionKernel || globalThis.SetiProductionKernel).getProbeRouteRequirements(state,seatId)?.candidates || []});
@@ -788,10 +822,10 @@
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
       if (movementPolicies.has(node)) return movementPolicies.get(node);
-      const result = goalMovement.plan({ state: readIdentityState(stored.envelope), seatId,
+      const result = goalMovement.plan({ state: readPlanningState(stored), seatId,
         actions: node.legalActions, status: node.status, session: stored.envelope.session?.session,
         intent: stored.intent, routeCache: movementRouteCache,
-        compareTiming: (id,path,free) => movementTiming(readIdentityState(stored.envelope),id,path,free), endpoints: () => (productionKernel || globalThis.SetiProductionKernel).getProbeRouteRequirements(readIdentityState(stored.envelope), seatId, stored.envelope.session?.session?.queue?.[0])?.candidates || [] });
+        compareTiming: (id,path,free) => movementTiming(readPlanningState(stored),id,path,free), endpoints: () => (productionKernel || globalThis.SetiProductionKernel).getProbeRouteRequirements(readPlanningState(stored), seatId, stored.envelope.session?.session?.queue?.[0])?.candidates || [] });
       goalMovementGeometryNodes += result?.routingNodes || 0;
       const frozen = result && freeze(result);
       movementPolicies.set(node, frozen);
@@ -829,7 +863,7 @@
         if (["terminal", "other-owner", "information-barrier","turn-boundary"].includes(current.status)) { goalStatus = "boundary"; break; }
         if (spec.intent.prefixOnly && prefixes.length && current.status === "stable") { goalStatus = "preparation-step-completed"; break; }
         const stored = nodes.get(current), intent = current === node ? spec.intent : stored.intent;
-        const state = readIdentityState(stored.envelope), owner = state.players.players.find(p => p.id === seatId);
+        const state = readPlanningState(stored), owner = state.players.players.find(p => p.id === seatId);
         const ship = state.pieces.rockets.find(r => r.id === spec.intent.rocketId), at = ship && rockets.getRocketSectorCoordinate(ship);
         const reached = at?.x === goal.coordinate.x && at?.y === goal.coordinate.y;
         const direction = current.legalActions.filter(goalMovement.isDirection);
@@ -923,6 +957,29 @@
       return [];
     }
 
+    function knownPostMainActions(envelope, actions) {
+      const state=readIdentityState(envelope),owner=state.players.players.find(p=>p.id===seatId);
+      if(!resourcePlanning||state.turn.gameEnded||!owner.mainActionCompleted||actions.some(a=>a.actorId!==seatId)
+        ||[...owner.hand,...owner.reservedCards,...(owner.privateAlienCards||[])].some(card=>!knownRootCardIds.has(card.id)))return [];
+      function known(value,key="") {
+        if(value==null)return true;
+        if(key==="cardInstanceId"||key==="cardId")return knownRootCardIds.has(value);
+        if(key==="cardInstanceIds"||key==="cardIds")return Array.isArray(value)&&value.every(id=>knownRootCardIds.has(id));
+        if(key==="alienId")return knownRootAlienIds.has(value);
+        if(Array.isArray(value))return value.every(item=>known(item));
+        return typeof value!=="object"||Object.entries(value).every(([name,item])=>known(item,name));
+      }
+      return actions.filter(action=>{
+        if(!known(action.target)||!known(action.payload))return false;
+        const target=action.target||{};
+        if(Number.isInteger(target.publicSlotIndex)&&!knownRootCardIds.has(state.cards.publicCards[target.publicSlotIndex]?.id))return false;
+        if(target.tileId&&state.tech.stacks[target.tileId]
+          &&(action.family==="research_tech"||envelope.session?.session?.queue?.[0]?.type===scienceSession.EFFECT_TYPES.RESEARCH)
+          &&state.tech.stacks[target.tileId].bonusIndex!==knownRootTechIndices.get(target.tileId))return false;
+        return true;
+      });
+    }
+
     function finishChild(before, result, intent = null, resourceControl = null, carriedBarrier = null) {
       const comp = fork.composition || fork;
       const inspection = comp.inspect();
@@ -934,17 +991,17 @@
       const envelope = snapshot(comp);
       loadedEnvelope = envelope;
       const childState = readIdentityState(envelope);
-      // Preserve the information mask while settling the same native effect
-      // queue. Only known public picks, specified sector scans and known income
-      // cards are admitted; stable actions and new owned-card identities close it.
-      let knownRewardActions = [];
+      // A refill does not end a root-known post-main plan. Unknown owned
+      // identities, alien reveals, other owners and actual turn changes still close it.
+      let knownRewardActions = [], postMainActions = [];
       if (newBarrier && cardPickPlanning && ["tech_bonus_reveal","hidden_card_reveal","hidden_card_draw"].includes(barrier.code)
-        && inspection.phase === "awaiting_input"
         && JSON.stringify([childState.turn.roundNumber,childState.turn.turnNumber,childState.turn.actionCycleNumber])===rootTurnKey) {
-        knownRewardActions = knownRewardChoices(envelope,legalActions(comp,inspection));
+        const nativeActions=legalActions(comp,inspection);
+        postMainActions=knownPostMainActions(envelope,nativeActions);
+        if(inspection.phase==="awaiting_input")knownRewardActions=knownRewardChoices(envelope,nativeActions);
       }
-      const settleKnownReward = knownRewardActions.length > 0;
-      const actions = settleKnownReward ? knownRewardActions : newBarrier ? [] : legalActions(comp, inspection);
+      const continueKnown = postMainActions.length > 0 || knownRewardActions.length > 0;
+      const actions = postMainActions.length ? postMainActions : knownRewardActions.length ? knownRewardActions : newBarrier ? [] : legalActions(comp, inspection);
       // Native terminal state closes the window even if the host still lists
       // residual controls. A pending required Decision must still be completed.
       const terminal = childState.turn.gameEnded === true && inspection.phase !== "awaiting_input";
@@ -953,7 +1010,7 @@
         throw new Error("ANALYSIS_EMPTY_NONTERMINAL");
       }
       const turnChanged = JSON.stringify([childState.turn.roundNumber,childState.turn.turnNumber,childState.turn.actionCycleNumber]) !== rootTurnKey;
-      const status = settleKnownReward ? "decision" : newBarrier ? "information-barrier"
+      const status = continueKnown ? inspection.phase==="awaiting_input"?"decision":"stable" : newBarrier ? "information-barrier"
         : terminal ? "terminal"
           : actions.some(action => action.actorId !== seatId) ? "other-owner"
           : !actions.length ? "terminal"
@@ -1349,7 +1406,7 @@
 
     function describeKnownCardMoneyOrder(stored, node) {
       if (node.status !== "stable" || stored.envelope.session) return null;
-      const state = readIdentityState(stored.envelope), owner = state.players.players.find(player => player.id === seatId);
+      const state = readPlanningState(stored), owner = state.players.players.find(player => player.id === seatId);
       const company = industryCatalog.getPlayerIndustryDefinition(owner), passives = company && POST_MAIN_MONEY_COMPANIES[company.activeAbilityId ?? "no_active"];
       if (!owner || state.turn.currentPlayerId !== seatId || state.match.initialSetup || owner.passCompletionPending
         || state.turn.passedPlayerIds.includes(seatId) || state.turn.activePlayerCount !== 4
@@ -1447,7 +1504,7 @@
 
     function describePreMainDataPlan(stored, node) {
       if (node.status !== "stable" || stored.envelope.session) return null;
-      const state = readIdentityState(stored.envelope), owner = state.players.players.find(player => player.id === seatId);
+      const state = readPlanningState(stored), owner = state.players.players.find(player => player.id === seatId);
       if (!owner || owner.mainActionCompleted || owner.hand.length > 5 || probeTurnSession.PASS_HAND_LIMIT !== 4
         || Object.keys(owner.techState.ownedTiles).some(id => id.startsWith("blue") && owner.techState.ownedTiles[id])
         || owner.industryFutureSpan?.card || owner.industryBorrowedTechTileId && !/^(orange|purple)[1-4]$/.test(owner.industryBorrowedTechTileId)
@@ -1511,7 +1568,7 @@
 
     function describePostMainCornerChoices(stored, node) {
       if (node.status !== "stable" || stored.envelope.session) return null;
-      const state = readIdentityState(stored.envelope), owner = state.players.players.find(player => player.id === seatId);
+      const state = readPlanningState(stored), owner = state.players.players.find(player => player.id === seatId);
       if (!owner?.mainActionCompleted) return null;
       const corners = node.legalActions.filter(action => action.family === "card_corner");
       if (corners.length < 2) return null;
@@ -1585,7 +1642,7 @@
     function describeStandardScanValueBound(stored,node) {
       const session=stored.envelope.session?.session;
       if (node.status!=="stable" && node.status!=="decision" || node.status==="decision" && session?.queue?.[0]?.type!==scienceSession.EFFECT_TYPES.SCAN_STEP) return null;
-      const state=session?.workingState || readIdentityState(stored.envelope);
+      const state=readPlanningState(stored);
       const owner=state.players.players.find(player=>player.id===seatId),company=industryCatalog.getPlayerIndustryDefinition(owner);
       const quietCompany=company && (company.activeAbilityId==="turing_borrow_tech" && company.passiveIds.length===0
         || company.activeAbilityId===null && company.passiveIds.length===1 && company.passiveIds[0]==="alien_lab_panels");
@@ -1658,18 +1715,72 @@
         firstChoiceCount:firstChoices.length,publicChoiceCount:publicChoices.length});
     }
 
+    function incomePlanSummary(node) {
+      const stored=nodes.get(node);
+      if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
+      if(!resourcePlanning||!cardPickPlanning||node.status!=="stable"||stored.envelope.session)return null;
+      if(incomeProofSpecs.has(node))return incomeProofSpecs.get(node);
+      const state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId);
+      const company=industryCatalog.getPlayerIndustryDefinition(owner),audited={
+        deepspace_swap_cards:"deepspace_free_analyze",turing_borrow_tech:"turing_blue_tech_publicity",helios_remove_tech_income:"helios_passive_reward_slots"};
+      let result=null;
+      if(owner.mainActionCompleted&&!owner.passCompletionPending&&!owner.industryBorrowedTechTileId
+        &&state.turn.currentPlayerId===seatId&&!state.turn.gameEnded&&!state.match.initialSetup
+        &&!(state.turn.cardTurnEventBonuses||[]).length
+        &&company&&audited[company.activeAbilityId]&&company.passiveIds.every(id=>id===audited[company.activeAbilityId])
+        &&Object.values(state.aliens.aliens).every(slot=>!slot.revealed&&!alienState.isAlienReadyToReveal(slot))
+        &&hasTradeInertReservations(state)){
+        const policy=resourceSpec(node),plan=policy?.plans.length===1&&policy.plans[0];
+        const goal=plan?.goal,card=owner.hand.find(c=>c.id===goal?.incomeCardId),gain=card&&cards.getIncomeGainForCard(card);
+        const placements=data.listComputerPlacedTokens(owner).map(t=>t.placementSlot).sort((a,b)=>a-b);
+        const first=node.legalActions.find(a=>a.actionId===plan?.firstActionId);
+        if(goal?.kind==="income"&&!policy.bound&&policy.retainedActionIds.length===0&&policy.incomeTail?.selected
+          &&first?.family==="place_data"&&gain?.handSize===1&&Object.keys(gain).length===1
+          &&placements.length<4&&placements.every((slot,index)=>slot===index+1)
+          &&owner.resources.availableData===owner.dataState.poolTokens.length
+          &&owner.resources.availableData>=4-placements.length
+          &&cards.getAvailablePool({...state.cards},state.players).length>0
+          &&Number.isSafeInteger(policy.incomeTail.netGain*2)){
+          result=freeze({proof:"seti-known-blind-income-plan-value-v1",scope:"exact-value-of-fixed-native-plan-to-unknown-owned-card-boundary",
+            firstActionId:first.actionId,goal,netGain:policy.incomeTail.netGain,
+            placements:4-placements.length,requiredNativeInputs:(4-placements.length)*2+1,blindDrawCount:1,
+            observationAvailable:false,successorEnvelopeAvailable:false});
+        }
+      }
+      incomeProofSpecs.set(node,result);return result;
+    }
+
+    function incomePlanBoundary(node,spec) {
+      if(!spec||incomePlanSummary(node)!==spec)throw new Error("ANALYSIS_INCOME_PROOF_INVALID");
+      if(incomeProofNodes.has(node))return incomeProofNodes.get(node);
+      const boundary=Object.freeze({status:"income-plan-value",boundary:"known-income-plan-value",legalActions:Object.freeze([]),planSummary:spec,
+        get observation(){throw new Error("ANALYSIS_PLAN_PROOF_HAS_NO_SUCCESSOR_OBSERVATION");}});
+      nodes.set(boundary,{identity:Object.freeze({}),incomeProofBase:node});nodeCount++;
+      incomeProofNodes.set(node,boundary);return boundary;
+    }
+
+    function incomePlanBase(node) {
+      const stored=nodes.get(node);
+      if(!fork||!stored?.incomeProofBase)throw new Error("ANALYSIS_INCOME_PROOF_INVALID");
+      return stored.incomeProofBase;
+    }
+
     function postMainValueBound(node) {
       const stored = nodes.get(node);
       if (!fork || !stored) throw new Error("ANALYSIS_NODE_INVALID");
       if (postMainValueBounds.has(node)) return postMainValueBounds.get(node);
-      const result = describePostMainValueBound(stored, node);
+      // Prefer the already-audited quiet-window bound; avoid rebuilding its
+      // rejected unfiltered company catalog first for every known continuation.
+      const policyNode=resourcePlanning?{...node,legalActions:node.legalActions.filter(action=>!(action.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(action.target?.abilityId)))}:null;
+      const quiet=policyNode?describePostMainPlan(stored,policyNode,true):null;
+      const result=quiet?{proof:"seti-quiet-post-main-policy-value-bound-v1",maximumValueIncrease:quiet.maximumValueIncrease,sourceProof:quiet}:describePostMainValueBound(stored,node);
       postMainValueBounds.set(node, result);
       return result;
     }
 
     function describePostMainValueBound(stored, node) {
       if (node.status !== "stable" || stored.envelope.session) return null;
-      const state = readIdentityState(stored.envelope), owner = state.players.players.find(player => player.id === seatId);
+      const state = readPlanningState(stored), owner = state.players.players.find(player => player.id === seatId);
       const company = industryCatalog.getPlayerIndustryDefinition(owner);
       const quietPlan = postMainPlanSpec(node);
       if (!owner?.mainActionCompleted || ![null, "turing_borrow_tech"].includes(company?.activeAbilityId)
@@ -1787,7 +1898,7 @@
       const bound = postMainValueBound(node);
       let result = null;
       if (bound?.movementUpper === 0) {
-        const state = readIdentityState(stored.envelope), owner = state.players.players.find(player => player.id === seatId);
+        const state = readPlanningState(stored), owner = state.players.players.find(player => player.id === seatId);
         const income = bound.incomeUpper > 0;
         const fill = income ? 4-data.listComputerPlacedTokens(owner).length : 0;
         const corners = income ? Math.max(0,fill-owner.dataState.poolTokens.length) : 0;
@@ -1829,7 +1940,7 @@
       }
       for (let step=0; step<spec.submissions; step+=1) {
         if (!hasTime()) return { complete: false, node: current, prefixes, submissions: step, proof: spec.proof };
-        const stored = nodes.get(current), state = readIdentityState(stored.envelope);
+        const stored = nodes.get(current), state = readPlanningState(stored);
         const owner = state.players.players.find(player => player.id === seatId);
         let choices;
         if (step < spec.dataCorners) {
@@ -1880,7 +1991,7 @@
 
     function describePostMainBorrow(stored, node) {
       if (node.status !== "stable" || stored.envelope.session) return null;
-      const state = readIdentityState(stored.envelope), owner = state.players.players.find(player => player.id === seatId);
+      const state = readPlanningState(stored), owner = state.players.players.find(player => player.id === seatId);
       const company = industryCatalog.getPlayerIndustryDefinition(owner);
       const start = node.legalActions.find(action => action.family === "industry" && action.target?.abilityId === "turing_borrow_tech");
       if (!owner?.mainActionCompleted || owner.industryBorrowedTechTileId || !start
@@ -1938,9 +2049,9 @@
       return result;
     }
 
-    function describePostMainPlan(stored, node) {
+    function describePostMainPlan(stored, node, allowNoExclusions = false) {
       if (node.status !== "stable" || stored.envelope.session) return null;
-      const state = JSON.parse(stored.envelope.committedState);
+      const state = planningState(readCommittedState(stored.envelope),stored.informationBarrier);
       const owner = state.players.players.find(player => player.id === seatId);
       const company = industryCatalog.getPlayerIndustryDefinition(owner);
       const quietCompany = company && ((company.activeAbilityId === "helios_remove_tech_income"
@@ -2005,7 +2116,7 @@
       const kept = node.legalActions.filter(action => ["end_turn", "place_data"].includes(action.family)
         || (action.family === "card_corner" && dataCornerIds.has(action.target?.cardInstanceId)));
       const excluded = node.legalActions.filter(action => !kept.includes(action));
-      if (!kept.some(action => action.family === "end_turn") || !excluded.length) return null;
+      if (!kept.some(action => action.family === "end_turn") || !allowNoExclusions && !excluded.length) return null;
       const poolCount = owner.dataState.poolTokens.length;
       if (owner.resources.availableData !== poolCount) return null;
       const occupied = data.listComputerPlacedTokens(owner).map(token => token.placementSlot);
@@ -2024,11 +2135,14 @@
         // 新收入改变a板公式；本版数值增益界只覆盖没有本席a板标记的窗口。
         if (state.finalScoring.tiles.a?.marks.some(mark => mark.playerId === seatId)) return null;
       }
-      let maximumValueIncrease = dataCornerIds.size * weights.availableData, additionalScore = 0;
+      // In the policy bound a data corner consumes a 1V hand card for
+      // at most .5V data, so it cannot increase value on its own. The legacy
+      // gross bound remains unchanged for its independent normal-form callers.
+      let maximumValueIncrease = allowNoExclusions?0:dataCornerIds.size * weights.availableData, additionalScore = 0;
       function includeBonus(bonus) {
         if (!bonus) return true;
         if (bonus.type === "income" && Object.keys(bonus).length === 1 && incomeReachable) {
-          maximumValueIncrease += 5 - state.turn.roundNumber;
+          maximumValueIncrease += (allowNoExclusions?4:5) - state.turn.roundNumber;
           return true;
         }
         if (bonus.type === "choose_card" && Object.keys(bonus).length === 1) { maximumValueIncrease += 1; return true; }
@@ -2054,7 +2168,7 @@
       if (scoreUpperBound >= scoreThreshold) return null;
       const transition = previewTurn(state);
       if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded || transition.nextPlayerId === seatId) return null;
-      return freeze({ proof: "seti-quiet-post-main-default-value-plan-v6", retainedActionIds: kept.map(action => action.actionId),
+      return freeze({ proof: allowNoExclusions?"seti-quiet-post-main-net-resource-upper-v1":"seti-quiet-post-main-default-value-plan-v6", retainedActionIds: kept.map(action => action.actionId),
         excludedActionIds: excluded.map(action => action.actionId), maximumValueIncrease, scoreUpperBound, scoreThreshold,
         incomeReachable, retainedDataCardCount: dataCornerIds.size });
     }
@@ -2080,7 +2194,7 @@
       const capacity = openingMoneyCapacity(node);
       let result = null;
       if (capacity && capacity.credits >= capacity.moneyCapacity.credits && capacity.energy >= capacity.moneyCapacity.energy) {
-        const state = JSON.parse(stored.envelope.committedState);
+        const state = planningState(readCommittedState(stored.envelope),stored.informationBarrier);
         const owner = state.players.players.find(player => player.id === seatId);
         const researchCost = techResolver.getResearchPublicityCost(owner), handLimit = probeTurnSession.PASS_HAND_LIMIT;
         if (Number.isSafeInteger(researchCost) && researchCost >= 0 && owner.resources.publicity >= Math.max(3, researchCost)
@@ -2111,7 +2225,7 @@
 
     function describeAlienLabOpeningPlan(stored, node) {
       if (node.status !== "stable" || stored.envelope.session) return null;
-      const state = JSON.parse(stored.envelope.committedState);
+      const state = planningState(readCommittedState(stored.envelope),stored.informationBarrier);
       const owner = state.players.players.find(player => player.id === seatId);
       const company = industryCatalog.getPlayerIndustryDefinition(owner);
       if (state.turn.currentPlayerId !== seatId || !owner || owner.mainActionCompleted || owner.passCompletionPending
@@ -2180,7 +2294,7 @@
     }
 
     function describeOpeningMoneyCapacity(stored, node, order) {
-      const state = JSON.parse(stored.envelope.committedState);
+      const state = planningState(readCommittedState(stored.envelope),stored.informationBarrier);
       const owner = state.players.players.find(player => player.id === seatId);
       // 本界只覆盖一个生产性钱电支出；扫描/公共取牌在实际补牌屏障停止，
       // 发射和零效果牌之后仅剩已证明无收益的移动/交易及免费放数据。
@@ -2245,7 +2359,7 @@
 
     function describeResourceOrder(stored, node, opening) {
       if (node.status !== "stable" || stored.envelope.session) return null;
-      const state = JSON.parse(stored.envelope.committedState);
+      const state = planningState(readCommittedState(stored.envelope),stored.informationBarrier);
       const owner = state.players.players.find(player => player.id === seatId);
       if (state.turn.currentPlayerId !== seatId || !owner || Boolean(owner.mainActionCompleted) !== !opening
         || owner.passCompletionPending || state.turn.passedPlayerIds.includes(seatId)
@@ -2331,17 +2445,19 @@
       postMainPlans = new WeakMap();
       postMainBorrows = new WeakMap();
       scanValueBounds = new WeakMap();
+      incomeProofSpecs=new WeakMap();incomeProofNodes=new WeakMap();
       postMainValueBounds = new WeakMap();
       postMainOptimalPlans = new WeakMap();
       resourceGroups.clear();
       cache.clear();
       clearPrefixGraph();
-      rootObservation = null;knownRootCardIds=new Set();knownRootNebulaIds=new Set();
+      rootObservation = null;knownRootCardIds=new Set();knownRootNebulaIds=new Set();knownRootTechIndices=new Map();knownRootAlienIds=new Set();planningStates=new WeakMap();
       publicSeed = null;rootTurnKey=null;
     }
 
     function valueObservation(node) {
       const stored=nodes.get(node);if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
+      if(stored.incomeProofBase)throw new Error("ANALYSIS_PLAN_PROOF_HAS_NO_SUCCESSOR_OBSERVATION");
       return node===openedRoot?node.observation:observeEnvelope(stored.envelope,stored.informationBarrier,true);
     }
 
@@ -2355,7 +2471,7 @@
       const picks=cardPickPlanner.getDiagnostics();
       return freeze({ cardPick:{...picks,rankingCacheHitsThisRoot:picks.rankingCacheHits-cardPickRootStats.rankingCacheHits,
         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, stableRestoreSkips, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
-        observationCount, observationReleases, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+        observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,
         committedDecodeCount, committedDecodeHits,
@@ -2372,7 +2488,7 @@
 
     return Object.freeze({ openRoot, expand, identity, releaseBoundaryObservation, valueObservation, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
-      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
+      cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound, incomePlanSummary, incomePlanBoundary, incomePlanBase, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }
 
   return Object.freeze({ createAnalysisPort });

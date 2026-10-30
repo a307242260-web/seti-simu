@@ -48,6 +48,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/post-main-attainment.test.js", "policy/decision-search", "实际达到收益上界的最短输入计划与完整图同选同值同距，内部状态计全局预算且真实逐步复用和恢复一致", "只以乐观上界选动作、漏计私有前缀预算、消耗唯一盲抽收入牌或未完成宏生成可提交证书"),
     entry("randomizer/game/ai/post-main-borrow.test.js", "policy/decision-search", "图灵主行动后无作用借用由更短原路径覆盖，保留orange2收益与已失效科技，宏计两次正式输入", "删除小行星移动折扣、越过已提交借用Decision或将两次输入算作一次而伪称覆盖"),
     entry("randomizer/game/ai/turn-preview.test.js", "architecture/policy-host", "正式回合推进在冻结非turn切片上与整局复制保持完整结果一致，覆盖PASS、跨轮、终局及同席", "推进函数越界写其他规则切片或部分复制共享可写turn，导致证明预览修改真实分支"),
+    entry("randomizer/game/ai/income-plan-value.test.js", "policy/decision-search", "固定盲抽收入计划以原生对照证明可达叶值，证明叶不伪造后继；节点/时间额度、模型限制与真实首步恢复有效，蓝槽收益包含正式终局数据成本", "把未执行计划伪装成原生状态、漏计证明节点或复用虚构中间态、非默认V仍套摘要，或忽略DLC8数据终局成本"),
     entry("randomizer/game/ai/analysis-port.test.js", "architecture/policy-host", "可信分支精确提交、结果缓存和权威根隔离", "策略取得权威envelope、同family代替动作或fork改变真实根/RNG"),
     entry("randomizer/game/ai/agent-runtime.test.js", "architecture/policy-host", "新AI接入只读席位输入、合法选择、多选完成与恢复复现", "私有session进入策略、异步或非法返回被提交、多选反复切换或恢复后选择漂移"),
     entry("randomizer/game/ai/search-agent.test.js", "architecture/policy-host", "同一搜索玩家经Browser与Simulation共享接入，每次只提交一步、记录完整覆盖、续用及恢复一致，超预算无提交", "宿主调用不同算法、丢弃搜索诊断、恢复后未经完整模型及原生依赖校验便复用证据，或不完整搜索被当成合法行动提交"),

@@ -7,7 +7,7 @@ function graph(spec, start = "root") {
   const nodes = new Map();
   function read(name) {
     const entry = spec[name];
-    const node = { observation: entry.observation || { value: entry.value }, status: entry.status || "stable",
+    const node = { boundary: entry.boundary || null, observation: entry.observation || { value: entry.value }, status: entry.status || "stable",
       legalActions: Object.keys(entry.next || {}).map(actionId => ({ actionId, actorId: "p1" })) };
     nodes.set(node, name);
     return node;
@@ -443,9 +443,13 @@ assert(globallyDominated.lines.some(line => line.prunedByBound && !line.localPla
   "整条取牌分支被更强全局证明省略时，不伪造本地执行见证");
 console.log("complete decision graph coverage, cycles, preparation chains and budget failures passed");
 
-// The smaller native projection is exclusive to the registered linear value.
-// Custom evaluators may read any full observation field.
+// Deferred known continuations remain explicit work when a watchdog interrupts.
+// A custom evaluator keeps its full observation contract.
 {
- const custom=graph(fixture);custom.port.valueObservation=()=>{throw new Error('custom evaluator must use full observation');};
- const output=searchDecision(custom);assert(output.complete);assert.equal(output.actionId,result.actionId);assert.equal(output.value,result.value);
+ const spec={root:{next:{prepare:'known'}},known:{boundary:'hidden_card_reveal',next:{finish:'done'}},done:{status:'turn-boundary',value:9}};
+ function prepared(){const g=graph(spec);g.port.resourceSpec=()=>null;g.port.expandResourcePlan=()=>{throw new Error('unexpected macro');};g.port.valueObservation=()=>{throw new Error('custom evaluator must use full observation');};return g;}
+ const full=searchDecision({...prepared(),resourcePlanning:true,budget:unlimited});assert(full.complete);assert.equal(full.value,9);assert.equal(full.actionId,'prepare');assert.equal(full.diagnostics.nativeExecutions,null);assert.equal(full.diagnostics.transitions,2);
+ const limited=prepared(),expand=limited.port.expand;let clock=0;limited.port.expand=(n,id)=>{const child=expand(n,id);clock=100;return child;};
+ const stopped=searchDecision({...limited,resourcePlanning:true,now:()=>clock,budget:{...unlimited,milliseconds:10}});
+ assert(!stopped.complete);assert.equal(stopped.actionId,null);assert.equal(stopped.stopReason,'watchdog');assert(stopped.unresolved.some(row=>row.policyPending&&row.actionIds.includes('finish')));
 }
