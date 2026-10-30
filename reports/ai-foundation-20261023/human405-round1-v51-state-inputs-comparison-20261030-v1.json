@@ -1,0 +1,13 @@
+{
+  "baselineCommit": "b90f9ae48dcffb13dd4c9269b4b488a67e9dea69",
+  "baselineSearchVersion": "v49",
+  "candidateSearchVersion": "v51",
+  "baselineLog": "reports/ai-foundation-20261023/human405-round1-v49-state-inputs-reference-20261030-v1.log",
+  "candidateLog": "reports/ai-foundation-20261023/human405-round1-v51-state-inputs-20261030-v1.log",
+  "sameFailures": [
+    "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+  ],
+  "newFailures": [],
+  "status": "preexisting-legacy-failure-retained",
+  "newSharedSearchInputChecks": "passed"
+}

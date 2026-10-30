@@ -1,0 +1,305 @@
+{
+  "recordPath": "reports/research/308feee7.b90f9ae4.quick-200.json",
+  "recordSha256": "7c27c260fb46e54edef58fde599f933169be21619d19cc5ab24af1af97db3184",
+  "sourceCommit": "b90f9ae4",
+  "openingSha256": "ab9a0dbbb3c35c453604addd668bd2625a4580c0577924d87c6cb8eff9c01b9c",
+  "strictNativeReplay": true,
+  "exactFinalCommittedStateAndSession": true,
+  "nonwhite": [
+    {
+      "step": 44,
+      "seat": "player-green",
+      "family": "pass",
+      "kind": "pass"
+    },
+    {
+      "step": 45,
+      "seat": "player-green",
+      "family": "choose_card",
+      "kind": "pass-hand-limit"
+    },
+    {
+      "step": 46,
+      "seat": "player-green",
+      "family": "choose_card",
+      "kind": "pass-reserve-card"
+    },
+    {
+      "step": 47,
+      "seat": "player-blue",
+      "family": "pass",
+      "kind": "pass"
+    },
+    {
+      "step": 48,
+      "seat": "player-blue",
+      "family": "choose_card",
+      "kind": "pass-reserve-card"
+    },
+    {
+      "step": 49,
+      "seat": "player-brown",
+      "family": "pass",
+      "kind": "pass"
+    },
+    {
+      "step": 50,
+      "seat": "player-brown",
+      "family": "choose_card",
+      "kind": "pass-reserve-card"
+    }
+  ],
+  "firstRoundSettled": true,
+  "formalTerminal": false,
+  "scoreScope": "provisional after first-round settlement; no full-game result",
+  "white": {
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 9,
+      "energy": 4,
+      "handSize": 2,
+      "publicity": 0,
+      "score": 16
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 4,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue1": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue1": true
+      }
+    },
+    "hand": [
+      "dlc_4.png",
+      "dlc_40.png"
+    ],
+    "reserved": [],
+    "computer": {
+      "discardedCount": 0,
+      "placedTokens": [],
+      "poolTokens": []
+    },
+    "rocket": [],
+    "round": 2
+  },
+  "teacher": {
+    "resources": {
+      "additionalPublicScan": 1,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 3,
+      "handSize": 2,
+      "publicity": 3,
+      "score": 15
+    },
+    "income": {
+      "additionalPublicScan": 1,
+      "availableData": 0,
+      "credits": 6,
+      "energy": 2,
+      "handSize": 1,
+      "publicity": 0
+    },
+    "technology": {
+      "blueBoardSlots": {
+        "blue2": 1
+      },
+      "disabledTiles": {},
+      "ownedTiles": {
+        "blue2": true,
+        "purple4": true
+      }
+    },
+    "hand": [
+      "dlc_5.png",
+      "dlc_37.png"
+    ],
+    "reserved": [
+      "b_117.webp",
+      "dlc_9.png"
+    ],
+    "computer": {
+      "discardedCount": 0,
+      "placedTokens": [
+        {
+          "id": "data-token-1",
+          "index": 1,
+          "placementKind": "computer",
+          "placementSlot": 1
+        },
+        {
+          "id": "data-token-2",
+          "index": 2,
+          "placementKind": "computer",
+          "placementSlot": 2
+        },
+        {
+          "id": "data-token-3",
+          "index": 3,
+          "placementKind": "computer",
+          "placementSlot": 3
+        },
+        {
+          "id": "data-token-4",
+          "index": 4,
+          "placementKind": "computer",
+          "placementSlot": 4
+        },
+        {
+          "blueSlot": 1,
+          "id": "data-token-11",
+          "index": 5,
+          "placementKind": "blueBonus"
+        }
+      ],
+      "poolTokens": []
+    },
+    "rocket": [],
+    "round": 2
+  },
+  "searches": 25,
+  "maxNativeInputs": 116,
+  "maxMilliseconds": 221.307459,
+  "allSearchesComplete": true,
+  "planReuseHits": 20,
+  "wallMs": 1269,
+  "whiteActions": [
+    {
+      "step": 24,
+      "action": "深空探测 1x 行动",
+      "family": "industry"
+    },
+    {
+      "step": 25,
+      "action": "b_117.webp",
+      "family": "choose_card"
+    },
+    {
+      "step": 26,
+      "action": "dlc_21.png",
+      "family": "choose_card"
+    },
+    {
+      "step": 27,
+      "action": "dlc_21.png：弃牌角标",
+      "family": "card_corner"
+    },
+    {
+      "step": 28,
+      "action": "dlc_9.png：弃牌角标",
+      "family": "card_corner"
+    },
+    {
+      "step": 29,
+      "action": "放置数据",
+      "family": "place_data"
+    },
+    {
+      "step": 30,
+      "action": "第一排放置位 1",
+      "family": "choose_target"
+    },
+    {
+      "step": 31,
+      "action": "放置数据",
+      "family": "place_data"
+    },
+    {
+      "step": 32,
+      "action": "第一排放置位 2",
+      "family": "choose_target"
+    },
+    {
+      "step": 33,
+      "action": "放置数据",
+      "family": "place_data"
+    },
+    {
+      "step": 34,
+      "action": "第一排放置位 3",
+      "family": "choose_target"
+    },
+    {
+      "step": 35,
+      "action": "放置数据",
+      "family": "place_data"
+    },
+    {
+      "step": 36,
+      "action": "第一排放置位 4",
+      "family": "choose_target"
+    },
+    {
+      "step": 37,
+      "action": "放置数据",
+      "family": "place_data"
+    },
+    {
+      "step": 38,
+      "action": "第一排放置位 5",
+      "family": "choose_target"
+    },
+    {
+      "step": 39,
+      "action": "放置数据",
+      "family": "place_data"
+    },
+    {
+      "step": 40,
+      "action": "第一排放置位 6",
+      "family": "choose_target"
+    },
+    {
+      "step": 41,
+      "action": "分析",
+      "family": "analyze"
+    },
+    {
+      "step": 42,
+      "action": "外星人 1 蓝色痕迹",
+      "family": "choose_target"
+    },
+    {
+      "step": 43,
+      "action": "结束回合",
+      "family": "end_turn"
+    },
+    {
+      "step": 51,
+      "action": "研究科技",
+      "family": "research_tech"
+    },
+    {
+      "step": 52,
+      "action": "研究 blue1（蓝槽 1）",
+      "family": "choose_target"
+    },
+    {
+      "step": 53,
+      "action": "结束回合",
+      "family": "end_turn"
+    },
+    {
+      "step": 54,
+      "action": "PASS",
+      "family": "pass"
+    },
+    {
+      "step": 55,
+      "action": "dlc_4.png",
+      "family": "choose_card"
+    }
+  ]
+}

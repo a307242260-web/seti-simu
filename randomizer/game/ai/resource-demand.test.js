@@ -96,3 +96,10 @@ function native(s){s=structuredClone(s);const hand=own(s).hand,ids=new Set(hand.
  assert.deepEqual(c.lifecycle.save().envelope,before);p.close();c.dispose();
 }
 console.log(JSON.stringify({resourceDemand:'passed',noLoosePreparations:true,protectedCards:true,exactNeed:true,nativePaymentAndRestore:true,boundedFallback:true}));
+// Orbit and landing already at the probe's location are distinct main purposes,
+// even when the movement policy chooses one route for future travel.
+{
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-039-20261030-v1.json'))),seed=f.source.seed;
+ const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});p.setResourcePlanning(true);
+ try{const root=p.openRoot(),routes=p.resourceSpec(root).plans.filter(p=>p.goal.kind==='route'),direct=routes.filter(p=>p.goal.movementPoints===0);assert(direct.some(p=>p.goal.family==='land'&&p.goal.planetId==='mars'));assert(direct.some(p=>p.goal.family==='orbit'&&p.goal.planetId==='mars'),'the legal Mars orbit cannot disappear because greedy landing has a higher route estimate');assert(routes.filter(p=>p.goal.movementPoints>0).length<=1,'future movement still follows one fixed destination');assert.deepEqual(c.lifecycle.save().envelope,before);}finally{p.close();c.dispose();}
+}

@@ -1,0 +1,10 @@
+{
+  "baseCommit": "b90f9ae48dcffb13dd4c9269b4b488a67e9dea69",
+  "testedSnapshot": "/private/tmp/seti-human405-round1-v49-run-20261030-d7ptcqv2",
+  "unchangedBaseFilesVerified": 5141,
+  "changedBaseFilesVerified": 12,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "explicitFiles": 198,
+  "runtimeImportsBoundToExplicitVersionSources": true,
+  "notes": "Every base file outside the explicit overlay is byte-identical to HEAD; runtime imports match the final candidate or its explicitly archived historical source binding."
+}

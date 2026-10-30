@@ -378,7 +378,7 @@
       return result;
     }
 
-    function createNode(envelope, observation, actions, status, barrier = null, intent = null, resourceControl = null) {
+    function createNode(envelope, observation, actions, status, barrier = null, intent = null, resourceControl = null, closeAfterInput = null) {
       let visible = observation && freeze(observation);
       // 搜索内部节点只用合法集与身份；首次估值/记录时才投影。getter 不暴露快照。
       const node = Object.freeze({
@@ -398,7 +398,7 @@
       const key = resourceControl ? JSON.stringify([cardKey,resourceControl]) : cardKey;
       if (!identities.has(key)) identities.set(key, Object.freeze({}));
       observationReleasers.set(node, () => { visible = null; envelopeObservations.delete(envelope); observationReleases++; });
-      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, policyKey: cardKey, physicalKey, intent, cardControl, resourceControl });
+      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, policyKey: cardKey, physicalKey, intent, cardControl, resourceControl, closeAfterInput });
       nodeCount += 1;
       return node;
     }
@@ -487,7 +487,7 @@
       }
       restoreEnvelope(stored.envelope, true);
       const { before, result } = executeCurrent(actionId);
-      return rememberPrefix(key,node,actionId,remember(key, finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null, stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null)));
+      return rememberPrefix(key,node,actionId,remember(key, finishChild(before, result, movementPlanning ? nextMovementIntent(node, requested) : null, stored.resourceControl&&resourceStep(node,stored.resourceControl.goal,stored.resourceControl.operation).kind!=="complete"?stored.resourceControl:null, stored.closeAfterInput)));
     }
 
     function setMovementPlanning(enabled) {
@@ -904,16 +904,29 @@
       return { before, result };
     }
 
-    function finishChild(before, result, intent = null, resourceControl = null) {
+    function finishChild(before, result, intent = null, resourceControl = null, closeAfterInput = null) {
       const comp = fork.composition || fork;
       const inspection = comp.inspect();
-      const barrier = result.irreversibleBarrier || inspection.session?.irreversibleBarrier;
-      const newBarrier = ruleComposition.isHiddenInformationBarrier(barrier)
+      const barrier = closeAfterInput || result.irreversibleBarrier || inspection.session?.irreversibleBarrier;
+      const newBarrier = Boolean(closeAfterInput) || ruleComposition.isHiddenInformationBarrier(barrier)
         && JSON.stringify(barrier) !== JSON.stringify(before.session?.irreversibleBarrier);
-      const actions = newBarrier ? [] : legalActions(comp, inspection);
       const envelope = snapshot(comp);
       loadedEnvelope = envelope;
       const childState = readIdentityState(envelope);
+      // A technology's already-visible PICK_CARD bonus is owed even though
+      // taking the tile reveals the next bonus. Only root-known public offers
+      // may be selected; close immediately after that one native input.
+      let knownRewardActions = [];
+      if (!closeAfterInput && newBarrier && cardPickPlanning && barrier.code === "tech_bonus_reveal"
+        && inspection.phase === "awaiting_input"
+        && envelope.session?.session?.queue?.[0]?.type === "science_domain_pick_card") {
+        const known = new Set((rootObservation.publicState.board.publicCards || []).filter(Boolean).map(c => c.id));
+        knownRewardActions = legalActions(comp, inspection).filter(a => a.actorId === seatId && cardPickPlanningApi.isOffer(a)
+          && a.target?.source !== "blind" && known.has(a.target.cardInstanceId || a.payload?.cardInstanceId
+            || childState.cards.publicCards[a.target.publicSlotIndex]?.id));
+      }
+      const settleKnownReward = knownRewardActions.length > 0;
+      const actions = settleKnownReward ? knownRewardActions : newBarrier ? [] : legalActions(comp, inspection);
       // Native terminal state closes the window even if the host still lists
       // residual controls. A pending required Decision must still be completed.
       const terminal = childState.turn.gameEnded === true && inspection.phase !== "awaiting_input";
@@ -922,7 +935,7 @@
         throw new Error("ANALYSIS_EMPTY_NONTERMINAL");
       }
       const turnChanged = JSON.stringify([childState.turn.roundNumber,childState.turn.turnNumber,childState.turn.actionCycleNumber]) !== rootTurnKey;
-      const status = newBarrier ? "information-barrier"
+      const status = settleKnownReward ? "decision" : newBarrier ? "information-barrier"
         : terminal ? "terminal"
           : actions.some(action => action.actorId !== seatId) ? "other-owner"
           : !actions.length ? "terminal"
@@ -938,7 +951,8 @@
       }
       const child = createNode(envelope, observation,
         ["other-owner", "terminal", "turn-boundary"].includes(status) ? [] : actions, status,
-        newBarrier ? barrier : status === "turn-boundary" ? {code:"own-turn-complete"} : null, intent, ["other-owner","terminal","information-barrier","turn-boundary"].includes(status)?null:resourceControl);
+        newBarrier ? barrier : status === "turn-boundary" ? {code:"own-turn-complete"} : null, intent, ["other-owner","terminal","information-barrier","turn-boundary"].includes(status)?null:resourceControl,
+        settleKnownReward ? barrier : null);
       return child;
     }
 
