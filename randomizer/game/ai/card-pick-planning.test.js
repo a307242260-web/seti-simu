@@ -105,6 +105,36 @@ function plan(s,actions=trades.concat(stop),planner=api.createCardPickPlanner(),
  const r=searchDecision({port,root,evaluate:createStateValueEvaluator('p1'),cardPickPlanning:true,cardChoiceEquivalence:true});assert(r.complete);assert.equal(r.actionId,'z-fixed');
 }
 console.log(JSON.stringify({purposeCardPick:'passed',noUnmotivatedTrades:true,incomeMoveDataAndUnusedPublicity:true,fixedCardAndSemanticCache:true}));
+// A funded fourth computer slot needs a spare income card when the only held
+// card is a valuable known future purpose. Native currency exchange can fund it.
+{
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-037-20261030-v1.json'))),session=f.compositionEnvelope.session.session,s=session.workingState,before=structuredClone(s),planner=api.createCardPickPlanner(),actions=offers(s);
+ const choose=state=>planner.plan({state,seatId:f.seatId,actions,status:'decision',session});
+ const r=choose(s);assert.equal(r.goal.kind,'ready-income');assert.equal(r.goal.fundsCardId,'card-15-0');assert.equal(r.selection.cardId,'card-18-0','energy income plus the existing energy funds DLC9 through native2-to1 exchange');assert.equal(r.retainedActionIds.length,1);assert.equal(r.isEquivalence,false);
+ const hidden=structuredClone(s);hidden.cards.drawPileCardIds.reverse();assert.equal(choose(hidden).selection.cardId,r.selection.cardId);assert.equal(choose(hidden).selection.cache,'hit');
+ const short=structuredClone(s);short.players.players.find(p=>p.id===f.seatId).resources.availableData=3;assert.notEqual(choose(short).goal.kind,'ready-income');
+ const funded=structuredClone(s);funded.players.players.find(p=>p.id===f.seatId).resources.credits=3;assert.notEqual(choose(funded).goal.kind,'ready-income');
+ const noEnergy=structuredClone(s);noEnergy.players.players.find(p=>p.id===f.seatId).resources.energy=0;assert.equal(choose(noEnergy).selection.cardId,'card-17-0','one energy alone cannot pay the two-energy exchange');
+ assert.deepEqual(s,before);
+}
+// The identified income and exchange actually pay the preserved card through
+// native actions. Unknown replacement/drawn card identities are never used.
+{
+ const {createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation');
+ const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-037-20261030-v1.json'))),seed=f.source.seed,k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);
+ try{
+  function legal(){return c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});}
+  function submit(match){const d=c.inspect().session?.decision,a=legal().find(match);assert(a);const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(r.ok,JSON.stringify(r));}
+  submit(a=>a.target?.cardInstanceId==='card-18-0');
+  for(let i=0;i<4;i++){submit(a=>a.family==='place_data');submit(a=>a.target?.target==='computer');}
+  submit(a=>a.target?.cardInstanceId==='card-18-0'&&a.target?.choiceId?.startsWith('income:'));
+  let p=JSON.parse(c.lifecycle.save().envelope.committedState).players.players.find(p=>p.id===f.seatId);assert.equal(p.resources.credits,2);assert.equal(p.resources.energy,2);assert.deepEqual(p.hand.map(c=>c.id),['card-15-0']);
+  submit(a=>a.target?.tradeId==='energy-for-credit');
+  p=JSON.parse(c.lifecycle.save().envelope.committedState).players.players.find(p=>p.id===f.seatId);assert.equal(p.resources.credits,3);assert.equal(p.resources.energy,0);
+  submit(a=>a.family==='end_turn');submit(a=>a.family==='play_card'&&a.target?.cardInstanceId==='card-15-0');submit(a=>a.target?.tileId==='purple4');
+  p=JSON.parse(c.lifecycle.save().envelope.committedState).players.players.find(p=>p.id===f.seatId);assert(p.techState.ownedTiles.purple4);assert.equal(p.resources.credits,0);
+ }finally{c.dispose();}
+}
 // A free pick before an already committed own income reward has an income
 // purpose, even when the player already holds cards and completed the main action.
 {

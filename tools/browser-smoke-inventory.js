@@ -952,6 +952,7 @@ module.exports = Object.freeze([...smokes, Object.freeze({
           }finally{q.close();}
         }
         else if(name==='blind-income-proof'){
+          const ready=p.cardPickSpec(n);if(ready?.goal.kind!=='ready-income'||ready.goal.fundsCardId!=='card-15-0'||ready.selection.cardId!=='card-18-0'||ready.retainedActionIds.length!==1)throw new Error('已有数据收入未保留已知后续主牌的资金目的');
           const pick=n.legalActions.find(a=>a.summary==='b_2.webp');if(!pick)throw new Error('缺少真实低机会成本收入牌');const root=p.expand(n,pick.actionId),evaluate=window.SetiStateValue.createStateValueEvaluator(f.seatId);
           const r=window.SetiDecisionSearch.searchDecision({port:p,root,evaluate,...window.SetiSearchAgent.OPTIONS,budget:{transitions:256,nodes:1024,frontier:256,milliseconds:1500}});
           if(!r.complete||r.diagnostics.transitions!==0||r.diagnostics.provedIncomeInputs!==9||!r.lines.some(l=>l.status==='income-plan-value'&&l.planSummary.successorEnvelopeAvailable===false))throw new Error('固定盲抽收入证明未装配或伪造后继');
