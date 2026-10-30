@@ -1,0 +1,148 @@
+{
+  "schemaVersion": "seti-purpose-capital-candidate-admission-v2",
+  "candidateVersion": "v91",
+  "candidateAdmitted": false,
+  "productionSourceCommit": "7e3fc7573af1e2594116e3714ad176a9a1f992b2",
+  "candidateSource": "adhoc/human405-v91-candidate-source-20261030-v1.json.gz",
+  "candidateSourceSha256": "c573c8a8ce68359d4416d3534f8875141ee2355f27909a65c50cc48b3b50ec30",
+  "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24",
+  "pointGateEvidenceVersion": "v90",
+  "pointGates": {
+    "teacherRoots": 32,
+    "legacyRoots": 12,
+    "over256Inputs": 0,
+    "over600ms": 0,
+    "slowestLegacy": {
+      "case": "152",
+      "inputs": 228,
+      "milliseconds": 579.6904159999999
+    },
+    "case105": {
+      "inputs": 189,
+      "milliseconds": 542.102125
+    },
+    "step317": {
+      "inputs": 211,
+      "milliseconds": 451.417916
+    }
+  },
+  "nativeControls": {
+    "version": "v90",
+    "prunedBoundSources": 151,
+    "typedPlanSources": 28,
+    "freshNativeRootComparisons": 4,
+    "sameBestActionAndValue": true,
+    "rootAndRngUnchanged": true
+  },
+  "validation": {
+    "targetedTests": 10,
+    "targetedFailures": 0,
+    "allArchivedJavaScriptSyntaxChecksPassed": true,
+    "exploratoryFullRun": {
+      "unitPassed": 128,
+      "unitFailed": 21,
+      "fullFlowPassed": 1,
+      "mixedVersions": [
+        "v90",
+        "v91"
+      ],
+      "scope": "Started at v90. Candidate mutation occurred during execution; this log identifies failures for triage and does not establish a frozen-source final regression result.",
+      "failedFiles": [
+        "randomizer/game/ai/alien-opening-plan.test.js",
+        "randomizer/game/ai/card-trade-bound.test.js",
+        "randomizer/game/ai/company-card-trade.test.js",
+        "randomizer/game/ai/decision-search.test.js",
+        "randomizer/game/ai/fixed-data-plan.test.js",
+        "randomizer/game/ai/inert-reservation.test.js",
+        "randomizer/game/ai/opening-plan.test.js",
+        "randomizer/game/ai/opening-resource.test.js",
+        "randomizer/game/ai/pass-reserve-choice.test.js",
+        "randomizer/game/ai/plan-prefix-reuse.test.js",
+        "randomizer/game/ai/post-main-attainment.test.js",
+        "randomizer/game/ai/post-main-borrow.test.js",
+        "randomizer/game/ai/post-main-corner-choice.test.js",
+        "randomizer/game/ai/post-main-movement.test.js",
+        "randomizer/game/ai/post-main-plan.test.js",
+        "randomizer/game/ai/pre-main-data-plan.test.js",
+        "randomizer/game/ai/quiet-bound-composition.test.js",
+        "randomizer/game/ai/resource-demand.test.js",
+        "randomizer/game/ai/shared-resource-prefix.test.js",
+        "randomizer/game/ai/standard-scan-bound.test.js",
+        "randomizer/game/ai/trade-reservation-bound.test.js"
+      ],
+      "subsequentlyPassed": [
+        "randomizer/game/ai/decision-search.test.js"
+      ]
+    },
+    "vInputAudit": {
+      "newPathsPass": true,
+      "remainingFailure": "pre-existing legacy expected-score evaluator attempts to mutate frozen aliens.aomomo",
+      "log": "reports/ai-foundation-20261023/human405-v91-v-input-audit-20261030-v1.log"
+    },
+    "browserSmokes": "not run for candidate",
+    "newAutonomousR1": "not run; candidate not admitted"
+  },
+  "teacherCategories": {
+    "covered-as-internal-input": 2,
+    "excluded-by-movement-policy": 1,
+    "same-first-input": 22,
+    "searched-but-lower-value": 2,
+    "excluded-by-card-pick-policy": 2,
+    "excluded-by-resource-policy": 2,
+    "same-value-different-first-input": 1
+  },
+  "latestAutonomousTrialStill": {
+    "record": "reports/research/448ff0e0.7e3fc757.quick-200.json",
+    "verification": "reports/ai-foundation-20261023/human405-white-r1-7e3fc757-verification-20261030-v1.json",
+    "comparison": "reports/ai-foundation-20261023/human405-white-r1-v53-v67-comparison-20261030-v1.json",
+    "wallMs": 1013,
+    "steps": 48,
+    "searches": 18,
+    "maxInputs": 89,
+    "maxMs": 223.847584,
+    "planReuseHits": 12,
+    "whiteScore": 11,
+    "whiteTech": [
+      "orange3"
+    ],
+    "teacherScore": 15,
+    "teacherTech": [
+      "blue2",
+      "purple4"
+    ],
+    "strategyAligned": false,
+    "searchVersion": "v67",
+    "sourceCommit": "7e3fc7573af1e2594116e3714ad176a9a1f992b2",
+    "formalTerminal": false,
+    "baselineEligible": false
+  },
+  "remaining": [
+    "Triage every failed full-regression test against current business behavior: model-incompatible old linear proofs, prematurely chosen blue destination, protected-card/resource/reuse behavior and genuinely missing contracts; do not restore unsafe old proofs just for green tests.",
+    "v91 delays proof-model checks until an actual corner/card-choice candidate exists; decision-search regression now passes. Run a frozen final full suite after remaining fixes, all44 point gates and four browser smokes.",
+    "Add a native counterexample for the suspected seven-data blue purpose versus six-slot pool capacity; determine whether preparation should interleave placements instead of demanding every data token up front.",
+    "After admission only, register the version and run one standard white-only autonomous R1, verify identical opening/RNG, other seats PASS and every native input including settlement.",
+    "Continue causal teacher-node analysis: deployed probe/B117 capability absent from V, pick/income and orbit/land order differences; equal scalar V is not strategic equivalence.",
+    "Keep technology use forecasts labeled as hypotheses; they are not guaranteed future native rewards or demonstrated full-game strength."
+  ],
+  "sourceHashes": {
+    "randomizer/game/ai/state-value.js": "f5b9767dcedef54e93f81945a88fc5de730e27f5ab89e1a1db5b7c7633caf13e",
+    "randomizer/game/ai/resource-demand.js": "fa035c7ebe5abb6eab4e0a292da444ebbf3116798fb2f711df0e9abf4a3f0644",
+    "randomizer/game/ai/local-decision-plans.js": "4cd9291a0018a29175bb882571f8b44707508aa8d5c9c07ee0be99f1f3d5c8be",
+    "randomizer/game/ai/decision-search.js": "6a1721ed1d3f0988db8d76d99cb54d2689d79de8bbc9c90f802ee3103fa0cc34",
+    "randomizer/game/actions/scan-effects.js": "38576775462e805201cc2b34572976de44732ba91780c8b768f33c726aba08d5",
+    "randomizer/game/effects/science-session.js": "c22870d31fd6a115b1aba72d592892c7cc1c58871bdcf8a9ebdb70e7af79224c",
+    "randomizer/index.html": "0cd0f6773ed8694bb101fc3fa10759fc617b716247d6122ba1e65c220de63cc1",
+    "randomizer/game/ai/analysis-port.js": "d7eb5dfb22767741d4c2cdfb02409a0fee2bbde46091ad6c5ee2e53bd109a4f8",
+    "randomizer/game/ai/income-plan-value.test.js": "6000650f4ed62de34228a641539b7ba392c027b4de1039486fb0dab992b557f6",
+    "randomizer/game/ai/purpose-capital-value.test.js": "132cee308c1a70da3c35ec7c60751ef9b8d61b5e61e61669d0554a554607d683",
+    "tools/node-test-inventory.js": "c9e6907f22b0ac32cfbb6062123a49c882b5ff2769402a1fa8c8f900e0ef1499",
+    "randomizer/game/production-kernel.js": "d4292b836d485df05084678b382a3ccfcfea1b0f2d6706f329912d567ee47521",
+    "randomizer/game/ai/blue-column-purpose.test.js": "bd4dc97915eb33f2121957fcac328b6a7443cc2f28ca5ea61a85dbbab3c3e9b8",
+    "randomizer/game/ai/six-greedy-plans.test.js": "c05b6a2a541ca27e9062a97e8b7c0f694cafeab9da7e90d475834103e5b821f8",
+    "randomizer/game/data/state.js": "e1fa0c53f628c0d1651b6460b8e47f4126307904bbdd8d8445e6136da5686645",
+    "randomizer/game/data/index.js": "593b159683ca184bf610c0d1097fc8a4c99306c3a664a9fc06d8d24ea1d6c903",
+    "randomizer/game/effects/residual-domain-session.js": "50ada0fbf8fbeff5abbf583c40e09faeec01a3a44adfc0b60956639fd9b6ec35",
+    "tools/audit_v_state_inputs.js": "cdea7b5d225bae2d9e59e5733f771f03a1a80e32c555e08795cacd4373b6eca8",
+    "randomizer/game/ai/quiet-data-tail.test.js": "77b7e5e2069aa443e02596026826548a47be67e60be7b2c475685d5415c8017d"
+  }
+}

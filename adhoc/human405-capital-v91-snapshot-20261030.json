@@ -1,0 +1,327 @@
+{
+  "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24",
+  "snapshot": "/private/tmp/seti-human405-v65-20261030-onpkqe05",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "files": {
+    "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v84-compat-case-152-20261029-v1.raw.json.gz": "27ed89149255f2c1ba3149dbbde516d43454256ab4e768d37f92c8f9ab72c570",
+    "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v90-compat-baseline-r1-t8-blue-20261029-v1.raw.json.gz": "599ae204b4753a7ffc9bb13cc85ced13705f9a9442813687f9447909c9760c55",
+    "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v90-compat-baseline-r2-t9-white-20261029-v1.raw.json.gz": "c3595d9661c59a68a234f33051e9096f0038fe3cd3538091c557ea43312d1292",
+    "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v90-compat-case-001-20261029-v1.raw.json.gz": "7cb498aaa10a668a5083df8107c0060e0a178a2a7261fab854f8d0aa5e4c413f",
+    "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v90-compat-case-003-20261029-v1.raw.json.gz": "12ab6280861a2bd8ff660dda4181a899765c859e73ff08d8aaf20b6738e80b55",
+    "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v90-compat-case-008-20261029-v1.raw.json.gz": "a21fa3eb73efeb2b7ecdf95a063ab25780c639b22bf629a2d3befd5f2a5f5cfa",
+    "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v90-compat-case-009-20261029-v1.raw.json.gz": "06d8a2c0d355d0373ec2a5742a79788e3e16c6d036d02ff436d8634de1b83a0f",
+    "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v90-compat-case-011-20261029-v1.raw.json.gz": "6b316cd6b7541f14891efa347a239af2318b8cd52c9003780e7c87935838aeb4",
+    "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v90-compat-case-062-20261029-v1.raw.json.gz": "6eb202dc5d2ec1f0e8c080ce702b6a9c849dc0ff8ef86ed92d2082acf4779eef",
+    "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v90-compat-case-105-20261029-v1.raw.json.gz": "fc0ebae4ce78e12ba98bd2330f1d81d90cb4c5033f25170bfe58d4d1e46d0474",
+    "adhoc/ai-decision-corpus-20261029-unbounded-v1/round1-v90-compat-case-152-20261029-v1.raw.json.gz": "42cc47ee151f47aa78750316bd2f03803a4268b6625ca6e67d8aa3b44df3e136",
+    "adhoc/audit-round1-v90-compat-corpus-20261030-v1.js": "c736344c0b7d9dcc7839ecf97a9996d6b0cbc05617e0747374f193b6da852ebe",
+    "adhoc/audit-round1-v90-compat-step317-20261030-v1.js": "dcddd98bcd0a270fc631eb87c35fcf6cfe29248e2007dd84357e41fb5a2fa9e5",
+    "adhoc/audit-round1-v90-compat-terminal-root-20261030-v1.js": "ae2c9b0a69b5f1a0c7284d3718409f7f574474cac13d79d74dce5a6660338493",
+    "adhoc/deliver-human405-capital-v91-20261030-v1.py": "7fc7c2f2b421c9714ee1aa8e90b2cdbbda93c52b5d7e5d08d706c838e5865f29",
+    "adhoc/human405-round1-progress-20261030-v11.json": "70d289519c69698d22c1cf02e9f15658d7a660b492c40766ec19eedf194b517b",
+    "adhoc/human405-v84-candidate-source-20261030-v1.json.gz": "1c90a9693ceae8c976a72aabda8d726e8912b348cd5ed517ac9a0b055d1d94f4",
+    "adhoc/human405-v87-candidate-source-20261030-v1.json.gz": "e641594f2d04cd77a4fa9ff16b5582c99ed797e3716c1715937f56e14c8e11c1",
+    "adhoc/human405-v87-case152-profile-20261030-v1.cpuprofile.gz": "7327e5db6a947ff504990e1b3d1ea828225be6f5db2f22868c5e0bdb13a37242",
+    "adhoc/human405-v90-candidate-source-20261030-v1.json.gz": "c161ab315d28b7876a9d5e6b2b589489d537754b733b42ddd64d7bf002d7417a",
+    "adhoc/human405-v91-candidate-source-20261030-v1.json.gz": "c573c8a8ce68359d4416d3534f8875141ee2355f27909a65c50cc48b3b50ec30",
+    "adhoc/profile-human405-v87-case152-20261030-v1.js": "cc1b127e730f69a34ddab365425942db71cc03640360dee6e59a4af02f1fe604",
+    "adhoc/verify-human405-v90-bounds-20261030-v1.js": "69ae62187a38416e3362a62fe29ca1276309e629a9bd0d207a37198e40e1e5fd",
+    "docs/ai-human405-learning-20261029.md": "2483441f4645e82683536578740866d5b942228de61c54f610c5ce154b61216c",
+    "reports/ai-foundation-20261023/human405-round1-v90-audit-20261030-v1.json": "0e06278a7bea5977e818e53d42ef07eec306ba8875dee1a26919a880caf064a8",
+    "reports/ai-foundation-20261023/human405-round1-v90-step024-20261030-v1.json": "815de3e62149f7e847dd0c671ddf074e20e779ca3d8c5f705ca80428f8da74f7",
+    "reports/ai-foundation-20261023/human405-round1-v90-step024-20261030-v1.raw.json.gz": "dbd2097ec519a7b95f2714721523706ee3b57ecfc3861a0e14f3f4051797a10d",
+    "reports/ai-foundation-20261023/human405-round1-v90-step025-20261030-v1.json": "9e76c381259c00a7ae31f8a62d8423ce11f58674ffd18c3733b61e56b912d9f0",
+    "reports/ai-foundation-20261023/human405-round1-v90-step025-20261030-v1.raw.json.gz": "17f70027ee64881103e3fcd83b9faf32a96dc3ef528b9123798179d4a24aee17",
+    "reports/ai-foundation-20261023/human405-round1-v90-step026-20261030-v1.json": "8d302c76736a784fb567d884b4525f25d39798d2dfeb05374acb286410b1fc24",
+    "reports/ai-foundation-20261023/human405-round1-v90-step026-20261030-v1.raw.json.gz": "ea4b679a0fdbdcd0a32ef02542df6dc430970748555d099335aec421941d5d89",
+    "reports/ai-foundation-20261023/human405-round1-v90-step027-20261030-v1.json": "6b70732f9a59f9fda50105612eb786f9a59bdc4c066a09f1fd9b1dadcdbef83d",
+    "reports/ai-foundation-20261023/human405-round1-v90-step027-20261030-v1.raw.json.gz": "613dd9e0b56862ed02b92cf63fdcae1abe86e340d402ab1c1866d78f4b5259c9",
+    "reports/ai-foundation-20261023/human405-round1-v90-step035-20261030-v1.json": "7450b6656cd0f25cf79f1870863368cebdb94aee59c439d3a51f85d58024efb5",
+    "reports/ai-foundation-20261023/human405-round1-v90-step035-20261030-v1.raw.json.gz": "4b8b9cac59c65dae7866c601c98ac0093a0cc93406f4b2a8d3d6f12b9f45cac0",
+    "reports/ai-foundation-20261023/human405-round1-v90-step036-20261030-v1.json": "6a039c1e2b40368f55a183148bf712aef159ce60f2d298bcf62086399e0a29b6",
+    "reports/ai-foundation-20261023/human405-round1-v90-step036-20261030-v1.raw.json.gz": "e07b9eb73fe94e137995f63c42945f1d6a6fd0e5502f92f843ad754bc34be5e4",
+    "reports/ai-foundation-20261023/human405-round1-v90-step037-20261030-v1.json": "1a314ee1a92a714affeaea7a2b21c8736453b542f8b8f4ade83a8593f9974c13",
+    "reports/ai-foundation-20261023/human405-round1-v90-step037-20261030-v1.raw.json.gz": "6d0e549de263d71e43ef738ec77d6eecb1aa16dbf6a37081087b7b91205bee9f",
+    "reports/ai-foundation-20261023/human405-round1-v90-step038-20261030-v1.json": "2bc5ba5f997e068a2adb738de13af17229d4f64c39212f7a00c750026e676dc9",
+    "reports/ai-foundation-20261023/human405-round1-v90-step038-20261030-v1.raw.json.gz": "19ef2e00427edcbb7f71378bb4b4ab4c6b3e7bf210106e8cd14c6a5f0ae08f83",
+    "reports/ai-foundation-20261023/human405-round1-v90-step039-20261030-v1.json": "7e2a9ca8c3f65262d1c8cd430f47292d5daf4657b331fe599b9b8c7c6cbd5b19",
+    "reports/ai-foundation-20261023/human405-round1-v90-step039-20261030-v1.raw.json.gz": "f110070d41d34651ef07b5b749cfb8cf76451dd3f7e6a98419a90454eeb128da",
+    "reports/ai-foundation-20261023/human405-round1-v90-step040-20261030-v1.json": "3e80e6a36fc325afddc1c57f437ffc876b575cbc36eebd6bfb0392bbb118d258",
+    "reports/ai-foundation-20261023/human405-round1-v90-step040-20261030-v1.raw.json.gz": "eedd80e4b9b47a9dbee6a8190c5d3cd11c51af73ba2fbc2d2a3a649a36d0a9c9",
+    "reports/ai-foundation-20261023/human405-round1-v90-step041-20261030-v1.json": "8d13578dd8cc2c4a7e965458d97755d8ce2b99bc3dfc939595691cf55bd9c317",
+    "reports/ai-foundation-20261023/human405-round1-v90-step041-20261030-v1.raw.json.gz": "7f5f10174e3bc5cc2962bd502529a13d97efc58f0371d2a98d0f026e7d306b56",
+    "reports/ai-foundation-20261023/human405-round1-v90-step042-20261030-v1.json": "f7317181be2e6db5202258fa1b0bf4cda4fff9a288303aa07fefcc3ac7237184",
+    "reports/ai-foundation-20261023/human405-round1-v90-step042-20261030-v1.raw.json.gz": "ede166fc170d5975f7dbb68092e0b1c7e75cbd6d5194cef4fc765bec674ccca3",
+    "reports/ai-foundation-20261023/human405-round1-v90-step043-20261030-v1.json": "8d5a57b7eac8f91aefa1ea3fa2a3f2e7373f454daf7104d5e08b9585a54c00a5",
+    "reports/ai-foundation-20261023/human405-round1-v90-step043-20261030-v1.raw.json.gz": "f5b70d12506b92c72d64e85ebcab07dcf406412ce000df78d3e218953bfe4583",
+    "reports/ai-foundation-20261023/human405-round1-v90-step044-20261030-v1.json": "628dd29b33eccb3b5b3a082822a5064b1374ff023a92638d8b1b12db46cadc94",
+    "reports/ai-foundation-20261023/human405-round1-v90-step044-20261030-v1.raw.json.gz": "b0232f4ea4e260fb7c42977042f00518df89e4fca4052c9280cbcbf32418d202",
+    "reports/ai-foundation-20261023/human405-round1-v90-step045-20261030-v1.json": "813b21c8349a2a2deed4da8ee084d6e6ef2fbae0607458ed65c3c24627f5e558",
+    "reports/ai-foundation-20261023/human405-round1-v90-step045-20261030-v1.raw.json.gz": "58d854bb9ff04fb02025c66acfd3a1c5c109a5dfe82dc5343f19bf0b92f6e1b5",
+    "reports/ai-foundation-20261023/human405-round1-v90-step046-20261030-v1.json": "688ab096c05570d22a821aa8edeb2ba37d28b8fd820dd11ed0ea6bb4efefb9e3",
+    "reports/ai-foundation-20261023/human405-round1-v90-step046-20261030-v1.raw.json.gz": "f3e91d32e259641f9e38bcdf0976cbad0346faf287d9053ca62060e15d43bcf4",
+    "reports/ai-foundation-20261023/human405-round1-v90-step047-20261030-v1.json": "44be1e0ba76ce7168900243f86a15613842b36b633ab0aee3b2c809842861d3b",
+    "reports/ai-foundation-20261023/human405-round1-v90-step047-20261030-v1.raw.json.gz": "d2194e13a8eeae0b3ca388c5d4ed814414d883d12725800999fc0f785e6cd489",
+    "reports/ai-foundation-20261023/human405-round1-v90-step048-20261030-v1.json": "562b506a954bbae1638b478deb3702d8c3cd6316ddece7cc2002c36d5a7d3a0f",
+    "reports/ai-foundation-20261023/human405-round1-v90-step048-20261030-v1.raw.json.gz": "3aee928601dbbc250b48f9ac5ed4b004b2025dd488da73895acfdc21cf36b521",
+    "reports/ai-foundation-20261023/human405-round1-v90-step049-20261030-v1.json": "b9a5d7b0281e5394686494c090f4474c8db154f88a549686e66705057b828901",
+    "reports/ai-foundation-20261023/human405-round1-v90-step049-20261030-v1.raw.json.gz": "5c39f0efb9a4ee4fab3cf7a138942f0d049654e27dfa59790c98893b1171489a",
+    "reports/ai-foundation-20261023/human405-round1-v90-step050-20261030-v1.json": "011d339c28e1084861ad2117d7688933107a8c19b8c385c3783a617f3dfab08e",
+    "reports/ai-foundation-20261023/human405-round1-v90-step050-20261030-v1.raw.json.gz": "76c824e56b8ed0b180f1457f6103b7eded3d53db8f49d6f4fc1d1f7c97fb0c3b",
+    "reports/ai-foundation-20261023/human405-round1-v90-step051-20261030-v1.json": "bed33a8e8964ae7ae9835fb38bad72f8b2b9fe68151b431cf50efbaefccf3f55",
+    "reports/ai-foundation-20261023/human405-round1-v90-step051-20261030-v1.raw.json.gz": "42295bc97c4cd2a18b55120ecad4cbbff6ee4ece68ac755eff2f3d12db18f813",
+    "reports/ai-foundation-20261023/human405-round1-v90-step052-20261030-v1.json": "feb09cb4bb0c70b15de3c81b139114ccce35b6a8b8ceb4a13ce228a7d8ec6f44",
+    "reports/ai-foundation-20261023/human405-round1-v90-step052-20261030-v1.raw.json.gz": "ea8d437596710c401c352c33f8cccc5e45ac7999c24796f5f0e95de27c30096f",
+    "reports/ai-foundation-20261023/human405-round1-v90-step053-20261030-v1.json": "23ba8cddbb0da0eaa6608357e6136293ea2347d4a12ecf1e4c898363492bd11c",
+    "reports/ai-foundation-20261023/human405-round1-v90-step053-20261030-v1.raw.json.gz": "923f53648c6e09096f34479cc7bf424d54c3dc95ac945f83599955617a144f26",
+    "reports/ai-foundation-20261023/human405-round1-v90-step054-20261030-v1.json": "5cccaf512532e554afed4f91449a875e8445de0f4b12ea3507686f4cf9b57fc4",
+    "reports/ai-foundation-20261023/human405-round1-v90-step054-20261030-v1.raw.json.gz": "d4e32472e1f3ccb711ea880b1367855416fbde6804b603d7d350b90c1ce3f044",
+    "reports/ai-foundation-20261023/human405-round1-v90-step055-20261030-v1.json": "8d85906ef43b437a9dbbf207600b1a5ba87db8d6a669bf671c6216261adea08c",
+    "reports/ai-foundation-20261023/human405-round1-v90-step055-20261030-v1.raw.json.gz": "1f510cfceee8269cf8a19b57ce1f4473edbf2558b6d52aa238eb36ca8c1178a4",
+    "reports/ai-foundation-20261023/human405-round1-v90-step056-20261030-v1.json": "b6100641f40d149322da8fe530b340e883ed6f5f9b406fe39eeb12ea312216b4",
+    "reports/ai-foundation-20261023/human405-round1-v90-step056-20261030-v1.raw.json.gz": "f3c56ddf1b4919d55ebf3ec5a44426fb6934caac1fa205b739228644a5ddf61e",
+    "reports/ai-foundation-20261023/human405-round1-v90-step057-20261030-v1.json": "6d4df42c8e92719cc25abee36a1bb4317044f1f8eb75ce8e07331a7883a54234",
+    "reports/ai-foundation-20261023/human405-round1-v90-step057-20261030-v1.raw.json.gz": "8002ac6f605d9b018dbe017c6542da4aa486a54c3d61ffbfdff192156a004b42",
+    "reports/ai-foundation-20261023/human405-round1-v90-step058-20261030-v1.json": "4bb690081fcfab4cc6c46956349ebbf9a7d9054718e90d65d9c94a4692450b60",
+    "reports/ai-foundation-20261023/human405-round1-v90-step058-20261030-v1.raw.json.gz": "3dd2ae487f90a24a5c05e1ce1571197027fb98759d92622a6e3a38c87cf471ac",
+    "reports/ai-foundation-20261023/human405-round1-v90-step059-20261030-v1.json": "caa766a7073d721e84e06399d19088c5cbc94f2ff400deae9119ffe19b3ded9a",
+    "reports/ai-foundation-20261023/human405-round1-v90-step059-20261030-v1.raw.json.gz": "ed27773aaaa106140d73ea790fee6824a7a4661d2ec0f90f816f7cc77ebe8591",
+    "reports/ai-foundation-20261023/human405-round1-v90-step060-20261030-v1.json": "f4cee4f2965f5ed9509baa47a279d1743cfe65cfbdcda4c75fbc7bc4e212a801",
+    "reports/ai-foundation-20261023/human405-round1-v90-step060-20261030-v1.raw.json.gz": "03da9091af74296dc9071a862edd3c9ae6e7b3151af1b3927c9d61c84339ff6f",
+    "reports/ai-foundation-20261023/human405-round1-v90-step061-20261030-v1.json": "2a14f1ff23ea960c4b138df33b927aa4cd445b12401f7734f6c49352a7e3b00c",
+    "reports/ai-foundation-20261023/human405-round1-v90-step061-20261030-v1.raw.json.gz": "8b40c49c9e22bf000ff3892917a12300a26455fae9024cd2bec603b44f68a6fd",
+    "reports/ai-foundation-20261023/human405-round1-v90-step062-20261030-v1.json": "7ce49f37ace798d50a651614ec384f991739b3e5d9f0fa1fa79f09b38935d783",
+    "reports/ai-foundation-20261023/human405-round1-v90-step062-20261030-v1.raw.json.gz": "51c1236de31a917ac1ba361e6bfdb19e2b5eeae7529672390e75748185c72af8",
+    "reports/ai-foundation-20261023/human405-v84-case152-reference-20261030-v1.json": "644e15e519778b10b03c73f1accd5a7f4fedf3c156ab296e2193d3b87781be1d",
+    "reports/ai-foundation-20261023/human405-v90-native-bound-controls-legacy-105-20261030-v1.json": "94af6684f106bbb00dd08a3ee70dc11323cb4266cebe409de1cb81a290ab66d8",
+    "reports/ai-foundation-20261023/human405-v90-native-bound-controls-legacy-152-20261030-v1.json": "ba2429d30bfa9d918509c8a9e3fb46cbd2d1dce020d0f34895066f09cd184101",
+    "reports/ai-foundation-20261023/human405-v90-native-bound-controls-teacher-39-20261030-v1.json": "4aa85590a2c5964c7508a2c0453edfef0779b387304bef98a5c450fec6739144",
+    "reports/ai-foundation-20261023/human405-v90-native-bound-controls-teacher-44-20261030-v1.json": "0aa4c75de58f354376dc65b23e10b8626a4746cc30e5a976cef389b8fea56f76",
+    "reports/ai-foundation-20261023/human405-v90-v91-exploratory-node-regression-20261030-v1.log": "67bf58a2bfc538ada2b9d0f1fcabf7085dcc197724f15155dcaff6bf5ded7b6d",
+    "reports/ai-foundation-20261023/human405-v91-candidate-admission-20261030-v1.json": "632d41f772629fa5431e25a8fa8fa4ca323b08134569b6a74e7a2d88d93ebd97",
+    "reports/ai-foundation-20261023/human405-v91-targeted-regression-20261030-v1.log": "4bd02431edef076f81e13e603f75c689a75e97d21c41099e8f80d26e02ad91d2",
+    "reports/ai-foundation-20261023/human405-v91-v-input-audit-20261030-v1.log": "3e7d9c90a7edb4a65259584ffeecbe3e1a7afc05962879d66dc1cd595dac35b4",
+    "reports/ai-foundation-20261023/round1-v90-compat-corpus-20261029-v1.json": "fecc0845d2d7354429d00485615d0365a8bac9cef84a0e0408bfc9bc0f711b9f",
+    "reports/ai-foundation-20261023/round1-v90-compat-step317-20261029-v1.json": "8fb23eae15d03563b9de0d070b2acc9a0bf04a3822ea867cd00c83f42c52b251",
+    "reports/ai-foundation-20261023/round1-v90-compat-step317-20261029-v1.raw.json.gz": "cebc3ce9f834a48f240b16f5875e0c583b57194f2c42d2b5c8a990200853643b",
+    "reports/ai-foundation-20261023/round1-v90-compat-terminal-root-20261029-v1.json": "c6b5d049d3f721337b67aa33d1264ed30278d5c0449f7f759b92d7e044c2637e",
+    "reports/ai-foundation-20261023/round1-v90-compat-terminal-root-20261029-v1.raw.json.gz": "0062e383f69b3a768c6c6b558afe0b0d8cad0805b98c8ea8cbdf319549287df3"
+  },
+  "sourceBoundReports": [
+    "reports/ai-foundation-20261023/human405-round1-v90-step054-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step025-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step040-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step061-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step044-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step035-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step050-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step055-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step060-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step041-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step024-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step045-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step051-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step038-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step042-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step027-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step056-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-audit-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step049-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step052-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step037-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step046-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step059-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step026-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step043-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step062-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step039-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step048-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step057-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step036-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step053-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step058-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-round1-v90-step047-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-v90-native-bound-controls-legacy-152-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-v90-native-bound-controls-teacher-44-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-v90-native-bound-controls-teacher-39-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-v90-native-bound-controls-legacy-105-20261030-v1.json",
+    "reports/ai-foundation-20261023/round1-v90-compat-corpus-20261029-v1.json",
+    "reports/ai-foundation-20261023/round1-v90-compat-step317-20261029-v1.json",
+    "reports/ai-foundation-20261023/round1-v90-compat-terminal-root-20261029-v1.json",
+    "reports/ai-foundation-20261023/human405-v91-candidate-admission-20261030-v1.json",
+    "reports/ai-foundation-20261023/human405-v84-case152-reference-20261030-v1.json"
+  ],
+  "sourceBindings": {
+    "reports/ai-foundation-20261023/human405-round1-v90-step054-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step025-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step040-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step061-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step044-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step035-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step050-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step055-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step060-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step041-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step024-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step045-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step051-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step038-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step042-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step027-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step056-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-audit-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step049-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step052-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step037-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step046-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step059-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step026-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step043-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step062-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step039-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step048-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step057-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step036-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step053-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step058-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-round1-v90-step047-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-v90-native-bound-controls-legacy-152-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-v90-native-bound-controls-teacher-44-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-v90-native-bound-controls-teacher-39-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-v90-native-bound-controls-legacy-105-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/round1-v90-compat-corpus-20261029-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/round1-v90-compat-step317-20261029-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/round1-v90-compat-terminal-root-20261029-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v90-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-v91-candidate-admission-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v91-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    },
+    "reports/ai-foundation-20261023/human405-v84-case152-reference-20261030-v1.json": {
+      "sourceSnapshot": "adhoc/human405-v84-candidate-source-20261030-v1.json.gz",
+      "baseCommit": "5322ac7e7dbe2291dc89643c23920a7e19f27b24"
+    }
+  },
+  "scope": "Artifact-only checkpoint. Runtime remains v67; unadmitted v90/v91 candidates are explicit archived overlays, not installed code.",
+  "candidateAdmitted": false
+}
