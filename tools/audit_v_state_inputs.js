@@ -292,8 +292,13 @@ try {
               if (evaluateSector(node.observation) !== evaluateSector(outcomeModel.createDecisionObservation(node.observation,
                 { seatId: sectorFixture.seatId }))) throw new Error("静止继续路径组合的原始/标准估值不一致");
             }
-            if (evaluateSector(attained.node.observation) !== rawValue + bound.maximumValueIncrease) throw new Error("静止继续路径未达到组合上界");
-            console.log(`[PASS] independent-quiet-bound-composition: root=${rawValue} leaf=${evaluateSector(attained.node.observation)}`);
+            const leafValue = evaluateSector(attained.node.observation), upper = rawValue + bound.maximumValueIncrease;
+            if (leafValue > upper) throw new Error("原生继续路径超过组合上界");
+            // Attainment belongs to the legacy linear-model contract. A funded
+            // purpose ceiling is an upper bound and need not be attainable.
+            const legacy = independentValue.supportsLegacyValueProof(root.observation);
+            if (legacy && leafValue !== upper) throw new Error("线性模型静止继续路径未达到组合上界");
+            console.log(`[PASS] independent-quiet-bound-composition: root=${rawValue} leaf=${leafValue} upper=${upper} legacyAttainment=${legacy}`);
           }
           if (!cardId) {
             const scan = root.legalActions.find(action => action.family === "scan"), bound = sectorPort.standardScanValueBound(root);
@@ -440,9 +445,11 @@ try {
             throw new Error("达到上界的内部前缀原始/标准V不一致");
           }
         }
-        if (!attained.complete || attained.submissions !== 10 || evaluate(attained.node.observation)
-          !== evaluate(root.observation)+bound.maximumValueIncrease) throw new Error("主行动后上界与实际最短完成见证不一致");
-        console.log(`[PASS] independent-post-main-attainment: root=${evaluate(root.observation)} leaf=${evaluate(attained.node.observation)} prefixes=${attained.prefixes.length}`);
+        const leafValue = evaluate(attained.node.observation), upper = evaluate(root.observation)+bound.maximumValueIncrease;
+        const legacy = independentValue.supportsLegacyValueProof(root.observation);
+        if (!attained.complete || attained.submissions !== 10 || leafValue > upper
+          || legacy && leafValue !== upper) throw new Error("主行动后原生继续路径与适用模型的上界契约不一致");
+        console.log(`[PASS] independent-post-main-continuation: root=${evaluate(root.observation)} leaf=${leafValue} upper=${upper} legacyAttainment=${legacy} prefixes=${attained.prefixes.length}`);
       } finally { port.close(); }
     }
     {

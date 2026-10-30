@@ -1,0 +1,22 @@
+[INFO(需装配)] env.observe(原始, 需装配): schema=false scoring=false progress=false assets=false hand=true V=THROW: V 只接受同 viewer 的标准 outcome projection
+[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib
+[PASS] independent-state-value: total=49 model=seti-purpose-capital-state-value-v3
+[PASS] independent-value-projection: total=44.5 fullFactsEqual=true weightedEqual=true
+[PASS] independent-card-choice-model-guard: total=45.5 nativeChoices=3 inputs=3
+[PASS] independent-public-pick-barrier: total=45.5
+[PASS] independent-opening-money-capacity: delta=1
+[PASS] independent-opening-plan: total=46
+[PASS] independent-opening-pass-normal-form: total=46
+[PASS] independent-initial-information: offer=28.5 income=35
+[PASS] independent-post-main-income: delta=3 retainedData=2
+[PASS] independent-alien-opening-sector-task: card=opening total=41
+[PASS] independent-standard-scan-refill-bound: stages=3 leaves=6
+[PASS] independent-company-card-trade: card=opening total=40
+[PASS] independent-alien-opening-sector-task: card=b_114.webp total=39
+[FAIL] independent-card-choice-equivalence: 静止继续路径未达到组合上界
+[PASS] heuristic-leaf(反事实叶): schema=true scoring=true progress=true assets=true hand=true V=total=223.0
+[INFO(需装配)] vguided-fork(原始, 需装配): schema=false scoring=false progress=false assets=false hand=true V=THROW: V 只接受同 viewer 的标准 outcome projection
+[PASS] browser-info-layer(机器席位观察): schema=true scoring=true progress=true assets=true hand=true V=total=0.0
+[PASS] independent-income-plan-proof: value=53.5 nativeControlInputs=9 inventedSuccessor=false
+
+V 输入审计有 FAIL（见上，检查对应调用点装配）

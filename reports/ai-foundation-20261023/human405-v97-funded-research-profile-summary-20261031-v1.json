@@ -1,0 +1,156 @@
+{
+  "self": [
+    {
+      "ms": 63,
+      "name": "(garbage collector)",
+      "file": ""
+    },
+    {
+      "ms": 19,
+      "name": "readCommittedState",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 16,
+      "name": "structuredClone",
+      "file": "worker/js_transferable"
+    },
+    {
+      "ms": 15,
+      "name": "forwardIdentity",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 15,
+      "name": "createNode",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 14,
+      "name": "structuredClone",
+      "file": "worker/js_transferable"
+    },
+    {
+      "ms": 10,
+      "name": "structuredClone",
+      "file": "worker/js_transferable"
+    },
+    {
+      "ms": 8,
+      "name": "structuredClone",
+      "file": "worker/js_transferable"
+    },
+    {
+      "ms": 7,
+      "name": "forwardIdentity",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 6,
+      "name": "structuredClone",
+      "file": "worker/js_transferable"
+    },
+    {
+      "ms": 6,
+      "name": "forwardIdentity",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 5,
+      "name": "wrapSafe",
+      "file": "cjs/loader"
+    }
+  ],
+  "inclusive": [
+    {
+      "ms": 261,
+      "name": "expandResourcePlan",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 242,
+      "name": "expand",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 124,
+      "name": "finishChild",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 109,
+      "name": "postMainValueBound",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 104,
+      "name": "observeEnvelope",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 104,
+      "name": "get observation",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 102,
+      "name": "executeCurrent",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 98,
+      "name": "expand",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 98,
+      "name": "expandWithCardPick",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 95,
+      "name": "project",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 78,
+      "name": "goalMovementSpec",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 61,
+      "name": "createNode",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 54,
+      "name": "movementTiming",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 54,
+      "name": "compareTiming",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 53,
+      "name": "executeCurrent",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 40,
+      "name": "forwardIdentity",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 33,
+      "name": "finishChild",
+      "file": "ai/analysis-port.js"
+    },
+    {
+      "ms": 30,
+      "name": "expandGoalMovementPlan",
+      "file": "ai/analysis-port.js"
+    }
+  ]
+}

@@ -1011,6 +1011,24 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "真实页面按收入数据需求固定准备流程，原生输入逐笔计数且权威状态不变",
   counterexample: "模块装配丢失、兑换或角标独立展开、缺少需求仍准备、宏漏记输入或修改权威根",
 }), Object.freeze({
+  id:'production-funded-research-value',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiStateValue?.researchCapital && window.SetiTechResolver)',
+  actionExpression: `(async()=>{
+    const f=await fetch('/adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-035-20261030-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('科技用途恢复失败');
+    const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+    try{const root=p.openRoot(),value=window.SetiStateValue.evaluateStateValue(root.observation,f.seatId),player=root.observation.publicState.players.find(p=>p.playerId===f.seatId);
+      if(player.researchPublicityCost!==6||value.components.researchPotential!==9.5||value.total!==52)throw Error('公开费用或科技用途估值缺失');
+      if(JSON.stringify(window.SetiStateValue.evaluateStateValue(p.valueObservation(root),f.seatId))!==JSON.stringify(value))throw Error('完整与紧凑用途估值不同');
+      const start=p.expand(root,root.legalActions.find(a=>a.family==='research_tech').actionId),choice=start.legalActions.find(a=>a.target.tileId==='blue1'&&a.target.blueSlot===1),end=p.expand(start,choice.actionId),actual=window.SetiStateValue.evaluateStateValue(end.observation,f.seatId);
+      if(actual.total!==value.total||actual.components.researchPotential!==0)throw Error('原生取得科技与用途重复计价');
+      if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('科技用途验证污染根或RNG');window.__fundedResearchSmoke={ok:true,value:value.total};
+    }finally{p.close();c.dispose();}
+  })()`,
+  successExpression:'window.__fundedResearchSmoke?.ok === true',
+  obligation:'真实页面公开原生研究费用，保留宣传的科技用途与原生取得一致，紧凑观察与根隔离保持',
+  counterexample:'Node单独可用而页面未装配费用来源、同一科技重复计价或估值读取隐藏奖励',
+}), Object.freeze({
   id:'production-quiet-data-tail',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiLocalDecisionPlans?.dataTailCompletion && window.SetiResidualDomainSession?.listFinalMarkChoices && window.SetiScienceSession?.listIncomeChoices)',
   actionExpression: `(async()=>{

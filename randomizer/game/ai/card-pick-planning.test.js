@@ -159,7 +159,8 @@ console.log(JSON.stringify({purposeCardPick:'passed',noUnmotivatedTrades:true,in
     const root=port.openRoot(),r=searchDecision({port,root,evaluate:createStateValueEvaluator(f.seatId),...agent.OPTIONS,budget:{transitions:limit,nodes:512,frontier:256,milliseconds:15000}});
     assert.deepEqual(c.lifecycle.save().envelope,before);
     if(limit===1){assert(!r.complete);assert.equal(r.actionId,null);assert.equal(r.planContinuation,null);assert.equal(r.stopReason,'transition-budget');}
-    else{assert(r.complete);assert.equal(root.legalActions.find(a=>a.actionId===r.actionId).target.cardInstanceId,'card-40-0');assert.equal(r.candidates.length,1);assert.equal(r.value,59);assert(r.diagnostics.transitions<256);}
+    else{assert(r.complete);assert.equal(root.legalActions.find(a=>a.actionId===r.actionId).target.cardInstanceId,'card-40-0');assert.equal(r.candidates.length,1);assert.equal(r.value,59.5); // Includes the visible purple4 publicity bonus in held DLC9 capital.
+    assert(r.diagnostics.transitions<256);}
    }finally{port.close();}
   }
  }finally{c.dispose();}

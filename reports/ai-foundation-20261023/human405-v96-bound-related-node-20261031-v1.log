@@ -1,0 +1,35 @@
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+59.5 !== 59
+
+    at Object.<anonymous> (/private/tmp/seti-human405-v65-20261030-onpkqe05/randomizer/game/ai/card-pick-planning.test.js:162:171)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 59.5,
+  expected: 59,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+{"postMainIncome":"passed","prunedInputs":1903,"value":41.5,"small":[{"rawInputs":60,"prunedInputs":16,"value":32.5},{"rawInputs":60,"prunedInputs":1,"value":7.5},{"rawInputs":284,"prunedInputs":40,"value":33.5},{"rawInputs":276,"prunedInputs":1,"value":8.5},{"rawInputs":561,"prunedInputs":561,"value":44}],"paymentCases":[{"tradeId":"cards-for-credit","rawInputs":1141,"prunedInputs":1141,"exits":3},{"tradeId":"cards-for-energy","rawInputs":1304,"prunedInputs":1304,"exits":3}]}
+{"postMainValueBound":"passed","rows":[{"name":"no-energy","raw":18,"bounded":18,"prunes":0,"upper":32,"value":32},{"name":"one-energy","raw":163,"bounded":108,"prunes":27,"upper":33,"value":33},{"name":"two-energy","raw":563,"bounded":153,"prunes":36,"upper":34,"value":34},{"name":"cash-income","raw":1373,"bounded":657,"prunes":171,"upper":42.5,"value":35.5},{"name":"reachable-mercury","raw":35,"bounded":32,"prunes":3,"upper":33.5,"value":33.5},{"name":"neutral-data-visits","raw":409,"bounded":301,"prunes":53,"upper":33.5,"value":33}]}
+{"quietBoundComposition":"passed","rows":[{"name":"no-hand","raw":7,"composed":7,"value":27.5,"distance":1},{"name":"unused-blind-card-and-task","raw":116,"composed":70,"value":35,"distance":1},{"name":"two-data-cards-and-task","raw":471,"composed":319,"value":35.5,"distance":1},{"name":"late-income","raw":540,"composed":26,"value":17,"distance":1}],"actualB114Continuation":true,"readyAndHistoricalRejected":true}
+SUMMARY unit passed=4 failed=1 total=5 time=22.26s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=5
+FAIL randomizer/game/ai/card-pick-planning.test.js status=1 signal=none

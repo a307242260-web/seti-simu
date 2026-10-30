@@ -19,7 +19,9 @@ function recordedNode(id,target){
  const before=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
  try{
   const root=p.openRoot(),r=searchDecision({port:p,root,evaluate:createStateValueEvaluator(f.seatId),...agent.OPTIONS,budget:{transitions:256,nodes:512,frontier:256,milliseconds:15000}}),line=r.lines[0],move=line.movementPolicy;
-  assert(move.forceExecution);assert.equal(line.resourcePolicy.incomeTail.selected,false);assert.equal(line.resourcePolicy.incomeTail.netGain,-2.5);assert(line.resourcePolicy.retainedActionIds.includes(move.selectedActionId),'preserving the known technology card must retain urgent movement');
+  assert(move.forceExecution);assert.equal(line.resourcePolicy.incomeTail.selected,false);assert(line.resourcePolicy.incomeTail.netGain<0);
+  const state=JSON.parse(before.committedState),requirements=require('../production-kernel').getResourceGoalRequirements(state,f.seatId),income=demand.catalog({state,seatId:f.seatId,requirements,actions:root.legalActions}).find(g=>g.kind==='income'),first=root.legalActions.find(a=>a.family==='place_data');assert(income&&first);
+  const native=p.expandResourcePlan(root,{id:income.id,goal:income,operation:{},firstActionId:first.actionId},()=>null),evaluate=createStateValueEvaluator(f.seatId);assert(native.complete);assert.equal(evaluate(native.node.observation)-evaluate(root.observation),line.resourcePolicy.incomeTail.netGain);assert(line.resourcePolicy.retainedActionIds.includes(move.selectedActionId),'preserving the known technology card must retain urgent movement');
   assert(r.complete,r.stopReason);assert(r.actionId,'the selected urgent native move must survive the combined candidate filters');assert.equal(r.actionId,move.selectedActionId);assert.equal(line.alternatives,1);assert.equal(line.edges.length,1);assert(Number.isFinite(r.value));assert.deepEqual(c.lifecycle.save().envelope,before);
  }finally{p.close();c.dispose();}
 }

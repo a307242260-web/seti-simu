@@ -2,9 +2,9 @@
   'use strict';const common=typeof module==='object'&&module.exports;
   const api=factory(common?require('../cards/deck'):root.SetiCards,common?require('../cards/effects'):root.SetiCardEffects,
     common?require('../data'):root.SetiData,common?require('../players'):root.SetiPlayers,
-    common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('../rockets'):root.SetiRocketActions,common?require('../industry'):root.SetiIndustry,common?require('./state-value'):root.SetiStateValue);
+    common?require('../abilities/rocket'):root.SetiAbilityRocket,common?require('../rockets'):root.SetiRocketActions,common?require('../industry'):root.SetiIndustry,common?require('./state-value'):root.SetiStateValue,common?require('../tech/resolver'):root.SetiTechResolver);
   if(common)module.exports=api;else root.SetiResourceDemand=api;
-})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue){
+})(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver){
   'use strict';
   const VERSION='seti-goal-resource-preparation-v3';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
@@ -96,9 +96,13 @@
     const card=choices[0]?.card;
     return card?{...goal,targetComputerSlot:4,incomeCardId:card.id,incomeFunding:true}:null;
   }
+  function heldAndResearchCapital(state,p){
+    return stateValue.handCapital(p.hand,p.techState,state.tech,state.turn.roundNumber)
+      +stateValue.researchCapital({hand:p.hand,techState:p.techState,supply:state.tech,round:state.turn.roundNumber,
+        publicity:p.resources.publicity,researchCost:techResolver.getResearchPublicityCost(p),passed:state.turn.passedPlayerIds.includes(p.id)});
+  }
   function incomeOpportunityCost(state,p,card){
-    const before=stateValue.handCapital(p.hand,p.techState,state.tech,state.turn.roundNumber);
-    return before-stateValue.handCapital(p.hand.filter(c=>c.id!==card.id),p.techState,state.tech,state.turn.roundNumber);
+    return heldAndResearchCapital(state,p)-heldAndResearchCapital(state,{...p,hand:p.hand.filter(c=>c.id!==card.id)});
   }
   function incomeCardValue(state,seatId,card){
     const p=owner(state,seatId),gain=cards.getIncomeGainForCard(card);
@@ -422,5 +426,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,cardOpportunityCost,dataCornerCards});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,cardOpportunityCost,heldAndResearchCapital,dataCornerCards});
 });

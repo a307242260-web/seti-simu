@@ -1,0 +1,63 @@
+trusted analysis fork isolation and exact reuse passed
+{"fundedResearch":"passed","nativeAcquisitionContinuity":true,"fullCompactEqual":true,"publicNativeFees":true,"sharedFreeCardTarget":true,"hiddenBonusIgnored":true,"sourceAndRngUnchanged":true}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: transition-budget
+    at run (/private/tmp/seti-human405-v65-20261030-onpkqe05/randomizer/game/ai/post-main-income.test.js:43:5)
+    at Object.<anonymous> (/private/tmp/seti-human405-v65-20261030-onpkqe05/randomizer/game/ai/post-main-income.test.js:48:16)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert(rows.some(row=>row.prunes>0))
+
+    at Object.<anonymous> (/private/tmp/seti-human405-v65-20261030-onpkqe05/randomizer/game/ai/post-main-value-bound.test.js:70:1)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+purpose capital, typed turn-tail proofs, default-model guard, budgets and cold blue funding passed
+{"quietBoundComposition":"passed","rows":[{"name":"no-hand","raw":7,"composed":7,"value":27.5,"distance":1},{"name":"unused-blind-card-and-task","raw":116,"composed":116,"value":34.5,"distance":1},{"name":"two-data-cards-and-task","raw":471,"composed":471,"value":35,"distance":1},{"name":"late-income","raw":540,"composed":540,"value":16.5,"distance":1}],"actualB114Continuation":true,"readyAndHistoricalRejected":true}
+quiet data prerequisites, native currency income and final marks match typed plan value; budgets/root isolation passed
+SUMMARY unit passed=6 failed=2 total=8 time=22.65s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=1
+OWNER policy/decision-search tests=6
+OWNER policy/state-value tests=1
+FAIL randomizer/game/ai/post-main-income.test.js status=1 signal=none
+FAIL randomizer/game/ai/post-main-value-bound.test.js status=1 signal=none

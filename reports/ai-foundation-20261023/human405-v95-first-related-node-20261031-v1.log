@@ -1,0 +1,8 @@
+known blue prerequisites, native income, seven-data plan with six-slot pool, recovery and budgets passed
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+independent state value accounting and strict inputs passed
+SUMMARY unit passed=4 failed=0 total=4 time=1.43s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=1

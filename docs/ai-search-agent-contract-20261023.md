@@ -1,5 +1,9 @@
 # 共享搜索玩家接入
 
+2026-10-31候选v98的筹足宣传研究用途使用V3；新增公开费用、PASS窗口、固定计划值及
+主行动后上界的契约见[机器玩家设计](ai-design.md#2026-10-31筹足宣传的科技用途候选)。
+源码准入已通过；本版本自主首轮尚未运行，也不代表整局成绩。
+
 本接口仍为实验版本。Simulation通过`reset({agentType:"search"})`选择，
 Browser通过`?agent=search`选择；两端都调用`game/ai/search-agent.js`的同一factory。
 未改变默认旧策略，也没有将简易completion策略的整局成绩算给搜索玩家。

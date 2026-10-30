@@ -1843,9 +1843,9 @@
       if (postMainValueBounds.has(node)) return postMainValueBounds.get(node);
       // Prefer the already-audited quiet-window bound; avoid rebuilding its
       // rejected unfiltered company catalog first for every known continuation.
-      const policyNode=resourcePlanning?{...node,legalActions:node.legalActions.filter(action=>!(action.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(action.target?.abilityId)))}:null;
+      const policyNode=resourcePlanning?{status:node.status,legalActions:node.legalActions.filter(action=>!(action.family==="industry"&&["turing_borrow_tech","helios_remove_tech_income"].includes(action.target?.abilityId)))}:null;
       const quiet=policyNode?describePostMainPlan(stored,policyNode,true):null;
-      const result=quiet?{proof:"seti-quiet-post-main-policy-value-bound-v1",maximumValueIncrease:quiet.maximumValueIncrease,sourceProof:quiet}:describePostMainValueBound(stored,node);
+      const result=quiet?{proof:"seti-quiet-post-main-policy-value-bound-v1",maximumValueIncrease:quiet.maximumValueIncrease,maximumPublicity:quiet.maximumPublicity,sourceProof:quiet}:describePostMainValueBound(stored,node);
       // No admitted post-main action in either source contract can gain a
       // permanent technology. Existing capital is constant (or expires at a
       // round boundary); only a known public pick can increase held-card capital.
@@ -1855,10 +1855,14 @@
         const state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId);
         const current=stateValue.handCapital(owner.hand,owner.techState,state.tech,state.turn.roundNumber);
         const offered=stateValue.handCapital(state.cards.publicCards.filter(Boolean),owner.techState,state.tech,state.turn.roundNumber);
-        const capitalUpperIncrease=Math.max(0,offered-current);
-        bound=freeze({...result,proof:"seti-post-main-capital-upper-v1",linearSourceProof:result.proof,
+        const currentResearch=resourceDemand.heldAndResearchCapital(state,owner)-current;
+        const researchCost=techResolver.getResearchPublicityCost(owner);
+        const researchUpper=result.maximumPublicity<researchCost?0:stateValue.researchCapitalCeiling({techState:owner.techState,supply:state.tech,round:state.turn.roundNumber,
+          researchCost});
+        const capitalUpperIncrease=Math.max(0,offered-current)+Math.max(0,researchUpper-currentResearch);
+        bound=freeze({...result,proof:"seti-post-main-capital-upper-v2",linearSourceProof:result.proof,
           maximumValueIncrease:result.maximumValueIncrease+capitalUpperIncrease,capitalUpperIncrease,
-          capitalValueModel:stateValue.MODEL_VERSION,sourceHandCapital:current,maximumPublicHandCapital:offered,
+          capitalValueModel:stateValue.MODEL_VERSION,sourceHandCapital:current,maximumPublicHandCapital:offered,sourceResearchCapital:currentResearch,maximumResearchCapital:researchUpper,
           permanentTechnologyGainAdmitted:false});
       }
       postMainValueBounds.set(node, bound);
@@ -1971,7 +1975,18 @@
       const incomePossible = !occupied.includes(4) && stockUpper >= 4 && owner.hand.length > minimumDataCorners;
       const incomeUpper = incomePossible ? Math.max(0,4-state.turn.roundNumber-(4-occupied.length)*0.5
         + (occupied.length < 2 ? 0.5 : 0)-minimumDataCorners*0.5) : 0;
-      return freeze({ proof: "seti-post-main-visit-income-value-bound-v1", maximumValueIncrease: movementUpper+incomeUpper,
+      // The audited window has only one-publicity hand corners, one computer
+      // publicity reward, one currency income, and one-use visit slots. Card
+      // purchases cannot grow publicity: known picks cost2cards or3publicity;
+      // money purchases/blind income stop at the unknown-owned-card barrier.
+      const visitMoney=slots.reduce((n,s)=>n+(s.trigger.effect.options?.gain?.credits||0)+(s.trigger.effect.options?.gain?.energy||0),0);
+      const visitPublicity=slots.reduce((n,s)=>n+(s.trigger.effect.options?.gain?.publicity||0),0);
+      const visitCards=slots.reduce((n,s)=>n+(["draw_cards","pick_card"].includes(s.trigger.effect.type)?Math.max(1,s.trigger.effect.options?.count||1):0),0);
+      const maximumMovePoints=probes.length?owner.resources.energy+Math.floor(owner.resources.credits/2)+owner.hand.length+visitCards+visitMoney+Number(incomePossible):0;
+      const maximumPublicity=owner.resources.publicity+owner.hand.length+visitCards+visitPublicity+maximumMovePoints
+        +Number(!occupied.includes(2)&&stockUpper>=2);
+      return freeze({ proof: "seti-post-main-visit-income-value-bound-v2", maximumValueIncrease: movementUpper+incomeUpper,
+        maximumPublicity,maximumMovePoints,
         movementUpper, incomeUpper, stockUpper, minimumDataCorners, minimumFirstPositiveMoves, positiveRewardSurplus,
         visitRewardSlots: slots.map(slot => ({ cardInstanceId: slot.card.id, ruleId: slot.trigger.id, value: slot.value })),
         minimumMoveCostValue: 1, maximumNativeArrivalValue: 0.5,
@@ -2239,17 +2254,20 @@
       // at most .5V data, so it cannot increase value on its own. The legacy
       // gross bound remains unchanged for its independent normal-form callers.
       let maximumValueIncrease = allowNoExclusions?0:dataCornerIds.size * weights.availableData, additionalScore = 0;
+      let publicityGain=0,freeCards=0,moneyGain=0;
       function includeBonus(bonus) {
         if (!bonus) return true;
         if (bonus.type === "income" && Object.keys(bonus).length === 1 && incomeReachable) {
           maximumValueIncrease += (allowNoExclusions?4:5) - state.turn.roundNumber;
           return true;
         }
-        if (bonus.type === "choose_card" && Object.keys(bonus).length === 1) { maximumValueIncrease += 1; return true; }
+        if (bonus.type === "choose_card" && Object.keys(bonus).length === 1) { maximumValueIncrease += 1; freeCards++; return true; }
         const weight = bonus.type === "score" ? 1 : weights[bonus.type];
         if (!["score", "credits", "energy", "publicity"].includes(bonus.type)
           || Object.keys(bonus).some(key => key !== "type" && key !== bonus.type)
           || !Number.isSafeInteger(bonus[bonus.type]) || bonus[bonus.type] < 0) return false;
+        if(bonus.type==="publicity")publicityGain+=bonus.publicity;
+        if(["credits","energy"].includes(bonus.type))moneyGain+=bonus[bonus.type];
         maximumValueIncrease += bonus[bonus.type] * weight;
         if (bonus.type === "score") additionalScore += bonus.score;
         return true;
@@ -2304,7 +2322,9 @@
       if (scoreUpperBound >= scoreThreshold) return null;
       const transition = previewTurn(state);
       if (!transition.turnAdvanced || transition.roundAdvanced || transition.gameEnded || !allowNoExclusions&&transition.nextPlayerId === seatId) return null;
-      return freeze({ proof: allowNoExclusions?"seti-quiet-single-turn-net-resource-upper-v3":"seti-quiet-post-main-default-value-plan-v6", retainedActionIds: kept.map(action => action.actionId),
+      const maximumMovePoints=ownRockets.length?owner.resources.energy+Math.floor(owner.resources.credits/2)+owner.hand.length+freeCards+moneyGain+Number(incomeReachable):0;
+      const maximumPublicity=owner.resources.publicity+owner.hand.length+freeCards+publicityGain+maximumMovePoints;
+      return freeze({ maximumPublicity,maximumMovePoints,proof: allowNoExclusions?"seti-quiet-single-turn-net-resource-upper-v4":"seti-quiet-post-main-default-value-plan-v6", retainedActionIds: kept.map(action => action.actionId),
         excludedActionIds: excluded.map(action => action.actionId), maximumValueIncrease, scoreUpperBound, scoreThreshold,
         incomeReachable, retainedDataCardCount: dataCornerIds.size,
         ...(allocationUpper!=null?{dataAllocationUpper:allocationUpper,paidPublicDataAllowance,maximumDataCount,boundedSwap}:{} ) });

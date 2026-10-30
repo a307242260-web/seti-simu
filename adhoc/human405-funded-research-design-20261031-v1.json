@@ -1,0 +1,24 @@
+{
+  "status": "source-admitted-v98-autonomous-trial-pending",
+  "baseCommit": "004c39e1413a3b09c586e3a34bc8f0cbd052c0a9",
+  "evidence": "reports/ai-foundation-20261023/human405-r1-capital-ledger-20261031-v1.json",
+  "change": "Forecast one paid research purpose funded by current publicity, using native public fee, available public stacks, first-take/visible stack bonus and existing technology-use assumptions. Keep the best compatible one-card free research option, excluding the same acquired tile. No probe forecast or route claim in this revision.",
+  "inputOwnership": "Expose the exact native research publicity cost in the existing public-player projection. Full, compact, Browser, Simulation and policy observations share this field. Canonical previews read the same native resolver. PASS comes from authoritative publicState.passedPlayerIds. Native passed-green/publicity8 counterexample now agrees with the canonical preview.",
+  "identity": "Unchanged full native state, pending control and information-set identity; no new equivalence or dominance relation. Existing exact execution DAG, goal/prefix reuse and RNG isolation retained.",
+  "reachability": "Only existing publicity can fund the forecast; no assumed future cards, exchanges or preparation reward. Actual native search preparations retain goal reachability and resource lower bounds. Blue slot/owned/supply constraints stay explicit.",
+  "forecastBoundary": "One paid research and at most one compatible known free-research card, not a sum over all targets. Paid tile and free card cannot claim the same first take/capability twice. Hidden stack bonus gives no bonus value. Existing usage counts remain hypotheses, never guaranteed search bounds. Passed seats use a later planning round; round4/terminal gains remain excluded. Paid and free-card options include the same currently visible stack bonus. Compatibility is computed over at most12target values, excluding the paid target from held options.",
+  "proofs": "Keep round4 legacy guards. Income/blue fixed-plan values include exact before/after held-and-research capital from the native player preview. Post-main upper bound adds a separate gross-funded-research ceiling minus the current component; it does not treat the forecast itself as an upper bound. Quiet same-round end does not change this component; no geometry-dependent value is introduced. Sources now certify maximumPublicity using audited one-publicity hand dispositions, distinct native computer/blue rewards and finite paid movement/one-use visit budgets. If this maximum cannot pay the native fee, no paid-research capital slack is added. The public bound is conservative about overlapping sources; actual native controls are still required.",
+  "workLimit": "At most12 public technology options and12 compatible free-card target options per value call; no native simulation and no new cross-state cache. All actual graph/proof work remains under caller global transition/node/frontier/time budgets; standard user-configured runtime remains unchanged.",
+  "admission": "Target-root cold check before44teacher/legacy roots. Every root must close within256actual native inputs/600ms before any standard autonomous R1. Validate full/compact equality, native fee discounts, hidden-information masking, no duplicated hand/tech capital, fixed-plan exact deltas, every used representative bound source and fresh no-shortcut best-action controls. Run relevant/full Node and Browser gates plus V-input audit. Then exactly one distinct standard autonomous R1 if admitted.",
+  "notYetClaimed": [
+    "B117 chosen autonomously",
+    "all44point gates",
+    "proof correctness",
+    "autonomous score improvement",
+    "full-game180s",
+    "baseline promotion"
+  ],
+  "revision": "v98",
+  "admissionReport": "reports/ai-foundation-20261023/human405-v98-admission-20261031-v1.json",
+  "performance": "CPUprofile v97case152 finds104ms full observation forced by node spread under postMainValueBound. v98 passes only status/legalActions; all44best actions/values matchv97, case152492.294ms vs607.348ms in single cold samples."
+}

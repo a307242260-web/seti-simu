@@ -2,10 +2,11 @@
   "use strict";
   const common = typeof module === "object" && module.exports;
   const api = factory(common ? require("../game/data/placement") : root.SetiDataPlacement,
-    common ? require("../game/industry/catalog") : root.SetiIndustryCatalog);
+    common ? require("../game/industry/catalog") : root.SetiIndustryCatalog,
+    common ? require("../game/tech/resolver") : root.SetiTechResolver);
   if (common) module.exports = api;
   else root.SetiSimulationContract = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (dataPlacement, industryCatalog) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (dataPlacement, industryCatalog, techResolver) {
 "use strict";
 
 const OBSERVATION_SCHEMA_VERSION = "seti-rl-observation-v1";
@@ -85,6 +86,7 @@ function sanitizePublicPlayer(player, finalScoreSummary) {
     credits: Number(resources.credits) || 0,
     energy: Number(resources.energy) || 0,
     publicity: Number(resources.publicity) || 0,
+    researchPublicityCost: techResolver.getResearchPublicityCost(player),
     availableData: Number(resources.availableData) || 0,
     additionalPublicScan: Number(resources.additionalPublicScan) || 0,
     handCount: Array.isArray(player?.hand)

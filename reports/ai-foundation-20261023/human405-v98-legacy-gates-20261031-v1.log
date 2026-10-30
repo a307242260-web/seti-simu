@@ -1,0 +1,36 @@
+{"label":"initial-selection","id":"case-001","choices":5,"complete":true,"stopReason":null,"inputs":144,"native":144,"logicalResourceInputs":0,"reusedResourceInputs":0,"states":42,"pending":0,"ms":162.54149999999998}
+{"label":"initial-income","id":"case-003","choices":5,"complete":true,"stopReason":null,"inputs":26,"native":26,"logicalResourceInputs":0,"reusedResourceInputs":0,"states":22,"pending":0,"ms":137.99225}
+{"label":"first-other-company-main","id":"case-008","choices":17,"complete":true,"stopReason":null,"inputs":107,"native":107,"logicalResourceInputs":97,"reusedResourceInputs":6,"states":118,"pending":0,"ms":173.74337499999996}
+{"label":"first-other-company-post-main","id":"case-011","choices":10,"complete":true,"stopReason":null,"inputs":9,"native":9,"logicalResourceInputs":9,"reusedResourceInputs":0,"states":10,"pending":0,"ms":15.588874999999916}
+{"label":"regular-conditional","id":"case-009","choices":1,"complete":true,"stopReason":null,"inputs":41,"native":41,"logicalResourceInputs":44,"reusedResourceInputs":3,"states":42,"pending":0,"ms":53.90691700000002}
+{"label":"round2-main-with-tech","id":"case-062","choices":25,"complete":true,"stopReason":null,"inputs":85,"native":85,"logicalResourceInputs":64,"reusedResourceInputs":18,"states":85,"pending":0,"ms":174.021166}
+{"label":"round3-main-with-reserved","id":"case-105","choices":28,"complete":true,"stopReason":null,"inputs":189,"native":189,"logicalResourceInputs":188,"reusedResourceInputs":90,"states":190,"pending":0,"ms":444.1768339999999}
+{"label":"round4-main","id":"case-152","choices":24,"complete":true,"stopReason":null,"inputs":228,"native":228,"logicalResourceInputs":209,"reusedResourceInputs":51,"states":263,"pending":0,"ms":492.2941659999999}
+{"label":"previous-full-attempt-R1T8-blue","id":"baseline-r1-t8-blue","choices":17,"complete":true,"stopReason":null,"inputs":13,"native":13,"logicalResourceInputs":12,"reusedResourceInputs":6,"states":21,"pending":0,"ms":32.13499999999999}
+{"label":"previous-2s-failure-R2T9-white","id":"baseline-r2-t9-white","choices":21,"complete":true,"stopReason":null,"inputs":85,"native":85,"logicalResourceInputs":95,"reusedResourceInputs":40,"states":86,"pending":0,"ms":144.7281660000001}
+reports/ai-foundation-20261023/round1-v98-compat-corpus-20261029-v1.json
+{
+  "complete": true,
+  "nativeInputs": 211,
+  "states": 216,
+  "ms": 428.367666,
+  "sameAction": false,
+  "sameValue": false,
+  "rootAlternatives": 16,
+  "disabledSkillNativeExecutions": 0,
+  "families": {
+    "choose_target": 57,
+    "end_turn": 41,
+    "place_data": 40,
+    "choose_payment": 25,
+    "choose_card": 12,
+    "play_card": 10,
+    "card_corner": 7,
+    "quick_trade": 7,
+    "move": 6,
+    "pass": 2,
+    "launch": 2,
+    "scan": 2
+  }
+}
+{"complete":true,"inputs":86,"ms":223.222583,"terminalLeaves":1}
