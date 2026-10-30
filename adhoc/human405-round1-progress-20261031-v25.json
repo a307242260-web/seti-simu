@@ -1,0 +1,396 @@
+{
+  "schemaVersion": "seti-human405-round1-goal-checkpoint-v2",
+  "date": "2026-10-31",
+  "goalStatus": "active",
+  "productionSource": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f",
+  "artifactCommit": "88af65dbc83aa69092ebd8500218bba0371f12d5",
+  "searchVersion": "v99",
+  "valueModel": "seti-purpose-capital-state-value-v4",
+  "candidateAdmitted": true,
+  "autonomousCurrentCandidateRun": true,
+  "phase": "v99-single-standard-R1-verified-PASS-timing-corrected-strategy-gap-remains",
+  "design": "adhoc/human405-pass-investment-window-design-20261031-v1.json",
+  "coldGate": {
+    "points": 45,
+    "allComplete": true,
+    "maxNativeInputs": 235,
+    "maxMilliseconds": 489.4720830000001
+  },
+  "nativeControls": {
+    "roots": 9,
+    "numeric": 201,
+    "typed": 134,
+    "allBestActionsValuesEqual": true
+  },
+  "chromePassed": 7,
+  "valueInputAudit": "All independent current-model paths plus native PASS window pass; sole pre-existing frozen-aomomo failure retained.",
+  "fullNodeInitial": {
+    "unitPassed": 148,
+    "unitFailed": 3,
+    "fullFlowPassed": 1,
+    "reason": "Synthetic observations missing new mandatory passingPlayerIds; fixed test inputs, strict contract kept."
+  },
+  "relatedRerun": {
+    "passed": 5,
+    "failed": 0
+  },
+  "remaining": [
+    "Deliver the trial records/save/report/V2 registry with the unrelated shared V1 experiment preserved.",
+    "Continue native teacher differences24/35/36/38/39/43/62 as applicable under current policy. The corrected58 is no longer a PASS tie; old25/56 order proofs remain specifically scoped.",
+    "Derive known funded probe/planet and held conditional-card purposes from native evidence; current endpoint value53.5 still trails teacher56. Equal V and increased stage score do not establish native equivalence or full-game strength."
+  ],
+  "admission": "reports/ai-foundation-20261023/human405-v99-admission-20261031-v1.json",
+  "finalFullNode": {
+    "unitPassed": 151,
+    "unitFailed": 0,
+    "fullFlowPassed": 1,
+    "log": "reports/ai-foundation-20261023/human405-v99-full-node-20261031-v2.log"
+  },
+  "sourceCheck": "reports/ai-foundation-20261023/human405-v99-trial-runtime-source-check-20261031-v1.json",
+  "verification": "reports/ai-foundation-20261023/human405-v99-standard-r1-verification-20261031-v1.json",
+  "latestTrial": {
+    "recordPath": "reports/research/f8d9ee42.0dc7785d.quick-200.json",
+    "savePath": "seti-saves/seti-save-research-ai-search-v99-white-r1-20261031-0dc7785d-quick-200-v14.json",
+    "tracePath": "reports/research/f8d9ee42.0dc7785d.quick-200.json.decisions.jsonl",
+    "steps": 47,
+    "searches": 17,
+    "wallMs": 1105,
+    "maxNativeInputs": 94,
+    "maxMilliseconds": 164.45145799999997,
+    "planReuseHits": 9,
+    "whiteActions": [
+      {
+        "input": 24,
+        "family": "play_card",
+        "summary": "dlc_9.png"
+      },
+      {
+        "input": 25,
+        "family": "choose_target",
+        "summary": "研究 purple4"
+      },
+      {
+        "input": 26,
+        "family": "place_data",
+        "summary": "放置数据"
+      },
+      {
+        "input": 27,
+        "family": "choose_target",
+        "summary": "第一排放置位 1"
+      },
+      {
+        "input": 28,
+        "family": "place_data",
+        "summary": "放置数据"
+      },
+      {
+        "input": 29,
+        "family": "choose_target",
+        "summary": "第一排放置位 2"
+      },
+      {
+        "input": 30,
+        "family": "place_data",
+        "summary": "放置数据"
+      },
+      {
+        "input": 31,
+        "family": "choose_target",
+        "summary": "第一排放置位 3"
+      },
+      {
+        "input": 32,
+        "family": "place_data",
+        "summary": "放置数据"
+      },
+      {
+        "input": 33,
+        "family": "choose_target",
+        "summary": "第一排放置位 4"
+      },
+      {
+        "input": 34,
+        "family": "choose_card",
+        "summary": "收入 b_117.webp"
+      },
+      {
+        "input": 35,
+        "family": "end_turn",
+        "summary": "结束回合"
+      },
+      {
+        "input": 43,
+        "family": "research_tech",
+        "summary": "研究科技"
+      },
+      {
+        "input": 44,
+        "family": "choose_target",
+        "summary": "研究 blue1（蓝槽 1）"
+      },
+      {
+        "input": 45,
+        "family": "end_turn",
+        "summary": "结束回合"
+      },
+      {
+        "input": 46,
+        "family": "pass",
+        "summary": "PASS"
+      },
+      {
+        "input": 47,
+        "family": "choose_card",
+        "summary": "dlc_4.png"
+      }
+    ]
+  },
+  "endpointComparison": {
+    "actual": {
+      "score": 13,
+      "scoreSources": {
+        "initialScore": 6,
+        "techBonusScore": 7
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 4,
+        "handSize": 4,
+        "publicity": 0,
+        "score": 13
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "purple4": true
+        }
+      },
+      "hand": [
+        "dlc_40.png",
+        "dlc_4.png",
+        "dlc_39.png",
+        "dlc_37.png"
+      ],
+      "reserved": [
+        "dlc_9.png"
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v4",
+        "total": 53.5,
+        "components": {
+          "realizedScore": 13,
+          "currentEndGameBonus": 0,
+          "resources": 10.5,
+          "hand": 4,
+          "income": 17,
+          "technologyPotential": 9,
+          "handPotential": 0,
+          "researchPotential": 0
+        },
+        "terminal": false
+      }
+    },
+    "control": {
+      "score": 8,
+      "scoreSources": {
+        "initialScore": 6,
+        "techBonusScore": 2
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 4,
+        "handSize": 4,
+        "publicity": 6,
+        "score": 8
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 2,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {},
+        "disabledTiles": {},
+        "ownedTiles": {
+          "purple4": true
+        }
+      },
+      "hand": [
+        "dlc_40.png",
+        "dlc_4.png",
+        "dlc_39.png",
+        "dlc_37.png"
+      ],
+      "reserved": [
+        "dlc_9.png"
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v4",
+        "total": 53.5,
+        "components": {
+          "realizedScore": 8,
+          "currentEndGameBonus": 0,
+          "resources": 13.5,
+          "hand": 4,
+          "income": 17,
+          "technologyPotential": 4,
+          "handPotential": 0,
+          "researchPotential": 7
+        },
+        "terminal": false
+      }
+    },
+    "prior": {
+      "score": 13,
+      "scoreSources": {
+        "initialScore": 6,
+        "techBonusScore": 7
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 1,
+        "credits": 7,
+        "energy": 4,
+        "handSize": 2,
+        "publicity": 1,
+        "score": 13
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "purple4": true
+        }
+      },
+      "hand": [
+        "dlc_4.png",
+        "dlc_40.png"
+      ],
+      "reserved": [
+        "dlc_9.png"
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v4",
+        "total": 51.5,
+        "components": {
+          "realizedScore": 13,
+          "currentEndGameBonus": 0,
+          "resources": 12.5,
+          "hand": 2,
+          "income": 15,
+          "technologyPotential": 9,
+          "handPotential": 0,
+          "researchPotential": 0
+        },
+        "terminal": false
+      }
+    },
+    "teacher": {
+      "score": 15,
+      "scoreSources": {
+        "blueTechScore": 2,
+        "initialScore": 6,
+        "orbitScore": 3,
+        "techBonusScore": 4
+      },
+      "resources": {
+        "additionalPublicScan": 1,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 3,
+        "handSize": 2,
+        "publicity": 3,
+        "score": 15
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "technology": {
+        "blueBoardSlots": {
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue2": true,
+          "purple4": true
+        }
+      },
+      "hand": [
+        "dlc_5.png",
+        "dlc_37.png"
+      ],
+      "reserved": [
+        "b_117.webp",
+        "dlc_9.png"
+      ],
+      "value": {
+        "modelVersion": "seti-purpose-capital-state-value-v4",
+        "total": 56,
+        "components": {
+          "realizedScore": 15,
+          "currentEndGameBonus": 0,
+          "resources": 11,
+          "hand": 2,
+          "income": 19,
+          "technologyPotential": 9,
+          "handPotential": 0,
+          "researchPotential": 0
+        },
+        "terminal": false
+      }
+    }
+  },
+  "sameNativePrefixThrough42": true,
+  "exactBeforeChangedChoiceStateSessionRng": true,
+  "findings": [
+    "Exactly one standard original23-opening autonomous R1 for v99; no forced human prefix or opponent actions beyond PASS and necessary choices.",
+    "All native inputs, final committed state/session/RNG and trace choices replay exactly. Native prefix through input42 equals v98 exactly; input43 changes from PASS to research.",
+    "White13points/blue1+purple4 versus v98 8points/purple4; both retain hand income2. Native acquisition replaces premature PASS after the investment-window correction.",
+    "Prior v94 also13points but hand income1. Teacher15points/blue2+purple4 remains. Endpoint V is recomputed through current native V4 projections for every record, not older trace schemas.",
+    "This is R1 stage evidence, not a full-game strength or180second acceptance claim. Baselinev41 unchanged."
+  ],
+  "baseline": "ai-search-v41-baseline-20261029",
+  "baselineEligible": false,
+  "strategicAlignmentComplete": false,
+  "completionNote": "Goal active. v99 realizes the funded research before PASS, increasing native stage points8to13 while common endpoint V4 stays53.5. Teacher15points/56V remains. No new full game or baseline promotion."
+}

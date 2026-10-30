@@ -1,0 +1,58 @@
+{
+  "baseCommit": "0dc7785da8a4dce7bc81eabbb7dc92dcf6faf58f",
+  "snapshot": "/private/tmp/seti-human405-v65-20261030-onpkqe05",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "files": {
+    "adhoc/archive-human405-v99-trial-20261031-v1.py": "0c6712ab1121404a48019288f682d45e1755688333bfc0cc32546c026d890212",
+    "adhoc/deliver-human405-round1-v99-trial-20261031-v1.py": "e2ec8ad6f988c0954162c427de410064dc638e32d7ae4504029f09ea338d04cf",
+    "adhoc/human405-round1-progress-20261031-v25.json": "fe5899b88c84506eed8eaa4e498736681bcb283aa1aaee520b7c9fb67f78a13b",
+    "adhoc/prepare-human405-v99-trial-root-overlays-20261031-v1.js": "22af86eeacae2c02affafaefd92ab37aeec84cd02a37e1f17cfb7c49235e369b",
+    "adhoc/verify-human405-v99-trial-20261031-v1.js": "26a6007d920356a29ca6fe4436ff83c8aca908602a6efb45bf1f67cbab235ef3",
+    "docs/ai-design.md": "65c3c3f7e1afbc4888a47f8568885cfd1fd6f0f746e55ee4e5bc41a45635edc5",
+    "reports/ai-foundation-20261023/human405-v99-before-standard-run-20261031-v1.log": "4a36a536bb32550e15bf2f760fef278ee9c46457c44fe0fd2f97dba9c4831a40",
+    "reports/ai-foundation-20261023/human405-v99-register-stage-20261031-v1.log": "3f974a7dd698d23b5569a83cf736ab292688078cbfd1eedb2dc1ce6195a161e5",
+    "reports/ai-foundation-20261023/human405-v99-standard-r1-verification-20261031-v1.json": "d6b89e6a5bd53edba7befd061b3187be3ebf4e2e2d7fd90125b7544b9ebeb4d3",
+    "reports/ai-foundation-20261023/human405-v99-standard-run-20261031-v1.log": "6d2729edd29936266efa4a5f38b559e5fcc4d3aaf1e05c1becb2963b04687d8c",
+    "reports/ai-foundation-20261023/human405-v99-trial-runtime-source-check-20261031-v1.json": "46e98fc2a0df3fc63ea239bb2f687d15bfb218b60daaa5b0211f8af918b83b61",
+    "reports/ai-foundation-20261023/human405-v99-trial-verifier-20261031-v1.log": "a88bb25beb2ed90cec2a5f5153a3fab5032f1430c0d3922a36110a7e03a38368",
+    "reports/iteration/ai-search-v99-white-r1-20261031/f8d9ee42.0dc7785d.quick-200.action-log.html": "24ffb6b4a69d7b70ca44f05ea12f207d0ce971a8d8ecfda05110caca71b6389f",
+    "reports/iteration/registry.json": "81874217f9575c5cd70fcb075910053bb467bd73121ad346c935da66c1e8d001",
+    "reports/iteration/versions.json": "dfebb637d8cafedc47982c483e37b4810dec6427952318a22babcb8351b167ab",
+    "reports/research/f8d9ee42.0dc7785d.quick-200.json": "1520e1e73c59aa631a70573652e8ddd871d4446656a34c1c99fb5f1a96534df3",
+    "reports/research/f8d9ee42.0dc7785d.quick-200.json.decisions.jsonl": "dd0cb58aa2cc643f3105ae030e33abd9a04cf4ac46b4be7bff4890bdb11013de",
+    "reports/robot-iteration.html": "7f44980ae6c040f8a50bbc4fd83cdeabc4ca96fbc299c8a07807945472c6d6e2",
+    "seti-saves/seti-save-research-ai-search-v99-white-r1-20261031-0dc7785d-quick-200-v14.json": "c833e13572a565d78788f82bb524c20ff95001f253852093b6a0e5374b155c6b"
+  },
+  "sourceBoundReports": [
+    "reports/ai-foundation-20261023/human405-v99-trial-runtime-source-check-20261031-v1.json",
+    "reports/ai-foundation-20261023/human405-v99-standard-r1-verification-20261031-v1.json"
+  ],
+  "sourceBindings": {},
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "056f468374e9f8464c1fb213882d2a4fb2f749947f52a9a0105fb60389fb0180",
+      "path": "/private/tmp/seti-human405-r1-v99-trial-root-overlays-20261031/versions.json",
+      "sha256": "e98370408cbe93e873cd2618971779656434b8464697f267745129dfb2a4a911"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "b7bc19217ccb7ec2a0c453db891a2dd7369f4bc001c8e9cede5810412e67a41e",
+      "path": "/private/tmp/seti-human405-r1-v99-trial-root-overlays-20261031/registry.json",
+      "sha256": "7a90a84cb5b09aeb27949aba34420d5038eb868a82d563d487a78c045b43363f"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "c1874e08e577385fdb55e9a66a2ecb4f002349c019a5e520364ce393a82e5a17",
+      "path": "/private/tmp/seti-human405-r1-v99-trial-root-overlays-20261031/robot-iteration.html",
+      "sha256": "36b1f39e9463a823cf8b54bff555f582e14881ea0a5a503f051f446099f0d24a"
+    }
+  },
+  "validation": {
+    "strictNativeTrialReplay": true,
+    "runtimeFilesChecked": 370,
+    "original23Opening": true,
+    "passiveOpponentsOnly": true,
+    "exactNativePrefix42AndPreDecisionStateRng": true,
+    "baselineEligible": false,
+    "goalStatus": "active"
+  }
+}
