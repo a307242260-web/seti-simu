@@ -1,0 +1,51 @@
+{
+  "schemaVersion": "seti-known-postmain-candidate-admission-v1",
+  "candidateVersion": "v63",
+  "productionCandidateAccepted": false,
+  "status": "rejected-for-production",
+  "goalStatus": "active",
+  "scope": "Teacher32 and legacy12 complete native policy-window diagnostics; graph closure is distinct from256-input/600ms admission. No autonomous episode was run with this candidate.",
+  "sourceSnapshot": "adhoc/human405-v63-unpromoted-source-20261030-v1.json.gz",
+  "sourceSnapshotSha256": "346e87f63f0e1af0b9160db43ac2062dfcd30057817aee6942a0f29b0add756b",
+  "knownNativeProof": {
+    "report": "reports/ai-foundation-20261023/human405-known-postmain-v63-20261030-v1.json",
+    "immediateValue": 43.5,
+    "completeKnownTailValue": 47,
+    "knownRewardInputs": 3,
+    "tailInputs": 9,
+    "actualControlInputs": 12,
+    "hiddenWorldInvariant": true
+  },
+  "boundProof": {
+    "report": "reports/ai-foundation-20261023/known-postmain-bounds-v63-20261030-v1.json",
+    "independentlyCompletedPrunedStates": 56,
+    "sameBestActionAndValueAsCompleteReference": true,
+    "prunedNativeInputs": 220,
+    "unprunedNativeInputs": 369
+  },
+  "failedAdmission": [
+    {
+      "fixture": "teacher24",
+      "nativeInputs": 347,
+      "milliseconds": 469.429791
+    },
+    {
+      "fixture": "teacher35",
+      "nativeInputs": 296,
+      "milliseconds": 486.96375
+    },
+    {
+      "fixture": "terminal-root",
+      "nativeInputs": 373,
+      "milliseconds": 741.648
+    }
+  ],
+  "remaining": [
+    "Reduce repeated known optional tails across strategic targets without losing necessary lines or treating different physical states as equivalent.",
+    "Profile all actual inputs at teacher24/35 and terminal root, not only their remaining frontiers.",
+    "Queued free-income card acquisition, preservation of B117/DLC9 and longer-term technology capability still differ from the teacher."
+  ],
+  "deliveredVersion": "v64",
+  "deliveredScope": "Value-only native projections and geometry-preview journal omission, with the v54 strategic window preserved.",
+  "baselineEligible": false
+}

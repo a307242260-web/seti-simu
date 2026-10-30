@@ -670,7 +670,7 @@ function buildProbeMoveTiming(state, player, context, requirements) {
   const result = new Map();
   if (!steps.size) return result;
   function rotatedRoutes(snapshot) {
-    const rotation = turnFlowApi.rotateSolarSystem(snapshot, 1, player.id);
+    const rotation = turnFlowApi.rotateSolarSystem(snapshot, 1, player.id, {captureSnapshots:false});
     if (!rotation.ok) throw new Error(`PROBE_TIMING_ROTATION_FAILED: ${rotation.message}`);
     return new Map(buildProbeRouteRequirements(snapshot, player.id, null, false).candidates
       .map(candidate => [candidate.requirementId, candidate]));
@@ -1458,6 +1458,10 @@ function createProductionHostComposition(options = {}) {
   }
   let composition;
   function projectedRequirements(state, viewer, session) {
+    // The shared linear value reads native score, resources, hand count and
+    // income only. A value projection keeps those exact fields and avoids
+    // rebuilding advisory route/goal catalogs that its caller never consumes.
+    if(viewer?.valueOnly===true)return{};
     const probeRouteRequirements = buildProbeRouteRequirements(state, viewer?.playerId, session);
     return {
       probeRouteRequirements,
@@ -1793,7 +1797,7 @@ function comparePlannedMovementTiming(state, seatId, requirementId, path, freePo
     return { comparable: false, reason: "temporary-or-company-movement-context", rotationCount: 1 };
   }
   const afterRotation = snapshot => {
-    const rotation = turnFlowApi.rotateSolarSystem(snapshot, 1, seatId);
+    const rotation = turnFlowApi.rotateSolarSystem(snapshot, 1, seatId, {captureSnapshots:false});
     if (!rotation.ok) throw new Error(`PROBE_PLAN_ROTATION_FAILED: ${rotation.message}`);
     return buildProbeRouteRequirements(snapshot, seatId, null, false).candidates.find(c => c.requirementId === requirementId);
   };

@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "seti-known-postmain-cpu-evidence-v1",
+  "profile": "reports/ai-foundation-20261023/human405-known-postmain-v57-case152-20261030-v1.cpuprofile.gz",
+  "profileSha256": "a42b9d2ae23c52193972e94fd8880c5981391f8843747ef5d94d89fed4fc81c4",
+  "sourceSnapshot": "adhoc/human405-v57-unpromoted-source-20261030-v1.json.gz",
+  "sourceSnapshotSha256": "0a7a81d6fb9064e0e928083ebd045f0bc2ef3c694826f4f29a20979dcd93e289",
+  "scope": "Exploratory v57 known-continuation candidate, not the delivered v64 policy and not an admission timing sample.",
+  "structuredCloneCallers": [
+    {
+      "stack": [
+        "settleRocketsAfterSolarRotation@rocket.js",
+        "rotateSolarSystem@turn-flow.js",
+        "afterRotation@production-kernel.js",
+        "comparePlannedMovementTiming@production-kernel.js"
+      ],
+      "sampledMilliseconds": 223.041
+    },
+    {
+      "stack": [
+        "buildProbeCandidateStructures@production-kernel.js",
+        "buildProbeRouteRequirements@production-kernel.js",
+        "afterRotation@production-kernel.js",
+        "comparePlannedMovementTiming@production-kernel.js"
+      ],
+      "sampledMilliseconds": 40.874
+    },
+    {
+      "stack": [
+        "clone@production-kernel.js",
+        "cloneMovementPreview@production-kernel.js",
+        "comparePlannedMovementTiming@production-kernel.js",
+        "movementTiming@analysis-port.js"
+      ],
+      "sampledMilliseconds": 33.04
+    },
+    {
+      "stack": [
+        "clone@session-runtime.js",
+        "restoreCheckpoint@session-runtime.js",
+        "restore@rule-composition.js",
+        "restoreEnvelope@analysis-port.js"
+      ],
+      "sampledMilliseconds": 24.04
+    },
+    {
+      "stack": [
+        "buildProbeCandidateStructures@production-kernel.js",
+        "buildProbeRouteRequirements@production-kernel.js",
+        "rotatedRoutes@production-kernel.js",
+        "buildProbeMoveTiming@production-kernel.js"
+      ],
+      "sampledMilliseconds": 7.5
+    },
+    {
+      "stack": [
+        "buildProbeCandidateStructures@production-kernel.js",
+        "buildProbeRouteRequirements@production-kernel.js",
+        "projectedRequirements@production-kernel.js",
+        "projectState@production-kernel.js"
+      ],
+      "sampledMilliseconds": 6.0
+    },
+    {
+      "stack": [
+        "clone@state-store.js",
+        "beginWorkingCopy@state-store.js",
+        "dispatchStandardAction@session-runtime.js",
+        "submitAction@rule-composition.js"
+      ],
+      "sampledMilliseconds": 4.958
+    },
+    {
+      "stack": [
+        "buildProbeCandidateStructures@production-kernel.js",
+        "buildProbeRouteRequirements@production-kernel.js",
+        "getProbeRouteRequirements@production-kernel.js",
+        "endpoints@analysis-port.js"
+      ],
+      "sampledMilliseconds": 4.542
+    },
+    {
+      "stack": [
+        "createNode@analysis-port.js",
+        "finishChild@analysis-port.js",
+        "expand@analysis-port.js",
+        "expandResourcePlan@analysis-port.js"
+      ],
+      "sampledMilliseconds": 4.541
+    },
+    {
+      "stack": [
+        "clone@rule-observation.js",
+        "buildRuleObservation@rule-observation.js",
+        "projectCounterfactualState@profile-known-postmain-20261030-v1.js",
+        "projectState@production-kernel.js"
+      ],
+      "sampledMilliseconds": 4.5
+    },
+    {
+      "stack": [
+        "clone@rule-observation.js",
+        "@rule-observation.js",
+        "buildRuleObservation@rule-observation.js",
+        "projectCounterfactualState@profile-known-postmain-20261030-v1.js"
+      ],
+      "sampledMilliseconds": 4.459
+    },
+    {
+      "stack": [
+        "settleRocketsAfterSolarRotation@rocket.js",
+        "rotateSolarSystem@turn-flow.js",
+        "rotatedRoutes@production-kernel.js",
+        "buildProbeMoveTiming@production-kernel.js"
+      ],
+      "sampledMilliseconds": 3.5
+    }
+  ]
+}

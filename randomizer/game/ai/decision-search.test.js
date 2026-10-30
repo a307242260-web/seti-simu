@@ -442,3 +442,10 @@ assert.equal(globallyDominated.diagnostics.cardChoiceExcludedActions, 0);
 assert(globallyDominated.lines.some(line => line.prunedByBound && !line.localPlan),
   "整条取牌分支被更强全局证明省略时，不伪造本地执行见证");
 console.log("complete decision graph coverage, cycles, preparation chains and budget failures passed");
+
+// The smaller native projection is exclusive to the registered linear value.
+// Custom evaluators may read any full observation field.
+{
+ const custom=graph(fixture);custom.port.valueObservation=()=>{throw new Error('custom evaluator must use full observation');};
+ const output=searchDecision(custom);assert(output.complete);assert.equal(output.actionId,result.actionId);assert.equal(output.value,result.value);
+}

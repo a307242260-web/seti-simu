@@ -291,7 +291,7 @@
     const decodedStates = new Map();
     const maxDecodedStateCacheEntries = 64, maxDecodedStateCacheBytes = 8 * 1024 * 1024;
     let decodedStateCacheBytes = 0;
-    let envelopeObservations = new WeakMap(), stateRequirements = new WeakMap(), goalCatalogs = new WeakMap();
+    let envelopeObservations = new WeakMap(), valueObservations = new WeakMap(), stateRequirements = new WeakMap(), goalCatalogs = new WeakMap();
     let observationCacheHits = 0, resourceQueryHits = 0, resourceQueryMisses = 0, goalCatalogHits = 0, goalCatalogMisses = 0;
     let committedDecodeCount = 0, committedDecodeHits = 0;
     let rootObservation = null, knownRootCardIds = new Set(), knownRootNebulaIds = new Set();
@@ -321,8 +321,8 @@
     const now = () => typeof performance !== "undefined" ? performance.now() : Date.now();
     const milliseconds = { restore: 0, execute: 0, observation: 0, checkpoint: 0, resourceOrder: 0, valueBound: 0, postMainPlan: 0, preMainDataPlan: 0 };
 
-    function project(comp) {
-      const state = comp.projection(viewer).state;
+    function project(comp, valueOnly = false) {
+      const state = comp.projection(valueOnly?{...viewer,valueOnly:true}:viewer).state;
       // Browser 的 resident UI 壳不属于分析输入；两种宿主只保留同源规则信息。
       const observation = {
         schemaVersion: "seti-analysis-observation-v1",
@@ -358,13 +358,14 @@
       loadedEnvelope = envelope;
     }
 
-    function observeEnvelope(envelope, barrier) {
+    function observeEnvelope(envelope, barrier, valueOnly = false) {
       if (!fork) throw new Error("ANALYSIS_NODE_INVALID");
-      let variants = envelopeObservations.get(envelope);
+      const observations=valueOnly?valueObservations:envelopeObservations;
+      let variants = observations.get(envelope);
       if (variants?.has(barrier)) { observationCacheHits++; return variants.get(barrier); }
       restoreEnvelope(envelope);
       const observationAt = now();
-      const observation = project(fork.composition || fork);
+      const observation = project(fork.composition || fork,valueOnly);
       const visible = barrier && ruleComposition.isHiddenInformationBarrier(barrier)
         ? ruleComposition.sanitizeHiddenInformationObservation(rootObservation, observation, barrier)
         : observation;
@@ -373,7 +374,7 @@
       // Sanitization creates only new wrappers over that immutable snapshot.
       const result = freeze(visible);
       milliseconds.observation += now() - observationAt;
-      if (!variants) { variants = new Map(); envelopeObservations.set(envelope, variants); }
+      if (!variants) { variants = new Map(); observations.set(envelope, variants); }
       variants.set(barrier, result);
       return result;
     }
@@ -397,7 +398,7 @@
       const cardKey = cardControl ? JSON.stringify([movementKey,cardControl]) : movementKey;
       const key = resourceControl ? JSON.stringify([cardKey,resourceControl]) : cardKey;
       if (!identities.has(key)) identities.set(key, Object.freeze({}));
-      observationReleasers.set(node, () => { visible = null; envelopeObservations.delete(envelope); observationReleases++; });
+      observationReleasers.set(node, () => { visible = null; envelopeObservations.delete(envelope); valueObservations.delete(envelope); observationReleases++; });
       nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, policyKey: cardKey, physicalKey, intent, cardControl, resourceControl, informationBarrier: ruleComposition.isHiddenInformationBarrier(barrier) ? barrier : null });
       nodeCount += 1;
       return node;
@@ -2303,7 +2304,7 @@
       fork = null;
       loadedEnvelope = null;
       decodedStates.clear(); decodedStateCacheBytes = 0;
-      envelopeObservations = new WeakMap(); stateRequirements = new WeakMap(); goalCatalogs = new WeakMap();
+      envelopeObservations = new WeakMap();valueObservations=new WeakMap(); stateRequirements = new WeakMap(); goalCatalogs = new WeakMap();
       nodes = new WeakMap();
       observationReleasers = new WeakMap();
       normalizedIdentityStates = new Map();
@@ -2339,6 +2340,11 @@
       publicSeed = null;rootTurnKey=null;
     }
 
+    function valueObservation(node) {
+      const stored=nodes.get(node);if(!fork||!stored)throw new Error("ANALYSIS_NODE_INVALID");
+      return node===openedRoot?node.observation:observeEnvelope(stored.envelope,stored.informationBarrier,true);
+    }
+
     function releaseBoundaryObservation(node) {
       if (!fork || !nodes.has(node)) throw new Error("ANALYSIS_NODE_INVALID");
       if (!["other-owner","terminal","information-barrier","turn-boundary"].includes(node.status)) throw new Error("ANALYSIS_BOUNDARY_REQUIRED");
@@ -2364,7 +2370,7 @@
       return stored.identity;
     }
 
-    return Object.freeze({ openRoot, expand, identity, releaseBoundaryObservation, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
+    return Object.freeze({ openRoot, expand, identity, releaseBoundaryObservation, valueObservation, getResourcePrefixGraph, setDecisionPlanning, localDecisionSpec, setResourcePlanning, resourceSpec, expandResourcePlan, setCardPickPlanning, cardPickSpec, expandWithCardPick, setMovementPlanning, goalMovementSpec, expandGoalMovementPlan, selectionSpec, selectionPlans, expandSelection,
       rememberSelection, reuseSelection, rememberPlan, reusePlan, exportPlan, importPlan, knownCardMoneyOrder, postMainResourceOrder, openingResourceOrder, openingMoneyCapacity, openingPlanSpec, expandOpeningPass,
       cardTradeBound, passReserveChoiceSpec, preMainDataPlanSpec, postMainCornerChoiceSpec, postMainPlanSpec, postMainBorrowSpec, expandPostMainBorrow, standardScanValueBound, postMainValueBound, postMainOptimalPlanSpec, expandPostMainOptimalPlan, close, getDiagnostics });
   }

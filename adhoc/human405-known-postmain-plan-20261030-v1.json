@@ -1,0 +1,39 @@
+{
+  "goalStatus": "active",
+  "baseCommit": "fc8296f08bef9976b4383afb2ac40841da0d0afc",
+  "problem": "Native public/technology refills close the search before root-known optional own-turn actions; branches without a refill receive a longer evaluation horizon.",
+  "candidate": "Continue known post-main actions after irrelevant card/supply refills, using the same production policy and native inputs; close on unknown owned cards, alien reveals, other owners, actual turn changes or unsupported choices.",
+  "identity": "Keep full physical state, RNG, pending queue, information barrier and resource/movement/card controls. Do not merge masked observations as states.",
+  "information": "Mask unknown public offers in every planning query; exclude unknown card/alien references and exhausted root-known technology tops. Keep only native legal action envelopes.",
+  "reachabilityAndResources": "Existing native resource requirements, capacity and purpose-bound greedy preparation remain authoritative; no arbitrary depth/per-root caps.",
+  "globalBudget": "256 native inputs, 600 ms admission, with explicit incomplete result; existing node/frontier budget accounting is unchanged. Profile cold teacher and legacy roots before another autonomous episode.",
+  "verification": [
+    "native reward-plus-optional-tail equality",
+    "hidden replacement identity differential",
+    "source root and RNG unchanged",
+    "budget interruption",
+    "legacy cold roots",
+    "32 teacher roots"
+  ],
+  "notClaimed": "No full-round alignment, no baseline promotion, no continuation before a completed main action beyond the existing known-effect queue.",
+  "candidateSourceSnapshot": "adhoc/human405-v63-unpromoted-source-20261030-v1.json.gz",
+  "candidateAdmittedToProduction": false,
+  "failedAdmission": [
+    {
+      "fixture": "teacher24",
+      "nativeInputs": 347,
+      "milliseconds": 469.429791
+    },
+    {
+      "fixture": "teacher35",
+      "nativeInputs": 296,
+      "milliseconds": 486.96375
+    },
+    {
+      "fixture": "terminal-root",
+      "nativeInputs": 373,
+      "milliseconds": 741.648
+    }
+  ],
+  "deliveredScope": "v64 only removes unused advisory projection catalogs and unused preview journal snapshots; its strategic window and every native input remain v54-equivalent."
+}

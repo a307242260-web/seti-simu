@@ -570,7 +570,7 @@
     };
   }
 
-  function settleRocketsAfterSolarRotation(context, beforeRotation, afterRotation) {
+  function settleRocketsAfterSolarRotation(context, beforeRotation, afterRotation, options = {}) {
     if (!context?.pieces || !context?.solarSystem || !context?.players) {
       return {
         ok: true,
@@ -615,8 +615,10 @@
       }
 
       const player = getPlayerById(context.players, plan.rocket.playerId);
-      const beforeRocket = structuredClone(plan.rocket);
-      const beforePlayer = player ? structuredClone(player) : null;
+      // Route previews consume geometry only; normal execution retains the
+      // complete journal snapshots used by replay and UI.
+      const beforeRocket = options.captureSnapshots === false ? null : structuredClone(plan.rocket);
+      const beforePlayer = options.captureSnapshots === false || !player ? null : structuredClone(player);
       rockets.assignRocketToSlot(plan.rocket, plan.to.x, plan.to.y, slotIndex);
 
       const afterVisible = getVisibleContentAtRotation(context, plan.to, afterRotation);

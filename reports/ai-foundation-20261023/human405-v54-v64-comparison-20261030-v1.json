@@ -1,0 +1,338 @@
+{
+  "schemaVersion": "seti-v54-v64-projection-optimization-comparison-v1",
+  "scope": "32 teacher roots and12 legacy cold roots. Native input counts, chosen actions and values are unchanged. Individual timings are cold samples, not a statistical speed guarantee. No autonomous episode or policy-window extension is claimed.",
+  "teacherRows": [
+    {
+      "step": 24,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 121,
+      "beforeMs": 260.298583,
+      "afterMs": 208.258958
+    },
+    {
+      "step": 25,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 11,
+      "beforeMs": 62.994417,
+      "afterMs": 52.36174999999999
+    },
+    {
+      "step": 26,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 10,
+      "beforeMs": 79.38475,
+      "afterMs": 69.18462500000001
+    },
+    {
+      "step": 27,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 9,
+      "beforeMs": 60.890417,
+      "afterMs": 55.15416699999999
+    },
+    {
+      "step": 35,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 71,
+      "beforeMs": 291.668833,
+      "afterMs": 147.812542
+    },
+    {
+      "step": 36,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 16,
+      "beforeMs": 137.4205,
+      "afterMs": 55.28416699999998
+    },
+    {
+      "step": 37,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 1,
+      "beforeMs": 24.655457999999996,
+      "afterMs": 22.218999999999994
+    },
+    {
+      "step": 38,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 9,
+      "beforeMs": 46.022542,
+      "afterMs": 40.39541599999998
+    },
+    {
+      "step": 39,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 115,
+      "beforeMs": 265.568541,
+      "afterMs": 207.63104199999998
+    },
+    {
+      "step": 40,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 3,
+      "beforeMs": 28.031416000000007,
+      "afterMs": 25.671458
+    },
+    {
+      "step": 41,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 11,
+      "beforeMs": 50.67929200000002,
+      "afterMs": 45.259457999999995
+    },
+    {
+      "step": 42,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 10,
+      "beforeMs": 48.257958,
+      "afterMs": 44.365292
+    },
+    {
+      "step": 43,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 9,
+      "beforeMs": 37.045,
+      "afterMs": 32.91395899999999
+    },
+    {
+      "step": 44,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 111,
+      "beforeMs": 203.69425,
+      "afterMs": 170.31120800000002
+    },
+    {
+      "step": 45,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 63,
+      "beforeMs": 139.76825,
+      "afterMs": 115.28912500000001
+    },
+    {
+      "step": 46,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 62,
+      "beforeMs": 136.66033299999998,
+      "afterMs": 135.63716699999998
+    },
+    {
+      "step": 47,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 61,
+      "beforeMs": 132.842167,
+      "afterMs": 113.44887499999999
+    },
+    {
+      "step": 48,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 15,
+      "beforeMs": 57.59495799999999,
+      "afterMs": 48.27133400000001
+    },
+    {
+      "step": 49,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 98,
+      "beforeMs": 198.450875,
+      "afterMs": 163.92075
+    },
+    {
+      "step": 50,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 58,
+      "beforeMs": 144.66249999999997,
+      "afterMs": 115.805
+    },
+    {
+      "step": 51,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 84,
+      "beforeMs": 180.005917,
+      "afterMs": 147.628167
+    },
+    {
+      "step": 52,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 50,
+      "beforeMs": 129.53250000000003,
+      "afterMs": 108.23762500000001
+    },
+    {
+      "step": 53,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 70,
+      "beforeMs": 162.726,
+      "afterMs": 134.722084
+    },
+    {
+      "step": 54,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 42,
+      "beforeMs": 118.019583,
+      "afterMs": 97.594208
+    },
+    {
+      "step": 55,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 28,
+      "beforeMs": 93.280041,
+      "afterMs": 82.24320900000001
+    },
+    {
+      "step": 56,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 41,
+      "beforeMs": 115.59175,
+      "afterMs": 100.74433400000001
+    },
+    {
+      "step": 57,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 19,
+      "beforeMs": 76.773042,
+      "afterMs": 67.218458
+    },
+    {
+      "step": 58,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 18,
+      "beforeMs": 72.999417,
+      "afterMs": 65.449667
+    },
+    {
+      "step": 59,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 5,
+      "beforeMs": 35.922875000000005,
+      "afterMs": 30.710458000000003
+    },
+    {
+      "step": 60,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 1,
+      "beforeMs": 20.700458000000012,
+      "afterMs": 20.26700000000001
+    },
+    {
+      "step": 61,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 1,
+      "beforeMs": 20.997,
+      "afterMs": 19.130916
+    },
+    {
+      "step": 62,
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 2,
+      "beforeMs": 28.280625000000015,
+      "afterMs": 26.205667000000005
+    }
+  ],
+  "coldRows": [
+    {
+      "caseId": "case-001",
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 144,
+      "beforeMs": 167.138333,
+      "afterMs": 158.79779200000002
+    },
+    {
+      "caseId": "case-003",
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 26,
+      "beforeMs": 144.41845900000004,
+      "afterMs": 134.004459
+    },
+    {
+      "caseId": "case-008",
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 27,
+      "beforeMs": 81.83125000000001,
+      "afterMs": 73.42358399999995
+    },
+    {
+      "caseId": "case-011",
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 9,
+      "beforeMs": 16.56658399999992,
+      "afterMs": 15.80837500000007
+    },
+    {
+      "caseId": "case-009",
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 5,
+      "beforeMs": 19.49183400000004,
+      "afterMs": 17.835915999999997
+    },
+    {
+      "caseId": "case-062",
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 73,
+      "beforeMs": 217.19183399999997,
+      "afterMs": 194.84329200000002
+    },
+    {
+      "caseId": "case-105",
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 157,
+      "beforeMs": 468.58124999999995,
+      "afterMs": 354.73587499999996
+    },
+    {
+      "caseId": "case-152",
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 208,
+      "beforeMs": 533.268208,
+      "afterMs": 421.6244589999999
+    },
+    {
+      "caseId": "baseline-r1-t8-blue",
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 16,
+      "beforeMs": 32.23108400000001,
+      "afterMs": 29.728207999999995
+    },
+    {
+      "caseId": "baseline-r2-t9-white",
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 94,
+      "beforeMs": 152.73916699999995,
+      "afterMs": 130.88862500000005
+    },
+    {
+      "caseId": "step317",
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 98,
+      "beforeMs": 253.28325,
+      "afterMs": 239.026292
+    },
+    {
+      "caseId": "terminal-root",
+      "sameActionValueAndNativeInputs": true,
+      "nativeInputs": 193,
+      "beforeMs": 426.17504199999996,
+      "afterMs": 383.083209
+    }
+  ],
+  "maxTeacherNativeInputs": 121,
+  "maxTeacherMs": 208.258958,
+  "maxColdNativeInputs": 208,
+  "maxColdMs": 421.6244589999999,
+  "sources": [
+    {
+      "path": "reports/ai-foundation-20261023/human405-round1-v54-audit-20261030-v1.json",
+      "sha256": "6bfbd6949ca3876d5c82939deedc737c3a11c0a279a959fe90c62b0a112de089"
+    },
+    {
+      "path": "reports/ai-foundation-20261023/human405-round1-v64-audit-20261030-v1.json",
+      "sha256": "a4715383e16a7ec92b517e8a2a315e2c3d7e7c2f101afedabbe07a9375258489"
+    },
+    {
+      "path": "reports/ai-foundation-20261023/round1-v54-compat-corpus-20261029-v1.json",
+      "sha256": "0326a8245e1ebc37e5f42115723e9a8060ef274ccdc6e836d3618fae2314b120"
+    },
+    {
+      "path": "reports/ai-foundation-20261023/round1-v64-compat-corpus-20261029-v1.json",
+      "sha256": "a4fa8e463adb3423fed653f91c5ead001dea683355a2122d19928af7bd5d7045"
+    }
+  ]
+}

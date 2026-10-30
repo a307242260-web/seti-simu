@@ -19,3 +19,11 @@ for(const row of before.rows){
  assert.notEqual(native.plannedMovementTimingKey(state,f.seatId,c.requirementId,c.path,1),original);
 }
 console.log(JSON.stringify({movementPreviewCopy:'passed',nativeTimingCases:12,fullProjectionHashes:4,frozenRootsUnchanged:true,geometryCacheInvalidation:true}));
+
+// Geometric previews omit journal snapshots; actual rotation keeps them.
+{
+ const turnFlow=require('../turn-flow'),f=read('adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json'),state=JSON.parse(f.compositionEnvelope.committedState),normal=structuredClone(state),preview=structuredClone(state),a=turnFlow.rotateSolarSystem(normal,1,f.seatId),b=turnFlow.rotateSolarSystem(preview,1,f.seatId,{captureSnapshots:false});
+ assert(a.ok&&b.ok);assert(a.moved.length>0);assert.deepEqual(preview,normal);
+ assert(a.moved.every(m=>m.beforeRocket&&m.beforePlayer));assert(b.moved.every(m=>m.beforeRocket===null&&m.beforePlayer===null));
+ const stripped=a.moved.map(m=>({...m,beforeRocket:null,beforePlayer:null}));assert.deepEqual(b,{...a,moved:stripped});
+}

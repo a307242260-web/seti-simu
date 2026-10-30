@@ -879,3 +879,9 @@ node tools/run_browser_smokes.js
 - 新 conditional family 先进入 Rule Composition Decision，再补 Policy 可观测估值。
 - Learned Policy 与 Heuristic Policy 必须共享 Policy Port、Host、input adapter 和 action identity。
 - 不以兼容、诊断或未来可能使用为由恢复旧 AI 文件；需要新能力时按当前 owner 重新设计并提供真实 caller。
+
+独立搜索 v64 的 `AnalysisPort.valueObservation` 只供已注册的线性 V 使用：保留与完整原生
+观察一致的 publicState/selfState/terminal，省去该评估器不读取的路线与目标目录。自定义
+评估器仍走完整观察。几何转动预览可关闭返回日志快照，正式执行默认保留快照；两种路径
+共用原生转动与推动奖励逻辑。搜索范围、合法输入、状态等价、预算和 V 权重不变。
+具体边界和验证见 `docs/ai-search-agent-contract-20261023.md` 的2026-10-30记录。

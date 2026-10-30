@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v54";
+  const VERSION = "seti-complete-decision-search-v64";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -30,6 +30,8 @@
       if (valueCache.has(observation)) { valueCacheHits++; return valueCache.get(observation); }
       valueEvaluations++; const value = evaluate(observation); valueCache.set(observation,value); return value;
     }
+    const observationForValue=node=>stateValue?.isStateValueEvaluator?.(evaluate)&&port.valueObservation?port.valueObservation(node):node.observation;
+    const valueForNode=node=>valueOf(observationForValue(node));
     const startedAt = now();
     const scope=(movementPlanning?"own-turn-visible-window-with-goal-directed-movement-policy":"own-turn-visible-decision-window-to-turn-owner-information-or-terminal-boundary")+(cardPickPlanning?"+fixed-card-pick-policy":"")+(resourcePlanning?"+goal-bound-greedy-resource-policy":"")+(finalMarkPlanning?"+local-final-mark-policy":"")+(scanPlanning?"+scan-purpose-policy":"");
     if (movementPlanning && typeof port.goalMovementSpec !== "function") throw new TypeError("SEARCH_MOVEMENT_PORT_REQUIRED");
@@ -167,7 +169,7 @@
       known.set(identity, index);
       const boundary = BOUNDARIES.has(node.status) || node.status === "plan-infeasible";
       if (!boundary && !node.legalActions?.length) throw new Error("SEARCH_EMPTY_NONTERMINAL");
-      const value = BOUNDARIES.has(node.status) ? valueOf(node.observation) : null;
+      const value = BOUNDARIES.has(node.status) ? valueForNode(node) : null;
       if (BOUNDARIES.has(node.status) && !Number.isFinite(value)) throw new Error("SEARCH_VALUE_INVALID");
       // A closed leaf retains its exact native envelope and scalar V; its full
       // observation can be regenerated, rather than pinning a second large tree.
@@ -243,7 +245,7 @@
       let borrowPlan = !resourcePlanning && !boundary && !selection && !resourcePolicy?.bound && postMainPruning && limits.transitions <= 4096
         ? port.postMainBorrowSpec?.(node) : null;
       if (borrowPlan) {
-        const value = valueOf(node.observation);
+        const value = valueForNode(node);
         if (!Number.isSafeInteger(value * 2) || value < 0 || value > Number.MAX_SAFE_INTEGER / 64) borrowPlan = null;
         else if (!borrowPlan.retainedTileIds.length && localPlan) borrowPlan = null;
       }
@@ -293,7 +295,7 @@
         .reduce((count, n) => count * n, 1) : alternatives.length;
       let resources = !boundary && !selection && useMoneyCapacity ? port.openingMoneyCapacity(node) : null;
       if (resources?.moneyCapacity) {
-        const currentValue = valueOf(node.observation);
+        const currentValue = valueForNode(node);
         if (!Number.isSafeInteger(currentValue * 2) || currentValue < 0 || currentValue > Number.MAX_SAFE_INTEGER / 64) resources = null;
       }
       if (!resources && !boundary && !selection && useResourceDominance) {
@@ -302,7 +304,7 @@
           resources = port.knownCardMoneyOrder?.(node) || null;
           if (resources) {
             let value;
-            resources = { ...resources, moneyValue: () => value ??= valueOf(node.observation) };
+            resources = { ...resources, moneyValue: () => value ??= valueForNode(node) };
           }
         }
       }
@@ -332,8 +334,8 @@
         if (now() - startedAt >= limits.milliseconds) { stopReason = "watchdog"; break; }
         const bound = port.postMainValueBound?.(entry.node);
         if (bound) {
-          const currentValue = valueOf(entry.node.observation);
-          const player = entry.node.observation.publicState.players.find(player => player.playerId === evaluate.seatId);
+          const currentValue = valueForNode(entry.node);
+          const player = observationForValue(entry.node).publicState.players.find(player => player.playerId === evaluate.seatId);
           const increase = bound.maximumValueIncrease;
           if (!Number.isSafeInteger(increase*2) || increase < 0) throw new TypeError("SEARCH_POST_MAIN_BOUND_INVALID");
           const safe = [currentValue,increase].every(value => Number.isSafeInteger(value*2) && value >= 0
@@ -352,7 +354,7 @@
       if (useScanBound && incumbent && entry.node.status === "decision") {
         if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break;}
         const bound=port.standardScanValueBound?.(entry.node);
-        if(bound){const currentValue=valueOf(entry.node.observation),player=entry.node.observation.publicState.players.find(p=>p.playerId===evaluate.seatId);
+        if(bound){const currentValue=valueForNode(entry.node),player=entry.node.observation.publicState.players.find(p=>p.playerId===evaluate.seatId);
           const upperBound=currentValue+bound.valueDelta;
           if(!Number.isSafeInteger(bound.valueDelta*2))throw new TypeError("SEARCH_SCAN_BOUND_INVALID");
           if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break;}
@@ -366,7 +368,7 @@
       if (optimal && transitions+optimal.submissions <= limits.transitions
         && nodes.length+certificateNodes+optimal.submissions <= limits.nodes
         && pendingFrontier+optimal.submissions-1 <= limits.frontier) {
-        const currentValue = valueOf(entry.node.observation), increase = optimal.bound.maximumValueIncrease;
+        const currentValue = valueForNode(entry.node), increase = optimal.bound.maximumValueIncrease;
         const safe = [currentValue,increase].every(value => Number.isSafeInteger(value*2) && value >= 0 && value < Number.MAX_SAFE_INTEGER/64);
         if (safe) {
           const macro = port.expandPostMainOptimalPlan(entry.node, () => now()-startedAt < limits.milliseconds);
@@ -379,7 +381,7 @@
             stopReason = "watchdog"; break;
           }
           if (macro.submissions !== optimal.submissions || !BOUNDARIES.has(macro.node.status)
-            || valueOf(macro.node.observation) !== currentValue+increase) throw new Error("SEARCH_ATTAINED_BOUND_WITNESS_MISMATCH");
+            || valueForNode(macro.node) !== currentValue+increase) throw new Error("SEARCH_ATTAINED_BOUND_WITNESS_MISMATCH");
           certificateNodes -= 1;
           const added = add(macro.node), first = macro.prefixes[0].action.actionId;
           if (nodes[added.index].value !== currentValue+increase) throw new Error("SEARCH_ATTAINED_BOUND_IDENTITY_MISMATCH");
@@ -438,7 +440,7 @@
         if(useScanBound && incumbent && entry.node.status==="stable" && entry.node.legalActions.some(action=>action.actionId===alternative.firstActionId && action.family==="scan" && action.target?.kind==="standard-scan")){
           if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
           const bound=port.standardScanValueBound?.(entry.node);
-          if(bound){const currentValue=valueOf(entry.node.observation),player=entry.node.observation.publicState.players.find(p=>p.playerId===evaluate.seatId),upperBound=currentValue+bound.valueDelta;
+          if(bound){const currentValue=valueForNode(entry.node),player=entry.node.observation.publicState.players.find(p=>p.playerId===evaluate.seatId),upperBound=currentValue+bound.valueDelta;
             if(!Number.isSafeInteger(bound.valueDelta*2))throw new TypeError("SEARCH_SCAN_BOUND_INVALID");
             if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
             if(player.finalScore===player.score && [currentValue,upperBound].every(v=>Number.isSafeInteger(v*2)&&v>=0&&v<Number.MAX_SAFE_INTEGER/64) && incumbent.value>upperBound){

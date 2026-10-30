@@ -94,7 +94,7 @@
     return { roundAdvanced: true, turnAdvanced: true, nextPlayerId: turn.currentPlayerId };
   }
 
-  function rotateSolarSystem(state, count = 1, actorId = null) {
+  function rotateSolarSystem(state, count = 1, actorId = null, options = {}) {
     if (!state?.solarSystem || !state?.pieces) {
       throw new TypeError("solar rotation requires committed solar/rocket state");
     }
@@ -120,6 +120,7 @@
       context,
       before,
       state.solarSystem.rotation,
+      options,
     );
     return settled.ok
       ? {

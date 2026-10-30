@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "seti-v-input-audit-comparison-v1",
+  "oldLog": "reports/ai-foundation-20261023/human405-round1-v54-state-inputs-20261030-v1.log",
+  "newLog": "reports/ai-foundation-20261023/human405-round1-v64-state-inputs-20261030-v1.log",
+  "sameFailureLines": true,
+  "failures": [
+    "[FAIL] decisionObs(\u88c5\u914d\u540e): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+  ],
+  "newIndependentValueProjectionPassed": true,
+  "totalAuditGreen": false
+}

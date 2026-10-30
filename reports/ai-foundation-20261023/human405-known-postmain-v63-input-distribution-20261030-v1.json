@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "seti-native-prefix-family-distribution-v1",
+  "candidateVersion": "v63",
+  "productionAccepted": false,
+  "rows": [
+    {
+      "name": "teacher24",
+      "reportPath": "reports/ai-foundation-20261023/human405-round1-v63-step024-20261030-v1.json",
+      "reportSha256": "15407ed738290bc98bc51a64b4f6e875779602f79161ebff7dd478bcdfe12e32",
+      "completeNativeInputs": 347,
+      "actualNativeFamilies": {
+        "launch": 2,
+        "play_card": 4,
+        "pass": 2,
+        "quick_trade": 2,
+        "choose_card": 56,
+        "industry": 1,
+        "place_data": 122,
+        "choose_target": 144,
+        "scan": 2,
+        "card_corner": 1,
+        "research_tech": 1,
+        "move": 5,
+        "choose_payment": 5
+      },
+      "afterInformationBoundaryMacroCostsByFirstFamily": {
+        "place_data": 222,
+        "move": 4
+      },
+      "notes": "All unique native prefix edges, not the unresolved frontier; macro cost attribution is by its first family and is separate from the actual per-input family counts."
+    },
+    {
+      "name": "teacher35",
+      "reportPath": "reports/ai-foundation-20261023/human405-round1-v63-step035-20261030-v1.json",
+      "reportSha256": "2918ce6b128f591c183c7ac8fed76d70a32422f32433990ac67da6f34c7e8dbb",
+      "completeNativeInputs": 296,
+      "actualNativeFamilies": {
+        "pass": 2,
+        "quick_trade": 2,
+        "choose_card": 43,
+        "industry": 1,
+        "place_data": 108,
+        "choose_target": 134,
+        "orbit": 2,
+        "research_tech": 2,
+        "play_card": 1,
+        "end_turn": 1
+      },
+      "afterInformationBoundaryMacroCostsByFirstFamily": {
+        "choose_target": 4,
+        "place_data": 225
+      },
+      "notes": "All unique native prefix edges, not the unresolved frontier; macro cost attribution is by its first family and is separate from the actual per-input family counts."
+    },
+    {
+      "name": "terminal-root",
+      "reportPath": "reports/ai-foundation-20261023/round1-v63-compat-terminal-root-20261029-v1.json",
+      "reportSha256": "3dcd71ce6f842d9a506a8f8b18971d5f500af912782171d99667ab1815e3fdb1",
+      "completeNativeInputs": 373,
+      "actualNativeFamilies": {
+        "launch": 3,
+        "play_card": 15,
+        "pass": 3,
+        "choose_card": 48,
+        "place_data": 64,
+        "choose_target": 117,
+        "analyze": 3,
+        "research_tech": 3,
+        "scan": 3,
+        "end_turn": 114
+      },
+      "afterInformationBoundaryMacroCostsByFirstFamily": {
+        "end_turn": 84,
+        "place_data": 96
+      },
+      "notes": "All unique native prefix edges, not the unresolved frontier; macro cost attribution is by its first family and is separate from the actual per-input family counts."
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "seti-human405-round1-goal-checkpoint-v1",
+  "date": "2026-10-30",
+  "goalStatus": "active",
+  "searchVersion": "v64",
+  "completed": [
+    "All32 white native teacher roots through input62 audited; source-bound raw search evidence retained.",
+    "Fixed movement/resource retained-action conflict, future movement cost, no-rotation timing and prepaid objective recovery.",
+    "Settled root-known guaranteed technology pick before closing its reveal boundary.",
+    "Preserved separate at-location orbit/land main purposes.",
+    "Three standard white-only through v53 autonomous first-round runs completed and exactly replayed; source opening/RNG and passive opponents verified.",
+    "146 unit +1 full-flow and4 browser smokes pass; legacy input audit failure reproduced in v49 and recorded.",
+    "Protected-card fourth-slot income funding is an explicit fixed native preparation, with causal resource lower bounds, cold recovery and global budget failure tests.",
+    "Company swap purpose inference excludes the outgoing card; a known credit income offer explicitly funds the preserved card. Teacher46 now matches.",
+    "Normal public-card/technology reveals now carry their mask through root-known public picks, specified-sector scans and known income in the same native effect queue.",
+    "Teacher40 pick/scan/income is exactly equal to a complete actual native control after masking replacement information; V40 becomes43.5. Hidden replacement identities genuinely differ in the adversarial test while masked outcomes match.",
+    "Repeated picks and resource-goal bindings preserve root knowledge and global budgets; new public-card facts are removed before fixed pick purpose inference.",
+    "Four funded purple-technology native controls end idle. bonus_1m is publicity, not movement; mandatory technology queues are complete in this example.",
+    "v54 known-queue settlement committed and pushed as fc8296f0.",
+    "v63 candidate proves complete known optional tail43.5→47 against12 actual inputs and an adversarial hidden world;56 proof-pruned states independently completed, but candidate is not admitted.",
+    "v64 only removes unused native advisory requirements from registered-linear-value projections and unused geometry-preview journal snapshots.32 teacher and12 legacy roots retain exact chosen actions, values and native input counts."
+  ],
+  "latestTrial": {
+    "record": "reports/research/5cfabf5d.692bdf03.quick-200.json",
+    "wallMs": 1320,
+    "steps": 53,
+    "searches": 23,
+    "maxInputs": 121,
+    "maxMs": 242.234583,
+    "planReuseHits": 17,
+    "whiteScore": 16,
+    "whiteTech": [
+      "blue1"
+    ],
+    "teacherScore": 15,
+    "teacherTech": [
+      "blue2",
+      "purple4"
+    ],
+    "strategyAligned": false,
+    "sameConfirmedPathAsV51": false,
+    "searchVersion": "v53",
+    "sourceCommit": "692bdf03e2e7280f9ecdf669fcb1a8b16ebbfa0a"
+  },
+  "remainingInOrder": [
+    "Reduce repeated fixed known optional tails at teacher24/35 and terminal root without physical-state merging, hidden-input leakage, depth truncation or budget relaxation. Archive full input distributions and native controls for any plan summary/value bound.",
+    "After the optional-window candidate passes every teacher and legacy point gate, finish its full Node/Browser validation and integrate it. Current Productionv64 retains v54 window.",
+    "Infer queued-income card purposes and preserve beneficiary cards across cold roots; current B2/DLC9 income choices still differ from teacher.",
+    "With comparable horizons, evaluate B117 deployment, DLC9 and technology future capability using native reachable-purpose evidence, without arbitrary imitation bonuses.",
+    "Run the next standard autonomous white-only first round only after window/gate correction; compare every teacher node through PASS settlement. Latest autonomous result remains v53."
+  ],
+  "acceptedFourAIBaseline": "ai-search-v41-baseline-20261029",
+  "completionNote": "Goal remains active. Stage scores do not demonstrate strategy alignment or a full-game score/time acceptance.",
+  "candidateSource": {
+    "baseCommit": "fc8296f08bef9976b4383afb2ac40841da0d0afc",
+    "snapshotManifest": "adhoc/human405-round1-v64-snapshot-20261030.json"
+  },
+  "currentRevisionAutonomouslyRun": false,
+  "validation": {
+    "teacherRoots": 32,
+    "legacyRoots": 12,
+    "maxTeacherNativeInputs": 121,
+    "maxTeacherMilliseconds": 208.258958,
+    "maxCompatibilityNativeInputs": 208,
+    "maxCompatibilityMilliseconds": 421.624459,
+    "nodeUnitPassed": 146,
+    "fullFlowPassed": 1,
+    "browserSmokePassed": 4,
+    "legacyVInputFailureRetained": true,
+    "newValueProjectionInputAuditPassed": true,
+    "sameActionValueAndNativeInputsAsV54ForAll44Roots": true
+  },
+  "unpromotedCandidate": {
+    "version": "v63",
+    "sourceSnapshot": "adhoc/human405-v63-unpromoted-source-20261030-v1.json.gz",
+    "admissionSummary": "reports/ai-foundation-20261023/human405-known-postmain-v63-admission-20261030-v1.json",
+    "productionAccepted": false,
+    "failedCases": [
+      "teacher24:347inputs",
+      "teacher35:296inputs",
+      "terminal:373inputs/741.648ms"
+    ]
+  }
+}

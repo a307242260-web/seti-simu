@@ -138,6 +138,15 @@ try {
     if (!result.complete || result.diagnostics.transitions !== 1 || result.value !== rawBound || rawBound !== standardBound) {
       throw new Error("取牌等价路径的观察、数值界与真实见证不一致");
     }
+    const compact = port.valueObservation(pending);
+    const full = pending.observation;
+    if (JSON.stringify(compact.publicState)!==JSON.stringify(full.publicState)
+      ||JSON.stringify(compact.selfState)!==JSON.stringify(full.selfState)
+      ||compact.terminal!==full.terminal
+      ||evaluator(compact)!==evaluator(full))throw new Error("精简估值投影改变正式字段或V");
+    const weighted=independentValue.createStateValueEvaluator(actor.actorId,{weights:{credits:2,handSize:3}});
+    if(weighted(compact)!==weighted(full))throw new Error("自定义线性权重的投影输入不一致");
+    console.log(`[PASS] independent-value-projection: total=${evaluator(compact)} fullFactsEqual=true weightedEqual=true`);
     port.close();
     console.log(`[PASS] independent-card-choice-equivalence: total=${result.value} inputs=1`);
     const publicPort = createAnalysisPort({ composition: comp, seatId: actor.actorId });
