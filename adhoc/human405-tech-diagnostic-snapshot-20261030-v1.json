@@ -1,0 +1,20 @@
+{
+  "baseCommit": "8c715275919b89cb32354fdf8d09fbc79d6213a8",
+  "snapshot": "/private/tmp/seti-human405-tech-diagnostic-20261030-j__rqaco",
+  "files": {
+    "adhoc/human405-tech-diagnostic-context-20261030.json": "956ef9db2dbc5a40b43b8fabad18f1f6b506ed9e3a163d23d99028b748dc940e",
+    "adhoc/audit-human405-tech-value-20261030-v1.js": "43f4dcb6f4c497a38f4c53feadda2a21c5f4e106d5d5a511f42f56796398c310",
+    "adhoc/prepare-human405-white-only-20261030-v1.js": "6b543591d2305e733d80468cb6e50b3a29bd97c945ca78628c42181ce69f9b48",
+    "adhoc/deliver-human405-tech-diagnostic-20261030-v1.py": "be51277b3c4d7eeb29390f82d6e67b9e523c8e7e3c92e98ba61e39490791d2e1",
+    "docs/ai-human405-learning-20261029.md": "d36e0c70212081802768bb9e9a25d5738d0a04fc7235e013589d1fdc7062399e",
+    "reports/ai-foundation-20261023/human405-tech-value-diagnostic-20261030-v1.json": "eb9e43396867fcd02de92dd7690337996bb55ad6c62397534b028cd2a8cfaa9e",
+    "reports/ai-foundation-20261023/human405-white-only-opening-20261030-v1.json": "9ba1ecef66185351b6cbb0e462d640ca2000f231fe86fb54c11c8451f29c3bac",
+    "reports/ai-foundation-20261023/human405-white-only-opening-20261030-v1.checkpoint.json": "ab9a0dbbb3c35c453604addd668bd2625a4580c0577924d87c6cb8eff9c01b9c",
+    "reports/ai-foundation-20261023/human405-learning-validation-20261030-v1.json": "e8687ee4fae229816b8b5c62090e6e640e61b35fceed8286de04b641470e03bc"
+  },
+  "unchangedBaseFilesVerified": 4642,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "runtimeSourceHashesVerified": true,
+  "baselinePromoted": false
+}
