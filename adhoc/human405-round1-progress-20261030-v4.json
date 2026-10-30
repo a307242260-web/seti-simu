@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "seti-human405-round1-goal-checkpoint-v1",
+  "date": "2026-10-30",
+  "goalStatus": "active",
+  "sourceCommit": "852263bbe99c369d4f9d1ed4e28636e7cd1eb8a5",
+  "searchVersion": "v51",
+  "completed": [
+    "All32 white native teacher roots through input62 audited; source-bound raw search evidence retained.",
+    "Fixed movement/resource retained-action conflict, future movement cost, no-rotation timing and prepaid objective recovery.",
+    "Settled root-known guaranteed technology pick before closing its reveal boundary.",
+    "Preserved separate at-location orbit/land main purposes.",
+    "Two standard white-only autonomous first-round runs completed and exactly replayed; source opening/RNG and passive opponents verified.",
+    "146 unit +1 full-flow and4 browser smokes pass; legacy input audit failure reproduced in v49 and recorded."
+  ],
+  "latestTrial": {
+    "record": "reports/research/600c9fb2.852263bb.quick-200.json",
+    "wallMs": 1289,
+    "steps": 55,
+    "searches": 25,
+    "maxInputs": 118,
+    "maxMs": 225.940833,
+    "planReuseHits": 20,
+    "whiteScore": 16,
+    "whiteTech": [
+      "blue1"
+    ],
+    "teacherScore": 15,
+    "teacherTech": [
+      "blue2",
+      "purple4"
+    ],
+    "strategyAligned": false,
+    "sameConfirmedPathAsV49": true
+  },
+  "remainingInOrder": [
+    "Extend settlement past public-card refill only for proven root-known mandatory scan/income choices; preserve hidden-information masking, exact identities and global input/state/time accounting.",
+    "Represent explicit income funding to preserve and play DLC9 instead of consuming it for corners; remove already-committed outgoing swap cards from purpose inference.",
+    "Re-evaluate teacher37/40/46 picks and data preparation with those explicit purposes; distinguish current-V ties and action-order alternatives from native equivalence.",
+    "Validate technology and reserved-trigger capability value with native reachable goals, then repeat bounded individual roots before a new first-round trial."
+  ],
+  "acceptedFourAIBaseline": "ai-search-v41-baseline-20261029",
+  "completionNote": "Goal remains active. Stage scores do not demonstrate strategy alignment or a full-game score/time acceptance."
+}

@@ -226,3 +226,9 @@ v51最终验证：Node全量146项unit及唯一fullFlow通过，相关定向9项
 
 
 V输入总审计仍有1项旧路径失败：`decisionObs(装配后)`的旧启发式V尝试在冻结对象添加aomomo。v49原源码与v51执行同一命令，失败行一致，新独立搜索输入各项通过。本次没有把总审计标为全绿，也没有扩大修改到该旧路径；比较与两份日志已归档为`human405-round1-v51-state-inputs-comparison-20261030-v1.json`。
+
+
+v51自主第一轮复查（已提交代码852263bb）：同样55输入结束第一轮，用时1289ms，25次白席决策全部闭合，最高118次原生模拟/225.941ms，20次计划复用。白16分，blue1；教师15分、blue2＋purple4。正式输入序列及最终canonical state与v49自主试跑完全一致，所以本批修正证明了教师节点覆盖与结算正确性改善，不能宣称棋力已经提升。逐次重放验证通过，原生状态与存档相同。
+
+- [v51自主第一轮重放验证](../reports/ai-foundation-20261023/human405-white-r1-852263bb-verification-20261030-v1.json)
+- [两次自主首轮对照](../reports/ai-foundation-20261023/human405-white-r1-v49-v51-comparison-20261030-v1.json)

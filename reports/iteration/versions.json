@@ -7,6 +7,30 @@
   },
   "versions": [
     {
+      "id": "ai-search-v51-white-r1-20261030",
+      "aiGeneration": "v2",
+      "agentType": "search",
+      "name": "ai-search-v51-white-r1-20261030",
+      "date": "2026-10-30",
+      "baseline": "ai-search-v41-baseline-20261029",
+      "head": "852263bb",
+      "commits": [
+        "f24600c7",
+        "5d1cae64",
+        "8c715275",
+        "0a4a2d08",
+        "e8327698",
+        "b90f9ae4",
+        "852263bb"
+      ],
+      "summary": "仅白席第一轮：科技必得精选与原地环绕/登陆候选修正。1.289秒、55输入，白16分/blue1；教师15分/blue2+purple4。25次搜索闭合，最高118次/225.941ms，20次复用；自主路径与v49相同，未宣称策略对齐或棋力提升；不晋升四AI基线。",
+      "records": {
+        "600c9fb2.852263bb.quick-200.json": {}
+      },
+      "roadmap": null,
+      "baselineEligible": false
+    },
+    {
       "id": "ai-search-v49-white-r1-20261030",
       "aiGeneration": "v2",
       "agentType": "search",

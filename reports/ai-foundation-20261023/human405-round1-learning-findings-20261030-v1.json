@@ -4,7 +4,7 @@
   "teacherRoots": 32,
   "allRootsActionable": true,
   "allRootsWithinGate": true,
-  "autonomousReference": "reports/ai-foundation-20261023/human405-white-r1-b90f9ae4-verification-20261030-v1.json",
+  "autonomousReference": "reports/ai-foundation-20261023/human405-white-r1-852263bb-verification-20261030-v1.json",
   "strategyAligned": false,
   "scope": "All first-round teacher roots and an autonomous white-only trial; remaining planning/value gaps are explicitly open.",
   "rows": [
@@ -584,5 +584,6 @@
       "finding": "Different reserve cards tie under uniform hand value; no strategic-equivalence proof.",
       "evidenceScope": "Native-root attribution and policy/model facts, without a long-horizon optimality claim."
     }
-  ]
+  ],
+  "autonomousPolicyUnchangedFromV49": true
 }

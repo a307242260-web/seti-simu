@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "seti-human405-autonomous-r1-comparison-v1",
+  "records": [
+    "ai-search-v49-white-r1-20261030",
+    "ai-search-v51-white-r1-20261030"
+  ],
+  "recordPaths": [
+    "reports/research/308feee7.b90f9ae4.quick-200.json",
+    "reports/research/600c9fb2.852263bb.quick-200.json"
+  ],
+  "sameConfirmedActions": true,
+  "exactFinalCanonicalStateEqual": true,
+  "interpretation": "v50/v51 correctness fixes change teacher-root coverage and reward accounting; this autonomous first-round policy path is unchanged. No strength improvement is inferred from the speed samples.",
+  "strategyAlignedToTeacher": false
+}
