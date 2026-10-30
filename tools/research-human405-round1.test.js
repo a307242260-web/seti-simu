@@ -18,6 +18,15 @@ assert.throws(() => buildIdentity({ ...options, full: true }), /REQUIRES_QUICK/)
 assert.throws(() => buildIdentity({ ...options, config: { ...options.config, activePlayerCount: 3 } }), /CONFIGURATION_INVALID/);
 assert.throws(() => buildIdentity({ ...options, config: { agentType: "search", scenario: "unknown" } }), /SCENARIO_UNKNOWN/);
 
+const prefixIdentity = buildIdentity({ ...options, config: { ...options.config, scenario: scenario.B117_PREFIX_ID } });
+assert.equal(prefixIdentity.scenario.openingInputs, 27);
+assert.equal(prefixIdentity.scenario.originalOpeningInputs, 23);
+assert.equal(prefixIdentity.scenario.controlledPrefix.forcedInputs, 4);
+assert.notEqual(fingerprintOf(prefixIdentity), fingerprintOf(identity), "forced teacher inputs must have an independent fingerprint");
+assert.notEqual(fingerprintOf(prefixIdentity), fingerprintOf({ ...prefixIdentity, scenario: { ...prefixIdentity.scenario,
+  controlledPrefix: { ...prefixIdentity.scenario.controlledPrefix, actionsSha256: "changed" } } }));
+assert.throws(() => buildIdentity({ ...options, full: true, config: { ...options.config, scenario: scenario.B117_PREFIX_ID } }), /REQUIRES_QUICK/);
+
 const root = path.resolve(__dirname, "..");
 const source = JSON.parse(fs.readFileSync(path.join(root, "seti-saves/seti-save-537-merged.json"), "utf8"));
 const openingBefore = scenario.opening();
@@ -35,6 +44,16 @@ try {
     const old = source.replaySteps[i], action = env.legalActions().find(a => a.actionId === old.action.actionId && a.actorId === old.actorPlayerId);
     assert(action); assert(env.step(action).ok);
   }
+  const nativePrefix = env.createCheckpoint();
+  const controlled = scenario.createEnvironment();
+  try {
+    const seededPrefix = scenario.initialize(controlled, { seed: identity.seed, activePlayerCount: 4, compactReplay: true }, prefixIdentity.scenario);
+    assert.equal(seededPrefix.length, 27);
+    assert.equal(controlled.createCheckpoint().coreState.committedState, nativePrefix.coreState.committedState);
+    assert.deepEqual(controlled.createCheckpoint().coreState.compositionEnvelope, nativePrefix.coreState.compositionEnvelope);
+    assert.deepEqual(seededPrefix.slice(0, 23), openingBefore.checkpoint.replaySteps);
+    assert.deepEqual(seededPrefix.slice(23).map(e => e.action), source.replaySteps.slice(23, 27).map(e => e.action));
+  } finally { controlled.dispose(); }
   for (let i = 0; i < 3; i++) {
     const before = env.createCheckpoint().replaySteps.length, result = env.runAgentDecision();
     assert.equal(result.actorPlayerId, "player-green");
@@ -48,6 +67,13 @@ try {
   assert.equal(env.observe().publicState.currentPlayerId, "player-blue");
 } finally { env.dispose(); }
 assert.deepEqual(scenario.opening().checkpoint, openingBefore.checkpoint, "host configuration must not rewrite the source opening");
+const invalidPrefix = scenario.createEnvironment();
+try {
+  assert.throws(() => scenario.initialize(invalidPrefix, { seed: identity.seed, activePlayerCount: 4 }, {
+    ...prefixIdentity.scenario, controlledPrefix: { ...prefixIdentity.scenario.controlledPrefix, actionsSha256: "changed" },
+  }), /WHITE_ONLY_PREFIX_IDENTITY_DRIFT/);
+  assert.equal(invalidPrefix.createCheckpoint().replaySteps.length, 23, "identity drift must not execute a forced input");
+} finally { invalidPrefix.dispose(); }
 
 const passive = scenario.passiveAgent("player-blue");
 assert.throws(() => passive.decide({ legalActions: [{ actionId: "unexpected", family: "choose_target", target: {} }] }), /UNSUPPORTED_DECISION/);
@@ -62,46 +88,58 @@ for (const [inputs, milliseconds] of [[257, 10], [10, 601]]) {
 
 // Standard CLI integration stops at the prepared opening without running white
 // AI decisions. Its persisted identity and duplicate guard are still exercised.
-const directory = fs.mkdtempSync(path.join(os.tmpdir(), "seti-white-round1-cli-"));
-try {
-  const args = ["tools/run_research_validation.js", "--name", "white-round1-opening-test", "--config", `agentType=search,scenario=${scenario.ID}`, "--steps", "23", "--no-save", "--records-dir", directory];
-  const first = spawnSync(process.execPath, args, { cwd: root, encoding: "utf8" });
-  assert.equal(first.status, 0, first.stderr);
-  const recordPath = path.join(directory, fs.readdirSync(directory).find(p => p.endsWith(".json")));
-  const bytes = fs.readFileSync(recordPath), record = JSON.parse(bytes);
-  assert.equal(record.steps, 23);
-  assert.equal(record.terminal, false);
-  assert.equal(record.scenarioResult.firstRoundSettled, false);
-  assert.equal(record.stopReason, "step-limit");
-  assert.equal(record.scenario.learnerAgentType, "search");
-  assert.equal(record.scoreSemantics, "provisional-after-round1-settlement");
-  const duplicate = spawnSync(process.execPath, args, { cwd: root, encoding: "utf8" });
-  assert.equal(duplicate.status, 2, duplicate.stderr);
-  assert.deepEqual(fs.readFileSync(recordPath), bytes);
-} finally { fs.rmSync(directory, { recursive: true, force: true }); }
+for (const scenarioIdentity of [identity, prefixIdentity]) {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), "seti-white-round1-cli-"));
+  try {
+    const args = ["tools/run_research_validation.js", "--name", "white-round1-opening-test", "--config", `agentType=search,scenario=${scenarioIdentity.scenario.id}`, "--steps", String(scenarioIdentity.scenario.openingInputs), "--no-save", "--records-dir", directory];
+    const first = spawnSync(process.execPath, args, { cwd: root, encoding: "utf8" });
+    assert.equal(first.status, 0, first.stderr);
+    const recordPath = path.join(directory, fs.readdirSync(directory).find(p => p.endsWith(".json")));
+    const bytes = fs.readFileSync(recordPath), record = JSON.parse(bytes);
+    assert.equal(record.steps, scenarioIdentity.scenario.openingInputs);
+    assert.deepEqual(record.scenario, scenarioIdentity.scenario);
+    assert.equal(record.terminal, false);
+    assert.equal(record.scenarioResult.firstRoundSettled, false);
+    assert.equal(record.stopReason, "step-limit");
+    assert.equal(record.scenario.learnerAgentType, "search");
+    assert.equal(record.scoreSemantics, "provisional-after-round1-settlement");
+    const duplicate = spawnSync(process.execPath, args, { cwd: root, encoding: "utf8" });
+    assert.equal(duplicate.status, 2, duplicate.stderr);
+    assert.deepEqual(fs.readFileSync(recordPath), bytes);
+  } finally { fs.rmSync(directory, { recursive: true, force: true }); }
+
+}
 
 // Inject a host decision failure before any AI input is submitted. The standard
 // runner must preserve the unchanged native root and deduplicate the failed run.
-const failedDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "seti-white-round1-fault-"));
-try {
-  const preload = path.join(failedDirectory, "fault.cjs");
-  fs.writeFileSync(preload, `const api=require(${JSON.stringify(path.join(root, "randomizer/app/simulation-env.js"))});const original=api.createSimulationEnv;api.createSimulationEnv=options=>{const env=original(options);env.runAgentDecision=()=>{const error=new Error('UNIT_SCENARIO_FAULT');error.code='UNIT_SCENARIO_FAULT';throw error;};return env;};\n`);
-  const args = ["tools/run_research_validation.js", "--name", "white-round1-fault-test", "--config", `agentType=search,scenario=${scenario.ID}`, "--steps", "24", "--no-save", "--records-dir", failedDirectory];
-  const childEnv = { ...process.env, NODE_OPTIONS: `${process.env.NODE_OPTIONS || ""} --require=${preload}` };
-  const first = spawnSync(process.execPath, args, { cwd: root, env: childEnv, encoding: "utf8" });
-  assert.equal(first.status, 1);
-  const recordPath = path.join(failedDirectory, fs.readdirSync(failedDirectory).find(p => p.endsWith(".quick-24.json")));
-  const bytes = fs.readFileSync(recordPath), record = JSON.parse(bytes);
-  assert.equal(record.status, "failed");
-  assert.equal(record.steps, 23);
-  assert.equal(record.failure.code, "UNIT_SCENARIO_FAULT");
-  assert.equal(record.failure.failedDecisionCommitted, false);
-  assert.deepEqual(record.summary.scores, {});
-  const checkpoint = JSON.parse(fs.readFileSync(path.join(root, record.failure.checkpointPath), "utf8"));
-  assert.equal(checkpoint.coreState.committedState, openingBefore.checkpoint.coreState.committedState);
-  const duplicate = spawnSync(process.execPath, args, { cwd: root, env: childEnv, encoding: "utf8" });
-  assert.equal(duplicate.status, 2, duplicate.stderr);
-  assert.deepEqual(fs.readFileSync(recordPath), bytes);
-} finally { fs.rmSync(failedDirectory, { recursive: true, force: true }); }
+for (const scenarioIdentity of [identity, prefixIdentity]) {
+  const failedDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "seti-white-round1-fault-"));
+  try {
+    const preload = path.join(failedDirectory, "fault.cjs");
+    fs.writeFileSync(preload, `const api=require(${JSON.stringify(path.join(root, "randomizer/app/simulation-env.js"))});const original=api.createSimulationEnv;api.createSimulationEnv=options=>{const env=original(options);env.runAgentDecision=()=>{const error=new Error('UNIT_SCENARIO_FAULT');error.code='UNIT_SCENARIO_FAULT';throw error;};return env;};\n`);
+    const args = ["tools/run_research_validation.js", "--name", "white-round1-fault-test", "--config", `agentType=search,scenario=${scenarioIdentity.scenario.id}`, "--steps", String(scenarioIdentity.scenario.openingInputs + 1), "--no-save", "--records-dir", failedDirectory];
+    const childEnv = { ...process.env, NODE_OPTIONS: `${process.env.NODE_OPTIONS || ""} --require=${preload}` };
+    const first = spawnSync(process.execPath, args, { cwd: root, env: childEnv, encoding: "utf8" });
+    assert.equal(first.status, 1);
+    const recordPath = path.join(failedDirectory, fs.readdirSync(failedDirectory).find(p => p.endsWith(`.quick-${scenarioIdentity.scenario.openingInputs + 1}.json`)));
+    const bytes = fs.readFileSync(recordPath), record = JSON.parse(bytes);
+    assert.equal(record.status, "failed");
+    assert.equal(record.steps, scenarioIdentity.scenario.openingInputs);
+    assert.equal(record.scenarioResult.openingInputs, scenarioIdentity.scenario.openingInputs);
+    assert.equal(record.failure.code, "UNIT_SCENARIO_FAULT");
+    assert.equal(record.failure.failedDecisionCommitted, false);
+    assert.deepEqual(record.summary.scores, {});
+    const checkpoint = JSON.parse(fs.readFileSync(path.join(root, record.failure.checkpointPath), "utf8"));
+    const expected = scenario.createEnvironment();
+    try {
+      scenario.initialize(expected, { seed: identity.seed, activePlayerCount: 4 }, scenarioIdentity.scenario);
+      assert.equal(checkpoint.coreState.committedState, expected.createCheckpoint().coreState.committedState);
+    } finally { expected.dispose(); }
+    const duplicate = spawnSync(process.execPath, args, { cwd: root, env: childEnv, encoding: "utf8" });
+    assert.equal(duplicate.status, 2, duplicate.stderr);
+    assert.deepEqual(fs.readFileSync(recordPath), bytes);
+  } finally { fs.rmSync(failedDirectory, { recursive: true, force: true }); }
+
+}
 
 console.log(JSON.stringify({ whiteOnlyScenario: "passed", controlledOpening: true, passiveNativeDecisions: 3, scenarioIdentitySeparated: true }));

@@ -11,6 +11,8 @@ const cards = require("../randomizer/game/cards/deck");
 const effects = require("../randomizer/game/cards/effects");
 
 const ID = "human405-white-round1-v1";
+const B117_PREFIX_ID = "human405-white-round1-b117-prefix-v1";
+const TEACHER_SAVE = "seti-saves/seti-save-537-merged.json";
 const LEARNER = "player-white";
 const OPPONENT_VERSION = "seti-human405-pass-only-v1";
 const ROOT = path.resolve(__dirname, "..");
@@ -27,19 +29,41 @@ function opening() {
   return { checkpoint, sha256 };
 }
 
+function teacherPrefix() {
+  const bytes = fs.readFileSync(path.join(ROOT, TEACHER_SAVE));
+  const save = JSON.parse(bytes);
+  const entries = save.replaySteps.slice(23, 27);
+  assert.equal(entries.length, 4);
+  assert.deepEqual(save.replaySteps.slice(0, 23).map(e => [e.actorPlayerId, e.action]),
+    opening().checkpoint.replaySteps.map(e => [e.actorPlayerId, e.action]), "WHITE_ONLY_TEACHER_OPENING_DRIFT");
+  assert.deepEqual(entries.map(e => [e.actorPlayerId, e.action.family, e.action.actionId]), [
+    [LEARNER, "play_card", "play_card:124d76d3"],
+    [LEARNER, "quick_trade", "quick_trade:be9dd0cd"],
+    [LEARNER, "choose_target", "choose_target:d9014565"],
+    [LEARNER, "end_turn", "end_turn:b2f9b29d"],
+  ], "WHITE_ONLY_B117_PREFIX_DRIFT");
+  return { entries, provenance: { sourcePath: TEACHER_SAVE,
+    sourceSha256: crypto.createHash("sha256").update(bytes).digest("hex"),
+    firstTeacherInput: 24, lastTeacherInput: 27, forcedInputs: 4,
+    actionsSha256: crypto.createHash("sha256").update(JSON.stringify(entries.map(e => e.action))).digest("hex") } };
+}
+
 function describe(identity, options = {}) {
-  if (identity.flags?.scenario !== ID) throw new Error("RESEARCH_SCENARIO_UNKNOWN");
+  if (![ID, B117_PREFIX_ID].includes(identity.flags?.scenario)) throw new Error("RESEARCH_SCENARIO_UNKNOWN");
   if (options.full) throw new Error("WHITE_ONLY_ROUND1_REQUIRES_QUICK_MODE");
   if (identity.agentType !== "search" || identity.activePlayerCount !== 4
     || identity.seed !== "seti-free-analyze-v1") throw new Error("WHITE_ONLY_ROUND1_CONFIGURATION_INVALID");
   const source = opening();
   return {
-    id: ID, learnerSeat: LEARNER, learnerAgentType: "search", hostAgentFactory: "custom-seat-roles",
+    id: identity.flags.scenario, learnerSeat: LEARNER, learnerAgentType: "search", hostAgentFactory: "custom-seat-roles",
     opponentPolicyVersion: OPPONENT_VERSION, opponentReserveRule: "historical-preference-if-offered-otherwise-stable-action-id",
     roles: { "player-white": "shared-search", "player-green": "pass-only", "player-blue": "pass-only", "player-brown": "pass-only" },
     openingInputs: 23, openingCheckpointSha256: source.sha256, stopAfterRound: 1,
     comparisonScope: "white-only-first-round", scoreSemantics: "provisional-after-round1-settlement",
     decisionGate: { nativeInputs: 256, milliseconds: 600 },
+    ...(identity.flags.scenario === B117_PREFIX_ID ? {
+      openingInputs: 27, originalOpeningInputs: 23, controlledPrefix: teacherPrefix().provenance,
+    } : {}),
   };
 }
 
@@ -110,9 +134,26 @@ function initialize(env, config, metadata) {
   assert.deepEqual(checkpoint.machineAI, {});
   env.loadCheckpoint(checkpoint);
   assert.equal(env.createCheckpoint().coreState.committedState, canonicalBefore);
+  if (metadata.id === B117_PREFIX_ID) {
+    const prefix = teacherPrefix();
+    assert.deepEqual(prefix.provenance, metadata.controlledPrefix, "WHITE_ONLY_PREFIX_IDENTITY_DRIFT");
+    for (const entry of prefix.entries) {
+      const action = env.legalActions().find(a => a.actionId === entry.action.actionId && a.actorId === entry.actorPlayerId);
+      assert(action, "WHITE_ONLY_PREFIX_NOT_LEGAL");
+      for (const key of ["schemaVersion", "family", "phase", "target", "payload"]) {
+        assert.deepEqual(action[key], entry.action[key], `WHITE_ONLY_PREFIX_ACTION_DRIFT:${key}`);
+      }
+      const result = env.step(action);
+      assert(result.ok, result.error);
+    }
+    assert.equal(env.createCheckpoint().replaySteps.length, metadata.openingInputs);
+    assert.equal(env.observe().publicState.currentPlayerId, "player-green");
+    return env.createCheckpoint().replaySteps;
+  }
+  assert.equal(metadata.id, ID, "RESEARCH_SCENARIO_UNKNOWN");
   return checkpoint.replaySteps;
 }
 
 function settled(observation) { return observation.publicState.roundNumber > 1; }
 
-module.exports = { ID, describe, opening, createEnvironment, initialize, settled, passiveAgent, assertDecisionGate };
+module.exports = { ID, B117_PREFIX_ID, describe, opening, createEnvironment, initialize, settled, passiveAgent, assertDecisionGate };

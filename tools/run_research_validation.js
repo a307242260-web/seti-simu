@@ -585,7 +585,7 @@ function runValidation(options) {
         seed: identity.seed, activePlayerCount: identity.activePlayerCount, world: identity.world,
         aiDifficulty: identity.aiDifficulty, policyVersion: identity.policyVersion, agentType: identity.agentType,
         agentTracePath: path.relative(path.join(__dirname, ".."), agentTracePath), searchCoverage: error.search?.complete ? "complete" : "incomplete",
-        flags: identity.flags, scenario: identity.scenario, scenarioResult: { firstRoundSettled: false, openingInputs: 23 },
+        flags: identity.flags, scenario: identity.scenario, scenarioResult: { firstRoundSettled: false, openingInputs: identity.scenario.openingInputs },
         createdAt: new Date().toISOString(), gitCommit: identity.gitCommit, steps: checkpoint.replayCursor.stepIndex, stepsLimit: options.steps,
         terminal: false, status: "failed", wallMs: Date.now() - startedAt, resumedFrom, resumeStep, savePath,
         summary: { round: env.observe().publicState.roundNumber, terminal: false, scores: {}, avgScore: null },

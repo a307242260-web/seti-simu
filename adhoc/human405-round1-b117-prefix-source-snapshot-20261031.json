@@ -1,0 +1,30 @@
+{
+  "baseCommit": "109c898fc7b6ba4405f1d946b951954b13541b93",
+  "snapshot": "/private/tmp/seti-human405-v65-20261030-onpkqe05",
+  "sharedIndexSha256Before": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256Before": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "files": {
+    "tools/research-human405-round1.js": "6226ab9e6f1577647ac3d2e2d2a1f8c1fedbddfab90e87e0d1a65dfabde42112",
+    "tools/research-human405-round1.test.js": "b4a56d0f7140d920ee0892c97f04ca751b50ed8220577e7e4eb1ff30310afa28",
+    "tools/run_research_validation.js": "f252d1759c952d50af66c8021002766563f643e8233aefb6215b80e6c66f2d22",
+    "tools/node-test-inventory.js": "505fd1772f819cb02fa75ace6cb55c1d1f1f6f62a67949af7056a04972557636",
+    "docs/robot-iteration-registry.md": "c2a57033506d99bb23b9eeca53e6c3a32c3c6f286d7dc0d67405375a0b45059e",
+    "docs/ai-human405-learning-20261029.md": "1f4126f27a29767b084a173a6ac17f3d061be42aa5a8e9b51a3f2c583d873e89",
+    "reports/ai-foundation-20261023/human405-b117-prefix-source-check-20261031-v1.json": "50773519d1bbb3f3eaeb1e5fd441ef20112fe31bf41aae93fb068be53208a149",
+    "reports/ai-foundation-20261023/human405-b117-prefix-scenario-tests-20261031-v1.log": "17936cb5d1047ca1bf6759ae282eaa02a776774e19f788db98f4de864531b113",
+    "adhoc/deliver-human405-round1-b117-prefix-source-20261031-v1.py": "8e7fc8b19217c78399bad26865d69f41c041f992f48e327f780db83df0e21722"
+  },
+  "sourceBoundReports": [
+    "reports/ai-foundation-20261023/human405-b117-prefix-source-check-20261031-v1.json"
+  ],
+  "validation": {
+    "original23PlusNativeTeacher24to27": true,
+    "exactNativeStateSessionRng": true,
+    "independentFingerprint": true,
+    "duplicateRejected": true,
+    "failureInputsCorrect": true,
+    "noProductionRuntimeChange": true,
+    "baselineUnchanged": true,
+    "goalStatus": "active"
+  }
+}
