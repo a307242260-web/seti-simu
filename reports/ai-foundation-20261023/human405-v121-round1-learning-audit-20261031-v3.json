@@ -1,0 +1,248 @@
+{
+  "schemaVersion": "seti-human405-round1-learning-completion-evidence-v1",
+  "sourceCommit": "85e94cc4327cac0e6a103e184c4a47e13a9aa578",
+  "scope": "Teacher32 native-state first-input audits plus one standard autonomous white-only R1 through PASS settlement; attempt to improve strategy, not require action imitation.",
+  "round1LearningEvidenceComplete": false,
+  "productionBudget": {
+    "transitions": null,
+    "nodes": null,
+    "frontier": null,
+    "milliseconds": null
+  },
+  "teacherDiagnosticFuse": {
+    "transitions": 2048,
+    "nodes": 4096,
+    "frontier": 2048,
+    "milliseconds": 10000
+  },
+  "allDiagnosticFusesNotReached": true,
+  "deliveryPending": true,
+  "goalStatus": "active",
+  "teacherRoots": 32,
+  "sameTeacherStateFirstInputs": 25,
+  "explainedDifferences": [
+    {
+      "step": 24,
+      "classification": "current-value-purpose-difference",
+      "evidence": "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step24-20261031-v1.json",
+      "studentWindowValue": 60,
+      "forcedTeacherFirstWindowValue": 57.5,
+      "sameBoundary": false,
+      "sameFormalState": false,
+      "sameSession": true,
+      "interpretation": "Native witnesses compare the current policy and a forced teacher FIRST input followed by that same policy, not an assertion that the entire teacher strategy is dominated. Different information boundaries remain explicit."
+    },
+    {
+      "step": 25,
+      "classification": "native-order-equivalence-except-input-revision",
+      "evidence": "reports/ai-foundation-20261023/human405-v121-paid-move-order-20261030-v1.json",
+      "allGameFactsAndRngEqual": true,
+      "onlyDifference": "native input concurrency revision"
+    },
+    {
+      "step": 38,
+      "classification": "profitable-fixed-preparation-before-end",
+      "evidence": "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step38-20261031-v1.json",
+      "studentWindowValue": 62,
+      "forcedTeacherFirstWindowValue": 55.5,
+      "sameBoundary": true,
+      "sameFormalState": false,
+      "sameSession": true,
+      "interpretation": "Native witnesses compare the current policy and a forced teacher FIRST input followed by that same policy, not an assertion that the entire teacher strategy is dominated. Different information boundaries remain explicit."
+    },
+    {
+      "step": 39,
+      "classification": "orbit-versus-land-value-purpose-difference",
+      "evidence": "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step39-20261031-v1.json",
+      "studentWindowValue": 62.5,
+      "forcedTeacherFirstWindowValue": 59.5,
+      "sameBoundary": false,
+      "sameFormalState": false,
+      "sameSession": true,
+      "interpretation": "Native witnesses compare the current policy and a forced teacher FIRST input followed by that same policy, not an assertion that the entire teacher strategy is dominated. Different information boundaries remain explicit."
+    },
+    {
+      "step": 43,
+      "classification": "profitable-fixed-preparation-before-end",
+      "evidence": "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step43-20261031-v1.json",
+      "studentWindowValue": 59.5,
+      "forcedTeacherFirstWindowValue": 55.5,
+      "sameBoundary": true,
+      "sameFormalState": false,
+      "sameSession": true,
+      "interpretation": "Native witnesses compare the current policy and a forced teacher FIRST input followed by that same policy, not an assertion that the entire teacher strategy is dominated. Different information boundaries remain explicit."
+    },
+    {
+      "step": 56,
+      "classification": "exact-native-order-equivalence",
+      "evidence": "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step56-fixed-prefix-20261031-v1.json",
+      "studentWindowValue": 59.5,
+      "forcedTeacherFirstWindowValue": 59.5,
+      "sameBoundary": true,
+      "sameFormalState": true,
+      "sameSession": true,
+      "interpretation": "Both five-input orders produce the identical committed state, session and RNG."
+    },
+    {
+      "step": 62,
+      "classification": "current-model-tie-not-rule-equivalence",
+      "evidence": "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step62-20261031-v1.json",
+      "studentWindowValue": 56,
+      "forcedTeacherFirstWindowValue": 56,
+      "sameBoundary": true,
+      "sameFormalState": false,
+      "sameSession": true,
+      "interpretation": "Both one-input native choices have V56; actionId tie-break chooses DLC4. Their card/scan fields differ. No future superiority or rule equivalence is claimed. A deeper native check additionally finds the already-visible chosen PASS card is masked together with the unknown income draw. This information-preservation defect is not fixed; equal current values do not excuse losing known inputs.",
+      "knownInputLoss": "reports/ai-foundation-20261023/human405-v121-known-pass-card-information-20261031-v1.json"
+    }
+  ],
+  "withinRound1UnresolvedDefects": [
+    {
+      "step": 62,
+      "kind": "known-PASS-choice-masked-as-unknown",
+      "evidence": "reports/ai-foundation-20261023/human405-v121-known-pass-card-information-20261031-v1.json",
+      "fixed": false
+    }
+  ],
+  "requirements": [
+    {
+      "requirement": "same four-seat23-input opening; whiteDeepSpace; other3PASS and mandatory choices",
+      "evidence": "reports/ai-foundation-20261023/human405-v121-standard-r1-verification-20261031-v1.json",
+      "proved": true
+    },
+    {
+      "requirement": "all32 teacher states originate from a current native replay and saved summaries match",
+      "evidence": "reports/ai-foundation-20261023/human405-v121-teacher-round1-native-replay-20261031-v1.json",
+      "proved": true
+    },
+    {
+      "requirement": "all32 current AI roots close necessary policy branches without root/RNG changes",
+      "evidence": "reports/ai-foundation-20261023/human405-round1-v121-audit-20261030-v1.json",
+      "proved": true
+    },
+    {
+      "requirement": "distinguish native equivalence, preparation, value policy and unproved future card utility",
+      "evidence": [
+        "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step24-20261031-v1.json",
+        "reports/ai-foundation-20261023/human405-v121-paid-move-order-20261030-v1.json",
+        "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step38-20261031-v1.json",
+        "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step39-20261031-v1.json",
+        "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step43-20261031-v1.json",
+        "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step56-fixed-prefix-20261031-v1.json",
+        "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step62-20261031-v1.json"
+      ],
+      "proved": true
+    },
+    {
+      "requirement": "fix identified candidate/value/plan-recovery causes with real native tests and shared budgets",
+      "evidence": [
+        "docs/ai-winning-income-recovery-20261031.md",
+        "reports/ai-foundation-20261023/human405-v121-node-full-20261031-v1.log",
+        "reports/ai-foundation-20261023/human405-v121-chrome-eight-20261031-v1.log",
+        "reports/ai-foundation-20261023/human405-v121-known-pass-card-information-20261031-v1.json"
+      ],
+      "proved": false
+    },
+    {
+      "requirement": "45 cold roots meet256 actual native inputs/600ms;34 actual white decisions complete within same gate",
+      "evidence": [
+        "reports/ai-foundation-20261023/human405-round1-v121-audit-20261030-v1.json",
+        "reports/ai-foundation-20261023/human405-v121-compat-cold-20261031-v1.json",
+        "reports/ai-foundation-20261023/human405-v121-standard-r1-verification-20261031-v1.json"
+      ],
+      "proved": true
+    },
+    {
+      "requirement": "one standard autonomousR1, exact native replay/state/session/RNG and commonV5 endpoint comparison",
+      "evidence": "reports/ai-foundation-20261023/human405-v121-standard-r1-verification-20261031-v1.json",
+      "proved": true
+    },
+    {
+      "requirement": "keep accepted full-game baseline and mark R1 record ineligible",
+      "evidence": "reports/iteration/versions.json",
+      "proved": true
+    }
+  ],
+  "actual": {
+    "record": "reports/research/f1e61527.85e94cc4.quick-200.json",
+    "score": 27,
+    "value": 63,
+    "inputs": 64,
+    "whiteDecisions": 34,
+    "wallMs": 1591,
+    "maxNativeInputs": 89,
+    "maxRootAndSearchMilliseconds": 166.222791
+  },
+  "teacher": {
+    "score": 15,
+    "value": 56,
+    "inputs": 62
+  },
+  "limitations": [
+    "No four-AI full-game strength or180second acceptance is claimed.",
+    "DLC4/DLC5 differ in later scanning utility; currentV5 ties them and no rule equivalence is claimed.",
+    "Some counterfactuals end at different formal information boundaries; their window values do not prove whole-game dominance.",
+    "45-point slowest598.746ms has little machine-load margin.",
+    "Legacy top-level record.searchCoverage remains not-evaluated; current completeness is proved by all34 metrics.searches and white agentTrace.coverage=complete.",
+    "The pre-existing legacy frozen-aomomo evaluator audit failure remains outside the independent search path."
+  ],
+  "evidenceSha256": {
+    "reports/ai-foundation-20261023/human405-round1-v121-audit-20261030-v1.json": "d3aa00ac39c8f22ab8b1c3b3a540ad05a6219db3fe25965de646b8d49f2362cd",
+    "reports/ai-foundation-20261023/human405-round1-v121-step024-20261030-v1.json": "e0d6766ef171f6031f065e4a7b63d4ac11317f11423de5acf8310a016d48dc7b",
+    "reports/ai-foundation-20261023/human405-round1-v121-step025-20261030-v1.json": "c754ac8204eda7e84a54f54aed687d9d954a5a78b6048728cf2c282f1920eb68",
+    "reports/ai-foundation-20261023/human405-round1-v121-step026-20261030-v1.json": "55e06d60460619a503bac7734840f37f2019ad59ea6d3acaf8fd85e9a92f3c5c",
+    "reports/ai-foundation-20261023/human405-round1-v121-step027-20261030-v1.json": "ffadc0416cefa2551f2a17c43bfeed0ce86a425730a517a6c05594614110b255",
+    "reports/ai-foundation-20261023/human405-round1-v121-step035-20261030-v1.json": "1f666f485cd8e34153d24a564c58b43499ad882e46d135e58ce572d93183fb8b",
+    "reports/ai-foundation-20261023/human405-round1-v121-step036-20261030-v1.json": "29a571a9bbeda4c4895e3bf9e24b3038b0a80483ae3c6314c39a399850cbda5c",
+    "reports/ai-foundation-20261023/human405-round1-v121-step037-20261030-v1.json": "3dd081d98225ac8f70565dfc7e82d58ae8778058eff68ae7dac81bf5603d9211",
+    "reports/ai-foundation-20261023/human405-round1-v121-step038-20261030-v1.json": "faebdbe91a8d78d160b7c3fc3adc96921024a081ca6c08c44279ae6fff017b75",
+    "reports/ai-foundation-20261023/human405-round1-v121-step039-20261030-v1.json": "701bfc6adf171e896972f8a238d21c13f2698e7d11fb7b5900057d0e5928c1e3",
+    "reports/ai-foundation-20261023/human405-round1-v121-step040-20261030-v1.json": "81717be5194a818ecb6b1bf1e7df41947bad97361527a53442ff26f734200674",
+    "reports/ai-foundation-20261023/human405-round1-v121-step041-20261030-v1.json": "9aa984fa9d3bb525a78980c53c29435709034da57798f5c8ad003ba5f9ccc966",
+    "reports/ai-foundation-20261023/human405-round1-v121-step042-20261030-v1.json": "5d9f4edf58ad287181353f2877cab0d107ec0b743cd6166f2051f786756e1ffc",
+    "reports/ai-foundation-20261023/human405-round1-v121-step043-20261030-v1.json": "bd979366a00dcc60c41f9cc3da16f922d3f8e52132fa2dc63e2c219f4970a9d2",
+    "reports/ai-foundation-20261023/human405-round1-v121-step044-20261030-v1.json": "535c9eb6c67d08493662403daa4b40aae91adfe22d372535ea6100216dcfebb1",
+    "reports/ai-foundation-20261023/human405-round1-v121-step045-20261030-v1.json": "be66330497c7ec072cdb1209876d63d5167b0a3ac92a11019ee80e2addb73ef9",
+    "reports/ai-foundation-20261023/human405-round1-v121-step046-20261030-v1.json": "6a2c4009a0b76bd718217bd9d5d8f1bd9af1c8b9bd86e45b1394d123a6e2ae39",
+    "reports/ai-foundation-20261023/human405-round1-v121-step047-20261030-v1.json": "9ef63473c2bdc8fe550c8c2384bca3079be5d62da7521592c78bff9333f2c796",
+    "reports/ai-foundation-20261023/human405-round1-v121-step048-20261030-v1.json": "fa1810769e9ea3fe7e2c1dd05f959c071dbf56d12bfb599e914b770ed5de109a",
+    "reports/ai-foundation-20261023/human405-round1-v121-step049-20261030-v1.json": "5f487fe113381811e2d5706332a481630f9f3e8dd15ac6c8cfceb637c024b89b",
+    "reports/ai-foundation-20261023/human405-round1-v121-step050-20261030-v1.json": "baf3ac15aac1c357707730b9609f1ad31fc3857e1a583819cff392773e6e9dfa",
+    "reports/ai-foundation-20261023/human405-round1-v121-step051-20261030-v1.json": "5b5a88b6bfc6b8305c52c7cc9a68957a18a491444140e12053ba22e4c34cfdc2",
+    "reports/ai-foundation-20261023/human405-round1-v121-step052-20261030-v1.json": "3096301c7f411d92a8a0e26785b7cb9eb74fd361ef67f5ae0d8a8cfe46c10b85",
+    "reports/ai-foundation-20261023/human405-round1-v121-step053-20261030-v1.json": "9882ac64a24e4b1346000fb7ff42c95e9ef1dc4ad7a3e3698c1df36b9d3edd24",
+    "reports/ai-foundation-20261023/human405-round1-v121-step054-20261030-v1.json": "8458b755fcbe2f961f15dcb13c39826918525a2a222eea0c789620f1ad0792c5",
+    "reports/ai-foundation-20261023/human405-round1-v121-step055-20261030-v1.json": "a6575f98265618677234eec34c9a8fe81ce9c5b5a693b0c0ed0ef1a358622f91",
+    "reports/ai-foundation-20261023/human405-round1-v121-step056-20261030-v1.json": "3c3f6eac55822176e4b9e09ab4e61fed2d11205a1aee71600dd2d8d62af8c87a",
+    "reports/ai-foundation-20261023/human405-round1-v121-step057-20261030-v1.json": "c057a3231e67eebe346a25ee505a08c2aa31727a9b9a3b0d9f97f6e1199d5f89",
+    "reports/ai-foundation-20261023/human405-round1-v121-step058-20261030-v1.json": "ef38aa8b73bca27f130b5ce0980d0ccc8c9568c7a76132833b0724f6e347bb90",
+    "reports/ai-foundation-20261023/human405-round1-v121-step059-20261030-v1.json": "bed05e2b570f8439861ce112129eb6b0a905b3fc45accc072bdb9f3627e1534a",
+    "reports/ai-foundation-20261023/human405-round1-v121-step060-20261030-v1.json": "d3c30d2ae7a5ac1f3e06442a023dd303bb525c8349e92ede3c9216155193ac21",
+    "reports/ai-foundation-20261023/human405-round1-v121-step061-20261030-v1.json": "58c643ac5d9f20c4a37d8c82d9779efd320d41130a1cf8b43b1bd410e8cb5fce",
+    "reports/ai-foundation-20261023/human405-round1-v121-step062-20261030-v1.json": "7ad17e212556055feac8142813049a0236c3b2f1e1cc4ad26859918c4d0e1b2d",
+    "reports/ai-foundation-20261023/human405-v121-cold-autonomous-pass-20261031-v1.json": "a01659bcb623aa884fb4f75b3ab40690b1705fecb515f1d9154c44f86811b9a4",
+    "reports/ai-foundation-20261023/human405-v121-cold-baseline-r1-t8-blue-20261031-v1.json": "3fc7e7ee75de92584d32071608f2e4daa4e61bda674d2f22107f3ec3aa00aea3",
+    "reports/ai-foundation-20261023/human405-v121-cold-baseline-r2-t9-white-20261031-v1.json": "c599302c31b5ab36a0acf93bcd81e6047f8f25b6a9a0b616a40af115fcc3daa3",
+    "reports/ai-foundation-20261023/human405-v121-cold-case-001-20261031-v1.json": "b85c93caf865dac696be1a8155f1fd8b45e8c63e28d4a91b0f8539a26cf3cf56",
+    "reports/ai-foundation-20261023/human405-v121-cold-case-003-20261031-v1.json": "e00b5f983f6a2abfcf3a7b68b518a928eefaad9e3e4e18b1d8795ea9608ed82a",
+    "reports/ai-foundation-20261023/human405-v121-cold-case-008-20261031-v1.json": "e935ff9f46ba7a391c768900362f372168909ca6befc39e19086be200be340f9",
+    "reports/ai-foundation-20261023/human405-v121-cold-case-009-20261031-v1.json": "760150dc6f75c0cf16e6e95bc4fdb77f31eece81cc197ee05748c96d52f5ebab",
+    "reports/ai-foundation-20261023/human405-v121-cold-case-011-20261031-v1.json": "2b0a8c64ffa54268e6f69aa6fbfc54d36812398e025c063b1cedbd26b3c34278",
+    "reports/ai-foundation-20261023/human405-v121-cold-case-062-20261031-v1.json": "eb7e64e4a2a505711041aac0b557d8118751cdbbc60d2933ea044a161ac3ac49",
+    "reports/ai-foundation-20261023/human405-v121-cold-case-105-20261031-v1.json": "012457ee4c02d660deac4b28baa10819e9939447406a769f326e8f747f0114e9",
+    "reports/ai-foundation-20261023/human405-v121-cold-case-152-20261031-v1.json": "dda3035294626a6b16f8e2f9ea55d2be00bf59b533046389ea452aeee1111dca",
+    "reports/ai-foundation-20261023/human405-v121-cold-step317-20261031-v1.json": "0b16ab094237e17bd642150b8a95037e69835afd292a74aee742018cedd45636",
+    "reports/ai-foundation-20261023/human405-v121-cold-terminal-20261031-v1.json": "72863aee077afc5e518d9a4d7da0e3b343c19276a13f2be5b6dba7d50d1adc67",
+    "reports/ai-foundation-20261023/human405-v121-compat-cold-20261031-v1.json": "3f390edbc6d96fdaa7902bea897de2052e8c06e891109f962ccc1f46b4bd11e6",
+    "reports/ai-foundation-20261023/human405-v121-known-pass-card-information-20261031-v1.json": "3ae2aa595888b16c5210e15f555456fadc5b0585f70415113f717f8bbe957baf",
+    "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step24-20261031-v1.json": "faedf10546d38f1fd07663d37950e73283dde7356a88a8db5cbf14a84f14358b",
+    "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step38-20261031-v1.json": "0f3f5ea268c6889a8e69b15d41ad80230e85dfb11070c1f15d3b254ae5646aaa",
+    "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step39-20261031-v1.json": "0631fecdae3d4b9c13364087837bd3b2abbf098e43d142ffd7e94b451836ef10",
+    "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step43-20261031-v1.json": "04895f6f0bd0125160fe112865933f7e5b213d6d27ee95aef0f423b7d1a45d49",
+    "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step56-fixed-prefix-20261031-v1.json": "cb71e2d3052e630566d267830ff69fc489b1d71b82e49931affd41dd23ef7888",
+    "reports/ai-foundation-20261023/human405-v121-native-witness-comparison-step62-20261031-v1.json": "bdf27cbc468f67df2468f19173246a01f8edb0bcab24d222e56991315453998c",
+    "reports/ai-foundation-20261023/human405-v121-paid-move-order-20261030-v1.json": "e5fbbabade655f7c16e89ece7f9e7de14dc9873ee4835fa7620a05a4581e9203",
+    "reports/ai-foundation-20261023/human405-v121-standard-r1-verification-20261031-v1.json": "62f75269f294d787c218e236acbad19f4a9be0bfb5b93113e86a226732a2d037",
+    "reports/ai-foundation-20261023/human405-v121-teacher-round1-native-replay-20261031-v1.json": "65d50905a7f5f5e23c1d7cb048590cb5d0c8e063994c928d90facf58a5c99eac"
+  }
+}

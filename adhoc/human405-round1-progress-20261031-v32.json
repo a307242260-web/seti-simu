@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "seti-human405-round1-goal-checkpoint-v2",
+  "date": "2026-10-31",
+  "goalStatus": "active",
+  "phase": "v121-one-standard-r1-recorded-known-pass-card-mask-unfixed",
+  "sourceCommit": "85e94cc4327cac0e6a103e184c4a47e13a9aa578",
+  "candidateVersion": "v121",
+  "singlePointAdmitted": true,
+  "fullGameAdmitted": false,
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "lastAutonomousRecord": "reports/research/f1e61527.85e94cc4.quick-200.json",
+  "lastAutonomousScore": 27,
+  "lastAutonomousValueV5": 63,
+  "actualInputs": 64,
+  "whiteDecisions": 34,
+  "wallMs": 1591,
+  "standardAutonomousRunsAtSource": 1,
+  "teacherNativeRoots": 32,
+  "sameFirstInputs": 25,
+  "sharedNativePrefixInputsWithV119": 26,
+  "completeStateSessionRngEqualBeforeInput27": true,
+  "unresolvedDefects": [
+    {
+      "step": 62,
+      "kind": "known-PASS-choice-masked-with-unknown-income-draw",
+      "fixed": false,
+      "evidence": "reports/ai-foundation-20261023/human405-v121-known-pass-card-information-20261031-v1.json"
+    }
+  ],
+  "documentation": "docs/human405-round1-v121-learning-review-20261031.md",
+  "nextSafeAction": "Fix preservation of current own-seat native PASS-menu card identities without exposing future offers or blind income cards; test native information/value impacts and hidden-world invariance, then repeat required single-point admission before a new source standard R1. Never rerun v121 standard trial."
+}

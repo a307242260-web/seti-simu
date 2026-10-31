@@ -1,0 +1,1 @@
+{"output":"reports/ai-foundation-20261023/human405-v121-standard-r1-verification-20261031-v1.json","actual":27,"previous":11,"prior":13,"teacher":15,"actualValue":63,"previousValue":46.5,"priorValue":53.5,"teacherValue":56,"wallMs":1591,"maxInputs":89,"maxMs":166.222791,"shared":26,"firstChangedInput":27}
