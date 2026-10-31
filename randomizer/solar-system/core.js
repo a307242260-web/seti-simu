@@ -21,6 +21,7 @@
   }
 
   const WHEEL_IDS = Object.freeze([1, 2, 3, 4]);
+  const WHEEL_STEP_KEYS = Object.freeze([null, "wheel1Steps", "wheel2Steps", "wheel3Steps", "wheel4Steps"]);
   const VISIBLE_WHEEL_IDS = Object.freeze([...WHEEL_IDS].sort((a, b) => (
     layout.WHEELS[a].zOrder - layout.WHEELS[b].zOrder
   )));
@@ -130,7 +131,7 @@
     if (!input) return 0;
     if (Array.isArray(input)) return Number(input[wheelId] || 0);
     return Number(
-      input[`wheel${wheelId}Steps`]
+      input[WHEEL_STEP_KEYS[wheelId]]
       || input[wheelId]
       || input[String(wheelId)]
       || 0,
@@ -176,7 +177,7 @@
   function getWheelStep(rotation, wheelId) {
     // Preserve the public normalization/coercion contract while reading only
     // the requested wheel. Geometry calls this several times for each cell.
-    const key = `wheel${wheelId}Steps`;
+    const key = typeof wheelId === "number" ? WHEEL_STEP_KEYS[wheelId] : `wheel${wheelId}Steps`;
     const id = key === "wheel1Steps" ? 1 : key === "wheel2Steps" ? 2
       : key === "wheel3Steps" ? 3 : key === "wheel4Steps" ? 4 : null;
     const source = rotation && rotation.rotation ? rotation.rotation : rotation;

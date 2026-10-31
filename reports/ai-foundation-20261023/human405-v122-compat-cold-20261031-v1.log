@@ -1,0 +1,14 @@
+{"label":"case-001","inputs":144,"ms":154.365709,"complete":true,"value":28.5}
+{"label":"case-003","inputs":26,"ms":149.357959,"complete":true,"value":41}
+{"label":"case-008","inputs":107,"ms":169.76833300000004,"complete":true,"value":45}
+{"label":"case-011","inputs":9,"ms":30.083375000000004,"complete":true,"value":41.5}
+{"label":"case-009","inputs":41,"ms":76.807458,"complete":true,"value":41.5}
+{"label":"case-062","inputs":171,"ms":339.726625,"complete":true,"value":67}
+{"label":"case-105","inputs":241,"ms":601.4762920000001,"complete":true,"value":60.5}
+{"label":"case-152","inputs":228,"ms":515.67125,"complete":true,"value":48}
+{"label":"baseline-r1-t8-blue","inputs":12,"ms":59.153791,"complete":true,"value":58.5}
+{"label":"baseline-r2-t9-white","inputs":86,"ms":185.021791,"complete":true,"value":48}
+{"label":"step317","inputs":195,"ms":367.65099999999995,"complete":true,"value":84.5}
+{"label":"terminal","inputs":86,"ms":201.613459,"complete":true,"value":84}
+{"label":"autonomous-pass","inputs":32,"ms":94.208542,"complete":true,"value":57}
+{"roots":13,"overruns":[{"label":"case-105","complete":true,"nativeInputs":241,"milliseconds":601.4762920000001,"value":60.5,"rootAndRngUnchanged":true,"evidencePath":"reports/ai-foundation-20261023/human405-v122-cold-case-105-20261031-v1.json"}]}

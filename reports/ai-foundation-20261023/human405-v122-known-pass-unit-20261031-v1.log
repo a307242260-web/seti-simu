@@ -1,0 +1,5 @@
+{"knownPassCardPreserved":true,"unknownIncomeDrawMasked":true,"nativeCases":6,"hiddenWorldPairs":3,"sourceCardPoolConserved":true,"positiveKnownPurposeValueDelta":6,"rootAndRngUnchanged":true}
+{"passOfferBarrier":"passed","hiddenWorldVariants":2,"actualOfferStillSelectable":true,"forcedDiscardPreserved":true,"emptyAndFinalRoundNoBarrier":true,"replayAndUndo":true}
+SUMMARY unit passed=2 failed=0 total=2 time=0.59s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=2

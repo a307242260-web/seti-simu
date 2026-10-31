@@ -1,0 +1,26 @@
+{
+  "baseCommit": "aeb6462c952a11914811ce423025b56791faaf80",
+  "exactTrackedCodeDataFiles": 2910,
+  "selectedChanges": {
+    "randomizer/game/rule-composition.js": "fe8d16acdea5e3ae83448740aba56177bc78e62bb5b518130b8b6c7ece6109f2",
+    "randomizer/game/ai/analysis-port.js": "c770df02183dec74f309241bac27caf803161d064eb13313658cb78993ad4d93",
+    "randomizer/game/ai/decision-search.js": "9f2de438b2ed5df84901cd8c44e8165c4b0bc539e7323fee79f9fff6644900a4",
+    "randomizer/solar-system/core.js": "d967dd46e6c1215d79d2e6c98f6c2733aa3d7a70948f12ecf7656f89e2e6bd44",
+    "randomizer/index.html": "095617559d6aea4c354d30d30b0875f58ab058cf1f16a2ff649ef21b5f94411b",
+    "randomizer/game/ai/known-pass-card.test.js": "39419e28726cd1a51d064b858968d79bb075a2d8f563acebcdfeeeef6492ef5a",
+    "tools/node-test-inventory.js": "bd12b6cde95096a92832ecf22393dec8287418770181ebf504e5e832e87ae0fc",
+    "tools/browser-smoke-inventory.js": "7dd5903654b8d7840b6370eb70aac69b28e5cc81f46f54848877e078760b609b"
+  },
+  "sourceBoundReportsVerified": true,
+  "node": {
+    "unit": 155,
+    "fullFlow": 1
+  },
+  "chrome": 9,
+  "legacyValueInputFailure": [
+    "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+  ],
+  "goalStatus": "active",
+  "fullGameAdmitted": false,
+  "nextAction": "one standard robot_iterate white R1 after commit"
+}

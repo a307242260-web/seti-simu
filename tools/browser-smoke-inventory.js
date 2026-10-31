@@ -1020,6 +1020,26 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   obligation: "真实页面按收入数据需求固定准备流程，原生输入逐笔计数且权威状态不变",
   counterexample: "模块装配丢失、兑换或角标独立展开、缺少需求仍准备、宏漏记输入或修改权威根",
 }), Object.freeze({
+  id:'production-known-pass-card',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiAnalysisPort && window.SetiCards && window.SetiStateValue)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-062-20261030-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+    try{for(const purpose of [false,true]){
+      const envelope=structuredClone(f.compositionEnvelope),state=envelope.session.session.workingState;
+      if(purpose){const pile=state.cards.passReservePiles[1],old=pile[0],index=state.cards.drawPileCardIds.indexOf('b_4.webp'),entry=window.SetiCards.CARD_CATALOG.find(c=>c.card_id==='b_4.webp');if(index<0||!entry)throw Error('科技对照牌不存在');const {cardName,src,...replacement}=window.SetiCards.createCardInstance(entry,'known-pass-purpose');pile[0]={...replacement,id:old.id,faceUp:true};state.cards.drawPileCardIds[index]=old.cardId;}
+      if(!c.lifecycle.restore(envelope).ok)throw Error('PASS根恢复失败');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+      try{const root=p.openRoot(),id=purpose?'b_4.webp':'dlc_4.png',a=root.legalActions.find(a=>a.target?.kind==='pass-reserve-card'&&a.target.cardId===id),child=p.expand(root,a.actionId),hand=child.observation.selfState.hand;
+        if(child.boundary!=='hidden_card_draw'||!hand.some(c=>c.id===a.payload.cardInstanceId&&c.cardId===id)||hand.filter(c=>c.hidden).length!==1)throw Error('已知PASS牌丢失或收入盲抽泄漏');
+        if(purpose&&window.SetiStateValue.evaluateStateValue(child.observation,f.seatId).components.handPotential<=0)throw Error('已知科技牌用途未进入估值');
+        if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('原根或RNG被修改');
+      }finally{p.close();}
+    }window.__knownPassCard={ok:true,nativeCases:2};}finally{c.dispose();}
+  })()`,
+  successExpression:'window.__knownPassCard?.ok === true',
+  obligation:'当前原生PASS已公开选牌在后续盲抽后保留身份，真实科技用途可估值而收入盲抽仍隐藏',
+  counterexample:'遮蔽已知选牌漏计用途、误读未来PASS选项或泄漏收入盲抽',
+}), Object.freeze({
   id:'production-winning-income-recovery',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiSearchAgent?.createSearchAgent && window.SetiAnalysisPort)',
   actionExpression:`(async()=>{

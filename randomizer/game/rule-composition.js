@@ -172,12 +172,13 @@
     return changed ? { ...aliens, slots: masked } : aliens;
   }
 
-  function sanitizeHiddenInformationObservation(rootObservation, leafObservation, barrier) {
+  function sanitizeHiddenInformationObservation(rootObservation, leafObservation, barrier, visibleRootCardIds = []) {
     // 只浅重建被遮蔽的部分（publicCards/techSupply/aliens/selfState 手牌/requirements），
     // 其余字段与 deepFrozen 的 leafObservation 共享（只读安全），不再整棵深克隆。
     if (!leafObservation || typeof leafObservation !== "object") return leafObservation;
     const rootBoard = rootObservation?.publicState?.board || {};
     const knownCardIds = collectKnownCardIds(rootObservation);
+    for (const id of visibleRootCardIds) knownCardIds.add(String(id));
     const board = leafObservation.publicState?.board || null;
     const sanitized = {
       ...leafObservation,

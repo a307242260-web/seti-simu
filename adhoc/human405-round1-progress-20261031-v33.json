@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-31",
+  "goalStatus": "active",
+  "phase": "v123-known-PASS-card-fix-awaiting-standard-R1-after-admission",
+  "baseCommit": "aeb6462c952a11914811ce423025b56791faaf80",
+  "candidateVersion": "v123",
+  "candidateValue": "V5",
+  "lastAutonomousSource": "85e94cc4327cac0e6a103e184c4a47e13a9aa578",
+  "lastAutonomousRecord": "reports/research/f1e61527.85e94cc4.quick-200.json",
+  "lastAutonomousScore": 27,
+  "lastAutonomousValue": 63,
+  "newCandidateAutonomousRun": false,
+  "knownPASSCardFix": {"nativeCases":6,"hiddenWorldPairs":3,"knownPurposeValueDelta":6,"futureOfferBarrierUnchanged":true},
+  "singlePointGate": {"roots":45,"maxNativeInputs":243,"maxMilliseconds":576.598833,"sameActionsValuesAndInputsAsV121":true},
+  "v122Rejected": {"reason":"601.476292ms exceeds600ms","complete":true,"inputs":241,"sourceArchived":true},
+  "nativeIdentityAndGeometry": {"geometryChecks":9100,"identityChecks":1440},
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "fullGameAdmitted": false,
+  "nextSafeAction": "Verify155unit+1fullFlow and9Chrome, isolate commit/push, then exactly one standard autonomous white R1 at admitted commit. Native-replay compare v121 and teacher; refresh remaining32-node evidence including knownPASS identities. No v121 orv122 autonomous rerun."
+}

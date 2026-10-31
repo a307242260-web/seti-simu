@@ -1,0 +1,10 @@
+PASS production-search-agent-entry http://127.0.0.1:50333/randomizer/index.html?agent=search
+PASS production-goal-movement-plan http://127.0.0.1:50333/randomizer/index.html
+PASS production-search-hotpath http://127.0.0.1:50333/randomizer/index.html
+PASS production-six-greedy-plans http://127.0.0.1:50333/randomizer/index.html
+PASS production-shared-resource-prefix http://127.0.0.1:50333/randomizer/index.html
+PASS production-known-pass-card http://127.0.0.1:50333/randomizer/index.html
+PASS production-winning-income-recovery http://127.0.0.1:50333/randomizer/index.html
+PASS production-funded-research-value http://127.0.0.1:50333/randomizer/index.html
+PASS production-quiet-data-tail http://127.0.0.1:50333/randomizer/index.html
+SUMMARY browserSmoke passed=9 failed=0 total=9

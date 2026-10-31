@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-31",
+  "sourceCommit": "aeb6462c952a11914811ce423025b56791faaf80",
+  "goalStatus": "active",
+  "defect": "Root-visible native own-seat PASS card is masked with subsequent hidden income draw",
+  "scope": "Add only validated current native PASS-menu instance IDs to root known-card set; pass the set to shared observation sanitizer. No new guessed observation or future menu access.",
+  "identityAndDedup": "Native physical/control identity and source action-set certificate remain unchanged. Knowledge is fixed per opened root; no cross-root cache.",
+  "reachabilityAndResourceBounds": "No candidate, target, resource lower-bound or admissible-pruning changes.",
+  "budgets": "Keep factory global transitions/nodes/frontier/milliseconds null as authorized; single-point acceptance actual <=256 native inputs and root+search <=600ms. Never substitute fallback PASS or truncate and call complete.",
+  "tests": ["real teacher62 choice remains known while one income card is hidden", "hidden draw-world variants preserve same known observation/value", "future PASS offers remain unknown until actual menu", "native real free-tech offer preserves positive held-card value; source card-pool conserved", "original root and RNG unchanged", "shared Node and Browser paths"],
+  "admission": "Per-point benchmark before 45cold gate and full regression; only after source-bound admission commit permit one standard white R1. Do not rerun v121.",
+  "baselineUnchanged": "ai-search-v41-baseline-20261029"
+}

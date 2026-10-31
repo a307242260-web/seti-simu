@@ -1,0 +1,10 @@
+{
+  "geometryChecks": 9100,
+  "sourceHashes": {
+    "randomizer/solar-system/core.js": "d967dd46e6c1215d79d2e6c98f6c2733aa3d7a70948f12ecf7656f89e2e6bd44",
+    "randomizer/game/ai/analysis-port.js": "c770df02183dec74f309241bac27caf803161d064eb13313658cb78993ad4d93",
+    "adhoc/human405-v119-reference-sources-20261031-v1.json.gz": "5ac704dfd28806d305bb58ec1b76321600bb7630533b65e45dd184faa5caf21d",
+    "adhoc/verify-human405-identity-solar-20261031-v3.js": "633dfaee1907b1a4082bb26e90d620a33a62b19bd5253c7e21f7a7e489574bce"
+  },
+  "geometryOnly": true
+}

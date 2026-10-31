@@ -375,7 +375,7 @@
       const observationAt = now();
       const observation = project(fork.composition || fork,valueOnly);
       const visible = barrier && ruleComposition.isHiddenInformationBarrier(barrier)
-        ? ruleComposition.sanitizeHiddenInformationObservation(rootObservation, observation, barrier)
+        ? ruleComposition.sanitizeHiddenInformationObservation(rootObservation, observation, barrier, knownRootCardIds)
         : observation;
       observationCount += 1;
       // Native non-cheap projection already owns and freezes its complete state.
@@ -468,6 +468,15 @@
       knownRootCardIds = new Set([...(rootObservation.publicState.board.publicCards || []),
         ...(rootObservation.selfState.hand || []), ...(rootObservation.selfState.reservedCards || []),
         ...(rootObservation.selfState.privateAlienCards || [])].filter(Boolean).map(c => c.id));
+      // The current native PASS menu already discloses these identities. Retain
+      // them when a later income draw closes the window; future menus stay hidden.
+      for (const action of actions) {
+        if (action.family === "choose_card" && action.target?.kind === "pass-reserve-card"
+          && action.target.cardId && action.target.choiceId
+          && action.payload?.cardInstanceId === action.target.choiceId) {
+          knownRootCardIds.add(action.target.choiceId);
+        }
+      }
       // 同一回合的已知输入不重抽未知世界；恢复仅依赖正式公开配置和回合身份。
       // 完整节点身份仍包括假设/RNG，不能因种子稳定而忽略实际依赖变化。
       const authoritative = snapshot(composition);

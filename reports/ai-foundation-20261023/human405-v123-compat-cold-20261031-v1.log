@@ -1,0 +1,14 @@
+{"label":"case-001","inputs":144,"ms":152.5165,"complete":true,"value":28.5}
+{"label":"case-003","inputs":26,"ms":149.549125,"complete":true,"value":41}
+{"label":"case-008","inputs":107,"ms":167.821375,"complete":true,"value":45}
+{"label":"case-011","inputs":9,"ms":29.249875000000003,"complete":true,"value":41.5}
+{"label":"case-009","inputs":41,"ms":74.134834,"complete":true,"value":41.5}
+{"label":"case-062","inputs":171,"ms":328.89883299999997,"complete":true,"value":67}
+{"label":"case-105","reused":true,"inputs":241,"ms":576.5988329999999}
+{"label":"case-152","inputs":228,"ms":505.581584,"complete":true,"value":48}
+{"label":"baseline-r1-t8-blue","inputs":12,"ms":59.498917000000006,"complete":true,"value":58.5}
+{"label":"baseline-r2-t9-white","inputs":86,"ms":182.74937500000004,"complete":true,"value":48}
+{"label":"step317","inputs":195,"ms":364.093209,"complete":true,"value":84.5}
+{"label":"terminal","inputs":86,"ms":198.33970900000003,"complete":true,"value":84}
+{"label":"autonomous-pass","inputs":32,"ms":93.07120799999998,"complete":true,"value":57}
+{"roots":13,"overruns":[]}

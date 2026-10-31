@@ -1,0 +1,33 @@
+{"step":24,"teacher":"b_117.webp","student":"发射","category":"entered-and-pruned-by-value-bound","teacherValue":57.5,"studentValue":60,"inputs":89,"ms":176,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":25,"teacher":"1能量 → 移动1步","student":"移动探测器 3 向外","category":"excluded-by-movement-policy","teacherValue":null,"studentValue":57.5,"inputs":2,"ms":38,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":26,"teacher":"移动探测器 3 向外","student":"移动探测器 3 向外","category":"same-first-input","teacherValue":57.5,"studentValue":57.5,"inputs":1,"ms":51,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":27,"teacher":"结束回合","student":"结束回合","category":"same-first-input","teacherValue":57.5,"studentValue":57.5,"inputs":0,"ms":39,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":35,"teacher":"研究科技","student":"研究科技","category":"same-first-input","teacherValue":62,"studentValue":62,"inputs":81,"ms":205,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":36,"teacher":"研究 blue2（蓝槽 1）","student":"研究 blue2（蓝槽 1）","category":"same-first-input","teacherValue":62,"studentValue":62,"inputs":64,"ms":179,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":37,"teacher":"b_48.webp","student":"b_48.webp","category":"same-first-input","teacherValue":62,"studentValue":62,"inputs":10,"ms":57,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":38,"teacher":"结束回合","student":"放置数据","category":"excluded-by-resource-policy","teacherValue":null,"studentValue":62,"inputs":9,"ms":52,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":39,"teacher":"环绕火星 - 奖励：首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入（R3，1信用点 + 1能量）","student":"放置数据","category":"entered-and-pruned-by-value-bound","teacherValue":null,"studentValue":62.5,"inputs":243,"ms":387,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":40,"teacher":"dlc_40.png","student":"dlc_40.png","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":14,"ms":48,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":41,"teacher":"扫描 绘架座β","student":"扫描 绘架座β","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":13,"ms":49,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":42,"teacher":"收入 dlc_40.png","student":"收入 dlc_40.png","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":12,"ms":49,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":43,"teacher":"结束回合","student":"放置数据","category":"excluded-by-resource-policy","teacherValue":null,"studentValue":59.5,"inputs":11,"ms":37,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":44,"teacher":"深空探测 1x 行动","student":"深空探测 1x 行动","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":153,"ms":218,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":45,"teacher":"b_48.webp","student":"b_48.webp","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":82,"ms":142,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":46,"teacher":"dlc_39.png","student":"dlc_39.png","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":81,"ms":140,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":47,"teacher":"放置数据","student":"放置数据","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":80,"ms":138,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":48,"teacher":"第一排放置位 1","student":"第一排放置位 1","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":51,"ms":107,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":49,"teacher":"放置数据","student":"放置数据","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":74,"ms":134,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":50,"teacher":"第一排放置位 2","student":"第一排放置位 2","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":49,"ms":106,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":51,"teacher":"放置数据","student":"放置数据","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":68,"ms":134,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":52,"teacher":"第一排放置位 3","student":"第一排放置位 3","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":47,"ms":108,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":53,"teacher":"放置数据","student":"放置数据","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":62,"ms":123,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":54,"teacher":"第一排放置位 4","student":"第一排放置位 4","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":45,"ms":104,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":55,"teacher":"收入 dlc_39.png","student":"收入 dlc_39.png","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":33,"ms":92,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":56,"teacher":"放置数据","student":"dlc_9.png","category":"entered-and-pruned-by-value-bound","teacherValue":null,"studentValue":59.5,"inputs":27,"ms":79,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":57,"teacher":"blue2 下方","student":"blue2 下方","category":"same-first-input","teacherValue":56.5,"studentValue":56.5,"inputs":8,"ms":41,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":58,"teacher":"dlc_9.png","student":"dlc_9.png","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":17,"ms":64,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":59,"teacher":"研究 purple4","student":"研究 purple4","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":5,"ms":36,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":60,"teacher":"结束回合","student":"结束回合","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":0,"ms":15,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":61,"teacher":"PASS","student":"PASS","category":"same-first-input","teacherValue":59.5,"studentValue":59.5,"inputs":1,"ms":19,"zeroAlternativeNodes":0,"reusedSearch":false}
+{"step":62,"reusedCheckpoint":true,"category":"same-value-different-first-input"}
+{"roots":32,"categories":{"entered-and-pruned-by-value-bound":3,"excluded-by-movement-policy":1,"same-first-input":25,"excluded-by-resource-policy":2,"same-value-different-first-input":1},"overruns":[]}

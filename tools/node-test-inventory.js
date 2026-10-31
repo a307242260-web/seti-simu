@@ -24,6 +24,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/company-card-trade.test.js", "policy/decision-search", "11家公司及任务的取牌/支付原生后继保持当前值，价值牌支付构成数量界反例，模型不适用时不省略选择", "公司被动或任务改变取牌收益，仍套用简单手牌界，或省略实体付款后伪称完成复用"),
     entry("randomizer/game/ai/trade-reservation-bound.test.js", "policy/decision-search", "真实中后期保留牌及就绪任务在交易信息边界内不产生额外收益，所有付款顺序与取牌出口保持数量界", "扩大交易界时误自动完成任务、触发保留牌或省略实体付款集合"),
     entry("randomizer/game/ai/pass-reserve-choice.test.js", "policy/decision-search", "PASS预留真实后继与完整最优保持；适用模型可用数量等价，其他轮次回退原生输入且额外奖励拒绝证明", "忽略PASS尾队列、任务、揭示或跨轮收入，错误用一个出口替代不同收益"),
+    entry("randomizer/game/ai/known-pass-card.test.js", "architecture/policy-host", "当前原生PASS已公开选牌在收入盲抽后仍保留身份，真实科技牌用途进入估值；未知世界与原根RNG隔离", "把已知选牌一并遮蔽而漏计用途，或为保留选牌泄漏未来PASS及收入盲抽"),
     entry("randomizer/game/ai/pass-offer-barrier.test.js", "architecture/policy-host", "PASS新选项公开时停止规划，已知实际选项仍可执行；隐藏牌差分、强制弃牌、空叠和恢复撤销一致", "提前选择未知PASS预留牌、未取得却加手牌，或屏障过早跳过强制弃牌与过晚泄漏选项"),
     entry("randomizer/game/ai/post-main-plan.test.js", "policy/decision-search", "主行动后全部数据/条件输入与支付出口的完整原生最优保持，模型不适用时不伪造局部排除证明", "删除强制收入、里程碑或新数据收益，或用未完成保留图冒充覆盖"),
     entry("randomizer/game/ai/post-main-income.test.js", "policy/decision-search", "主行动后保留数据角标和全部收入出口，省略准备后新增强制收入有非盲抽替代且保持完整最优", "额外手牌迫使提前盲抽丢掉蓝色后续奖励，或漏计数据角标的可达收入与金标"),
