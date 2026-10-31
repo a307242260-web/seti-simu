@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-31",
+  "goalStatus": "active",
+  "phase": "round1-learning-verified-awaiting-final-delivery",
+  "goalCompletionReadyAfterDelivery": true,
+  "sourceCommit": "945301446ad6e2198fbf3b9e6a284602d078a037",
+  "searchVersion": "v123",
+  "teacherRoots": 32,
+  "sameFirstInputs": 25,
+  "explainedDifferences": 7,
+  "withinRound1UnresolvedDefects": [],
+  "actual": {
+    "record": "reports/research/19bd7474.94530144.quick-200.json",
+    "score": 27,
+    "valueV5": 63,
+    "steps": 64,
+    "wallMs": 1664,
+    "maxNativeInputs": 89,
+    "maxRootAndSearchMs": 174.265625
+  },
+  "teacher": {
+    "score": 15,
+    "valueV5": 56
+  },
+  "same64ActualActionsAndFullNativeStateSessionRngAsV121": true,
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "baselineEligible": false,
+  "fullGameAdmitted": false,
+  "audit": "reports/ai-foundation-20261023/human405-v123-round1-learning-audit-20261031-v1.json",
+  "review": "docs/human405-round1-v123-learning-review-20261031.md",
+  "nextSafeAction": "Deliver only current metadata/docs/native evidence with private Git index, preserve foreign V1 and shared index, push origin/dev and verify remote; then mark this goal complete. No additional autonomous experiment or broader strategy changes required."
+}

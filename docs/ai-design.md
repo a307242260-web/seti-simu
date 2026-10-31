@@ -5,7 +5,7 @@
 新开发主线通过`createAgentDecisionFunction`注册completion与实验search factory，
 两端仍使用本文的同一协调器和正式输入端口。search使用独立analysis-port/decision-search/state-value，
 不调用下文旧heuristic的目标选择、估值或计划缓存；具体入口、完成证据与失败语义见
-[共享搜索玩家](ai-search-agent-contract-20261023.md)。search v121 / V5 的白席首轮为27分，见[32节点学习复盘](human405-round1-v121-learning-review-20261031.md)；[获胜收入计划的原生前缀](ai-winning-income-recovery-20261031.md)修复已选目的的保存恢复。v123另[保留已公开PASS选牌身份](ai-known-pass-card-20261031.md)，通过45个单点及155单元/1完整流程/9项Chrome，新首轮对照待核验；整局速度与棋力仍待验收。资源兑换与角标采用[先需求、再贪心、最后目标内搜索](ai-resource-demand-20261027.md)，不再是独立探索动作。重组的任意弃牌按[正边际收益固定执行](ai-reorg-greedy-20261029.md)，不枚举手牌子集。生产搜索另[禁用移除科技换收入](ai-no-helios-20261029.md)，与借科技入口限制一致。
+[共享搜索玩家](ai-search-agent-contract-20261023.md)。search v121 / V5 的白席首轮为27分，见[32节点学习复盘](human405-round1-v121-learning-review-20261031.md)；[获胜收入计划的原生前缀](ai-winning-income-recovery-20261031.md)修复已选目的的保存恢复。v123另[保留已公开PASS选牌身份](ai-known-pass-card-20261031.md)，通过45个单点及155单元/1完整流程/9项Chrome，[新首轮及32节点对照](human405-round1-v123-learning-review-20261031.md)已完成（白席27分/1.664秒，教师15分），本阶段首轮学习已验证；整局速度与棋力仍待验收。资源兑换与角标采用[先需求、再贪心、最后目标内搜索](ai-resource-demand-20261027.md)，不再是独立探索动作。重组的任意弃牌按[正边际收益固定执行](ai-reorg-greedy-20261029.md)，不枚举手牌子集。生产搜索另[禁用移除科技换收入](ai-no-helios-20261029.md)，与借科技入口限制一致。
 
 ## 1. 决策流程
 

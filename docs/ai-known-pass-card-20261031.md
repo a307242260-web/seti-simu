@@ -12,7 +12,7 @@ v122功能回归通过，但旧105点为241输入/601.476ms，超过600ms，未�
 
 本阶段继续使用v41整局baseline。首轮成绩不能外推为整局405分或四AI180秒验收。
 
-45点冷启动复核已通过，动作、值及实际模拟次数与v121逐点一致；当前信息修复由单独原生反例验证。详见[45点交叉核对](../reports/ai-foundation-20261023/human405-v123-cold-admission-crosscheck-20261031-v1.json)、[几何及身份差分](../reports/ai-foundation-20261023/human405-v123-identity-solar-differential-20261031-v1.json)。新源码尚未运行自主首轮，等待完整回归后登记。
+45点冷启动复核已通过，动作、值及实际模拟次数与v121逐点一致；当前信息修复由单独原生反例验证。详见[45点交叉核对](../reports/ai-foundation-20261023/human405-v123-cold-admission-crosscheck-20261031-v1.json)、[几何及身份差分](../reports/ai-foundation-20261023/human405-v123-identity-solar-differential-20261031-v1.json)。新源码已通过完整回归，随后一次自主白席首轮为27分/1.664秒，见[最终首轮复盘](human405-round1-v123-learning-review-20261031.md)。
 
 值输入审计仍只有既有旧decisionObs冻结aomomo写入失败，独立搜索检查全部通过；此项明确保留，未作为本次新路径通过的替代证据。
 
