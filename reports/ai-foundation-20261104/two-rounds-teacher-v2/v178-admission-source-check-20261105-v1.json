@@ -1,0 +1,69 @@
+{
+  "baseCommit": "e40b0b7f1ac1c0e7bbabb9b42911a90104c1d3e7",
+  "runtimeChanges": [
+    "randomizer/game/ai/analysis-port.js",
+    "randomizer/game/ai/card-pick-planning.js",
+    "randomizer/game/ai/card-pick-planning.test.js",
+    "randomizer/game/ai/decision-search.js",
+    "randomizer/game/ai/funded-hand-timing.test.js",
+    "randomizer/game/ai/income-plan-value.test.js",
+    "randomizer/game/ai/local-decision-plans.js",
+    "randomizer/game/ai/opening-plan.test.js",
+    "randomizer/game/ai/post-main-plan.test.js",
+    "randomizer/game/ai/probe-capital.js",
+    "randomizer/game/ai/public-income-option.test.js",
+    "randomizer/game/ai/research-income-capital.js",
+    "randomizer/game/ai/resource-demand.js",
+    "randomizer/game/ai/settled-tech-funding.test.js",
+    "randomizer/game/ai/state-value.js",
+    "randomizer/index.html",
+    "tools/audit_v_state_inputs.js",
+    "tools/browser-smoke-inventory.js",
+    "tools/node-test-inventory.js"
+  ],
+  "otherRuntimeToolsAssetsUnchanged": 889,
+  "coldRoots": 95,
+  "maxNativeInputs": 246,
+  "maxRootAndSearchMs": 539.2417079999999,
+  "fullUnitOriginal": {
+    "passed": 164,
+    "failed": 4,
+    "total": 168
+  },
+  "currentUnitCoverage": {
+    "passed": 168,
+    "total": 168,
+    "focusedReplacements": [
+      "income-plan-value",
+      "opening-plan",
+      "post-main-plan",
+      "settled-tech-funding"
+    ]
+  },
+  "fullFlow": 1,
+  "chromePassed": 21,
+  "valueAudit": {
+    "independentSearchChecks": "pass",
+    "legacyFailureUnchanged": [
+      "[FAIL] decisionObs(装配后): schema=true scoring=true progress=true assets=true hand=true V=THROW: Cannot add property aomomo, object is not extensib"
+    ]
+  },
+  "valueModel": "v16",
+  "productionBudgets": {
+    "transitions": null,
+    "nodes": null,
+    "frontier": null,
+    "milliseconds": null
+  },
+  "nativeEndWitnessInputs": 13,
+  "developmentAligned": false,
+  "autonomousRuns": 0,
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "foreignWorkingHashes": {
+    "reports/iteration/versions.json": "7c3327e577eace7055ce9957197b0c609d00fb51f79f1c467f8c18f5b1abaf3d",
+    "reports/iteration/registry.json": "4c2411c53c1ea95a349d31c38b1da8eff0e59fe297da421ec5cd1b452208cb1e",
+    "reports/robot-iteration.html": "62ac5ca87a20925991c0a26b973bd22dc0a89f744fc87d6e0948ee1ce4443126"
+  }
+}

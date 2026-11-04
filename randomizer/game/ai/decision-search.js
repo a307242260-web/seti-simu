@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v166";
+  const VERSION = "seti-complete-decision-search-v178";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -36,7 +36,12 @@
     const valueForNode=node=>{
       if(!["income-plan-value","turn-tail-value"].includes(node.status))return valueOf(observationForValue(node));
       if(!stateValue?.isDefaultStateValueEvaluator?.(evaluate)||evaluate.seatId!==root.legalActions?.[0]?.actorId)throw new TypeError("SEARCH_INCOME_PROOF_MODEL_INVALID");
-      const total=valueOf(observationForValue((node.status==="income-plan-value"?port.incomePlanBase(node):port.turnTailBase(node))))+node.planSummary.netGain;
+      const baseValue=valueOf(observationForValue((node.status==="income-plan-value"?port.incomePlanBase(node):port.turnTailBase(node))));
+      // A complete audited plan with exactly zero value change is an identity,
+      // including fixed data realization under a fractional expectation.
+      // Every nonzero additive shortcut retains its exact half-unit grid.
+      if(node.planSummary.netGain===0)return baseValue;
+      const total=baseValue+node.planSummary.netGain;
       if(!Number.isSafeInteger(total*2))throw new Error("SEARCH_INCOME_PROOF_VALUE_INVALID");
       return total;
     };
@@ -365,7 +370,7 @@
           const currentValue = valueForNode(entry.node);
           const player = observationForValue(entry.node).publicState.players.find(player => player.playerId === evaluate.seatId);
           const increase = bound.maximumValueIncrease;
-          if (!Number.isSafeInteger(increase*2) || increase < 0) throw new TypeError("SEARCH_POST_MAIN_BOUND_INVALID");
+          if (!Number.isFinite(increase) || increase < 0) throw new TypeError("SEARCH_POST_MAIN_BOUND_INVALID");
           const safe = [currentValue,increase].every(value => Number.isSafeInteger(value*2) && value >= 0
             && value < Number.MAX_SAFE_INTEGER/64) && player.finalScore === player.score;
           const upperBound = safe ? currentValue+increase : null;
@@ -396,7 +401,7 @@
       const incomeProof=resourcePlanning&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)
         &&entry.alternatives.length===1&&entry.alternatives[0].resourcePlan?.goal.kind==="income"
         ?port.incomePlanSummary?.(entry.node):null;
-      if(incomeProof){
+      if(incomeProof&&(incomeProof.netGain===0||[valueForNode(entry.node),incomeProof.netGain].every(v=>Number.isSafeInteger(v*2)))){
         if(nodes.length+certificateNodes>=limits.nodes){stopReason="node-budget";break;}
         if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break;}
         const leaf=port.incomePlanBoundary(entry.node,incomeProof),added=add(leaf);
@@ -495,7 +500,9 @@
           :alternative.resourcePlan?.goal.kind==="income"?"data-end-turn"
           :entry.node.legalActions.some(a=>a.actionId===alternative.firstActionId&&a.family==="end_turn")?"end-turn":null;
         const tail=tailKind&&resourcePlanning&&stateValue?.isDefaultStateValueEvaluator?.(evaluate)?port.turnTailSummary?.(entry.node,tailKind):null;
-        if(tail&&tail.firstActionId===alternative.firstActionId){
+        if(tail&&tail.firstActionId===alternative.firstActionId
+          &&(tail.netGain===0
+            ||[valueForNode(entry.node),tail.netGain].every(v=>Number.isSafeInteger(v*2)))){
           if(nodes.length+certificateNodes>=limits.nodes){stopReason="node-budget";break outer;}
           if(now()-startedAt>=limits.milliseconds){stopReason="watchdog";break outer;}
           const added=add(port.turnTailBoundary(entry.node,tail));turnTailProofs++;provedTurnTailInputs+=tail.requiredNativeInputs;

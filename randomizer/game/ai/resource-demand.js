@@ -6,7 +6,7 @@
   if(common)module.exports=api;else root.SetiResourceDemand=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v6';
+  const VERSION='seti-goal-resource-preparation-v8';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -120,18 +120,34 @@
     if(!Object.values(value).every(immutableCapitalInput))return false;
     immutableCapitalInputs.add(value);return true;
   }
+  function valueFacts(state,p){
+    return{...probeCapital.factsFromState(state,p),supply:state.tech,researchCost:techResolver.getResearchPublicityCost(p),
+      computerSlots:data.listComputerPlacedTokens({...p}).map(t=>t.placementSlot),reservedCards:p.reservedCards,
+      analyzeEnergyCost:industry.canAnalyzeWithoutEnergy(p)?0:data.ANALYZE_ENERGY_COST};
+  }
   function planningCapital(state,p){
     // Only fully immutable source/player pairs can share this value. Mutable
     // previews compute directly; there is no serialized-key invalidation cost.
     const immutable=Object.isFrozen(p)&&Object.isFrozen(state)&&immutableCapitalInput(p)&&immutableCapitalInput(state);
     let quotes=immutable?planningCapitalQuotes.get(state):null;
     if(quotes?.has(p))return quotes.get(p);
-    const facts={...probeCapital.factsFromState(state,p),supply:state.tech,researchCost:techResolver.getResearchPublicityCost(p),
-      computerSlots:data.listComputerPlacedTokens({...p}).map(t=>t.placementSlot),reservedCards:p.reservedCards,
-      analyzeEnergyCost:industry.canAnalyzeWithoutEnergy(p)?0:data.ANALYZE_ENERGY_COST};
+    const facts=valueFacts(state,p);
     const value=stateValue.purposeCapital(facts).total;
     if(immutable){if(!quotes){quotes=new WeakMap();planningCapitalQuotes.set(state,quotes);}quotes.set(p,value);}
     return value;
+  }
+  function forecastDataPlan(state,p){
+    if(!Object.entries(p.techState.blueBoardSlots).some(([id,slot])=>slot<=2&&p.techState.ownedTiles[id]&&!p.techState.disabledTiles[id]&&['blue1','blue2','blue4'].includes(id)))return null;
+    const capital=stateValue.purposeCapital(valueFacts(state,p));
+    return capital.dataPotential>0?capital.dataPlan:null;
+  }
+  function incomeSwapPlan(state,p,committed=false){
+    const facts={...probeCapital.factsFromState(state,p),supply:state.tech,researchCost:techResolver.getResearchPublicityCost(p),reservedCards:p.reservedCards};
+    // In a native pending swap the mark is already spent by this very flow.
+    // Quote its remaining selection with the live wallet, without refunding
+    // the mark in any native state or admitting a second company action.
+    if(committed&&facts.companyState?.abilityId==='deepspace_swap_cards')facts.companyState={...facts.companyState,roundMarkRound:0};
+    return stateValue.incomeAllocationCapital(facts).knownSwapPlan;
   }
   function incomeOpportunityCost(state,p,card,beforeCapital=planningCapital(state,p)){
     const hand=p.hand.filter(c=>c.id!==card.id);
@@ -500,5 +516,5 @@
     if(!a)return{kind:'infeasible',reason:'funded-target-unavailable'};
     return{kind:goal.kind==='research_tech'?'start-target':'target',actionId:a.actionId,reason:'funded-goal-action'};
   }
-  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,dataCornerCards});
+  return Object.freeze({VERSION,MONEY,isPreparation,positiveResourceGain,paidBudget,paidChoice,greedyTechPlans,previewIncomeTail,fixedDataChoice,incomeFunding,blueFunding,catalog,currentGoal,needs,capacity,preparations,paymentCards,step,incomeChoice,incomeCardValue,incomeOfferValue,computerIncomeValue,cardOpportunityCost,heldAndResearchCapital,planningCapital,incomeSwapPlan,forecastDataPlan,dataCornerCards});
 });

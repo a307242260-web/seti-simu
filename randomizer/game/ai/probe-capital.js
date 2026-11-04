@@ -12,10 +12,11 @@
     common ? require("../../solar-system/core") : root.SetiSolarSystem,
     common ? require("../players") : root.SetiPlayers,
     common ? require("../rockets") : root.SetiRocketActions,
-    common ? require("../abilities/rocket") : root.SetiAbilityRocket);
+    common ? require("../abilities/rocket") : root.SetiAbilityRocket,
+    common ? require("../industry/catalog") : root.SetiIndustryCatalog);
   if (common) module.exports = api;
   else root.SetiProbeCapital = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (cards, data, science, alienState, trades, shared, planetAbility, rewards, solar, players, rockets, rocketAbility) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (cards, data, science, alienState, trades, shared, planetAbility, rewards, solar, players, rockets, rocketAbility, industryCatalog) {
   "use strict";
   const ordinary = new Set(shared.NON_EARTH_PLANET_IDS.filter(id=>id!=="aomomo"));
   const cToE = trades.TRADE_ACTIONS.find(t => t.id === "credits-for-energy");
@@ -270,6 +271,7 @@
     const pub = observation.publicState, player = pub.players.find(p => p.playerId === seatId);
     if (!player || observation.selfState?.playerId !== seatId) throw new Error('PROBE_CAPITAL_VIEWER_MISMATCH');
     return { player: { ...player, id: seatId }, board: pub.board, hand: observation.selfState.hand,
+      companyState: player.dataProgress?.blueSlots?.some(b=>b.slot<=2&&["blue1","blue2","blue4"].includes(b.tileId))&&observation.selfState.companyState ? { abilityId: observation.selfState.companyState.abilityId, roundMarkRound: observation.selfState.companyState.roundMarkRound, roundMarkTurn: observation.selfState.companyState.roundMarkTurn } : null,
       extraUnknownCount: 0, round: pub.roundNumber, passing: pub.passingPlayerIds.includes(seatId),
       terminal: observation.terminal ?? observation.outcomeProjection?.terminal,
       computerSlots: player.dataProgress?.computerSlots, blueSlots: player.dataProgress?.blueSlots };
@@ -281,16 +283,18 @@
     const slots = Object.entries(state.aliens?.aliens || {}).map(([slotId, slot]) => ({
       slotId: Number(slotId), revealed: Boolean(slot.revealed), traces: slot.traces,
     }));
+    const computerSlots=data.listComputerPlacedTokens(player).map(t=>t.placementSlot),usedBlue=data.listBlueBonusPlacedTokens(player);
+    const blueSlots=Object.entries(player.techState?.blueBoardSlots||{}).filter(([id])=>player.techState.ownedTiles[id]&&!player.techState.disabledTiles[id]).map(([tileId,slot])=>({tileId,slot:Number(slot),
+      occupied:usedBlue.some(t=>Number(t.blueSlot)===Number(slot)),unlocked:computerSlots.includes(data.getRequiredComputerSlotForBlueBonus(slot))})).sort((a,b)=>a.slot-b.slot);
+    const unknown=state.cards?.unknownPublicSlotIndices,publicCards=unknown?.length?state.cards.publicCards.map((card,index)=>card||(unknown.includes(index)?{hidden:true,faceUp:false}:null)):state.cards?.publicCards;
     return { player: { ...player.resources, id: player.id, color: player.color, techState: player.techState, income: player.income },
       board: { rockets: state.pieces?.rockets, planets: state.planets, data: state.data, solarSystem: state.solarSystem,
-        publicCards: state.cards?.publicCards, aliens: { slots } }, hand: player.hand,
+        publicCards, aliens: { slots } }, hand: player.hand,
+      companyState: blueSlots.some(b=>b.slot<=2&&["blue1","blue2","blue4"].includes(b.tileId))?{ abilityId: industryCatalog.getPlayerIndustryDefinition(player)?.activeAbilityId ?? null, roundMarkRound: Number(player.industryRoundMarkRound) || 0, roundMarkTurn: Number(player.industryRoundMarkTurn) || 0 }:null,
       extraUnknownCount: Math.max(0, (player.resources.handSize || 0) - player.hand.length), round: state.turn.roundNumber,
       passing: (state.passingPlayerIds || state.turn.passedPlayerIds).includes(player.id) || player.passCompletionPending === true,
       terminal: state.turn.gameEnded === true,
-      computerSlots: data.listComputerPlacedTokens(player).map(t=>t.placementSlot),
-      blueSlots: Object.entries(player.techState?.blueBoardSlots || {}).filter(([id])=>player.techState.ownedTiles[id]&&!player.techState.disabledTiles[id]).map(([tileId,slot])=>({tileId,slot:Number(slot),
-        occupied:data.listBlueBonusPlacedTokens(player).some(t=>Number(t.blueSlot)===Number(slot)),
-        unlocked:data.listComputerPlacedTokens(player).some(t=>t.placementSlot===data.getRequiredComputerSlotForBlueBonus(slot))})).sort((a,b)=>a.slot-b.slot) };
+      computerSlots,blueSlots };
   }
 
   function fromObservation(observation,seatId,weights,investment){return quote({...factsFromObservation(observation,seatId),investment},weights);}

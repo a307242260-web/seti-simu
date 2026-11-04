@@ -108,7 +108,8 @@ function upperBound(facts, weights, technologyCapital) {
   return{linear:Math.max(0,...ceilings),secondResearchPossible:ceilings.length>0&&facts.maximumPublicity-cost+publicity>=cost};
 }
 // Typed resource quote only. It never constructs an observation or game node.
-function missionDataContinuation({facts,hand,wallet,income,traceSlots,investment},weights){
+function missionDataContinuation({facts,hand,wallet,income,traceSlots,investment,incomeGains={}},weights){
+ const incomeGainFor=card=>incomeGains[card.id]||cards.getIncomeGainForCard(card);
  const zero=reason=>({value:0,selected:null,reason});
  const slots=facts.computerSlots,blues=facts.blueSlots||facts.player.dataProgress?.blueSlots;
  if(facts.passing||facts.round>=4||!Array.isArray(slots)||!Array.isArray(blues))return zero('data-facts-unavailable');
@@ -119,7 +120,7 @@ function missionDataContinuation({facts,hand,wallet,income,traceSlots,investment
  if(!active.length)return zero('currency-blue-unavailable');
  const available=active.filter(b=>!b.occupied);
  const base=investment(hand,wallet.publicity,{resources:wallet,income,startingIncome:0}),candidates=[];
- const incomeCards=slots.includes(4)?[]:hand.filter(c=>!c.hidden&&c.cardId&&(()=>{const gain=cards.getIncomeGainForCard(c);return gain&&Object.keys(gain).every(k=>['credits','energy'].includes(k));})());
+ const incomeCards=slots.includes(4)?[]:hand.filter(c=>!c.hidden&&c.cardId&&(()=>{const gain=incomeGainFor(c);return gain&&Object.keys(gain).every(k=>['credits','energy'].includes(k));})());
  for(const blue of [null,...available]){
   if(!blue&&slots.includes(4))continue;
   const bonus=blue&&placement.getBlueTileDataBonus(blue.tileId);
@@ -135,7 +136,7 @@ function missionDataContinuation({facts,hand,wallet,income,traceSlots,investment
     if(Object.entries(facts.player.techState.blueBoardSlots).some(([id,b])=>facts.player.techState.ownedTiles[id]&&!facts.player.techState.disabledTiles[id]&&placement.getRequiredComputerSlotForBlueBonus(b)===slot))score+=placement.getBlueColumnScoreBonus().score;
    }
    let remaining=hand,linearIncome=0;
-   if(incomeCard){const gain=cards.getIncomeGainForCard(incomeCard);remaining=hand.filter(c=>c.id!==incomeCard.id);players.gainResources({resources:next},gain);for(const[k,n]of Object.entries(gain))nextIncome[k]+=n;linearIncome=Object.entries(gain).reduce((n,[k,x])=>n+x*weights[k],0)*(4-facts.round)-weights.handSize;}
+   if(incomeCard){const gain=incomeGainFor(incomeCard);remaining=hand.filter(c=>c.id!==incomeCard.id);players.gainResources({resources:next},gain);for(const[k,n]of Object.entries(gain))nextIncome[k]+=n;linearIncome=Object.entries(gain).reduce((n,[k,x])=>n+x*weights[k],0)*(4-facts.round)-weights.handSize;}
    if(blue)players.gainResources({resources:next},{[bonus.type]:bonus[bonus.type]});
    const linear=score+linearIncome+['credits','energy','publicity','availableData'].reduce((n,k)=>n+(next[k]-wallet[k])*weights[k],0);
    const after=investment(remaining,next.publicity,{resources:next,income:nextIncome,startingIncome:0}),value=linear+after-base;
@@ -145,5 +146,50 @@ function missionDataContinuation({facts,hand,wallet,income,traceSlots,investment
  candidates.sort((a,b)=>b.value-a.value||a.neededData-b.neededData||a.blueSlot-b.blueSlot||String(a.incomeCardId).localeCompare(String(b.incomeCardId)));
  return{value:Math.max(0,candidates[0]?.value||0),selected:candidates[0]||null,candidates,reason:'one-fixed-income-and-optional-currency-blue-tail',scope:'One current-data-funded computer/income continuation with an optional currency-blue tail after one mission; shared wallet and known hand, no corners, exchanges, unknown identities, observations, search or pruning bounds.'};
 }
-return Object.freeze({quote,upperBound,missionDataContinuation});
+
+// A closure of one existing-data income/blue plan. A free company swap can
+// change the supplier's resource category, but consumes the same income slot,
+// outgoing hand card and shared wallet. A confirmed hidden public card uses
+// the public catalog prior; it is never a native payoff or pruning bound.
+const incomeCounts={credits:0,energy:0,handSize:0};
+for(const entry of cards.CARD_CATALOG)if(!entry.set.startsWith('alien:')){
+ const key=['credits','energy','handSize'][entry.income_code];if(key)incomeCounts[key]++;
+}
+function incomeOptions({facts,investment,baseCapital},weights){
+ const ctx={facts,hand:facts.hand,wallet:facts.player,income:facts.player.income,investment};
+ const fixed=missionDataContinuation(ctx,weights),baseline=baseCapital+fixed.value;
+ const result={total:baseline,baseline,knownSwapCapital:baseline,knownSwapPlan:null,fixed,classes:[]};
+ if(facts.terminal||facts.passing||facts.round>=4||facts.computerSlots.includes(4)
+   ||facts.companyState?.abilityId!=='deepspace_swap_cards'||facts.companyState.roundMarkRound===facts.round)return result;
+ // With equal currency weights, a swap can only improve this investment
+ // portfolio by changing a known held research card's payment window/loss.
+ if(weights.credits===weights.energy&&!facts.hand.some(c=>effects.buildPlayEffects(c).some(e=>e.type==='card_research_tech')))return result;
+ const suppliers=facts.hand.filter(c=>!c.hidden&&c.cardId&&['credits','energy'].some(k=>cards.getIncomeGainForCard(c)?.[k]===1)
+   &&!effects.buildPlayEffects(c).some(e=>e.type==='card_research_tech'));
+ if(!suppliers.length)return result;
+ const categories=new Map();
+ function bestFor(key){
+  if(categories.has(key))return categories.get(key);
+  let best={total:baseline,plan:null};
+  for(const card of suppliers){
+   const q=missionDataContinuation({...ctx,incomeGains:{[card.id]:{[key]:1}}},weights);
+   for(const plan of q.candidates||[])if(plan.incomeCardId===card.id&&baseCapital+plan.value>best.total)
+    best={total:baseCapital+plan.value,plan:{outgoingCardId:card.id,continuation:plan}};
+  }
+  categories.set(key,best);return best;
+ }
+ for(const incoming of facts.board.publicCards.filter(c=>c&&!c.hidden&&c.cardId)){
+  const gain=cards.getIncomeGainForCard(incoming),key=['credits','energy'].find(k=>gain?.[k]===1);if(!key)continue;
+  const best=bestFor(key);
+  if(best.total>result.knownSwapCapital){result.knownSwapCapital=best.total;result.knownSwapPlan={...best.plan,incomingCardId:incoming.id,netGain:best.total-baseline};}
+ }
+ result.total=result.knownSwapCapital;
+ if(facts.board.publicCards.some(c=>c?.hidden===true)){
+  const count=Object.values(incomeCounts).reduce((n,x)=>n+x,0);
+  for(const [key,n]of Object.entries(incomeCounts))result.classes.push({gain:key,count:n,probability:n/count,total:key==='handSize'?result.knownSwapCapital:Math.max(result.knownSwapCapital,bestFor(key).total)});
+  result.total=result.classes.reduce((n,c)=>n+c.probability*c.total,0);
+ }
+ return result;
+}
+return Object.freeze({quote,upperBound,missionDataContinuation,incomeOptions});
 });

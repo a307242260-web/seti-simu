@@ -41,6 +41,7 @@ module.exports = Object.freeze({
     entry("randomizer/game/ai/probe-capital-value.test.js", "policy/state-value", "一次在场探测任务按原生费用和已知完整奖励链估值，与固定计划共用机会成本且不读取隐藏身份", "探测器跨回合被估为零、重复计价、无法支付仍计收益、未知牌被用于插收入或踪迹奖励硬编码"),
     entry("randomizer/game/ai/ready-analysis-capital.test.js", "policy/state-value", "已就绪分析与研究共用资金用途，状态/观察同值，当前原生准备资产不因turn边界丢失", "先清空电脑损失蓝槽奖励、分析用途与探测资金重复计算或准备策略与正式估值分离"),
     entry("randomizer/game/ai/research-income-capital.test.js", "policy/state-value", "已筹资研究的已知收入牌与现有数据共用钱包估值，正式观察和原生执行一致", "忽略已知收入准备、重复使用钱包或将新补牌身份计入未来价值"),
+    entry("randomizer/game/ai/public-income-option.test.js", "policy/state-value", "公开补牌收入选择与固定数据共用钱包，121原生输入的51个稳定前缀、公司换牌冷恢复及13输入结束回合摘要一致", "读取未知牌序、重复消费收入蓝槽、公司已用仍报价或价值已计入后拒绝兑现换牌"),
     entry("randomizer/game/ai/mission-data-continuation.test.js", "policy/state-value", "任务后固定计算机收入和蓝槽后续共用钱包，80个控制根全部原生分支及完整首轮路径一致", "漏计既有数据筹资、重复领取蓝槽、读取未知收入牌或状态与正式观察不一致"),
     entry("randomizer/game/ai/funded-movement-tail.test.js", "policy/decision-search", "已筹资固定移动和数据收尾的原生价值核对，严格上界只省略无法获胜的模拟", "漏掉移动触发、付牌或选牌收益，用未执行的虚假后继评分，或相同分数时丢失更短路线"),
     entry("randomizer/game/ai/funded-hand-timing.test.js", "policy/state-value", "已知手牌科技按当前支付或已知收入后的实际轮次计用途，兑换损失与原生资源一致", "花完钱电仍计本轮科技收益，未知牌资助当前计划，或兑换成本没有进入价值"),

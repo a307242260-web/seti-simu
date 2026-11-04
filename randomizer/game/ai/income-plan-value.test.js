@@ -36,7 +36,9 @@ function open(envelope=f.compositionEnvelope){assert(c.lifecycle.restore(envelop
  controlled.committedState=JSON.stringify(s);
  // With no probe the energy blue slot still advances the held card payment
  // window. A positive income tail cannot hide that better fixed preparation.
- const check=open(controlled);try{const r=searchDecision({port:check.p,root:check.root,evaluate,...agent.OPTIONS,budget}),policy=check.p.resourceSpec(check.root);assert(r.complete);assert(policy.plans.every(p=>p.goal.kind==='blue-data'));assert(policy.blueTails[0].netGain>policy.incomeTail.netGain);assert.equal(check.p.incomePlanSummary(check.root),null);const actual=check.p.expandResourcePlan(check.root,policy.plans[0],()=>null);assert(actual.complete);assert.equal(r.value,evaluate(actual.node.observation));assert.deepEqual(c.lifecycle.save().envelope,check.before);}finally{check.p.close();}
+ // A known company swap may improve the portfolio before that preparation;
+ // compare the whole decision with native expansion, not just the blue leaf.
+ const check=open(controlled);try{const r=searchDecision({port:check.p,root:check.root,evaluate,...agent.OPTIONS,budget}),policy=check.p.resourceSpec(check.root);assert(r.complete);assert(policy.plans.every(p=>p.goal.kind==='blue-data'));assert(policy.blueTails[0].netGain>policy.incomeTail.netGain);assert.equal(check.p.incomePlanSummary(check.root),null);const actual=check.p.expandResourcePlan(check.root,policy.plans[0],()=>null);assert(actual.complete);assert(r.value>=evaluate(actual.node.observation));const native=searchDecision({port:{...check.p,turnTailSummary:()=>null,incomePlanSummary:()=>null,postMainValueBound:()=>null},root:check.root,evaluate,...agent.OPTIONS,budget});assert(native.complete);assert.equal(r.actionId,native.actionId);assert.equal(r.value,native.value);assert.deepEqual(c.lifecycle.save().envelope,check.before);}finally{check.p.close();}
  // Add one energy in this already-controlled state. The held card is now
  // funded without the blue slot, so blind income is genuinely the better tail.
  s.players.players.find(p=>p.id===f.seatId).resources.energy++;

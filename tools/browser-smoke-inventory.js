@@ -1054,7 +1054,7 @@ module.exports = Object.freeze([...smokes, Object.freeze({
         else if(name==='income'){const s=p.resourceSpec(n);if(s.incomeTail?.selected!==false||s.plans.some(g=>g.goal.kind==='income'))throw new Error('无净收益收入仍展开');}
         else if(name==='paid'){const plans=p.resourceSpec(n).plans.filter(g=>g.goal.paidRewardPolicy);if(plans.length!==1)throw new Error('付款额度仍枚举');const r=p.expandResourcePlan(n,plans[0],()=>null);if(!r.complete||r.prefixes.filter(p=>p.action.target?.pay).length!==4)throw new Error('付款计划未固定');}
         else if(name==='income-funding'){const plan=p.resourceSpec(n).plans.find(p=>p.goal.cardId==='card-15-0'&&p.goal.incomeFunding);if(!plan)throw new Error('收入资助主牌候选缺失');const r=p.expandResourcePlan(n,plan,()=>null);if(!r.complete||r.submissions!==10||r.prefixes[8].action.target.cardInstanceId!=='card-41-0'||r.prefixes[9].action.target.cardInstanceId!=='card-15-0')throw new Error('收入资助链丢失受益牌');}
-        else if(name==='income-funding-pick'){const s=p.cardPickSpec(n);if(s?.goal.fundsCardId!=='card-15-0'||s.selection.cardId!=='card-41-0')throw new Error('浏览器收入选牌未绑定资金目的');const r=p.expandWithCardPick(n,s.selectedActionId,()=>null);if(!r.complete)throw new Error('浏览器收入选牌执行失败');}
+        else if(name==='income-funding-pick'){const s=p.cardPickSpec(n);if(s?.goal.kind!=='known-income-swap'||!(s.goal.netGain>0)||s.selection.cardId!=='card-41-0')throw new Error('浏览器收入选牌未绑定已知筹资换牌目的');const r=p.expandWithCardPick(n,s.selectedActionId,()=>null);if(!r.complete)throw new Error('浏览器收入选牌执行失败');}
         else if(name==='known-rewards'){
           const fixed=p.cardPickSpec(n);if(fixed?.goal.kind!=='queued-income'||fixed.goal.fundsCardId!=='card-15-0'||fixed.selection.cardId!=='card-40-0'||fixed.retainedActionIds.length!==1)throw new Error('已承诺收入未传递到固定选牌目的');
           const picked=p.expand(n,f.source.teacherActionId);if(picked.status!=='decision')throw new Error('公共补牌截断已知奖励');
@@ -1377,10 +1377,10 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   id:'production-settled-tech-funding',file:'randomizer/index.html',
   readyExpression:'Boolean(window.SetiAnalysisPort && window.SetiDecisionSearch)',
   actionExpression:`(async()=>{
-    const f=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json').then(r=>r.json()),reference=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v2/v160-cold-serial-teacher-039-20261105-v1.json').then(r=>r.json()),seed=f.source.seed;
+    const f=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json').then(r=>r.json()),reference=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-cold-serial-teacher-039-20261105-v1.json').then(r=>r.json()),seed=f.source.seed;
     const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('paid-tech root restore');const before=JSON.stringify(c.lifecycle.save().envelope),p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
     try{const root=p.openRoot(),evaluate=window.SetiStateValue.createStateValueEvaluator(f.seatId),r=window.SetiDecisionSearch.searchDecision({port:p,root,evaluate,...window.SetiSearchAgent.OPTIONS,modelKey:evaluate.modelKey,budget:window.SetiSearchAgent.BUDGET});
-      if(!r.complete||r.unresolved.length||r.actionId!==reference.actionId||r.value!==reference.value||r.diagnostics.nativeExecutions>256||r.diagnostics.nativeExecutions>=reference.nativeInputs)throw Error('paid-tech funding contexts were not shared correctly');
+      if(!r.complete||r.unresolved.length||r.actionId!==reference.actionId||r.value!==reference.value||r.diagnostics.nativeExecutions>256||r.diagnostics.nativeExecutions!==reference.nativeInputs)throw Error('paid-tech funding contexts were not shared correctly');
       if(!r.lines.some(l=>l.status==='decision'&&l.resourcePolicy?.bound&&l.resourcePolicy.goal?.purpose==='tech'&&l.alternatives>=4))throw Error('distinct technology choices were lost');
       if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('paid-tech sharing changed root/RNG');window.__settledTechFunding={ok:true,nativeInputs:r.diagnostics.nativeExecutions};
     }finally{p.close();c.dispose();}
@@ -1400,6 +1400,30 @@ module.exports = Object.freeze([...smokes, Object.freeze({
   successExpression:'window.__readyAnalysisSmoke?.ok === true',
   obligation:'真实页面共享已就绪分析用途，资金机会成本和研究先后原生账本一致',
   counterexample:'只在Node计分析用途、页面少装依赖、状态准备与观察估值分离或读写根/RNG',
+}), Object.freeze({
+  id:'production-public-income-option',file:'randomizer/index.html',
+  readyExpression:'Boolean(window.SetiStateValue?.incomeAllocationCapital && window.SetiAnalysisPort)',
+  actionExpression:`(async()=>{
+    const f=await fetch('/reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json').then(r=>r.json()),seed=f.source.seed,seat=f.seatId;
+    const k=window.SetiProductionKernel.createSimulationRuleComposition({seed,random:window.SetiRandom.createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>window.SetiRuleObservation.buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;
+    if(!c.lifecycle.restore(f.compositionEnvelope).ok)throw Error('public income root restore');const original=JSON.stringify(c.lifecycle.save().envelope);
+    const submit=id=>{const d=c.inspect().session?.decision,a=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===id);if(!a)throw Error('native path missing '+id);const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);if(!r.ok)throw Error('native public income path rejected');};
+    try{
+      let p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});
+      try{const root=p.openRoot(),r=window.SetiDecisionSearch.searchDecision({port:p,root,evaluate:window.SetiStateValue.createStateValueEvaluator(seat),...window.SetiSearchAgent.OPTIONS,budget:window.SetiSearchAgent.BUDGET});
+        if(!r.complete||r.unresolved.length||r.actionId!=='orbit:44937d1f'||r.value!==64.5+62/182||r.diagnostics.nativeExecutions>256)throw Error('public income choice/value incomplete '+JSON.stringify({action:r.actionId,value:r.value,inputs:r.diagnostics.nativeExecutions}));
+        if(JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('public option search changed root/RNG');
+      }finally{p.close();}
+      for(const id of ['place_data:8fd12fd3','choose_target:29b5215c','place_data:8fd12fd3','choose_target:29b5215c','place_data:8fd12fd3','choose_target:29b5215c','place_data:8fd12fd3','choose_target:29b5215c','choose_card:b27d2a0c','scan:2d21a323','choose_target:2ad5607b','choose_card:65224aaf'])submit(id);
+      const before=JSON.stringify(c.lifecycle.save().envelope),value=window.SetiStateValue.evaluateStateValue(c.projection({role:'player',playerId:seat}).state,seat).total;p=window.SetiAnalysisPort.createAnalysisPort({composition:c,seatId:seat,maxCacheEntries:0});let proof;
+      try{p.setResourcePlanning(true);p.setCardPickPlanning(true);p.setMovementPlanning(true);const root=p.openRoot(),policy=p.cardPickSpec(root),swap=root.legalActions.find(a=>a.family==='industry');proof=p.turnTailSummary(root,'end-turn');if(!swap||policy.retainedActionIds.includes(swap.actionId)||!proof||proof.netGain!==0||proof.requiredNativeInputs!==1)throw Error('plain end incorrectly blocked by company compound guard');if(JSON.stringify(c.lifecycle.save().envelope)!==before)throw Error('end summary changed root/RNG');}finally{p.close();}
+      submit(proof.firstActionId);if(window.SetiStateValue.evaluateStateValue(c.projection({role:'player',playerId:seat}).state,seat).total!==value)throw Error('native end differs from identity proof');
+      if(!c.lifecycle.restore(f.compositionEnvelope).ok||JSON.stringify(c.lifecycle.save().envelope)!==original)throw Error('public option root restoration failed');window.__publicIncomeOptionSmoke={ok:true};
+    }finally{c.dispose();}
+  })()`,
+  successExpression:'window.__publicIncomeOptionSmoke?.ok === true',
+  obligation:'浏览器以公开收入先验保留筹资选择，完整第39根与Node一致，普通结束摘要不被已排除换牌阻断且与原生13输入相符',
+  counterexample:'浏览器少装新用途模块、读到实际隐藏牌、公司复合守卫扩大到结束回合或污染根/RNG',
 }), Object.freeze({
   ...smokes.find(smoke=>smoke.id==='production-browser-full-parity'),
   id:'production-search-agent-parity',file:'randomizer/index.html',query:'agent=search',

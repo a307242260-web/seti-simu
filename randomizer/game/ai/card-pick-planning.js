@@ -8,7 +8,7 @@
   if(common)module.exports=api;else root.SetiCardPickPlanning=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,tech,demand,players,trades,probe){
   'use strict';
-  const VERSION='seti-purpose-card-pick-policy-v9';
+  const VERSION='seti-purpose-card-pick-policy-v10';
   const TRADE_IDS=new Set(['credits-for-card','energy-for-card','publicity-for-card','cards-for-pick-card']);
   const isTrade=a=>a.family==='quick_trade'&&TRADE_IDS.has(a.target?.tradeId);
   const isOffer=a=>a.family==='choose_card'&&!a.target?.nebulaId&&(a.target?.source==='public'||a.target?.source==='blind'
@@ -173,8 +173,11 @@
       if(e)return resources.credits-(required.credits||0)>=e*energyTrade.cost.credits?e*(energyTrade.cost.credits-energyTrade.gain.energy):Infinity;
       return 0;
     }
-    function swapIntent(state,seatId,endpoints,outgoingId=null){
+    function swapIntent(state,seatId,endpoints,outgoingId=null,committed=false){
       const p=state.players.players.find(p=>p.id===seatId),outgoing=outgoingId?p.hand.find(c=>c.id===outgoingId):swapHandRanks(state,seatId)[0]?.card;
+      const planned=demand.incomeSwapPlan(state,p,committed);
+      if(planned&&(!outgoingId||planned.outgoingCardId===outgoingId))return{goal:{kind:'known-income-swap',id:'income:swap:'+planned.incomingCardId,cardId:planned.incomingCardId,netGain:planned.netGain},
+        selection:{cardId:planned.incomingCardId,blind:false,cache:'fixed-known-income-funding'},discardIds:[planned.outgoingCardId],reason:'realize-known-income-funding-option'};
       if(!outgoing)return null;
       const hand=p.hand.filter(c=>c.id!==outgoing.id),purposeState={...state,players:{...state.players,players:state.players.players.map(v=>v===p?{...p,hand,resources:{...p.resources,handSize:p.resources.handSize-1}}:v)}};
       const offered=state.cards.publicCards.filter(c=>c&&!c.hidden&&c.cardId),outFacts=facts(outgoing);
@@ -208,8 +211,9 @@
       const tradePending=pending?.type==='trade'&&TRADE_IDS.has(pending.tradeId)&&['discard','card_selection'].includes(pending.kind);
       if(status==='decision'&&head?.payload?.step==='swap_hand'&&actions.length>0&&actions.every(a=>a.family==='choose_card'&&a.target?.choiceId?.startsWith('hand:')&&state.players.players.find(p=>p.id===seatId).hand.some(c=>c.id===a.target.cardInstanceId))){
         const ranked=swapHandRanks(state,seatId).filter(r=>actions.some(a=>a.target.cardInstanceId===r.card.id));
-        const action=actions.find(a=>a.target.cardInstanceId===ranked[0].card.id);
-        return {...fixed(action,{kind:'company-swap',id:'committed-company-swap'},null,[ranked[0].card.id],actions,'fixed-swap-outgoing'),
+        const planned=demand.incomeSwapPlan(state,state.players.players.find(p=>p.id===seatId),true);
+        const preferred=planned&&actions.find(a=>a.target.cardInstanceId===planned.outgoingCardId),action=preferred||actions.find(a=>a.target.cardInstanceId===ranked[0].card.id);
+        return {...fixed(action,{kind:'company-swap',id:'committed-company-swap'},null,[action.target.cardInstanceId],actions,'fixed-swap-outgoing'),
           knownCardValues:ranked.map(r=>({cardId:r.card.id,value:r.value})),assumption:'greedy known price, remaining income and corner utility; does not prove interchangeable card identities'};
       }
       if(status==='stable'){
@@ -232,7 +236,7 @@
       const outgoing=companySwap&&head.payload.handCardInstanceId;
       const purposeState=outgoing?{...state,players:{...state.players,players:state.players.players.map(p=>p.id===seatId?{...p,resources:{...p.resources,handSize:p.hand.length-1},hand:p.hand.filter(c=>c.id!==outgoing)}:p)}}:state;
       const availableGoals=!tradePending?goals(purposeState,seatId,()=>endpoints(purposeState)):[];
-      const companyIntent=companySwap?swapIntent(state,seatId,endpoints,outgoing):null;
+      const companyIntent=companySwap?swapIntent(state,seatId,endpoints,outgoing,true):null;
       const inferred=availableGoals.find(g=>g.kind==='income'||g.kind==='move'&&state.cards.publicCards.some(c=>c&&facts(c).move>=g.amount)||g.kind==='data'&&state.cards.publicCards.some(c=>c&&facts(c).data>=g.amount)||g.kind==='exceptional-card');
       const goal=committed?.goal||companyIntent?.goal||(!tradePending&&!companySwap&&(queuedIncomeGoal(session,seatId,state)||readyIncomeGoal(state,seatId)))||inferred||{kind:tradePending?'committed-pick':'free-reward',id:tradePending?`committed:${pending.tradeId}`:'free-card-reward'};
       if(pending?.kind==='discard'){

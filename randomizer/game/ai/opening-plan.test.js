@@ -200,8 +200,8 @@ for (let i = 0; i < pairs.length; i += 1) {
   assert.equal(upper.status, lower.status);
   if (upper.status !== "decision") {
     const a=values.evaluateStateValue(upper.observation,seatId),b=values.evaluateStateValue(lower.observation,seatId);
-    assert.equal(a.total-a.components.researchIncomePotential-(b.total-b.components.researchIncomePotential),0.5,
-      "原生首数据仍不追补未来蓝列；新研究收入资本另计，不能继续声称早期完整V恒差半分");
+    assert.equal(a.total-a.components.researchIncomePotential-a.components.dataPotential-(b.total-b.components.researchIncomePotential-b.components.dataPotential),0.5,
+      "原生首数据仍不追补未来蓝列；研究收入与当前数据计划资本另计，完整V不再恒差半分");
     dataAuditLeaves += 1; continue;
   }
   assert.equal(upper.legalActions.length, lower.legalActions.length);

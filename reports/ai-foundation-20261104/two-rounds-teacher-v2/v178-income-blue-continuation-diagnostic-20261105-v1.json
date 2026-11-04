@@ -1,0 +1,1136 @@
+{
+  "scope": "existing no-probe regression, inspect full search after fixed blue rather than assume that preparation is terminal",
+  "rootValue": {
+    "modelVersion": "seti-purpose-capital-state-value-v16",
+    "total": 57,
+    "components": {
+      "realizedScore": 8,
+      "currentEndGameBonus": 0,
+      "resources": 5.5,
+      "hand": 2,
+      "income": 22.5,
+      "technologyPotential": 7.5,
+      "handPotential": 6.5,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 5
+    },
+    "terminal": false
+  },
+  "blueValue": {
+    "modelVersion": "seti-purpose-capital-state-value-v16",
+    "total": 57,
+    "components": {
+      "realizedScore": 10,
+      "currentEndGameBonus": 0,
+      "resources": 5.5,
+      "hand": 2,
+      "income": 22.5,
+      "technologyPotential": 7.5,
+      "handPotential": 9.5,
+      "researchPotential": 0,
+      "probePotential": 0,
+      "analysisPotential": 0,
+      "researchIncomePotential": 0,
+      "dataPotential": 0
+    },
+    "terminal": false
+  },
+  "policy": {
+    "policy": "seti-goal-resource-preparation-v8",
+    "isEquivalence": false,
+    "plans": [
+      {
+        "id": "data:blue:1",
+        "goal": {
+          "id": "data:blue:1",
+          "kind": "blue-data",
+          "blueSlot": 1,
+          "targetComputerSlot": 1,
+          "required": {}
+        },
+        "operation": {
+          "finalPlacement": false
+        },
+        "firstActionId": "place_data:8fd12fd3",
+        "mode": "greedy",
+        "reason": "data-placement-for-goal"
+      }
+    ],
+    "incomeTail": {
+      "policy": "seti-greedy-income-tail-v2",
+      "selected": false,
+      "realizesForecast": false,
+      "netGain": -1.5,
+      "placements": 4,
+      "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+    },
+    "blueTails": [
+      {
+        "goalId": "data:blue:1",
+        "policy": "seti-greedy-blue-resource-tail-v2",
+        "available": true,
+        "selected": true,
+        "realizesForecast": true,
+        "netGain": 0,
+        "blueSlot": 1,
+        "dataCornerId": null,
+        "dataCornerIds": [],
+        "incomeCardId": null,
+        "computerPlacements": 1,
+        "requiredNativeInputs": 4,
+        "immediateScoreGain": 2,
+        "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+      }
+    ],
+    "retainedActionIds": [
+      "quick_trade:49c75492",
+      "quick_trade:37140fcf",
+      "industry:e887dc52",
+      "end_turn:b2f9b29d"
+    ],
+    "excludedActionIds": [
+      "quick_trade:f385e2ac",
+      "quick_trade:12411a2c",
+      "quick_trade:a39c1a77",
+      "card_corner:f9d602d7",
+      "card_corner:753fb0ad",
+      "place_data:8fd12fd3"
+    ]
+  },
+  "search": {
+    "schemaVersion": "seti-complete-decision-search-v178",
+    "complete": true,
+    "actionId": "industry:e887dc52",
+    "selectionPlan": null,
+    "selectionContinuation": null,
+    "planContinuation": {},
+    "planEvidence": {
+      "evidenceId": "plan-evidence-1",
+      "proof": "seti-complete-window-best-prefix-reuse-v1",
+      "nodeCount": 11
+    },
+    "value": 59.5,
+    "stopReason": null,
+    "scope": "own-turn-visible-window-with-goal-directed-movement-policy+fixed-card-pick-policy+goal-bound-greedy-resource-policy+local-final-mark-policy+scan-purpose-policy",
+    "roots": [
+      {
+        "actionId": "quick_trade:f385e2ac",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v8",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "quick_trade:49c75492",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-card-pick-policy",
+        "policy": "seti-purpose-card-pick-policy-v10",
+        "goal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-18-0",
+          "cardId": "card-18-0",
+          "netGain": 2.5
+        },
+        "isEquivalence": false
+      },
+      {
+        "actionId": "quick_trade:12411a2c",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v8",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "quick_trade:a39c1a77",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v8",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "quick_trade:37140fcf",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-card-pick-policy",
+        "policy": "seti-purpose-card-pick-policy-v10",
+        "goal": {
+          "kind": "known-portfolio-swap",
+          "id": "portfolio:swap:card-18-0",
+          "cardId": "card-18-0",
+          "netGain": 2.5
+        },
+        "isEquivalence": false
+      },
+      {
+        "actionId": "industry:e887dc52",
+        "target": 1,
+        "value": 59.5,
+        "completion": "complete"
+      },
+      {
+        "actionId": "card_corner:f9d602d7",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v8",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "card_corner:753fb0ad",
+        "target": null,
+        "value": null,
+        "valueType": "not-executed",
+        "completion": "excluded-by-resource-policy",
+        "policy": "seti-goal-resource-preparation-v8",
+        "isEquivalence": false
+      },
+      {
+        "actionId": "place_data:8fd12fd3",
+        "target": 3,
+        "value": 57,
+        "kind": "resource-goal-plan",
+        "goal": {
+          "id": "data:blue:1",
+          "kind": "blue-data",
+          "blueSlot": 1,
+          "targetComputerSlot": 1,
+          "required": {}
+        },
+        "resourceGoalCount": 1,
+        "completion": "complete"
+      },
+      {
+        "actionId": "end_turn:b2f9b29d",
+        "target": 2,
+        "value": 57,
+        "valueType": "proved-plan-value",
+        "turnTailPlanValue": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "end-turn",
+          "firstActionId": "end_turn:b2f9b29d",
+          "netGain": 0,
+          "requiredNativeInputs": 1,
+          "markedTiles": [],
+          "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "completion": "proved-plan-value"
+      }
+    ],
+    "lines": [
+      {
+        "node": 0,
+        "status": "stable",
+        "boundary": null,
+        "expanded": true,
+        "alternatives": 3,
+        "edges": [
+          {
+            "actionId": "industry:e887dc52",
+            "target": 1,
+            "cost": 3,
+            "equivalent": false,
+            "fixedCardPlan": {
+              "policy": "seti-purpose-card-pick-policy-v10",
+              "isEquivalence": false,
+              "kind": "card-acquisition-plan",
+              "goal": {
+                "kind": "known-portfolio-swap",
+                "id": "portfolio:swap:card-18-0",
+                "cardId": "card-18-0",
+                "netGain": 2.5
+              },
+              "selectedActionId": "industry:e887dc52",
+              "selection": {
+                "cardId": "card-18-0",
+                "blind": false,
+                "cache": "fixed-known-portfolio"
+              },
+              "discardIds": [
+                "card-17-0"
+              ],
+              "companySwap": {
+                "goal": {
+                  "kind": "known-portfolio-swap",
+                  "id": "portfolio:swap:card-18-0",
+                  "cardId": "card-18-0",
+                  "netGain": 2.5
+                },
+                "selection": {
+                  "cardId": "card-18-0",
+                  "blind": false,
+                  "cache": "fixed-known-portfolio"
+                },
+                "discardIds": [
+                  "card-17-0"
+                ],
+                "reason": "positive-known-portfolio-company-swap"
+              },
+              "retainedActionIds": [
+                "quick_trade:f385e2ac",
+                "quick_trade:12411a2c",
+                "quick_trade:a39c1a77",
+                "industry:e887dc52",
+                "card_corner:f9d602d7",
+                "card_corner:753fb0ad",
+                "place_data:8fd12fd3",
+                "end_turn:b2f9b29d"
+              ],
+              "excludedActionIds": [
+                "quick_trade:49c75492",
+                "quick_trade:37140fcf"
+              ],
+              "reason": "explicit-pick-purpose"
+            },
+            "fixedChoices": [
+              {
+                "prefix": 1,
+                "policy": "seti-purpose-card-pick-policy-v10",
+                "isEquivalence": false,
+                "kind": "fixed-card-plan",
+                "fixed": true,
+                "goal": {
+                  "kind": "company-swap",
+                  "id": "committed-company-swap"
+                },
+                "selection": null,
+                "discardIds": [
+                  "card-17-0"
+                ],
+                "selectedActionId": "choose_card:00da7b14",
+                "retainedActionIds": [
+                  "choose_card:00da7b14"
+                ],
+                "excludedActionIds": [
+                  "choose_card:f88a4f80"
+                ],
+                "reason": "fixed-swap-outgoing",
+                "knownCardValues": [
+                  {
+                    "cardId": "card-17-0",
+                    "value": 4
+                  },
+                  {
+                    "cardId": "card-15-0",
+                    "value": 6.5
+                  }
+                ],
+                "assumption": "greedy known price, remaining income and corner utility; does not prove interchangeable card identities"
+              },
+              {
+                "prefix": 2,
+                "policy": "seti-purpose-card-pick-policy-v10",
+                "isEquivalence": false,
+                "kind": "fixed-card-plan",
+                "fixed": true,
+                "goal": {
+                  "kind": "known-portfolio-swap",
+                  "id": "portfolio:swap:card-40-0",
+                  "cardId": "card-40-0",
+                  "netGain": 2.5
+                },
+                "selection": {
+                  "cardId": "card-40-0",
+                  "blind": false,
+                  "cache": "fixed-known-portfolio"
+                },
+                "discardIds": [],
+                "selectedActionId": "choose_card:00b0ef7b",
+                "retainedActionIds": [
+                  "choose_card:00b0ef7b"
+                ],
+                "excludedActionIds": [
+                  "choose_card:5230cf9f",
+                  "choose_card:06206e43"
+                ],
+                "reason": "fixed-card-pick"
+              }
+            ],
+            "steps": [
+              "industry:e887dc52",
+              "choose_card:00da7b14",
+              "choose_card:00b0ef7b"
+            ]
+          },
+          {
+            "actionId": "end_turn:b2f9b29d",
+            "target": 2,
+            "cost": 1,
+            "equivalent": false,
+            "turnTailPlanValue": {
+              "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+              "kind": "end-turn",
+              "firstActionId": "end_turn:b2f9b29d",
+              "netGain": 0,
+              "requiredNativeInputs": 1,
+              "markedTiles": [],
+              "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+              "observationAvailable": false,
+              "successorEnvelopeAvailable": false
+            },
+            "actualNativeInputs": 0,
+            "provedNativeInputs": 1
+          },
+          {
+            "actionId": "place_data:8fd12fd3",
+            "target": 3,
+            "cost": 4,
+            "equivalent": false,
+            "newInputs": 4,
+            "sharedPath": [
+              3,
+              4,
+              5,
+              6
+            ],
+            "resourcePlan": {
+              "id": "data:blue:1",
+              "goal": {
+                "id": "data:blue:1",
+                "kind": "blue-data",
+                "blueSlot": 1,
+                "targetComputerSlot": 1,
+                "required": {}
+              },
+              "operation": {
+                "finalPlacement": false
+              },
+              "firstActionId": "place_data:8fd12fd3",
+              "mode": "greedy",
+              "reason": "data-placement-for-goal"
+            },
+            "goalStatus": "completed",
+            "fallbackReason": null,
+            "preparations": [
+              {
+                "input": 0,
+                "reason": "data-placement-for-goal",
+                "goalId": "data:blue:1",
+                "demand": {
+                  "credits": 0,
+                  "energy": 0,
+                  "publicity": 0,
+                  "data": 0
+                },
+                "actionId": "place_data:8fd12fd3"
+              },
+              {
+                "input": 1,
+                "reason": "fixed-goal-data-slot",
+                "goalId": "data:blue:1",
+                "demand": {
+                  "credits": 0,
+                  "energy": 0,
+                  "publicity": 0,
+                  "data": 0
+                },
+                "actionId": "choose_target:29b5215c"
+              },
+              {
+                "input": 2,
+                "reason": "data-placement-for-goal",
+                "goalId": "data:blue:1",
+                "demand": {
+                  "credits": 0,
+                  "energy": 0,
+                  "publicity": 0,
+                  "data": 0
+                },
+                "actionId": "place_data:8fd12fd3"
+              },
+              {
+                "input": 3,
+                "reason": "fixed-goal-data-slot",
+                "goalId": "data:blue:1",
+                "demand": {
+                  "credits": 0,
+                  "energy": 0,
+                  "publicity": 0,
+                  "data": 0
+                },
+                "actionId": "choose_target:44b74627"
+              }
+            ],
+            "steps": [
+              "place_data:8fd12fd3",
+              "choose_target:29b5215c",
+              "place_data:8fd12fd3",
+              "choose_target:44b74627"
+            ]
+          }
+        ],
+        "distance": 13,
+        "value": 59.5,
+        "completion": "reachable",
+        "cardPickPolicy": {
+          "policy": "seti-purpose-card-pick-policy-v10",
+          "isEquivalence": false,
+          "kind": "card-acquisition-plan",
+          "goal": {
+            "kind": "known-portfolio-swap",
+            "id": "portfolio:swap:card-18-0",
+            "cardId": "card-18-0",
+            "netGain": 2.5
+          },
+          "selectedActionId": "industry:e887dc52",
+          "selection": {
+            "cardId": "card-18-0",
+            "blind": false,
+            "cache": "fixed-known-portfolio"
+          },
+          "discardIds": [
+            "card-17-0"
+          ],
+          "companySwap": {
+            "goal": {
+              "kind": "known-portfolio-swap",
+              "id": "portfolio:swap:card-18-0",
+              "cardId": "card-18-0",
+              "netGain": 2.5
+            },
+            "selection": {
+              "cardId": "card-18-0",
+              "blind": false,
+              "cache": "fixed-known-portfolio"
+            },
+            "discardIds": [
+              "card-17-0"
+            ],
+            "reason": "positive-known-portfolio-company-swap"
+          },
+          "retainedActionIds": [
+            "quick_trade:f385e2ac",
+            "quick_trade:12411a2c",
+            "quick_trade:a39c1a77",
+            "industry:e887dc52",
+            "card_corner:f9d602d7",
+            "card_corner:753fb0ad",
+            "place_data:8fd12fd3",
+            "end_turn:b2f9b29d"
+          ],
+          "excludedActionIds": [
+            "quick_trade:49c75492",
+            "quick_trade:37140fcf"
+          ],
+          "reason": "explicit-pick-purpose"
+        },
+        "resourcePolicy": {
+          "policy": "seti-goal-resource-preparation-v8",
+          "isEquivalence": false,
+          "plans": [
+            {
+              "id": "data:blue:1",
+              "goal": {
+                "id": "data:blue:1",
+                "kind": "blue-data",
+                "blueSlot": 1,
+                "targetComputerSlot": 1,
+                "required": {}
+              },
+              "operation": {
+                "finalPlacement": false
+              },
+              "firstActionId": "place_data:8fd12fd3",
+              "mode": "greedy",
+              "reason": "data-placement-for-goal"
+            }
+          ],
+          "incomeTail": {
+            "policy": "seti-greedy-income-tail-v2",
+            "selected": false,
+            "realizesForecast": false,
+            "netGain": -1.5,
+            "placements": 4,
+            "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+          },
+          "blueTails": [
+            {
+              "goalId": "data:blue:1",
+              "policy": "seti-greedy-blue-resource-tail-v2",
+              "available": true,
+              "selected": true,
+              "realizesForecast": true,
+              "netGain": 0,
+              "blueSlot": 1,
+              "dataCornerId": null,
+              "dataCornerIds": [],
+              "incomeCardId": null,
+              "computerPlacements": 1,
+              "requiredNativeInputs": 4,
+              "immediateScoreGain": 2,
+              "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+            }
+          ],
+          "retainedActionIds": [
+            "quick_trade:49c75492",
+            "quick_trade:37140fcf",
+            "industry:e887dc52",
+            "end_turn:b2f9b29d"
+          ],
+          "excludedActionIds": [
+            "quick_trade:f385e2ac",
+            "quick_trade:12411a2c",
+            "quick_trade:a39c1a77",
+            "card_corner:f9d602d7",
+            "card_corner:753fb0ad",
+            "place_data:8fd12fd3"
+          ]
+        }
+      },
+      {
+        "node": 1,
+        "status": "stable",
+        "boundary": null,
+        "expanded": true,
+        "alternatives": 1,
+        "edges": [
+          {
+            "actionId": "place_data:8fd12fd3",
+            "target": 5,
+            "cost": 10,
+            "equivalent": false,
+            "turnTailPlanValue": {
+              "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+              "kind": "data-end-turn",
+              "firstActionId": "place_data:8fd12fd3",
+              "netGain": 0,
+              "requiredNativeInputs": 10,
+              "dataPlans": [
+                {
+                  "goal": {
+                    "id": "data:income:4",
+                    "kind": "income",
+                    "targetComputerSlot": 4,
+                    "incomeCardId": "card-40-0",
+                    "incomeBefore": 8,
+                    "required": {}
+                  },
+                  "netGain": 0,
+                  "requiredNativeInputs": 9,
+                  "incomeCardId": "card-40-0"
+                }
+              ],
+              "markedTiles": [],
+              "scope": "exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value",
+              "observationAvailable": false,
+              "successorEnvelopeAvailable": false
+            },
+            "actualNativeInputs": 0,
+            "provedNativeInputs": 10
+          }
+        ],
+        "distance": 10,
+        "value": 59.5,
+        "completion": "reachable",
+        "cardPickPolicy": {
+          "policy": "seti-purpose-card-pick-policy-v10",
+          "isEquivalence": false,
+          "kind": "card-acquisition-plan",
+          "goal": null,
+          "selectedActionId": null,
+          "selection": null,
+          "discardIds": [],
+          "companySwap": null,
+          "retainedActionIds": [
+            "quick_trade:f385e2ac",
+            "quick_trade:12411a2c",
+            "quick_trade:a39c1a77",
+            "card_corner:f9d602d7",
+            "card_corner:6785c989",
+            "place_data:8fd12fd3",
+            "end_turn:b2f9b29d"
+          ],
+          "excludedActionIds": [
+            "quick_trade:49c75492",
+            "quick_trade:37140fcf"
+          ],
+          "reason": "no-pick-purpose"
+        },
+        "resourcePolicy": {
+          "policy": "seti-goal-resource-preparation-v8",
+          "isEquivalence": false,
+          "plans": [
+            {
+              "id": "data:income:4",
+              "goal": {
+                "id": "data:income:4",
+                "kind": "income",
+                "targetComputerSlot": 4,
+                "incomeCardId": "card-40-0",
+                "incomeBefore": 8,
+                "required": {}
+              },
+              "operation": {
+                "finalPlacement": false
+              },
+              "firstActionId": "place_data:8fd12fd3",
+              "mode": "greedy",
+              "reason": "data-placement-for-goal"
+            }
+          ],
+          "incomeTail": {
+            "policy": "seti-greedy-income-tail-v2",
+            "selected": true,
+            "realizesForecast": true,
+            "netGain": 0,
+            "placements": 4,
+            "assumption": "known income reward and remaining official income rounds; unknown drawn identities excluded"
+          },
+          "blueTails": [
+            {
+              "goalId": "data:blue:1",
+              "policy": "seti-greedy-blue-resource-tail-v2",
+              "available": true,
+              "selected": false,
+              "realizesForecast": false,
+              "netGain": -2.5,
+              "blueSlot": 1,
+              "dataCornerId": null,
+              "dataCornerIds": [],
+              "incomeCardId": null,
+              "computerPlacements": 1,
+              "requiredNativeInputs": 4,
+              "immediateScoreGain": 2,
+              "assumption": "known blue column/resource plan, greedy data corners and one shared-native currency income choice; default V including native end-game, permanent income and held-card opportunity cost; no new owned card identity"
+            }
+          ],
+          "retainedActionIds": [],
+          "excludedActionIds": [
+            "quick_trade:f385e2ac",
+            "quick_trade:49c75492",
+            "quick_trade:12411a2c",
+            "quick_trade:a39c1a77",
+            "quick_trade:37140fcf",
+            "card_corner:f9d602d7",
+            "card_corner:6785c989",
+            "place_data:8fd12fd3",
+            "end_turn:b2f9b29d"
+          ]
+        }
+      },
+      {
+        "node": 2,
+        "status": "turn-tail-value",
+        "boundary": "quiet-turn-tail-value",
+        "planSummary": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "end-turn",
+          "firstActionId": "end_turn:b2f9b29d",
+          "netGain": 0,
+          "requiredNativeInputs": 1,
+          "markedTiles": [],
+          "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "expanded": true,
+        "alternatives": 0,
+        "edges": [],
+        "distance": 0,
+        "value": 57,
+        "completion": "reachable"
+      },
+      {
+        "node": 3,
+        "status": "stable",
+        "boundary": null,
+        "expanded": true,
+        "alternatives": 1,
+        "edges": [
+          {
+            "actionId": "end_turn:b2f9b29d",
+            "target": 4,
+            "cost": 1,
+            "equivalent": false,
+            "turnTailPlanValue": {
+              "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+              "kind": "end-turn",
+              "firstActionId": "end_turn:b2f9b29d",
+              "netGain": 0,
+              "requiredNativeInputs": 1,
+              "markedTiles": [],
+              "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+              "observationAvailable": false,
+              "successorEnvelopeAvailable": false
+            },
+            "actualNativeInputs": 0,
+            "provedNativeInputs": 1
+          }
+        ],
+        "distance": 1,
+        "value": 57,
+        "completion": "reachable",
+        "cardPickPolicy": {
+          "policy": "seti-purpose-card-pick-policy-v10",
+          "isEquivalence": false,
+          "kind": "card-acquisition-plan",
+          "goal": null,
+          "selectedActionId": null,
+          "selection": null,
+          "discardIds": [],
+          "companySwap": null,
+          "retainedActionIds": [
+            "quick_trade:f385e2ac",
+            "quick_trade:12411a2c",
+            "quick_trade:a39c1a77",
+            "quick_trade:df811f99",
+            "card_corner:f9d602d7",
+            "card_corner:753fb0ad",
+            "place_data:8fd12fd3",
+            "end_turn:b2f9b29d"
+          ],
+          "excludedActionIds": [
+            "quick_trade:49c75492",
+            "quick_trade:37140fcf",
+            "quick_trade:122c43fc",
+            "industry:e887dc52"
+          ],
+          "reason": "no-pick-purpose"
+        },
+        "resourcePolicy": {
+          "policy": "seti-goal-resource-preparation-v8",
+          "isEquivalence": false,
+          "plans": [],
+          "incomeTail": {
+            "available": false,
+            "reason": "income-tail-needs-additional-funding",
+            "selected": false
+          },
+          "retainedActionIds": [
+            "quick_trade:49c75492",
+            "quick_trade:37140fcf",
+            "quick_trade:122c43fc",
+            "industry:e887dc52",
+            "end_turn:b2f9b29d"
+          ],
+          "excludedActionIds": [
+            "quick_trade:f385e2ac",
+            "quick_trade:12411a2c",
+            "quick_trade:a39c1a77",
+            "quick_trade:df811f99",
+            "card_corner:f9d602d7",
+            "card_corner:753fb0ad",
+            "place_data:8fd12fd3"
+          ]
+        }
+      },
+      {
+        "node": 4,
+        "status": "turn-tail-value",
+        "boundary": "quiet-turn-tail-value",
+        "planSummary": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "end-turn",
+          "firstActionId": "end_turn:b2f9b29d",
+          "netGain": 0,
+          "requiredNativeInputs": 1,
+          "markedTiles": [],
+          "scope": "exact-native-end-turn-and-greedy-final-marks-value",
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "expanded": true,
+        "alternatives": 0,
+        "edges": [],
+        "distance": 0,
+        "value": 57,
+        "completion": "reachable"
+      },
+      {
+        "node": 5,
+        "status": "turn-tail-value",
+        "boundary": "quiet-turn-tail-value",
+        "planSummary": {
+          "proof": "seti-audited-company-quiet-turn-tail-value-v2",
+          "kind": "data-end-turn",
+          "firstActionId": "place_data:8fd12fd3",
+          "netGain": 0,
+          "requiredNativeInputs": 10,
+          "dataPlans": [
+            {
+              "goal": {
+                "id": "data:income:4",
+                "kind": "income",
+                "targetComputerSlot": 4,
+                "incomeCardId": "card-40-0",
+                "incomeBefore": 8,
+                "required": {}
+              },
+              "netGain": 0,
+              "requiredNativeInputs": 9,
+              "incomeCardId": "card-40-0"
+            }
+          ],
+          "markedTiles": [],
+          "scope": "exact-fixed-blue-then-end-turn-and-greedy-final-marks-policy-value",
+          "observationAvailable": false,
+          "successorEnvelopeAvailable": false
+        },
+        "expanded": true,
+        "alternatives": 0,
+        "edges": [],
+        "distance": 0,
+        "value": 59.5,
+        "completion": "reachable"
+      }
+    ],
+    "unresolved": [],
+    "sharedPrefixGraph": {
+      "nodes": [
+        {
+          "id": 0,
+          "status": "stable"
+        },
+        {
+          "id": 1,
+          "status": "decision"
+        },
+        {
+          "id": 2,
+          "status": "decision"
+        },
+        {
+          "id": 3,
+          "status": "stable"
+        },
+        {
+          "id": 4,
+          "status": "decision"
+        },
+        {
+          "id": 5,
+          "status": "stable"
+        },
+        {
+          "id": 6,
+          "status": "decision"
+        },
+        {
+          "id": 7,
+          "status": "stable"
+        }
+      ],
+      "edges": [
+        {
+          "id": 0,
+          "from": 0,
+          "to": 1,
+          "actionId": "industry:e887dc52"
+        },
+        {
+          "id": 1,
+          "from": 1,
+          "to": 2,
+          "actionId": "choose_card:00da7b14"
+        },
+        {
+          "id": 2,
+          "from": 2,
+          "to": 3,
+          "actionId": "choose_card:00b0ef7b"
+        },
+        {
+          "id": 3,
+          "from": 0,
+          "to": 4,
+          "actionId": "place_data:8fd12fd3"
+        },
+        {
+          "id": 4,
+          "from": 4,
+          "to": 5,
+          "actionId": "choose_target:29b5215c"
+        },
+        {
+          "id": 5,
+          "from": 5,
+          "to": 6,
+          "actionId": "place_data:8fd12fd3"
+        },
+        {
+          "id": 6,
+          "from": 6,
+          "to": 7,
+          "actionId": "choose_target:44b74627"
+        }
+      ]
+    },
+    "candidates": [
+      {
+        "kind": "card-acquisition-plan",
+        "plan": {
+          "policy": "seti-purpose-card-pick-policy-v10",
+          "isEquivalence": false,
+          "kind": "card-acquisition-plan",
+          "goal": {
+            "kind": "known-portfolio-swap",
+            "id": "portfolio:swap:card-18-0",
+            "cardId": "card-18-0",
+            "netGain": 2.5
+          },
+          "selectedActionId": "industry:e887dc52",
+          "selection": {
+            "cardId": "card-18-0",
+            "blind": false,
+            "cache": "fixed-known-portfolio"
+          },
+          "discardIds": [
+            "card-17-0"
+          ],
+          "companySwap": {
+            "goal": {
+              "kind": "known-portfolio-swap",
+              "id": "portfolio:swap:card-18-0",
+              "cardId": "card-18-0",
+              "netGain": 2.5
+            },
+            "selection": {
+              "cardId": "card-18-0",
+              "blind": false,
+              "cache": "fixed-known-portfolio"
+            },
+            "discardIds": [
+              "card-17-0"
+            ],
+            "reason": "positive-known-portfolio-company-swap"
+          },
+          "retainedActionIds": [
+            "quick_trade:f385e2ac",
+            "quick_trade:12411a2c",
+            "quick_trade:a39c1a77",
+            "industry:e887dc52",
+            "card_corner:f9d602d7",
+            "card_corner:753fb0ad",
+            "place_data:8fd12fd3",
+            "end_turn:b2f9b29d"
+          ],
+          "excludedActionIds": [
+            "quick_trade:49c75492",
+            "quick_trade:37140fcf"
+          ],
+          "reason": "explicit-pick-purpose"
+        },
+        "firstActionId": "industry:e887dc52"
+      },
+      {
+        "kind": "action",
+        "actionId": "end_turn:b2f9b29d"
+      },
+      {
+        "kind": "resource-goal-plan",
+        "plan": {
+          "id": "data:blue:1",
+          "goal": {
+            "id": "data:blue:1",
+            "kind": "blue-data",
+            "blueSlot": 1,
+            "targetComputerSlot": 1,
+            "required": {}
+          },
+          "operation": {
+            "finalPlacement": false
+          },
+          "firstActionId": "place_data:8fd12fd3",
+          "mode": "greedy",
+          "reason": "data-placement-for-goal"
+        },
+        "firstActionId": "place_data:8fd12fd3"
+      }
+    ],
+    "diagnostics": {
+      "valueEvaluations": 3,
+      "valueCacheHits": 2,
+      "finalMarkPlanning": true,
+      "scanPlanning": true,
+      "resourcePlanning": "goal-bound-greedy-preparation",
+      "cardPickPlanning": "purpose-bound-fixed-plan",
+      "movementPlanning": "goal-directed-policy",
+      "movementPolicyNodes": 0,
+      "movementDirectionsExcluded": 0,
+      "routeGeometryNodes": 0,
+      "incomePlanProofs": 0,
+      "provedIncomeInputs": 0,
+      "turnTailProofs": 3,
+      "provedTurnTailInputs": 12,
+      "movementValuePrunes": 0,
+      "winningIncomePlans": 0,
+      "winningIncomeInputs": 0,
+      "nativeExecutions": 7,
+      "logicalResourceInputs": 4,
+      "sharedResourceInputHits": 0,
+      "sharedResourceInternalStates": 3,
+      "localFinalMarkStates": 0,
+      "localFinalMarkExcluded": 0,
+      "fixedDataChoiceStates": 0,
+      "fixedDataChoicesExcluded": 0,
+      "branchingStates": 1,
+      "singleAlternativeStates": 2,
+      "disabledBorrowStarts": 0,
+      "disabledRemoveTechIncomeStarts": 0,
+      "scanPurposePlans": 0,
+      "resourceGoalPlans": 1,
+      "resourcePreparationInputs": 4,
+      "resourceFallbacks": 0,
+      "resourceExcludedActions": 22,
+      "transitions": 7,
+      "nodes": 11,
+      "graphNodes": 6,
+      "certificateNodes": 5,
+      "postMainOptimalPlans": 0,
+      "postMainOptimalPlanSteps": 0,
+      "equivalents": 0,
+      "selectionMacros": 0,
+      "peakFrontier": 5,
+      "dominancePrunes": 0,
+      "resourceDominance": "disabled-for-movement-policy",
+      "moneyCapacityPrunes": 0,
+      "moneyCapacityDominance": "disabled-for-movement-policy",
+      "postMainValuePrunes": 0,
+      "scanValuePrunes": 0,
+      "scanActionPrunes": 0,
+      "cardTradePrunes": 0,
+      "cardTradePruning": "disabled-for-selection-certificate",
+      "postMainProofNodes": 0,
+      "postMainExcludedActions": 0,
+      "postMainPruning": "enabled",
+      "openingProofNodes": 0,
+      "openingExcludedActions": 0,
+      "openingPruning": "enabled",
+      "openingPassMacros": 0,
+      "postMainBorrowProofNodes": 0,
+      "postMainBorrowExcludedChoices": 0,
+      "postMainBorrowMacros": 0,
+      "cardChoiceProofNodes": 0,
+      "cardChoiceExcludedActions": 0,
+      "cardCornerProofNodes": 0,
+      "cardCornerExcludedActions": 0,
+      "preMainDataProofNodes": 0,
+      "preMainDataExcludedActions": 0,
+      "cardChoiceEquivalence": "enabled",
+      "resourceModelKey": "{\"version\":\"seti-purpose-capital-state-value-v16\",\"seatId\":\"player-white\",\"weights\":{\"credits\":1,\"energy\":1,\"publicity\":0.5,\"availableData\":0.5,\"additionalPublicScan\":0.5,\"handSize\":1}}",
+      "continuation": "not-requested",
+      "planContinuation": "not-requested",
+      "milliseconds": 15.073458000000016,
+      "limits": {
+        "transitions": 256,
+        "nodes": 1024,
+        "frontier": 256,
+        "milliseconds": 5000
+      }
+    }
+  }
+}

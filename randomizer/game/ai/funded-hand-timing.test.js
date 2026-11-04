@@ -52,6 +52,9 @@ try{const checkpoint=read(record.roundEnds[0].checkpointPath);env.loadCheckpoint
  // Remove the deployed probe in a separate controlled state to isolate the
  // immediate same-round payment contract from that future mission purpose.
  incomeState.pieces.rockets=incomeState.pieces.rockets.filter(r=>r.playerId!==seatId);incomeState.pieces.activeRocketId=null;
+ // This control isolates the existing energy-income payment; an unused
+ // company could now improve it by acquiring the known credit income.
+ incomeOwner.industryRoundMarkRound=incomeState.turn.roundNumber;incomeOwner.industryRoundMarkTurn=incomeState.turn.turnNumber;
  const incomeRank=incomeOwner.hand.map(card=>({card,value:demand.computerIncomeValue(incomeState,seatId,card)})).sort((a,b)=>b.value-a.value||(a.card.id<b.card.id?-1:1));
  assert.equal(incomeRank[0].card.cardId,'b_48.webp','energy income improves the preservedDLC9 payment window');
  const incomeGoal=demand.catalog({state:incomeState,seatId,requirements:{bluePlacements:[]}}).find(g=>g.kind==='income');assert(incomeGoal);assert.equal(incomeGoal.incomeCardId,incomeRank[0].card.id,'income catalog must choose the same funded marginal value as native income choice');

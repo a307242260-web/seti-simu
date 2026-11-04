@@ -595,7 +595,8 @@
       if (!barrier) return state;
       if (planningStates.has(state)) return planningStates.get(state);
       const result = { ...state,
-        cards: { ...state.cards, publicCards: state.cards.publicCards.map(card=>card&&knownRootCardIds.has(card.id)?card:null) },
+        cards: { ...state.cards, publicCards: state.cards.publicCards.map(card=>card&&knownRootCardIds.has(card.id)?card:null),
+          unknownPublicSlotIndices: state.cards.publicCards.flatMap((card,index)=>card&&!knownRootCardIds.has(card.id)?[index]:[]) },
         tech: { ...state.tech, stacks: Object.fromEntries(Object.entries(state.tech.stacks).map(([id,stack])=>[id,
           stack.bonusIndex===knownRootTechIndices.get(id)?stack:{...stack,depleted:true,remaining:0,bonusId:null}])) },
       };
@@ -1931,7 +1932,8 @@
       if(kind!=="end-turn"&&!movementPlanning&&hasUnprovedProbeCapital(readPlanningState(stored)))return null;
       let variants=turnTailSpecs.get(node);if(variants?.has(kind))return variants.get(kind);
       const state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId),company=industryCatalog.getPlayerIndustryDefinition(owner);
-      if(kind!=="end-turn"&&state.turn.roundNumber<4&&node.legalActions.some(a=>a.family==="industry"&&a.target?.abilityId==="deepspace_swap_cards"))return null;
+      const companyPolicy=kind!=="end-turn"&&state.turn.roundNumber<4?cardPickSpec(node):null;
+      if(kind!=="end-turn"&&node.legalActions.some(a=>a.family==="industry"&&a.target?.abilityId==="deepspace_swap_cards"&&(!companyPolicy||companyPolicy.retainedActionIds.includes(a.actionId))))return null;
       const end=node.legalActions.find(a=>a.family==="end_turn"),minimum=Math.min(...state.finalScoring.thresholds);
       const passives={deepspace_swap_cards:"deepspace_free_analyze",turing_borrow_tech:"turing_blue_tech_publicity",helios_remove_tech_income:"helios_passive_reward_slots"};
       const quietCompany=company&&passives[company.activeAbilityId]&&company.passiveIds.length===1&&company.passiveIds[0]===passives[company.activeAbilityId];

@@ -1,0 +1,4 @@
+{"settledTechFunding":"passed","complete":true,"nativeInputs":246,"distinctResearchInputs":16,"duplicatePaidResearchInputs":0,"rootAndRngUnchanged":true}
+SUMMARY unit passed=1 failed=0 total=1 time=0.99s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1

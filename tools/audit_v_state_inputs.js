@@ -783,6 +783,29 @@ try { comp.dispose?.(); } catch (_e) { /* noop */ }
  finally{kernel?.composition.dispose();}
 }
 
+// Public income optionality must consume the same company mark, wallet and
+// confirmed unknown-slot presence in formal observation and planning facts.
+{
+ let kernel;
+ try{
+  const fs=require('node:fs'),assert=require('node:assert/strict'),{createSimulationRuleComposition}=require('../randomizer/training/simulation-rule-composition'),{createSeededRandom}=require('../randomizer/game/random'),{buildRuleObservation}=require('../randomizer/app/rule-observation'),rules=require('../randomizer/game/rule-composition'),demand=require('../randomizer/game/ai/resource-demand');
+  const ref=JSON.parse(fs.readFileSync('reports/ai-foundation-20261104/two-rounds-teacher-v2/v165-public-refill-funding-native-20261105-v2.json')),plan=ref.plans.find(p=>p.incomeCode===0&&!p.useSwap),seed=JSON.parse(plan.rootEnvelope.committedState).meta.seed,seat='player-white';
+  kernel=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});kernel.newGame({seed});const c=kernel.composition;assert(c.lifecycle.restore(plan.rootEnvelope).ok);const original=c.lifecycle.save().envelope,root=c.projection({role:'player',playerId:seat}).state,known=new Set([...root.selfState.hand,...root.publicState.board.publicCards].filter(Boolean).map(c=>c.id));let checks=0;
+  for(let i=0;i<=8;i++){
+   const before=c.lifecycle.save().envelope;
+   if(!before.session){
+    const raw=c.projection({role:'player',playerId:seat}).state,formal=outcomeModel.createDecisionObservation(raw,{seatId:seat,stateVersion:0,decisionVersion:0}),value=independentValue.evaluateStateValue(raw,seat),state=JSON.parse(before.committedState),owner=state.players.players.find(p=>p.id===seat),capital=v=>['handPotential','researchPotential','probePotential','analysisPotential','researchIncomePotential','dataPotential'].reduce((n,k)=>n+v.components[k],0);
+    assert.deepEqual(independentValue.evaluateStateValue(formal,seat),value);assert.equal(demand.planningCapital(state,owner),capital(value));
+    if(owner.hand.every(card=>known.has(card.id))){const masked=rules.sanitizeHiddenInformationObservation(root,raw,{code:'hidden_card_reveal'}),slots=state.cards.publicCards.flatMap((card,index)=>card&&!known.has(card.id)?[index]:[]),planning={...state,cards:{...state.cards,publicCards:state.cards.publicCards.map(card=>card&&known.has(card.id)?card:null),unknownPublicSlotIndices:slots}};assert.equal(demand.planningCapital(planning,owner),capital(independentValue.evaluateStateValue(masked,seat)));}
+    assert.deepEqual(c.lifecycle.save().envelope,before);checks++;
+   }
+   if(i===8)break;const d=c.inspect().session?.decision,a=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===plan.steps[i].actionId);assert(a);const r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(r.ok);
+  }
+  assert(checks>=3);assert(c.lifecycle.restore(original).ok);assert.deepEqual(c.lifecycle.save().envelope,original);console.log('[PASS] independent-public-income-option: '+checks+' native prefixes, formal/state/confirmed-hidden-slot parity; root/RNG restored');
+ }catch(error){console.log(`[FAIL] independent-public-income-option: ${error.message}`);allPass=false;}
+ finally{kernel?.composition.dispose();}
+}
+
 env.dispose();
 console.log(allPass ? "\nV 输入审计全部通过" : "\nV 输入审计有 FAIL（见上，检查对应调用点装配）");
 process.exit(allPass ? 0 : 1);

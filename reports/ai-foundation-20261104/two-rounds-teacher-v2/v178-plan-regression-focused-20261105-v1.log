@@ -1,0 +1,6 @@
+{"alienOpeningPlan":"passed","fullInputs":107,"value":51,"small":[{"cardId":null,"rawInputs":61,"prunedInputs":23,"value":36.5},{"cardId":"dlc_9.png","rawInputs":36,"prunedInputs":22,"value":44},{"cardId":"b_86.webp","rawInputs":36,"prunedInputs":22,"value":44},{"cardId":"b_114.webp","rawInputs":64,"prunedInputs":52,"value":37.5}]}
+{"openingPlan":"passed","results":[{"cardId":null,"value":41.5,"baseline":338,"pruned":338},{"cardId":"dlc_27.png","value":42.5,"baseline":782,"pruned":782},{"cardId":"b_44.webp","value":42.5,"baseline":1282,"pruned":1282},{"cardId":"b_23.webp","value":42.5,"baseline":730,"pruned":730},{"cardId":"dlc_22.png","value":42.5,"baseline":782,"pruned":782},{"cardId":"b_48.webp","value":42.5,"baseline":706,"pruned":706}],"passPaymentExits":20,"directPassValue":43.5,"directPassInputs":2,"publicityPassValue":44,"dataAuditInputs":332,"dataAuditLeaves":120,"fullHandBeforePassMacros":116,"fullHandAfterPassMacros":73,"fullHandCachedInputs":73,"passMacroCacheHits":2}
+{"postMainPlan":"passed","rawInputs":314,"prunedInputs":314,"excludedActions":0}
+SUMMARY unit passed=3 failed=0 total=3 time=23.73s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3
