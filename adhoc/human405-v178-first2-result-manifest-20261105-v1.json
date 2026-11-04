@@ -1,0 +1,58 @@
+{
+  "sourceCommit": "9491f13ba33be484b737123b8c25172602b67b00",
+  "files": {
+    "adhoc/compare-v178-first2-development-20261105-v1.js": "e79a925ab801191639d0dc5ca39c2d4debf3ab99185428e91a9c9e410e227a7c",
+    "adhoc/deliver-human405-v178-first2-result-20261105-v1.py": "0bc0a11d0c7d5fce6d709396b01d16ea4d674af7a477a79c1bf4794eb7dcfd4f",
+    "adhoc/diagnose-v178-round2-reserve-choice-20261105-v1.js": "6836ec05a20dee15b00dc5252c85e02d22284dc7affeb35baaaf9f4360020e1d",
+    "adhoc/human405-two-rounds-progress-20261105-v10.json": "fa4b488c303ac2bb85e3e3f6ac09bc4ba639e39fb47d5d910098e06546e51638",
+    "adhoc/prepare-v178-first2-root-overlays-20261105-v1.js": "53c3aa5de09be205c0e348a61ff68f74c8707b033e05d6ab6da8afa050d47389",
+    "adhoc/verify-human405-v178-first2-20261105-v1.js": "0f9b9edf7b0d701abc39bb1dce06a3fc3bd1dce552c21ce30a87b73d53da6d36",
+    "adhoc/verify-v178-round-assets-20261105-v1.js": "d69d05494227b4607fec764514c05b2dfa4fa2666875010b1c78bdfed2ef1558",
+    "docs/ai-design.md": "64269ce291bbe7da88df8e6c281d2ccd63a34716ef07d1a5afc62a9eaecbab56",
+    "docs/ai-public-income-admission-20261105.md": "cd5178a36f81a017ab4de72788aee9e2ed57894e414660ef96282f43cdf8b7f3",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step062-pass-reserve-root-20261105-v1.json": "a9aec56c0d60676e7783441b9243205ceca176f3173dee8083609ec03f77ad54",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-center-results-build-20261105-v1.log": "0f6a13b9beb0602fd4904acaeefefc084538358ca14065fa368de10b4786fd8f",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-first2-development-comparison-20261105-v1.json": "b6f47c23044590628bd8aa3185caa9204d96a1a2606feb40f9980009056f19ea",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-first2-development-comparison-20261105-v1.log": "0e232e55e5af45c1c854a0003d85302dff1829b0c476520fc2e14e2f60c6efa6",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-first2-native-verification-20261105-v1.json": "f768a04fcbdba0b8933b8acdb76819f718fd9c0021a399557d60e3d24dcd0012",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-first2-native-verification-20261105-v1.log": "b13f8e3c5e1c8e8475b6ccff5dacc1bb321b5c364dd667b977c7c3ccc071230d",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-first2-result-source-check-20261105-v1.json": "cda9758fdb61cba268ee02c15c715870c93ca0adefa9541c125aa4d52c6ed048",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-official-first2-20261105-v1.log": "dbeb14d0741b2ffd8ac232a04407d407d180a0468388e471732874efd00576ac",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-research-list-before-20261105-v1.log": "a3d0570868e5b6a9fb90d4e7ca62491089bddafa8670318f6aaad803a7fd4469",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-round-assets-audit-20261105-v1.json": "b9336af75e2b142b4cf8534062d0cfc995c2c245d7aff5a0a88d61a311eabf07",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-round-assets-audit-20261105-v1.log": "acda213bbe9f83719f53069b32dd7825a1642506547a9b6a58841c4b061e43d9",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-round2-reserve-choice-native-20261105-v1.json": "24fd5c0d6b31ebab9d1869eacdf89a302e45cfc01a69f1bbfbfdac4b02e9f2e3",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-round2-reserve-choice-native-20261105-v1.log": "a5268821018ebcc5605f02c31fbfc7f2f056ff5c007e3aa8d4552ebdda2a9448",
+    "reports/iteration/ai-search-v178-white-first2-20261105/e987ead2.9491f13b.quick-400.action-log.html": "3ac245cda3dd8c36a6c86e75aaefc7aec35a85af036b41524416318bd9e186c2",
+    "reports/iteration/registry.json": "525678a035f41fb1981bffe71f73e0f5e3e1d18cba865acfe50e54025435906e",
+    "reports/iteration/versions.json": "a023fcfb6d6bf9179b2442a0efb82796ab6cde040cfd100546637fcb707fde43",
+    "reports/research/e987ead2.9491f13b.quick-400.json": "280250d7a406244dbc19875e6d7a8f411db31e44e347f4d3ceae3bffcc8baf48",
+    "reports/research/e987ead2.9491f13b.quick-400.json.decisions.jsonl": "9e7a86729740544d55ea0b7097d3715ec38e9dee2f876a7f6925007042b82cd7",
+    "reports/research/e987ead2.9491f13b.quick-400.json.round-end-1.checkpoint.json": "bb9eb33ea0bc882726f1f2ee356f6834e451e455719e9511507e64777de3df99",
+    "reports/research/e987ead2.9491f13b.quick-400.json.round-end-2.checkpoint.json": "1e0436af7df61a8ef5e897e831f3a883d33c6ce2c0c51f5e5db7a98f7850ebf8",
+    "reports/research/e987ead2.9491f13b.quick-400.json.round-ends.jsonl": "126df72b67c0cc8a7c516a116a7d5f20945cca8ac6fddd1867d4036b2f3e5d13",
+    "reports/robot-iteration.html": "2c55a2f66afabb3062e72956712398e511746058d57ec81cb2eb6bcfa6a9830c",
+    "seti-saves/seti-save-research-ai-search-v178-white-first2-20261105-9491f13b-quick-400-v47.json": "a7881be7e7df252f22a489a945ba78152e03577d3b911f1470b5ffbe56786e50"
+  },
+  "workingTreeOverlays": {
+    "reports/iteration/versions.json": {
+      "beforeSha256": "7c3327e577eace7055ce9957197b0c609d00fb51f79f1c467f8c18f5b1abaf3d",
+      "path": "/private/tmp/seti-v178-first2-root-overlays-20261105/versions.json",
+      "sha256": "0b74dd4914278a638d62c9bfe67e4fff9f2476e326700bc76745019118891140"
+    },
+    "reports/iteration/registry.json": {
+      "beforeSha256": "4c2411c53c1ea95a349d31c38b1da8eff0e59fe297da421ec5cd1b452208cb1e",
+      "path": "/private/tmp/seti-v178-first2-root-overlays-20261105/registry.json",
+      "sha256": "dee58842ce7b68883556fcba68d7e7409bd6a6e8b36b96f9524d2c7669ed3b49"
+    },
+    "reports/robot-iteration.html": {
+      "beforeSha256": "62ac5ca87a20925991c0a26b973bd22dc0a89f744fc87d6e0948ee1ce4443126",
+      "path": "/private/tmp/seti-v178-first2-root-overlays-20261105/robot-iteration.html",
+      "sha256": "64d359dbe34f9946be1e560a2458290ebffb6c34997030c1f4edb3378be96b6c"
+    }
+  },
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "sharedIndexEntriesSha256": "9e3d88268694038e1c8b530e6f372baae5a0157d269d9e4e7916841980040c30",
+  "goalStatus": "active",
+  "goalAchieved": false
+}

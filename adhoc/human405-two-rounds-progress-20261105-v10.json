@@ -1,0 +1,43 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "previousGoalTurnClassification": "progress: V174 native controls and retained264-input evidence changed the next action to diagnosing18 native ends; intervening20-board user request was delivered separately",
+  "thisGoalTurnClassification": "progress: proved and fixed plain-end guard leak, admitted V178 after95 cold roots, recorded one autonomous first2, replayed115 inputs, isolated next PASS-tool-value tie with93 native controls",
+  "productionRuntime": "v178 / V16",
+  "productionSourceCommit": "9491f13ba33be484b737123b8c25172602b67b00",
+  "actualRecord": "reports/research/e987ead2.9491f13b.quick-400.json",
+  "actualScores": [
+    15,
+    43
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "specificTechnologyAndSixIncomesEqualBothRounds": true,
+  "round1AllComparedAssetsEqual": true,
+  "round2AssetsStillBehind": {
+    "credits": 3,
+    "energy": 1,
+    "probes": 1,
+    "pinkFirstTrace": 1,
+    "sectorWins": 1
+  },
+  "actualWallMs": 4180,
+  "actualMaxNativeInputs": 246,
+  "actualMaxRootAndSearchMs": 319.94441700000004,
+  "actualAllNativeInputsAndRngReplayed": true,
+  "coldMaxNativeInputs": 246,
+  "coldMaxMs": 539.2417079999999,
+  "nativeNextDifferenceInputs": 93,
+  "nextDifferenceFixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v178-actual-step062-pass-reserve-root-20261105-v1.json",
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit instruction",
+  "baseline": "ai-search-v41-baseline-20261029",
+  "developmentFullyAligned": false,
+  "nextActions": [
+    "Inspect known DLC5 data/move/return capital and reusable tool purpose against finite native continuations; both cards are legal retained and tied60 at actual62.",
+    "Define resource lower bounds, exact context/de-dup and finite global node/time budgets before adding any planning. Do not hardcode teacher card choice or count future self-return forever.",
+    "Only after a genuine changed candidate passes required256/600 gates and tests, register one new autonomous first2; preserve V178 evidence and V41 full-game baseline."
+  ]
+}
