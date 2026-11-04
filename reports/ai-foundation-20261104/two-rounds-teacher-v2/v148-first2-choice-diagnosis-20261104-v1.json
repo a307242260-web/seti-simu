@@ -1,0 +1,2167 @@
+{
+  "sourceCommit": "7da81a85e675bd08abe393108450a6d0cb7510c7",
+  "record": "reports/research/d421cdf5.7da81a85.quick-400.json",
+  "recordSha256": "6c20425ba31272106cd9f4637eeedcb93e33b6a576cbe9e7cf47b081db0f7e51",
+  "rows": [
+    {
+      "input": 24,
+      "chosenActionId": "launch:c94cda79",
+      "complete": true,
+      "nativeInputs": 89,
+      "rootChoices": [
+        {
+          "actionId": "launch:c94cda79",
+          "goal": null,
+          "value": 58,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "scan:2d21a323",
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "value": 47.5,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "play_card:124d76d3",
+          "goal": null,
+          "value": 55.5,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "play_card:437f4432",
+          "goal": {
+            "id": "effect:tech:card:card-15-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-15-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "value": 57,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "goal": null,
+          "value": 44,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "quick_trade:71814d67",
+          "goal": null,
+          "value": 45.5,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "industry:e887dc52",
+          "goal": null,
+          "value": 58,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "place_data:8fd12fd3",
+          "goal": {
+            "id": "data:income:4",
+            "kind": "income",
+            "targetComputerSlot": 4,
+            "incomeCardId": "card-13-0",
+            "incomeBefore": 8,
+            "required": {}
+          },
+          "value": 47.5,
+          "completion": "covered-by-global-value-bound"
+        }
+      ],
+      "technologyChoices": []
+    },
+    {
+      "input": 44,
+      "chosenActionId": "research_tech:806ccfc8",
+      "complete": true,
+      "nativeInputs": 63,
+      "rootChoices": [
+        {
+          "actionId": "orbit:44937d1f",
+          "goal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "route",
+            "family": "orbit",
+            "rocketId": 3,
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            },
+            "benefit": {
+              "score": 3,
+              "incomeCount": 1,
+              "dataCount": 0,
+              "grossEquivalentValue": 5.5,
+              "rewardSummary": "首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入",
+              "source": "planetRewards.orbit:mars"
+            },
+            "coordinate": {
+              "x": 5,
+              "y": 2
+            },
+            "path": [],
+            "movementPoints": 0,
+            "required": {
+              "credits": 1
+            }
+          },
+          "value": 60,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "research_tech:806ccfc8",
+          "goal": {
+            "id": "tech:blue1:1",
+            "kind": "research_tech",
+            "tileId": "blue1",
+            "blueSlot": 1,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 60,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "play_card:8faf8ead",
+          "goal": {
+            "id": "effect:tech:card:card-15-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-15-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "value": 54.5,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "play_card:cc423961",
+          "goal": null,
+          "value": 54,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "goal": null,
+          "value": 54.5,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "value": 49.5,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "card_corner:6785c989",
+          "goal": {
+            "id": "data:analyze:6",
+            "kind": "analyze",
+            "targetComputerSlot": 6,
+            "required": {}
+          },
+          "value": 59,
+          "completion": "covered-by-global-value-bound"
+        }
+      ],
+      "technologyChoices": [
+        {
+          "goal": {
+            "id": "tech:blue1:1",
+            "kind": "research_tech",
+            "tileId": "blue1",
+            "blueSlot": 1,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 60,
+          "steps": [
+            "research_tech:806ccfc8",
+            "choose_target:509236e8"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "funded-goal-action",
+              "goalId": "tech:blue1:1",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 1,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:blue1:1",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:509236e8"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:blue2:1",
+            "kind": "research_tech",
+            "tileId": "blue2",
+            "blueSlot": 1,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 59,
+          "steps": [
+            "research_tech:806ccfc8",
+            "choose_target:3fcecb14",
+            "choose_card:ecb525ad"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "funded-goal-action",
+              "goalId": "tech:blue2:1",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 1,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:blue2:1",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:3fcecb14"
+            },
+            {
+              "input": 2,
+              "reason": "fixed-card-in-resource-plan",
+              "goalId": "tech:blue2:1",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 6,
+                "data": 0
+              },
+              "actionId": "choose_card:ecb525ad"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:blue3:1",
+            "kind": "research_tech",
+            "tileId": "blue3",
+            "blueSlot": 1,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 58,
+          "steps": [
+            "research_tech:806ccfc8",
+            "choose_target:ad894514",
+            "choose_card:ecb525ad"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "funded-goal-action",
+              "goalId": "tech:blue3:1",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 1,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:blue3:1",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:ad894514"
+            },
+            {
+              "input": 2,
+              "reason": "fixed-card-in-resource-plan",
+              "goalId": "tech:blue3:1",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 6,
+                "data": 0
+              },
+              "actionId": "choose_card:ecb525ad"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:blue4:1",
+            "kind": "research_tech",
+            "tileId": "blue4",
+            "blueSlot": 1,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 59,
+          "steps": [
+            "research_tech:806ccfc8",
+            "choose_target:d9ba91f0"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "funded-goal-action",
+              "goalId": "tech:blue4:1",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 1,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:blue4:1",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:d9ba91f0"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:orange1:",
+            "kind": "research_tech",
+            "tileId": "orange1",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 50.5,
+          "steps": [
+            "research_tech:806ccfc8",
+            "choose_target:03fdb62d",
+            "choose_card:ecb525ad"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "funded-goal-action",
+              "goalId": "tech:orange1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 1,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:orange1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:03fdb62d"
+            },
+            {
+              "input": 2,
+              "reason": "fixed-card-in-resource-plan",
+              "goalId": "tech:orange1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 6,
+                "data": 0
+              },
+              "actionId": "choose_card:ecb525ad"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:orange2:",
+            "kind": "research_tech",
+            "tileId": "orange2",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 51.5,
+          "steps": [
+            "research_tech:806ccfc8",
+            "choose_target:70b9a53f"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "funded-goal-action",
+              "goalId": "tech:orange2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 1,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:orange2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:70b9a53f"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:orange3:",
+            "kind": "research_tech",
+            "tileId": "orange3",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 57.5,
+          "steps": [
+            "research_tech:806ccfc8",
+            "choose_target:22eefebd"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "funded-goal-action",
+              "goalId": "tech:orange3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 1,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:orange3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:22eefebd"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:orange4:",
+            "kind": "research_tech",
+            "tileId": "orange4",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 51.5,
+          "steps": [
+            "research_tech:806ccfc8",
+            "choose_target:a16882e3"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "funded-goal-action",
+              "goalId": "tech:orange4:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 1,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:orange4:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:a16882e3"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:purple1:",
+            "kind": "research_tech",
+            "tileId": "purple1",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 51,
+          "steps": [
+            "research_tech:806ccfc8",
+            "choose_target:405d1e5d"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "funded-goal-action",
+              "goalId": "tech:purple1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 1,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:purple1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:405d1e5d"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:purple2:",
+            "kind": "research_tech",
+            "tileId": "purple2",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 50,
+          "steps": [
+            "research_tech:806ccfc8",
+            "choose_target:66c1a4bb"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "funded-goal-action",
+              "goalId": "tech:purple2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 1,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:purple2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:66c1a4bb"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:purple3:",
+            "kind": "research_tech",
+            "tileId": "purple3",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 50.5,
+          "steps": [
+            "research_tech:806ccfc8",
+            "choose_target:d57e0409",
+            "choose_card:ecb525ad"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "funded-goal-action",
+              "goalId": "tech:purple3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 1,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:purple3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:d57e0409"
+            },
+            {
+              "input": 2,
+              "reason": "fixed-card-in-resource-plan",
+              "goalId": "tech:purple3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 6,
+                "data": 0
+              },
+              "actionId": "choose_card:ecb525ad"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:purple4:",
+            "kind": "research_tech",
+            "tileId": "purple4",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 51.5,
+          "steps": [
+            "research_tech:806ccfc8",
+            "choose_target:d0b75b83"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "funded-goal-action",
+              "goalId": "tech:purple4:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 1,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:purple4:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:d0b75b83"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "input": 47,
+      "chosenActionId": "orbit:44937d1f",
+      "complete": true,
+      "nativeInputs": 60,
+      "rootChoices": [
+        {
+          "actionId": "orbit:44937d1f",
+          "goal": {
+            "id": "rocket:3:orbit:mars:planet:",
+            "kind": "route",
+            "family": "orbit",
+            "rocketId": 3,
+            "planetId": "mars",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            },
+            "benefit": {
+              "score": 3,
+              "incomeCount": 1,
+              "dataCount": 0,
+              "grossEquivalentValue": 5.5,
+              "rewardSummary": "首次环绕：额外获得 3 分；精选 1 张卡牌；火星扇区扫描；获得 1 次收入",
+              "source": "planetRewards.orbit:mars"
+            },
+            "coordinate": {
+              "x": 4,
+              "y": 2
+            },
+            "path": [],
+            "movementPoints": 0,
+            "required": {
+              "credits": 1
+            }
+          },
+          "value": 60.5,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "play_card:8faf8ead",
+          "goal": {
+            "id": "effect:tech:card:card-15-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-15-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "value": 60,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "play_card:cc423961",
+          "goal": null,
+          "value": 53.5,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "goal": null,
+          "value": 57,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "value": 50,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "card_corner:6785c989",
+          "goal": {
+            "id": "data:analyze:6",
+            "kind": "analyze",
+            "targetComputerSlot": 6,
+            "required": {}
+          },
+          "value": 59,
+          "completion": "covered-by-global-value-bound"
+        }
+      ],
+      "technologyChoices": []
+    },
+    {
+      "input": 54,
+      "chosenActionId": "play_card:8faf8ead",
+      "complete": true,
+      "nativeInputs": 22,
+      "rootChoices": [
+        {
+          "actionId": "launch:c94cda79",
+          "goal": null,
+          "value": 56.5,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "play_card:8faf8ead",
+          "goal": {
+            "id": "effect:tech:card:card-15-0",
+            "kind": "effect-purpose",
+            "purpose": "tech",
+            "cardId": "card-15-0",
+            "sourceFamily": "play_card",
+            "required": {
+              "credits": 3
+            }
+          },
+          "value": 60.5,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "goal": null,
+          "value": 58.5,
+          "completion": "covered-by-global-value-bound"
+        }
+      ],
+      "technologyChoices": []
+    },
+    {
+      "input": 68,
+      "chosenActionId": "launch:c94cda79",
+      "complete": true,
+      "nativeInputs": 32,
+      "rootChoices": [
+        {
+          "actionId": "launch:c94cda79",
+          "goal": null,
+          "value": 62.5,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "play_card:cc286ace",
+          "goal": null,
+          "value": 58,
+          "completion": "covered-by-global-value-bound"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "goal": null,
+          "value": 57,
+          "completion": "covered-by-global-value-bound"
+        }
+      ],
+      "technologyChoices": []
+    },
+    {
+      "input": 70,
+      "chosenActionId": "quick_trade:f385e2ac",
+      "complete": true,
+      "nativeInputs": 47,
+      "rootChoices": [
+        {
+          "actionId": "scan:2d21a323",
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "value": 53,
+          "completion": "complete"
+        },
+        {
+          "actionId": "play_card:a1d72579",
+          "goal": null,
+          "value": 53,
+          "completion": "complete"
+        },
+        {
+          "actionId": "play_card:29f55acb",
+          "goal": null,
+          "value": 63,
+          "completion": "complete"
+        },
+        {
+          "actionId": "play_card:cc286ace",
+          "goal": null,
+          "value": 63.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "play_card:72e382ac",
+          "goal": null,
+          "value": 53.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "goal": null,
+          "value": 62.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "goal": {
+            "id": "rocket:4:orbit:neptune:planet:",
+            "kind": "route",
+            "family": "orbit",
+            "rocketId": 4,
+            "planetId": "neptune",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            },
+            "benefit": {
+              "score": 10,
+              "incomeCount": 0,
+              "dataCount": 4,
+              "grossEquivalentValue": 15,
+              "rewardSummary": "首次环绕：额外获得 3 分；获得 7 分；获得 4 个数据；织女一/绘架座β扫描",
+              "source": "planetRewards.orbit:neptune"
+            },
+            "coordinate": {
+              "x": 1,
+              "y": 4
+            },
+            "path": [
+              {
+                "from": {
+                  "x": 1,
+                  "y": 1
+                },
+                "to": {
+                  "x": 1,
+                  "y": 2
+                },
+                "deltaX": 0,
+                "deltaY": 1,
+                "requiredMovePoints": 1
+              },
+              {
+                "from": {
+                  "x": 1,
+                  "y": 2
+                },
+                "to": {
+                  "x": 1,
+                  "y": 3
+                },
+                "deltaX": 0,
+                "deltaY": 1,
+                "requiredMovePoints": 1
+              },
+              {
+                "from": {
+                  "x": 1,
+                  "y": 3
+                },
+                "to": {
+                  "x": 1,
+                  "y": 4
+                },
+                "deltaX": 0,
+                "deltaY": 1,
+                "requiredMovePoints": 1
+              }
+            ],
+            "movementPoints": 3,
+            "required": {
+              "credits": 1
+            }
+          },
+          "value": 71.5,
+          "completion": "complete"
+        }
+      ],
+      "technologyChoices": []
+    },
+    {
+      "input": 77,
+      "chosenActionId": "card_corner:753fb0ad",
+      "complete": true,
+      "nativeInputs": 67,
+      "rootChoices": [
+        {
+          "actionId": "orbit:d0314792",
+          "goal": {
+            "id": "rocket:4:orbit:neptune:planet:",
+            "kind": "route",
+            "family": "orbit",
+            "rocketId": 4,
+            "planetId": "neptune",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            },
+            "benefit": {
+              "score": 10,
+              "incomeCount": 0,
+              "dataCount": 4,
+              "grossEquivalentValue": 10,
+              "rewardSummary": "首次环绕：额外获得 3 分；获得 7 分；获得 4 个数据；织女一/绘架座β扫描",
+              "source": "planetRewards.orbit:neptune"
+            },
+            "coordinate": {
+              "x": 1,
+              "y": 4
+            },
+            "path": [],
+            "movementPoints": 0,
+            "required": {
+              "credits": 1
+            }
+          },
+          "value": 71.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "play_card:a1d72579",
+          "goal": null,
+          "value": 62.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "play_card:29f55acb",
+          "goal": null,
+          "value": 50.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "play_card:cc286ace",
+          "goal": null,
+          "value": 63.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "goal": null,
+          "value": 64.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "goal": {
+            "id": "rocket:4:land:neptune:planet:",
+            "kind": "route",
+            "family": "land",
+            "rocketId": 4,
+            "planetId": "neptune",
+            "endpointTarget": {
+              "type": "planet",
+              "rocketId": 4
+            },
+            "endpointCost": {
+              "energy": 3
+            },
+            "benefit": {
+              "score": 10,
+              "incomeCount": 0,
+              "dataCount": 3,
+              "grossEquivalentValue": 15.833333333333334,
+              "rewardSummary": "首次登陆：额外获得 3 个数据；获得 10 分；获得 1 个黄色外星人标记",
+              "source": "planetRewards.land:neptune"
+            },
+            "coordinate": {
+              "x": 1,
+              "y": 4
+            },
+            "path": [],
+            "movementPoints": 0,
+            "required": {
+              "credits": 0
+            }
+          },
+          "value": 71,
+          "completion": "complete"
+        },
+        {
+          "actionId": "quick_trade:a39c1a77",
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "value": 49,
+          "completion": "complete"
+        },
+        {
+          "actionId": "card_corner:753fb0ad",
+          "goal": {
+            "id": "tech:orange4:",
+            "kind": "research_tech",
+            "tileId": "orange4",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 72.5,
+          "completion": "complete"
+        }
+      ],
+      "technologyChoices": [
+        {
+          "goal": {
+            "id": "tech:blue2:2",
+            "kind": "research_tech",
+            "tileId": "blue2",
+            "blueSlot": 2,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 68,
+          "steps": [
+            "card_corner:753fb0ad",
+            "card_corner:782ed1f3",
+            "card_corner:c8a181ae",
+            "research_tech:806ccfc8",
+            "choose_target:9b661234",
+            "choose_card:56497dc2"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:blue2:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 3,
+                "data": 0
+              },
+              "actionId": "card_corner:753fb0ad"
+            },
+            {
+              "input": 1,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:blue2:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 2,
+                "data": 0
+              },
+              "actionId": "card_corner:782ed1f3"
+            },
+            {
+              "input": 2,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:blue2:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 1,
+                "data": 0
+              },
+              "actionId": "card_corner:c8a181ae"
+            },
+            {
+              "input": 3,
+              "reason": "funded-goal-action",
+              "goalId": "tech:blue2:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 4,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:blue2:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:9b661234"
+            },
+            {
+              "input": 5,
+              "reason": "fixed-card-in-resource-plan",
+              "goalId": "tech:blue2:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 6,
+                "data": 0
+              },
+              "actionId": "choose_card:56497dc2"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:blue3:2",
+            "kind": "research_tech",
+            "tileId": "blue3",
+            "blueSlot": 2,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 68,
+          "steps": [
+            "card_corner:753fb0ad",
+            "card_corner:782ed1f3",
+            "card_corner:c8a181ae",
+            "research_tech:806ccfc8",
+            "choose_target:c86683cc",
+            "choose_card:56497dc2"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:blue3:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 3,
+                "data": 0
+              },
+              "actionId": "card_corner:753fb0ad"
+            },
+            {
+              "input": 1,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:blue3:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 2,
+                "data": 0
+              },
+              "actionId": "card_corner:782ed1f3"
+            },
+            {
+              "input": 2,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:blue3:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 1,
+                "data": 0
+              },
+              "actionId": "card_corner:c8a181ae"
+            },
+            {
+              "input": 3,
+              "reason": "funded-goal-action",
+              "goalId": "tech:blue3:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 4,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:blue3:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:c86683cc"
+            },
+            {
+              "input": 5,
+              "reason": "fixed-card-in-resource-plan",
+              "goalId": "tech:blue3:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 6,
+                "data": 0
+              },
+              "actionId": "choose_card:56497dc2"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:blue4:2",
+            "kind": "research_tech",
+            "tileId": "blue4",
+            "blueSlot": 2,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 68.5,
+          "steps": [
+            "card_corner:753fb0ad",
+            "card_corner:782ed1f3",
+            "card_corner:c8a181ae",
+            "research_tech:806ccfc8",
+            "choose_target:d4a9f494"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:blue4:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 3,
+                "data": 0
+              },
+              "actionId": "card_corner:753fb0ad"
+            },
+            {
+              "input": 1,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:blue4:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 2,
+                "data": 0
+              },
+              "actionId": "card_corner:782ed1f3"
+            },
+            {
+              "input": 2,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:blue4:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 1,
+                "data": 0
+              },
+              "actionId": "card_corner:c8a181ae"
+            },
+            {
+              "input": 3,
+              "reason": "funded-goal-action",
+              "goalId": "tech:blue4:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 4,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:blue4:2",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:d4a9f494"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:orange1:",
+            "kind": "research_tech",
+            "tileId": "orange1",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 63,
+          "steps": [
+            "card_corner:753fb0ad",
+            "card_corner:782ed1f3",
+            "card_corner:c8a181ae",
+            "research_tech:806ccfc8",
+            "choose_target:03fdb62d",
+            "choose_card:56497dc2"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:orange1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 3,
+                "data": 0
+              },
+              "actionId": "card_corner:753fb0ad"
+            },
+            {
+              "input": 1,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:orange1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 2,
+                "data": 0
+              },
+              "actionId": "card_corner:782ed1f3"
+            },
+            {
+              "input": 2,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:orange1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 1,
+                "data": 0
+              },
+              "actionId": "card_corner:c8a181ae"
+            },
+            {
+              "input": 3,
+              "reason": "funded-goal-action",
+              "goalId": "tech:orange1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 4,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:orange1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:03fdb62d"
+            },
+            {
+              "input": 5,
+              "reason": "fixed-card-in-resource-plan",
+              "goalId": "tech:orange1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 6,
+                "data": 0
+              },
+              "actionId": "choose_card:56497dc2"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:orange2:",
+            "kind": "research_tech",
+            "tileId": "orange2",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 63.5,
+          "steps": [
+            "card_corner:753fb0ad",
+            "card_corner:782ed1f3",
+            "card_corner:c8a181ae",
+            "research_tech:806ccfc8",
+            "choose_target:70b9a53f"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:orange2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 3,
+                "data": 0
+              },
+              "actionId": "card_corner:753fb0ad"
+            },
+            {
+              "input": 1,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:orange2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 2,
+                "data": 0
+              },
+              "actionId": "card_corner:782ed1f3"
+            },
+            {
+              "input": 2,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:orange2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 1,
+                "data": 0
+              },
+              "actionId": "card_corner:c8a181ae"
+            },
+            {
+              "input": 3,
+              "reason": "funded-goal-action",
+              "goalId": "tech:orange2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 4,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:orange2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:70b9a53f"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:orange3:",
+            "kind": "research_tech",
+            "tileId": "orange3",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 68.5,
+          "steps": [
+            "card_corner:753fb0ad",
+            "card_corner:782ed1f3",
+            "card_corner:c8a181ae",
+            "research_tech:806ccfc8",
+            "choose_target:22eefebd"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:orange3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 3,
+                "data": 0
+              },
+              "actionId": "card_corner:753fb0ad"
+            },
+            {
+              "input": 1,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:orange3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 2,
+                "data": 0
+              },
+              "actionId": "card_corner:782ed1f3"
+            },
+            {
+              "input": 2,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:orange3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 1,
+                "data": 0
+              },
+              "actionId": "card_corner:c8a181ae"
+            },
+            {
+              "input": 3,
+              "reason": "funded-goal-action",
+              "goalId": "tech:orange3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 4,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:orange3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:22eefebd"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:orange4:",
+            "kind": "research_tech",
+            "tileId": "orange4",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 72.5,
+          "steps": [
+            "card_corner:753fb0ad",
+            "card_corner:782ed1f3",
+            "card_corner:c8a181ae",
+            "research_tech:806ccfc8",
+            "choose_target:a16882e3"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:orange4:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 3,
+                "data": 0
+              },
+              "actionId": "card_corner:753fb0ad"
+            },
+            {
+              "input": 1,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:orange4:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 2,
+                "data": 0
+              },
+              "actionId": "card_corner:782ed1f3"
+            },
+            {
+              "input": 2,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:orange4:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 1,
+                "data": 0
+              },
+              "actionId": "card_corner:c8a181ae"
+            },
+            {
+              "input": 3,
+              "reason": "funded-goal-action",
+              "goalId": "tech:orange4:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 4,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:orange4:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:a16882e3"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:purple1:",
+            "kind": "research_tech",
+            "tileId": "purple1",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 63,
+          "steps": [
+            "card_corner:753fb0ad",
+            "card_corner:782ed1f3",
+            "card_corner:c8a181ae",
+            "research_tech:806ccfc8",
+            "choose_target:405d1e5d"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:purple1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 3,
+                "data": 0
+              },
+              "actionId": "card_corner:753fb0ad"
+            },
+            {
+              "input": 1,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:purple1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 2,
+                "data": 0
+              },
+              "actionId": "card_corner:782ed1f3"
+            },
+            {
+              "input": 2,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:purple1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 1,
+                "data": 0
+              },
+              "actionId": "card_corner:c8a181ae"
+            },
+            {
+              "input": 3,
+              "reason": "funded-goal-action",
+              "goalId": "tech:purple1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 4,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:purple1:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:405d1e5d"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:purple2:",
+            "kind": "research_tech",
+            "tileId": "purple2",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 62.5,
+          "steps": [
+            "card_corner:753fb0ad",
+            "card_corner:782ed1f3",
+            "card_corner:c8a181ae",
+            "research_tech:806ccfc8",
+            "choose_target:66c1a4bb"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:purple2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 3,
+                "data": 0
+              },
+              "actionId": "card_corner:753fb0ad"
+            },
+            {
+              "input": 1,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:purple2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 2,
+                "data": 0
+              },
+              "actionId": "card_corner:782ed1f3"
+            },
+            {
+              "input": 2,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:purple2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 1,
+                "data": 0
+              },
+              "actionId": "card_corner:c8a181ae"
+            },
+            {
+              "input": 3,
+              "reason": "funded-goal-action",
+              "goalId": "tech:purple2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 4,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:purple2:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:66c1a4bb"
+            }
+          ]
+        },
+        {
+          "goal": {
+            "id": "tech:purple3:",
+            "kind": "research_tech",
+            "tileId": "purple3",
+            "blueSlot": null,
+            "required": {
+              "publicity": 6
+            }
+          },
+          "value": 63,
+          "steps": [
+            "card_corner:753fb0ad",
+            "card_corner:782ed1f3",
+            "card_corner:c8a181ae",
+            "research_tech:806ccfc8",
+            "choose_target:d57e0409",
+            "choose_card:56497dc2"
+          ],
+          "preparations": [
+            {
+              "input": 0,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:purple3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 3,
+                "data": 0
+              },
+              "actionId": "card_corner:753fb0ad"
+            },
+            {
+              "input": 1,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:purple3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 2,
+                "data": 0
+              },
+              "actionId": "card_corner:782ed1f3"
+            },
+            {
+              "input": 2,
+              "reason": "greedy-resource-deficit",
+              "goalId": "tech:purple3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 1,
+                "data": 0
+              },
+              "actionId": "card_corner:c8a181ae"
+            },
+            {
+              "input": 3,
+              "reason": "funded-goal-action",
+              "goalId": "tech:purple3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "research_tech:806ccfc8"
+            },
+            {
+              "input": 4,
+              "reason": "fixed-goal-target",
+              "goalId": "tech:purple3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 0,
+                "data": 0
+              },
+              "actionId": "choose_target:d57e0409"
+            },
+            {
+              "input": 5,
+              "reason": "fixed-card-in-resource-plan",
+              "goalId": "tech:purple3:",
+              "demand": {
+                "credits": 0,
+                "energy": 0,
+                "publicity": 6,
+                "data": 0
+              },
+              "actionId": "choose_card:56497dc2"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "input": 83,
+      "chosenActionId": "quick_trade:f385e2ac",
+      "complete": true,
+      "nativeInputs": 30,
+      "rootChoices": [
+        {
+          "actionId": "orbit:d0314792",
+          "goal": {
+            "id": "rocket:4:orbit:neptune:planet:",
+            "kind": "route",
+            "family": "orbit",
+            "rocketId": 4,
+            "planetId": "neptune",
+            "endpointTarget": {
+              "type": "planet"
+            },
+            "endpointCost": {
+              "credits": 1,
+              "energy": 1
+            },
+            "benefit": {
+              "score": 10,
+              "incomeCount": 0,
+              "dataCount": 4,
+              "grossEquivalentValue": 10,
+              "rewardSummary": "首次环绕：额外获得 3 分；获得 7 分；获得 4 个数据；织女一/绘架座β扫描",
+              "source": "planetRewards.orbit:neptune"
+            },
+            "coordinate": {
+              "x": 1,
+              "y": 4
+            },
+            "path": [],
+            "movementPoints": 0,
+            "required": {
+              "credits": 1
+            }
+          },
+          "value": 70,
+          "completion": "complete"
+        },
+        {
+          "actionId": "scan:2d21a323",
+          "goal": {
+            "id": "scan:sector:sector-1-a",
+            "kind": "scan-flow",
+            "nebulaId": "sector-1-a",
+            "required": {
+              "credits": 1,
+              "energy": 2
+            },
+            "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+          },
+          "value": 48.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "pass:a1f33c73",
+          "goal": null,
+          "value": 72.5,
+          "completion": "complete"
+        },
+        {
+          "actionId": "quick_trade:f385e2ac",
+          "goal": {
+            "id": "rocket:4:land:neptune:satellite:triton",
+            "kind": "route",
+            "family": "land",
+            "rocketId": 4,
+            "planetId": "neptune",
+            "endpointTarget": {
+              "type": "satellite",
+              "satelliteId": "triton",
+              "rocketId": 4
+            },
+            "endpointCost": {
+              "energy": 3
+            },
+            "benefit": {
+              "score": 26,
+              "incomeCount": 0,
+              "dataCount": 0,
+              "grossEquivalentValue": 26,
+              "rewardSummary": "获得 26 分",
+              "source": "planetRewards.land:neptune"
+            },
+            "coordinate": {
+              "x": 1,
+              "y": 4
+            },
+            "path": [],
+            "movementPoints": 0,
+            "required": {
+              "credits": 0
+            }
+          },
+          "value": 79.5,
+          "completion": "complete"
+        }
+      ],
+      "technologyChoices": []
+    },
+    {
+      "input": 88,
+      "chosenActionId": "pass:a1f33c73",
+      "complete": true,
+      "nativeInputs": 1,
+      "rootChoices": [
+        {
+          "actionId": "pass:a1f33c73",
+          "goal": null,
+          "value": 79.5,
+          "completion": "complete"
+        }
+      ],
+      "technologyChoices": []
+    }
+  ],
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "nextAction": "Native replay both blue1/blue2 input44 branches and orange4/blue2 input77. Quantify per-term values and achievable remaining own-turn developments; no forced teacher preference or new weights without evidence."
+}
