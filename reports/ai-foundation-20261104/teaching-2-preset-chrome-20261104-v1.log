@@ -1,0 +1,5 @@
+PASS production-fixed-board http://127.0.0.1:59518/randomizer/index.html
+PASS production-custom-seed http://127.0.0.1:59518/randomizer/index.html
+PASS production-fixed-board-free-analyze http://127.0.0.1:59518/randomizer/index.html
+PASS production-fixed-board-teaching-2 http://127.0.0.1:59518/randomizer/index.html
+SUMMARY browserSmoke passed=4 failed=0 total=4

@@ -198,6 +198,37 @@ const smokes = [
     counterexample: "免电盘面 seed 未接入或浏览器盘面与 Simulation 不一致",
   }),
   Object.freeze({
+    id: "production-fixed-board-teaching-2",
+    file: "randomizer/index.html",
+    readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-fixed-board'))",
+    actionExpression: `(async () => {
+      const fixed = document.querySelector("#start-fixed-board");
+      fixed.value = "seti-teacher-20261104-07";
+      if (fixed.selectedOptions[0]?.textContent !== "免电分析教学局2") throw new Error("教学局2名称或选项缺失");
+      fixed.dispatchEvent(new Event("change", { bubbles: true }));
+      const seed = document.querySelector("#start-seed-input");
+      if (!seed.disabled || seed.value !== fixed.value) throw new Error("教学局2未锁定正确种子");
+      if (!document.querySelector("#start-record-trajectory").checked) throw new Error("教学局默认轨迹录制未启用");
+      document.querySelector("#start-screen-start-button").click();
+      const deadline = Date.now() + 12000;
+      while (!document.querySelector(".initial-selection-card-button")) {
+        if (Date.now() >= deadline) throw new Error("教学局2初始选择未打开");
+        await new Promise(resolve => setTimeout(resolve, 25));
+      }
+      const render = window.SetiRandomizer.inspect().projection.resident?.ui?.browserReadModel?.render || {};
+      const sectors = (render.boardChrome?.sectors || []).map(e => [Number(e.slotId), Number(e.sectorId)]);
+      const faces = (render.cardPanels?.publicCards || []).map(c => String(c.imageSrc || ""));
+      if (JSON.stringify(sectors) !== JSON.stringify([[1,1],[2,2],[3,4],[4,3]])
+        || !["b_135.webp","b_15.webp","b_39.webp"].every(f => faces.some(src => src.endsWith(f)))) throw new Error("教学局2盘面与原生种子不一致");
+      const companies = [...document.querySelectorAll("#compositionDecisionRoot .decision-ui-card-image-industry")].map(img => img.alt);
+      if (!["深空探测","芬威克研究中心"].every(name => companies.some(c => c.includes(name)))) throw new Error("教学局2白席公司不一致");
+      window.__setiTeaching2Smoke = { ok: true };
+    })()`,
+    successExpression: "window.__setiTeaching2Smoke?.ok === true",
+    obligation: "选择直观名称免电分析教学局2，以已验证的新种子打开四人盘面并提供深空探测，默认录制轨迹",
+    counterexample: "只改显示名却仍使用旧种子、不能选到免电分析，或新教学局盘面无法复现",
+  }),
+  Object.freeze({
     id: "production-browser-full-parity",
     file: "randomizer/index.html",
     readyExpression: "Boolean(window.SetiRandomizer && document.querySelector('#start-screen-start-button'))",
