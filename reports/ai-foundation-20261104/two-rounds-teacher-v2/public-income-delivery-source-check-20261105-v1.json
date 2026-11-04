@@ -1,0 +1,101 @@
+{
+  "baseCommit": "09989ac099a824c3d4b54099072658e670b943b1",
+  "productionRuntime": "v166 / V15",
+  "productionCoreFilesUnchanged": [
+    "randomizer/game/ai/state-value.js",
+    "randomizer/game/ai/probe-capital.js",
+    "randomizer/game/ai/research-income-capital.js",
+    "randomizer/game/ai/resource-demand.js",
+    "randomizer/game/ai/card-pick-planning.js",
+    "randomizer/game/ai/local-decision-plans.js",
+    "randomizer/game/ai/analysis-port.js",
+    "randomizer/game/ai/decision-search.js",
+    "randomizer/index.html",
+    "tools/node-test-inventory.js",
+    "tools/browser-smoke-inventory.js"
+  ],
+  "noNewAutonomousRuns": true,
+  "candidateRuntime": "v174 / V16",
+  "candidateColdRoots": 95,
+  "candidateMaxNativeInputs": 264,
+  "candidateMaxMilliseconds": 550.3054579999999,
+  "candidateAdmitted": false,
+  "controlledRound1NativeInputs": 22,
+  "controlledRound1Score": 15,
+  "controlledRound1Technology": [
+    "blue2@1",
+    "purple4"
+  ],
+  "controlledRound1IncomeCreditsEnergyCards": [
+    6,
+    2,
+    1
+  ],
+  "allComparedTeacherAssetsMatch": true,
+  "candidateMaterializedFromBaseAndOverlay": true,
+  "materializedNativeControls": 121,
+  "materializedFullSearchControls": [
+    {
+      "incomeCode": 0,
+      "proofsOff": false,
+      "nativeInputs": 264,
+      "value": 64.84065934065934,
+      "actionId": "orbit:44937d1f"
+    },
+    {
+      "incomeCode": 0,
+      "proofsOff": true,
+      "nativeInputs": 363,
+      "value": 64.84065934065934,
+      "actionId": "orbit:44937d1f"
+    },
+    {
+      "incomeCode": 1,
+      "proofsOff": false,
+      "nativeInputs": 264,
+      "value": 64.84065934065934,
+      "actionId": "orbit:44937d1f"
+    },
+    {
+      "incomeCode": 2,
+      "proofsOff": false,
+      "nativeInputs": 264,
+      "value": 64.84065934065934,
+      "actionId": "orbit:44937d1f"
+    }
+  ],
+  "archiveVersions": [
+    167,
+    168,
+    169,
+    170,
+    171,
+    172,
+    173,
+    174,
+    175,
+    176,
+    177
+  ],
+  "sourceModules": 92,
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "baselineUnchanged": "ai-search-v41-baseline-20261029",
+  "foreignV1Preserved": true,
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "archivedSourceWhitespaceExemptions": [
+    "reports/ai-foundation-20261104/candidate-v174-public-income-option-20261105-v1/randomizer/game/ai/decision-search.js",
+    "reports/ai-foundation-20261104/rejected-v167-runtime-20261105-v1/randomizer/game/ai/decision-search.js",
+    "reports/ai-foundation-20261104/rejected-v168-runtime-20261105-v1/randomizer/game/ai/decision-search.js",
+    "reports/ai-foundation-20261104/rejected-v169-runtime-20261105-v1/randomizer/game/ai/decision-search.js",
+    "reports/ai-foundation-20261104/rejected-v170-runtime-20261105-v1/randomizer/game/ai/decision-search.js",
+    "reports/ai-foundation-20261104/rejected-v171-runtime-20261105-v1/randomizer/game/ai/decision-search.js",
+    "reports/ai-foundation-20261104/rejected-v172-runtime-20261105-v1/randomizer/game/ai/decision-search.js",
+    "reports/ai-foundation-20261104/rejected-v173-runtime-20261105-v1/randomizer/game/ai/decision-search.js",
+    "reports/ai-foundation-20261104/rejected-v174-runtime-20261105-v1/randomizer/game/ai/decision-search.js",
+    "reports/ai-foundation-20261104/rejected-v175-runtime-20261105-v1/randomizer/game/ai/decision-search.js",
+    "reports/ai-foundation-20261104/rejected-v176-runtime-20261105-v1/randomizer/game/ai/decision-search.js",
+    "reports/ai-foundation-20261104/rejected-v177-runtime-20261105-v1/randomizer/game/ai/decision-search.js"
+  ],
+  "archiveWhitespaceReason": "Preserve exact source bytes and their validated cold-runtime SHA256; ordinary new content still passes diff whitespace checks."
+}

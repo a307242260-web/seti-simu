@@ -1,0 +1,56 @@
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
++ undefined
+- 'card-15-0'
+
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/card-pick-planning.test.js:174:91)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: undefined,
+  expected: 'card-15-0',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/funded-hand-timing.test.js:66
+  port.setResourcePlanning(true);port.setCardPickPlanning(true);const root=port.openRoot(),plan=port.resourceSpec(root).plans.find(p=>p.goal.kind==='income');assert.equal(plan.goal.incomeCardId,incomeGoal.incomeCardId);
+                                                                                                                                                                                ^
+
+TypeError: Cannot read properties of undefined (reading 'goal')
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/funded-hand-timing.test.js:66:177)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49
+
+Node.js v22.22.0
+{"missionDataContinuation":"passed","controlledRoots":80,"nativePlans":75,"nativeInputs":580,"fullMissionValue":64.5,"occupiedAndUnknownRewardsExcluded":true,"rootAndRngRestored":true}
+{"publicIncomeOption":"passed","nativeInputs":108,"stablePrefixes":51,"searchControls":[{"incomeCode":0,"proofsOff":false,"nativeInputs":177,"value":64.84065934065934,"actionId":"orbit:44937d1f"},{"incomeCode":0,"proofsOff":true,"nativeInputs":277,"value":64.84065934065934,"actionId":"orbit:44937d1f"},{"incomeCode":1,"proofsOff":false,"nativeInputs":177,"value":64.84065934065934,"actionId":"orbit:44937d1f"},{"incomeCode":2,"proofsOff":false,"nativeInputs":177,"value":64.84065934065934,"actionId":"orbit:44937d1f"}],"committedSwapColdRecovery":3,"knownCreditValue":65.5,"unknownExpectedValue":64.84065934065934,"rootAndRngRestored":true}
+{"nativeScalarPlans":408,"nativeSelectedPaths":66,"nativeInputs":4896,"postMainFundingBounds":3,"stateObservationParity":true,"rootAndRngUnchanged":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+independent state value accounting and strict inputs passed
+SUMMARY unit passed=5 failed=2 total=7 time=33.80s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=2
+OWNER policy/state-value tests=5
+FAIL randomizer/game/ai/card-pick-planning.test.js status=1 signal=none
+FAIL randomizer/game/ai/funded-hand-timing.test.js status=1 signal=none

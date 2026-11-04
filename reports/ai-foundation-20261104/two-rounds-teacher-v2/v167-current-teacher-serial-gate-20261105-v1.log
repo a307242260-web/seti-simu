@@ -1,0 +1,42 @@
+{"label":"serial-case-105","inputs":198,"ms":529.674,"complete":true,"value":71}
+{"label":"serial-teacher-024","inputs":80,"ms":172.86787499999997,"complete":true,"value":64.5}
+{"label":"serial-teacher-025","inputs":2,"ms":49.855458,"complete":true,"value":64.5}
+{"label":"serial-teacher-026","inputs":1,"ms":56.81224999999999,"complete":true,"value":64.5}
+{"label":"serial-teacher-027","inputs":0,"ms":46.30445800000001,"complete":true,"value":64.5}
+{"label":"serial-teacher-035","inputs":73,"ms":202.68683400000003,"complete":true,"value":64.5}
+{"label":"serial-teacher-036","inputs":56,"ms":158.764833,"complete":true,"value":64.5}
+{"label":"serial-teacher-037","inputs":10,"ms":56.08420799999999,"complete":true,"value":64.5}
+{"label":"serial-teacher-038","inputs":7,"ms":49.31216599999999,"complete":true,"value":64.5}
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/benchmark-human405-current-first2-20261105-v4.js:3
+for(const item of cases){if(report.rows.some(r=>r.label===item.label))continue;report.pending=item;fs.writeFileSync(out,JSON.stringify(report,null,2)+'\n');const label='serial-'+item.label,p=spawnSync(process.execPath,['adhoc/benchmark-human405-decision-20261105-v4.js',label,item.fixture],{encoding:'utf8',timeout:30000});process.stdout.write(p.stdout||'');if(p.status!==0){report.status='failed';report.failure=p.stderr||p.error?.message;fs.writeFileSync(out,JSON.stringify(report,null,2)+'\n');throw Error(report.failure);}const evidence=folder+`${version}-cold-${label}-20261105-v1.json`,r=read(evidence);report.rows.push({...item,evidence,nativeInputs:r.nativeInputs,milliseconds:r.milliseconds,value:r.value,actionId:r.actionId,complete:r.complete,rootAndRngUnchanged:r.rootAndRngUnchanged});report.pending=null;fs.writeFileSync(out,JSON.stringify(report,null,2)+'\n');}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ^
+
+Error: /private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/decision-search.js:40
+      if(!Number.isSafeInteger(total*2))throw new Error("SEARCH_INCOME_PROOF_VALUE_INVALID");
+                                        ^
+
+Error: SEARCH_INCOME_PROOF_VALUE_INVALID
+    at valueForNode (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/decision-search.js:40:47)
+    at add (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/decision-search.js:195:51)
+    at Object.searchDecision (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/decision-search.js:501:23)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/benchmark-human405-decision-20261105-v4.js:5:114)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+
+Node.js v22.22.0
+
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/benchmark-human405-current-first2-20261105-v4.js:3:504)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49
+
+Node.js v22.22.0

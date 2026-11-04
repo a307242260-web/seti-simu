@@ -1,0 +1,139 @@
+{
+  "status": "failed",
+  "searchVersion": "seti-complete-decision-search-v167",
+  "valueModel": "seti-purpose-capital-state-value-v16",
+  "reference": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v158-current-teacher-serial-gate-20261104-v1.json",
+  "protocol": "95 serial fresh processes; previously slow case105 first; no concurrent owned Node/Chrome tests or game; retain first sample, never resample unchanged source.",
+  "productionBudgets": {
+    "transitions": null,
+    "nodes": null,
+    "frontier": null,
+    "milliseconds": null
+  },
+  "rows": [
+    {
+      "label": "case-105",
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v167-cold-serial-case-105-20261105-v1.json",
+      "nativeInputs": 198,
+      "milliseconds": 529.674,
+      "value": 71,
+      "actionId": "place_data:01c038e2",
+      "complete": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "teacher-024",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-024-20261104-v1.json",
+      "round": 1,
+      "teacherActionId": "play_card:124d76d3",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v167-cold-serial-teacher-024-20261105-v1.json",
+      "nativeInputs": 80,
+      "milliseconds": 172.86787499999997,
+      "value": 64.5,
+      "actionId": "play_card:124d76d3",
+      "complete": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "teacher-025",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-025-20261104-v1.json",
+      "round": 1,
+      "teacherActionId": "quick_trade:be9dd0cd",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v167-cold-serial-teacher-025-20261105-v1.json",
+      "nativeInputs": 2,
+      "milliseconds": 49.855458,
+      "value": 64.5,
+      "actionId": "move:e0158279",
+      "complete": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "teacher-026",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-026-20261104-v1.json",
+      "round": 1,
+      "teacherActionId": "choose_target:d9014565",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v167-cold-serial-teacher-026-20261105-v1.json",
+      "nativeInputs": 1,
+      "milliseconds": 56.81224999999999,
+      "value": 64.5,
+      "actionId": "choose_target:d9014565",
+      "complete": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "teacher-027",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-027-20261104-v1.json",
+      "round": 1,
+      "teacherActionId": "end_turn:b2f9b29d",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v167-cold-serial-teacher-027-20261105-v1.json",
+      "nativeInputs": 0,
+      "milliseconds": 46.30445800000001,
+      "value": 64.5,
+      "actionId": "end_turn:b2f9b29d",
+      "complete": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "teacher-035",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-035-20261104-v1.json",
+      "round": 1,
+      "teacherActionId": "research_tech:806ccfc8",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v167-cold-serial-teacher-035-20261105-v1.json",
+      "nativeInputs": 73,
+      "milliseconds": 202.68683400000003,
+      "value": 64.5,
+      "actionId": "research_tech:806ccfc8",
+      "complete": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "teacher-036",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-036-20261104-v1.json",
+      "round": 1,
+      "teacherActionId": "choose_target:3fcecb14",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v167-cold-serial-teacher-036-20261105-v1.json",
+      "nativeInputs": 56,
+      "milliseconds": 158.764833,
+      "value": 64.5,
+      "actionId": "choose_target:3fcecb14",
+      "complete": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "teacher-037",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-037-20261104-v1.json",
+      "round": 1,
+      "teacherActionId": "choose_card:56497dc2",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v167-cold-serial-teacher-037-20261105-v1.json",
+      "nativeInputs": 10,
+      "milliseconds": 56.08420799999999,
+      "value": 64.5,
+      "actionId": "choose_card:56497dc2",
+      "complete": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "teacher-038",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-038-20261104-v1.json",
+      "round": 1,
+      "teacherActionId": "end_turn:b2f9b29d",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v167-cold-serial-teacher-038-20261105-v1.json",
+      "nativeInputs": 7,
+      "milliseconds": 49.31216599999999,
+      "value": 64.5,
+      "actionId": "end_turn:b2f9b29d",
+      "complete": true,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "pending": {
+    "label": "teacher-039",
+    "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json",
+    "round": 1,
+    "teacherActionId": "orbit:44937d1f"
+  },
+  "failure": "/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/decision-search.js:40\n      if(!Number.isSafeInteger(total*2))throw new Error(\"SEARCH_INCOME_PROOF_VALUE_INVALID\");\n                                        ^\n\nError: SEARCH_INCOME_PROOF_VALUE_INVALID\n    at valueForNode (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/decision-search.js:40:47)\n    at add (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/decision-search.js:195:51)\n    at Object.searchDecision (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/decision-search.js:501:23)\n    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/benchmark-human405-decision-20261105-v4.js:5:114)\n    at Module._compile (node:internal/modules/cjs/loader:1706:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)\n    at Module.load (node:internal/modules/cjs/loader:1441:32)\n    at Module._load (node:internal/modules/cjs/loader:1263:12)\n    at TracingChannel.traceSync (node:diagnostics_channel:328:14)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)\n\nNode.js v22.22.0\n"
+}

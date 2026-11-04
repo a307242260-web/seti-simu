@@ -1,0 +1,87 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "previousGoalTurnClassification": "progress: V166 source admission, unique autonomous first2 and native93-input asset comparison were committed and published",
+  "thisGoalTurnClassification": "progress: public-prior prototype105native, candidate121native controls and51prefixes, hidden-category/full-native search equivalence,22-input controlled R1 completion matching teacher assets; candidate remains unadmitted because264>256",
+  "productionRuntime": "v166 / V15",
+  "productionSourceCommit": "92dc86691c903f7876102af13e5dcb4133e4a8b2",
+  "actualRecord": "reports/research/8b8b00a9.92dc8669.quick-400.json",
+  "actualScores": [
+    21,
+    54
+  ],
+  "actualTechnologyCount": [
+    1,
+    2
+  ],
+  "actualIncomeCreditsEnergyCards": [
+    4,
+    3,
+    1
+  ],
+  "candidateRuntime": "v174 / V16",
+  "candidateAdmitted": false,
+  "candidateSnapshot": "reports/ai-foundation-20261104/candidate-v174-public-income-option-20261105-v1/manifest.json",
+  "candidateColdRoots": 95,
+  "candidateAllSearchesComplete": true,
+  "candidateMaxInputs": 264,
+  "candidateMaxMs": 550.3054579999999,
+  "candidateOverruns": [
+    {
+      "label": "teacher-039",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json",
+      "round": 1,
+      "teacherActionId": "orbit:44937d1f",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v174-cold-serial-teacher-039-20261105-v1.json",
+      "nativeInputs": 264,
+      "milliseconds": 417.742667,
+      "value": 64.84065934065934,
+      "actionId": "orbit:44937d1f",
+      "complete": true,
+      "rootAndRngUnchanged": true
+    },
+    {
+      "label": "actual-v165-39",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/ai-v165-step039-20261105-v1.json",
+      "evidence": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v174-cold-serial-actual-v165-39-20261105-v1.json",
+      "nativeInputs": 264,
+      "milliseconds": 425.627792,
+      "value": 64.84065934065934,
+      "actionId": "orbit:44937d1f",
+      "complete": true,
+      "rootAndRngUnchanged": true
+    }
+  ],
+  "candidateOfficialRuns": 0,
+  "controlledRound1": {
+    "scope": "same actual39 root finite continuation, not full autonomous opening",
+    "nativeInputs": 22,
+    "score": 15,
+    "technology": [
+      "blue2@1",
+      "purple4"
+    ],
+    "incomeCreditsEnergyCards": [
+      6,
+      2,
+      1
+    ],
+    "resourcesCreditsEnergyDataPublicity": [
+      0,
+      1,
+      0,
+      3
+    ],
+    "teacherComparedAssetsAllMatch": true,
+    "source": "reports/ai-foundation-20261104/two-rounds-teacher-v2/public-income-round1-controlled-completion-20261105-v1.json"
+  },
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit user instruction",
+  "developmentAligned": false,
+  "nextActions": [
+    "Read all264 native-input profile; prioritize18 native end_turn executions and74 income/28blue fixed-plan inputs that still require native work. All95 lines are closed; do not confuse this with unresolved frontier.",
+    "Reconstruct exact candidate from09989ac0 and overlay, or use the isolated current snapshot verified to V174. V175 ordering/V176 same-envelope cache/V177 rounding did not help and were removed.",
+    "Prove any additional pure-plan summary or dedup against full native state/RNG and distinct private goals. Keep256/600 gate; no new autonomous run before it passes.",
+    "Then run relevant/fullNode, input audit andChrome, admit source in private-index commit, and register exactly one white-only first2. Production remainsV166 and V41 full-game baseline is preserved."
+  ]
+}
