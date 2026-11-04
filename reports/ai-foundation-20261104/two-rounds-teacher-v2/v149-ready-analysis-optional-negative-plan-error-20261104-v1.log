@@ -1,0 +1,26 @@
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: {"industry":"stratus","credits":0,"energy":2,"stock":0,"publicity":0,"before":80.5,"after":73.5,"q":{"available":true,"netGain":0,"baseNetGain":-7,"payment":{"spend":{"credits":0,"energy":1},"energyPurchases":0,"creditPurchases":0,"value":1},"trace":{"target":{"alienSlotId":1,"traceType":"blue"},"gain":{"score":5,"publicity":1}},"blueTail":null,"nativeInputs":2,"scope":"One current-wallet-funded ready analysis and one known resource-only blue tail, without another player, hidden identity, species reveal or unearned income. Forecast hypothesis; not an admissible bound."}}
+
+-7 !== 0
+
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/adhoc/verify-v149-ready-analysis-capital-20261104-v1.js:17:35)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: -7,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0

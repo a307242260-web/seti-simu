@@ -2,7 +2,7 @@
   "date": "2026-11-04",
   "goalStatus": "active",
   "goalAchieved": false,
-  "phase": "v148-first2-published-teacher67-audited-native-launch-timing",
+  "phase": "ready-analysis-capital-prototype-native-192-controls-passed-production-v148-unchanged",
   "sourceVersion": "v148 / V8 funded hand timing, shared post-income ranking, actual fixed movement budget",
   "draftUncommitted": false,
   "baseCommit": "ec6b09f0056c6bf0d1cf299e543c3f1f991c70f9",
@@ -20,7 +20,7 @@
   "userBoundary": "Round end excludes both PASS card pick and next income; both belong to next round start.",
   "finalChecksPending": false,
   "chromeSession": 99824,
-  "nextAction": "Native equality/counterfactual audit teacher inputs38/43 data timing and R2 72/78/81/84/92; quantify known-card income opportunities and longterm capital. Preserve information reveal timing. No new production change or repeat autonomous run.",
+  "nextAction": "Integrate ready-analysis purpose only after shared state/observation contract and all native value/bound proofs are audited; avoid local-decision-plans/state-value circular import. Production V148 unchanged; no repeat autonomous run. Explicit global256/600 gate stays.",
   "sourceCommit": "7da81a85e675bd08abe393108450a6d0cb7510c7",
   "unitPassed": 161,
   "fullFlowPassed": 1,
@@ -45,5 +45,24 @@
     "same-reported-value-different-action": 2,
     "teacher-action-policy-excluded": 5,
     "teacher-value-not-established": 2
+  },
+  "readyAnalysisPrototype": "adhoc/prototype-v149-ready-analysis-capital-20261104-v1.js",
+  "readyAnalysisControls": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v149-ready-analysis-capital-native-controls-20261104-v1.json",
+  "roundValueComparison": [
+    {
+      "round": 1,
+      "ai": 60.5,
+      "teacher": 59.5
+    },
+    {
+      "round": 2,
+      "ai": 79.5,
+      "teacher": 90
+    }
+  ],
+  "knownOrderingDifference": {
+    "researchThenAnalyze": 90,
+    "analyzeThenResearch": 89.5,
+    "missingReadyAnalysisCapital": 8.5
   }
 }

@@ -1,0 +1,30 @@
+{
+  "baseCommit": "26a583b4b9f73a66fb5fc4dab5ee336343346301",
+  "productionSourceCommit": "7da81a85e675bd08abe393108450a6d0cb7510c7",
+  "files": {
+    "adhoc/analyze-v148-round-capital-20261104-v1.js": "f92cf12c03d71251ff4dcc519aae0fafb7be932c4da1154b5f78270a05e16ee7",
+    "adhoc/deliver-ready-analysis-prototype-20261104-v1.py": "54e855293c676be909d1e000d39eb1f7d300454ef1391e599cd6cb6c5b112df8",
+    "adhoc/human405-two-rounds-progress-20261104-v10.json": "aba50cbd34296773d1347cd4ec86b612e8f8ab05f512f39153573e85df002680",
+    "adhoc/prototype-v149-ready-analysis-capital-20261104-v1.js": "4b75285cdb5f2b6b53f1e21cdeb59c7a75f3d98ec4530485fb20ff49ff4afc00",
+    "adhoc/verify-v149-ready-analysis-capital-20261104-v1.js": "c6359f41ad9241b6f53d914c69252aa80d1216302c03d4145fba6319e3d091db",
+    "adhoc/witness-v148-research-analysis-order-20261104-v1.js": "b81996be09b8cac34c910550c188eb0d41cd4a9b48db649c45b30687031fc4f4",
+    "docs/ai-ready-analysis-capital-20261104.md": "e24db9618046ca47311fc994f9aec06b0bc983e9c4f5da01a7bfa87852c24c5f",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-research-analysis-order-native-20261104-v1.json": "ecaec5ce4e4c283ccaf0090c844029a1e165b744490ae7191ca01dfe545f3c2b",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-research-analysis-order-native-20261104-v1.log": "f66544259b70088c2684122e7f8b6b7a227e2001a3e89e5bf85d145254877ff4",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-round-capital-native-20261104-v1.json": "652f272558a427ef3d653303d5d7a5397555162a22f8a447f529e9144957b0b4",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v148-round-capital-native-20261104-v1.log": "caf6547c84f48cd04140fcd36a53c6f1d23bfb1323e16d3ed6007f195627a880",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v149-ready-analysis-capital-native-controls-20261104-v1.json": "b9a5586710e2d8cce691cbe3e9e2f37eb78e7ffc20b601653839ebe1b1f23634",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v149-ready-analysis-capital-native-controls-20261104-v1.log": "de07cba132fc5915b1afef26d66f5292f2ee318674def9b971a14d7a5f973f05",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v149-ready-analysis-controlled-wallet-attribution-error-20261104-v1.log": "aea753ad9d05ec8a2f5addab74f6f77830dfc6effaa1abe8b0b29c4160646b86",
+    "reports/ai-foundation-20261104/two-rounds-teacher-v2/v149-ready-analysis-optional-negative-plan-error-20261104-v1.log": "ad709653bea4fe48f6f63a26677970283b3e62acb24b346e508bf368fd8a4b00"
+  },
+  "sharedIndexSha256": "fc85f92edd341768801c684278718c809b0da7092d9c1eba78bf6fd978304e49",
+  "foreignRegistryHashes": {
+    "reports/iteration/versions.json": "5c23d5891d70e3a004746af4621abf01c573a9630c937f2d2b8712e96db1025d",
+    "reports/iteration/registry.json": "eddd8cceb0a957a9747eb8b385131f0036c66ad3f143a759534c818c5d47edf1",
+    "reports/robot-iteration.html": "3af352922c36a994b9190c8b1c28e2ee0c7d5e5f6560c4c31866f162c3adfa0c"
+  },
+  "productionUnchanged": true,
+  "goalStatus": "active",
+  "goalAchieved": false
+}
