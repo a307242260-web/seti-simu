@@ -1,0 +1,54 @@
+{
+  "date": "2026-11-05",
+  "previousGoalTurnClassification": "no goal progress: completed user-requested20-board delivery verification",
+  "thisGoalTurnClassification": "progress: committed and pushed native-verified V184 autonomous failure; V185 native regression reproduced then fixed,170unit/fullFlow and189cold roots pass; scalar-tie PASS independently persists",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "productionRuntime": "V184/V18",
+  "productionSourceCommit": "11437f119e0c7cf3f13c20409a1259c5f3199e68",
+  "actualResultArtifactCommit": "ba59a814e8bd829c8ee1a71a56ce1a6a9edffccf",
+  "actualRecord": "reports/research/ea6138c1.11437f11.quick-400.json",
+  "actualScores": [
+    15,
+    25
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "bothRoundsSpecificTechnologyAndSixIncomesEqual": true,
+  "developmentFullyAligned": false,
+  "actualGameMs": 3823,
+  "candidateRuntime": "V185/V19",
+  "candidateAdmitted": false,
+  "candidateArchive": "reports/ai-foundation-20261104/candidate-v185-sector-data-tail-20261105-v1/manifest.json",
+  "candidateSourceBase": "ba59a814e8bd829c8ee1a71a56ce1a6a9edffccf",
+  "candidateNamedColdCases": 225,
+  "candidateUniqueColdRoots": 189,
+  "candidateMaxInputs": 252,
+  "candidateMaxMs": 579.428167,
+  "candidateColdOverruns": 0,
+  "candidateUnitPassed": 170,
+  "candidateFullFlowPassed": 1,
+  "candidateIndependentAuditPasses": 45,
+  "legacyAuditFailureUnchanged": true,
+  "candidateOfficialRuns": 0,
+  "nativeRegressionInputs": 13,
+  "controlledPurposeInputs": 21,
+  "controlledScores": [
+    25,
+    29,
+    30,
+    34
+  ],
+  "controlsAreNotAutonomousScores": true,
+  "actualRoot91StillPass": true,
+  "actualRoot91ColdNativeInputs": 20,
+  "actualRoot91ColdMs": 123.70337500000001,
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit user instruction",
+  "baseline": "ai-search-v41-baseline-20261029",
+  "nextActions": [
+    "Design and verify same-value realization of a positively quoted currently funded purpose, including cycles, fixed-summary boundaries, equal-value pruning and plan reuse.",
+    "Do not rerun V185 or claim34 autonomous points. Gate next source before one unique autonomousfirst2; compare full assets, technology and six permanent incomes."
+  ]
+}
