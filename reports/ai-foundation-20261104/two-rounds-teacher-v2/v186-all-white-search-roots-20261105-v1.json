@@ -1,0 +1,481 @@
+{
+  "status": "complete",
+  "sourceRecord": "reports/research/92230fbe.9e3fa00b.quick-400.json",
+  "sourceRecordSha256": "397360aa2d1d0d9022c9862389066da86b4199780779bb9608aa532c45edaf2b",
+  "nativeReplayedInputs": 83,
+  "autonomousRuns": 0,
+  "searchReruns": 0,
+  "scope": "One replay only to capture the67 actually measured V186 white-search roots; original recorded legal inputs, no policy queries or new game experiment",
+  "finalNativeStateAndRngReplayed": true,
+  "rows": [
+    {
+      "label": "actual-v186-024",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step024-20261105-v1.json",
+      "fixtureSha256": "edb49dc821c91bad10fc19a9668198bca0689d0b426cbdd8889bceecb66fedeb",
+      "round": 1,
+      "actualActionId": "play_card:124d76d3"
+    },
+    {
+      "label": "actual-v186-025",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step025-20261105-v1.json",
+      "fixtureSha256": "4396ba5011840a6adf45cc34a36550846cae1be75c960f4dc77a2c5f580bde9f",
+      "round": 1,
+      "actualActionId": "move:e0158279"
+    },
+    {
+      "label": "actual-v186-026",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step026-20261105-v1.json",
+      "fixtureSha256": "b4e0fa618b1c7b0cd4a99c032e1ac19563fe12c1f5e03fbdf80a3ad27b83a092",
+      "round": 1,
+      "actualActionId": "choose_payment:abbb51f1"
+    },
+    {
+      "label": "actual-v186-027",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step027-20261105-v1.json",
+      "fixtureSha256": "9eed2bf9fcb9d4033dd13a99c7eae0277364a1bd8f0a9573ca3d9b58aeccd3d5",
+      "round": 1,
+      "actualActionId": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v186-035",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step035-20261105-v1.json",
+      "fixtureSha256": "492afb07ec0399820fb744c3f96b9e33aca3db4ec33174386f4f10e55d14a421",
+      "round": 1,
+      "actualActionId": "research_tech:806ccfc8"
+    },
+    {
+      "label": "actual-v186-036",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step036-20261105-v1.json",
+      "fixtureSha256": "7d65e12b729d526ca9ad854c03092f688540669723130464a46a3c3950328c6b",
+      "round": 1,
+      "actualActionId": "choose_target:3fcecb14"
+    },
+    {
+      "label": "actual-v186-037",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step037-20261105-v1.json",
+      "fixtureSha256": "85f41645efd3cb33ffe87eed11634f97657d0668050a95f687c21c23ad0b3b7a",
+      "round": 1,
+      "actualActionId": "choose_card:56497dc2"
+    },
+    {
+      "label": "actual-v186-038",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step038-20261105-v1.json",
+      "fixtureSha256": "d9124353355bf15923c5e9684dec74cce9a21e9b26435d8dff59ea4368a141e5",
+      "round": 1,
+      "actualActionId": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v186-039",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step039-20261105-v1.json",
+      "fixtureSha256": "5980b0c3db8dafb3e8af3974e9e6ac54a49ec01165afba16870879ebea8e1fcb",
+      "round": 1,
+      "actualActionId": "orbit:44937d1f"
+    },
+    {
+      "label": "actual-v186-040",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step040-20261105-v1.json",
+      "fixtureSha256": "fdbb9c35df94b470c873c0e84856edb6306efd0858db807b5972a1857c8dfc16",
+      "round": 1,
+      "actualActionId": "choose_card:669ddc72"
+    },
+    {
+      "label": "actual-v186-041",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step041-20261105-v1.json",
+      "fixtureSha256": "47369da96289aca293bdef70bd63fd661e0a97998bfe320b1319ff61a0944931",
+      "round": 1,
+      "actualActionId": "choose_target:96270e4a"
+    },
+    {
+      "label": "actual-v186-042",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step042-20261105-v1.json",
+      "fixtureSha256": "571f36750a0ee114f81d1b99d689ccdcbeaf62b23b86a00ab3dc885d8b709ada",
+      "round": 1,
+      "actualActionId": "choose_card:6ddc2a28"
+    },
+    {
+      "label": "actual-v186-043",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step043-20261105-v1.json",
+      "fixtureSha256": "2f0589a621c694510589487b0bf2e808b1686f8135015cc987a2bb28b497cd29",
+      "round": 1,
+      "actualActionId": "place_data:8fd12fd3"
+    },
+    {
+      "label": "actual-v186-044",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step044-20261105-v1.json",
+      "fixtureSha256": "d17117d5803efff02812c9b9cd353b09c349a5fc66d3da149fb135e1c1be1f75",
+      "round": 1,
+      "actualActionId": "choose_target:29b5215c"
+    },
+    {
+      "label": "actual-v186-045",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step045-20261105-v1.json",
+      "fixtureSha256": "22c60940f7a5c91a62143d43b3f8802d56eb772f0dc83cce90ff266f6462348f",
+      "round": 1,
+      "actualActionId": "place_data:8fd12fd3"
+    },
+    {
+      "label": "actual-v186-046",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step046-20261105-v1.json",
+      "fixtureSha256": "304660346fca3003555186e45723daea4fe236adb5bead8c5156d4a6d8080e36",
+      "round": 1,
+      "actualActionId": "choose_target:44b74627"
+    },
+    {
+      "label": "actual-v186-047",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step047-20261105-v1.json",
+      "fixtureSha256": "3ca120e370f95f1596273414a67cea3d6c4e8fcaa9ba40d8eb00a4d68e4dd1dc",
+      "round": 1,
+      "actualActionId": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v186-048",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step048-20261105-v1.json",
+      "fixtureSha256": "d4aec902937428ebeb0e801b2a0a6a75b074fdb58049e271b08ade5b1d73b339",
+      "round": 1,
+      "actualActionId": "industry:e887dc52"
+    },
+    {
+      "label": "actual-v186-049",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step049-20261105-v1.json",
+      "fixtureSha256": "da60cab78f98668636067da3b55f5ebca997daa1b208bf157e38fb141c9f17ce",
+      "round": 1,
+      "actualActionId": "choose_card:406ad170"
+    },
+    {
+      "label": "actual-v186-050",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step050-20261105-v1.json",
+      "fixtureSha256": "325cbf1bf43342c2a92f788005f191e413f4008366bba90c2a53289cc57791c8",
+      "round": 1,
+      "actualActionId": "choose_card:2882fca6"
+    },
+    {
+      "label": "actual-v186-051",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step051-20261105-v1.json",
+      "fixtureSha256": "e9462674409e8c9f90836cf348932e6de92f851b07b90b030de43d7fd9effee7",
+      "round": 1,
+      "actualActionId": "place_data:8fd12fd3"
+    },
+    {
+      "label": "actual-v186-052",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step052-20261105-v1.json",
+      "fixtureSha256": "7b7472b42d429524e1ba611481eb94d03b84b5bcd509fc9a269dd928782bc04d",
+      "round": 1,
+      "actualActionId": "choose_target:29b5215c"
+    },
+    {
+      "label": "actual-v186-053",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step053-20261105-v1.json",
+      "fixtureSha256": "e35e06587a44bbd11abb37e61a6694f6c2acd00c5c49f7801262063cd7f77d9d",
+      "round": 1,
+      "actualActionId": "place_data:8fd12fd3"
+    },
+    {
+      "label": "actual-v186-054",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step054-20261105-v1.json",
+      "fixtureSha256": "ea20cee9ed4f510918169db97aceaa3ab56c3ad29d71c9c56d3ecc69120faac3",
+      "round": 1,
+      "actualActionId": "choose_target:29b5215c"
+    },
+    {
+      "label": "actual-v186-055",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step055-20261105-v1.json",
+      "fixtureSha256": "505c292c935583c5fb842f568566b15a9ea7e1821cf9ca79e688ac380bf36bae",
+      "round": 1,
+      "actualActionId": "place_data:8fd12fd3"
+    },
+    {
+      "label": "actual-v186-056",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step056-20261105-v1.json",
+      "fixtureSha256": "f201719305ca90e296049d48ebd9f482648ce0edfe87974df869931475603554",
+      "round": 1,
+      "actualActionId": "choose_target:29b5215c"
+    },
+    {
+      "label": "actual-v186-057",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step057-20261105-v1.json",
+      "fixtureSha256": "fc2a446617c028175357fd0527a5b6f46df8b32e8af5b0a8eec6bae43606e6f7",
+      "round": 1,
+      "actualActionId": "choose_card:66acc520"
+    },
+    {
+      "label": "actual-v186-058",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step058-20261105-v1.json",
+      "fixtureSha256": "5fd28ba9bff830df66e8eed832a6697332d688533b335751259e41a6a3218a60",
+      "round": 1,
+      "actualActionId": "play_card:8faf8ead"
+    },
+    {
+      "label": "actual-v186-059",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step059-20261105-v1.json",
+      "fixtureSha256": "326efbf47f4686ac6ce79c2cc9ccf3123e7e7bfca75598209854311897c07ddb",
+      "round": 1,
+      "actualActionId": "choose_target:062d2a7a"
+    },
+    {
+      "label": "actual-v186-060",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step060-20261105-v1.json",
+      "fixtureSha256": "0c575690686a60b71311889d99b858f28ff48ad4004b66f920e17af32410549b",
+      "round": 1,
+      "actualActionId": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v186-061",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step061-20261105-v1.json",
+      "fixtureSha256": "adeebdde81ff7eea509adf8914e811afe05e7e3c09e02783037555507dfd7c68",
+      "round": 1,
+      "actualActionId": "pass:a1f33c73"
+    },
+    {
+      "label": "actual-v186-062",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step062-20261105-v1.json",
+      "fixtureSha256": "1bba01dc7c6050876c04f1698573eafda018da5f90238eb7f53d681507d0ee69",
+      "round": 1,
+      "actualActionId": "choose_card:3a866be4"
+    },
+    {
+      "label": "actual-v186-072",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step072-20261105-v1.json",
+      "fixtureSha256": "1d0874194eb8878d854aa7011d0f9a2fde966ca62630d70687e8944e4c69b699",
+      "round": 2,
+      "actualActionId": "scan:2d21a323"
+    },
+    {
+      "label": "actual-v186-073",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step073-20261105-v1.json",
+      "fixtureSha256": "6c282dd872abb6dacff2d381eec5b9c495dce1b150b4939d1cc3aefc60aabc3d",
+      "round": 2,
+      "actualActionId": "choose_target:8a5d7b2d"
+    },
+    {
+      "label": "actual-v186-074",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step074-20261105-v1.json",
+      "fixtureSha256": "340189cb5fca57f78006768c64a6ee9216eb1e0b90e7c9f8873a90bb826a0eb4",
+      "round": 2,
+      "actualActionId": "choose_card:00a51ff4"
+    },
+    {
+      "label": "actual-v186-075",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step075-20261105-v1.json",
+      "fixtureSha256": "370291da0aed782aa117dc40b88fc7eb27ebebe929c553ada2703e7eafa3019f",
+      "round": 2,
+      "actualActionId": "choose_card:c1d20eee"
+    },
+    {
+      "label": "actual-v186-076",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step076-20261105-v1.json",
+      "fixtureSha256": "d0b5a5e8c9d02e2b4e83f1440e2ba4de4384e98ab68c1c340485be21306d3c08",
+      "round": 2,
+      "actualActionId": "choose_target:f042ebe0"
+    },
+    {
+      "label": "actual-v186-077",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step077-20261105-v1.json",
+      "fixtureSha256": "678bc4cbe0db92699c3e411756f83ffba1e429f185445687d66ecacb224c9f18",
+      "round": 2,
+      "actualActionId": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v186-078",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step078-20261105-v1.json",
+      "fixtureSha256": "b11c88895ecb45c99b946a9e947cb1fde86ee15c598f8924fc963d0164a40914",
+      "round": 2,
+      "actualActionId": "quick_trade:f385e2ac"
+    },
+    {
+      "label": "actual-v186-079",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step079-20261105-v1.json",
+      "fixtureSha256": "95e9a13edc71dcc11feb4d2d3355c8b172aa87659fe434c1bc20f8cf62af60e4",
+      "round": 2,
+      "actualActionId": "scan:2d21a323"
+    },
+    {
+      "label": "actual-v186-080",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step080-20261105-v1.json",
+      "fixtureSha256": "3080fcf37cde14108f25068b82a58375b3b97eaec10e6392c0e3450e1c59c15d",
+      "round": 2,
+      "actualActionId": "choose_target:8a5d7b2d"
+    },
+    {
+      "label": "actual-v186-081",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step081-20261105-v1.json",
+      "fixtureSha256": "1cbc1269c0466818ba12760a674089ae34cd2b0efe73dd2cc31010fe4f40d6ab",
+      "round": 2,
+      "actualActionId": "choose_card:efb772a0"
+    },
+    {
+      "label": "actual-v186-082",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step082-20261105-v1.json",
+      "fixtureSha256": "98339789705afe396fae3c90b401001e5a7761113c8244e5fa6e01dbdef793fc",
+      "round": 2,
+      "actualActionId": "choose_target:2618cdf2"
+    },
+    {
+      "label": "actual-v186-083",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step083-20261105-v1.json",
+      "fixtureSha256": "171768e66e0d15f80ae5148859ba8b0362d1923a623cca501a617eab03d93806",
+      "round": 2,
+      "actualActionId": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v186-084",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step084-20261105-v1.json",
+      "fixtureSha256": "3d5cd5b647b6d287f44eb4e425142f45e427b238f2755b3d402df79e4fc1ba40",
+      "round": 2,
+      "actualActionId": "card_corner:c8a181ae"
+    },
+    {
+      "label": "actual-v186-085",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step085-20261105-v1.json",
+      "fixtureSha256": "db9c3d57efe6ff5dc5c495aa2d5a5b47a59fa6dc778a3d9efb0322bdd843a7ad",
+      "round": 2,
+      "actualActionId": "research_tech:806ccfc8"
+    },
+    {
+      "label": "actual-v186-086",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step086-20261105-v1.json",
+      "fixtureSha256": "1b014d749f5245b1dd9de0a80d3b293108973ea406ee8b22d3dc8b03f2a1aeed",
+      "round": 2,
+      "actualActionId": "choose_target:0cbf059c"
+    },
+    {
+      "label": "actual-v186-087",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step087-20261105-v1.json",
+      "fixtureSha256": "9e36096e6c889199bf2ac6522dc872ff3d54909ee8f4c9a6edf4009bcbdbecd9",
+      "round": 2,
+      "actualActionId": "place_data:8fd12fd3"
+    },
+    {
+      "label": "actual-v186-088",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step088-20261105-v1.json",
+      "fixtureSha256": "e39bc7e05c5b31c8180addb34147a936900e3fbdad1109b596ae56c4de73e293",
+      "round": 2,
+      "actualActionId": "choose_target:7be78a55"
+    },
+    {
+      "label": "actual-v186-089",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step089-20261105-v1.json",
+      "fixtureSha256": "3972de8b06cc2c6a04d82cbef48994af726733939c44953349bbf1e05b0754d6",
+      "round": 2,
+      "actualActionId": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v186-090",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step090-20261105-v1.json",
+      "fixtureSha256": "46135293d7ad272b9a946d39695acd966285965ffe0df0dacf6199f8580b2347",
+      "round": 2,
+      "actualActionId": "choose_target:91d79691"
+    },
+    {
+      "label": "actual-v186-091",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step091-20261105-v1.json",
+      "fixtureSha256": "f38f489e5b10fa6a5942d3d391a9b041281413317e29c63f743cc6c3d96a0a9b",
+      "round": 2,
+      "actualActionId": "place_data:8fd12fd3"
+    },
+    {
+      "label": "actual-v186-092",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step092-20261105-v1.json",
+      "fixtureSha256": "7e249971d06ed48fc7b93db39d3302685962a36112973c23152a510c657008cb",
+      "round": 2,
+      "actualActionId": "choose_target:29b5215c"
+    },
+    {
+      "label": "actual-v186-093",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step093-20261105-v1.json",
+      "fixtureSha256": "0bb1d0496e063d052956dea64031c6d333f2746874d6db6280eec673a7469ec6",
+      "round": 2,
+      "actualActionId": "place_data:8fd12fd3"
+    },
+    {
+      "label": "actual-v186-094",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step094-20261105-v1.json",
+      "fixtureSha256": "dc9985bfa1fd99491bb5f22817b1a4aa904cda2cb9679a634163947d673e99e0",
+      "round": 2,
+      "actualActionId": "choose_target:29b5215c"
+    },
+    {
+      "label": "actual-v186-095",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step095-20261105-v1.json",
+      "fixtureSha256": "f42e5acdc7d7a89817c6fc753d2bb89313afd186b5e5b7ba3b58dd52cbd9b67b",
+      "round": 2,
+      "actualActionId": "analyze:a5629aa3"
+    },
+    {
+      "label": "actual-v186-096",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step096-20261105-v1.json",
+      "fixtureSha256": "2cb7f4fd28ede9b46482a9232842520727317cb3deb28c2b564545cbeda23c15",
+      "round": 2,
+      "actualActionId": "choose_target:8f2f1c72"
+    },
+    {
+      "label": "actual-v186-097",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step097-20261105-v1.json",
+      "fixtureSha256": "579cf6ddf20d85f2341872a23257580f931ab600fc2bb4b76862ea0026d5ddad",
+      "round": 2,
+      "actualActionId": "place_data:8fd12fd3"
+    },
+    {
+      "label": "actual-v186-098",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step098-20261105-v1.json",
+      "fixtureSha256": "f21f1c6fb3fb862d6c8a4c6afe15c7e995047152fff4836c207f0627f2adf2ba",
+      "round": 2,
+      "actualActionId": "choose_target:29b5215c"
+    },
+    {
+      "label": "actual-v186-099",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step099-20261105-v1.json",
+      "fixtureSha256": "31a21731fff1dc5af3e349fdcac60523f259deb39f4c993226e8c7687f8263f2",
+      "round": 2,
+      "actualActionId": "place_data:8fd12fd3"
+    },
+    {
+      "label": "actual-v186-100",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step100-20261105-v1.json",
+      "fixtureSha256": "11a9eaecf9e3a5fd1d6a4601720cd6a4c1ecaafbb3711e648881dc30e879b998",
+      "round": 2,
+      "actualActionId": "choose_target:44b74627"
+    },
+    {
+      "label": "actual-v186-101",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step101-20261105-v1.json",
+      "fixtureSha256": "b2c4151d3ab1e888d3418f7ad8877efdea709b42071b4fa16789fbbfb0c2f93f",
+      "round": 2,
+      "actualActionId": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v186-102",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step102-20261105-v1.json",
+      "fixtureSha256": "7b968f8dab9eca268310388c941e1f830bed2e25eb9d47297cb650d103eec13b",
+      "round": 2,
+      "actualActionId": "play_card:684d5f30"
+    },
+    {
+      "label": "actual-v186-103",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step103-20261105-v1.json",
+      "fixtureSha256": "f3a4a51dad6585d82be4d9fe04770f0b12a6ed96415022922e12b734ed48bd09",
+      "round": 2,
+      "actualActionId": "choose_target:8b9d27ca"
+    },
+    {
+      "label": "actual-v186-104",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step104-20261105-v1.json",
+      "fixtureSha256": "318082c42094dfe464d1cc9dcd093beb695a1de559910ca41598472ae595c652",
+      "round": 2,
+      "actualActionId": "end_turn:b2f9b29d"
+    },
+    {
+      "label": "actual-v186-105",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step105-20261105-v1.json",
+      "fixtureSha256": "001f1917ed04c3564c4fa9a1e9016fc26452a08a3a8d49b709860b4f01937f7c",
+      "round": 2,
+      "actualActionId": "pass:a1f33c73"
+    },
+    {
+      "label": "actual-v186-106",
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-actual-step106-20261105-v1.json",
+      "fixtureSha256": "68882d599c84edb0f77cc6cdee74e394f0435cc5ea4ea19653fada19d49b6f63",
+      "round": 2,
+      "actualActionId": "choose_card:c3064b92"
+    }
+  ]
+}

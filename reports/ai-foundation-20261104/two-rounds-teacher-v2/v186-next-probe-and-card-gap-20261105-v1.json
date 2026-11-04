@@ -1,0 +1,514 @@
+{
+  "sourceRecord": "reports/research/92230fbe.9e3fa00b.quick-400.json",
+  "sourceRecordSha256": "397360aa2d1d0d9022c9862389066da86b4199780779bb9608aa532c45edaf2b",
+  "nativeComparison": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v186-first2-development-comparison-20261105-v1.json",
+  "round2": {
+    "round": 2,
+    "phase": "before-pass-card-and-income",
+    "ai": {
+      "score": 36,
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "purple4": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 3,
+        "energy": 1,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 36
+      },
+      "hand": [],
+      "data": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-16",
+            "index": 9,
+            "placementKind": "computer",
+            "placementSlot": 1
+          },
+          {
+            "blueSlot": 1,
+            "id": "data-token-17",
+            "index": 10,
+            "placementKind": "blueBonus"
+          }
+        ],
+        "poolTokens": []
+      },
+      "probes": [],
+      "sectorWins": [
+        {
+          "sectorId": "sector-2-a",
+          "settlementNumber": 1
+        }
+      ],
+      "scanProgress": [
+        {
+          "sectorId": "sector-2-b",
+          "ownedSlots": [
+            1,
+            2
+          ],
+          "capacity": 5
+        },
+        {
+          "sectorId": "sector-4-b",
+          "ownedSlots": [
+            1,
+            2
+          ],
+          "capacity": 5
+        }
+      ],
+      "alienTraceSlots": [
+        {
+          "slotId": 1,
+          "revealed": false,
+          "alienId": null,
+          "traces": {
+            "blue": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "neutral": false
+            },
+            "pink": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "neutral": false
+            },
+            "yellow": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          }
+        },
+        {
+          "slotId": 2,
+          "revealed": false,
+          "alienId": null,
+          "traces": {
+            "blue": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            },
+            "pink": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            },
+            "yellow": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          }
+        }
+      ]
+    },
+    "teacher": {
+      "score": 34,
+      "technology": {
+        "blueBoardSlots": {
+          "blue1": 2,
+          "blue2": 1
+        },
+        "disabledTiles": {},
+        "ownedTiles": {
+          "blue1": true,
+          "blue2": true,
+          "purple4": true
+        }
+      },
+      "income": {
+        "additionalPublicScan": 1,
+        "availableData": 0,
+        "credits": 6,
+        "energy": 2,
+        "handSize": 1,
+        "publicity": 0
+      },
+      "resources": {
+        "additionalPublicScan": 0,
+        "aomomoFossils": 0,
+        "availableData": 0,
+        "credits": 4,
+        "energy": 1,
+        "handSize": 0,
+        "publicity": 1,
+        "score": 34
+      },
+      "hand": [],
+      "data": {
+        "discardedCount": 0,
+        "placedTokens": [
+          {
+            "id": "data-token-16",
+            "index": 9,
+            "placementKind": "computer",
+            "placementSlot": 1
+          },
+          {
+            "blueSlot": 1,
+            "id": "data-token-17",
+            "index": 10,
+            "placementKind": "blueBonus"
+          }
+        ],
+        "poolTokens": []
+      },
+      "probes": [
+        {
+          "angleDegrees": -22.5,
+          "color": "white",
+          "id": 4,
+          "launchGrid": {
+            "x": 1,
+            "y": 1
+          },
+          "launchSectorCoordinate": {
+            "x": 1,
+            "y": 1
+          },
+          "playerId": "player-white",
+          "playerSequence": 1,
+          "radius": 227.66,
+          "sectorX": 1,
+          "sectorY": 3,
+          "slotIndex": 4,
+          "surface": "solar-board"
+        }
+      ],
+      "sectorWins": [
+        {
+          "sectorId": "sector-2-a",
+          "settlementNumber": 1
+        }
+      ],
+      "scanProgress": [
+        {
+          "sectorId": "sector-4-b",
+          "ownedSlots": [
+            1,
+            2
+          ]
+        }
+      ],
+      "alienTraceSlots": [
+        {
+          "slotId": 1,
+          "revealed": false,
+          "alienId": null,
+          "traces": {
+            "blue": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "neutral": false
+            },
+            "pink": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "ownerPlayerColor": "white",
+              "neutral": false
+            },
+            "yellow": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            }
+          }
+        },
+        {
+          "slotId": 2,
+          "revealed": false,
+          "alienId": null,
+          "traces": {
+            "blue": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            },
+            "pink": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": false,
+              "ownerPlayerColor": null
+            },
+            "yellow": {
+              "extraCount": 0,
+              "extraMarkers": [],
+              "firstPlaced": true,
+              "neutral": false,
+              "ownerPlayerColor": "blue"
+            }
+          }
+        }
+      ]
+    },
+    "boardScoreDelta": 2,
+    "technologyCountDelta": 0,
+    "incomeDelta": {
+      "additionalPublicScan": 0,
+      "availableData": 0,
+      "credits": 0,
+      "energy": 0,
+      "handSize": 0,
+      "publicity": 0
+    },
+    "resourceDelta": {
+      "additionalPublicScan": 0,
+      "aomomoFossils": 0,
+      "availableData": 0,
+      "credits": -1,
+      "energy": 0,
+      "handSize": 0,
+      "publicity": 0,
+      "score": 2
+    },
+    "aiCheckpoint": "reports/research/92230fbe.9e3fa00b.quick-400.json.round-end-2.checkpoint.json",
+    "teacherCheckpoint": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-round2-end-before-pick-income-20261104-v1.checkpoint.json"
+  },
+  "passChoice": {
+    "step": 62,
+    "aiAction": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:3a866be4",
+      "actorId": "player-white",
+      "stateVersion": 20,
+      "decisionVersion": 0,
+      "target": {
+        "kind": "pass-reserve-card",
+        "choiceId": "card-20-pass-1-1",
+        "cardId": "dlc_4.png"
+      },
+      "payload": {
+        "cardInstanceId": "card-20-pass-1-1"
+      },
+      "decision": null,
+      "summary": "dlc_4.png",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-20-pass-1-1",
+        "imageSrc": "../assets/cards/space-agency/split/dlc_4.png",
+        "imageAlt": "dlc_4.png"
+      }
+    },
+    "teacherAction": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_card",
+      "phase": "conditional",
+      "actionId": "choose_card:e1e8d8f7",
+      "actorId": "player-white",
+      "stateVersion": 20,
+      "decisionVersion": 1,
+      "target": {
+        "kind": "pass-reserve-card",
+        "choiceId": "card-24-pass-1-5",
+        "cardId": "dlc_5.png"
+      },
+      "payload": {
+        "cardInstanceId": "card-24-pass-1-5"
+      },
+      "decision": null,
+      "summary": "dlc_5.png",
+      "presentation": {
+        "cardKind": "pick",
+        "cardId": "card-24-pass-1-5",
+        "imageSrc": "../assets/cards/space-agency/split/dlc_5.png",
+        "imageAlt": "dlc_5.png"
+      }
+    },
+    "actualSearchComplete": true,
+    "actualRoots": [
+      {
+        "actionId": "choose_card:3a866be4",
+        "target": 1,
+        "value": 63.666666666666664,
+        "realization": -3.6666666666666665,
+        "completion": "complete"
+      },
+      {
+        "actionId": "choose_card:e1e8d8f7",
+        "target": 2,
+        "value": 63.666666666666664,
+        "realization": -3.6666666666666665,
+        "completion": "complete"
+      }
+    ],
+    "interpretation": "Both visible choices are retained and tied at63.666666666666664; AI picksDLC4, teacherDLC5. Not a missing candidate. Downstream future-card/preinvestment value needs native joint controls."
+  },
+  "scan4Choice": {
+    "step": 76,
+    "aiAction": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:f042ebe0",
+      "actorId": "player-white",
+      "stateVersion": 24,
+      "decisionVersion": 0,
+      "target": {
+        "choiceId": "scan4:skip",
+        "mode": "skip"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "跳过"
+    },
+    "teacherAction": {
+      "schemaVersion": "seti-standard-action-v1",
+      "family": "choose_target",
+      "phase": "conditional",
+      "actionId": "choose_target:5bb27a70",
+      "actorId": "player-white",
+      "stateVersion": 24,
+      "decisionVersion": 1,
+      "target": {
+        "choiceId": "scan4:launch",
+        "mode": "launch"
+      },
+      "payload": {},
+      "decision": null,
+      "summary": "发射探测器"
+    },
+    "actualReusedRoots": [
+      {
+        "actionId": "choose_target:5bb27a70",
+        "value": 75.5,
+        "valueType": "attained-lower-bound",
+        "completion": "covered-by-prior-complete-window",
+        "sourceNode": 6
+      },
+      {
+        "actionId": "choose_target:f042ebe0",
+        "value": 76.5,
+        "valueType": "attained-lower-bound",
+        "completion": "covered-by-prior-complete-window",
+        "sourceNode": 6
+      }
+    ],
+    "interpretation": "AI skips, teacher launches. Cached per-root numbers are attained lower bounds75.5 and76.5; they do not prove the exact global maximum of each launch continuation. Do not claim one-point causal loss without an independent same-root/native control."
+  },
+  "teacherCardIdentityEvidence": {
+    "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-084-20261104-v1.json",
+    "discardedDlc5Instance": "card-24-pass-1-5",
+    "model": "dlc5:1data+1movement, returns while own probe adjacentEarth",
+    "teacherPlayedAtHistoricalInputs": [
+      78,
+      81
+    ]
+  },
+  "nextRequiredEvidence": [
+    "At native PASS root62 compareDLC4 andDLC5 purpose/capital, not arbitrary card label priority.",
+    "From legal alternateDLC5 pick replay common native scan prefix, then compare scan4 launch vs skip with current hand/wallet; use funding lower bounds and optional fixed-purpose movement only.",
+    "Check whether a current launch is undervalued because its next-turn known movement/data tool is absent from the joint portfolio; this remains a hypothesis."
+  ],
+  "autonomousReruns": 0,
+  "searchReruns": 0,
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "firstRoundComparedAssetQuantitiesAndLocationsEqual": true,
+  "entityIdsNotEquatedAcrossDifferentActionOrder": true,
+  "firstRoundDataComparison": {
+    "ai": {
+      "discardedCount": 0,
+      "poolCount": 0,
+      "placements": [
+        [
+          "blueBonus",
+          0,
+          1
+        ],
+        [
+          "computer",
+          1,
+          0
+        ],
+        [
+          "computer",
+          2,
+          0
+        ],
+        [
+          "computer",
+          3,
+          0
+        ],
+        [
+          "computer",
+          4,
+          0
+        ]
+      ]
+    },
+    "teacher": {
+      "discardedCount": 0,
+      "poolCount": 0,
+      "placements": [
+        [
+          "blueBonus",
+          0,
+          1
+        ],
+        [
+          "computer",
+          1,
+          0
+        ],
+        [
+          "computer",
+          2,
+          0
+        ],
+        [
+          "computer",
+          3,
+          0
+        ],
+        [
+          "computer",
+          4,
+          0
+        ]
+      ]
+    }
+  }
+}

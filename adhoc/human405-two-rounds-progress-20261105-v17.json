@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-05",
+  "goalStatus": "active",
+  "goalAchieved": false,
+  "thisGoalTurnClassification": "progress: V186 source admitted after170unit/24Chrome/190cold; unique106-input autonomous15/36 verified and67actual search roots captured; remaining money/probe deficit traced to tiedDLC4/DLC5 choice and launch decision requiring joint native control",
+  "productionRuntime": "V186/V20",
+  "productionSourceCommit": "9e3fa00bb4fb944e737271dcd86d0ba8992f9b32",
+  "actualRecord": "reports/research/92230fbe.9e3fa00b.quick-400.json",
+  "actualScores": [
+    15,
+    36
+  ],
+  "teacherScores": [
+    15,
+    34
+  ],
+  "actualGameMs": 4346,
+  "actualInputs": 106,
+  "actualWhiteSearches": 67,
+  "actualMaxNativeInputs": 252,
+  "actualMaxRootAndSearchMs": 386.22904199999994,
+  "allActualDecisionGatesPassed": true,
+  "nativeReplayedInputsAfterOpening": 83,
+  "allFinalNativeStateSessionRngAndRoundCheckpointsVerified": true,
+  "firstRoundComparedAssetQuantitiesAndLocationsEqual": true,
+  "bothRoundsSpecificTechnologyAndSixIncomesEqual": true,
+  "round2MoneyAIvsTeacher": [
+    3,
+    4
+  ],
+  "round2EnergyAIvsTeacher": [
+    1,
+    1
+  ],
+  "round2ProbesAIvsTeacher": [
+    0,
+    1
+  ],
+  "developmentFullyAligned": false,
+  "baseline": "ai-search-v41-baseline-20261029",
+  "candidateOfficialRuns": 1,
+  "candidateAdmitted": true,
+  "capturedActualWhiteSearchRoots": 67,
+  "newSourceOrGameReruns": 0,
+  "roundEnd": "before-PASS-card-and-next-income per latest explicit user instruction",
+  "nextActions": [
+    "At actual62, bothDLC4/DLC5 retained/tied; restore original root and select legalDLC5, replay common native scan prefix, then control launch/skip with actual jointwallet and fixed-purpose movement.",
+    "Distinguish current launch investment, known future tool/data quote, candidate or greedy-plan omissions; do not hardcode teacher or treat attained-lower-bound roots as exact maxima.",
+    "Extend190rootgate with67actual roots by exactnative-envelope dedup before any next source experiment. Preserve unique V186 actual result, V184 failure and V41 whole-game baseline."
+  ]
+}
