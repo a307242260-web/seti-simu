@@ -1,0 +1,80 @@
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/audit_host_architecture.js:135
+      throw new Error(`规则模块残留 Browser runtime: ${path.relative(ROOT, file)}`);
+      ^
+
+Error: 规则模块残留 Browser runtime: randomizer/game/ai/state-value.js
+    at assertGameHasNoBrowserRuntime (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/audit_host_architecture.js:135:13)
+    at runAudit (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/audit_host_architecture.js:203:3)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/app/host-architecture-audit.test.js:6:16)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+
+Node.js v22.22.0
+known blue prerequisites, native income, seven-data plan with six-slot pool, recovery and budgets passed
+{"companyCardTrade":"passed","rows":[{"label":"层云核心","physicalLeaves":34},{"label":"图灵系统","physicalLeaves":34},{"label":"哨兵探测网络","physicalLeaves":34},{"label":"寰宇动力","physicalLeaves":34},{"label":"赫利昂联合体","physicalLeaves":34},{"label":"任务中继站","physicalLeaves":34},{"label":"芬威克研究中心","physicalLeaves":34},{"label":"深空探测","physicalLeaves":34},{"label":"未来跨度研究所","physicalLeaves":34},{"label":"异星实验室","physicalLeaves":34},{"label":"宇宙战略集团","physicalLeaves":34},{"label":"b_114.webp","physicalLeaves":18},{"label":"dlc_9.png","physicalLeaves":18}],"physicalLeaves":410,"paymentInputs":{"raw":[21,20,19,4],"equivalence":[21,20,19,4],"reused":[21,0,0,4]},"reuseHits":2}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+7.5 !== 8.5
+
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/probe-capital-value.test.js:70:39)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 7.5,
+  expected: 8.5,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+60 !== 58
+
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/winning-income-plan.test.js:22:9)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 60,
+  expected: 58,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+SUMMARY unit passed=3 failed=3 total=6 time=5.33s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/host-source-zero tests=1
+OWNER policy/decision-search tests=4
+OWNER policy/state-value tests=1
+FAIL randomizer/app/host-architecture-audit.test.js status=1 signal=none
+FAIL randomizer/game/ai/probe-capital-value.test.js status=1 signal=none
+FAIL randomizer/game/ai/winning-income-plan.test.js status=1 signal=none

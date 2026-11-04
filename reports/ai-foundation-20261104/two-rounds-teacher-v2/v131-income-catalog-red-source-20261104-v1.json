@@ -1,0 +1,8 @@
+{
+  "baseCommit": "6eff6f3da26e2d680e2963184def68fb387d3d5a",
+  "runtimeArchive": "reports/ai-foundation-20261104/rejected-v131-geometry-runtime-20261104-v1",
+  "testArchive": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v131-income-catalog-red-test-20261104-v1.js",
+  "testSha256": "c4ff48dfc059c125a795712643d69fea6a030a4ad24aad98ffb3203b5c38be77",
+  "testPath": "randomizer/game/ai/funded-hand-timing.test.js",
+  "failure": "income card catalog chooses hand-income card17 while its shared funded marginal quote prefers energy-income card18; controlled visible-card transfer from native teacher38"
+}

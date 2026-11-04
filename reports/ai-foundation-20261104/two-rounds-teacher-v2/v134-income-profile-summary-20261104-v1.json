@@ -1,0 +1,429 @@
+{
+  "scope": "Instrumented CPU profile only, not admission timing",
+  "topSelf": [
+    {
+      "name": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "selfMs": 55.753,
+      "inclusiveMs": 55.753
+    },
+    {
+      "name": "createNode",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 390,
+      "selfMs": 17.916,
+      "inclusiveMs": 44.959
+    },
+    {
+      "name": "buildProbeRouteRequirements",
+      "file": "randomizer/game/production-kernel.js",
+      "line": 576,
+      "selfMs": 16.542,
+      "inclusiveMs": 67.042
+    },
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 14.249,
+      "inclusiveMs": 14.249
+    },
+    {
+      "name": "forwardIdentity",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 151,
+      "selfMs": 12.084,
+      "inclusiveMs": 27.043
+    },
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 12.083,
+      "inclusiveMs": 12.083
+    },
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 10.541,
+      "inclusiveMs": 10.541
+    },
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 9.041,
+      "inclusiveMs": 9.041
+    },
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 9.0,
+      "inclusiveMs": 9.0
+    },
+    {
+      "name": "readFileSync",
+      "file": "node:fs",
+      "line": 433,
+      "selfMs": 7.75,
+      "inclusiveMs": 7.75
+    },
+    {
+      "name": "forwardIdentity",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 151,
+      "selfMs": 7.542,
+      "inclusiveMs": 20.125
+    },
+    {
+      "name": "plannedMovementTimingKey",
+      "file": "randomizer/game/production-kernel.js",
+      "line": 1806,
+      "selfMs": 7.5,
+      "inclusiveMs": 9.0
+    },
+    {
+      "name": "",
+      "file": "randomizer/game/production-kernel.js",
+      "line": 1216,
+      "selfMs": 6.042,
+      "inclusiveMs": 6.042
+    },
+    {
+      "name": "plan",
+      "file": "randomizer/game/ai/goal-movement.js",
+      "line": 40,
+      "selfMs": 6.042,
+      "inclusiveMs": 141.21
+    },
+    {
+      "name": "readCommittedState",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 425,
+      "selfMs": 6.041,
+      "inclusiveMs": 6.041
+    },
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 6.0,
+      "inclusiveMs": 6.0
+    },
+    {
+      "name": "createNode",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 390,
+      "selfMs": 5.874,
+      "inclusiveMs": 31.999
+    },
+    {
+      "name": "buildProbeCandidateStructures",
+      "file": "randomizer/game/production-kernel.js",
+      "line": 730,
+      "selfMs": 5.374,
+      "inclusiveMs": 6.541
+    },
+    {
+      "name": "getOccupiedSlotIndices",
+      "file": "randomizer/game/rockets.js",
+      "line": 229,
+      "selfMs": 4.625,
+      "inclusiveMs": 9.083
+    },
+    {
+      "name": "resolveNormalizedVisibleContent",
+      "file": "randomizer/solar-system/core.js",
+      "line": 577,
+      "selfMs": 4.542,
+      "inclusiveMs": 12.375
+    },
+    {
+      "name": "validate",
+      "file": "randomizer/game/state/state-store.js",
+      "line": 256,
+      "selfMs": 4.541,
+      "inclusiveMs": 14.915
+    },
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 4.541,
+      "inclusiveMs": 4.541
+    },
+    {
+      "name": "stableSerialize",
+      "file": "randomizer/game/state/state-store.js",
+      "line": 46,
+      "selfMs": 4.501,
+      "inclusiveMs": 4.501
+    },
+    {
+      "name": "",
+      "file": "adhoc/benchmark-human405-decision-20261104-v1.js",
+      "line": 1,
+      "selfMs": 4.5,
+      "inclusiveMs": 785.58
+    },
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 4.5,
+      "inclusiveMs": 4.5
+    }
+  ],
+  "topInclusive": [
+    {
+      "name": "searchDecision",
+      "file": "randomizer/game/ai/decision-search.js",
+      "line": 14,
+      "selfMs": 3.0,
+      "inclusiveMs": 658.162
+    },
+    {
+      "name": "add",
+      "file": "randomizer/game/ai/decision-search.js",
+      "line": 174,
+      "selfMs": 3.709,
+      "inclusiveMs": 213.541
+    },
+    {
+      "name": "expandResourcePlan",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 774,
+      "selfMs": 1.541,
+      "inclusiveMs": 189.041
+    },
+    {
+      "name": "expand",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 502,
+      "selfMs": 0.0,
+      "inclusiveMs": 147.001
+    },
+    {
+      "name": "submit",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 902,
+      "selfMs": 0.0,
+      "inclusiveMs": 147.001
+    },
+    {
+      "name": "expandGoalMovementPlan",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 896,
+      "selfMs": 0.0,
+      "inclusiveMs": 147.001
+    },
+    {
+      "name": "expand",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 502,
+      "selfMs": 3.0,
+      "inclusiveMs": 146.999
+    },
+    {
+      "name": "goalMovementSpec",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 872,
+      "selfMs": 0.0,
+      "inclusiveMs": 142.71
+    },
+    {
+      "name": "plan",
+      "file": "randomizer/game/ai/goal-movement.js",
+      "line": 40,
+      "selfMs": 6.042,
+      "inclusiveMs": 141.21
+    },
+    {
+      "name": "movementTiming",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 823,
+      "selfMs": 1.5,
+      "inclusiveMs": 103.084
+    },
+    {
+      "name": "compareTiming",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 879,
+      "selfMs": 0.0,
+      "inclusiveMs": 103.084
+    },
+    {
+      "name": "comparePlannedMovementTiming",
+      "file": "randomizer/game/production-kernel.js",
+      "line": 1820,
+      "selfMs": 0.0,
+      "inclusiveMs": 91.084
+    },
+    {
+      "name": "afterRotation",
+      "file": "randomizer/game/production-kernel.js",
+      "line": 1827,
+      "selfMs": 0.0,
+      "inclusiveMs": 82.709
+    },
+    {
+      "name": "finishChild",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 1036,
+      "selfMs": 0.0,
+      "inclusiveMs": 79.753
+    },
+    {
+      "name": "executeCurrent",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 974,
+      "selfMs": 0.0,
+      "inclusiveMs": 71.542
+    },
+    {
+      "name": "buildProbeRouteRequirements",
+      "file": "randomizer/game/production-kernel.js",
+      "line": 576,
+      "selfMs": 16.542,
+      "inclusiveMs": 67.042
+    },
+    {
+      "name": "resourceSpec",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 670,
+      "selfMs": 1.5,
+      "inclusiveMs": 57.707
+    },
+    {
+      "name": "finishChild",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 1036,
+      "selfMs": 0.0,
+      "inclusiveMs": 56.708
+    },
+    {
+      "name": "executeCurrent",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 974,
+      "selfMs": 0.0,
+      "inclusiveMs": 55.289
+    },
+    {
+      "name": "expand",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 502,
+      "selfMs": 0.0,
+      "inclusiveMs": 53.58
+    },
+    {
+      "name": "expandWithCardPick",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 587,
+      "selfMs": 0.0,
+      "inclusiveMs": 53.58
+    },
+    {
+      "name": "submitDecision",
+      "file": "randomizer/game/rule-composition.js",
+      "line": 768,
+      "selfMs": 0.0,
+      "inclusiveMs": 51.416
+    },
+    {
+      "name": "",
+      "file": "randomizer/training/simulation-rule-composition.js",
+      "line": 1,
+      "selfMs": 0.0,
+      "inclusiveMs": 46.5
+    },
+    {
+      "name": "loadProductionDependency",
+      "file": "randomizer/game/production-kernel.js",
+      "line": 4,
+      "selfMs": 0.0,
+      "inclusiveMs": 44.959
+    },
+    {
+      "name": "",
+      "file": "randomizer/game/production-kernel.js",
+      "line": 1,
+      "selfMs": 0.0,
+      "inclusiveMs": 44.959
+    },
+    {
+      "name": "createNode",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 390,
+      "selfMs": 17.916,
+      "inclusiveMs": 44.959
+    },
+    {
+      "name": "resolveDecision",
+      "file": "randomizer/game/effects/session-runtime.js",
+      "line": 727,
+      "selfMs": 0.0,
+      "inclusiveMs": 40.958
+    },
+    {
+      "name": "createNode",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 390,
+      "selfMs": 5.874,
+      "inclusiveMs": 31.999
+    },
+    {
+      "name": "submitDecision",
+      "file": "randomizer/game/rule-composition.js",
+      "line": 768,
+      "selfMs": 0.0,
+      "inclusiveMs": 31.873
+    },
+    {
+      "name": "observeEnvelope",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 369,
+      "selfMs": 0.0,
+      "inclusiveMs": 31.374
+    },
+    {
+      "name": "valueObservation",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 2715,
+      "selfMs": 0.0,
+      "inclusiveMs": 31.374
+    },
+    {
+      "name": "observationForValue",
+      "file": "randomizer/game/ai/decision-search.js",
+      "line": 33,
+      "selfMs": 0.0,
+      "inclusiveMs": 31.374
+    },
+    {
+      "name": "legacyProof",
+      "file": "randomizer/game/ai/decision-search.js",
+      "line": 34,
+      "selfMs": 0.0,
+      "inclusiveMs": 31.374
+    },
+    {
+      "name": "resourceCatalog",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 627,
+      "selfMs": 0.0,
+      "inclusiveMs": 28.79
+    },
+    {
+      "name": "committedProjection",
+      "file": "randomizer/game/rule-composition.js",
+      "line": 571,
+      "selfMs": 0.0,
+      "inclusiveMs": 28.333
+    }
+  ],
+  "artifact": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v134-income-profile-20261104-v1.cpuprofile.gz",
+  "artifactSha256": "409360bae5f7959d8098a7f81fcd4d38e35d12a228817606516ca3b4d2a57ffe"
+}

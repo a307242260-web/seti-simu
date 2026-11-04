@@ -7,6 +7,16 @@ try{const root=p.openRoot(),evaluate=values.createStateValueEvaluator(f.seatId),
   for(let n=0;current.status==='decision';n++){assert(n<8);const choice=p.localDecisionSpec(current);assert.equal(choice.kind,'fixed-final-mark');current=p.expand(current,choice.selectedActionId);inputs++;}
   assert.equal(inputs,spec.requiredNativeInputs);assert.equal(evaluate(current.observation),evaluate(p.valueObservation(base))+spec.netGain,'scalar tail must match complete native inputs including mission funding/capital changes');controls++;
  }
+ // A fixed movement plan's estimate is an upper bound, not a reservation.
+ // The actual256-input closure fits; one fewer input must fail closed.
+ for(const transitions of [256,255]){
+  const bounded=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+  try{const n=bounded.openRoot(),result=searchDecision({...agent.OPTIONS,port:bounded,root:n,evaluate,modelKey:evaluate.modelKey,budget:{transitions,nodes:1024,frontier:256,milliseconds:15000}});
+   if(transitions===256){assert(result.complete,'actual256-input closure must not be rejected by a larger movement estimate');assert.equal(result.value,fast.value);assert.deepEqual(result.roots,fast.roots);}
+   else{assert(!result.complete);assert.equal(result.stopReason,'transition-budget');assert.equal(result.actionId,null);assert.equal(result.planContinuation,null);}
+   assert(result.diagnostics.nativeExecutions<=transitions);assert(result.diagnostics.transitions<=transitions);assert.deepEqual(c.lifecycle.save().envelope,original);
+  }finally{bounded.close();}
+ }
  p.setMovementPlanning(false);
  for(const [spec,base]of proofs){
   assert.equal(p.turnTailSummary(base,spec.kind),null,'a cached movement-policy proof must not survive disabling that policy');

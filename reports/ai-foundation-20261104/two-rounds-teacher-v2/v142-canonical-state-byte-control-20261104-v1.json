@@ -1,0 +1,1111 @@
+{
+  "scope": "canonical-byte compatibility control only; no search or gameplay",
+  "oldSource": "reports/ai-foundation-20261104/rejected-v141-resource-preview-runtime-20261104-v1/randomizer/game/state/state-store.js",
+  "oldSourceSha256": "25f452041322fb493c750ace6407ee15018dc0c767ca48db0f4a3290eeb35ed5",
+  "currentSource": "randomizer/game/state/state-store.js",
+  "currentSourceSha256": "9aff732ead9d4a20290a7903bda2c9346d0d1a021c671c61654773f7b949e095",
+  "fixtures": 83,
+  "states": 120,
+  "allCanonicalBytesEqual": true,
+  "originalInputsUnchanged": true,
+  "rows": [
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json",
+      "fixtureSha256": "840d7625dd80b5a0186133b4aabc25fec65dd55aa79e1b82da9d733be2e5cb6c",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 36347,
+          "sha256": "95ab8e64d492f62a131917b9d3f7fbd3cb25152b444a5ec5b486559854a704bb"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-024-20261104-v1.json",
+      "fixtureSha256": "86587a727b6f29153dad747bc34b15afed53351cc02a1588cbb60b644fabb8fe",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 26370,
+          "sha256": "b9d273f0c47d11a6b82b4d80b9a36d2d3d8503f6b6b0174050a118ff1f1312e6"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-025-20261104-v1.json",
+      "fixtureSha256": "b044fcd7d74def9e0220e895139ff296f9117df8924b70e593e8b6194344b767",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 27061,
+          "sha256": "81897eeafb697db475b3d20f45c4ef1eebbd087c66fb8eb7d72eb93397c73d98"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-026-20261104-v1.json",
+      "fixtureSha256": "6859cd8c37d2dbb04f731fc2da864d9774fbbe90edf2654786ced56eb0570af4",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 27061,
+          "sha256": "81897eeafb697db475b3d20f45c4ef1eebbd087c66fb8eb7d72eb93397c73d98"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 27061,
+          "sha256": "5407bef805cc42803dfb17e2f416716c82233405ebfb5cd15718e8e5bf44b75b"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-027-20261104-v1.json",
+      "fixtureSha256": "07294c0ec8a15bed23406c9bf6a5aaf8473cc3cd88be1c1412ae5b2df1652b3b",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 27062,
+          "sha256": "100c1d2c4dcca62924bd599f111568c6442fe5259266bc304c7b20742441f4b3"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-035-20261104-v1.json",
+      "fixtureSha256": "6c1abc63b0bb6c5741772b9943283b655dadb55efd50c99a8b94d48783e2f249",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28244,
+          "sha256": "14b7c8a2d464abc9853e09df9a61d75fcfed316e17d03890bae3673d53086aeb"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-036-20261104-v1.json",
+      "fixtureSha256": "ec40dd05659d86109f77ace06701c8dff130c1aa6f3cf2718bb326199799f619",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28244,
+          "sha256": "14b7c8a2d464abc9853e09df9a61d75fcfed316e17d03890bae3673d53086aeb"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28244,
+          "sha256": "14b7c8a2d464abc9853e09df9a61d75fcfed316e17d03890bae3673d53086aeb"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-037-20261104-v1.json",
+      "fixtureSha256": "cff2e8848d46378871f775b02ae719acc979e6c6d5091404cd7b362cfd072409",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28244,
+          "sha256": "14b7c8a2d464abc9853e09df9a61d75fcfed316e17d03890bae3673d53086aeb"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28292,
+          "sha256": "d687621fb3f27d0dcf5286c4a57d24d10478fc6579dae4675ce0bdf6517de15d"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-038-20261104-v1.json",
+      "fixtureSha256": "7c2a6cbcb9159b7f5451184e25fd5fc8f8512b736bca38eb6057cd1827aa6990",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28438,
+          "sha256": "80ce62aacb73d0fde65d389a64044d47a3ca6d7f2278fab823bb9090536c8123"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-039-20261104-v1.json",
+      "fixtureSha256": "491d0f88b8b9544df3639de8cb6ec1d141d6efa60556a4d73686ebcd185c743c",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28440,
+          "sha256": "3fba39d5b3c29d57e6a59f1a7b8cfc17c945d14722e5bb3b96c7e35d7446c95a"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-040-20261104-v1.json",
+      "fixtureSha256": "3f6506dbfdf0d631b3eee83c5b13bbe20a0c8963508264f8ccd478cde4f40f2e",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28440,
+          "sha256": "3fba39d5b3c29d57e6a59f1a7b8cfc17c945d14722e5bb3b96c7e35d7446c95a"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28262,
+          "sha256": "ba7afb6a3b6a4780bbab2c62bb5a4c6f121006ebe533c11a756a596acd65f5cd"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-041-20261104-v1.json",
+      "fixtureSha256": "46a9799ed6f6264523e380372b83556a9d1f24cf71ddfe18109678ea34b5d8c4",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28440,
+          "sha256": "3fba39d5b3c29d57e6a59f1a7b8cfc17c945d14722e5bb3b96c7e35d7446c95a"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28408,
+          "sha256": "8fa3ebe61226f3ad0f4ab6191b33127de2a3b7ae191611aceaf2eec8393a15f0"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-042-20261104-v1.json",
+      "fixtureSha256": "3c15737b1f6076690f894e5d7bd995abded6bd3b8a1d6765f483cb5005cd06ae",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28440,
+          "sha256": "3fba39d5b3c29d57e6a59f1a7b8cfc17c945d14722e5bb3b96c7e35d7446c95a"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28498,
+          "sha256": "2aa2cd793182e877b070efe1512e05b7ac678e87105b21e434e052e6c582bcf4"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-043-20261104-v1.json",
+      "fixtureSha256": "ba1d5f5dd8d343ac2c8112831455f6d5085a1196cb6a556f183cf139c38b2297",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28352,
+          "sha256": "696fc1707397885fa3cfbcb1bb8a6f014705726d8dc5d63e530ad1591a03f34e"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-044-20261104-v1.json",
+      "fixtureSha256": "f9c4977463ad72996d15876a73dbdb437cb351a505ca681e472dc46486485094",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28353,
+          "sha256": "7989fa3609eaf3b296e0ede716e0fdb775cfbc576703613f0bd9ec99df8ba46d"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-045-20261104-v1.json",
+      "fixtureSha256": "225c18624fd9867f20a1b0c6aca7ec32d00050a61fa948b7c950aa13973d9757",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28353,
+          "sha256": "7989fa3609eaf3b296e0ede716e0fdb775cfbc576703613f0bd9ec99df8ba46d"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28611,
+          "sha256": "850a9684ca971c3ee4e95aa5b316f70a7dfd4d2752b3c22f81b309f138050581"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-046-20261104-v1.json",
+      "fixtureSha256": "222e429646e65c717667e95c9eab744f2ab2e550ddad4b0967d6a47fa0c2d836",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28353,
+          "sha256": "7989fa3609eaf3b296e0ede716e0fdb775cfbc576703613f0bd9ec99df8ba46d"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28611,
+          "sha256": "850a9684ca971c3ee4e95aa5b316f70a7dfd4d2752b3c22f81b309f138050581"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-047-20261104-v1.json",
+      "fixtureSha256": "3192d126a2727b151174aab383ed1e5fde913d338254d0bbcc0eca39f49d1c20",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28611,
+          "sha256": "9eb5b0105feb04c8f1e5d013e3d8b18e5168691aa8af9f3e18172589d92ff2c1"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-048-20261104-v1.json",
+      "fixtureSha256": "f3b7af7fe141fdbaabb012be05b1ed99c56e8d45702a6592b2417af9a067d092",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28611,
+          "sha256": "9eb5b0105feb04c8f1e5d013e3d8b18e5168691aa8af9f3e18172589d92ff2c1"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28611,
+          "sha256": "9eb5b0105feb04c8f1e5d013e3d8b18e5168691aa8af9f3e18172589d92ff2c1"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-049-20261104-v1.json",
+      "fixtureSha256": "f3cb7f1bc0419ee5ce10255706bb0be8a152162cd3c301b7f41189483852735b",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28659,
+          "sha256": "0fd27232515a73f2b61e52d8b792ee4c13536b6fe1ec3e84cc0acd3c8d76ab66"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-050-20261104-v1.json",
+      "fixtureSha256": "c8a7ef3e7c37aeda6e833b01e4ca40a09095deb3fa0b616ad54ae0f07dfe2405",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28659,
+          "sha256": "0fd27232515a73f2b61e52d8b792ee4c13536b6fe1ec3e84cc0acd3c8d76ab66"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28659,
+          "sha256": "0fd27232515a73f2b61e52d8b792ee4c13536b6fe1ec3e84cc0acd3c8d76ab66"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-051-20261104-v1.json",
+      "fixtureSha256": "cd1c23c379e8b1fa58a7912f403d1c98989c7e811a40807744babf370d5fc8f7",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28690,
+          "sha256": "faff70a91a2b07ec1fef2169261ee6e53a4acbbd7954c0d99bad5a5a7550aba7"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-052-20261104-v1.json",
+      "fixtureSha256": "cf742bb7b4b4aa54270fbbccebd1c1f0450d5a795ecfaa1afc20ba2a8fbe3bdc",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28690,
+          "sha256": "faff70a91a2b07ec1fef2169261ee6e53a4acbbd7954c0d99bad5a5a7550aba7"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28690,
+          "sha256": "faff70a91a2b07ec1fef2169261ee6e53a4acbbd7954c0d99bad5a5a7550aba7"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-053-20261104-v1.json",
+      "fixtureSha256": "916888996671d7b7893066dcff96c322cad22fe8284d08e073529751215d2b52",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28721,
+          "sha256": "b64245fa9204b20a87f1a1ee71537306f3bf1cc7355435ad7437702eb730fe96"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-054-20261104-v1.json",
+      "fixtureSha256": "a100fed2624bf2515a17f3df9f7c5cebce7d49f49f702fdeee1967c42bbf1aee",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28721,
+          "sha256": "b64245fa9204b20a87f1a1ee71537306f3bf1cc7355435ad7437702eb730fe96"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28721,
+          "sha256": "b64245fa9204b20a87f1a1ee71537306f3bf1cc7355435ad7437702eb730fe96"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-055-20261104-v1.json",
+      "fixtureSha256": "5c7385b1bd65f9a9de040718478cd46d74363285b5405688509d04e1ca71fdba",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28721,
+          "sha256": "b64245fa9204b20a87f1a1ee71537306f3bf1cc7355435ad7437702eb730fe96"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28752,
+          "sha256": "8b674cf05c00a1f9861f42eb9626599b705b327f21202213e1ebc3d7d6b66178"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-056-20261104-v1.json",
+      "fixtureSha256": "8bb4ca15358cb6a84458ed5927afdff6a6c172afa3ee8a157e5c524bef5d8ea1",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28606,
+          "sha256": "2968fd78d26515b62c4c3692769f82b55d91b02f931875e72f2069db2afa55af"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-057-20261104-v1.json",
+      "fixtureSha256": "a4abfa087c74179376c7bb407289261d390d8a3c19385c33855fe296f28ee9d1",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28606,
+          "sha256": "2968fd78d26515b62c4c3692769f82b55d91b02f931875e72f2069db2afa55af"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28606,
+          "sha256": "2968fd78d26515b62c4c3692769f82b55d91b02f931875e72f2069db2afa55af"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-058-20261104-v1.json",
+      "fixtureSha256": "0fdb0d100aec4863233cd6b5f4c007b2092027b5d252a1dfc603ad509b1f4aec",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28634,
+          "sha256": "4cb3261285217db95c5cf01f57041779cdbc38b32691a0c3dabfd808f91c164b"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-059-20261104-v1.json",
+      "fixtureSha256": "d6447096217ab31299867dcf4b58a7bd177055b2b6b85ba71c1e5ae396a042a9",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28634,
+          "sha256": "4cb3261285217db95c5cf01f57041779cdbc38b32691a0c3dabfd808f91c164b"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28803,
+          "sha256": "0c0d78a9ce8bbab0f8545f3d5c0f9dc855704993262fc18c300270c0efddeeb8"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-060-20261104-v1.json",
+      "fixtureSha256": "e5dd242c1534e1ba7602c40a13aad554dc55458feb132cba67fff616643285cf",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28827,
+          "sha256": "561c17025b6de67d35309f9cf9c5233bd3d319da82d6f53911e69936a63b3ab1"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-061-20261104-v1.json",
+      "fixtureSha256": "7394cbae2174e90098721e268f1f3f1c246c6facbf179029aa5ca8f9201a1ccd",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28751,
+          "sha256": "8ab0616f80bf624da08030ccc1eb4556985da848df0458220905a6fded475ac7"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-062-20261104-v1.json",
+      "fixtureSha256": "c6c1cbb52ce1e4c457e2ae2620cad7881699f2d9d7e2cf1f9503a7ebf6b21e99",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28751,
+          "sha256": "8ab0616f80bf624da08030ccc1eb4556985da848df0458220905a6fded475ac7"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 28751,
+          "sha256": "8ab0616f80bf624da08030ccc1eb4556985da848df0458220905a6fded475ac7"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-072-20261104-v1.json",
+      "fixtureSha256": "4ce66faec84dcdb2c9e413b8f162a2b877968d47f66afe8cc1e4934bc83da45d",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31014,
+          "sha256": "bb66e73a74776164bfc658991ccbf750ff4f6ff251605339cbdf8ca123d2aac3"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-073-20261104-v1.json",
+      "fixtureSha256": "6008c5f31c3f78db083d49df3e5727276f191cbfe8679908021617dca546f165",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31014,
+          "sha256": "bb66e73a74776164bfc658991ccbf750ff4f6ff251605339cbdf8ca123d2aac3"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 31013,
+          "sha256": "c8872dd8b498128f57e91f0742e85b4229454355018e91a25d6418d74d3b5c38"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-074-20261104-v1.json",
+      "fixtureSha256": "404356375950fd74f2e088ed49ef3569ef5699b9c6a9a4cb818314f9031fb644",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31014,
+          "sha256": "bb66e73a74776164bfc658991ccbf750ff4f6ff251605339cbdf8ca123d2aac3"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 31070,
+          "sha256": "f0ea4e67ada6df79db3320d7b781783ddf7dfd4ba7c737ea2f2ac1d59cd6266b"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-075-20261104-v1.json",
+      "fixtureSha256": "ec5453a081a655487bd54e93d870cb34c1fcd05f11c7fd7d849b6cb3061e3e64",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31014,
+          "sha256": "bb66e73a74776164bfc658991ccbf750ff4f6ff251605339cbdf8ca123d2aac3"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 31133,
+          "sha256": "ac15c688cbe771a928abafd31a3cd496b0f6807ca3b97aad83d3ffd693a6cc8d"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-076-20261104-v1.json",
+      "fixtureSha256": "5a785c192b4d5a7f59597091afcd0edc63a14187869c34b700fbb600a0d1164b",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31014,
+          "sha256": "bb66e73a74776164bfc658991ccbf750ff4f6ff251605339cbdf8ca123d2aac3"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 31196,
+          "sha256": "516db03218df6517107319cff7d183f341111f47fa7c3268a36b908326abfe44"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-077-20261104-v1.json",
+      "fixtureSha256": "0d70c9bf2e7d10952fe18600d509369e260597c804882746f686fd909b3697f9",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31705,
+          "sha256": "d48fa244a80f15a41a4144334df2b23c6fe9111e62ceeec721efc32c74d8a183"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-078-20261104-v1.json",
+      "fixtureSha256": "bc66d6879d07f9a6926bf667f2e400081dbdf93947294825845f82844b35104b",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31663,
+          "sha256": "580d68bc9e8feb4f82b1fad69d42b8d401f09515f5ba476b86613404b7de9ac6"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-079-20261104-v1.json",
+      "fixtureSha256": "da33844162c000f36faf553a084f8ac9d02ecfdc6c6c35334188039557147c0b",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31663,
+          "sha256": "580d68bc9e8feb4f82b1fad69d42b8d401f09515f5ba476b86613404b7de9ac6"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 31793,
+          "sha256": "c14104e2da05cee4e994bc223b67e3a8b0e589cb42f1f37a54aa845157a30536"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-080-20261104-v1.json",
+      "fixtureSha256": "d27f3a7a08ad52e3cb49d00736c1fc557dcbd21895eb26b55b4a866318b3c3a9",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31795,
+          "sha256": "a5beacbf9ad238fc7ab225b868c2cfcdf1d69b1e66a46bbd3f4fe77a3f915688"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-081-20261104-v1.json",
+      "fixtureSha256": "25272fd0bfa4ffdeba661a69d9a77b755acf363b5ae096c627e8cd398aace583",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31712,
+          "sha256": "bcc4cfe8b631683b698e011aaa3e662c1e521f1859669eb3bc042cebdfb6128e"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-082-20261104-v1.json",
+      "fixtureSha256": "e5bcf47d690063fb0c78f9c582772f55a2623964dd0491d531ac0a25b861d608",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31712,
+          "sha256": "bcc4cfe8b631683b698e011aaa3e662c1e521f1859669eb3bc042cebdfb6128e"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 31843,
+          "sha256": "3828e3f102348d57e347f432a0ad5b6a047fbce01c41004ef190fef0aec7425e"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-083-20261104-v1.json",
+      "fixtureSha256": "f02715f255e33af4194f1f6a7eab85f87f0e4d311083a4a72d81abe81f80d44f",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31843,
+          "sha256": "a14086ab7d9d0f766b49867b159b0f9858f794f5ae43487940bf42bc34d33afb"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-084-20261104-v1.json",
+      "fixtureSha256": "c800bbfa002284aaa6b464ab362777b6a23cae14378226fef7fe3cfeef6ed5e6",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31760,
+          "sha256": "1fce545f0d33f1ca7c1cf10fa0c115cee2870848154bb90fbd1a6dbc354735f6"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-085-20261104-v1.json",
+      "fixtureSha256": "6f229ea1451501e30bc3176a4e474430991b0e26fef1ba95d3c3571d041e75e8",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31760,
+          "sha256": "1fce545f0d33f1ca7c1cf10fa0c115cee2870848154bb90fbd1a6dbc354735f6"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 31838,
+          "sha256": "eff8d67e15af289ff491a6557c7590514f54efd4b0184a13cdd259790bff1fcd"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-086-20261104-v1.json",
+      "fixtureSha256": "b4bd36613c28c10d4bfe2564ebb079a76d78704f04d00f05c980ecdc26716c64",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31760,
+          "sha256": "1fce545f0d33f1ca7c1cf10fa0c115cee2870848154bb90fbd1a6dbc354735f6"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 32086,
+          "sha256": "ee9714d7c92e2c2dca864ca22fd4e6dc5bcb5858e6233d97ce6f8a5690b4cc96"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-087-20261104-v1.json",
+      "fixtureSha256": "153932bf3f7fe72d5a403206180cfee35bf5939a340f656f1b39a786d66c7965",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32128,
+          "sha256": "f4f14f84ccf3b2b3170f173afaf6a00759f758f870f3c623da45badb2851a12f"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-088-20261104-v1.json",
+      "fixtureSha256": "4860d08303f535b4df6633caafa9af5c99bbb41570f94cfa1df4952852477444",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32128,
+          "sha256": "f4f14f84ccf3b2b3170f173afaf6a00759f758f870f3c623da45badb2851a12f"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 32128,
+          "sha256": "f4f14f84ccf3b2b3170f173afaf6a00759f758f870f3c623da45badb2851a12f"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-089-20261104-v1.json",
+      "fixtureSha256": "a015d49028bc8fb1093c3ad65b0d526579f965774b24d3df04e9a06f1c0e97da",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32159,
+          "sha256": "9b0d4c780501459e1da185dfb663b8b92f0d5974a7bea2df47755bcb6d9bb3cc"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-090-20261104-v1.json",
+      "fixtureSha256": "0ef70f665c7c727c8eeed80aac31cb7ed89f23f0405a2c474372f0e4dedc1b81",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32159,
+          "sha256": "9b0d4c780501459e1da185dfb663b8b92f0d5974a7bea2df47755bcb6d9bb3cc"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 32159,
+          "sha256": "9b0d4c780501459e1da185dfb663b8b92f0d5974a7bea2df47755bcb6d9bb3cc"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-091-20261104-v1.json",
+      "fixtureSha256": "f2fcc7b74e3acab55fdd286b7cd80b8d214fd5f40ccb2a44e4d6fbd5801f7211",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32190,
+          "sha256": "348f314aa5c084a519287b2b11baf784a8418c1ce83656f3d0821da220feec3c"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-092-20261104-v1.json",
+      "fixtureSha256": "621b38badbac19bf97d3d81d78507cc8f858395a9bf40ade7a7de22a946b1b35",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32113,
+          "sha256": "2188af67f3154488b0f2aded59f90c7e52f5de032b74a6e68e4ebd3ba9222139"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-093-20261104-v1.json",
+      "fixtureSha256": "314a8b079c24189a90f41adf0aeb1eadc9b98a2ce14531d6f28bfa5355d44665",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32113,
+          "sha256": "2188af67f3154488b0f2aded59f90c7e52f5de032b74a6e68e4ebd3ba9222139"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 32113,
+          "sha256": "2188af67f3154488b0f2aded59f90c7e52f5de032b74a6e68e4ebd3ba9222139"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-094-20261104-v1.json",
+      "fixtureSha256": "a7bb8ff00be2bec48dc879d7cf9a7bf7d8891e18245e3757072970017e583759",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32145,
+          "sha256": "b0cabac424c4d080c1f804ee034e2baa8ea0c9d5dabc9971f212d00c8bc8268e"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-095-20261104-v1.json",
+      "fixtureSha256": "bce17ba051a244019d0708064a2da4a6140f7ed349f51807fe945e20506f5de7",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32145,
+          "sha256": "b0cabac424c4d080c1f804ee034e2baa8ea0c9d5dabc9971f212d00c8bc8268e"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 32145,
+          "sha256": "b0cabac424c4d080c1f804ee034e2baa8ea0c9d5dabc9971f212d00c8bc8268e"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-096-20261104-v1.json",
+      "fixtureSha256": "86fcd90c3887160bf6cf75f290ab10b2b4d580fbd70a611ba97871517f7ab3b5",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32172,
+          "sha256": "2d419e84d2c588e1821584e6835262775cb480dfb2f7fb090f19e7e1928789c2"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-097-20261104-v1.json",
+      "fixtureSha256": "248e8628ffa23bfd13edf5b1f1510e66e7581b0bc129eb3a5ba6dfbfeac8b515",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32172,
+          "sha256": "2d419e84d2c588e1821584e6835262775cb480dfb2f7fb090f19e7e1928789c2"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 32172,
+          "sha256": "2d419e84d2c588e1821584e6835262775cb480dfb2f7fb090f19e7e1928789c2"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-098-20261104-v1.json",
+      "fixtureSha256": "f7875e94f34449dda2ab01e67d8a2cba0bd11b0f7b5811634fe305786e0d6c56",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32302,
+          "sha256": "4a39cdf895448cfb182e14d55286f43f49af7549536e3a230969cf8b2a8654c1"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-099-20261104-v1.json",
+      "fixtureSha256": "0bc933f81ef65e6b922de5084aa30dca1c87af58c7602cb7636a7cc43158058c",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32302,
+          "sha256": "4a39cdf895448cfb182e14d55286f43f49af7549536e3a230969cf8b2a8654c1"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 31690,
+          "sha256": "ece1907798c6483b78a3e12e5cc5d18bcea3989f911272a4503c21945085807c"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-100-20261104-v1.json",
+      "fixtureSha256": "ee4e3c61a92791bb074d807a30619578e7421bedbc730d6aa7da542bbe895813",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31732,
+          "sha256": "a59cf573ffd96ef0060654c2bbf44f614e1a2fb0f208a2f9a82d823bdf60bf82"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-101-20261104-v1.json",
+      "fixtureSha256": "8629218c9cd3bbf29981f21548b2a4c5ba84a1046e8c8579dd979c60fc949490",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31732,
+          "sha256": "a59cf573ffd96ef0060654c2bbf44f614e1a2fb0f208a2f9a82d823bdf60bf82"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 31732,
+          "sha256": "a59cf573ffd96ef0060654c2bbf44f614e1a2fb0f208a2f9a82d823bdf60bf82"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-102-20261104-v1.json",
+      "fixtureSha256": "2c0862882aafe69a6d3693fafb3d27785ed59b0f55be656999939705d1a4992f",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31762,
+          "sha256": "e4bb0bfb1452786aa8a46d28faae5c79ad4e031469327ae42243344bb03c1014"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-103-20261104-v1.json",
+      "fixtureSha256": "0edcb0f61889f19fffd9b5f773a0d346608a7a082f8973403e6aa0f456f48fb5",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31762,
+          "sha256": "e4bb0bfb1452786aa8a46d28faae5c79ad4e031469327ae42243344bb03c1014"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 31762,
+          "sha256": "e4bb0bfb1452786aa8a46d28faae5c79ad4e031469327ae42243344bb03c1014"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-104-20261104-v1.json",
+      "fixtureSha256": "b10b509174a57c76ad5ba2142cc85b414160cc95828c39e070d2c7ea4206bfe6",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31790,
+          "sha256": "28128e3fa4de40ac9ffd89b323766a29e48ef0172bdf9b35f6e83f362923b805"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-105-20261104-v1.json",
+      "fixtureSha256": "9f8e49cc179d933988ac154cc88bb8839774a94ec6aae4b8d4b0695ede5a2448",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31792,
+          "sha256": "195d77002eb0295be3d32a8e32587f109f755fe204c67ee3293fd4b95f9e4e13"
+        }
+      ]
+    },
+    {
+      "fixture": "reports/ai-foundation-20261104/two-rounds-teacher-v2/teacher-step-106-20261104-v1.json",
+      "fixtureSha256": "34944749ce5784225be5c3ce091445608949412a3ea584896449e44c2499082e",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31792,
+          "sha256": "195d77002eb0295be3d32a8e32587f109f755fe204c67ee3293fd4b95f9e4e13"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 31792,
+          "sha256": "195d77002eb0295be3d32a8e32587f109f755fe204c67ee3293fd4b95f9e4e13"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-001-20261023-v1.json",
+      "fixtureSha256": "f86194d3568b6ab4fdf04d23cbbf24707aafb872028433bfa66bd5e41f5bdbff",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 24395,
+          "sha256": "c79f068bee5726f22a7485cfcbdcdb9d7071f1714f0f720185813bb163e63104"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 26537,
+          "sha256": "feaa0281eb3c19ceac3d105110805d391666c5a71ff7e53f0935477cb4f9b881"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-003-20261023-v1.json",
+      "fixtureSha256": "0b3f35ebc045aac1b4ae86131ab8f7cb8dba3c1898f9a7272082282c85452768",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 24395,
+          "sha256": "c79f068bee5726f22a7485cfcbdcdb9d7071f1714f0f720185813bb163e63104"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 29245,
+          "sha256": "999f31d7febf2bd909fa9b9d9ddb9b3044764c1eb18f1e4772638c16b90e89d3"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-008-20261023-v1.json",
+      "fixtureSha256": "b436e02d566778ecd7e87a45e9e2cfca705a51e5ab3b2893ebfedcda2ce94be9",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 26573,
+          "sha256": "f0de33f8caf99773513a5944c53fb715020c4206bb92d76a966fcbb755d5725b"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-011-20261023-v1.json",
+      "fixtureSha256": "10ae734103d0bdacc79dc5d7d97ec0d5bb7d0152256b4d851faf12d6bbc711bb",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 26914,
+          "sha256": "d55a6398419483af3f9c1db105c3f36383cbc1032a21d4ada455a4f91de0ae51"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-009-20261023-v1.json",
+      "fixtureSha256": "01464efd955b55860f7718e4a31c0754ea8649c50db64b4b790ccd0d2586edea",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 26573,
+          "sha256": "f0de33f8caf99773513a5944c53fb715020c4206bb92d76a966fcbb755d5725b"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 26601,
+          "sha256": "f3204d32648d9178dcb984c7bdfbb8a79f5df3a2d59fe874cbd45eb7c870917b"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-062-20261023-v1.json",
+      "fixtureSha256": "e76dc0b1b72a00a07ae1e69c02ae3b0a2ad07ec4bc2702a8076ef4eaf6b82795",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 33363,
+          "sha256": "f0fa415449fef951e974f14203783ae3c123d6dd13190b9126de1063bc82c95c"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+      "fixtureSha256": "a0aaef74d6e6a272bcd89e9f2c9f3c764b673c16cdaec44d26b7457fafbd8023",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 39253,
+          "sha256": "5b668798c84da71c247d18d24089c7f1175a8f31e35bc186efb9d51c19d7b643"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261029-v38/baseline-r1-t8-blue-20261029-v1.json",
+      "fixtureSha256": "c324b4b6c059533a357522c8696714cecd0dcf90b08ba2781852002b784cd6fe",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28558,
+          "sha256": "7b919ddd133689db3788fdda71f61e3699a13fe2d80183272f055961e18568c7"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261029-budget1024-v1/baseline-r2-t9-white-20261029-v1.json",
+      "fixtureSha256": "01b96b913feeb9c7832d8767ec4df7257abfa0d292f4ee18967f1b2e7c75175f",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 32082,
+          "sha256": "89e5aa113060b4fcdffae76b3827b3e6825d615139a6998f1a033a5f3ce2ea06"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261029-reorg-v1/step317-20261029-v1.json",
+      "fixtureSha256": "3968665750a7a891f4dfad3149c6123f9fd2c06180092f4f8b204aaa717a87ed",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 36584,
+          "sha256": "aeee609dbe5f01670fa30eab9388fd8086df59108b7e1489cdb659769694563e"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261029-learning-v1/v41-step322-terminal-blue-20261029-v1.json",
+      "fixtureSha256": "58b8daf65a676b450496248e2c8eec0ae3017120a1d044522572edd1f44a8066",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 37736,
+          "sha256": "c610dbfb2f5c8d89df107f4e1978d42b22ccf2db8c39778d7c6ffd45fd3b0b73"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261031-v98-pass-boundary-v1/autonomous-before-pass-20261031-v1.json",
+      "fixtureSha256": "a489eca6d685ec285d9c9481958de751920e5ba4542a659cc6232204e5168bc2",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28045,
+          "sha256": "8c8e7a043be8d3f3a5dff6f35359e487f19c5c7a3ebcc306d203955929f2ab9d"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/human405-two-rounds-20261104-v1/ai-v123-step095-pass-choice-20261104-v1.json",
+      "fixtureSha256": "60c003b4d92d0b645d8d793c252a133c479437466cb43b716e36f45b9d217acd",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 31145,
+          "sha256": "d77bea091641c9f349bb5265c0ea241b3fa36039b5b3cd46d3442a7776462e54"
+        },
+        {
+          "kind": "pending-working",
+          "bytes": 31145,
+          "sha256": "d77bea091641c9f349bb5265c0ea241b3fa36039b5b3cd46d3442a7776462e54"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/human405-two-rounds-20261104-v2/ai-v129-step044-first-blue-20261104-v1.json",
+      "fixtureSha256": "2a0af61e5edca41efc02f36b66ba94289b4649b35a2d8c9890ee161c8e020bd1",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28166,
+          "sha256": "50ffc9fbd5a53e5e6bd8be65688aa06c7626f471f1d3abc1ebcd22bec541b2c0"
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/human405-two-rounds-20261104-v2/ai-v129-step050-mission-choice-20261104-v1.json",
+      "fixtureSha256": "50b7665513420d033739440bf535200f6187ca5fafed77cd4623cdb266f55326",
+      "states": [
+        {
+          "kind": "committed",
+          "bytes": 28290,
+          "sha256": "ce23c28a1f1536f1f1a82c118391e9f13fdfb169a8ba00c8d0fa32f77623e3c1"
+        }
+      ]
+    }
+  ]
+}

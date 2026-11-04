@@ -122,6 +122,13 @@ for(const limit of [1,5]){
  const r=searchDecision({port:timed,root:opened.root,evaluate,modelKey:evaluate.modelKey,...agent.OPTIONS,now:()=>clock,budget:{transitions:256,nodes:257,frontier:256,milliseconds:limit}});
  assert(!r.complete);assert.equal(r.actionId,null);assert.equal(r.planContinuation,null);assert.equal(r.stopReason,'watchdog');assert.equal(r.diagnostics.transitions,limit===1?0:2);assert(r.unresolved.some(n=>n.goalAttempt));assert.deepEqual(comp.lifecycle.save().envelope,opened.before);opened.port.close();
 }
+// Native fixed movement must respect every actual global budget before the
+// next input, without reserving the complete worst-case route upfront.
+for(const [reason,limits]of [['transition-budget',{transitions:1}],['node-budget',{nodes:2}],['frontier-budget',{frontier:1}]]){
+ const opened=open(pending);
+ const r=searchDecision({port:opened.port,root:opened.root,evaluate,modelKey:evaluate.modelKey,...agent.OPTIONS,budget:{transitions:256,nodes:1024,frontier:256,milliseconds:15000,...limits}});
+ assert(!r.complete);assert.equal(r.stopReason,reason);assert.equal(r.actionId,null);assert.equal(r.planContinuation,null);assert.equal(r.diagnostics.transitions,1);assert(r.unresolved.some(n=>n.goalAttempt));assert.deepEqual(comp.lifecycle.save().envelope,opened.before);opened.port.close();
+}
 // Hidden draw order does not determine the movement objective, including reconstructed Session history.
 {
  const changed=structuredClone(pending);for(const state of [changed.session.session.baseState,changed.session.session.workingState,...changed.session.session.undoFrames.map(f=>f.stateBefore)])if(state?.cards)state.cards.drawPileCardIds.reverse();

@@ -1,0 +1,4 @@
+PASS production-goal-movement-plan http://127.0.0.1:59110/randomizer/index.html
+PASS production-search-hotpath http://127.0.0.1:59110/randomizer/index.html
+PASS production-funded-hand-timing http://127.0.0.1:59110/randomizer/index.html
+SUMMARY browserSmoke passed=3 failed=0 total=3

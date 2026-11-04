@@ -19,7 +19,7 @@ function open(envelope=f.compositionEnvelope){assert(c.lifecycle.restore(envelop
   const r=searchDecision({port:p,root,evaluate,...agent.OPTIONS,modelKey:evaluate.modelKey,budget});assert(r.complete);
   const policy=p.resourceSpec(root);assert(policy.plans.every(plan=>plan.goal.kind==='blue-data'));
   assert.equal(policy.incomeTail.netGain,3.5);assert.equal(policy.blueTails[0].netGain,5);
-  assert.equal(p.incomePlanSummary(root),null);assert.equal(r.value,60.5);assert(r.diagnostics.nativeExecutions>0);
+  assert.equal(p.incomePlanSummary(root),null);const nativeBlue=p.expandResourcePlan(root,policy.plans[0],()=>null);assert(nativeBlue.complete);assert.equal(r.value,evaluate(nativeBlue.node.observation));assert.equal(r.value,58.5);assert(r.diagnostics.nativeExecutions>0);
   assert.deepEqual(c.lifecycle.save().envelope,before);
   const first=root.legalActions.find(a=>a.actionId===r.actionId);assert(c.inputPort.submitQuickAction(first).ok);
   const changed=c.lifecycle.save().envelope;p.close();const n=p.openRoot();

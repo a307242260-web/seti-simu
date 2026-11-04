@@ -1,0 +1,12 @@
+trusted analysis fork isolation and exact reuse passed
+data token fungibility, real placement diamonds and every immediate successor passed
+{"heldResearchFundingTiming":true,"oldRound1NativeCannotPay":true,"nextRoundNativeCanPay":true,"unfundedCurrentValue":2.5,"nextRoundValue":2.5,"fundingControls":1568,"memoControls":64,"shallowFrozenWalletInvalidation":true,"nativeIncomeInputs":9,"sameRoundFundedResearch":true,"jointNativeMissionFunds":{"orbit":{"hand":4.5,"value":60},"land":{"hand":2.5,"value":60}},"rootAndRngUnchanged":true}
+{"localFinalMarkAndScan":"passed","nativeMarkOptions":4,"retainedMarkOptions":1,"scanPurposes":5,"nativeRecoveryAndRootIsolation":true,"stableRestoreSkipped":true}
+{"fundedTravelTail":true,"nativeProofControls":14,"movementModeGuard":true,"optimizedInputs":256,"fullNativeInputs":334,"completeRootValueParity":true,"rootAndRngUnchanged":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+{"winningIncomeNativeContinuation":true,"coldCertificateRecovery":true,"exactDependencyInvalidation":true,"sharedBudgetEnforced":true,"initialInputs":89}
+SUMMARY unit passed=7 failed=0 total=7 time=7.30s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/policy-host tests=2
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=2

@@ -1,0 +1,178 @@
+{
+  "scope": "Instrumented CPU profile, not an admission timing sample",
+  "profile": "/private/tmp/seti-v130-funded-hand-profile-20261104/case105.cpuprofile",
+  "totalMs": 766.292,
+  "topSelf": [
+    {
+      "name": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "selfMs": 51.627,
+      "inclusiveMs": 51.627
+    },
+    {
+      "name": "createNode",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 390,
+      "selfMs": 17.916,
+      "inclusiveMs": 50.333
+    },
+    {
+      "name": "forwardIdentity",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 151,
+      "selfMs": 16.334,
+      "inclusiveMs": 32.417
+    },
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 13.084,
+      "inclusiveMs": 13.084
+    },
+    {
+      "name": "forwardIdentity",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 151,
+      "selfMs": 12.0,
+      "inclusiveMs": 27.543
+    },
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 9.125,
+      "inclusiveMs": 9.125
+    },
+    {
+      "name": "buildProbeRouteRequirements",
+      "file": "randomizer/game/production-kernel.js",
+      "line": 576,
+      "selfMs": 7.959,
+      "inclusiveMs": 61.874
+    },
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 7.458,
+      "inclusiveMs": 7.458
+    },
+    {
+      "name": "requirements",
+      "file": "randomizer/game/ai/probe-capital.js",
+      "line": 63,
+      "selfMs": 6.5,
+      "inclusiveMs": 8.625
+    },
+    {
+      "name": "stableSerialize",
+      "file": "randomizer/game/state/state-store.js",
+      "line": 46,
+      "selfMs": 5.958,
+      "inclusiveMs": 10.416
+    },
+    {
+      "name": "",
+      "file": "randomizer/game/production-kernel.js",
+      "line": 1216,
+      "selfMs": 5.917,
+      "inclusiveMs": 5.917
+    },
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 4.542,
+      "inclusiveMs": 4.542
+    },
+    {
+      "name": "createNode",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 390,
+      "selfMs": 4.541,
+      "inclusiveMs": 39.626
+    },
+    {
+      "name": "buildLandRewardSummary",
+      "file": "randomizer/game/abilities/planet.js",
+      "line": 180,
+      "selfMs": 4.541,
+      "inclusiveMs": 4.541
+    },
+    {
+      "name": "readFileSync",
+      "file": "node:fs",
+      "line": 433,
+      "selfMs": 4.5,
+      "inclusiveMs": 4.5
+    },
+    {
+      "name": "forwardIdentity",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 151,
+      "selfMs": 4.459,
+      "inclusiveMs": 6.668
+    },
+    {
+      "name": "stableSerialize",
+      "file": "randomizer/game/state/state-store.js",
+      "line": 46,
+      "selfMs": 4.458,
+      "inclusiveMs": 4.458
+    },
+    {
+      "name": "normalize",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 202,
+      "selfMs": 4.416,
+      "inclusiveMs": 4.541
+    },
+    {
+      "name": "stableSerialize",
+      "file": "randomizer/game/state/state-store.js",
+      "line": 46,
+      "selfMs": 4.374,
+      "inclusiveMs": 7.291
+    },
+    {
+      "name": "buildTopologyBody",
+      "file": "randomizer/game/production-kernel.js",
+      "line": 444,
+      "selfMs": 4.25,
+      "inclusiveMs": 15.5
+    },
+    {
+      "name": "getWheelCellAtDisplayCoordinate",
+      "file": "randomizer/solar-system/core.js",
+      "line": 521,
+      "selfMs": 4.084,
+      "inclusiveMs": 7.751
+    },
+    {
+      "name": "movementTiming",
+      "file": "randomizer/game/ai/analysis-port.js",
+      "line": 823,
+      "selfMs": 3.957,
+      "inclusiveMs": 89.416
+    },
+    {
+      "name": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 112,
+      "selfMs": 3.417,
+      "inclusiveMs": 3.417
+    },
+    {
+      "name": "stableSerialize",
+      "file": "randomizer/game/state/state-store.js",
+      "line": 46,
+      "selfMs": 3.209,
+      "inclusiveMs": 6.125
+    }
+  ],
+  "profileArtifact": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v130-funding-profile-105-20261104-v1.cpuprofile.gz",
+  "profileArtifactSha256": "41e46e154dd9aa83cf99d39d476e6dd159ee0c2fa2cd6c177a43e7b7c8ed3ccd",
+  "finding": "funding ~3.25ms self; movement timing ~89ms inclusive. Optimize the existing geometry-only cache, not fiscal calculation or search completeness."
+}

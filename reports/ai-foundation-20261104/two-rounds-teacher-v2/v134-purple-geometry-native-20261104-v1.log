@@ -1,0 +1,7 @@
+{"requestedOwnerLandCost":"passed","differentCurrentActor":true,"viewerCacheIsolation":true,"nativePassControlInputs":9,"rootAndRngUnchanged":true}
+{"movementPreviewCopy":"passed","nativeTimingCases":12,"technologyVariants":36,"nativeProjectionControls":4,"frozenRootsUnchanged":true,"geometryCacheInvalidation":true}
+{"fundedTravelTail":true,"nativeProofControls":14,"movementModeGuard":true,"optimizedInputs":256,"fullNativeInputs":334,"completeRootValueParity":true,"rootAndRngUnchanged":true}
+SUMMARY unit passed=2 failed=0 total=2 time=1.85s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=1
+OWNER policy/state-value tests=1

@@ -99,8 +99,15 @@ restore(envelopeFor("异星实验室", extra));
 const observed = createAnalysisPort({ composition: comp, seatId }), root = observed.openRoot();
 const pending = observed.expand(root, root.legalActions.find(action => action.target?.tradeId === "credits-for-card").actionId);
 assert.equal(observed.cardTradeBound(pending), null);
-assert.equal(evaluators[0](observed.expand(pending, pending.legalActions[0].actionId).observation),
-  evaluateHandCountDelta(evaluators[0], pending.observation, 1) + 5);
+const rewarded=observed.expand(pending,pending.legalActions[0].actionId).observation;
+const withoutReward={...rewarded,publicState:{...rewarded.publicState,players:rewarded.publicState.players.map(p=>p.playerId===seatId?{...p,credits:p.credits-5}:p)}};
+const fullValue=require('./state-value').evaluateStateValue;
+assert.equal(evaluators[0](withoutReward),evaluateHandCountDelta(evaluators[0],pending.observation,1),'known gift identity remains the same after removing only the event currency');
+const actualValue=fullValue(rewarded,seatId),baseValue=fullValue(withoutReward,seatId);
+assert.equal(actualValue.components.resources-baseValue.components.resources,5,'native quick-trade event still grants exactly5credits');
+const portfolio=v=>v.components.handPotential+v.components.researchPotential+v.components.probePotential;
+assert(portfolio(actualValue)>=portfolio(baseValue));
+assert.equal(actualValue.total,evaluateHandCountDelta(evaluators[0],pending.observation,1)+5+portfolio(actualValue)-portfolio(baseValue));
 observed.close();
 const other = structuredClone(source);
 other.players.players.find(player => player.id !== seatId).reservedCards = [ownerOf(other).hand.shift()];

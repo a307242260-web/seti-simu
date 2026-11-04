@@ -12,7 +12,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (cardEffects, dataPlacement, techCatalog, planetAbility, scanEffects, probeCapital) {
   "use strict";
 
-  const MODEL_VERSION = "seti-purpose-capital-state-value-v7";
+  const MODEL_VERSION = "seti-purpose-capital-state-value-v8";
   // 首版比较刻度，属于估值假设，不是规则兑换率或可用于证明剪枝的收益上界。
   const DEFAULT_WEIGHTS = Object.freeze({
     credits: 1, energy: 1, publicity: 0.5, availableData: 0.5, additionalPublicScan: 0.5, handSize: 1,
@@ -83,6 +83,7 @@
       const result = targetQuotes.get(key); memo?.set(round, result); return result;
     }
     const owned = techState?.ownedTiles || {}, current = technologyCapital(techState, round, weights);
+    const currentByRound = [0, 1, 2, 3].map(r => r ? technologyCapital(techState, r, weights) : 0);
     const occupied = new Set(Object.values(techState?.blueBoardSlots || {}));
     const blueSlot = [1, 2, 3, 4].find(slot => !occupied.has(slot));
     const result = Object.entries(supply?.stacks || {}).flatMap(([id, stack]) => {
@@ -94,7 +95,8 @@
       const bonus = !stack.bonusHidden && techCatalog.BONUS_EFFECTS[stack.bonusId];
       const bonusValue = bonus ? Object.entries(bonus).reduce((n, [key, amount]) => n + amount *
         (key === "score" ? 1 : key === "cardSelection" ? weights.handSize : weights[key] || 0), 0) : 0;
-      return [Object.freeze({ id, type, capability: technologyCapital(next, round, weights) - current, first, bonusValue })];
+      return [Object.freeze({ id, type, capability: technologyCapital(next, round, weights) - current,
+        capabilityByRound: Object.freeze([0, 1, 2, 3].map(r => r ? technologyCapital(next, r, weights) - currentByRound[r] : 0)), first, bonusValue })];
     });
     if (targetQuotes.size >= 64) targetQuotes.delete(targetQuotes.keys().next().value);
     targetQuotes.set(key, Object.freeze(result)); memo?.set(round, result);
@@ -116,7 +118,7 @@
     }
     return supported;
   }
-  function cardResearchOptions(card, targets, round, weights) {
+  function cardResearchOptions(card, targets, round, weights, funding = null) {
     if (round >= 4) return [];
     const research = supportedResearch(card);
     if (!research) return [];
@@ -124,36 +126,57 @@
     // Conditional cards remain legal native plans; their future prerequisites
     // and altered rewards are not proven by the held-card capital model.
     const types = research.options.techTypes || techCatalog.TECH_TYPES;
-    const cost = Object.entries(cardEffects.getCardPlayCost(card)).reduce((n, [key, amount]) => n + amount * (weights[key] || 0), 0);
-    // Paid and held-card options use the same visible one-time stack reward.
+    const cost = cardEffects.getCardPlayCost(card);
+    if (Object.keys(cost).some(key => !['credits', 'energy'].includes(key))) throw new TypeError('VALUE_HELD_COST_UNSUPPORTED');
+    // An abstract query without a wallet remains the unconstrained quote used
+    // by default-model upper bounds. Production values always supply funding.
+    let windows = [{ round, payment: Object.entries(cost).reduce((n, [key, amount]) => n + amount * weights[key], 0) }];
+    if (funding) {
+      const credits = number(funding.resources.credits, 'heldFunding.credits'), energy = number(funding.resources.energy, 'heldFunding.energy');
+      const creditIncome = number(funding.income.credits, 'heldFunding.income.credits'), energyIncome = number(funding.income.energy, 'heldFunding.income.energy');
+      windows = [];
+      for (let at = round; at < 4; at++) {
+        const payments = (funding.startingIncome || 0) + at - round;
+        const payment = probeCapital.funding({ credits: credits + payments * creditIncome, energy: energy + payments * energyIncome }, cost, weights);
+        if (payment) {
+          windows.push({ round: at, payment: payment.value });
+          // Later technology capability cannot increase. Once payment reaches
+          // the unconstrained2-to1 exchange minimum, later windows are dominated.
+          const minimum=(cost.credits||0)*Math.min(weights.credits,2*weights.energy)+(cost.energy||0)*Math.min(weights.energy,2*weights.credits);
+          if(payment.value===minimum)break;
+        }
+      }
+    }
+    // Only already-known currency income can advance the payment round. No
+    // guessed blind card, future reward or fabricated successor funds the card.
     return targets.filter(t => types.includes(t.type)).map(t => ({ id: t.id,
-      value: Math.max(0, t.capability + t.first + t.bonusValue - cost - weights.handSize) }));
+      value: Math.max(0, ...windows.map(period => t.capabilityByRound[period.round] + t.first + t.bonusValue - period.payment - weights.handSize)) }));
   }
-  function knownCardCapital(card, techState, supply, round, weights = DEFAULT_WEIGHTS) {
+  function knownCardCapital(card, techState, supply, round, weights = DEFAULT_WEIGHTS, funding = null) {
     if (round >= 4 || !supportedResearch(card)) return 0;
-    return Math.max(0, ...cardResearchOptions(card, researchTargets(techState, supply, round, weights), round, weights).map(o => o.value));
+    return Math.max(0, ...cardResearchOptions(card, researchTargets(techState, supply, round, weights), round, weights, funding).map(o => o.value));
   }
-  function handOptions(hand, targets, round, weights) {
+  function handOptions(hand, targets, round, weights, funding = null) {
     const byTarget = new Map();
-    for (const card of hand) for (const option of cardResearchOptions(card, targets, round, weights)) {
+    for (const card of hand) for (const option of cardResearchOptions(card, targets, round, weights, funding)) {
       byTarget.set(option.id, Math.max(byTarget.get(option.id) || 0, option.value));
     }
     return [...byTarget].map(([id, value]) => ({ id, value }));
   }
-  function handCapital(hand, techState, supply, round, weights = DEFAULT_WEIGHTS) {
+  function handCapital(hand, techState, supply, round, weights = DEFAULT_WEIGHTS, funding = null) {
     if (round >= 4 || !hand.length) return 0;
     const eligible = hand.filter(supportedResearch);
     if (!eligible.length) return 0;
-    return Math.max(0, ...handOptions(eligible, researchTargets(techState, supply, round, weights), round, weights).map(o => o.value));
+    return Math.max(0, ...handOptions(eligible, researchTargets(techState, supply, round, weights), round, weights, funding).map(o => o.value));
   }
-  function researchCapital({ hand, techState, supply, round, publicity, researchCost, passed = false }, weights = DEFAULT_WEIGHTS) {
+  function researchCapital({ hand, techState, supply, round, publicity, researchCost, passed = false, funding = null }, weights = DEFAULT_WEIGHTS) {
     const planningRound = round + Number(passed);
     if (planningRound >= 4 || !Object.keys(supply?.stacks || {}).length) return 0;
     number(researchCost, "player.researchPublicityCost");
     if (!Number.isSafeInteger(researchCost) || researchCost < 0) throw new TypeError("VALUE_RESEARCH_COST_INVALID");
     if (publicity < researchCost) return 0;
     const targets = researchTargets(techState, supply, planningRound, weights);
-    const held = handOptions(hand, targets, planningRound, weights);
+    const held = handOptions(hand, targets, planningRound, weights, funding);
     const currentHand = Math.max(0, ...held.map(o => o.value));
     return Math.max(0, ...targets.map(t => t.capability + t.first + t.bonusValue - researchCost * weights.publicity
       + Math.max(0, ...held.filter(o => o.id !== t.id).map(o => o.value)) - currentHand));
@@ -167,10 +190,10 @@
   function probePotential(observation, seatId, weights = DEFAULT_WEIGHTS) {
     const pub = observation.publicState, player = pub.players.find(p => p.playerId === seatId);
     const round = pub.roundNumber + Number(pub.passingPlayerIds.includes(seatId));
-    return probeCapital.fromObservation(observation, seatId, weights, (hand, publicity) =>
-      handCapital(hand, player.techState, pub.board.techSupply, round, weights)
+    return probeCapital.fromObservation(observation, seatId, weights, (hand, publicity, funding) =>
+      handCapital(hand, player.techState, pub.board.techSupply, round, weights, funding)
         + researchCapital({ hand, techState: player.techState, supply: pub.board.techSupply,
-          round, publicity, researchCost: player.researchPublicityCost }, weights)).value;
+          round, publicity, researchCost: player.researchPublicityCost, funding }, weights)).value;
   }
 
   function evaluateStateValue(observation, seatId, options = {}) {
@@ -200,12 +223,13 @@
       income += number(player.income[key], `income.${key}`) * weights[key] * (4 - round);
     }
     const hand = observation.selfState.hand.length * weights.handSize;
+    const funding = { resources: player, income: player.income, startingIncome: Number(passing) };
     const components = Object.freeze({ realizedScore, currentEndGameBonus: currentTotal - realizedScore,
       resources, hand, income, technologyPotential: technologyCapital(player.techState, round, weights),
-      handPotential: handCapital(observation.selfState.hand, player.techState, observation.publicState.board?.techSupply, round + Number(passing), weights),
+      handPotential: handCapital(observation.selfState.hand, player.techState, observation.publicState.board?.techSupply, round + Number(passing), weights, funding),
       researchPotential: researchCapital({ hand: observation.selfState.hand, techState: player.techState,
         supply: observation.publicState.board?.techSupply, round, publicity: player.publicity,
-        researchCost: player.researchPublicityCost, passed: passing }, weights),
+        researchCost: player.researchPublicityCost, passed: passing, funding }, weights),
       probePotential: probePotential(observation, seatId, weights) });
     const total = Object.values(components).reduce((sum, value) => sum + value, 0);
     number(total, "total");

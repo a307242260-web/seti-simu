@@ -28,7 +28,8 @@ try {
   assert.equal(player.publicity, 7);
   const before = values.evaluateStateValue(observation, seatId);
   assert.equal(before.components.researchPotential, 9.5);
-  assert.equal(before.total, 57.5);
+  assert.equal(before.total, 55.5);
+  assert.equal(before.components.handPotential, 2.5, 'held DLC9 cannot pay3credits from2credits/1energy before the next income');
   assert.equal(before.components.probePotential, 5.5);
   assert.deepEqual(values.evaluateStateValue(port.valueObservation(root), seatId), before);
   const started = port.expand(root, root.legalActions.find(a => a.family === 'research_tech').actionId);
@@ -95,9 +96,9 @@ try {
     const publicPlayer = buildRuleObservation(testState, seed, seatId).publicState.players.find(p => p.playerId === seatId);
     assert.equal(publicPlayer.researchPublicityCost, resolver.getResearchPublicityCost(p));
     const facts = { ...params, hand: p.hand, techState: p.techState, supply: testState.tech, publicity: p.resources.publicity,
-      researchCost: publicPlayer.researchPublicityCost };
+      researchCost: publicPlayer.researchPublicityCost, funding: { resources: p.resources, income: p.income, startingIncome: 0 } };
     assert.equal(demand.heldAndResearchCapital(testState, p),
-      values.handCapital(p.hand, p.techState, testState.tech, 1) + values.researchCapital(facts));
+      values.handCapital(p.hand, p.techState, testState.tech, 1, values.DEFAULT_WEIGHTS, facts.funding) + values.researchCapital(facts));
   }
   assert.equal(native.resources.publicity, 7);
   // The canonical passed-player set is authoritative; legacy player flags do
@@ -154,10 +155,10 @@ for (const [name, expected] of [['autonomous', 54.5], ['teacher58', 57.5]]) {
     assert(!next.publicState.passingPlayerIds.includes(seatId), 'new round must reopen without a second window shift');
     const owner = next.publicState.players.find(p => p.playerId === seatId), nextValue = values.evaluateStateValue(next, seatId);
     assert.equal(nextValue.components.handPotential,
-      values.handCapital(next.selfState.hand, owner.techState, next.publicState.board.techSupply, 2));
+      values.handCapital(next.selfState.hand, owner.techState, next.publicState.board.techSupply, 2, values.DEFAULT_WEIGHTS, { resources: owner, income: owner.income, startingIncome: 0 }));
     assert.equal(nextValue.components.researchPotential,
       values.researchCapital({ hand: next.selfState.hand, techState: owner.techState, supply: next.publicState.board.techSupply,
-        round: 2, publicity: owner.publicity, researchCost: owner.researchPublicityCost }));
+        round: 2, publicity: owner.publicity, researchCost: owner.researchPublicityCost, funding: { resources: owner, income: owner.income, startingIncome: 0 } }));
   } finally { analysis.close(); composition.dispose(); }
 }
 // The first mandatory PASS decision can be hand-limit discard, before reserve
@@ -195,7 +196,7 @@ for (const [name, expected] of [['autonomous', 54.5], ['teacher58', 57.5]]) {
     assert(settled.publicState.passingPlayerIds.includes(seat));
     const owner = settled.publicState.players.find(p => p.playerId === seat);
     assert.equal(values.evaluateStateValue(settled, seat).components.handPotential,
-      values.handCapital(settled.selfState.hand, owner.techState, settled.publicState.board.techSupply, 2));
+      values.handCapital(settled.selfState.hand, owner.techState, settled.publicState.board.techSupply, 2, values.DEFAULT_WEIGHTS, { resources: owner, income: owner.income, startingIncome: 1 }));
   } finally { composition.dispose(); }
 }
 // Native publicity threshold controls for both typed income and blue plans.

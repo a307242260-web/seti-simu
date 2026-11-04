@@ -95,6 +95,17 @@ function native(s){s=structuredClone(s);const hand=own(s).hand,ids=new Set(hand.
  assert.equal(pending.plans.length,2);assert(pending.plans.every(plan=>plan.mode==='search-fallback'));
  assert.deepEqual(c.lifecycle.save().envelope,before);p.close();c.dispose();
 }
+// Data income uses an isolated canonical sequence context. Overflow has no
+// immediate resource value; future permanent income retains the same forecast.
+{
+ const s=state(),p=own(s),supplier=card('b_2.webp','data-income');supplier.incomeCode=3;p.hand=[supplier];p.resources.handSize=1;
+ s.turn.roundNumber=1;p.mainActionCompleted=true;s.pieces.rockets=s.pieces.rockets.filter(r=>r.playerId!==seatId);s.pieces.activeRocketId=null;
+ const before=structuredClone(s);assert.equal(demand.incomeCardValue(s,seatId,supplier),2);assert.deepEqual(s,before,'income preview must preserve root state and entity counters');
+ for(let i=0;i<6;i++)assert(data.gainData(p,{root:s}).ok);
+ const capped=structuredClone(s);assert.equal(demand.incomeCardValue(s,seatId,supplier),1.5,'a full data pool receives only future income value');assert.deepEqual(s,capped);
+ while(p.dataState.poolTokens.length>4)p.dataState.poolTokens.pop();p.resources.availableData=4;
+ const tailBefore=structuredClone(s),tail=demand.previewIncomeTail({state:s,seatId,goal:{incomeCardId:supplier.id}});assert(tail.available);assert.equal(tail.player.resources.availableData,1);assert.equal(tail.player.income.availableData,p.income.availableData+1);assert.deepEqual(s,tailBefore);
+}
 console.log(JSON.stringify({resourceDemand:'passed',noLoosePreparations:true,protectedCards:true,exactNeed:true,nativePaymentAndRestore:true,boundedFallback:true}));
 // Orbit and landing already at the probe's location are distinct main purposes,
 // even when the movement policy chooses one route for future travel.

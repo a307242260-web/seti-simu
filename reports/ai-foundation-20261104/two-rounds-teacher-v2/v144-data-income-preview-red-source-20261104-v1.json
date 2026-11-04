@@ -1,0 +1,8 @@
+{
+  "baseCommit": "ec6b09f0056c6bf0d1cf299e543c3f1f991c70f9",
+  "runtimeArchive": "reports/ai-foundation-20261104/rejected-v144-data-income-runtime-20261104-v1",
+  "testArchive": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v144-data-income-preview-red-test-20261104-v1.js",
+  "testSha256": "c67fe188b3004747bf7eb6c485872c7e7bcaa3d9460d206686adb9c1454d494d",
+  "testPath": "randomizer/game/ai/resource-demand.test.js",
+  "failure": "data income native gainData preview must receive an isolated canonical meta.sequences context; capped data has no immediate value"
+}

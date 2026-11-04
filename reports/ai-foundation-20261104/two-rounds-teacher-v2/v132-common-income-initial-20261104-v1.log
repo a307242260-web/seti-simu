@@ -1,0 +1,37 @@
+known blue prerequisites, native income, seven-data plan with six-slot pool, recovery and budgets passed
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+{"heldResearchFundingTiming":true,"oldRound1NativeCannotPay":true,"nextRoundNativeCanPay":true,"unfundedCurrentValue":2.5,"nextRoundValue":2.5,"fundingControls":1568,"jointNativeMissionFunds":{"orbit":{"hand":4.5,"value":60},"land":{"hand":2.5,"value":60}},"rootAndRngUnchanged":true}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+node:internal/assert/utils:77
+    throw err;
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert(fast.diagnostics.nativeExecutions<=256)
+
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/probe-travel-tail.test.js:4:362)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+{"winningIncomeNativeContinuation":true,"coldCertificateRecovery":true,"exactDependencyInvalidation":true,"sharedBudgetEnforced":true,"initialInputs":89}
+SUMMARY unit passed=6 failed=1 total=7 time=4.19s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=5
+OWNER policy/state-value tests=2
+FAIL randomizer/game/ai/probe-travel-tail.test.js status=1 signal=none

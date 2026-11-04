@@ -1,0 +1,67 @@
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: one energy alone cannot pay the two-energy exchange
++ actual - expected
+
++ 'card-18-0'
+- 'card-17-0'
+         ^
+
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/card-pick-planning.test.js:117:112)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'card-18-0',
+  expected: 'card-17-0',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+{"heldResearchFundingTiming":true,"oldRound1NativeCannotPay":true,"nextRoundNativeCanPay":true,"unfundedCurrentValue":2.5,"nextRoundValue":2.5,"fundingControls":1568,"rootAndRngUnchanged":true}
+node:assert:150
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+55.5 !== 57.5
+
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/funded-research-value.test.js:31:10)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1839:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Module._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 55.5,
+  expected: 57.5,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v22.22.0
+{"missionRewardContinuity":true,"adapterParity":true,"hiddenIdentityIsolation":true,"firstAndExtraTraces":true,"dataAndPublicityCaps":true,"fundingControls":3240,"originalAndRngUnchanged":true}
+{"fundedTravelTail":true,"nativeProofControls":6,"movementModeGuard":true,"optimizedInputs":232,"fullNativeInputs":266,"completeRootValueParity":true,"rootAndRngUnchanged":true}
+purpose capital, typed turn-tail proofs, default-model guard, budgets and cold blue funding passed
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+SUMMARY unit passed=5 failed=2 total=7 time=3.04s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=4
+FAIL randomizer/game/ai/card-pick-planning.test.js status=1 signal=none
+FAIL randomizer/game/ai/funded-research-value.test.js status=1 signal=none

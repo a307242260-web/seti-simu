@@ -1,0 +1,1668 @@
+{
+  "scope": "instrumented diagnosis only; not cold admission",
+  "analysisSourceSha256": "42ccd69c39778dba04135d77a24f893f9d85e9f7ceed0f3913a5d9be810770b7",
+  "nativeInputs": 325,
+  "value": 71,
+  "tails": [
+    {
+      "status": "stable",
+      "barrier": null,
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 6,
+          "credits": 3,
+          "energy": 2,
+          "handSize": 6,
+          "publicity": 3,
+          "score": 17
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-24-pass-1-5",
+            "cardId": "dlc_5.png"
+          },
+          {
+            "id": "card-26-pass-2-2",
+            "cardId": "b_78.webp"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "main": false
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:analyze:6",
+          "kind": "analyze",
+          "targetComputerSlot": 6,
+          "required": {
+            "energy": 1
+          }
+        },
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        },
+        {
+          "id": "play:card-65-0:paid-reward:4",
+          "kind": "play_card",
+          "cardId": "card-65-0",
+          "required": {
+            "credits": 4
+          },
+          "paidRewardBudget": 4,
+          "paidRewardPolicy": {
+            "policy": "seti-greedy-paid-budget-v1",
+            "amount": 4,
+            "netGain": 6.5,
+            "assumption": "positive known resource reward; greedy funding; beneficiary card preserved"
+          }
+        },
+        {
+          "id": "rocket:5:land:uranus:satellite:titania",
+          "kind": "route",
+          "family": "land",
+          "rocketId": 5,
+          "planetId": "uranus",
+          "endpointTarget": {
+            "type": "satellite",
+            "satelliteId": "titania",
+            "rocketId": 5
+          },
+          "endpointCost": {
+            "energy": 3
+          },
+          "benefit": {
+            "score": 25,
+            "incomeCount": 0,
+            "dataCount": 0,
+            "grossEquivalentValue": 27.5,
+            "rewardSummary": "获得 25 分",
+            "source": "planetRewards.land:uranus"
+          },
+          "coordinate": {
+            "x": 6,
+            "y": 4
+          },
+          "path": [
+            {
+              "from": {
+                "x": 6,
+                "y": 1
+              },
+              "to": {
+                "x": 6,
+                "y": 2
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "from": {
+                "x": 6,
+                "y": 2
+              },
+              "to": {
+                "x": 6,
+                "y": 3
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            },
+            {
+              "from": {
+                "x": 6,
+                "y": 3
+              },
+              "to": {
+                "x": 6,
+                "y": 4
+              },
+              "deltaX": 0,
+              "deltaY": 1,
+              "requiredMovePoints": 1
+            }
+          ],
+          "movementPoints": 3,
+          "required": {
+            "credits": 0
+          }
+        },
+        {
+          "id": "tech:blue1:1",
+          "kind": "research_tech",
+          "tileId": "blue1",
+          "blueSlot": 1,
+          "required": {
+            "publicity": 6
+          },
+          "publicityData": true,
+          "targetComputerSlot": 2
+        },
+        {
+          "id": "tech:blue2:1",
+          "kind": "research_tech",
+          "tileId": "blue2",
+          "blueSlot": 1,
+          "required": {
+            "publicity": 6
+          },
+          "publicityData": true,
+          "targetComputerSlot": 2
+        },
+        {
+          "id": "tech:blue3:1",
+          "kind": "research_tech",
+          "tileId": "blue3",
+          "blueSlot": 1,
+          "required": {
+            "publicity": 6
+          },
+          "publicityData": true,
+          "targetComputerSlot": 2
+        },
+        {
+          "id": "tech:blue4:1",
+          "kind": "research_tech",
+          "tileId": "blue4",
+          "blueSlot": 1,
+          "required": {
+            "publicity": 6
+          },
+          "publicityData": true,
+          "targetComputerSlot": 2
+        },
+        {
+          "id": "tech:orange1:",
+          "kind": "research_tech",
+          "tileId": "orange1",
+          "blueSlot": null,
+          "required": {
+            "publicity": 6
+          },
+          "publicityData": true,
+          "targetComputerSlot": 2
+        },
+        {
+          "id": "tech:orange2:",
+          "kind": "research_tech",
+          "tileId": "orange2",
+          "blueSlot": null,
+          "required": {
+            "publicity": 6
+          },
+          "publicityData": true,
+          "targetComputerSlot": 2
+        },
+        {
+          "id": "tech:orange3:",
+          "kind": "research_tech",
+          "tileId": "orange3",
+          "blueSlot": null,
+          "required": {
+            "publicity": 6
+          },
+          "publicityData": true,
+          "targetComputerSlot": 2
+        },
+        {
+          "id": "tech:purple1:",
+          "kind": "research_tech",
+          "tileId": "purple1",
+          "blueSlot": null,
+          "required": {
+            "publicity": 6
+          },
+          "publicityData": true,
+          "targetComputerSlot": 2
+        },
+        {
+          "id": "tech:purple2:",
+          "kind": "research_tech",
+          "tileId": "purple2",
+          "blueSlot": null,
+          "required": {
+            "publicity": 6
+          },
+          "publicityData": true,
+          "targetComputerSlot": 2
+        },
+        {
+          "id": "tech:purple3:",
+          "kind": "research_tech",
+          "tileId": "purple3",
+          "blueSlot": null,
+          "required": {
+            "publicity": 6
+          },
+          "publicityData": true,
+          "targetComputerSlot": 2
+        },
+        {
+          "id": "tech:purple4:",
+          "kind": "research_tech",
+          "tileId": "purple4",
+          "blueSlot": null,
+          "required": {
+            "publicity": 6
+          },
+          "publicityData": true,
+          "targetComputerSlot": 2
+        },
+        {
+          "id": "scan:sector:sector-1-a",
+          "kind": "scan-flow",
+          "nebulaId": "sector-1-a",
+          "required": {
+            "credits": 1,
+            "energy": 2
+          },
+          "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+        },
+        {
+          "id": "scan:sector:sector-2-a",
+          "kind": "scan-flow",
+          "nebulaId": "sector-2-a",
+          "required": {
+            "credits": 1,
+            "energy": 2
+          },
+          "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+        },
+        {
+          "id": "scan:sector:sector-2-b",
+          "kind": "scan-flow",
+          "nebulaId": "sector-2-b",
+          "required": {
+            "credits": 1,
+            "energy": 2
+          },
+          "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+        },
+        {
+          "id": "scan:sector:sector-3-b",
+          "kind": "scan-flow",
+          "nebulaId": "sector-3-b",
+          "required": {
+            "credits": 1,
+            "energy": 2
+          },
+          "purpose": "advance-or-complete-known-sector; collect its data and native reward"
+        }
+      ],
+      "movement": "selected-objective",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": {
+        "effectId": "effect-session-26:effect:3",
+        "revision": 3,
+        "code": "hidden_card_reveal",
+        "reason": "公共牌补牌翻出新牌"
+      },
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 3,
+          "energy": 1,
+          "handSize": 5,
+          "publicity": 0,
+          "score": 17
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          },
+          {
+            "id": "card-45-0",
+            "cardId": "b_63.webp"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": {
+        "effectId": "effect-session-26:effect:3",
+        "revision": 3,
+        "code": "hidden_card_reveal",
+        "reason": "公共牌补牌翻出新牌"
+      },
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 3,
+          "energy": 1,
+          "handSize": 5,
+          "publicity": 0,
+          "score": 19
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          },
+          {
+            "id": "card-45-0",
+            "cardId": "b_63.webp"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": {
+        "effectId": "effect-session-26:effect:2",
+        "revision": 2,
+        "code": "tech_bonus_reveal",
+        "reason": "拿取科技后露出下一张 bonus"
+      },
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 3,
+          "energy": 1,
+          "handSize": 4,
+          "publicity": 1,
+          "score": 19
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": {
+        "effectId": "effect-session-26:effect:2",
+        "revision": 2,
+        "code": "tech_bonus_reveal",
+        "reason": "拿取科技后露出下一张 bonus"
+      },
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 3,
+          "energy": 1,
+          "handSize": 4,
+          "publicity": 1,
+          "score": 17
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": {
+        "effectId": "effect-session-26:effect:2",
+        "revision": 2,
+        "code": "tech_bonus_reveal",
+        "reason": "拿取科技后露出下一张 bonus"
+      },
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 3,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 1,
+          "score": 19
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": {
+        "effectId": "effect-session-26:effect:2",
+        "revision": 2,
+        "code": "tech_bonus_reveal",
+        "reason": "拿取科技后露出下一张 bonus"
+      },
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 5,
+          "credits": 3,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 1,
+          "score": 19
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": {
+        "effectId": "effect-session-26:effect:2",
+        "revision": 2,
+        "code": "tech_bonus_reveal",
+        "reason": "拿取科技后露出下一张 bonus"
+      },
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 5,
+          "credits": 3,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 1,
+          "score": 19
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": {
+        "effectId": "effect-session-26:effect:2",
+        "revision": 2,
+        "code": "tech_bonus_reveal",
+        "reason": "拿取科技后露出下一张 bonus"
+      },
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 5,
+          "credits": 3,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 1,
+          "score": 19
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": {
+        "effectId": "effect-session-26:effect:2",
+        "revision": 2,
+        "code": "tech_bonus_reveal",
+        "reason": "拿取科技后露出下一张 bonus"
+      },
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 3,
+          "energy": 1,
+          "handSize": 4,
+          "publicity": 1,
+          "score": 17
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": {
+        "effectId": "effect-session-26:effect:2",
+        "revision": 2,
+        "code": "tech_bonus_reveal",
+        "reason": "拿取科技后露出下一张 bonus"
+      },
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 3,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 1,
+          "score": 19
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": {
+        "effectId": "effect-session-26:effect:3",
+        "revision": 3,
+        "code": "hidden_card_reveal",
+        "reason": "公共牌补牌翻出新牌"
+      },
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 3,
+          "energy": 1,
+          "handSize": 5,
+          "publicity": 1,
+          "score": 19
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          },
+          {
+            "id": "card-45-0",
+            "cardId": "b_63.webp"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": {
+        "effectId": "effect-session-26:effect:2",
+        "revision": 2,
+        "code": "tech_bonus_reveal",
+        "reason": "拿取科技后露出下一张 bonus"
+      },
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 3,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 1,
+          "score": 17
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": {
+        "effectId": "effect-session-26:effect:2",
+        "revision": 2,
+        "code": "tech_bonus_reveal",
+        "reason": "拿取科技后露出下一张 bonus"
+      },
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 4,
+          "credits": 3,
+          "energy": 2,
+          "handSize": 4,
+          "publicity": 1,
+          "score": 17
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    },
+    {
+      "status": "stable",
+      "barrier": null,
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 6,
+          "credits": 2,
+          "energy": 0,
+          "handSize": 4,
+          "publicity": 5,
+          "score": 17
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-24-pass-1-5",
+            "cardId": "dlc_5.png"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-24-pass-1-5",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": true
+    },
+    {
+      "status": "stable",
+      "barrier": null,
+      "session": false,
+      "owner": {
+        "resources": {
+          "additionalPublicScan": 0,
+          "aomomoFossils": 0,
+          "availableData": 6,
+          "credits": 2,
+          "energy": 2,
+          "handSize": 5,
+          "publicity": 3,
+          "score": 17
+        },
+        "hand": [
+          {
+            "id": "card-40-0",
+            "cardId": "dlc_40.png"
+          },
+          {
+            "id": "card-52-0",
+            "cardId": "dlc_30.png"
+          },
+          {
+            "id": "card-26-pass-2-2",
+            "cardId": "b_78.webp"
+          },
+          {
+            "id": "card-65-0",
+            "cardId": "dlc_17.png"
+          },
+          {
+            "id": "card-66-0",
+            "cardId": "dlc_16.png"
+          }
+        ],
+        "main": true
+      },
+      "quietCompany": true,
+      "aliens": [
+        {
+          "revealed": false,
+          "ready": false
+        },
+        {
+          "revealed": false,
+          "ready": false
+        }
+      ],
+      "inert": true,
+      "transition": {
+        "roundAdvanced": false,
+        "turnAdvanced": true,
+        "nextPlayerId": "player-brown"
+      },
+      "plans": [
+        {
+          "id": "data:income:4",
+          "kind": "income",
+          "targetComputerSlot": 4,
+          "incomeCardId": "card-52-0",
+          "incomeBefore": 8,
+          "required": {}
+        }
+      ],
+      "movement": "objective-reached",
+      "spec": false
+    }
+  ],
+  "compounds": [
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 1,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 1,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 1,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 1,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 2,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 2,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 2,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 2,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 1,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 2,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 1,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 2,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 2,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-24-pass-1-5",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": true,
+        "plans": [
+          {
+            "goal": {
+              "id": "data:income:4",
+              "kind": "income",
+              "targetComputerSlot": 4,
+              "incomeCardId": "card-24-pass-1-5",
+              "incomeBefore": 8,
+              "required": {}
+            },
+            "netGain": 15.5,
+            "requiredNativeInputs": 9,
+            "incomeCardId": "card-24-pass-1-5"
+          }
+        ],
+        "netGain": 15.5,
+        "requiredNativeInputs": 10,
+        "immediateScoreGain": 0,
+        "markedTiles": []
+      },
+      "energy": 0,
+      "stationary": true
+    },
+    {
+      "kind": "data-end-turn",
+      "goal": {
+        "id": "data:income:4",
+        "kind": "income",
+        "targetComputerSlot": 4,
+        "incomeCardId": "card-52-0",
+        "incomeBefore": 8,
+        "required": {}
+      },
+      "compound": {
+        "available": false,
+        "reason": "data-tail-movement-needs-native-continuation"
+      },
+      "energy": 2,
+      "stationary": true
+    }
+  ]
+}

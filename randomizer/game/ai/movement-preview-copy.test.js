@@ -6,8 +6,25 @@ function freeze(value){if(value&&typeof value==='object'&&!Object.isFrozen(value
 for(const row of before.rows){
  const f=row.name==='advance'?captured.cases.advance:read(`adhoc/ai-decision-corpus-20261023-v1/case-${row.name}-20261023-v1.json`);assert.equal(sha(JSON.stringify(f)),row.fixtureSha256);
  const state=freeze(f.compositionEnvelope.session?.session?.workingState||JSON.parse(f.compositionEnvelope.committedState)),original=JSON.stringify(state);
- for(const c of row.cases){assert.deepEqual(native.comparePlannedMovementTiming(state,f.seatId,c.requirementId,c.path,0),c.value);assert.equal(JSON.stringify(state),original);}
+ for(const c of row.cases){assert.deepEqual(native.comparePlannedMovementTiming(state,f.seatId,c.requirementId,c.path,0),c.value);assert.equal(JSON.stringify(state),original);
+  const blue=structuredClone(state),p=blue.players.players.find(p=>p.id===f.seatId),free=[1,2,3,4].filter(n=>!Object.values(p.techState.blueBoardSlots).includes(n));
+  for(const id of ['blue1','blue2','blue3','blue4']){p.techState.ownedTiles[id]=true;if(!p.techState.blueBoardSlots[id])p.techState.blueBoardSlots[id]=free.shift();}
+  p.resources.score+=3;p.scoreSources={...p.scoreSources,initialScore:(p.scoreSources?.initialScore||0)+3};
+  assert.equal(native.plannedMovementTimingKey(blue,f.seatId,c.requirementId,c.path,0),native.plannedMovementTimingKey(state,f.seatId,c.requirementId,c.path,0));
+  assert.deepEqual(native.comparePlannedMovementTiming(freeze(blue),f.seatId,c.requirementId,c.path,0),c.value,'all12native timing controls remain exact across blue ownership/slot and score history changes');
+  for(const disabled of [false,true]){const purple=structuredClone(state),owner=purple.players.players.find(p=>p.id===f.seatId);for(const id of ['purple1','purple2','purple3','purple4']){owner.techState.ownedTiles[id]=true;owner.techState.disabledTiles[id]=disabled;}assert.equal(native.plannedMovementTimingKey(purple,f.seatId,c.requirementId,c.path,0),native.plannedMovementTimingKey(state,f.seatId,c.requirementId,c.path,0));assert.deepEqual(native.comparePlannedMovementTiming(freeze(purple),f.seatId,c.requirementId,c.path,0),c.value,'purple ownership/disabled state cannot change native terrain or endpoint access');}
+ }
  const seed=f.source.seed,k=native.createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const comp=k.composition;assert(comp.lifecycle.restore(f.compositionEnvelope).ok);const saved=comp.lifecycle.save().envelope,observation=comp.projection({role:'player',playerId:f.seatId}).state;
+ // Force an uncached native directory with a distinct game identity, then
+ // compare the complete reused directory across data/scan/research tiles.
+ const baseDirectory=native.getProbeRouteRequirements(state,f.seatId);
+ for(const type of ['blue','purple'])for(const disabled of [false,true]){
+  const changed=structuredClone(state),owner=changed.players.players.find(p=>p.id===f.seatId),slots=[1,2,3,4].filter(n=>!Object.values(owner.techState.blueBoardSlots).includes(n));
+  for(let n=1;n<=4;n++){const id=type+n;owner.techState.ownedTiles[id]=true;owner.techState.disabledTiles[id]=disabled;if(type==='blue'&&!owner.techState.blueBoardSlots[id])owner.techState.blueBoardSlots[id]=slots.shift();}
+  const uncached=structuredClone(changed);uncached.meta.gameId+=':uncached-'+type+'-'+disabled;
+  assert.deepEqual(native.getProbeRouteRequirements(freeze(uncached),f.seatId),baseDirectory,'uncached complete native directory is independent of these tech facts');
+  assert.deepEqual(native.getProbeRouteRequirements(freeze(changed),f.seatId),baseDirectory,'cached native directory matches independent uncached calculation');
+ }
  // Public observation fields evolve independently of the geometric-copy
  // optimization. Compare current native rule facts, not an old schema hash.
  const expected=buildRuleObservation(state,seed,f.seatId);
@@ -37,7 +54,7 @@ for(const row of before.rows){
  for(const mutate of [s=>s.solarSystem.rotation.wheel1Steps++,s=>s.pieces.rockets[0].sectorX++,s=>s.players.players.find(p=>p.id===f.seatId).techState.disabledTiles.orange2=true,s=>s.turn.cardTurnEventBonuses.push({playerId:f.seatId,movementModifiers:{ignoreAsteroidRestriction:true}}),s=>s.turn.turnNumber++]){const changed=structuredClone(state);mutate(changed);assert.notEqual(key(changed),original);}
  assert.notEqual(native.plannedMovementTimingKey(state,f.seatId,c.requirementId,c.path,1),original);
 }
-console.log(JSON.stringify({movementPreviewCopy:'passed',nativeTimingCases:12,nativeProjectionControls:4,frozenRootsUnchanged:true,geometryCacheInvalidation:true}));
+console.log(JSON.stringify({movementPreviewCopy:'passed',nativeTimingCases:12,technologyVariants:36,uncachedDirectoryControls:16,nativeProjectionControls:4,frozenRootsUnchanged:true,geometryCacheInvalidation:true}));
 
 // Geometric previews omit journal snapshots; actual rotation keeps them.
 {

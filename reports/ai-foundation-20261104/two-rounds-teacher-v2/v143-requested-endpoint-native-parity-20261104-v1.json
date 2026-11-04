@@ -1,0 +1,4096 @@
+{
+  "scope": "pure native geometry query compatibility only; no game/search timing sample",
+  "oldSource": "reports/ai-foundation-20261104/rejected-v142-serialization-runtime-20261104-v1/randomizer/game/production-kernel.js",
+  "oldSourceSha256": "0a2b370deeba2bab7860b832d3d70c00b9ea7c7dab940ea4cd7557a590a6f14d",
+  "currentSource": "randomizer/game/production-kernel.js",
+  "currentSourceSha256": "47a81948a6927d511261fde257f7c82941be966e5e454e1e64cfd211d8d69d25",
+  "nativeQueries": 94,
+  "comparable": 94,
+  "completeDirectoriesUnchanged": true,
+  "allRequestedQueriesEqual": true,
+  "frozenInputsUnchanged": true,
+  "rows": [
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json",
+      "fixtureSha256": "840d7625dd80b5a0186133b4aabc25fec65dd55aa79e1b82da9d733be2e5cb6c",
+      "choices": [
+        {
+          "id": "rocket:5:land:jupiter:satellite:io",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:jupiter:satellite:io",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:neptune:satellite:triton",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 7,
+            "bestPrefixLength": 5,
+            "bestTotalPaidPoints": 6,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 7
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:neptune:satellite:triton",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 7,
+            "bestPrefixLength": 5,
+            "bestTotalPaidPoints": 4,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 7
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:jupiter:satellite:ganymede",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:jupiter:satellite:ganymede",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:uranus:satellite:titania",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 3,
+            "bestTotalPaidPoints": 3,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:uranus:satellite:titania",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 3,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:neptune:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 7,
+            "bestPrefixLength": 5,
+            "bestTotalPaidPoints": 6,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 7
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:neptune:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 7,
+            "bestPrefixLength": 5,
+            "bestTotalPaidPoints": 4,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 7
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:orbit:uranus:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 3,
+            "bestTotalPaidPoints": 3,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:orbit:uranus:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 3,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:mercury:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:mercury:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:jupiter:satellite:callisto",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:jupiter:satellite:callisto",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:jupiter:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:jupiter:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:jupiter:satellite:europa",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:jupiter:satellite:europa",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:orbit:neptune:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 7,
+            "bestPrefixLength": 5,
+            "bestTotalPaidPoints": 6,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 7
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:orbit:neptune:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 7,
+            "bestPrefixLength": 5,
+            "bestTotalPaidPoints": 4,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 7
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:uranus:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 3,
+            "bestTotalPaidPoints": 3,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:uranus:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 3,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:saturn:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:saturn:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 1,
+            "bestTotalPaidPoints": 3,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:saturn:satellite:enceladus",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:saturn:satellite:enceladus",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 1,
+            "bestTotalPaidPoints": 3,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:mars:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 3,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:mars:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:venus:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 3,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:venus:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:orbit:venus:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 3,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:orbit:venus:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:mars:satellite:phobos-deimos",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 3,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:mars:satellite:phobos-deimos",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:saturn:satellite:titan",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:land:saturn:satellite:titan",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 1,
+            "bestTotalPaidPoints": 3,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:orbit:jupiter:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:orbit:jupiter:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:orbit:mars:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 3,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:orbit:mars:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:orbit:mercury:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:5:orbit:mercury:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-152-20261023-v1.json",
+      "fixtureSha256": "a0aaef74d6e6a272bcd89e9f2c9f3c764b673c16cdaec44d26b7457fafbd8023",
+      "choices": [
+        {
+          "id": "rocket:4:land:mercury:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:land:mercury:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 3,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:orbit:uranus:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 7,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 6,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 7
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:orbit:uranus:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 7,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 4,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 7
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:land:neptune:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 6,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 6,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:land:neptune:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 6,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 4,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:land:jupiter:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 6,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 6,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:land:jupiter:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 6,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 4,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:land:uranus:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 7,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 6,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 7
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:land:uranus:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 7,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 4,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 7
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:land:saturn:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 3,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:land:saturn:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:orbit:neptune:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 6,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 6,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:orbit:neptune:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 6,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 4,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:land:mars:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 4,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:land:mars:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:land:venus:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 3,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:land:venus:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:orbit:venus:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 3,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:orbit:venus:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:orbit:mercury:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:orbit:mercury:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 3,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:orbit:jupiter:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 6,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 6,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 7,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:orbit:jupiter:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 6,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 4,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 6
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 6,
+                "prefixMovementPoints": 6,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:orbit:mars:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 4,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:4:orbit:mars:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "fixture": "adhoc/human405-two-rounds-20261104-v2/ai-v129-step050-mission-choice-20261104-v1.json",
+      "fixtureSha256": "50b7665513420d033739440bf535200f6187ca5fafed77cd4623cdb266f55326",
+      "choices": [
+        {
+          "id": "rocket:3:orbit:mars:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 0,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 0,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 0,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:orbit:mars:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 0,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 0,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 0,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:orbit:uranus:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 1,
+            "bestTotalPaidPoints": 4,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:orbit:uranus:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:neptune:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:neptune:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:mercury:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 5,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:mercury:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 3,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:uranus:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 1,
+            "bestTotalPaidPoints": 4,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:uranus:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:saturn:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 1,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:saturn:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 1,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:jupiter:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 3,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:jupiter:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 3,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 1,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 1,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:orbit:neptune:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 4,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:orbit:neptune:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 4,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 2,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 2,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 5,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:venus:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 5,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:venus:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 3,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:mars:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 0,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 0,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 0,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:land:mars:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 0,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 0,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 0,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:orbit:venus:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 5,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:orbit:venus:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 3,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 4,
+                "remainingPaidPoints": 4
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 3,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 2
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:orbit:mercury:planet:",
+          "freePoints": 0,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 0,
+            "bestTotalPaidPoints": 5,
+            "classification": "defer",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 6,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        },
+        {
+          "id": "rocket:3:orbit:mercury:planet:",
+          "freePoints": 2,
+          "actual": {
+            "comparable": true,
+            "assumption": "one-known-solar-rotation-before-the-future-goal",
+            "rotationCount": 1,
+            "waitPaidPoints": 5,
+            "bestPrefixLength": 2,
+            "bestTotalPaidPoints": 3,
+            "classification": "advance-before-rotation",
+            "alternatives": [
+              {
+                "prefixLength": 0,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 1,
+                "prefixMovementPoints": 1,
+                "totalPaidPoints": 5,
+                "remainingPaidPoints": 5
+              },
+              {
+                "prefixLength": 2,
+                "prefixMovementPoints": 2,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 3
+              },
+              {
+                "prefixLength": 3,
+                "prefixMovementPoints": 4,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 1
+              },
+              {
+                "prefixLength": 4,
+                "prefixMovementPoints": 5,
+                "totalPaidPoints": 3,
+                "remainingPaidPoints": 0
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

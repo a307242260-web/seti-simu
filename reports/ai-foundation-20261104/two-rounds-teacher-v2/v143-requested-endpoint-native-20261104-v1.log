@@ -1,0 +1,9 @@
+{"requestedOwnerLandCost":"passed","differentCurrentActor":true,"viewerCacheIsolation":true,"nativePassControlInputs":9,"rootAndRngUnchanged":true}
+{"movementPreviewCopy":"passed","nativeTimingCases":12,"technologyVariants":36,"uncachedDirectoryControls":16,"nativeProjectionControls":4,"frozenRootsUnchanged":true,"geometryCacheInvalidation":true}
+{"fundedTravelTail":true,"nativeProofControls":14,"movementModeGuard":true,"optimizedInputs":256,"fullNativeInputs":334,"completeRootValueParity":true,"rootAndRngUnchanged":true}
+probe directory borrowed-tech, owner cache and scan allowance tests passed
+SUMMARY unit passed=3 failed=0 total=3 time=2.31s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/standard-action tests=1
+OWNER policy/decision-search tests=1
+OWNER policy/state-value tests=1

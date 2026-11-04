@@ -1,0 +1,17 @@
+{
+  "scope": "sequential instrumented-equivalence control only; not admission timing",
+  "fixture": "adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json",
+  "fixtureSha256": "840d7625dd80b5a0186133b4aabc25fec65dd55aa79e1b82da9d733be2e5cb6c",
+  "beforeSource": "reports/ai-foundation-20261104/rejected-v135-directory-runtime-20261104-v1/randomizer/game/ai/analysis-port.js",
+  "beforeSourceSha256": "748cb2a1620117395439372ba464a93dc7c3737ed4991def06a961c9a86fdc79",
+  "afterSource": "randomizer/game/ai/analysis-port.js",
+  "afterSourceSha256": "f1ab686749c2d79e309770c6a64a5407b6922b16332c869c56cabd9fae559459",
+  "completeAllRootAndLineParity": true,
+  "exactPrefixGraphParity": true,
+  "byteEquivalentDurablePlanKeys": true,
+  "certificateRows": 24,
+  "nativeInputs": 256,
+  "actionId": "place_data:01c038e2",
+  "value": 71,
+  "originalRootAndRngUnchanged": true
+}

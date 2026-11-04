@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-04",
+  "baseCommit": "6eff6f3da26e2d680e2963184def68fb387d3d5a",
+  "candidate": "v136 / V8",
+  "status": "rejected",
+  "reason": "case105256native/640.680917ms;all lines,roots,prefix graph and24durable plan rows identical toV135; no autonomous run",
+  "runtimeHashes": {
+    "randomizer/game/ai/state-value.js": "9448c4a30bd203ad215ad6e67ad8e648f776caf2b07dde677d97f7ff0c6a069d",
+    "randomizer/game/ai/probe-capital.js": "813a81c90088671515f49e6803779274ffe8191874f3cc1a2d6d4a240a8f3662",
+    "randomizer/game/ai/resource-demand.js": "e5801228c765d4a78d99bb2b5783ba06ab16d4bf67e4b3083c1bbf73549aac42",
+    "randomizer/game/ai/card-pick-planning.js": "1d42c24e5b31b91c4657ca4ecd0293e634c956e3c819899b16448a438c26114d",
+    "randomizer/game/ai/analysis-port.js": "a8b8dc086313015a9d70e03f31b2b1e581aab1ab2feeeff94c4c4fd576fd3eec",
+    "randomizer/game/ai/decision-search.js": "5a40c23ffa8d79f9d15670682247849b4929c0530c6fd8eaff365a9c160c7b78",
+    "randomizer/game/production-kernel.js": "0a2b370deeba2bab7860b832d3d70c00b9ea7c7dab940ea4cd7557a590a6f14d",
+    "randomizer/index.html": "ace6197deb6bc0abbe3d7ad1920287efa72434e962491a97293bfa2d5bf9c412"
+  }
+}

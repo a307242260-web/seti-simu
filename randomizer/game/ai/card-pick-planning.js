@@ -8,7 +8,7 @@
   if(common)module.exports=api;else root.SetiCardPickPlanning=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,tech,demand,players,trades){
   'use strict';
-  const VERSION='seti-purpose-card-pick-policy-v7';
+  const VERSION='seti-purpose-card-pick-policy-v8';
   const TRADE_IDS=new Set(['credits-for-card','energy-for-card','publicity-for-card','cards-for-pick-card']);
   const isTrade=a=>a.family==='quick_trade'&&TRADE_IDS.has(a.target?.tradeId);
   const isOffer=a=>a.family==='choose_card'&&!a.target?.nebulaId&&(a.target?.source==='public'||a.target?.source==='blind'
@@ -36,7 +36,7 @@
       const p=state.players.players.find(p=>p.id===seatId);
       const known=offered.map(card=>{
         const f=facts(card);if(!['queued-income','ready-income'].includes(goal.kind))return f;
-        const withCard={...state,players:{...state.players,players:state.players.players.map(v=>v===p?{...p,hand:[...p.hand,card]}:v)}};
+        const withCard={...state,players:{...state.players,players:state.players.players.map(v=>v===p?{...p,hand:[...p.hand,card],resources:{...p.resources,handSize:p.resources.handSize+1}}:v)}};
         const gain=cards.getIncomeGainForCard(card);
         let after;
         if(goal.kind==='ready-income'){
@@ -129,6 +129,13 @@
       if(!card||placed>=4||p.resources.availableData<4-placed||demand.cardOpportunityCost(state,seatId,card)<=0)return null;
       const required=effects.getCardPlayCost(card);
       if(Object.keys(required).some(k=>!['credits','energy'].includes(k))||moneyFundingGap(p.resources,required)<=0)return null;
+      // This purpose promises payment now, not merely a better later wallet.
+      // If no visible income completes funding, leave the free pick to its
+      // ordinary policy instead of inventing a current beneficiary.
+      if(!state.cards.publicCards.some(card=>{
+        if(!card||card.hidden)return false;const gain=cards.getIncomeGainForCard(card);
+        return gain&&moneyFundingGap({credits:p.resources.credits+(gain.credits||0),energy:p.resources.energy+(gain.energy||0)},required)===0;
+      }))return null;
       return{kind:'ready-income',id:'income:ready:preserve-known-purpose',fundsCardId:card.id,protectedCardId:card.id,required};
     }
     function queuedIncomeGoal(session,seatId,state){

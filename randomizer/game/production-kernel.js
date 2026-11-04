@@ -714,6 +714,14 @@ function buildProbeMoveTiming(state, player, context, requirements) {
 // 探测候选结构缓存键：拓扑键（火箭/旋转/orange2/火箭上限）+ 行星标记 + 玩家科技/有效登陆能力 +
 // alien 痕迹（rewardEquivalentValue 的黄色痕迹来源）。玩家资源不入键——只影响
 // resourceGap，由 finalizeProbeRequirements 每节点便宜地重算。
+// These known data/scan/research tiles never enter rocket topology or native
+// endpoint access/costs. Keep orange, unknown tiles and all other tech fields.
+function probeMovementTechFacts(techState) {
+  if(!techState)return techState;
+  const movementTiles=tiles=>Object.fromEntries(Object.entries(tiles||{}).filter(([id])=>!/^(blue|purple)[1-4]$/.test(id)));
+  return {...techState,ownedTiles:movementTiles(techState.ownedTiles),disabledTiles:movementTiles(techState.disabledTiles),blueBoardSlots:{}};
+}
+
 function probeStructureKey(workingState, player, context, sources) {
   const topologyKey = probeRouteTopologyKey(workingState, player, sources, context);
   // 与正式登陆费用及卫星准入使用同一能力、同一回合上下文；借用字段不在techState内。
@@ -724,7 +732,7 @@ function probeStructureKey(workingState, player, context, sources) {
     // 全量重排（实测占采样 ~2.5%）；JSON.stringify 保留插入顺序且状态构建路径
     // 确定（parse→clone→mutate），同逻辑内容→同字符串。键格式是内部 Map 键，
     // 不外泄；即使顺序在极端路径下不同也只会缓存 miss（重算，结果正确）。
-    return `${topologyKey}|P${JSON.stringify(workingState.planets)}|T${JSON.stringify(player.techState)}|L${landDiscount},${satelliteAccess}|A${JSON.stringify(workingState.aliens)}`;
+    return `${topologyKey}|P${JSON.stringify(workingState.planets)}|T${JSON.stringify(probeMovementTechFacts(player.techState))}|L${landDiscount},${satelliteAccess}|A${JSON.stringify(workingState.aliens)}`;
 }
 
 function buildProbeCandidateStructures(workingState, player, context, topology, sources, requestedRequirementId = null) {
@@ -734,8 +742,16 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
   const rewardEffects = new Map();
   for (const source of topology.sources) {
     if (!source.coordinate) continue;
+    // A specific native requirement cannot belong to another source or
+    // planet. Avoid enumerating unrelated endpoint menus before its exact
+    // existing requirementId check; full directories retain every endpoint.
+    const requestedFamily = requestedRequirementId == null ? null
+      : ["orbit", "land"].find(family => requestedRequirementId.startsWith(source.sourceId + ":" + family + ":"));
+    if (requestedRequirementId != null && !requestedFamily) continue;
+    const requestedPrefix = source.sourceId + ":" + requestedFamily + ":";
     const reachablePlanets = topology.reachableBySource.get(source.sourceId) || [];
     for (const reach of reachablePlanets) {
+      if (requestedRequirementId != null && !requestedRequirementId.startsWith(requestedPrefix + reach.planet.planetId + ":")) continue;
       const placement = {
         rocket: { id: source.rocketId, playerId: player.id, surface: "solar-board" },
         currentPlayer: player,
@@ -743,8 +759,8 @@ function buildProbeCandidateStructures(workingState, player, context, topology, 
         sectorCoordinate: reach.coordinate,
       };
       const endpointChoices = [
-        ...planetAbility.listOrbitRequirementsAt(context, placement),
-        ...planetAbility.listLandRequirementsAt(context, placement),
+        ...(requestedRequirementId == null || requestedFamily === "orbit" ? planetAbility.listOrbitRequirementsAt(context, placement) : []),
+        ...(requestedRequirementId == null || requestedFamily === "land" ? planetAbility.listLandRequirementsAt(context, placement) : []),
       ];
       for (const choice of endpointChoices) {
         if(requestedRequirementId!=null&&routeRequirementKey(source.sourceId,choice)!==requestedRequirementId)continue;
@@ -1804,7 +1820,9 @@ function createBrowserProductionKernel(options = {}) {
 // The returned timing describes geometry/target reachability, not affordability or reward value.
 // Economic/card facts are re-read by the goal policy; they cannot change this calculation.
 function plannedMovementTimingKey(state, seatId, requirementId, path, freePoints = 0) {
-  const geometryPlayers = state.players.players.map(({ resources, income, hand, reservedCards, dataState, ...geometry }) => geometry);
+  const geometryPlayers = state.players.players.map(({ resources, income, hand, reservedCards, dataState, scoreSources, ...geometry }) => {
+    return{...geometry,techState:probeMovementTechFacts(geometry.techState)};
+  });
   return JSON.stringify([state.meta?.gameId, seatId, state.solarSystem, state.pieces, state.planets,
     state.aliens, geometryPlayers, state.turn, requirementId, path, freePoints]);
 }

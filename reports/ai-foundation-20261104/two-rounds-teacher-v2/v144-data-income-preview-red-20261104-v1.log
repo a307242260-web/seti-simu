@@ -1,0 +1,17 @@
+/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/state/sequences.js:12
+      throw new TypeError("规则实体编号需要 canonical meta.sequences");
+      ^
+
+TypeError: 规则实体编号需要 canonical meta.sequences
+    at getSequenceMap (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/state/sequences.js:12:13)
+    at Object.take (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/state/sequences.js:26:23)
+    at Object.gainData (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/data/state.js:279:46)
+    at Object.gainData (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/resource-demand.js:138:103)
+    at applyImmediateIncomeReward (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/players.js:406:19)
+    at Object.gainIncome (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/players.js:440:5)
+    at incomeValueWithCapital (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/resource-demand.js:138:13)
+    at Object.incomeCardValue (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/resource-demand.js:132:40)
+    at Object.<anonymous> (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/randomizer/game/ai/resource-demand.test.js:103:54)
+    at Module._compile (node:internal/modules/cjs/loader:1706:14)
+
+Node.js v22.22.0

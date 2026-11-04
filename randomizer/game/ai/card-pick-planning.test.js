@@ -114,7 +114,7 @@ console.log(JSON.stringify({purposeCardPick:'passed',noUnmotivatedTrades:true,in
  const hidden=structuredClone(s);hidden.cards.drawPileCardIds.reverse();assert.equal(choose(hidden).selection.cardId,r.selection.cardId);assert.equal(choose(hidden).selection.cache,'hit');
  const short=structuredClone(s);short.players.players.find(p=>p.id===f.seatId).resources.availableData=3;assert.notEqual(choose(short).goal.kind,'ready-income');
  const funded=structuredClone(s);funded.players.players.find(p=>p.id===f.seatId).resources.credits=3;assert.notEqual(choose(funded).goal.kind,'ready-income');
- const noEnergy=structuredClone(s);noEnergy.players.players.find(p=>p.id===f.seatId).resources.energy=0;assert.equal(choose(noEnergy).selection.cardId,'card-17-0','one energy alone cannot pay the two-energy exchange');
+ const noEnergy=structuredClone(s);noEnergy.players.players.find(p=>p.id===f.seatId).resources.energy=0;assert.equal(choose(noEnergy).selection.cardId,'card-17-0','one energy alone cannot pay the two-energy exchange');assert.notEqual(choose(noEnergy).goal.kind,'ready-income','an unfundable offer must not claim a current income-funded card purpose');
  assert.deepEqual(s,before);
 }
 // The identified income and exchange actually pay the preserved card through
@@ -159,7 +159,10 @@ console.log(JSON.stringify({purposeCardPick:'passed',noUnmotivatedTrades:true,in
     const root=port.openRoot(),r=searchDecision({port,root,evaluate:createStateValueEvaluator(f.seatId),...agent.OPTIONS,budget:{transitions:limit,nodes:512,frontier:256,milliseconds:15000}});
     assert.deepEqual(c.lifecycle.save().envelope,before);
     if(limit===1){assert(!r.complete);assert.equal(r.actionId,null);assert.equal(r.planContinuation,null);assert.equal(r.stopReason,'transition-budget');}
-    else{assert(r.complete);assert.equal(root.legalActions.find(a=>a.actionId===r.actionId).target.cardInstanceId,'card-40-0');assert.equal(r.candidates.length,1);assert.equal(r.value,59.5); // Includes the visible purple4 publicity bonus in held DLC9 capital.
+    else{assert(r.complete);assert.equal(root.legalActions.find(a=>a.actionId===r.actionId).target.cardInstanceId,'card-40-0');assert.equal(r.candidates.length,1);assert.equal(r.value,58.5); // Current payment includes the actual2energy-to1credit exchange loss.
+    const lines=new Map(r.lines.map(l=>[l.node,l]));let line=lines.get(0),control=root;
+    while(line.edges.length){const edge=line.edges.filter(e=>lines.get(e.target).value===line.value).sort((a,b)=>a.cost+lines.get(a.target).distance-b.cost-lines.get(b.target).distance)[0];assert(edge);for(const id of edge.steps||[edge.actionId])control=port.expand(control,id);line=lines.get(edge.target);}
+    assert.equal(line.status,'turn-tail-value');assert.equal(line.planSummary.kind,'end-turn');assert.equal(createStateValueEvaluator(f.seatId)(port.valueObservation(control)),r.value,'the funded timing quote must equal complete native pick/scan/income/data/end-turn inputs');
     assert(r.diagnostics.transitions<256);}
    }finally{port.close();}
   }

@@ -1,0 +1,29 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),{createSimulationRuleComposition}=require('../../training/simulation-rule-composition'),{createSeededRandom}=require('../random'),{buildRuleObservation}=require('../../app/rule-observation'),{createAnalysisPort}=require('./analysis-port'),{searchDecision}=require('./decision-search'),values=require('./state-value'),agent=require('./search-agent');
+const f=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261023-v1/case-105-20261023-v1.json'))),seed=f.source.seed,k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(f.compositionEnvelope).ok);const original=c.lifecycle.save().envelope,proofs=new Map(),p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+try{const root=p.openRoot(),evaluate=values.createStateValueEvaluator(f.seatId),wrapped={...p,turnTailSummary(node,kind){const spec=p.turnTailSummary(node,kind);if(spec&&kind!=='end-turn')proofs.set(spec,node);return spec;}},fast=searchDecision({...agent.OPTIONS,port:wrapped,root,evaluate,modelKey:evaluate.modelKey,budget:agent.BUDGET});assert(fast.complete);assert(fast.diagnostics.nativeExecutions<=256);assert(proofs.size>0,'live-probe currency tails must have an actual proved use');let controls=0;
+ for(const [spec,base]of proofs){let current=base,inputs=0;for(const step of spec.dataPlans||[]){const plan=p.resourceSpec(current)?.plans.find(p=>p.goal.id===step.goal.id);assert(plan);const done=p.expandResourcePlan(current,plan,()=>null);assert(done.complete);inputs+=done.submissions;current=done.node;}
+  const end=current.legalActions.find(a=>a.family==='end_turn');assert(end);current=p.expand(current,end.actionId);inputs++;
+  for(let n=0;current.status==='decision';n++){assert(n<8);const choice=p.localDecisionSpec(current);assert.equal(choice.kind,'fixed-final-mark');current=p.expand(current,choice.selectedActionId);inputs++;}
+  assert.equal(inputs,spec.requiredNativeInputs);assert.equal(evaluate(current.observation),evaluate(p.valueObservation(base))+spec.netGain,'scalar tail must match complete native inputs including mission funding/capital changes');controls++;
+ }
+ // A fixed movement plan's estimate is an upper bound, not a reservation.
+ // The actual256-input closure fits; one fewer input must fail closed.
+ for(const transitions of [256,255]){
+  const bounded=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
+  try{const n=bounded.openRoot(),result=searchDecision({...agent.OPTIONS,port:bounded,root:n,evaluate,modelKey:evaluate.modelKey,budget:{transitions,nodes:1024,frontier:256,milliseconds:15000}});
+   if(transitions===256){assert(result.complete,'actual256-input closure must not be rejected by a larger movement estimate');assert.equal(result.value,fast.value);assert.deepEqual(result.roots,fast.roots);}
+   else{assert(!result.complete);assert.equal(result.stopReason,'transition-budget');assert.equal(result.actionId,null);assert.equal(result.planContinuation,null);}
+   assert(result.diagnostics.nativeExecutions<=transitions);assert(result.diagnostics.transitions<=transitions);assert.deepEqual(c.lifecycle.save().envelope,original);
+  }finally{bounded.close();}
+ }
+ p.setMovementPlanning(false);
+ for(const [spec,base]of proofs){
+  assert.equal(p.turnTailSummary(base,spec.kind),null,'a cached movement-policy proof must not survive disabling that policy');
+  assert.throws(()=>p.turnTailBoundary(base,spec),/ANALYSIS_TURN_TAIL_PROOF_INVALID/);
+ }
+ p.setMovementPlanning(true);
+ for(const [spec,base]of proofs)assert.equal(p.turnTailSummary(base,spec.kind),spec,'reenabling the original policy may reuse its immutable proof');
+ assert.deepEqual(c.lifecycle.save().envelope,original);
+ const q=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});try{const root=q.openRoot(),control=searchDecision({...agent.OPTIONS,port:{...q,turnTailSummary(n,kind){return kind==='end-turn'?q.turnTailSummary(n,kind):null;}},root,evaluate,modelKey:evaluate.modelKey,budget:agent.BUDGET});assert(control.complete);assert.equal(control.value,fast.value);assert.equal(control.actionId,fast.actionId);assert(control.diagnostics.nativeExecutions>fast.diagnostics.nativeExecutions);const signature=r=>r.roots.map(r=>[r.actionId,r.goal?.id,r.value,r.valueType,r.completion]);assert.deepEqual(signature(fast),signature(control),'no root or required line may disappear behind a faster scalar proof');assert.deepEqual(c.lifecycle.save().envelope,original);console.log(JSON.stringify({fundedTravelTail:true,nativeProofControls:controls,movementModeGuard:true,optimizedInputs:fast.diagnostics.nativeExecutions,fullNativeInputs:control.diagnostics.nativeExecutions,completeRootValueParity:true,rootAndRngUnchanged:true}));}finally{q.close();}
+}finally{p.close();c.dispose();}

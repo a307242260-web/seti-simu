@@ -210,14 +210,34 @@
         });
       }
       if (!value || typeof value !== "object") return value;
-      if (Array.isArray(value)) return value.map(item => normalize(item));
-      const descriptor = value.schemaVersion === "seti-standard-action-v1";
-      const result = Object.create(null);
-      for (const name of Object.keys(value).sort()) {
-        if (descriptor && ["actionId", "stateVersion", "decisionVersion"].includes(name)) continue;
-        result[name] = normalize(value[name], name);
+      // Most canonical slices already have sorted keys and need no change.
+      // Keep them read-only; allocate only when normalization actually differs.
+      if (Array.isArray(value)) {
+        let result=null;
+        for(let i=0;i<value.length;i++){
+          const item=normalize(value[i]);
+          if(!result&&item!==value[i])result=value.slice(0,i);
+          if(result)result.push(item);
+        }
+        return result||value;
       }
-      return result;
+      const descriptor = value.schemaVersion === "seti-standard-action-v1";
+      const keys=Object.keys(value);let ordered=true;
+      for(let i=1;i<keys.length;i++)if(keys[i-1]>keys[i]){ordered=false;break;}
+      if(!ordered)keys.sort();
+      const prototype=Object.getPrototypeOf(value);
+      let result=ordered&&!descriptor&&(prototype===Object.prototype||prototype===null)?null:Object.create(null);
+      for(let i=0;i<keys.length;i++){
+        const name=keys[i];
+        if(descriptor&&["actionId","stateVersion","decisionVersion"].includes(name))continue;
+        const item=normalize(value[name],name);
+        if(!result&&item!==value[name]){
+          result=Object.create(null);
+          for(let j=0;j<i;j++)result[keys[j]]=value[keys[j]];
+        }
+        if(result)result[name]=item;
+      }
+      return result||value;
     }
     const pending = session ? {
       phase: session.phase, queue: session.queue,
@@ -271,7 +291,23 @@
     let nodes = new WeakMap();
     let observationReleasers = new WeakMap(), observationReleases = 0;
     let normalizedIdentityStates = new Map();
-    const identities = new Map();
+    const identities = new Map(), physicalIdentityKeys = new Map();
+    // Intern exact full-state bytes once. Search control keys need only the
+    // collision-free local integer; durable plan dependencies retain the
+    // original complete serialized keys below.
+    function nodeIdentity(physicalKey,intent,cardControl,resourceControl) {
+      if(!physicalIdentityKeys.has(physicalKey))physicalIdentityKeys.set(physicalKey,physicalIdentityKeys.size);
+      const key=JSON.stringify([physicalIdentityKeys.get(physicalKey),intent,cardControl,resourceControl]);
+      if(!identities.has(key))identities.set(key,Object.freeze({}));
+      return identities.get(key);
+    }
+    function policyDependencyKey(stored) {
+      if(stored.policyKey===undefined){
+        const movementKey=stored.intent?JSON.stringify([stored.physicalKey,stored.intent]):stored.physicalKey;
+        stored.policyKey=stored.cardControl?JSON.stringify([movementKey,stored.cardControl]):movementKey;
+      }
+      return stored.policyKey;
+    }
     let resourceOrders = new WeakMap();
     let knownMoneyOrders = new WeakMap();
     let openingOrders = new WeakMap();
@@ -300,7 +336,7 @@
     let rootObservation = null, knownRootCardIds = new Set(), knownRootNebulaIds = new Set(), knownRootTechIndices = new Map(), knownRootAlienIds = new Set();
     let planningStates = new WeakMap();
     let publicSeed = null, rootTurnKey = null;
-    let nodeCount = 0;
+    let nodeCount = 0, identityMaterializations = 0;
     let submissionCount = 0;
     let cacheHits = 0, stableRestoreSkips = 0, movementTimingCacheHits = 0, movementTimingCacheMisses = 0;
     let observationCount = 0;
@@ -387,6 +423,15 @@
       return result;
     }
 
+    // Native enumeration owns fresh target/payload objects; decision menus
+    // are already deep-frozen snapshots. Freeze fresh descriptor children in
+    // place instead of cloning the complete private menu a second time.
+    function ownLegalActions(actions) {
+      if(Object.isFrozen(actions))return actions;
+      for(const action of actions){Object.values(action).forEach(freeze);Object.freeze(action);}
+      return Object.freeze(actions);
+    }
+
     function createNode(envelope, observation, actions, status, barrier = null, intent = null, resourceControl = null) {
       let visible = observation && freeze(observation);
       // 搜索内部节点只用合法集与身份；首次估值/记录时才投影。getter 不暴露快照。
@@ -395,19 +440,28 @@
           if (!visible) visible = observeEnvelope(envelope, barrier);
           return visible;
         },
-        legalActions: Object.isFrozen(actions) ? actions : freeze(structuredClone(actions)), status, boundary: barrier?.code || null,
+        legalActions: ownLegalActions(actions), status, boundary: barrier?.code || null,
       });
       const boundary = barrier?.code || null;
       if (movementPlanning && !intent) intent = recoverMovementIntent(envelope,barrier);
-      const physicalKey = forwardIdentity(envelope, status, boundary, readIdentityState(envelope), normalizedIdentityStates);
-      const movementKey = intent ? JSON.stringify([physicalKey, intent]) : physicalKey;
       const pick = cardPickPlanning && status === "decision" && actions.length ? describeCardPick(envelope,actions,status,barrier) : null;
       const cardControl = pick?.fixed ? {goal:pick.goal,selection:pick.selection&&{cardId:pick.selection.cardId,blind:pick.selection.blind},discardIds:pick.discardIds} : null;
-      const cardKey = cardControl ? JSON.stringify([movementKey,cardControl]) : movementKey;
-      const key = resourceControl ? JSON.stringify([cardKey,resourceControl]) : cardKey;
-      if (!identities.has(key)) identities.set(key, Object.freeze({}));
       observationReleasers.set(node, () => { visible = null; envelopeObservations.delete(envelope); valueObservations.delete(envelope); observationReleases++; });
-      nodes.set(node, { envelope, serial: nodeCount, identity: identities.get(key), key, policyKey: cardKey, physicalKey, intent, cardControl, resourceControl, informationBarrier: ruleComposition.isHiddenInformationBarrier(barrier) ? barrier : null });
+      // Fixed native prefixes may be charged only as certificate steps, never
+      // compared by the graph. Delay their large exact key until identity or
+      // durable plan evidence actually consumes it; no equality fields change.
+      let physicalKey,identity;
+      nodes.set(node, { envelope, serial: nodeCount,
+        get physicalKey(){
+          if(physicalKey===undefined){physicalKey=forwardIdentity(envelope,status,boundary,readIdentityState(envelope),normalizedIdentityStates);identityMaterializations++;}
+          return physicalKey;
+        },
+        get identity(){
+          if(identity===undefined)identity=nodeIdentity(this.physicalKey,this.intent,this.cardControl,this.resourceControl);
+          return identity;
+        },
+        set identity(value){identity=value;},
+        intent,cardControl,resourceControl,informationBarrier:ruleComposition.isHiddenInformationBarrier(barrier)?barrier:null });
       nodeCount += 1;
       return node;
     }
@@ -526,9 +580,8 @@
         if (!stored.intent) {
           stored.intent = recoverMovementIntent(stored.envelope);
           if (stored.intent) {
-            stored.key = JSON.stringify([stored.physicalKey, stored.intent]); stored.policyKey = stored.key;
-            if (!identities.has(stored.key)) identities.set(stored.key, Object.freeze({}));
-            stored.identity = identities.get(stored.key);
+            stored.policyKey=undefined;
+            stored.identity=nodeIdentity(stored.physicalKey,stored.intent,stored.cardControl,stored.resourceControl);
           }
         }
       }
@@ -578,8 +631,8 @@
         const stored=nodes.get(openedRoot),pick=cardPickSpec(openedRoot);
         if(pick?.fixed&&!stored.cardControl){
           stored.cardControl={goal:pick.goal,selection:pick.selection&&{cardId:pick.selection.cardId,blind:pick.selection.blind},discardIds:pick.discardIds};
-          stored.key=JSON.stringify([stored.key,stored.cardControl]);stored.policyKey=stored.key;
-          if(!identities.has(stored.key))identities.set(stored.key,Object.freeze({}));stored.identity=identities.get(stored.key);
+          stored.policyKey=undefined;
+          stored.identity=nodeIdentity(stored.physicalKey,stored.intent,stored.cardControl,stored.resourceControl);
         }
       }
     }
@@ -1275,7 +1328,7 @@
           throw new Error("ANALYSIS_PLAN_EVIDENCE_INVALID");
         }
         if(entry.committedGoal!==undefined&&(typeof entry.committedGoal!=="string"||!entry.committedGoal))throw new Error("ANALYSIS_PLAN_EVIDENCE_INVALID");
-        return { key: entry.committedGoal ? stored.physicalKey : stored.policyKey,
+        return { key: entry.committedGoal ? stored.physicalKey : policyDependencyKey(stored),
           ...(entry.committedGoal?{committedGoal:entry.committedGoal}:{}), actions: actionSetKey(entry.node.legalActions), actionId: entry.actionId,
           value: entry.value, distance: entry.distance, sourceNode: entry.sourceNode, roots: freeze(structuredClone(entry.roots)) };
       });
@@ -1290,7 +1343,7 @@
       const saved = token && planCertificate?.token === token ? planCertificate : null;
       if (!saved) return { hit: false, reason: "unknown-evidence" };
       if (saved.modelKey !== modelKey) return { hit: false, reason: "model-changed" };
-      const row = saved.rows.find(entry => entry.key === (entry.committedGoal?stored.physicalKey:stored.policyKey) && entry.actions === actionSetKey(node.legalActions));
+      const row = saved.rows.find(entry => entry.key === (entry.committedGoal?stored.physicalKey:policyDependencyKey(stored)) && entry.actions === actionSetKey(node.legalActions));
       if (!row) return { hit: false, reason: "dependencies-changed" };
       return freeze({ hit: true, actionId: row.actionId, value: row.value, distance: row.distance, roots: row.roots,
         proof: "seti-complete-window-best-prefix-reuse-v1", evidenceId: saved.evidenceId,
@@ -1821,7 +1874,7 @@
             const policy=resourceSpec(node),plan=policy?.plans.length===1&&policy.plans[0],tail=policy?.fixedBlueTail;
             const activeBlue=Object.keys(owner.techState.ownedTiles).filter(id=>id.startsWith("blue")&&owner.techState.ownedTiles[id]&&!owner.techState.disabledTiles[id]);
             if(plan&&((plan.goal.kind==="blue-data"&&tail?.available&&tail.selected)||(kind==="data-end-turn"&&plan.goal.kind==="income"&&policy.incomeTail?.selected))){
-              let stationary;
+              let stationary,reachedIntent;
               const moveCards=p=>p.hand.reduce((n,card)=>n+(cards.getDiscardActionMoveRewardForCard(card)?.movementPoints||0),0);
               const sourceMoveCards=moveCards(owner);
               const compound=localPlans.dataTailCompletion({state,seatId,
@@ -1830,6 +1883,7 @@
                     const policy=goalMovementSpec(node);
                     stationary=!stored.intent?.path.length&&!policy?.selectedActionId
                       &&["defer-movement","no-affordable-objective","objective-reached"].includes(policy?.reason);
+                    reachedIntent=policy?.reason==="objective-reached"&&stored.intent?.path.length===0;
                   }
                   const p=preview.players.players.find(p=>p.id===seatId);
                   // At stable post-main nodes this policy's paid movement
@@ -1838,6 +1892,11 @@
                   // an objective or a cheaper pre-rotation prefix. Other board,
                   // reservation, technology and temporary-ability facts do not
                   // change in these already-audited currency/data previews.
+                  // Native data/currency steps retain a completed movement intent.
+                  // With no route left and no reduced wallet, its endpoint
+                  // payment remains valid even when this income adds energy.
+                  if(reachedIntent&&p.resources.credits>=owner.resources.credits
+                    &&p.resources.energy>=owner.resources.energy)return true;
                   return stationary&&p.resources.energy<=owner.resources.energy
                     &&p.resources.publicity>=owner.resources.publicity&&moveCards(p)<=sourceMoveCards;
                 }});
@@ -1944,8 +2003,11 @@
       let bound=result;
       if(result){
         const state=readPlanningState(stored),owner=state.players.players.find(p=>p.id===seatId);
-        const current=stateValue.handCapital(owner.hand,owner.techState,state.tech,state.turn.roundNumber);
-        const offered=stateValue.handCapital(state.cards.publicCards.filter(Boolean),owner.techState,state.tech,state.turn.roundNumber);
+        const funding={resources:owner.resources,income:owner.income,startingIncome:0};
+        const current=stateValue.handCapital(owner.hand,owner.techState,state.tech,state.turn.roundNumber,stateValue.DEFAULT_WEIGHTS,funding);
+        // Receiving money can advance an already-held card as well as a pick.
+        const heldUpper=stateValue.handCapital(owner.hand,owner.techState,state.tech,state.turn.roundNumber);
+        const offered=Math.max(heldUpper,stateValue.handCapital(state.cards.publicCards.filter(Boolean),owner.techState,state.tech,state.turn.roundNumber));
         const currentResearch=resourceDemand.heldAndResearchCapital(state,owner)-current;
         const researchCost=techResolver.getResearchPublicityCost(owner);
         const researchUpper=result.maximumPublicity<researchCost?0:stateValue.researchCapitalCeiling({techState:owner.techState,supply:state.tech,round:state.turn.roundNumber,
@@ -2680,7 +2742,7 @@
       cardPickSpecs = new WeakMap();
       envelopeCardSpecs = new WeakMap();
       openedRoot = null;
-      identities.clear();
+      identities.clear();physicalIdentityKeys.clear();
       resourceOrders = new WeakMap();
       knownMoneyOrders = new WeakMap();
       openingOrders = new WeakMap();
@@ -2719,7 +2781,7 @@
       const picks=cardPickPlanner.getDiagnostics();
       return freeze({ cardPick:{...picks,rankingCacheHitsThisRoot:picks.rankingCacheHits-cardPickRootStats.rankingCacheHits,
         rankingCacheMissesThisRoot:picks.rankingCacheMisses-cardPickRootStats.rankingCacheMisses,rankedCardsThisRoot:picks.rankedCards-cardPickRootStats.rankedCards}, goalMovementGeometryNodes, movementRouteCacheEntries: movementRouteCache.size, maxMovementRouteCacheEntries: 64, nodeCount, submissionCount, cacheHits, stableRestoreSkips, movementTimingCacheHits, movementTimingCacheMisses, cacheEntries: cache.size,
-        observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
+        observationCount, observationReleases, movementTimingCacheEntries:movementTimingCache.size,maxMovementTimingCacheEntries:256, normalizedIdentityCacheEntries:normalizedIdentityStates.size, maxNormalizedIdentityCacheEntries:64, identityCount: identities.size, identityMaterializations, maxCacheEntries, sharedPrefixEdges:prefixEdges.size,sharedPrefixNodes:prefixNodes.size,sharedPrefixHits:prefixHits,
         decodedStateCacheEntries: decodedStates.size, maxDecodedStateCacheEntries, decodedStateCacheBytes, maxDecodedStateCacheBytes,
         observationCacheHits, resourceQueryHits, resourceQueryMisses, goalCatalogHits, goalCatalogMisses,
         committedDecodeCount, committedDecodeHits, committedReferenceCount,

@@ -1,0 +1,8 @@
+{
+  "baseCommit": "6eff6f3da26e2d680e2963184def68fb387d3d5a",
+  "testPath": "randomizer/game/ai/funded-hand-timing.test.js",
+  "testArchive": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-unfunded-hand-native-red-test-20261104-v1.js",
+  "testSha256": "7129af76ba2acf823a4bf955c2bf3f9a22887c6c6565189cdd00d93e41805818",
+  "log": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v129-unfunded-hand-timing-native-red-20261104-v1.log",
+  "failure": "Unaffordable current-round DLC9 hand capital4.5 versus native next-round2.5. Apply archived test at its canonical testPath on baseCommit."
+}

@@ -108,12 +108,12 @@
     if (!goals.length) return zero();
     const knownHand = facts.hand.filter(c => !c.hidden && c.cardId);
     const capitalValues = new Map();
-    const capital = (hand, publicity) => {
-      const key = JSON.stringify([publicity, hand.map(card => card.id)]);
-      if (!capitalValues.has(key)) capitalValues.set(key, facts.investment(hand, publicity));
+    const capital = (hand, wallet, income) => {
+      const key = JSON.stringify([wallet.credits, wallet.energy, wallet.publicity, income.credits, income.energy, hand.map(card => card.id)]);
+      if (!capitalValues.has(key)) capitalValues.set(key, facts.investment(hand, wallet.publicity, { resources: wallet, income, startingIncome: Number(facts.passing) }));
       return capitalValues.get(key);
     };
-    const initialCapital = capital(knownHand, player.publicity);
+    const initialCapital = capital(knownHand, player, player.income);
     const root = { data: facts.board.data, solarSystem: facts.board.solarSystem };
     const actor = { id: seatId, color: player.color };
     const candidates = [];
@@ -124,11 +124,21 @@
       const hand = knownHand.slice(), publicCards = (facts.board.publicCards || []).filter(c => c && !c.hidden && c.cardId);
       const wallet = { credits: player.credits - payment.spend.credits, energy: player.energy - payment.spend.energy,
         publicity: player.publicity, availableData: player.availableData };
+      const income = { ...player.income };
       let delta = -payment.value, unknownCount = facts.hand.length - hand.length + facts.extraUnknownCount, supported = true;
       let traceSlots = null;
       const usedTokens = new Set(), effects = goal.endpointFacts.rewards, ledger = [];
       const weighted = gain => Object.entries(gain).reduce((n, [k, amount]) => n + amount * (k === 'score' ? 1 : weights[k] || 0), 0);
-      const incomeValue = card => weighted(cards.getIncomeGainForCard(card) || {}) * (5 - planningRound);
+      const incomePurpose = (card, availableHand) => {
+        const gain=cards.getIncomeGainForCard(card),immediate={...gain},nextWallet={...wallet},nextIncome={...income};
+        if(immediate.publicity)immediate.publicity=Math.min(immediate.publicity,players.RESOURCE_LIMITS.publicity-wallet.publicity);
+        if(immediate.availableData)immediate.availableData=Math.min(immediate.availableData,players.RESOURCE_LIMITS.availableData-wallet.availableData);
+        for(const [key,amount]of Object.entries(immediate))if(key!=='handSize')nextWallet[key]=(nextWallet[key]||0)+amount;
+        for(const [key,amount]of Object.entries(gain))nextIncome[key]=(nextIncome[key]||0)+amount;
+        const after=capital(availableHand.filter(c=>c!==card),nextWallet,nextIncome);
+        const linear=weighted(immediate)+weighted(gain)*(4-planningRound)-weights.handSize;
+        return{card,gain,wallet:nextWallet,income:nextIncome,after,linear,value:linear+after-capital(availableHand,wallet,income)};
+      };
       for (let index = 0; index < effects.length && supported; index++) {
         const effect = effects[index], options = effect.options || {};
         if (effect.type === 'gain_resources') {
@@ -146,8 +156,8 @@
         } else if (effect.type === 'pick_card') {
           if ((options.count || 1) !== 1) { supported = false; break; }
           const incomeLater = effects.slice(index + 1).some(e => e.type === 'income');
-          const ranked = publicCards.map(card => ({ card, value: incomeLater ? incomeValue(card)
-            : capital([...hand, card], wallet.publicity) - capital(hand, wallet.publicity) }))
+          const ranked = publicCards.map(card => ({ card, value: incomeLater ? incomePurpose(card, [...hand, card]).value
+            : capital([...hand, card], wallet, income) - capital(hand, wallet, income) }))
             .sort((a, b) => b.value - a.value || a.card.id.localeCompare(b.card.id));
           const picked = ranked[0]?.card;
           if (picked) { hand.push(picked); publicCards.splice(publicCards.indexOf(picked), 1); } else unknownCount++;
@@ -155,10 +165,9 @@
             policy: 'one fixed known income or held-purpose quote; not a claim of native card identity equivalence' });
         } else if (effect.type === 'income') {
           if ((options.count || 1) !== 1) { supported = false; break; }
-          const before = capital(hand, wallet.publicity);
-          const ranked = hand.map(card => ({ card, gain: cards.getIncomeGainForCard(card), value: incomeValue(card) - weights.handSize
-            + capital(hand.filter(c => c !== card), wallet.publicity) - before }))
-            .filter(r => r.gain).sort((a, b) => b.value - a.value || a.card.id.localeCompare(b.card.id));
+          const before = capital(hand, wallet, income);
+          const ranked = hand.filter(card=>cards.getIncomeGainForCard(card)).map(card=>incomePurpose(card,hand))
+            .sort((a, b) => b.value - a.value || a.card.id.localeCompare(b.card.id));
           if (!ranked.length) {
             if (unknownCount) supported = false;
             ledger.push({ type: effect.type, value: 0, unresolvedUnknownIncome: unknownCount > 0 });
@@ -166,13 +175,10 @@
           }
           const chosen = ranked[0]; hand.splice(hand.indexOf(chosen.card), 1);
           unknownCount += chosen.gain.handSize || 0;
-          const immediate = { ...chosen.gain };
-          if (immediate.publicity) immediate.publicity = Math.min(immediate.publicity, players.RESOURCE_LIMITS.publicity - wallet.publicity);
-          if (immediate.availableData) immediate.availableData = Math.min(immediate.availableData, players.RESOURCE_LIMITS.availableData - wallet.availableData);
-          for (const [key, amount] of Object.entries(immediate)) if (key !== 'handSize') wallet[key] = (wallet[key] || 0) + amount;
-          const linear = weighted(immediate) + weighted(chosen.gain) * (4 - planningRound) - weights.handSize;
+          Object.assign(wallet,chosen.wallet);Object.assign(income,chosen.income);
+          const linear = chosen.linear;
           delta += linear; ledger.push({ type: effect.type, cardId: chosen.card.cardId, gain: chosen.gain, value: linear,
-            handPurposeCost: before - capital(hand, wallet.publicity) });
+            handPurposeCost: before - capital(hand, wallet, income) });
         } else if (['scan_planet_sector', 'choose_nebula_scan', 'choose_colored_nebula_scan'].includes(effect.type)) {
           const opts = effect.type === 'scan_planet_sector' ? { mode: 'planet', planetId: options.planetId }
             : effect.type === 'choose_colored_nebula_scan' ? { mode: 'color', color: options.color }
@@ -212,7 +218,7 @@
           }
         } else { supported = false; ledger.push({ type: effect.type, unsupported: true }); }
       }
-      const capitalDelta = capital(hand, wallet.publicity) - initialCapital;
+      const capitalDelta = capital(hand, wallet, income) - initialCapital;
       candidates.push({ id: goal.requirementId, family: goal.endpointFamily, planet: goal.planetId, funded: true,
         supported, payment, route: goal.route, ledger, capitalDelta, value: supported ? Math.max(0, delta + capitalDelta) : 0 });
     }
@@ -224,9 +230,9 @@
   function funding(wallet, cost, weights) {
     if (cToE.gain.energy !== 1 || eToC.gain.credits !== 1) throw Error('PROBE_CAPITAL_EXCHANGE_CONTRACT_UNSUPPORTED');
     const c = cost.credits || 0, e = cost.energy || 0, a = cToE.cost.credits, b = eToC.cost.energy;
-    if (!Number.isSafeInteger(c) || c < 0 || c > 1 || !Number.isSafeInteger(e) || e < 0) throw Error('PROBE_CAPITAL_ENDPOINT_COST_UNSUPPORTED');
+    if (!Number.isSafeInteger(c) || c < 0 || !Number.isSafeInteger(e) || e < 0) throw Error('PROBE_CAPITAL_ENDPOINT_COST_UNSUPPORTED');
     const choices = [];
-    // At most two credit-funding cases. Reserve endpoint costs before trades;
+    // One case per required credit (ordinary missions need at most one). Reserve costs before trades;
     // the energy-funding interval has a linear weighted cost, so use its end.
     for (let x = 0; x <= c; x++) {
       const lower = Math.max(0, e + b * x - wallet.energy);
@@ -255,7 +261,7 @@
     const slots = Object.entries(state.aliens?.aliens || {}).map(([slotId, slot]) => ({
       slotId: Number(slotId), revealed: Boolean(slot.revealed), traces: slot.traces,
     }));
-    return quote({ player: { ...player.resources, id: player.id, color: player.color, techState: player.techState },
+    return quote({ player: { ...player.resources, id: player.id, color: player.color, techState: player.techState, income: player.income },
       board: { rockets: state.pieces?.rockets, planets: state.planets, data: state.data, solarSystem: state.solarSystem,
         publicCards: state.cards?.publicCards, aliens: { slots } }, hand: player.hand,
       extraUnknownCount: Math.max(0, (player.resources.handSize || 0) - player.hand.length), round: state.turn.roundNumber,

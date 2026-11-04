@@ -1,0 +1,10 @@
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+{"heldResearchFundingTiming":true,"oldRound1NativeCannotPay":true,"nextRoundNativeCanPay":true,"unfundedCurrentValue":2.5,"nextRoundValue":2.5,"fundingControls":1568,"memoControls":64,"shallowFrozenWalletInvalidation":true,"nativeIncomeInputs":9,"sameRoundFundedResearch":true,"jointNativeMissionFunds":{"orbit":{"hand":4.5,"value":60},"land":{"hand":2.5,"value":60}},"rootAndRngUnchanged":true}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+{"localFinalMarkAndScan":"passed","nativeMarkOptions":4,"retainedMarkOptions":1,"scanPurposes":5,"nativeRecoveryAndRootIsolation":true,"stableRestoreSkipped":true}
+{"fundedTravelTail":true,"nativeProofControls":14,"movementModeGuard":true,"optimizedInputs":256,"fullNativeInputs":334,"completeRootValueParity":true,"rootAndRngUnchanged":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+SUMMARY unit passed=6 failed=0 total=6 time=4.78s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=4
+OWNER policy/state-value tests=2

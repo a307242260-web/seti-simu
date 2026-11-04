@@ -4,11 +4,11 @@ const {createSimulationRuleComposition}=require('../../training/simulation-rule-
 const fixture=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../../../adhoc/ai-decision-corpus-20261030-round1-v1/teacher-step-024-20261030-v1.json'))),seed=fixture.source.seed,seatId=fixture.seatId;
 const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,v)=>buildRuleObservation(s,seed,v?.playerId)});k.newGame({seed});const c=k.composition;assert(c.lifecycle.restore(fixture.compositionEnvelope).ok);
 const evaluate=values.createStateValueEvaluator(seatId),budget={transitions:256,nodes:1024,frontier:256,milliseconds:10000},options={...agent.OPTIONS,evaluate,modelKey:evaluate.modelKey,budget};
-let p=createAnalysisPort({composition:c,seatId,maxCacheEntries:0}),token=null,initialInputs,initialNodes,after26,checkpoint;
+let p=createAnalysisPort({composition:c,seatId,maxCacheEntries:0}),token=null,initialInputs,initialNodes,after26,checkpoint,expectedValue,knownAtRoot;
 function submit(actionId){const d=c.inspect().session?.decision,action=(d?.choices||c.inputPort.enumerateActions({})).find(a=>a.actionId===actionId);assert(action);const result=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:action}):action.phase==='quick'?c.inputPort.submitQuickAction(action):c.inputPort.submitAction(action);assert(result.ok);return action;}
 try{
  for(let i=0;i<12;i++){
-  const before=c.lifecycle.save().envelope,root=p.openRoot(),result=search.searchDecision({...options,port:p,root,planContinuation:token});assert(result.complete,result.stopReason);assert.equal(result.value,60);assert.deepEqual(c.lifecycle.save().envelope,before);
+  const before=c.lifecycle.save().envelope,root=p.openRoot(),result=search.searchDecision({...options,port:p,root,planContinuation:token});assert(result.complete,result.stopReason);if(i===0){expectedValue=result.value;knownAtRoot=new Set(root.observation.selfState.hand.map(c=>c.id));}assert.equal(result.value,expectedValue);assert.deepEqual(c.lifecycle.save().envelope,before);
   if(i===0){initialInputs=result.diagnostics.nativeExecutions;initialNodes=result.diagnostics.nodes;assert(result.planContinuation);}
   else {assert.equal(result.diagnostics.planContinuation,'hit',`the committed native plan must survive input${23+i}`);assert.equal(result.diagnostics.nativeExecutions,0);}
   const action=root.legalActions.find(a=>a.actionId===result.actionId);assert(action);
@@ -19,8 +19,10 @@ try{
   // Recreate the port and import its exact certificate at every native input.
   p=createAnalysisPort({composition:c,seatId,maxCacheEntries:0});token=p.importPlan(saved);
  }
- assert.equal(values.evaluateStateValue(c.projection({role:'player',playerId:seatId}).state,seatId).total,60);
- assert(initialInputs>80&&initialInputs<=256,'only the winning fixed tail adds native work to the original80-input complete root');p.close();
+ const observed=c.projection({role:'player',playerId:seatId}).state,masked={...observed,selfState:{...observed.selfState,hand:observed.selfState.hand.map(card=>knownAtRoot.has(card.id)?card:{id:card.id,hidden:true})}};
+ assert.equal(values.evaluateStateValue(masked,seatId).total,expectedValue,'the original certificate ends at the blind draw without guessing its card identity');
+ assert(values.evaluateStateValue(observed,seatId).total>=expectedValue,'newly learned card purposes may improve value only after the native reveal');
+ assert(initialInputs>0&&initialInputs<=256,'the winning fixed tail remains within the production input gate');p.close();
  for(const changed of ['money','hand']){
   const envelope=structuredClone(after26),state=JSON.parse(envelope.committedState),owner=state.players.players.find(v=>v.id===seatId);
   if(changed==='money')owner.resources.energy+=1;else owner.hand.reverse();

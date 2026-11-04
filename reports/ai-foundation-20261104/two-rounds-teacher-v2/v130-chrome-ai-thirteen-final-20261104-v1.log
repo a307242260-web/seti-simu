@@ -1,0 +1,13 @@
+PASS production-search-agent-entry http://127.0.0.1:54561/randomizer/index.html?agent=search
+PASS production-goal-movement-plan http://127.0.0.1:54561/randomizer/index.html
+PASS production-search-hotpath http://127.0.0.1:54561/randomizer/index.html
+PASS production-six-greedy-plans http://127.0.0.1:54561/randomizer/index.html
+PASS production-shared-resource-prefix http://127.0.0.1:54561/randomizer/index.html
+PASS production-funded-travel-capital http://127.0.0.1:54561/randomizer/index.html
+PASS production-conditional-sector-flow http://127.0.0.1:54561/randomizer/index.html
+PASS production-conditional-research-capital http://127.0.0.1:54561/randomizer/index.html
+PASS production-known-pass-card http://127.0.0.1:54561/randomizer/index.html
+Error: production-winning-income-recovery 操作异常：Error: 计划值改变或搜索污染原根
+    at <anonymous>:9:94
+    at runInteractiveSmoke (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/run_browser_smokes.js:232:11)
+    at async main (/private/var/folders/cl/yh68cq4s3pz4w8cy0_95jbj00000gn/T/seti-human405-two-rounds-20261104-99s6iw4n/tools/run_browser_smokes.js:294:11)

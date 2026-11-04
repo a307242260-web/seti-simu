@@ -1,0 +1,8 @@
+{
+  "baseCommit": "ec6b09f0056c6bf0d1cf299e543c3f1f991c70f9",
+  "runtimeArchive": "reports/ai-foundation-20261104/rejected-v147-budget-reservation-runtime-20261104-v1",
+  "testArchive": "reports/ai-foundation-20261104/two-rounds-teacher-v2/v147-actual-budget-reservation-red-test-20261104-v1.js",
+  "testSha256": "db5f8acf7d506be6b9760f8872caf72d488b383c6f264f534db27c3391747883",
+  "testPath": "randomizer/game/ai/probe-travel-tail.test.js",
+  "failure": "actual256-native-input closure incorrectly rejected when a movement maximum estimate doesnot fit remaining budget"
+}

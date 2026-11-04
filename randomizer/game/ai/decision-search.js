@@ -6,7 +6,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (stateValue) {
   "use strict";
 
-  const VERSION = "seti-complete-decision-search-v129";
+  const VERSION = "seti-complete-decision-search-v148";
   const BOUNDARIES = new Set(["terminal", "other-owner", "information-barrier", "turn-boundary", "income-plan-value", "turn-tail-value"]);
   // 这是单决策诊断额度，不是允许截断的棋力配置；超限绝不返回可提交动作。
   const DEFAULT_BUDGET = Object.freeze({ transitions: 128, nodes: 129, frontier: 128, milliseconds: 1000 });
@@ -502,9 +502,9 @@
             }
           }
         }
-        if (!alternative.resourcePlan && transitions + alternative.submissions > limits.transitions) stopReason = "transition-budget";
-        else if (!alternative.resourcePlan && nodes.length+certificateNodes+(alternative.goalPlan ? alternative.submissions-1 : 0) >= limits.nodes) stopReason = "node-budget";
-        else if (!alternative.resourcePlan && pendingFrontier+(alternative.goalPlan ? alternative.submissions-1 : 0) > limits.frontier) stopReason = "frontier-budget";
+        if (!alternative.resourcePlan && !alternative.goalPlan && transitions + alternative.submissions > limits.transitions) stopReason = "transition-budget";
+        else if (!alternative.resourcePlan && !alternative.goalPlan && nodes.length+certificateNodes >= limits.nodes) stopReason = "node-budget";
+        else if (!alternative.resourcePlan && !alternative.goalPlan && pendingFrontier > limits.frontier) stopReason = "frontier-budget";
         else if (now() - startedAt >= limits.milliseconds) stopReason = "watchdog";
         if (stopReason) break outer;
         if(alternative.resourcePlan){
@@ -532,9 +532,20 @@
           resourceExecutions.set(entry.edges.at(-1),fixed);
           continue;
         }
-        const goalExecution = alternative.goalPlan ? port.expandGoalMovementPlan(entry.node, () => now()-startedAt < limits.milliseconds) : null;
+        // A route estimate is a maximum. Charge the real fixed native inputs
+        // one by one, using the same node/frontier accounting as the macro.
+        let goalInputs=0,goalStopReason=null;
+        const goalExecution = alternative.goalPlan ? port.expandGoalMovementPlan(entry.node, () => {
+          if(transitions+goalInputs+1>limits.transitions)goalStopReason="transition-budget";
+          else if(nodes.length+certificateNodes+goalInputs+1>limits.nodes)goalStopReason="node-budget";
+          else if(pendingFrontier+goalInputs>limits.frontier)goalStopReason="frontier-budget";
+          else if(now()-startedAt>=limits.milliseconds)goalStopReason="watchdog";
+          if(goalStopReason)return false;
+          goalInputs++;return true;
+        }) : null;
         if (goalExecution) {
           if (goalExecution.complete && goalExecution.submissions < 1 || goalExecution.submissions > alternative.submissions
+            || goalInputs !== goalExecution.submissions
             || goalExecution.prefixes.length !== goalExecution.submissions
             || goalExecution.prefixes.length && goalExecution.prefixes[0].action.actionId !== alternative.firstActionId) throw new Error("SEARCH_GOAL_PLAN_COST_INVALID");
           transitions += goalExecution.submissions;
@@ -542,7 +553,7 @@
           peakFrontier = Math.max(peakFrontier,pendingFrontier+goalExecution.submissions-1);
           if (!goalExecution.complete) {
             entry.goalAttempt = { goal: goalExecution.goal, submissions: goalExecution.submissions };
-            stopReason = "watchdog"; break outer;
+            stopReason = goalStopReason || "watchdog"; break outer;
           }
           certificateNodes -= 1;
           const added = add(goalExecution.node);

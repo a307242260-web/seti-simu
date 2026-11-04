@@ -1,0 +1,11 @@
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+{"heldResearchFundingTiming":true,"oldRound1NativeCannotPay":true,"nextRoundNativeCanPay":true,"unfundedCurrentValue":2.5,"nextRoundValue":2.5,"fundingControls":1568,"rootAndRngUnchanged":true}
+{"fundedResearch":"passed","nativePassWindowFixtures":3,"nativeAcquisitionContinuity":true,"fullCompactEqual":true,"publicNativeFees":true,"sharedFreeCardTarget":true,"hiddenBonusIgnored":true,"sourceAndRngUnchanged":true,"nativeIncomeAndBlueThresholds":true}
+{"missionRewardContinuity":true,"adapterParity":true,"hiddenIdentityIsolation":true,"firstAndExtraTraces":true,"dataAndPublicityCaps":true,"fundingControls":3240,"originalAndRngUnchanged":true}
+{"fundedTravelTail":true,"nativeProofControls":6,"movementModeGuard":true,"optimizedInputs":232,"fullNativeInputs":266,"completeRootValueParity":true,"rootAndRngUnchanged":true}
+purpose capital, typed turn-tail proofs, default-model guard, budgets and cold blue funding passed
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+SUMMARY unit passed=7 failed=0 total=7 time=3.46s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=4

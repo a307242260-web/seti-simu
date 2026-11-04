@@ -13,10 +13,10 @@ k.newGame({ seed }); const c = k.composition; assert(c.lifecycle.restore(fixture
 const original = c.lifecycle.save().envelope, port = createAnalysisPort({ composition: c, seatId, maxCacheEntries: 0 });
 const quote = (obs, weights = values.DEFAULT_WEIGHTS) => {
   const p = obs.publicState.players.find(p => p.playerId === seatId), round = obs.publicState.roundNumber + Number(obs.publicState.passingPlayerIds.includes(seatId));
-  return probe.fromObservation(obs, seatId, weights, (hand, publicity) =>
-    values.handCapital(hand, p.techState, obs.publicState.board.techSupply, round, weights)
+  return probe.fromObservation(obs, seatId, weights, (hand, publicity, funding) =>
+    values.handCapital(hand, p.techState, obs.publicState.board.techSupply, round, weights, funding)
       + values.researchCapital({ hand, publicity, techState: p.techState, supply: obs.publicState.board.techSupply,
-        round, researchCost: p.researchPublicityCost }, weights));
+        round, researchCost: p.researchPublicityCost, funding }, weights));
 };
 try {
   port.setCardPickPlanning(true); port.setResourcePlanning(true);
@@ -29,7 +29,7 @@ try {
     'a deployed funded probe must retain its known mission value across a turn boundary');
   assert.deepEqual(values.evaluateStateValue(port.valueObservation(root), seatId), values.evaluateStateValue(obs, seatId));
   const state = JSON.parse(original.committedState), own = state.players.players.find(p => p.id === seatId);
-  const investment = (hand, publicity) => demand.heldAndResearchCapital(state, { ...own, hand, resources: { ...own.resources, publicity } });
+  const investment = (hand, publicity, funding) => demand.heldAndResearchCapital(state, { ...own, hand, income: funding.income, resources: { ...own.resources, ...funding.resources, publicity } });
   assert.deepEqual(probe.fromState(state, own, values.DEFAULT_WEIGHTS, investment), forecast);
   assert.equal(demand.planningCapital(state, own), demand.heldAndResearchCapital(state, own) + forecast.value);
 
@@ -67,7 +67,7 @@ try {
   const source = read('reports/ai-foundation-20261023/human405-v99-native-witness-comparison-step36-20261031-v1.json');
   const raw = JSON.parse(zlib.gunzipSync(fs.readFileSync(path.resolve(__dirname, '../../..', source.rawPath))));
   const land = raw.find(r => r.name === 'teacher-first').observation;
-  const landing = quote(land); assert.equal(landing.value, 8.5); assert.equal(landing.selected.family, 'land');
+  const landing = quote(land); assert.equal(landing.value, 7.5); assert.equal(landing.selected.family, 'land');
   assert.equal(landing.selected.ledger.find(e => e.type === 'alien_trace').gain.score, 5);
   const discounted=structuredClone(land),discountOwner=discounted.publicState.players.find(p=>p.playerId===seatId);
   discountOwner.techState.ownedTiles.orange3=true;
@@ -107,15 +107,15 @@ try {
 } finally { port.close(); c.dispose(); }
 
 // The exact teacher Earth root has a funded one-point route to Mars. Its
-// future orbit retains 4.5V, and moving there natively charges that energy.
+// future orbit retains 3.5V after held-card funding opportunity cost, and moving there natively charges that energy.
 {
   const f=read('reports/ai-foundation-20261104/two-rounds-teacher-v1/teacher-step-025-20261104-v1.json'),seed=f.source.seed;
   const k=createSimulationRuleComposition({seed,random:createSeededRandom(seed),activePlayerCount:4,trustedProjectionReader:true,projectCounterfactualState:(s,w)=>buildRuleObservation(s,seed,w?.playerId)});k.newGame({seed});const c=k.composition;
   assert(c.lifecycle.restore(f.compositionEnvelope).ok);const original=c.lifecycle.save().envelope,p=createAnalysisPort({composition:c,seatId:f.seatId,maxCacheEntries:0});
   const legal=()=>c.inspect().session?.decision?.choices||c.inputPort.enumerateActions({});
   function submit(a){assert(a);const d=c.inspect().session?.decision,r=d?c.inputPort.submitDecision({decisionId:d.decisionId,decisionVersion:d.decisionVersion,ownerId:d.ownerId,choice:a}):a.phase==='quick'?c.inputPort.submitQuickAction(a):c.inputPort.submitAction(a);assert(r.ok,JSON.stringify(r));}
-  try{const root=p.openRoot(),q=quote(root.observation);assert.equal(q.value,4.5);assert.equal(q.selected.planet,'mars');assert.equal(q.selected.route.cost,1);assert.equal(q.selected.route.path.length,1);assert.equal(q.selected.payment.value,3);assert(Object.isFrozen(q.selected.route));
-    const s=JSON.parse(original.committedState),own=s.players.players.find(p=>p.id===f.seatId),investment=(hand,publicity)=>demand.heldAndResearchCapital(s,{...own,hand,resources:{...own.resources,publicity}});assert.deepEqual(probe.fromState(s,own,values.DEFAULT_WEIGHTS,investment),q);
+  try{const root=p.openRoot(),q=quote(root.observation);assert.equal(q.value,3.5);assert.equal(q.selected.planet,'mars');assert.equal(q.selected.route.cost,1);assert.equal(q.selected.route.path.length,1);assert.equal(q.selected.payment.value,3);assert(Object.isFrozen(q.selected.route));
+    const s=JSON.parse(original.committedState),own=s.players.players.find(p=>p.id===f.seatId),investment=(hand,publicity,funding)=>demand.heldAndResearchCapital(s,{...own,hand,income:funding.income,resources:{...own.resources,...funding.resources,publicity}});assert.deepEqual(probe.fromState(s,own,values.DEFAULT_WEIGHTS,investment),q);
     assert.deepEqual(values.evaluateStateValue(p.valueObservation(root),f.seatId),values.evaluateStateValue(root.observation,f.seatId));
     const saved=structuredClone(root.observation),poor=structuredClone(saved),player=poor.publicState.players.find(p=>p.playerId===f.seatId);player.credits=0;player.energy=0;player.income.credits=99;player.income.energy=99;assert.equal(quote(poor).value,0,'later income and endpoint rewards cannot prepay the route');assert.deepEqual(quote(saved),q,'a cached route never caches wallet-dependent funding');
     const hidden=structuredClone(saved);hidden.publicState.board.aliens.slots.forEach(s=>s.assignedAlienId='other-hidden-world');assert.deepEqual(quote(hidden),q);

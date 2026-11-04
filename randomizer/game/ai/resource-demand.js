@@ -6,7 +6,7 @@
   if(common)module.exports=api;else root.SetiResourceDemand=api;
 })(typeof globalThis!=='undefined'?globalThis:window,function(cards,effects,data,players,rocketAbility,rockets,industry,stateValue,techResolver,probeCapital){
   'use strict';
-  const VERSION='seti-goal-resource-preparation-v3';
+  const VERSION='seti-goal-resource-preparation-v5';
   const MONEY=new Set(['credits-for-energy','energy-for-credit','cards-for-credit','cards-for-energy']);
   const isPreparation=a=>a.family==='card_corner'||a.family==='place_data'||a.family==='quick_trade'&&MONEY.has(a.target?.tradeId);
   const owner=(s,id)=>s.players.players.find(p=>p.id===id);
@@ -98,27 +98,57 @@
   }
   function heldAndResearchCapital(state,p){
     const passing=(state.passingPlayerIds||state.turn.passedPlayerIds).includes(p.id)||p.passCompletionPending===true;
-    return stateValue.handCapital(p.hand,p.techState,state.tech,state.turn.roundNumber+Number(passing))
+    const funding={resources:p.resources,income:p.income,startingIncome:Number(passing)};
+    return stateValue.handCapital(p.hand,p.techState,state.tech,state.turn.roundNumber+Number(passing),stateValue.DEFAULT_WEIGHTS,funding)
       +stateValue.researchCapital({hand:p.hand,techState:p.techState,supply:state.tech,round:state.turn.roundNumber,
-        publicity:p.resources.publicity,researchCost:techResolver.getResearchPublicityCost(p),passed:passing});
+        publicity:p.resources.publicity,researchCost:techResolver.getResearchPublicityCost(p),passed:passing,funding});
+  }
+  const immutableCapitalInputs=new WeakSet(),planningCapitalQuotes=new WeakMap();
+  function immutableCapitalInput(value){
+    if(!value||typeof value!=='object')return true;
+    if(immutableCapitalInputs.has(value))return true;
+    if(!Object.isFrozen(value))return false;
+    const prototype=Object.getPrototypeOf(value);
+    if(!Array.isArray(value)&&prototype!==Object.prototype&&prototype!==null)return false;
+    if(!Object.values(value).every(immutableCapitalInput))return false;
+    immutableCapitalInputs.add(value);return true;
   }
   function planningCapital(state,p){
-    const investment=(hand,publicity)=>heldAndResearchCapital(state,{...p,hand,resources:{...p.resources,publicity}});
-    return heldAndResearchCapital(state,p)+probeCapital.fromState(state,p,stateValue.DEFAULT_WEIGHTS,investment).value;
+    // Only fully immutable source/player pairs can share this value. Mutable
+    // previews compute directly; there is no serialized-key invalidation cost.
+    const immutable=Object.isFrozen(p)&&Object.isFrozen(state)&&immutableCapitalInput(p)&&immutableCapitalInput(state);
+    let quotes=immutable?planningCapitalQuotes.get(state):null;
+    if(quotes?.has(p))return quotes.get(p);
+    const investment=(hand,publicity,funding)=>heldAndResearchCapital(state,{...p,hand,income:funding.income,resources:{...p.resources,...funding.resources,publicity}});
+    const value=heldAndResearchCapital(state,p)+probeCapital.fromState(state,p,stateValue.DEFAULT_WEIGHTS,investment).value;
+    if(immutable){if(!quotes){quotes=new WeakMap();planningCapitalQuotes.set(state,quotes);}quotes.set(p,value);}
+    return value;
   }
-  function incomeOpportunityCost(state,p,card){
+  function incomeOpportunityCost(state,p,card,beforeCapital=planningCapital(state,p)){
     const hand=p.hand.filter(c=>c.id!==card.id);
-    return planningCapital(state,p)-planningCapital(state,{...p,hand,resources:{...p.resources,handSize:Math.max(0,p.resources.handSize-1)}});
+    return beforeCapital-planningCapital(state,{...p,hand,resources:{...p.resources,handSize:Math.max(0,p.resources.handSize-1)}});
   }
   function incomeCardValue(state,seatId,card){
-    const p=owner(state,seatId),gain=cards.getIncomeGainForCard(card);
-    return Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0)*(5-state.turn.roundNumber)-incomeOpportunityCost(state,p,card);
+    const p=owner(state,seatId);return incomeValueWithCapital(state,p,card,planningCapital(state,p));
+  }
+  function incomeValueWithCapital(state,p,card,beforeCapital){
+    const gain=cards.getIncomeGainForCard(card);
+    const next={...p,hand:p.hand.filter(c=>c.id!==card.id),resources:{...p.resources,handSize:p.resources.handSize-1},income:{...p.income},
+      dataState:{...p.dataState,poolTokens:[...p.dataState.poolTokens]}};
+    let previewRoot=null;
+    players.gainIncome(next,gain,{blindDraw:target=>target.resources.handSize++,
+      gainData:target=>data.gainData(target,{root:previewRoot||(previewRoot={meta:structuredClone(state.meta)})})});
+    const linear=Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0)*(5-state.turn.roundNumber);
+    const overflow=(gain.publicity?gain.publicity-next.resources.publicity+p.resources.publicity:0)*.5
+      +(gain.availableData?gain.availableData-next.resources.availableData+p.resources.availableData:0)*.5;
+    return linear-overflow+planningCapital(state,next)-beforeCapital;
   }
   function cardOpportunityCost(state,seatId,card){return incomeOpportunityCost(state,owner(state,seatId),card);}
   function dataCornerCards({state,seatId,goal}){
     const p=owner(state,seatId);
-    return p.hand.filter(c=>!protectedCard(c,goal)&&cornerData(c)===1&&!Object.keys(cards.getDiscardActionRewardForCard(c).gain||{}).length)
-      .map(card=>({card,loss:incomeOpportunityCost(state,p,card)}))
+    const eligible=p.hand.filter(c=>!protectedCard(c,goal)&&cornerData(c)===1&&!Object.keys(cards.getDiscardActionRewardForCard(c).gain||{}).length);
+    if(!eligible.length)return[];const beforeCapital=planningCapital(state,p);
+    return eligible.map(card=>({card,loss:incomeOpportunityCost(state,p,card,beforeCapital)}))
       .sort((a,b)=>a.loss-b.loss||(a.card.id<b.card.id?-1:a.card.id>b.card.id?1:0));
   }
   function catalog({state,seatId,requirements,actions=[]}){
@@ -165,11 +195,12 @@
       }
     }
     if(placed(p)<4&&p.hand.some(c=>cards.getIncomeGainForCard(c))){
-      const incomeCard=p.hand.filter(c=>cards.getIncomeGainForCard(c)).sort((a,b)=>{
-        const value=c=>Object.entries(cards.getIncomeGainForCard(c)||{}).reduce((n,[k,v])=>n+v*({credits:1,energy:1,handSize:1,publicity:.5,availableData:.5}[k]||0),0);
-        return (value(b)*(5-state.turn.roundNumber)-incomeOpportunityCost(state,p,b))
-          -(value(a)*(5-state.turn.roundNumber)-incomeOpportunityCost(state,p,a))||(a.id<b.id?-1:1);
-      }).find(c=>capacity(state,seatId,{kind:'income',targetComputerSlot:4,incomeCardId:c.id,required:{}}));
+      const beforeCapital=planningCapital(state,p);
+      // Quote each supplier once, using the same post-income wallet as the
+      // native choice. Sorting must not repeatedly simulate an unchanged source.
+      const incomeCard=p.hand.filter(c=>cards.getIncomeGainForCard(c)).map(card=>({card,value:incomeValueWithCapital(state,p,card,beforeCapital)}))
+        .sort((a,b)=>b.value-a.value||(a.card.id<b.card.id?-1:1))
+        .find(row=>capacity(state,seatId,{kind:'income',targetComputerSlot:4,incomeCardId:row.card.id,required:{}}))?.card;
       if(incomeCard)add({id:'data:income:4',kind:'income',targetComputerSlot:4,incomeCardId:incomeCard.id,incomeBefore:Object.values(p.income).reduce((a,b)=>a+b,0),required:{}});
     }
     const blue=[...requirements.bluePlacements].sort((a,b)=>blueValue(p,b.blueSlot)-blueValue(p,a.blueSlot)||a.blueSlot-b.blueSlot)[0];
@@ -196,12 +227,15 @@
     const gain=effect?.options?.gain;
     return effect?.type==='gain_resources'&&gain&&Object.keys(gain).length&&Object.entries(gain).every(([k,v])=>k in localWeights&&Number.isFinite(v)&&v>=0)?gain:null;
   }
+  // These pure currency previews write only the wallet, hand container and
+  // blue-wallet attribution. Card models and technologies remain read-only.
+  function resourcePreview(p){return{...p,resources:{...p.resources},hand:[...p.hand]};}
   function paidChoice({state,seatId,actions,session}){
     if(!actions.length||!actions.every(a=>a.family==='choose_reward'&&(a.target?.pay||a.target?.skip)))return null;
     const effect=session?.queue?.[0]?.payload?.cardEffect;
     if(effect?.type!=='card_pay_credits_for_reward')return null;
     const gain=positiveResourceGain(effect.options?.reward);if(!gain||gain.credits||gain.energy)return null;
-    const p=owner(state,seatId),copy=structuredClone(p),before=resourceValue(copy);
+    const p=owner(state,seatId),copy=resourcePreview(p),before=resourceValue(copy);
     const paid=players.spendResources(copy,{credits:1});if(paid.ok)players.gainResources(copy,gain);
     const net=paid.ok?resourceValue(copy)-before:0;
     const a=actions.find(a=>net>0?a.target?.pay:a.target?.skip);
@@ -212,7 +246,7 @@
     if(effect?.type!=='card_pay_credits_for_reward')return null;
     const gain=positiveResourceGain(effect.options?.reward),cost=effects.getCardPlayCost(card);
     if(!gain||gain.credits||gain.energy||!players.canAfford(owner(state,seatId),cost))return null;
-    let current={...state,players:{...state.players,players:state.players.players.map(p=>p.id===seatId?structuredClone(p):p)}};
+    let current={...state,players:{...state.players,players:state.players.players.map(p=>p.id===seatId?resourcePreview(p):p)}};
     if(!players.spendResources(owner(current,seatId),cost).ok)return null;
     let amount=0,net=0;
     while(true){
@@ -224,7 +258,7 @@
         next=project(next,seatId,actions.find(a=>a.actionId===choice.actionId),choice.discardIds);
         if(!next||owner(next,seatId).resources.credits<1)break;
       }
-      const p=structuredClone(owner(next,seatId));if(!players.spendResources(p,{credits:1}).ok)break;
+      const p=resourcePreview(owner(next,seatId));if(!players.spendResources(p,{credits:1}).ok)break;
       players.gainResources(p,gain);const delta=resourceValue(p)-before;if(!(delta>0))break;
       current={...next,players:{...next.players,players:next.players.players.map(v=>v.id===seatId?p:v)}};amount++;net+=delta;
     }
@@ -242,7 +276,8 @@
       ||(state.turn.cardTurnEventBonuses||[]).some(b=>(b.eventType||b.event?.type)===type);
   }
   function project(state,seatId,action,discardIds){
-    const p=structuredClone(owner(state,seatId));
+    const source=owner(state,seatId),p={...resourcePreview(source),dataState:{...source.dataState,
+      poolTokens:[...source.dataState.poolTokens],placedTokens:[...source.dataState.placedTokens]}};
     if(discardIds?.length)p.hand=p.hand.filter(c=>!discardIds.includes(c.id));
     if(action.family==='quick_trade'){
       const cost={...action.payload.cost};delete cost.handSize;if(!players.spendResources(p,cost).ok)return null;
@@ -300,11 +335,12 @@
   function incomeChoice({state,seatId,goal,actions}){
     const p=owner(state,seatId),choices=actions.filter(a=>a.family==='choose_card'&&a.target?.choiceId?.startsWith('income:'));
     if(choices.length!==actions.length)return null;
+    const beforeCapital=planningCapital(state,p);
     const scored=choices.filter(a=>a.target.cardInstanceId!==goal.cardId&&(!goal.incomeCardId||a.target.cardInstanceId===goal.incomeCardId)).map(a=>{
       const card=p.hand.find(c=>c.id===a.target.cardInstanceId),gain=cards.getIncomeGainForCard(card);
       const next={...state,players:{...state.players,players:state.players.players.map(v=>v.id===seatId?{...p,resources:{...p.resources},hand:p.hand.filter(c=>c!==card)}:v)}};
       if(goal.incomeFunding&&card.id===goal.incomeCardId)players.gainResources(owner(next,seatId),gain);
-      return{action:a,value:incomeCardValue(state,seatId,card),feasible:capacity(next,seatId,goal)};
+      return{action:a,value:incomeValueWithCapital(state,p,card,beforeCapital),feasible:capacity(next,seatId,goal)};
     }).filter(x=>x.feasible).sort((a,b)=>b.value-a.value||(a.action.actionId<b.action.actionId?-1:1));
     return scored[0]?{kind:'fixed',actionId:scored[0].action.actionId,reason:'greedy-income-for-goal'}:{kind:'infeasible',reason:'income-would-consume-goal-card'};
   }
@@ -326,15 +362,16 @@
       const result=data.placeDataToComputer(p);if(!result.ok)return{available:false,reason:'income-tail-slot-unavailable'};
       for(const bonus of result.slotBonuses||[]){if(bonus.type==='publicity')players.gainResources(p,{publicity:bonus.publicity});else if(bonus.type==='score')players.gainResources(p,{score:bonus.score});}
     }
-    p.hand=p.hand.filter(c=>c.id!==card.id);const gain=cards.getIncomeGainForCard(card);let blindHandValue=0;
-    players.gainIncome(p,gain,{blindDraw:()=>{blindHandValue++;},gainData:target=>data.gainData(target)});
+    p.hand=p.hand.filter(c=>c.id!==card.id);const gain=cards.getIncomeGainForCard(card);let blindHandValue=0,previewRoot=null;
+    players.gainIncome(p,gain,{blindDraw:()=>{blindHandValue++;},
+      gainData:target=>data.gainData(target,{root:previewRoot||(previewRoot={meta:structuredClone(state.meta)})})});
     p.resources.handSize=p.hand.length+blindHandValue;
     const future=Object.entries(gain).reduce((n,[k,v])=>n+v*({credits:1,energy:1,publicity:.5,availableData:.5,additionalPublicScan:.5,handSize:1}[k]||0),0)*(4-state.turn.roundNumber);
     return{available:true,player:p,netGain:resourceValue(p)-resourceValue(original)+blindHandValue+future,
       immediateScoreGain:p.resources.score-original.resources.score,placements:remaining,assumption:'known income reward and remaining official income rounds; unknown drawn identities excluded'};
   }
   function blueValue(p,slot){
-    const bonus=data.getBlueBonusPlacementReward(structuredClone(p),slot);
+    const bonus=data.getBlueBonusPlacementReward({...p},slot);
     if(!bonus)return 0;
     return (bonus.score||0)+(bonus.credits||0)+(bonus.energy||0)+(bonus.publicity||0)*.5+(bonus.type==='choose_card'?1:0);
   }

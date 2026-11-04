@@ -1,0 +1,8 @@
+{"heldResearchFundingTiming":true,"oldRound1NativeCannotPay":true,"nextRoundNativeCanPay":true,"unfundedCurrentValue":2.5,"nextRoundValue":2.5,"fundingControls":1568,"memoControls":64,"nativeIncomeInputs":9,"sameRoundFundedResearch":true,"jointNativeMissionFunds":{"orbit":{"hand":4.5,"value":60},"land":{"hand":2.5,"value":60}},"rootAndRngUnchanged":true}
+{"incomePlanValue":"passed","nativeControlInputs":9,"noInventedSuccessor":true,"nodeAndTimeBudgets":true,"realFirstInputRecovery":true,"customValueNativeFallback":true,"negativeBlueEndGameValue":true}
+{"fundedTravelTail":true,"nativeProofControls":14,"movementModeGuard":true,"optimizedInputs":256,"fullNativeInputs":334,"completeRootValueParity":true,"rootAndRngUnchanged":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+SUMMARY unit passed=4 failed=0 total=4 time=3.28s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER policy/decision-search tests=2
+OWNER policy/state-value tests=2

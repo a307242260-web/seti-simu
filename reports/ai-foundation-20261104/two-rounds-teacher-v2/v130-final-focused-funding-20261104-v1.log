@@ -1,0 +1,11 @@
+host architecture audit tests passed
+{"purposeCardPick":"passed","noUnmotivatedTrades":true,"incomeMoveDataAndUnusedPublicity":true,"fixedCardAndSemanticCache":true}
+{"heldResearchFundingTiming":true,"oldRound1NativeCannotPay":true,"nextRoundNativeCanPay":true,"unfundedCurrentValue":2.5,"nextRoundValue":2.5,"fundingControls":1568,"jointNativeMissionFunds":{"orbit":{"hand":4.5,"value":60},"land":{"hand":2.5,"value":60}},"rootAndRngUnchanged":true}
+{"missionRewardContinuity":true,"adapterParity":true,"hiddenIdentityIsolation":true,"firstAndExtraTraces":true,"dataAndPublicityCaps":true,"fundingControls":3240,"originalAndRngUnchanged":true}
+{"resourceDemand":"passed","noLoosePreparations":true,"protectedCards":true,"exactNeed":true,"nativePaymentAndRestore":true,"boundedFallback":true}
+{"winningIncomeNativeContinuation":true,"coldCertificateRecovery":true,"exactDependencyInvalidation":true,"sharedBudgetEnforced":true,"initialInputs":89}
+SUMMARY unit passed=6 failed=0 total=6 time=3.02s
+SUMMARY fullFlow passed=0 failed=0 total=0 time=0.00s
+OWNER architecture/host-source-zero tests=1
+OWNER policy/decision-search tests=3
+OWNER policy/state-value tests=2
